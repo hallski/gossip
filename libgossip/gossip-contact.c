@@ -824,35 +824,13 @@ gboolean
 gossip_contact_equal (gconstpointer v1,
 		      gconstpointer v2)
 {
-	const gchar   *id_a;
-	const gchar   *id_b;
-	GossipAccount *account_a;
-	GossipAccount *account_b;
-
-	g_return_val_if_fail (GOSSIP_IS_CONTACT (v1), FALSE);
-	g_return_val_if_fail (GOSSIP_IS_CONTACT (v2), FALSE);
-
-	id_a = gossip_contact_get_id (GOSSIP_CONTACT (v1));
-	id_b = gossip_contact_get_id (GOSSIP_CONTACT (v2));
-
-	account_a = gossip_contact_get_account (GOSSIP_CONTACT (v1));
-	account_b = gossip_contact_get_account (GOSSIP_CONTACT (v2));
-
-	return g_str_equal (id_a, id_b) &&
-	       gossip_account_equal (account_a, account_b);
+	return g_direct_equal (v1, v2);
 }
 
 guint
 gossip_contact_hash (gconstpointer key)
 {
-	GossipContactPriv *priv;
-
-	g_return_val_if_fail (GOSSIP_IS_CONTACT (key), +1);
-
-	priv = GET_PRIV (GOSSIP_CONTACT (key));
-
-	return g_str_hash (gossip_contact_get_id (GOSSIP_CONTACT (key))) + 
-	       gossip_account_hash (gossip_contact_get_account (GOSSIP_CONTACT (key)));
+	return g_direct_hash (key);
 }
 
 /* convenience functions */

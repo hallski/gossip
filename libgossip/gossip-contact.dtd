@@ -6,10 +6,9 @@
 <!-- Root element. -->
 <!ELEMENT contacts (account+)>
 
-<!ELEMENT account (type,(self?),(contact*))>
-<!ATTLIST account id CDATA #REQUIRED>
+<!ELEMENT account ((self?),(contact*))>
+<!ATTLIST account name CDATA #REQUIRED>
 
-<!ELEMENT type (#PCDATA)>
 <!ELEMENT self (name)>
 
 <!ELEMENT contact (name)>

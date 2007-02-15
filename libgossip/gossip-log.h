@@ -59,8 +59,6 @@ void              gossip_log_handler_remove            (GossipLogManager      *m
 
 
 /* Utils */
-GossipContact *   gossip_log_get_own_contact           (GossipLogManager      *manager,
-							GossipAccount         *account);
 GList *           gossip_log_get_contacts              (GossipLogManager      *manager,
 							GossipAccount         *account);
 GList *           gossip_log_get_chatrooms             (GossipLogManager      *manager,

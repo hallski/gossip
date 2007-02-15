@@ -49,7 +49,7 @@ gboolean              gossip_contact_manager_add      (GossipContactManager *man
 void                  gossip_contact_manager_remove   (GossipContactManager *manager,
 						       GossipContact        *contact);
 GossipContact *       gossip_contact_manager_find     (GossipContactManager *manager,
-						       const gchar          *account_id,
+						       GossipAccount        *account,
 						       const gchar          *contact_id);
 gboolean              gossip_contact_manager_store    (GossipContactManager *manager);
 

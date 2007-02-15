@@ -1297,37 +1297,6 @@ log_set_name (GossipLogManager *manager,
 	return gossip_contact_manager_store (contact_manager);
 }
 
-GossipContact *
-gossip_log_get_own_contact (GossipLogManager *manager,
-			    GossipAccount    *account)
-{
-	GossipLogManagerPriv *priv;
-	GossipContactManager *contact_manager;
-	GossipContact        *contact;
-	const gchar          *account_param;
-
-	g_return_val_if_fail (GOSSIP_IS_LOG_MANAGER (manager), NULL);
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
-
-	priv = GET_PRIV (manager);
-
-	gossip_account_param_get (account, "account", &account_param, NULL);
-
-	contact_manager = gossip_session_get_contact_manager (priv->session);
-	contact = gossip_contact_manager_find (contact_manager,
-					       account_param, 
-					       account_param);
-
-	if (!contact) {
-		GossipProtocol *protocol = NULL;
-
- 		protocol = gossip_session_get_protocol (priv->session, account); 
-		contact = gossip_protocol_get_own_contact (protocol);
-	}
-
-	return contact;
-}
-
 GList *
 gossip_log_get_contacts (GossipLogManager *manager,
 			 GossipAccount    *account)
@@ -1369,8 +1338,6 @@ gossip_log_get_contacts (GossipLogManager *manager,
 	gossip_debug (DEBUG_DOMAIN, "Collating a list of contacts in:'%s'", directory);
 
 	while ((filename = g_dir_read_name (dir)) != NULL) {
-		const gchar *account_param;
-
 		if (!g_file_test (directory, G_FILE_TEST_IS_DIR)) {
 			continue;
 		}
@@ -1381,9 +1348,8 @@ gossip_log_get_contacts (GossipLogManager *manager,
 
 		filename_unescaped = log_unescape (filename);
 
-		gossip_account_param_get (account, "account", &account_param, NULL);
 		contact = gossip_contact_manager_find (contact_manager, 
-						       account_param,
+						       account,
 						       filename_unescaped);
 		g_free (filename_unescaped);
 
@@ -1557,19 +1523,22 @@ gossip_log_get_messages_for_contact (GossipLogManager *manager,
 				     GossipContact    *contact,
 				     const gchar      *date)
 {
-	GossipAccount    *account;
-	GossipContact    *own_contact;
-	gchar            *filename;
-	GList            *messages = NULL;
-	gboolean          get_own_name = FALSE;
-	gboolean          get_name = FALSE;
-	xmlParserCtxtPtr  ctxt;
-	xmlDocPtr         doc;
-	xmlNodePtr        log_node;
-	xmlNodePtr        node;
+	GossipLogManagerPriv *priv;
+	GossipAccount        *account;
+	GossipContact        *own_contact;
+	gchar                *filename;
+	GList                *messages = NULL;
+	gboolean              get_own_name = FALSE;
+	gboolean              get_name = FALSE;
+	xmlParserCtxtPtr      ctxt;
+	xmlDocPtr             doc;
+	xmlNodePtr            log_node;
+	xmlNodePtr            node;
 
 	g_return_val_if_fail (GOSSIP_IS_LOG_MANAGER (manager), NULL);
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
+
+	priv = GET_PRIV (manager);
 
 	filename = log_get_filename_by_date_for_contact (contact, date);
 
@@ -1602,9 +1571,8 @@ gossip_log_get_messages_for_contact (GossipLogManager *manager,
 		return NULL;
 	}
 
-	/* Get own contact from log contact. */
 	account = gossip_contact_get_account (contact);
-	own_contact = gossip_log_get_own_contact (manager, account);
+	own_contact = gossip_session_get_own_contact (priv->session, account);
 
 	if (gossip_contact_get_name (own_contact) == NULL ||
 	    strcmp (gossip_contact_get_id (own_contact),
@@ -1711,26 +1679,29 @@ gossip_log_message_for_contact (GossipLogManager *manager,
 				GossipMessage    *message,
 				gboolean          incoming)
 {
-	GossipAccount *account;
-	GossipContact *contact;
-	GossipContact *own_contact;
-	GossipContact *own_contact_saved;
-	gchar         *filename;
-	FILE          *file;
-	const gchar   *to_or_from = "";
-	gchar         *timestamp;
-	gchar         *body;
-	gchar         *resource;
-	gchar         *name;
-	gchar         *contact_id;
-	const gchar   *str;
-	const gchar   *body_str;
-	gboolean       new_file = FALSE;
-	gboolean       save_contact = FALSE;
-	gboolean       save_own_contact = FALSE;
+	GossipLogManagerPriv *priv;
+	GossipAccount        *account;
+	GossipContact        *contact;
+	GossipContact        *own_contact;
+	GossipContact        *own_contact_saved;
+	gchar                *filename;
+	FILE                 *file;
+	const gchar          *to_or_from = "";
+	gchar                *timestamp;
+	gchar                *body;
+	gchar                *resource;
+	gchar                *name;
+	gchar                *contact_id;
+	const gchar          *str;
+	const gchar          *body_str;
+	gboolean              new_file = FALSE;
+	gboolean              save_contact = FALSE;
+	gboolean              save_own_contact = FALSE;
 
 	g_return_if_fail (GOSSIP_IS_LOG_MANAGER (manager));
 	g_return_if_fail (GOSSIP_IS_MESSAGE (message));
+
+	priv = GET_PRIV (manager);
 
 	body_str = gossip_message_get_body (message);
 	if (!body_str || strcmp (body_str, "") == 0) {
@@ -1755,7 +1726,7 @@ gossip_log_message_for_contact (GossipLogManager *manager,
 	}
 
 	account = gossip_contact_get_account (contact);
-	own_contact_saved = gossip_log_get_own_contact (manager, account);
+	own_contact_saved = gossip_session_get_own_contact (priv->session, account);
 
 	filename = log_get_filename_by_date_for_contact (contact, NULL);
 
@@ -1998,6 +1969,8 @@ gossip_log_get_messages_for_chatroom (GossipLogManager *manager,
 	g_return_val_if_fail (GOSSIP_IS_LOG_MANAGER (manager), NULL);
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
 
+	priv = GET_PRIV (manager);
+
 	filename = log_get_filename_by_date_for_chatroom (chatroom, date);
 
 	gossip_debug (DEBUG_DOMAIN, "Attempting to parse filename:'%s'...", filename);
@@ -2010,7 +1983,7 @@ gossip_log_get_messages_for_chatroom (GossipLogManager *manager,
 
 	/* Get own contact from log contact. */
 	account = gossip_chatroom_get_account (chatroom);
-	own_contact = gossip_log_get_own_contact (manager, account);
+	own_contact = gossip_session_get_own_contact (priv->session, account);
 
 	/* Create parser. */
 	ctxt = xmlNewParserCtxt ();
@@ -2105,22 +2078,25 @@ gossip_log_message_for_chatroom (GossipLogManager *manager,
 				 GossipMessage    *message,
 				 gboolean          incoming)
 {
-	GossipAccount *account;
-	GossipContact *contact;
-	GossipContact *own_contact;
-	gchar         *filename;
-	FILE          *file;
-	gchar         *timestamp;
-	gchar         *body;
-	gchar         *name;
-	gchar         *contact_id;
-	const gchar   *str;
-	const gchar   *body_str;
-	gboolean       new_file = FALSE;
-	gboolean       save_contact = FALSE;
+	GossipLogManagerPriv *priv;
+	GossipAccount        *account;
+	GossipContact        *contact;
+	GossipContact        *own_contact;
+	gchar                *filename;
+	FILE                 *file;
+	gchar                *timestamp;
+	gchar                *body;
+	gchar                *name;
+	gchar                *contact_id;
+	const gchar          *str;
+	const gchar          *body_str;
+	gboolean              new_file = FALSE;
+	gboolean              save_contact = FALSE;
 
 	g_return_if_fail (GOSSIP_IS_LOG_MANAGER (manager));
 	g_return_if_fail (GOSSIP_IS_MESSAGE (message));
+
+	priv = GET_PRIV (manager);
 
 	body_str = gossip_message_get_body (message);
 	if (!body_str || strcmp (body_str, "") == 0) {
@@ -2131,7 +2107,7 @@ gossip_log_message_for_chatroom (GossipLogManager *manager,
 	contact = gossip_message_get_sender (message);
 
 	account = gossip_chatroom_get_account (chatroom);
-	own_contact = gossip_log_get_own_contact (manager, account);
+	own_contact = gossip_session_get_own_contact (priv->session, account);
 
 	filename = log_get_filename_by_date_for_chatroom (chatroom, NULL);
 
@@ -2303,7 +2279,6 @@ gossip_log_search_new (GossipLogManager *manager,
 		if (strstr (contents_casefold, text_casefold)) {
 			GossipLogSearchHit *hit;
 			GossipAccount      *account;
-			const gchar        *account_param;
 			gchar              *contact_id;
 
 			account = log_get_account_from_filename (manager, filename);
@@ -2315,19 +2290,16 @@ gossip_log_search_new (GossipLogManager *manager,
 				continue;
 			}
 
-			gossip_account_param_get (account, "account", &account_param, NULL);
 			contact_id = log_get_contact_id_from_filename (filename);
 
 			hit = g_new0 (GossipLogSearchHit, 1);
 
+			hit->date = log_get_date_from_filename (filename);
+			hit->filename = g_strdup (filename);
 			hit->account = g_object_ref (account);
 			hit->contact = gossip_contact_manager_find (contact_manager, 
-								    account_param,
+								    account,
 								    contact_id);
-
-			hit->date = log_get_date_from_filename (filename);
-
-			hit->filename = g_strdup (filename);
 
 			hits = g_list_append (hits, hit);
 

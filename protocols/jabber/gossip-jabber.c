@@ -3691,7 +3691,7 @@ gossip_jabber_get_contact_from_jid (GossipJabber *jabber,
 
 		g_hash_table_insert (priv->contacts,
 				     g_strdup (gossip_jid_get_without_resource (jid)),
-				     g_object_ref (contact));
+				     contact);
 
 		if (get_vcard) {
 			/* Request contacts VCard details so we can get the

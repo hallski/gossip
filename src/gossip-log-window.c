@@ -298,7 +298,8 @@ log_window_find_changed_cb (GtkTreeSelection *selection,
 	gossip_chat_view_scroll (window->chatview_find, FALSE);
 
 	/* Get own contact to know which messages are from me or the contact */
-	own_contact = gossip_log_get_own_contact (window->log_manager, account);
+	own_contact = gossip_session_get_own_contact (gossip_app_get_session (),
+						      account);
 	g_object_unref (account);
 
 	/* Get messages */
@@ -1004,7 +1005,8 @@ log_window_contacts_get_messages (GossipLogWindow *window,
 
 	/* Get own contact to know which messages are from me or the contact */
 	account = gossip_contact_get_account (contact);
-	own_contact = gossip_log_get_own_contact (window->log_manager, account);
+	own_contact = gossip_session_get_own_contact (gossip_app_get_session (),
+						      account);
 
 	/* Get messages */
 	messages = gossip_log_get_messages_for_contact (window->log_manager, contact, date);
@@ -1495,8 +1497,8 @@ log_window_chatrooms_get_messages (GossipLogWindow *window,
 	}
 
 	/* Get own contact to know which messages are from me or the contact */
-	own_contact = gossip_log_get_own_contact (window->log_manager, account);
-
+	own_contact = gossip_session_get_own_contact (gossip_app_get_session (),
+						      account);
 	/* Either use the supplied date or get the last */
 	date = date_to_show;
 	if (!date) {

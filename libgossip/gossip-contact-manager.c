@@ -152,7 +152,7 @@ gossip_contact_manager_add (GossipContactManager *manager,
 {
 	GossipContactManagerPriv *priv;
 	GossipAccount            *account;
-	const gchar              *account_param;
+	GossipContact            *own_contact;
 	const gchar              *contact_id;
 	gboolean                  found;
 	
@@ -162,23 +162,22 @@ gossip_contact_manager_add (GossipContactManager *manager,
 	priv = GET_PRIV (manager);
 
 	account = gossip_contact_get_account (contact);
-	gossip_account_param_get (account, "account", &account_param, NULL);
+	own_contact = gossip_session_get_own_contact (priv->session, account);
 	contact_id = gossip_contact_get_id (contact);
 
 	/* Don't add if it is a self contact, since we do this ourselves */
-	if (!G_STR_EMPTY (account_param) && 
-	    !G_STR_EMPTY (contact_id) && 
-	    strcmp (account_param, contact_id) == 0) {
+	if (gossip_contact_equal (own_contact, contact)) {
 		return TRUE;
 	}
 
 	/* Don't add more than once */
-	found = gossip_contact_manager_find (manager, account_param, contact_id) != NULL;
+	found = gossip_contact_manager_find (manager, account, contact_id) != NULL;
 
 	if (!found) {
 		gossip_debug (DEBUG_DOMAIN, 
 			      "Adding contact from account:'%s' with id:'%s'",
-			      account_param, contact_id);
+			      gossip_account_get_name (account),
+			      contact_id);
 
 		priv->contacts = g_list_append (priv->contacts, g_object_ref (contact));
 	}
@@ -191,6 +190,7 @@ gossip_contact_manager_remove (GossipContactManager *manager,
 			       GossipContact        *contact)
 {
 	GossipContactManagerPriv *priv;
+	GList                    *l;
 
 	g_return_if_fail (GOSSIP_IS_CONTACT_MANAGER (manager));
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
@@ -201,46 +201,44 @@ gossip_contact_manager_remove (GossipContactManager *manager,
 		      "Removing contact with name:'%s'",
 		      gossip_contact_get_name (contact));
 
-	priv->contacts = g_list_remove (priv->contacts, contact);
-
-	g_object_unref (contact);
+	l = g_list_find (priv->contacts, contact);
+	if (l) {
+		priv->contacts = g_list_remove_link (priv->contacts, l);
+		g_object_unref (contact);
+		g_list_free1 (l);
+	}
 }
 
 GossipContact *
 gossip_contact_manager_find (GossipContactManager *manager,
-			     const gchar          *account_param,
+			     GossipAccount        *account,
 			     const gchar          *contact_id)
 {
 	GossipContactManagerPriv *priv;
 	GList                    *l;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT_MANAGER (manager), NULL);
-	g_return_val_if_fail (account_param != NULL, NULL);
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
 	g_return_val_if_fail (contact_id != NULL, NULL);
 
 	priv = GET_PRIV (manager);
 
 	for (l = priv->contacts; l; l = l->next) {
-		GossipAccount *account;
-		GossipContact *contact;
-		const gchar   *this_account_param;
+		GossipAccount *this_account;
+		GossipContact *this_contact;
 		const gchar   *this_contact_id;
 
-		contact = l->data;
-		account = gossip_contact_get_account (contact);
+		this_contact = l->data;
+		this_account = gossip_contact_get_account (this_contact);
+		this_contact_id = gossip_contact_get_id (this_contact);
 
-		gossip_account_param_get (account, 
-					  "account", &this_account_param, 
-					  NULL);
-		this_contact_id = gossip_contact_get_id (contact);
-
-		if (!this_account_param || !this_contact_id) {
+		if (!this_contact_id) {
 			continue;
 		}
 
-		if (strcmp (this_account_param, account_param) == 0 &&
+		if (gossip_account_equal (account, this_account) &&
 		    strcmp (this_contact_id, contact_id) == 0) {
-			return contact;
+			return this_contact;
 		}
 	}
 
@@ -395,13 +393,9 @@ contact_manager_parse_self (GossipContactManager *manager,
 	 * likely that the vcard we request in the backend has set it
 	 * correctly. 
 	 */ 
-	if ((G_STR_EMPTY (name) == TRUE) || 
-	    (G_STR_EMPTY (id) == FALSE && strcmp (id, name) == 0)) {
+	if (G_STR_EMPTY (name) || (!G_STR_EMPTY (id) && strcmp (id, name) == 0)) {
 		gossip_contact_set_name (contact, new_name);
 	}
-
-	contact = gossip_protocol_new_contact (protocol, id, NULL);
-	gossip_contact_manager_add (manager, contact);
 
 	xmlFree (new_name);
 }
@@ -448,10 +442,9 @@ contact_manager_file_parse (GossipContactManager *manager,
 
 	node = contacts->children;
 	while (node) {
-		GossipAccount *account = NULL;
+		GossipAccount *account;
 		const gchar   *name;
-		gchar         *id;
-		gchar         *type;
+		gchar         *account_name;
 
 		if (xmlNodeIsText (node)) {
 			node = node->next;
@@ -460,31 +453,21 @@ contact_manager_file_parse (GossipContactManager *manager,
 
 		name = node->name;
 
-		id = xmlGetProp (node, "id");
-		type = gossip_xml_node_get_child_content (node, "type");
+		account_name = xmlGetProp (node, "name");
 
 		child = node->children;
 		node = node->next;
 
-		if (!id) {
-			xmlFree (type);
-			g_warning ("No 'id' attribute for '%s' element found?", name);
+		if (!account_name) {
+			g_warning ("No 'name' attribute for '%s' element found?", name);
 			continue;
 		}
 
-		if (!type) {
-			xmlFree (id);
-			g_warning ("No 'type' attribute for '%s' element found?", name);
-			continue;
-		}
-
-		account = gossip_account_manager_find_by_id (account_manager, id, type);
-
-		xmlFree (id);
-		xmlFree (type);
+		account = gossip_account_manager_find (account_manager, account_name);
+		xmlFree (account_name);
 
 		if (!account) {			
-			g_warning ("No GossipAccount found by id:'%s' and type:'%s'", id, type);
+			g_warning ("No GossipAccount found by name:'%s'", account_name);
 			continue;
 		}
 		
@@ -596,11 +579,9 @@ contact_manager_file_save (GossipContactManager *manager)
 	gossip_debug (DEBUG_DOMAIN, "Checking account nodes exist");
 
 	for (l = accounts; l; l = l->next) {
-		xmlNodePtr         node;
-		GossipAccountType  account_type;
-		const gchar       *account_type_str;
-		const gchar       *account_param;
-		gboolean           exists = FALSE;
+		xmlNodePtr node;
+		gboolean   exists = FALSE;
+		const gchar *account_name;
 		
 		account = l->data;
 
@@ -608,24 +589,17 @@ contact_manager_file_save (GossipContactManager *manager)
 			continue;
 		}
 
-		account_type = gossip_account_get_type (account);
-		account_type_str = gossip_account_type_to_string (account_type);
-
-		gossip_account_param_get (account, "account", &account_param, NULL);
+		account_name = gossip_account_get_name (account);
 
 		/* Check if this account is already in the xml file */
 		node = root->children;
 		while (node) {
-			gchar *type;
-			gchar *id;
+			gchar *name;
 
-			id = xmlGetProp (node, "id");
-			type = gossip_xml_node_get_child_content (node, "type");
+			name = xmlGetProp (node, "name");
 
- 			exists = type && strcmp (type, account_type_str) == 0 &&
- 				 id && strcmp (id, account_param) == 0;  
-			xmlFree (type);
-			xmlFree (id);
+ 			exists = name && strcmp (name, account_name) == 0;  
+			xmlFree (name);
 				
 			if (exists) {
 				g_hash_table_insert (nodes, account, node);
@@ -638,22 +612,20 @@ contact_manager_file_save (GossipContactManager *manager)
 		if (exists) {
 			gossip_debug (DEBUG_DOMAIN, 
 				      "Using existing xml node for account:'%s'", 
-				      gossip_account_get_name (account));
+				      account_name);
 			continue;
 		}
 
 		gossip_debug (DEBUG_DOMAIN, 
 			      "Creating xml node for account:'%s'", 
-			      gossip_account_get_name (account));
+			      account_name);
 
 		/* Add node for this account */
 		node = xmlNewChild (root, NULL, "account", NULL);
-		xmlNewProp (node, "id", account_param);
-		xmlNewChild (node, NULL, "type", account_type_str);
+		xmlNewProp (node, "name", account_name);
 
 		g_hash_table_insert (nodes, account, node);
 	}
-
 
 	/* This is a self contact */
 	for (l = accounts; l; l = l->next) {
@@ -701,7 +673,6 @@ contact_manager_file_save (GossipContactManager *manager)
 	for (l = priv->contacts; l; l = l->next) {
 		xmlNodePtr     node, child, p;
 		GossipContact *contact;
-		const gchar   *account_param;
 		const gchar   *id;
 		const gchar   *name; 
 
@@ -709,11 +680,10 @@ contact_manager_file_save (GossipContactManager *manager)
 		account = gossip_contact_get_account (contact);
 
 		node = g_hash_table_lookup (nodes, account);
-		
-		gossip_account_param_get (account, "account", &account_param, NULL);
 
 		if (!node) {
-			g_warning ("No node created for this account:'%s'", account_param);
+			g_warning ("No node created for this account:'%s'",
+				   gossip_account_get_name (account));
 			continue;
 		}
 
