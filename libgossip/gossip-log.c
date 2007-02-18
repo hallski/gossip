@@ -151,10 +151,12 @@ typedef enum {
 static void            gossip_log_manager_class_init           (GossipLogManagerClass *klass);
 static void            gossip_log_manager_init                 (GossipLogManager      *manager);
 static void            log_manager_finalize                    (GObject               *object);
+#ifdef HAVE_GNOME
 static void            log_move_contact_dirs                   (GossipLogManager      *manager,
 								const gchar           *log_directory,
 								const gchar           *filename,
 								const gchar           *account_type);
+#endif
 static void            log_account_added_cb                    (GossipAccountManager  *manager,
 								GossipAccount         *account,
 								gpointer               user_data);
@@ -176,7 +178,9 @@ static void            log_handlers_notify_all                 (GossipLogManager
 								GossipChatroom        *chatroom,
 								GossipMessage         *message);
 static gboolean        log_check_dir                           (gchar                **directory);
+#ifdef HAVE_GNOME
 static LogVersion      log_check_version                       (void);
+#endif
 static gchar *         log_get_basedir                         (GossipAccount         *account,
 								const gchar           *log_dir);
 static gchar *         log_get_timestamp_from_message          (GossipMessage         *msg);
@@ -266,7 +270,9 @@ gossip_log_manager_new (GossipSession *session)
 	GossipLogManagerPriv *priv;
 	GossipLogManager     *manager;
 	GossipAccountManager *account_manager;
+#ifdef HAVE_GNOME
 	LogVersion            version;
+#endif
 	GList                *accounts, *l;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
@@ -364,6 +370,7 @@ gossip_log_manager_new (GossipSession *session)
 	return manager;
 }
 
+#ifdef HAVE_GNOME
 static void
 log_move_contact_dirs (GossipLogManager *manager,
 		       const gchar      *log_directory,
@@ -371,8 +378,6 @@ log_move_contact_dirs (GossipLogManager *manager,
 		       const gchar      *type_str)
 {
 	GossipLogManagerPriv *priv;
-
-#ifdef HAVE_GNOME
 	GnomeVFSResult        result = GNOME_VFS_OK;
 	GnomeVFSURI          *new_uri, *old_uri;
 	GnomeVFSURI          *new_uri_unknown;
@@ -447,8 +452,8 @@ log_move_contact_dirs (GossipLogManager *manager,
 	gnome_vfs_uri_unref (old_uri);
 	gnome_vfs_uri_unref (new_uri);
 	gnome_vfs_uri_unref (new_uri_unknown);
-#endif
 }
+#endif
 
 static void
 log_account_added_cb (GossipAccountManager *manager,

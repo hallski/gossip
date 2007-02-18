@@ -1,3 +1,9 @@
+2007-02-18  Richard Hult  <richard@imendio.com>
+
+	* libgossip/gossip-log.c: (gossip_log_manager_new),
+	(log_move_contact_dirs): Fix build on OSX. The real fix is probably to
+	not use GnomeVFS for moving the old log files.
+
 2006-02-15  Xavier Claessens  <xclaesse@gmail.com>
 
 	* protocols/jabber/gossip-jabber.c:
