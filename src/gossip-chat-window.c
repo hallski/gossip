@@ -585,6 +585,19 @@ chat_window_close_clicked_cb (GtkWidget  *button,
 	gossip_chat_window_remove_chat (window, chat);
 }
 
+static void
+chat_window_close_button_style_set_cb (GtkWidget *button,
+				       GtkStyle  *previous_style,
+				       gpointer   user_data)
+{
+	gint h, w;
+
+	gtk_icon_size_lookup_for_settings (gtk_widget_get_settings (button),
+					   GTK_ICON_SIZE_MENU, &w, &h);
+
+	gtk_widget_set_size_request (button, w, h);
+}
+
 static GtkWidget *
 chat_window_create_label (GossipChatWindow *window,
 			  GossipChat       *chat)
@@ -595,12 +608,10 @@ chat_window_create_label (GossipChatWindow *window,
 	GtkWidget            *status_image;
 	GtkWidget            *close_button;
 	GtkWidget            *close_image;
-	const gchar          *name;
 	GtkWidget            *event_box;
 	GtkWidget            *event_box_hbox;
 	PangoAttrList        *attr_list;
 	PangoAttribute       *attr;
-	GtkRequisition        size;
 
 	priv = GET_PRIV (window);
 
@@ -610,10 +621,8 @@ chat_window_create_label (GossipChatWindow *window,
 	event_box = gtk_event_box_new ();
 	gtk_event_box_set_visible_window (GTK_EVENT_BOX (event_box), FALSE);
 
-	name = gossip_chat_get_name (chat);
-	name_label = gtk_label_new (name);
- 	gtk_label_set_ellipsize (GTK_LABEL (name_label), PANGO_ELLIPSIZE_END);
-
+	name_label = gtk_label_new (gossip_chat_get_name (chat));
+	gtk_label_set_ellipsize (GTK_LABEL (name_label), PANGO_ELLIPSIZE_END);
 
 	attr_list = pango_attr_list_new ();
 	attr = pango_attr_scale_new (1/1.2);
@@ -638,8 +647,6 @@ chat_window_create_label (GossipChatWindow *window,
 	g_object_set_data (G_OBJECT (chat), "chat-window-tab-image", status_image);
 	g_object_set_data (G_OBJECT (chat), "chat-window-tab-tooltip-widget", event_box);
 
-	chat_window_update_tooltip (window, chat);
-
 	close_button = gtk_button_new ();
 	gtk_button_set_relief (GTK_BUTTON (close_button), GTK_RELIEF_NONE);
 
@@ -654,15 +661,19 @@ chat_window_create_label (GossipChatWindow *window,
 
 	close_image = gtk_image_new_from_stock (GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
 
-	gtk_widget_size_request (close_image, &size);
-	gtk_widget_set_size_request (close_button, size.width, size.height);
-
 	gtk_container_add (GTK_CONTAINER (close_button), close_image);
-	gtk_container_set_border_width (GTK_CONTAINER (close_button), 0);
 
 	gtk_container_add (GTK_CONTAINER (event_box), event_box_hbox);
 	gtk_box_pack_start (GTK_BOX (hbox), event_box, TRUE, TRUE, 0);
 	gtk_box_pack_end (GTK_BOX (hbox), close_button, FALSE, FALSE, 0);
+
+	/* React to theme changes and also used to setup the initial size
+	 * correctly.
+	 */
+	g_signal_connect (close_button,
+			  "style-set",
+			  G_CALLBACK (chat_window_close_button_style_set_cb),
+			  chat);
 
 	g_signal_connect (close_button,
 			  "clicked",
@@ -714,7 +725,7 @@ chat_window_update_title (GossipChatWindow *window,
 				gossip_chat_get_name (priv->current_chat),
 				_("New Message"));
 		}
-		else if (gossip_chat_is_group_chat (chat)) {
+		else if (gossip_chat_is_group_chat (priv->current_chat)) {
 			title = g_strdup_printf (
 				"%s - %s", 
 				gossip_chat_get_name (priv->current_chat),
@@ -1410,7 +1421,6 @@ chat_window_new_message_cb (GossipChat       *chat,
 	if (!g_list_find (priv->chats_new_msg, chat)) {
 		priv->chats_new_msg = g_list_prepend (priv->chats_new_msg, chat);
 		chat_window_update_status (window, chat);
-		chat_window_update_title (window, chat);
 	}
 }
 
@@ -1645,8 +1655,7 @@ chat_window_focus_in_event_cb (GtkWidget        *widget,
 	priv->new_msg = FALSE;
 	priv->chats_new_msg = g_list_remove (priv->chats_new_msg, priv->current_chat);
 
-	/* Set the title, since we now mark all unread messages as read */
-	chat_window_update_title (window, priv->current_chat);
+	/* Update the title, since we now mark all unread messages as read. */
 	chat_window_update_status (window, priv->current_chat);
 
 	return FALSE;
