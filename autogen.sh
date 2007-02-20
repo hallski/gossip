@@ -34,7 +34,7 @@ DIE=0
   ($INTLTOOLIZE --version) < /dev/null > /dev/null 2>&1 || {
     echo
     echo "You must have \`intltoolize' installed to compile $PROJECT."
-    echo "Get ftp://ftp.gnome.org/pub/GNOME/stable/sources/intltool/intltool-0.22.tar.gz"
+    echo "Get ftp://ftp.gnome.org/pub/GNOME/stable/sources/intltool/intltool-0.35.tar.gz"
     echo "(or a newer version if it is available)"
     DIE=1
   }
@@ -44,17 +44,15 @@ DIE=0
   ($GNOME_DOC_PREPARE --version) < /dev/null > /dev/null 2>&1 || {
     echo
     echo "You must have \`gnome-doc-prepare' installed to compile $PROJECT."
-    #echo "Get ftp://ftp.gnome.org/pub/GNOME/stable/sources/intltool/intltool-0.22.tar.gz"
-    #echo "(or a newer version if it is available)"
     DIE=1
   }
 }
 
 ($AUTOMAKE --version) < /dev/null > /dev/null 2>&1 || {
 	echo
-	echo "You must have automake installed to compile $PROJECT."
-	echo "Get ftp://sourceware.cygnus.com/pub/automake/automake-1.9.tar.gz"
-	echo "(or a newer version if it is available)"
+	echo "You must have automake 1.9 installed to compile $PROJECT."
+	echo "Get ftp://ftp.gnu.org/pub/gnu/automake/automake-1.9.6.tar.gz"
+	echo "(or a newer version of 1.9.x if it is available)"
 	DIE=1
 }
 
@@ -62,7 +60,7 @@ DIE=0
   ($LIBTOOL --version) < /dev/null > /dev/null 2>&1 || {
     echo
     echo "**Error**: You must have \`libtool' installed to compile $PROJECT."
-    echo "Get ftp://ftp.gnu.org/pub/gnu/libtool-1.4.tar.gz"
+    echo "Get ftp://ftp.gnu.org/pub/gnu/libtool/libtool-1.5.22.tar.gz"
     echo "(or a newer version if it is available)"
     DIE=1
   }
