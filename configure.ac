@@ -189,6 +189,9 @@ if test "x$enable_libnotify" != "xno"; then
    if test x$have_libnotify = xyes; then
       AC_DEFINE(HAVE_LIBNOTIFY, 1, [libnotify support])
       libnotify_pkgconfig=$libnotify_pkgconfig_tmp
+      if pkg-config --max-version=0.4.3.90 libnotify;then
+	  AC_DEFINE(LIBNOTIFY_BUGGY_CLOSE, 1, [libnotify close bug see #395588 ])
+      fi
   fi
 else
    have_libnotify=no
