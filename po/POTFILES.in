@@ -14,6 +14,7 @@ libgossip/gossip-protocol.c
 
 protocols/jabber/gossip-jabber.c
 protocols/jabber/gossip-jabber-disco.c
+protocols/telepathy/gossip-telepathy-cmgr.c
 
 src/gossip-about-dialog.c
 src/gossip-accounts-dialog.c
