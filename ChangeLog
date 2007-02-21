@@ -88,7 +88,7 @@
 	offline use in logging.
 
 	Updated the logging to now have a GossipLogManager which is
-	associated with the session.
+	associated with the session, fixes bug #397213.
 
 	* protocols/jabber/*.[ch]: Now all contacts are created in the
 	backend instead of all over the code.
