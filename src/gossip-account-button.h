@@ -25,6 +25,8 @@
 
 #include <gtk/gtktogglebutton.h>
 
+#include <libgossip/gossip-account.h>
+
 G_BEGIN_DECLS
 
 #define GOSSIP_TYPE_ACCOUNT_BUTTON         (gossip_account_button_get_type ())

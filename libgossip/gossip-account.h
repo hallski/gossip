@@ -35,7 +35,9 @@ G_BEGIN_DECLS
 #define GOSSIP_IS_ACCOUNT_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_ACCOUNT))
 #define GOSSIP_ACCOUNT_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_ACCOUNT, GossipAccountClass))
 
+typedef struct _GossipAccount      GossipAccount;
 typedef struct _GossipAccountClass GossipAccountClass;
+typedef struct _GossipAccountParam GossipAccountParam;
 
 struct _GossipAccount {
 	GObject parent;
@@ -45,11 +47,33 @@ struct _GossipAccountClass {
 	GObjectClass parent_class;
 };
 
+typedef enum {
+	GOSSIP_ACCOUNT_PARAM_FLAG_REQUIRED    = 1 << 0,
+	GOSSIP_ACCOUNT_PARAM_FLAG_REGISTER    = 1 << 1,
+	GOSSIP_ACCOUNT_PARAM_FLAG_HAS_DEFAULT = 1 << 2,
+	GOSSIP_ACCOUNT_PARAM_FLAG_ALL         = (1 << 3) - 1
+} GossipAccountParamFlags;
+
+typedef enum {
+	GOSSIP_ACCOUNT_TYPE_JABBER,
+	GOSSIP_ACCOUNT_TYPE_AIM,
+	GOSSIP_ACCOUNT_TYPE_ICQ,
+	GOSSIP_ACCOUNT_TYPE_MSN,
+	GOSSIP_ACCOUNT_TYPE_YAHOO,
+	GOSSIP_ACCOUNT_TYPE_UNKNOWN,
+	GOSSIP_ACCOUNT_TYPE_COUNT
+} GossipAccountType;
+
 struct _GossipAccountParam {
 	GossipAccountParamFlags flags;
 	GValue                  g_value;
 	gboolean                modified;
 };
+
+typedef void (*GossipAccountParamFunc) (GossipAccount      *account,
+					const gchar        *param_name,
+					GossipAccountParam *param,
+					gpointer            user_data);
 
 GType             gossip_account_get_gtype         (void) G_GNUC_CONST;
 
@@ -93,7 +117,7 @@ void              gossip_account_set_auto_connect  (GossipAccount           *acc
 						    gboolean                 auto_connect);
 void              gossip_account_set_use_proxy     (GossipAccount           *account,
 						    gboolean                 use_proxy);
-#ifdef USE_TELEPATHY
+#ifdef HAVE_TELEPATHY
 const gchar *     gossip_account_get_protocol      (GossipAccount           *account);
 const gchar *     gossip_account_get_cmgr_name     (GossipAccount           *account);
 void              gossip_account_set_protocol      (GossipAccount           *account,

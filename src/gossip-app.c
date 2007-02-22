@@ -35,7 +35,15 @@
 #include <glade/glade.h>
 #include <glib/gi18n.h>
 
-#include <libgossip/gossip.h>
+#include <libgossip/gossip-chatroom.h>
+#include <libgossip/gossip-contact.h>
+#include <libgossip/gossip-event.h>
+#include <libgossip/gossip-presence.h>
+#include <libgossip/gossip-chatroom-provider.h>
+#include <libgossip/gossip-protocol.h>
+#include <libgossip/gossip-account-manager.h>
+#include <libgossip/gossip-conf.h>
+#include <libgossip/gossip-debug.h>
 
 #include "gossip-about-dialog.h"
 #include "gossip-accounts-dialog.h"

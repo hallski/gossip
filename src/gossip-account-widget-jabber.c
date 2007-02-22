@@ -30,7 +30,11 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 
-#include <libgossip/gossip.h>
+#include <libgossip/gossip-protocol.h>
+#include <libgossip/gossip-session.h>
+#include <libgossip/gossip-utils.h>
+#include <libgossip/gossip-vcard.h>
+#include <libgossip/gossip-account-manager.h>
 
 #include "gossip-account-widget-jabber.h"
 #include "gossip-app.h"

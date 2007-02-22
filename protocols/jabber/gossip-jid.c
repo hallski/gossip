@@ -25,8 +25,6 @@
 #include <ctype.h>
 #include <string.h>
 
-#include <libgossip/gossip-types.h>
-
 #include <libgossip/gossip-utils.h>
 
 #include "gossip-jid.h"

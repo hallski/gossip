@@ -23,8 +23,6 @@
 
 #include <string.h>
 
-#include <libgossip/gossip.h>
-
 #include "peekaboo-dbus.h"
 
 /* #define DEBUG_MSG(x)  */

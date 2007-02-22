@@ -29,17 +29,12 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
-#include "gossip-types.h"
-
-#include "gossip-account.h"
-#include "gossip-account-manager.h"
-#include "gossip-contact.h"
-#include "gossip-contact-manager.h"
-#include "gossip-chatroom-provider.h"
-#include "gossip-debug.h"
-#include "gossip-private.h"
-#include "gossip-protocol.h"
 #include "gossip-session.h"
+#include "gossip-debug.h"
+#include "gossip-protocol.h"
+#include "gossip-contact-manager.h"
+#include "gossip-account-manager.h"
+#include "gossip-private.h"
 #include "gossip-utils.h"
 
 #include "libgossip-marshal.h"

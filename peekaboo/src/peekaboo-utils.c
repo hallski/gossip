@@ -21,8 +21,6 @@
 
 #include "config.h"
 
-#include <libgossip/gossip.h>
-
 #include "peekaboo-utils.h"
 #include "peekaboo-stock.h"
 

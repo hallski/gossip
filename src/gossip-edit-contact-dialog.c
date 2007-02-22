@@ -28,7 +28,10 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 
-#include <libgossip/gossip.h>
+#include <libgossip/gossip-account.h>
+#include <libgossip/gossip-session.h>
+#include <libgossip/gossip-utils.h>
+#include <libgossip/gossip-vcard.h>
 
 #include "gossip-app.h"
 #include "gossip-edit-contact-dialog.h"

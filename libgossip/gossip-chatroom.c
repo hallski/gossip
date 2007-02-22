@@ -27,11 +27,7 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 
-#include "gossip-types.h"
-
-#include "gossip-account.h"
 #include "gossip-chatroom.h"
-#include "gossip-contact.h"
 
 #include "libgossip-marshal.h"
 

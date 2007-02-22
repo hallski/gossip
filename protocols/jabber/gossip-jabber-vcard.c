@@ -27,8 +27,6 @@
 
 #include <loudmouth/loudmouth.h>
 
-#include <libgossip/gossip-types.h>
-
 #include <libgossip/gossip-avatar.h>
 #include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-ft.h>

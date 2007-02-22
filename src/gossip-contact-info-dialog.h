@@ -25,6 +25,8 @@
 #ifndef __GOSSIP_CONTACT_INFO_DIALOG_H__
 #define __GOSSIP_CONTACT_INFO_DIALOG_H__
 
+#include <libgossip/gossip-contact.h>
+
 G_BEGIN_DECLS
 
 void gossip_contact_info_dialog_show (GossipContact *contact,

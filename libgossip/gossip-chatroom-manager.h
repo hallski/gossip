@@ -23,6 +23,9 @@
 
 #include <glib-object.h>
 
+#include "gossip-account.h"
+#include "gossip-chatroom.h"
+
 G_BEGIN_DECLS
 
 #define GOSSIP_TYPE_CHATROOM_MANAGER         (gossip_chatroom_manager_get_type ())
@@ -32,6 +35,7 @@ G_BEGIN_DECLS
 #define GOSSIP_IS_CHATROOM_MANAGER_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_CHATROOM_MANAGER))
 #define GOSSIP_CHATROOM_MANAGER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_CHATROOM_MANAGER, GossipChatroomManagerClass))
 
+typedef struct _GossipChatroomManager      GossipChatroomManager;
 typedef struct _GossipChatroomManagerClass GossipChatroomManagerClass;
 
 struct _GossipChatroomManager {

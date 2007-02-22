@@ -22,9 +22,6 @@
 
 #include "config.h"
 
-#include "gossip-types.h"
-
-#include "gossip-event.h"
 #include "gossip-event-manager.h"
 
 #include "libgossip-marshal.h"

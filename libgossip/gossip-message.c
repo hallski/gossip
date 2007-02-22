@@ -22,12 +22,7 @@
 
 #include "config.h"
 
-#include "gossip-types.h"
-
-#include "gossip-chatroom.h"
-#include "gossip-contact.h"
 #include "gossip-message.h"
-#include "gossip-time.h"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_MESSAGE, GossipMessagePriv))
 

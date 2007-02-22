@@ -23,6 +23,8 @@
 #ifndef __GOSSIP_ACCOUNTS_DIALOG_H__
 #define __GOSSIP_ACCOUNTS_DIALOG_H__
 
+#include <libgossip/gossip-account.h>
+
 G_BEGIN_DECLS
 
 void       gossip_accounts_dialog_show      (GossipAccount *account);

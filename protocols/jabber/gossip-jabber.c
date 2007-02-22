@@ -29,8 +29,6 @@
 
 #include <glib/gi18n.h>
 
-#include <libgossip/gossip-types.h>
-
 #include <libgossip/gossip-account.h>
 #include <libgossip/gossip-async.h>
 #include <libgossip/gossip-avatar.h>
@@ -40,11 +38,9 @@
 #include <libgossip/gossip-chatroom.h>
 #include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-chatroom-provider.h>
-#include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-ft.h>
 #include <libgossip/gossip-ft-provider.h>
 #include <libgossip/gossip-message.h>
-#include <libgossip/gossip-protocol.h>
 #include <libgossip/gossip-session.h>
 #include <libgossip/gossip-utils.h>
 #include <libgossip/gossip-vcard.h>

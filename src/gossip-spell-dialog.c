@@ -35,8 +35,6 @@
 #include <gtk/gtksizegroup.h>
 #include <glade/glade.h>
 
-#include <libgossip/gossip.h>
-
 #include "gossip-chat.h"
 #include "gossip-spell-dialog.h"
 #include "gossip-ui-utils.h"

@@ -90,3 +90,4 @@ gossip_debug_impl (const gchar *domain, const gchar *msg, ...)
 	}
 }
 
+#include "gossip-debug.h"

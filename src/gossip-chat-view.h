@@ -28,6 +28,9 @@
 #include <gtk/gtktextview.h>
 #include <gtk/gtktooltips.h>
 
+#include <libgossip/gossip-contact.h>
+#include <libgossip/gossip-message.h>
+
 G_BEGIN_DECLS
 
 #define GOSSIP_TYPE_CHAT_VIEW         (gossip_chat_view_get_type ())

@@ -32,12 +32,9 @@
 
 #include <libxml/uri.h>
 
-#include "gossip-types.h"
-
-#include "gossip-utils.h"
-#include "gossip-conf.h"
-#include "gossip-paths.h"
 #include "gossip-debug.h"
+#include "gossip-utils.h"
+#include "gossip-paths.h"
 
 #define DEBUG_DOMAIN "Utils"
 

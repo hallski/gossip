@@ -30,8 +30,6 @@
 #include <glib/gi18n.h>
 #include <gobject/gvaluecollector.h>
 
-#include "gossip-types.h"
-
 #include "gossip-account.h"
 #include "gossip-utils.h"
 
@@ -48,7 +46,7 @@ struct _GossipAccountPriv {
 	gchar             *name;
 	gboolean           auto_connect;
 	gboolean           use_proxy;
-#ifdef USE_TELEPATHY
+#ifdef HAVE_TELEPATHY
 	gchar             *protocol;
 	gchar             *cmgr_name;
 #endif
@@ -99,7 +97,7 @@ enum {
 	PROP_NAME,
 	PROP_AUTO_CONNECT,
 	PROP_USE_PROXY,
-#ifdef USE_TELEPATHY
+#ifdef HAVE_TELEPATHY
 	PROP_PROTOCOL,
 	PROP_CMGR_NAME,
 #endif
@@ -178,7 +176,7 @@ account_class_init (GossipAccountClass *class)
 							       "Identifies if the connection uses the environment proxy",
 							       FALSE,
 							       G_PARAM_READWRITE));
-#ifdef USE_TELEPATHY
+#ifdef HAVE_TELEPATHY
 	g_object_class_install_property (object_class,
 					 PROP_PROTOCOL,
 					 g_param_spec_string ("protocol",
@@ -210,7 +208,7 @@ account_init (GossipAccount *account)
 	priv->name         = NULL;
 	priv->auto_connect = TRUE;
 	priv->use_proxy    = FALSE;
-#ifdef USE_TELEPATHY
+#ifdef HAVE_TELEPATHY
 	priv->protocol     = NULL;
 	priv->cmgr_name    = NULL;
 #endif
@@ -229,7 +227,7 @@ account_finalize (GObject *object)
 	priv = GET_PRIV (object);
 
 	g_free (priv->name);
-#ifdef USE_TELEPATHY
+#ifdef HAVE_TELEPATHY
 	g_free (priv->protocol);
 	g_free (priv->cmgr_name);
 #endif
@@ -263,7 +261,7 @@ account_get_property (GObject    *object,
 	case PROP_USE_PROXY:
 		g_value_set_boolean (value, priv->use_proxy);
 		break;
-#ifdef USE_TELEPATHY
+#ifdef HAVE_TELEPATHY
 	case PROP_PROTOCOL:
 		g_value_set_string (value, priv->protocol);
 		break;
@@ -304,7 +302,7 @@ account_set_property (GObject      *object,
 		gossip_account_set_use_proxy (GOSSIP_ACCOUNT (object),
 					    g_value_get_boolean (value));
 		break;
-#ifdef USE_TELEPATHY
+#ifdef HAVE_TELEPATHY
 	case PROP_PROTOCOL:
 		gossip_account_set_protocol (GOSSIP_ACCOUNT (object),
 					     g_value_get_string (value));
@@ -742,7 +740,7 @@ gossip_account_set_use_proxy (GossipAccount *account,
 	g_object_notify (G_OBJECT (account), "use_proxy");
 }
 
-#ifdef USE_TELEPATHY
+#ifdef HAVE_TELEPATHY
 const gchar *
 gossip_account_get_protocol (GossipAccount *account)
 {
@@ -856,7 +854,7 @@ gossip_account_string_to_type (const gchar *str)
 const gchar *
 account_param_name_convert (const gchar *param_name)
 {
-#ifdef USE_TELEPATHY
+#ifdef HAVE_TELEPATHY
 	if (strcmp (param_name, "use_ssl") == 0) {
 		return "old-ssl";
 	}

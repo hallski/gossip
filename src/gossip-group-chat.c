@@ -31,7 +31,14 @@
 #include <glade/glade.h>
 #include <glib/gi18n.h>
 
-#include <libgossip/gossip.h>
+#include <libgossip/gossip-contact.h>
+#include <libgossip/gossip-session.h>
+#include <libgossip/gossip-protocol.h>
+#include <libgossip/gossip-utils.h>
+#include <libgossip/gossip-account.h>
+#include <libgossip/gossip-log.h>
+#include <libgossip/gossip-debug.h>
+#include <libgossip/gossip-message.h>
 
 #include "gossip-app.h"
 #include "gossip-cell-renderer-expander.h"

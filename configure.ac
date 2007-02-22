@@ -154,7 +154,7 @@ if test "x$enable_telepathy" != "xno" -a "x$have_dbus" = "xyes"; then
       $telepathy_pkgconfig_tmp
    ], have_telepathy="yes", have_telepathy="no")
    if test x$have_telepathy = xyes; then
-      AC_DEFINE(USE_TELEPATHY, 1, [Telepathy support])
+      AC_DEFINE(HAVE_TELEPATHY, 1, [Telepathy support])
       telepathy_pkgconfig=$telepathy_pkgconfig_tmp
    fi
 else

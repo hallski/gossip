@@ -23,8 +23,13 @@
 
 #include <glib-object.h>
 
-G_BEGIN_DECLS
+#include "gossip-account.h"
+#include "gossip-chatroom.h"
+#include "gossip-contact.h"
+#include "gossip-log.h"
+#include "gossip-message.h"
 
+G_BEGIN_DECLS
 
 #define GOSSIP_TYPE_LOG_MANAGER         (gossip_log_manager_get_type ())
 #define GOSSIP_LOG_MANAGER(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_LOG_MANAGER, GossipLogManager))
@@ -33,7 +38,9 @@ G_BEGIN_DECLS
 #define GOSSIP_IS_LOG_MANAGER_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_LOG_MANAGER))
 #define GOSSIP_LOG_MANAGER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_LOG_MANAGER, GossipLogManagerClass))
 
+typedef struct _GossipLogManager      GossipLogManager;
 typedef struct _GossipLogManagerClass GossipLogManagerClass;
+typedef struct _GossipLogSearchHit    GossipLogSearchHit;
 
 struct _GossipLogManager {
 	GObject parent;
@@ -42,6 +49,10 @@ struct _GossipLogManager {
 struct _GossipLogManagerClass {
 	GObjectClass parent_class;
 };
+
+typedef void (* GossipLogMessageFunc)  (GossipContact  *own_contact,
+					GossipMessage  *message,
+					gpointer        user_data);
 
 GType             gossip_log_manager_get_type          (void) G_GNUC_CONST;
 

@@ -24,6 +24,8 @@
 #ifndef __GOSSIP_GALAGO_H__
 #define __GOSSIP_GALAGO_H__
 
+#include <libgossip/gossip-session.h>
+
 G_BEGIN_DECLS
 
 void gossip_galago_init (GossipSession *session);

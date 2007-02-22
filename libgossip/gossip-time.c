@@ -26,8 +26,6 @@
 #include <stdio.h>
 #include <time.h>
 
-#include "gossip-types.h"
-
 #include "gossip-time.h"
 
 /* Note: GossipTime is always in UTC. */
@@ -100,3 +98,4 @@ gossip_time_to_string_local (GossipTime   t,
 	return g_strdup (stamp);
 }
 
+#include "gossip-time.h"

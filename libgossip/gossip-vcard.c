@@ -23,9 +23,6 @@
 
 #include "config.h"
 
-#include "gossip-types.h"
-
-#include "gossip-avatar.h"
 #include "gossip-vcard.h"
 
 #define GOSSIP_VCARD_GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_VCARD, GossipVCardPriv))

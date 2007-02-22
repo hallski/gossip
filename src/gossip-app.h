@@ -28,7 +28,10 @@
 
 #include <glib-object.h>
 
-#include <libgossip/gossip.h>
+#include <libgossip/gossip-account.h>
+#include <libgossip/gossip-session.h>
+#include <libgossip/gossip-event-manager.h>
+#include <libgossip/gossip-chatroom-manager.h>
 
 #include "gossip-chat-manager.h"
 

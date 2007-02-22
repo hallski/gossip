@@ -30,7 +30,7 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 
-#include <libgossip/gossip.h>
+#include <libgossip/gossip-utils.h>
 
 #include "gossip-marshal.h"
 #include "gossip-app.h"

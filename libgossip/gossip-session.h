@@ -23,6 +23,20 @@
 
 #include <glib-object.h>
 
+#include "gossip-presence.h"
+#include "gossip-account.h"
+#include "gossip-contact.h"
+#include "gossip-log.h"
+#include "gossip-async.h"
+#include "gossip-chatroom-provider.h"
+#include "gossip-account-manager.h"
+#include "gossip-protocol.h"
+#include "gossip-message.h"
+#include "gossip-vcard.h"
+#include "gossip-contact-manager.h"
+#include "gossip-chatroom-manager.h"
+#include "gossip-ft-provider.h"
+
 G_BEGIN_DECLS
 
 #define GOSSIP_TYPE_SESSION         (gossip_session_get_type ())
@@ -32,6 +46,7 @@ G_BEGIN_DECLS
 #define GOSSIP_IS_SESSION_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_SESSION))
 #define GOSSIP_SESSION_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_SESSION, GossipSessionClass))
 
+typedef struct _GossipSession      GossipSession;
 typedef struct _GossipSessionClass GossipSessionClass;
 
 struct _GossipSession {

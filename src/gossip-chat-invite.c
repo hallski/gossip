@@ -28,7 +28,11 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 
-#include <libgossip/gossip.h>
+#include <libgossip/gossip-account.h>
+#include <libgossip/gossip-chatroom.h>
+#include <libgossip/gossip-session.h>
+#include <libgossip/gossip-utils.h>
+#include <libgossip/gossip-chatroom-provider.h>
 
 #include "gossip-app.h"
 #include "gossip-chat-invite.h"

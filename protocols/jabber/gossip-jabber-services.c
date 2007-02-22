@@ -25,7 +25,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include <libgossip/gossip-types.h>
 
 #include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-presence.h>

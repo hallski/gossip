@@ -24,6 +24,8 @@
 #ifndef __GOSSIP_ACCOUNT_WIDGET_GENERIC_H__
 #define __GOSSIP_ACCOUNT_WIDGET_GENERIC_H__
 
+#include <libgossip/gossip-account.h>
+
 G_BEGIN_DECLS
 
 GtkWidget *gossip_account_widget_generic_new (GossipAccount *account,

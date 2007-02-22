@@ -22,10 +22,6 @@
 
 #include "config.h"
 
-#include "gossip-types.h"
-
-#include "gossip-contact.h"
-#include "gossip-ft.h"
 #include "gossip-ft-provider.h"
 
 #include "libgossip-marshal.h"

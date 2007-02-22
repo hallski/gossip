@@ -31,6 +31,14 @@ G_BEGIN_DECLS
 
 #define G_STR_EMPTY(x) ((x) == NULL || (x)[0] == '\0')
 
+typedef enum {
+	GOSSIP_REGEX_AS_IS,
+	GOSSIP_REGEX_BROWSER,
+	GOSSIP_REGEX_EMAIL,
+	GOSSIP_REGEX_OTHER,
+	GOSSIP_REGEX_ALL,
+} GossipRegExType;
+
 /* Regular expressions */
 gchar *      gossip_substring                      (const gchar     *str,
 						    gint             start,

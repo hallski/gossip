@@ -24,6 +24,8 @@
 #ifndef __GOSSIP_EDIT_CHATROOMS_WINDOW_H__
 #define __GOSSIP_EDIT_CHATROOMS_WINDOW_H__
 
+#include <libgossip/gossip-chatroom.h>
+
 G_BEGIN_DECLS
 
 void gossip_edit_chatroom_dialog_show (GtkWindow      *parent,

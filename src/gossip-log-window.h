@@ -23,6 +23,9 @@
 #ifndef __GOSSIP_LOG_WINDOW_H__
 #define __GOSSIP_LOG_WINDOW_H__
 
+#include <libgossip/gossip-chatroom.h>
+#include <libgossip/gossip-contact.h>
+
 G_BEGIN_DECLS
 
 void gossip_log_window_show (GossipContact  *contact,

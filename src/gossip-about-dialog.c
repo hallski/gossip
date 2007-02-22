@@ -27,8 +27,6 @@
 #include <gtk/gtksizegroup.h>
 #include <glade/glade.h>
 
-#include <libgossip/gossip.h>
-
 #include "gossip-about-dialog.h"
 #include "gossip-ui-utils.h"
 
@@ -98,7 +96,7 @@ gossip_about_dialog_new (GtkWindow *parent)
 				     _(license[2]), "\n\n",
 				     NULL);
 
-#ifdef USE_TELEPATHY
+#ifdef HAVE_TELEPATHY
 	backend = "Telepathy";
 #else
 	backend = "Jabber";

@@ -23,6 +23,7 @@
 
 #include <glib-object.h>
 #include <loudmouth/loudmouth.h>
+
 #include "gossip-transport-register.h"
 #include "gossip-jid.h"
 #include "gossip-jabber.h"

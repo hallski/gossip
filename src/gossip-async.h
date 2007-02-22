@@ -21,6 +21,9 @@
 #ifndef __GOSSIP_ASYNC_H__
 #define __GOSSIP_ASYNC_H__
 
+#include <libgossip/gossip-version-info.h>
+#include <libgossip/gossip-vcard.h>
+
 #include "gossip-vcard.h"
 #include "gossip-version-info.h"
 

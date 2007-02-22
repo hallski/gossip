@@ -28,7 +28,6 @@
 #include <bonobo/bonobo-ui-component.h>
 #include <panel-applet-gconf.h>
 
-#include <libgossip/gossip.h>
 
 #include "peekaboo-applet.h"
 #include "peekaboo-dbus.h"

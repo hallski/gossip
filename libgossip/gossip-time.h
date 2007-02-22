@@ -31,6 +31,8 @@ G_BEGIN_DECLS
 #define GOSSIP_TIME_FORMAT_DISPLAY_SHORT "%H:%M"
 #define GOSSIP_TIME_FORMAT_DISPLAY_LONG  "%a %d %b %Y"
 
+typedef long GossipTime;         /* Note: Always in UTC. */
+
 GossipTime  gossip_time_get_current     (void);
 GossipTime  gossip_time_parse           (const gchar *str);
 GossipTime  gossip_time_parse_format    (const gchar *str,

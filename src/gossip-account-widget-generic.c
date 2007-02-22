@@ -28,7 +28,9 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 
-#include <libgossip/gossip.h>
+#include <libgossip/gossip-session.h>
+#include <libgossip/gossip-account-manager.h>
+#include <libgossip/gossip-utils.h>
 
 #include "gossip-account-widget-generic.h"
 #include "gossip-app.h"

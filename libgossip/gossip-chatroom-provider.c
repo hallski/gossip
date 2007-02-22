@@ -22,11 +22,7 @@
 
 #include <glib/gi18n.h>
 
-#include "gossip-types.h"
-
-#include "gossip-chatroom.h"
 #include "gossip-chatroom-provider.h"
-#include "gossip-contact.h"
 #include "gossip-message.h"
 
 #include "libgossip-marshal.h"

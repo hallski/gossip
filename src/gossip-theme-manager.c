@@ -27,7 +27,8 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 
-#include <libgossip/gossip.h>
+#include <libgossip/gossip-utils.h>
+#include <libgossip/gossip-conf.h>
 
 #include "gossip-app.h"
 #include "gossip-chat-view.h"

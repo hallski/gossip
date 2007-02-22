@@ -32,7 +32,12 @@
 #include <glade/glade.h>
 #include <glib/gi18n.h>
 
-#include <libgossip/gossip.h>
+#include <libgossip/gossip-contact.h>
+#include <libgossip/gossip-debug.h>
+#include <libgossip/gossip-chatroom.h>
+#include <libgossip/gossip-message.h>
+#include <libgossip/gossip-chatroom-manager.h>
+#include <libgossip/gossip-conf.h>
 
 #include "gossip-add-contact-dialog.h"
 #include "gossip-app.h"

@@ -22,10 +22,10 @@
 
 #include "config.h"
 
-#include "gossip-types.h"
-
-#include "gossip-debug.h"
+#include "gossip-contact.h"
 #include "gossip-event.h"
+#include "gossip-message.h"
+#include "gossip-debug.h"
 
 #define DEBUG_DOMAIN "Event"
 

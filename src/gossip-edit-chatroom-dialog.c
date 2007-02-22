@@ -31,7 +31,8 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 
-#include <libgossip/gossip.h>
+#include <libgossip/gossip-utils.h>
+#include <libgossip/gossip-chatroom-manager.h>
 
 #include "gossip-app.h"
 #include "gossip-edit-chatroom-dialog.h"

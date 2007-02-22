@@ -23,6 +23,10 @@
 
 #include <glib-object.h>
 
+#include "gossip-account.h"
+#include "gossip-avatar.h"
+#include "gossip-presence.h"
+
 G_BEGIN_DECLS
 
 #define GOSSIP_TYPE_CONTACT         (gossip_contact_get_gtype ())
@@ -32,6 +36,7 @@ G_BEGIN_DECLS
 #define GOSSIP_IS_CONTACT_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_CONTACT))
 #define GOSSIP_CONTACT_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_CONTACT, GossipContactClass))
 
+typedef struct _GossipContact      GossipContact;
 typedef struct _GossipContactClass GossipContactClass;
 
 struct _GossipContact {
@@ -41,6 +46,20 @@ struct _GossipContact {
 struct _GossipContactClass {
 	GObjectClass parent_class;
 };
+
+typedef enum {
+	GOSSIP_CONTACT_TYPE_TEMPORARY,
+	GOSSIP_CONTACT_TYPE_CONTACTLIST,
+	GOSSIP_CONTACT_TYPE_CHATROOM,
+	GOSSIP_CONTACT_TYPE_USER           /* Represents the own user */
+} GossipContactType;
+
+typedef enum {
+	GOSSIP_SUBSCRIPTION_NONE,
+	GOSSIP_SUBSCRIPTION_TO,
+	GOSSIP_SUBSCRIPTION_FROM,
+	GOSSIP_SUBSCRIPTION_BOTH
+} GossipSubscription;
 
 GType              gossip_contact_get_gtype                 (void) G_GNUC_CONST;
 

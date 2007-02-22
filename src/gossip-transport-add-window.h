@@ -22,6 +22,7 @@
 #define __GOSSIP_TRANSPORT_ADD_WINDOW_H__
 
 #include <glib.h>
+
 #include "gossip-jabber.h"
 #include "gossip-transport-accounts.h"
 

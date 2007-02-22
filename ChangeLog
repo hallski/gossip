@@ -1,3 +1,11 @@
+2006-02-22  Xavier Claessens  <xclaesse@gmail.com>
+
+	* libgossip/*.[ch]:
+	* src/*.[ch]:
+	* protocols/jabber/*.[ch]:
+	* peekaboo/src/*.[ch]: Remove gossip-types.h and gossip.h.
+	Fixes bug #408006
+
 2007-02-21  Martyn Russell  <martyn@imendio.com>
 
 	* configure.ac:

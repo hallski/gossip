@@ -25,8 +25,6 @@
 
 #include <sys/utsname.h>
 
-#include "gossip-types.h"
-
 #include "gossip-version-info.h"
 
 #define GOSSIP_VERSION_INFO_GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_VERSION_INFO, GossipVersionInfoPriv))

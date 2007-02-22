@@ -23,6 +23,9 @@
 #ifndef __GOSSIP_FT_WINDOW_H__
 #define __GOSSIP_FT_WINDOW_H__
 
+#include <libgossip/gossip-session.h>
+#include <libgossip/gossip-contact.h>
+
 G_BEGIN_DECLS
 
 void gossip_ft_window_init               (GossipSession *session);

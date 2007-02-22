@@ -27,7 +27,6 @@
 #include "gossip-stock.h"
 #include "gossip-add-contact.h"
 
-
 struct _GossipTransportAccountsWindow {
 	GtkWidget *window;
 

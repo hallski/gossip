@@ -23,11 +23,7 @@
 
 #include "config.h"
 
-#include "gossip-types.h"
-
 #include "gossip-avatar.h"
-#include "gossip-debug.h"
-#include "gossip-utils.h"
 
 #define DEBUG_DOMAIN "Avatar"
 

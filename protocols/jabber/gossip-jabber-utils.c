@@ -24,7 +24,6 @@
 
 #include <string.h>
 
-#include <libgossip/gossip-types.h>
 #include <libgossip/gossip-presence.h>
 #include <libgossip/gossip-time.h>
 #include <libgossip/gossip-chatroom.h>

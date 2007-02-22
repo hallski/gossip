@@ -26,6 +26,8 @@
 
 #include <gtk/gtktreeview.h>
 
+#include <libgossip/gossip-contact.h>
+
 G_BEGIN_DECLS
 
 #define GOSSIP_TYPE_CONTACT_LIST         (gossip_contact_list_get_type ())

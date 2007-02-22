@@ -42,7 +42,10 @@
 #include <Cocoa/Cocoa.h>
 #endif
 
-#include <libgossip/gossip.h>
+#include <libgossip/gossip-session.h>
+#include <libgossip/gossip-account-manager.h>
+#include <libgossip/gossip-conf.h>
+#include <libgossip/gossip-paths.h>
 
 #ifdef HAVE_LIBNOTIFY
 #include "gossip-notify.h"

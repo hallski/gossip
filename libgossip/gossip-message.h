@@ -23,6 +23,10 @@
 
 #include <glib-object.h>
 
+#include "gossip-contact.h"
+#include "gossip-time.h"
+#include "gossip-chatroom.h"
+
 G_BEGIN_DECLS
 
 #define GOSSIP_TYPE_MESSAGE         (gossip_message_get_gtype ())
@@ -32,6 +36,7 @@ G_BEGIN_DECLS
 #define GOSSIP_IS_MESSAGE_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_MESSAGE))
 #define GOSSIP_MESSAGE_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_MESSAGE, GossipMessageClass))
 
+typedef struct _GossipMessage      GossipMessage;
 typedef struct _GossipMessageClass GossipMessageClass;
 
 struct _GossipMessage {
@@ -41,6 +46,12 @@ struct _GossipMessage {
 struct _GossipMessageClass {
 	GObjectClass parent_class;
 };
+
+typedef enum {
+	GOSSIP_MESSAGE_TYPE_NORMAL,
+	GOSSIP_MESSAGE_TYPE_CHAT_ROOM,
+	GOSSIP_MESSAGE_TYPE_HEADLINE
+} GossipMessageType;
 
 GType             gossip_message_get_gtype               (void) G_GNUC_CONST;
 GossipMessage *   gossip_message_new                     (GossipMessageType     type,

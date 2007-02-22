@@ -23,8 +23,6 @@
 
 #include "config.h"
 
-#include <libgossip/gossip.h>
-
 #include "gossip-contact-list-iface.h"
 #include "gossip-marshal.h"
 

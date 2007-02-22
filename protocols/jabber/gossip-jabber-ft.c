@@ -31,8 +31,6 @@
 #include <libgnomevfs/gnome-vfs.h>
 #endif
 
-#include <libgossip/gossip-types.h>
-
 #include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-presence.h>

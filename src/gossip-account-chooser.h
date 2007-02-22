@@ -25,6 +25,9 @@
 
 #include <gtk/gtkcombobox.h>
 
+#include <libgossip/gossip-account.h>
+#include <libgossip/gossip-session.h>
+
 G_BEGIN_DECLS
 
 #define GOSSIP_TYPE_ACCOUNT_CHOOSER (gossip_account_chooser_get_type ())

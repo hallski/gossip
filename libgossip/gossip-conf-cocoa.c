@@ -28,8 +28,6 @@
 
 #include <Cocoa/Cocoa.h>
 
-#include "gossip-types.h"
-
 #include "gossip-conf.h"
 
 #define POOL_ALLOC   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init]
@@ -458,3 +456,4 @@ gossip_conf_get_http_proxy (GossipConf  *conf,
 	return TRUE;
 }
 
+#include "gossip-conf.h"

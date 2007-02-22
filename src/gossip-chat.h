@@ -28,6 +28,10 @@
 
 #include <glib-object.h>
 
+#include <libgossip/gossip-chatroom.h>
+#include <libgossip/gossip-contact.h>
+#include <libgossip/gossip-message.h>
+
 G_BEGIN_DECLS
 
 #define GOSSIP_TYPE_CHAT         (gossip_chat_get_type ())

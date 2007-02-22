@@ -23,6 +23,8 @@
 
 #include <glib-object.h>
 
+#include "gossip-account.h"
+
 G_BEGIN_DECLS
 
 #define GOSSIP_TYPE_ACCOUNT_MANAGER         (gossip_account_manager_get_type ())
@@ -32,6 +34,7 @@ G_BEGIN_DECLS
 #define GOSSIP_IS_ACCOUNT_MANAGER_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_ACCOUNT_MANAGER))
 #define GOSSIP_ACCOUNT_MANAGER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_ACCOUNT_MANAGER, GossipAccountManagerClass))
 
+typedef struct _GossipAccountManager      GossipAccountManager;
 typedef struct _GossipAccountManagerClass GossipAccountManagerClass;
 
 struct _GossipAccountManager {

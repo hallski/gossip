@@ -29,6 +29,13 @@
 #ifndef __GOSSIP_UI_UTILS_H__
 #define __GOSSIP_UI_UTILS_H__
 
+#include <libgossip/gossip-account.h>
+#include <libgossip/gossip-contact.h>
+#include <libgossip/gossip-vcard.h>
+#include <libgossip/gossip-presence.h>
+#include <libgossip/gossip-chatroom.h>
+#include <libgossip/gossip-avatar.h>
+
 #include "gossip-chat-view.h"
 
 G_BEGIN_DECLS

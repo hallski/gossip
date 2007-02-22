@@ -23,6 +23,8 @@
 #ifndef __GOSSIP_STATUS_PRESETS_H__
 #define __GOSSIP_STATUS_PRESETS_H__
 
+#include <libgossip/gossip-presence.h>
+
 G_BEGIN_DECLS
 
 void                gossip_status_presets_get_all            (void);

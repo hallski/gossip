@@ -27,7 +27,9 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 
-#include <libgossip/gossip.h>
+#include <libgossip/gossip-protocol.h>
+#include <libgossip/gossip-session.h>
+#include <libgossip/gossip-debug.h>
 
 #include "gossip-marshal.h"
 #include "gossip-app.h"

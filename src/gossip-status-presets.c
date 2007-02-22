@@ -32,7 +32,8 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
-#include <libgossip/gossip.h>
+#include <libgossip/gossip-debug.h>
+#include <libgossip/gossip-utils.h>
 
 #include "gossip-status-presets.h"
 

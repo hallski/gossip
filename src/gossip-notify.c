@@ -29,7 +29,14 @@
 #include <glade/glade.h>
 #include <libnotify/notify.h>
 
-#include <libgossip/gossip.h>
+#include <libgossip/gossip-account.h>
+#include <libgossip/gossip-contact.h>
+#include <libgossip/gossip-event.h>
+#include <libgossip/gossip-protocol.h>
+#include <libgossip/gossip-message.h>
+#include <libgossip/gossip-presence.h>
+#include <libgossip/gossip-debug.h>
+#include <libgossip/gossip-conf.h>
 
 #include "gossip-chat-manager.h"
 #include "gossip-app.h"

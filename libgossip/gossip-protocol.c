@@ -24,20 +24,12 @@
 
 #include <glib/gi18n.h>
 
-/* FIXME: we should really have a definition in config.h so we can
- * include certain protocol head files.
- */
-#ifdef USE_TELEPATHY
+#ifdef HAVE_TELEPATHY
 #include <protocols/telepathy/gossip-telepathy.h>
 #else 
 #include <protocols/jabber/gossip-jabber.h>
 #endif
 
-#include "gossip-types.h"
-
-#include "gossip-account.h"
-#include "gossip-contact.h"
-#include "gossip-message.h"
 #include "gossip-protocol.h"
 
 #include "libgossip-marshal.h"
@@ -224,7 +216,7 @@ gossip_protocol_new_from_account_type (GossipAccountType type)
 {
 	GossipProtocol *protocol = NULL;
 
-#ifdef USE_TELEPATHY
+#ifdef HAVE_TELEPATHY
 	protocol = g_object_new (GOSSIP_TYPE_TELEPATHY, NULL);
 #else
 	/* create protocol for account type */

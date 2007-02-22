@@ -3690,7 +3690,7 @@
 </widget>
 
 <widget class="GtkWindow" id="main_window">
-  <property name="title" translatable="yes">Gossip</property>
+  <property name="title" translatable="yes">Contact List - Gossip</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>

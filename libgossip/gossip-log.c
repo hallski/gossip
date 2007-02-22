@@ -61,22 +61,14 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
-#include "gossip-types.h"
-
-#include "gossip-account.h"
-#include "gossip-account-manager.h"
-#include "gossip-chatroom.h"
 #include "gossip-chatroom-manager.h"
-#include "gossip-chatroom-provider.h"
-#include "gossip-contact.h"
-#include "gossip-contact-manager.h"
-#include "gossip-debug.h"
-#include "gossip-log.h"
-#include "gossip-message.h"
 #include "gossip-protocol.h"
-#include "gossip-private.h"
+#include "gossip-debug.h"
 #include "gossip-session.h"
+#include "gossip-contact-manager.h"
+#include "gossip-account-manager.h"
 #include "gossip-time.h"
+#include "gossip-private.h"
 #include "gossip-utils.h"
 
 #ifdef HAVE_GNOME

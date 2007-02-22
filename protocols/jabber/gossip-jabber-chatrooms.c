@@ -23,10 +23,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <libgossip/gossip-types.h>
 
 #include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-chatroom.h>
 #include <libgossip/gossip-ft.h>
 #include <libgossip/gossip-ft-provider.h>

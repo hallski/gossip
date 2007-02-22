@@ -26,8 +26,6 @@
 
 #include <gconf/gconf-client.h>
 
-#include "gossip-types.h"
-
 #include "gossip-conf.h"
 #include "gossip-debug.h"
 
@@ -428,3 +426,5 @@ gossip_conf_get_http_proxy (GossipConf  *conf,
 
 	return TRUE;
 }
+#include "gossip-debug.h"
+#include "gossip-conf.h"

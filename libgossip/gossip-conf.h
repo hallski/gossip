@@ -32,6 +32,7 @@ G_BEGIN_DECLS
 #define GOSSIP_IS_CONF_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_CONF))
 #define GOSSIP_CONF_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_CONF, GossipConfClass))
 
+typedef struct _GossipConf      GossipConf;
 typedef struct _GossipConfClass GossipConfClass;
 
 struct _GossipConf  {
@@ -41,6 +42,10 @@ struct _GossipConf  {
 struct _GossipConfClass {
 	GObjectClass parent_class;
 };
+
+typedef void (*GossipConfNotifyFunc) (GossipConf  *conf, 
+				      const gchar *key,
+				      gpointer     user_data);
 
 GType       gossip_conf_get_type        (void) G_GNUC_CONST;
 GossipConf *gossip_conf_get             (void);

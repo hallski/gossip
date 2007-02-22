@@ -24,25 +24,10 @@
 
 #include <string.h>
 
-#include "gossip-types.h"
-
-#include "gossip-account.h"
-#include "gossip-account-manager.h"
 #include "gossip-chatroom.h"
-#include "gossip-chatroom-manager.h"
-#include "gossip-chatroom-provider.h"
-#include "gossip-contact.h"
-#include "gossip-contact-manager.h"
-#include "gossip-debug.h"
-#include "gossip-ft.h"
-#include "gossip-ft-provider.h"
-#include "gossip-log.h"
-#include "gossip-message.h"
-#include "gossip-presence.h"
-#include "gossip-private.h"
-#include "gossip-protocol.h"
 #include "gossip-session.h"
-#include "gossip-vcard.h"
+#include "gossip-debug.h"
+#include "gossip-private.h"
 
 #include "libgossip-marshal.h"
 

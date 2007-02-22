@@ -26,6 +26,8 @@
 
 #include <glib-object.h>
 
+#include <libgossip/gossip-contact.h>
+
 G_BEGIN_DECLS
 
 #define GOSSIP_TYPE_CONTACT_LIST_IFACE         (gossip_contact_list_iface_get_type ())

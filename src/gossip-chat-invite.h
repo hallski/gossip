@@ -23,6 +23,8 @@
 #ifndef __GOSSIP_CHAT_INVITE_H__
 #define __GOSSIP_CHAT_INVITE_H__
 
+#include <libgossip/gossip-contact.h>
+
 G_BEGIN_DECLS
 
 void gossip_chat_invite_dialog_show (GossipContact    *contact,

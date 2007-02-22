@@ -29,18 +29,15 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
-#ifdef USE_TELEPATHY
+#ifdef HAVE_TELEPATHY
 #include <protocols/telepathy/gossip-telepathy-cmgr.h>
 #endif 
 
-#include "gossip-types.h"
-
-#include "gossip-account.h" 
-#include "gossip-account-manager.h" 
 #include "gossip-debug.h"
-#include "gossip-private.h"
 #include "gossip-protocol.h"
-#include "gossip-utils.h" 
+#include "gossip-account-manager.h"
+#include "gossip-private.h"
+#include "gossip-utils.h"
 
 #include "libgossip-marshal.h"
 
@@ -483,7 +480,7 @@ account_manager_parse_account (GossipAccountManager *manager,
 	GossipAccount  *account;
 	xmlNodePtr      child;
 	gchar          *str;
-#ifdef USE_TELEPATHY
+#ifdef HAVE_TELEPATHY
 	gchar *cmgr_name;
 	gchar *protocol;
 
@@ -782,7 +779,7 @@ account_manager_file_save (GossipAccountManager *manager)
 			if (strcmp ((gchar *) node->name, "default") == 0) {
 				continue;
 			}
-#ifdef USE_TELEPATHY
+#ifdef HAVE_TELEPATHY
 			if (!xmlHasProp (node, "cmgr_name") ||
 			    !xmlHasProp (node, "protocol")) {
 				/* That's a jabber account */
@@ -813,7 +810,7 @@ account_manager_file_save (GossipAccountManager *manager)
 		type = gossip_account_type_to_string (gossip_account_get_type (account));
 
 		node = xmlNewChild (root, NULL, "account", NULL);
-#ifdef USE_TELEPATHY
+#ifdef HAVE_TELEPATHY
 		xmlNewProp (node, "cmgr_name", gossip_account_get_cmgr_name (account));
 		xmlNewProp (node, "protocol", gossip_account_get_protocol (account));
 #else

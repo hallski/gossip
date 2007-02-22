@@ -23,6 +23,13 @@
 
 #include <glib-object.h>
 
+#include "gossip-account.h"
+#include "gossip-contact.h"
+#include "gossip-message.h"
+#include "gossip-presence.h"
+#include "gossip-async.h"
+#include "gossip-vcard.h"
+
 G_BEGIN_DECLS
 
 #define GOSSIP_TYPE_PROTOCOL         (gossip_protocol_get_type ())

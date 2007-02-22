@@ -25,6 +25,8 @@
 #ifndef __GOSSIP_SOUND_H__
 #define __GOSSIP_SOUND_H__
 
+#include <libgossip/gossip-session.h>
+
 G_BEGIN_DECLS
 
 typedef enum {

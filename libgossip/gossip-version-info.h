@@ -32,6 +32,7 @@ G_BEGIN_DECLS
 #define GOSSIP_IS_VERSION_INFO_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_VERSION_INFO))
 #define GOSSIP_VERSION_INFO_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_VERSION_INFO, GossipVersionInfoClass))
 
+typedef struct _GossipVersionInfo      GossipVersionInfo;
 typedef struct _GossipVersionInfoClass GossipVersionInfoClass;
 
 struct _GossipVersionInfo {

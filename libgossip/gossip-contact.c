@@ -27,12 +27,7 @@
 
 #include <glib/gi18n.h>
 
-#include "gossip-types.h"
-
-#include "gossip-account.h"
-#include "gossip-avatar.h"
 #include "gossip-contact.h"
-#include "gossip-presence.h"
 #include "gossip-utils.h"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CONTACT, GossipContactPriv))

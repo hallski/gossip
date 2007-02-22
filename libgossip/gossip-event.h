@@ -32,7 +32,9 @@ G_BEGIN_DECLS
 #define GOSSIP_IS_EVENT_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_EVENT))
 #define GOSSIP_EVENT_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_EVENT, GossipEventClass))
 
+typedef struct _GossipEvent      GossipEvent;
 typedef struct _GossipEventClass GossipEventClass;
+typedef gint                     GossipEventId;
 
 struct _GossipEvent {
 	GObject parent;
@@ -41,6 +43,16 @@ struct _GossipEvent {
 struct _GossipEventClass {
 	GObjectClass parent_class;
 };
+
+typedef enum {
+	GOSSIP_EVENT_NEW_MESSAGE,
+	GOSSIP_EVENT_SUBSCRIPTION_REQUEST,
+	GOSSIP_EVENT_SERVER_MESSAGE,
+	GOSSIP_EVENT_FILE_TRANSFER_REQUEST,
+	GOSSIP_EVENT_USER_ONLINE,
+	GOSSIP_EVENT_USER_OFFLINE,
+	GOSSIP_EVENT_ERROR
+} GossipEventType;
 
 GType           gossip_event_get_gtype   (void) G_GNUC_CONST;
 GossipEvent *   gossip_event_new         (GossipEventType  type);

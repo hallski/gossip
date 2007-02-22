@@ -23,6 +23,9 @@
 
 #include <glib-object.h>
 
+#include "gossip-account.h"
+#include "gossip-contact.h"
+
 G_BEGIN_DECLS
 
 #define GOSSIP_TYPE_CONTACT_MANAGER         (gossip_contact_manager_get_type ())

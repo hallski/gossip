@@ -25,6 +25,8 @@
 
 #include <glib-object.h>
 
+#include <libgossip/gossip-contact.h>
+
 G_BEGIN_DECLS
 
 #define GOSSIP_TYPE_CHAT_MANAGER         (gossip_chat_manager_get_type ())

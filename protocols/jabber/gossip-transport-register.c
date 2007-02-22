@@ -22,6 +22,7 @@
 
 #include <string.h>
 #include <loudmouth/loudmouth.h>
+
 #include <libgossip/gossip-utils.h>
 
 #include "gossip-jabber-private.h"

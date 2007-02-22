@@ -21,7 +21,11 @@
 #ifndef __GOSSIP_AVATAR_H__
 #define __GOSSIP_AVATAR_H__
 
+#include <glib-object.h>
+
 G_BEGIN_DECLS
+
+typedef struct _GossipAvatar GossipAvatar;
 
 struct _GossipAvatar {
 	guchar *data;

@@ -28,9 +28,13 @@
 #include <glade/glade.h>
 #include <glib/gi18n.h>
 
-#include <libgossip/gossip.h>
+#include <libgossip/gossip-debug.h>
+#include <libgossip/gossip-protocol.h>
+#include <libgossip/gossip-session.h>
+#include <libgossip/gossip-utils.h>
+#include <libgossip/gossip-account-manager.h>
 
-#ifdef USE_TELEPATHY
+#ifdef HAVE_TELEPATHY
 #include <protocols/telepathy/gossip-telepathy-cmgr.h>
 #include "gossip-protocol-chooser.h"
 #endif
@@ -1097,7 +1101,7 @@ accounts_dialog_button_connect_clicked_cb (GtkWidget            *button,
 	g_object_unref (account);
 }
 
-#ifdef USE_TELEPATHY
+#ifdef HAVE_TELEPATHY
 static void
 accounts_dialog_choose_protocol_response_cb (GtkDialog            *widget,
 					     gint                  response,

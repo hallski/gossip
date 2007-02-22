@@ -28,7 +28,8 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 
-#include <libgossip/gossip.h>
+#include <libgossip/gossip-protocol.h>
+#include <libgossip/gossip-account-manager.h>
 
 #include "gossip-ui-utils.h"
 #include "gossip-account-chooser.h"

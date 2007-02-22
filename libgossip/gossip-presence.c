@@ -26,9 +26,6 @@
 
 #include <glib/gi18n.h>
 
-#include "gossip-types.h"
-
-#include "gossip-utils.h"
 #include "gossip-presence.h"
 #include "gossip-time.h"
 

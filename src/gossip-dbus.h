@@ -25,6 +25,8 @@
 
 #include <dbus/dbus-glib.h>
 
+#include <libgossip/gossip-session.h>
+
 G_BEGIN_DECLS
 
 #define GOSSIP_DBUS_ERROR gnome_dbus_error_quark()

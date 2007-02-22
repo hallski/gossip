@@ -32,7 +32,9 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 
-#include <libgossip/gossip.h>
+#include <libgossip/gossip-debug.h>
+#include <libgossip/gossip-utils.h>
+#include <libgossip/gossip-conf.h>
 
 #include "gossip-app.h"
 #include "gossip-chat.h"

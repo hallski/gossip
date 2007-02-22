@@ -23,6 +23,9 @@
 #ifndef __GOSSIP_NOTIFY_H__
 #define __GOSSIP_NOTIFY_H__
 
+#include <libgossip/gossip-session.h>
+#include <libgossip/gossip-event-manager.h>
+
 G_BEGIN_DECLS
 
 void gossip_notify_init                   (GossipSession      *session,
