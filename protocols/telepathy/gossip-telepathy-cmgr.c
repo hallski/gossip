@@ -23,7 +23,6 @@
 #include <glib/gi18n.h>
 #include <libtelepathy/tp-helpers.h>
 
-#include <libgossip/gossip-account.h>
 #include <libgossip/gossip-utils.h>
 
 #include "gossip-telepathy-cmgr.h"

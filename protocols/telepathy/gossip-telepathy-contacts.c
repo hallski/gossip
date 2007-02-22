@@ -27,11 +27,11 @@
 #include <libtelepathy/tp-conn-iface-presence-gen.h>
 #include <libtelepathy/tp-conn-iface-avatars-gen.h>
 
-#include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-account.h>
 #include <libgossip/gossip-debug.h>
+#include <libgossip/gossip-protocol.h>
+#include <libgossip/gossip-utils.h>
 
-#include "gossip-telepathy.h"
 #include "gossip-telepathy-contacts.h"
 
 #define DEBUG_DOMAIN "TelepathyContacts"
@@ -57,11 +57,6 @@ typedef struct {
 	guint                   *handles;
 } TelepathyContactsAliasesRequestData;
 
-typedef struct {
-	const gchar *id;
-	guint        handle;
-} TelepathyContactsFindHandleData;
-
 static void     telepathy_contacts_disconnected_cb         (GossipProtocol                       *telepathy,
 							    GossipAccount                        *account,
 							    gint                                  reason,
@@ -69,14 +64,15 @@ static void     telepathy_contacts_disconnected_cb         (GossipProtocol      
 void            telepathy_contacts_connected_cb            (GossipProtocol                       *telepathy,
 							    GossipAccount                        *account,
 							    GossipTelepathyContacts              *contacts);
-static gboolean telepathy_contacts_finalize_foreach        (guint                                 key,
+static void     telepathy_contacts_disconnected_foreach    (gchar                                *id,
 							    GossipContact                        *contact,
-							    GossipTelepathy                      *telepathy);
-static gboolean telepathy_contacts_find_foreach            (guint                                 key,
+							    GossipTelepathyContacts              *contacts);
+static gboolean telepathy_contacts_find_foreach            (gchar                                *id,
 							    GossipContact                        *contact,
-							    TelepathyContactsFindHandleData      *data);
-static GList *  telepathy_contacts_create_from_handles      (GossipTelepathyContacts             *contacts,
-							    GArray                               *handles);
+							    guint                                 handle);
+static GossipContact *
+                telepathy_contacts_new_contact             (GossipTelepathyContacts              *contacts,
+							    const gchar                          *id);
 static void     telepathy_contacts_get_info                (GossipTelepathyContacts              *contacts,
 							    GArray                               *handles);
 static void     telepathy_contacts_request_avatar          (GossipTelepathyContacts              *contacts,
@@ -127,9 +123,9 @@ gossip_telepathy_contacts_init (GossipTelepathy *telepathy)
 
 	contacts = g_slice_new0 (GossipTelepathyContacts);
 	contacts->telepathy = telepathy;
-	contacts->contacts = g_hash_table_new_full (g_direct_hash,
-						    g_direct_equal,
-						    NULL,
+	contacts->contacts = g_hash_table_new_full (g_str_hash,
+						    g_str_equal,
+						    (GDestroyNotify) g_free,
 						    (GDestroyNotify) g_object_unref);
 	g_signal_connect (telepathy, "disconnected",
 			  G_CALLBACK (telepathy_contacts_disconnected_cb),
@@ -141,15 +137,24 @@ gossip_telepathy_contacts_init (GossipTelepathy *telepathy)
 	return contacts;
 }
 
+void
+gossip_telepathy_contacts_finalize (GossipTelepathyContacts *contacts)
+{
+	g_return_if_fail (contacts != NULL);
+
+	g_hash_table_destroy (contacts->contacts);
+	g_slice_free (GossipTelepathyContacts, contacts);
+}
+
 static void
 telepathy_contacts_disconnected_cb (GossipProtocol          *telepathy,
 				    GossipAccount           *account,
 				    gint                     reason,
 				    GossipTelepathyContacts *contacts)
 {
-	g_hash_table_foreach_remove (contacts->contacts,
-				     (GHRFunc) telepathy_contacts_finalize_foreach,
-				     contacts->telepathy);
+	g_hash_table_foreach (contacts->contacts,
+			      (GHFunc) telepathy_contacts_disconnected_foreach,
+			      contacts);
 
 	contacts->aliasing_iface = NULL;
 	contacts->avatars_iface = NULL;
@@ -193,36 +198,42 @@ telepathy_contacts_connected_cb (GossipProtocol          *telepathy,
 	}
 }
 
-void
-gossip_telepathy_contacts_finalize (GossipTelepathyContacts *contacts)
+GossipContact *
+gossip_telepathy_contacts_find (GossipTelepathyContacts *contacts,
+				const gchar             *id)
 {
-	g_return_if_fail (contacts != NULL);
+	g_return_val_if_fail (contacts != NULL, NULL);
+	g_return_val_if_fail (id != NULL, NULL);
 
-	g_hash_table_foreach_remove (contacts->contacts,
-				     (GHRFunc) telepathy_contacts_finalize_foreach,
-				     contacts->telepathy);
-
-	g_hash_table_destroy (contacts->contacts);
-	g_slice_free (GossipTelepathyContacts, contacts);
+	return g_hash_table_lookup (contacts->contacts, id);
 }
 
 GossipContact *
-gossip_telepathy_contacts_find (GossipTelepathyContacts *contacts,
-				const gchar             *id,
-				guint                   *handle)
+gossip_telepathy_contacts_new (GossipTelepathyContacts *contacts,
+			       const gchar             *id,
+			       const gchar             *name)
 {
-	TelepathyContactsFindHandleData  data;
-	GossipContact                   *contact;
+	GossipContact *contact;
+	guint          handle;
 
 	g_return_val_if_fail (contacts != NULL, NULL);
+	g_return_val_if_fail (id != NULL, NULL);
 
-	data.id = id;
-	data.handle = 0;
-	contact =  g_hash_table_find (contacts->contacts,
-				      (GHRFunc) telepathy_contacts_find_foreach,
-				      &data);
-	if (handle) {
-		*handle = data.handle;
+	contact = g_hash_table_lookup (contacts->contacts, id);
+
+	if (contact) {
+		return contact;
+	}
+
+	if (gossip_telepathy_get_connection (contacts->telepathy)) {
+		handle = gossip_telepathy_contacts_get_handle (contacts, id);
+		contact = gossip_telepathy_contacts_get_from_handle (contacts, handle);
+	} else {
+		contact = telepathy_contacts_new_contact (contacts, id);
+	}
+
+	if (!G_STR_EMPTY (name)) {
+		gossip_contact_set_name (contact, name);
 	}
 
 	return contact;
@@ -242,9 +253,13 @@ gossip_telepathy_contacts_get_handle (GossipTelepathyContacts *contacts,
 	g_return_val_if_fail (id != NULL, 0);
 
 	/* Checks if we already have this contact id */
-	gossip_telepathy_contacts_find (contacts, id, &handle);
-	if (handle != 0) {
-		return handle;
+	contact = g_hash_table_lookup (contacts->contacts, id);
+	if (contact) {
+		handle = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (contact),
+							      "telepathy-handle"));
+		if (handle != 0) {
+			return handle;
+		}
 	}
 
 	/* The id is unknown, requests a new handle */
@@ -307,21 +322,28 @@ GList *
 gossip_telepathy_contacts_get_from_handles (GossipTelepathyContacts *contacts,
 					    GArray                  *handles)
 {
-	GossipContact *contact;
-	guint          i;
-	GArray        *new_handles;
-	GList         *list = NULL;
+	GossipContact  *contact;
+	GossipAccount  *account;
+	TpConn         *tp_conn;
+	gchar         **handles_names;
+	gchar         **id;
+	GArray         *new_handles;
+	GList          *list = NULL;
+	guint           i;
+	GError         *error = NULL;
 
 	g_return_val_if_fail (contacts != NULL, NULL);
 	g_return_val_if_fail (handles != NULL, NULL);
 
+	/* Search all handles we already have */
 	new_handles = g_array_new (FALSE, FALSE, sizeof (guint));
 	for (i = 0; i < handles->len; i++) {
 		guint handle;
 
 		handle = g_array_index (handles, guint, i);
-		contact = g_hash_table_lookup (contacts->contacts,
-					       GUINT_TO_POINTER (handle));
+		contact = g_hash_table_find (contacts->contacts,
+					     (GHRFunc) telepathy_contacts_find_foreach,
+					     GUINT_TO_POINTER (handle));
 		if (contact) {
 			list = g_list_prepend (list, contact);
 		} else {
@@ -329,15 +351,61 @@ gossip_telepathy_contacts_get_from_handles (GossipTelepathyContacts *contacts,
 		}
 	}
 
-	if (new_handles->len > 0) {
-		GList *new_list;
-
-		new_list = telepathy_contacts_create_from_handles (contacts,
-								   new_handles);
-		list = g_list_concat (list, new_list);
+	if (new_handles->len == 0) {
+		return list;
 	}
 
+	tp_conn = gossip_telepathy_get_connection (contacts->telepathy);
+	account = gossip_telepathy_get_account (contacts->telepathy);
+
+	/* Holds all handles we don't have yet.
+	 * FIXME: We should release them at some point. */
+	if (!tp_conn_hold_handles (DBUS_G_PROXY (tp_conn),
+				   TP_CONN_HANDLE_TYPE_CONTACT,
+				   new_handles, &error)) {
+		gossip_debug (DEBUG_DOMAIN, "HoldHandles Error: %s",
+			      error->message);
+		g_clear_error (&error);
+		g_array_free (new_handles, TRUE);
+		return list;
+	}
+
+	/* Get the IDs of all new handles */
+	if (!tp_conn_inspect_handles (DBUS_G_PROXY (tp_conn),
+				      TP_CONN_HANDLE_TYPE_CONTACT,
+				      new_handles,
+				      &handles_names,
+				      &error)) {
+		gossip_debug (DEBUG_DOMAIN, "InspectHandle Error: %s",
+			      error->message);
+		g_clear_error (&error);
+		g_array_free (new_handles, TRUE);
+		return list;
+	}
+
+	i = 0;
+	for (id = handles_names; *id && i < new_handles->len; id++) {
+		GossipContact *contact;
+		guint          handle;
+
+		handle = g_array_index (new_handles, guint, i);
+		contact = g_hash_table_lookup (contacts->contacts, *id);
+
+		if (!contact) {
+			contact = telepathy_contacts_new_contact (contacts, *id);
+		}
+
+		g_object_set_data (G_OBJECT (contact), "telepathy-handle",
+				   GUINT_TO_POINTER (handle));
+
+		list = g_list_prepend (list, contact);
+
+		i++;
+	}
+
+	telepathy_contacts_get_info (contacts, new_handles);
 	g_array_free (new_handles, TRUE);
+	g_strfreev (handles_names);
 
 	return list;
 }
@@ -345,7 +413,7 @@ gossip_telepathy_contacts_get_from_handles (GossipTelepathyContacts *contacts,
 gboolean
 gossip_telepathy_contacts_set_avatar (GossipTelepathyContacts *contacts,
 				      GossipAvatar            *avatar,
-				      GossipResultCallback     callback,
+				      GossipCallback           callback,
 				      gpointer                 user_data)
 {
 	GossipCallbackData *data;
@@ -523,92 +591,53 @@ gossip_telepathy_contacts_send_presence (GossipTelepathyContacts *contacts,
 	g_hash_table_destroy (status_ids);
 }
 
-static gboolean
-telepathy_contacts_finalize_foreach (guint            handle,
-				     GossipContact   *contact,
-				     GossipTelepathy *telepathy)
+static void
+telepathy_contacts_disconnected_foreach (gchar                   *id,
+					 GossipContact           *contact,
+					 GossipTelepathyContacts *contacts)
 {
-	g_signal_emit_by_name (telepathy, "contact-removed", contact);
-
-	return TRUE;
+	g_object_set_data (G_OBJECT (contact), "telepathy-handle", NULL);
+	g_signal_emit_by_name (contacts->telepathy, "contact-removed", contact);
 }
 
 static gboolean
-telepathy_contacts_find_foreach (guint                            key,
-				 GossipContact                   *contact,
-				 TelepathyContactsFindHandleData *data)
+telepathy_contacts_find_foreach (gchar         *id,
+				 GossipContact *contact,
+				 guint          handle)
 {
-	if (strcmp (gossip_contact_get_id (contact), data->id) == 0) {
-		data->handle = key;
+	guint this_handle;
+
+	this_handle = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (contact),
+							   "telepathy-handle"));
+	if (this_handle == handle) {
 		return TRUE;
 	}
 
 	return FALSE;
 }
 
-static GList *
-telepathy_contacts_create_from_handles (GossipTelepathyContacts *contacts,
-					GArray                  *handles)
+static GossipContact *
+telepathy_contacts_new_contact (GossipTelepathyContacts *contacts,
+				const gchar             *id)
 {
-	GossipAccount  *account;
-	TpConn         *tp_conn;
-	gchar         **handles_names;
-	gchar         **id;
-	GList          *list = NULL;
-	guint           i;
-	GError         *error = NULL;
-
-	/* Get the IDs of all contacts */
-	tp_conn = gossip_telepathy_get_connection (contacts->telepathy);
-	if (!tp_conn_inspect_handles (DBUS_G_PROXY (tp_conn),
-				      TP_CONN_HANDLE_TYPE_CONTACT,
-				      handles,
-				      &handles_names,
-				      &error)) {
-		gossip_debug (DEBUG_DOMAIN, "InspectHandle Error: %s",
-			      error->message);
-		g_clear_error (&error);
-		return NULL;
-	}
+	GossipContact *contact;
+	GossipAccount *account;
 
 	account = gossip_telepathy_get_account (contacts->telepathy);
 
-	/* FIXME: Here we holds all handles, we should release them at some point. */
-	if (!tp_conn_hold_handles (DBUS_G_PROXY (tp_conn),
-				   TP_CONN_HANDLE_TYPE_CONTACT,
-				   handles, &error)) {
-		gossip_debug (DEBUG_DOMAIN, "HoldHandles Error; %s",
-			      error->message);
-		g_clear_error (&error);
-		return NULL;
-	}
+	contact = g_object_new (GOSSIP_TYPE_CONTACT,
+				"type", GOSSIP_CONTACT_TYPE_TEMPORARY,
+				"account", account,
+				"id", id,
+				NULL);
 
-	/* Create GossipContact objects */
-	id = handles_names;
-	for (i = 0; i < handles->len; i++) {
-		GossipContact *contact;
-		guint          handle;
+	gossip_debug (DEBUG_DOMAIN, "new contact created: %s", id);
 
-		contact = g_object_new (GOSSIP_TYPE_CONTACT,
-					"type", GOSSIP_CONTACT_TYPE_TEMPORARY,
-					"account", account,
-					NULL);
-		list = g_list_prepend (list, contact);
-		gossip_contact_set_id (contact, *id);
+	g_hash_table_insert (contacts->contacts,
+			     g_strdup (id),
+			     contact);
 
-		handle = g_array_index (handles, guint, i);
-		gossip_debug (DEBUG_DOMAIN, "new contact created: %s (%d)",
-			      *id, handle);
-		g_hash_table_insert (contacts->contacts,
-				     GUINT_TO_POINTER (handle),
-				     contact);
-		id++;
-	}
-	g_strfreev (handles_names);
-
-	telepathy_contacts_get_info (contacts, handles);
-
-	return list;
+	return contact;
 }
 
 static void
@@ -737,8 +766,8 @@ telepathy_contacts_set_avatar_cb (DBusGProxy         *proxy,
 				  GError             *error,
 				  GossipCallbackData *data)
 {
-	GossipResultCallback callback;
-	GossipResult         result = GOSSIP_RESULT_OK;
+	GossipCallback callback;
+	GossipResult   result = GOSSIP_RESULT_OK;
 
 	callback = data->callback;
 

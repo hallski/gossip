@@ -25,12 +25,14 @@
 #include <libtelepathy/tp-helpers.h>
 #include <libtelepathy/tp-chan-type-text-gen.h>
 
-#include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-account.h>
+#include <libgossip/gossip-protocol.h>
 #include <libgossip/gossip-contact.h>
+#include <libgossip/gossip-account.h>
+#include <libgossip/gossip-message.h>
+#include <libgossip/gossip-debug.h>
+#include <libgossip/gossip-time.h>
 
 #include "gossip-telepathy-message.h"
-#include "gossip-telepathy.h"
 #include "gossip-telepathy-contacts.h"
 #include "gossip-telepathy-private.h"
 
@@ -338,7 +340,7 @@ telepathy_message_emit (TelepathyMessageChan *msg_chan,
 
 	gossip_message_set_sender (message, from);
 	gossip_message_set_body (message, message_body);
-	gossip_message_set_timestamp (message, (gossip_time_t) timestamp);
+	gossip_message_set_timestamp (message, (GossipTime) timestamp);
 
 	if (msg_chan->text_chan->handle_type != TP_CONN_HANDLE_TYPE_ROOM) {
 		g_signal_emit_by_name (msg_chan->telepathy, "new-message",

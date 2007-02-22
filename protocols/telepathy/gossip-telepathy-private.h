@@ -21,6 +21,7 @@
 #ifndef __GOSSIP_TELEPATHY_PRIVATE_H__
 #define __GOSSIP_TELEPATHY_PRIVATE_H__
 
+
 #include "gossip-telepathy.h"
 #include "gossip-telepathy-contacts.h"
 

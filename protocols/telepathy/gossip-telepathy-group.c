@@ -20,14 +20,12 @@
 
 #include <config.h>
 
-
 #include <dbus/dbus-glib.h>
 #include <libtelepathy/tp-chan.h>
 #include <libtelepathy/tp-chan-iface-group-gen.h>
 
 #include <libgossip/gossip-debug.h>
 
-#include "gossip-telepathy.h"
 #include "gossip-telepathy-group.h"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \

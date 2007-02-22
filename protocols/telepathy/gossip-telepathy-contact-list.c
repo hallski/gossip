@@ -27,10 +27,11 @@
 #include <libtelepathy/tp-helpers.h>
 #include <libtelepathy/tp-chan-type-contact-list-gen.h>
 
-#include <libgossip/gossip-debug.h>
+#include <libgossip/gossip-account.h>
 #include <libgossip/gossip-contact.h>
+#include <libgossip/gossip-debug.h>
+#include <libgossip/gossip-protocol.h>
 
-#include "gossip-telepathy.h"
 #include "gossip-telepathy-contact-list.h"
 #include "gossip-telepathy-group.h"
 #include "gossip-telepathy-private.h"
@@ -159,30 +160,14 @@ gossip_telepathy_contact_list_add (GossipTelepathyContactList *list,
 				   const gchar                *id,
 				   const gchar                *message)
 {
-	GError      *error = NULL;
-	const gchar *ids[2] = {id, NULL};
-	GArray      *handles;
-	guint        handle;
-	TpConn      *tp_conn;
+	GossipTelepathyContacts *contacts;
+	guint                    handle;
 
 	g_return_if_fail (list != NULL);
 	g_return_if_fail (id != NULL);
 
-	tp_conn = gossip_telepathy_get_connection (list->telepathy);
-	if (!tp_conn_request_handles (DBUS_G_PROXY (tp_conn),
-				      TP_CONN_HANDLE_TYPE_CONTACT, ids,
-				      &handles, &error)) {
-		gossip_debug (DEBUG_DOMAIN, "Failed to retrieve handle for %s: %s",
-			      id[0], error->message);
-		g_clear_error (&error);
-		return;
-	}
-
-	handle = g_array_index (handles, gint, 0);
-	g_array_free (handles, TRUE);
-
-	gossip_debug (DEBUG_DOMAIN, "Retrieved handle for %s, and it is %d",
-		      ids[0], handle);
+	contacts = gossip_telepathy_get_contacts (list->telepathy);
+	handle = gossip_telepathy_contacts_get_handle (contacts, id);
 
 	gossip_telepathy_group_add_member (list->subscribe, handle, message);
 }

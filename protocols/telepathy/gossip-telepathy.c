@@ -35,17 +35,17 @@
 #include <libtelepathy/tp-chan-type-text-gen.h>
 #include <libtelepathy/tp-interfaces.h>
 
-
-#include <libgossip/gossip-account.h>
-#include <libgossip/gossip-contact.h>
+#include <libgossip/gossip-chatroom.h>
+#include <libgossip/gossip-presence.h>
+#include <libgossip/gossip-chatroom-provider.h>
+#include <libgossip/gossip-debug.h>
+#include <libgossip/gossip-message.h>
+#include <libgossip/gossip-chatroom.h>
+#include <libgossip/gossip-avatar.h>
 #include <libgossip/gossip-vcard.h>
 #include <libgossip/gossip-utils.h>
-#include <libgossip/gossip-chatroom-provider.h>
+#include <libgossip/gossip-async.h>
 #include <libgossip/gossip-ft-provider.h>
-#include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-session.h>
-#include <libgossip/gossip-utils.h>
-
 
 #include "gossip-telepathy.h"
 #include "gossip-telepathy-contacts.h"
@@ -107,7 +107,7 @@ static void             telepathy_logout                         (GossipProtocol
 static void             telepathy_register_account               (GossipProtocol               *protocol,
 								  GossipAccount                *account,
 								  GossipVCard                  *vcard,
-								  GossipResultErrorCallback     callback,
+								  GossipErrorCallback           callback,
 								  gpointer                      user_data);
 static void             telepathy_register_cancel                (GossipProtocol               *protocol);
 static gboolean         telepathy_is_connected                   (GossipProtocol               *protocol);
@@ -132,7 +132,7 @@ static void             telepathy_set_subscription               (GossipProtocol
 								  gboolean                      subscribed);
 static gboolean         telepathy_set_vcard                      (GossipProtocol               *protocol,
 								  GossipVCard                  *vcard,
-								  GossipResultCallback          callback,
+								  GossipCallback                callback,
 								  gpointer                      user_data,
 								  GError                      **error);
 static void             telepathy_avatars_get_requirements       (GossipProtocol               *protocol,
@@ -142,11 +142,14 @@ static void             telepathy_avatars_get_requirements       (GossipProtocol
 								  guint                        *max_height,
 								  gsize                        *max_size,
 								  gchar                       **format);
-static void             telepathy_change_password                (GossipProtocol             *protocol,
-								  const gchar                *new_password,
-								  GossipResultErrorCallback   callback,
-								  gpointer                    user_data);
-static void             telepathy_change_password_cancel         (GossipProtocol             *protocol);
+static void             telepathy_change_password                (GossipProtocol               *protocol,
+								  const gchar                  *new_password,
+								  GossipErrorCallback           callback,
+								  gpointer                      user_data);
+static void             telepathy_change_password_cancel         (GossipProtocol               *protocol);
+static GossipContact *  telepathy_contact_new                    (GossipProtocol               *protocol,
+								  const gchar                  *id,
+								  const gchar                  *name);
 static GossipContact *  telepathy_contact_find                   (GossipProtocol               *protocol,
 								  const gchar                  *id);
 static void             telepathy_contact_add                    (GossipProtocol               *protocol,
@@ -287,6 +290,7 @@ gossip_telepathy_class_init (GossipTelepathyClass *klass)
 	protocol_class->set_vcard               = telepathy_set_vcard;
 	protocol_class->send_message            = telepathy_send_message;
 	protocol_class->send_composing          = telepathy_send_composing;
+	protocol_class->new_contact             = telepathy_contact_new;
 	protocol_class->find_contact            = telepathy_contact_find;
 	protocol_class->add_contact             = telepathy_contact_add;
 	protocol_class->rename_contact          = telepathy_contact_rename;
@@ -402,6 +406,7 @@ telepathy_setup (GossipProtocol *protocol,
 	priv = GET_PRIV (telepathy);
 
 	priv->account = g_object_ref (account);
+	priv->contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_USER, account);
 }
 
 static TpConn *
@@ -772,12 +777,12 @@ telepathy_connection_status_changed_cb (DBusGProxy                      *proxy,
 			/* Logged out */
 			g_signal_emit_by_name (telepathy, "disconnected",
 					       priv->account,
-					       GOSSIP_DISCONNECT_ASKED);
+					       GOSSIP_PROTOCOL_DISCONNECT_ASKED);
 		} else {
 			/* Some error */
 			g_signal_emit_by_name (telepathy, "disconnected",
 					       priv->account,
-					       GOSSIP_DISCONNECT_ERROR);
+					       GOSSIP_PROTOCOL_DISCONNECT_ERROR);
 		}
 
 		return;
@@ -800,7 +805,7 @@ telepathy_connection_status_changed_cb (DBusGProxy                      *proxy,
 
 		g_signal_emit_by_name (telepathy, "disconnecting", priv->account);
 		g_signal_emit_by_name (telepathy, "disconnected", priv->account,
-				       GOSSIP_DISCONNECT_ERROR);
+				       GOSSIP_PROTOCOL_DISCONNECT_ERROR);
 
 		telepathy_error (GOSSIP_PROTOCOL (telepathy), gossip_protocol_error);
 	}
@@ -875,24 +880,18 @@ telepathy_insert_params_foreach (GossipAccount      *account,
 				 GossipAccountParam *param,
 				 GHashTable         *protocol_params)
 {
-	if (G_VALUE_HOLDS (&param->g_value, G_TYPE_STRING)) {
-		const gchar *str;
-
-		str = g_value_get_string (&param->g_value);
-		if (!str || *str == '\0') {
-			return;
-		}
+	if (!param->modified) {
+		return;
 	}
-
 	g_hash_table_insert (protocol_params, param_name, &param->g_value);
 }
 
 static void
-telepathy_register_account (GossipProtocol            *protocol,
-			    GossipAccount             *account,
-			    GossipVCard               *vcard,
-			    GossipResultErrorCallback  callback,
-			    gpointer                   user_data)
+telepathy_register_account (GossipProtocol      *protocol,
+			    GossipAccount       *account,
+			    GossipVCard         *vcard,
+			    GossipErrorCallback  callback,
+			    gpointer             user_data)
 {
 	GossipResult result = GOSSIP_RESULT_ERROR_UNAVAILABLE;
 
@@ -1079,11 +1078,11 @@ telepathy_set_subscription (GossipProtocol *protocol,
 }
 
 static gboolean
-telepathy_set_vcard (GossipProtocol       *protocol,
-		     GossipVCard          *vcard,
-		     GossipResultCallback  callback,
-		     gpointer              user_data,
-		     GError              **error)
+telepathy_set_vcard (GossipProtocol *protocol,
+		     GossipVCard    *vcard,
+		     GossipCallback  callback,
+		     gpointer        user_data,
+		     GError        **error)
 {
 	GossipTelepathy     *telepathy;
 	GossipTelepathyPriv *priv;
@@ -1124,10 +1123,10 @@ telepathy_avatars_get_requirements (GossipProtocol  *protocol,
 }
 
 static void
-telepathy_change_password (GossipProtocol            *protocol,
-			   const gchar               *new_password,
-			   GossipResultErrorCallback  callback,
-			   gpointer                   user_data)
+telepathy_change_password (GossipProtocol      *protocol,
+			   const gchar         *new_password,
+			   GossipErrorCallback  callback,
+			   gpointer             user_data)
 {
 	gossip_debug (DEBUG_DOMAIN, "telepathy_change_password");
 	if (callback) {
@@ -1142,6 +1141,21 @@ telepathy_change_password_cancel (GossipProtocol *protocol)
 }
 
 static GossipContact *
+telepathy_contact_new (GossipProtocol *protocol,
+		       const gchar    *id,
+		       const gchar    *name)
+{
+	GossipTelepathy     *telepathy;
+	GossipTelepathyPriv *priv;
+
+	telepathy = GOSSIP_TELEPATHY (protocol);
+
+	priv = GET_PRIV (telepathy);
+
+	return gossip_telepathy_contacts_new (priv->contacts, id, name);
+}
+
+static GossipContact *
 telepathy_contact_find (GossipProtocol *protocol,
 			const gchar    *id)
 {
@@ -1152,7 +1166,7 @@ telepathy_contact_find (GossipProtocol *protocol,
 
 	priv = GET_PRIV (telepathy);
 
-	return gossip_telepathy_contacts_find (priv->contacts, id, NULL);
+	return gossip_telepathy_contacts_find (priv->contacts, id);
 }
 
 static void
@@ -1667,8 +1681,6 @@ gossip_telepathy_get_own_contact (GossipTelepathy *telepathy)
 	GossipTelepathyPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_TELEPATHY (telepathy), NULL);
-
-	gossip_debug (DEBUG_DOMAIN, "gossip_telepathy_get_own_contact");
 
 	priv = GET_PRIV (telepathy);
 

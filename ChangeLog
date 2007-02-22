@@ -1,5 +1,23 @@
 2006-02-22  Xavier Claessens  <xclaesse@gmail.com>
 
+	* protocols/telepathy/gossip-telepathy-chatrooms.c:
+	* protocols/telepathy/gossip-telepathy.c:
+	* protocols/telepathy/gossip-telepathy-chatrooms.h:
+	* protocols/telepathy/gossip-telepathy-contact-list.c:
+	* protocols/telepathy/gossip-telepathy.h:
+	* protocols/telepathy/gossip-telepathy-contacts.c:
+	* protocols/telepathy/gossip-telepathy-private.h:
+	* protocols/telepathy/gossip-telepathy-contacts.h:
+	* protocols/telepathy/gossip-telepathy-message.c:
+	* protocols/telepathy/gossip-telepathy-cmgr.c:
+	* protocols/telepathy/gossip-telepathy-group.c: Fix build with new
+	includes and new GossipProtocol API.
+
+	* libgossip/gossip.h:
+	* libgossip/gossip-types.h: Removed.
+
+2006-02-22  Xavier Claessens  <xclaesse@gmail.com>
+
 	* libgossip/*.[ch]:
 	* src/*.[ch]:
 	* protocols/jabber/*.[ch]:

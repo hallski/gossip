@@ -23,9 +23,9 @@
 
 #include <libtelepathy/tp-conn.h>
 
+#include <libgossip/gossip-protocol.h>
 #include <libgossip/gossip-account.h>
 #include <libgossip/gossip-contact.h>
-#include <libgossip/gossip-protocol.h>
 
 G_BEGIN_DECLS
 

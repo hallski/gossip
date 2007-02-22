@@ -22,6 +22,9 @@
 #define __GOSSIP_TELEPATHY_CONTACTS_H__
 
 #include <libgossip/gossip-contact.h>
+#include <libgossip/gossip-avatar.h>
+#include <libgossip/gossip-presence.h>
+#include <libgossip/gossip-async.h>
 
 #include "gossip-telepathy.h"
 
@@ -32,8 +35,10 @@ typedef struct _GossipTelepathyContacts GossipTelepathyContacts;
 GossipTelepathyContacts *gossip_telepathy_contacts_init             (GossipTelepathy                *telepathy);
 void                     gossip_telepathy_contacts_finalize         (GossipTelepathyContacts        *contacts);
 GossipContact *          gossip_telepathy_contacts_find             (GossipTelepathyContacts        *contacts,
+								     const gchar                    *id);
+GossipContact *          gossip_telepathy_contacts_new              (GossipTelepathyContacts        *contacts,
 								     const gchar                    *id,
-								     guint                          *handle);
+								     const gchar                    *name);
 guint                    gossip_telepathy_contacts_get_handle       (GossipTelepathyContacts        *contacts,
 								     const gchar                    *id);
 GossipContact *          gossip_telepathy_contacts_get_from_handle  (GossipTelepathyContacts        *contacts,
@@ -42,7 +47,7 @@ GList *                  gossip_telepathy_contacts_get_from_handles (GossipTelep
 								     GArray                         *handles);
 gboolean                 gossip_telepathy_contacts_set_avatar       (GossipTelepathyContacts        *contacts,
 								     GossipAvatar                   *avatar,
-								     GossipResultCallback            callback,
+								     GossipCallback                  callback,
 								     gpointer                        user_data);
 void                     gossip_telepathy_contacts_get_avatar_requirements (GossipTelepathyContacts *contacts,
 								     guint                          *min_width,

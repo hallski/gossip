@@ -27,8 +27,10 @@
 #include <libtelepathy/tp-interfaces.h>
 #include <libtelepathy/tp-constants.h>
 
+#include <libgossip/gossip-account.h>
 #include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-contact.h>
+#include <libgossip/gossip-chatroom.h>
+#include <libgossip/gossip-protocol.h>
 
 #include "gossip-telepathy-chatrooms.h"
 #include "gossip-telepathy-group.h"

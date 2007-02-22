@@ -21,8 +21,9 @@
 #ifndef __GOSSIP_TELEPATHY_CHATROOM_H__
 #define __GOSSIP_TELEPATHY_CHATROOM_H__
 
-#include <libgossip/gossip-chatroom-provider.h>
+#include <libgossip/gossip-chatroom.h>
 #include <libgossip/gossip-contact.h>
+#include <libgossip/gossip-chatroom-provider.h>
 
 #include "gossip-telepathy.h"
 
