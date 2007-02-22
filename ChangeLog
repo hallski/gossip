@@ -1,5 +1,10 @@
 2006-02-22  Xavier Claessens  <xclaesse@gmail.com>
 
+	* protocols/telepathy/gossip-telepathy.c: remove a useless debug msg.
+	* libgossip/Makefile.am: remove gossip.h from source files.
+
+2006-02-22  Xavier Claessens  <xclaesse@gmail.com>
+
 	* protocols/telepathy/gossip-telepathy-chatrooms.c:
 	* protocols/telepathy/gossip-telepathy.c:
 	* protocols/telepathy/gossip-telepathy-chatrooms.h:

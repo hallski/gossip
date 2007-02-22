@@ -1270,8 +1270,6 @@ telepathy_get_own_contact (GossipProtocol *protocol)
 {
 	GossipTelepathy *telepathy;
 
-	gossip_debug (DEBUG_DOMAIN, "telepathy_get_own_contact");
-
 	telepathy = GOSSIP_TELEPATHY (protocol);
 
 	return gossip_telepathy_get_own_contact (telepathy);

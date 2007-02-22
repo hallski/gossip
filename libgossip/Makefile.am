@@ -30,7 +30,6 @@ backend_impl = 						\
 endif
 
 libgossip_la_SOURCES =             			\
-	gossip.h					\
 	gossip-account.c           			\
 	gossip-account.h           			\
 	gossip-account-manager.c   			\
