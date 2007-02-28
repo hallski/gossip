@@ -24,6 +24,7 @@
 #include <libtelepathy/tp-chan.h>
 #include <libtelepathy/tp-helpers.h>
 #include <libtelepathy/tp-chan-type-text-gen.h>
+#include <libtelepathy/tp-chan-iface-chat-state-gen.h>
 
 #include <libgossip/gossip-protocol.h>
 #include <libgossip/gossip-contact.h>
@@ -45,6 +46,7 @@ typedef struct {
 	GossipTelepathy *telepathy;
 	TpChan          *text_chan;
 	DBusGProxy      *text_iface;
+	DBusGProxy	*chat_state_iface;
 	guint            timeout_id;
 	guint            id;
 } TelepathyMessageChan;
@@ -70,6 +72,10 @@ static void     telepathy_message_sent_cb         (DBusGProxy             *text_
 						   guint                   timestamp,
 						   guint                   message_type,
 						   gchar                  *message_body,
+						   TelepathyMessageChan   *msg_chan);
+static void     telepathy_message_state_cb        (DBusGProxy             *chat_state_iface,
+						   guint                   contact_handle,
+						   guint                   state,
 						   TelepathyMessageChan   *msg_chan);
 static void     telepathy_message_ack_pending     (TelepathyMessageChan   *msg_chan);
 static void     telepathy_message_emit            (TelepathyMessageChan   *msg_chan,
@@ -130,6 +136,7 @@ gossip_telepathy_message_newchannel (GossipTelepathyMessage *message,
 {
 	TelepathyMessageChan *msg_chan;
 	DBusGProxy           *text_iface;
+	DBusGProxy	     *chat_state_iface;
 
 	g_return_if_fail (message != NULL);
 	g_return_if_fail (TELEPATHY_IS_CHAN (new_chan));
@@ -141,10 +148,13 @@ gossip_telepathy_message_newchannel (GossipTelepathyMessage *message,
 
 	text_iface = tp_chan_get_interface (new_chan,
 					    TELEPATHY_CHAN_IFACE_TEXT_QUARK);
+	chat_state_iface = tp_chan_get_interface (new_chan,
+						  TELEPATHY_CHAN_IFACE_CHAT_STATE_QUARK);
 
 	msg_chan = g_slice_new0 (TelepathyMessageChan);
 	msg_chan->text_chan = g_object_ref (new_chan);
 	msg_chan->text_iface = text_iface;
+	msg_chan->chat_state_iface = chat_state_iface;
 	msg_chan->telepathy = message->telepathy;
 	msg_chan->id = id;
 
@@ -157,14 +167,18 @@ gossip_telepathy_message_newchannel (GossipTelepathyMessage *message,
 	dbus_g_proxy_connect_signal (DBUS_G_PROXY (new_chan), "Closed",
 				     G_CALLBACK (telepathy_message_closed_cb),
 				     message, NULL);
-
 	dbus_g_proxy_connect_signal (text_iface, "Received",
 				     G_CALLBACK (telepathy_message_received_cb),
 				     msg_chan, NULL);
-
 	dbus_g_proxy_connect_signal (text_iface, "Sent",
 				     G_CALLBACK (telepathy_message_sent_cb),
 				     msg_chan, NULL);
+
+	if (chat_state_iface != NULL) {
+		dbus_g_proxy_connect_signal (chat_state_iface, "ChatStateChanged",
+					     G_CALLBACK (telepathy_message_state_cb),
+					     msg_chan, NULL);
+	}
 
 	telepathy_message_timeout_reset (msg_chan);
 }
@@ -219,6 +233,31 @@ gossip_telepathy_message_send (GossipTelepathyMessage *message,
 	}
 
 	telepathy_message_timeout_reset (msg_chan);
+}
+
+void
+gossip_telepathy_message_send_state (GossipTelepathyMessage *message,
+				     guint                   id,
+				     guint                   state)
+{
+	TelepathyMessageChan *msg_chan;
+	GError               *error = NULL;
+
+	g_return_if_fail (message != NULL);
+
+	msg_chan = g_hash_table_lookup (message->text_channels,
+					GUINT_TO_POINTER (id));
+
+	if (msg_chan && msg_chan->chat_state_iface) {
+		gossip_debug (DEBUG_DOMAIN, "Set state: %d", state);
+		if (!tp_chan_iface_chat_state_set_chat_state (msg_chan->chat_state_iface,
+							      state,
+							      &error)) {
+			gossip_debug (DEBUG_DOMAIN, "Set Chat State Error: %s",
+				      error->message);
+			g_clear_error (&error);
+		}
+	}
 }
 
 static void
@@ -431,5 +470,23 @@ telepathy_message_find_chan (guint                 key,
 	}
 
 	return FALSE;
+}
+
+static void
+telepathy_message_state_cb (DBusGProxy *chat_state_iface,
+  			    guint contact_handle,
+			    guint state,
+			    TelepathyMessageChan *msg_chan)
+{
+	GossipContact 		*from;
+	gboolean 		 composing;
+	GossipTelepathyContacts *contacts;
+
+	composing = (state == TP_CHANNEL_CHAT_STATE_COMPOSING);
+	contacts = gossip_telepathy_get_contacts (msg_chan->telepathy);
+	from = gossip_telepathy_contacts_get_from_handle (contacts,
+							  contact_handle);
+
+	g_signal_emit_by_name (msg_chan->telepathy, "composing", from, composing);
 }
 

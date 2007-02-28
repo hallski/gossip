@@ -708,7 +708,7 @@ telepathy_retrieve_open_channels (GossipTelepathy *telepathy)
 		GValueArray                   *chan_struct;
 		const gchar                   *object_path;
 		const gchar                   *chan_iface;
-		TelepathyConnectionHandleType  handle_type;
+		guint                          handle_type;
 		guint                          handle;
 
 		chan_struct = g_ptr_array_index (channels, i);
@@ -1029,7 +1029,29 @@ telepathy_send_composing (GossipProtocol *protocol,
 			  GossipContact  *contact,
 			  gboolean        typing)
 {
-	gossip_debug (DEBUG_DOMAIN, "telepathy_send_composing");
+	GossipTelepathyPriv *priv;
+	GossipTelepathy     *telepathy;
+	guint                handle;
+	const gchar         *id;
+	guint		     state;
+
+	g_return_if_fail (GOSSIP_IS_TELEPATHY (protocol));
+	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
+
+	telepathy = GOSSIP_TELEPATHY (protocol);
+	priv = GET_PRIV (telepathy);
+
+	id = gossip_contact_get_id (contact);
+
+	handle = gossip_telepathy_contacts_get_handle (priv->contacts, id);
+
+	if (typing) {
+		state = TP_CHANNEL_CHAT_STATE_COMPOSING;
+	} else {
+		state = TP_CHANNEL_CHAT_STATE_INACTIVE;
+	}
+
+	gossip_telepathy_message_send_state (priv->message, handle, state);
 }
 
 static void

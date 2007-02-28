@@ -1,3 +1,11 @@
+2006-02-28  Xavier Claessens  <xclaesse@gmail.com>
+
+	* protocols/telepathy/gossip-telepathy.c:
+	* protocols/telepathy/gossip-telepathy-message.c:
+	* protocols/telepathy/gossip-telepathy-message.h:
+	* configure.ac: Add composing state support, requires
+	libtelepathy >= 0.0.42. Fixes bug #407846 (Guillaume Desmottes).
+
 2006-02-22  Xavier Claessens  <xclaesse@gmail.com>
 
 	* protocols/telepathy/gossip-telepathy.c: remove a useless debug msg.

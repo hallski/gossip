@@ -142,7 +142,7 @@ AC_ARG_ENABLE(telepathy,
               enable_telepathy=no)
 
 if test "x$enable_telepathy" != "xno" -a "x$have_dbus" = "xyes"; then
-   telepathy_pkgconfig_tmp="libtelepathy >= 0.0.41 "
+   telepathy_pkgconfig_tmp="libtelepathy >= 0.0.42 "
    PKG_CHECK_MODULES(GOSSIP_TELEPATHY,
    [
       glib-2.0 >= $GLIB_REQUIRED

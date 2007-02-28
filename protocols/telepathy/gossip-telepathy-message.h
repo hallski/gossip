@@ -35,6 +35,10 @@ void                    gossip_telepathy_message_newchannel (GossipTelepathyMess
 void                    gossip_telepathy_message_send       (GossipTelepathyMessage *message,
 							     guint                   handle,
 							     const gchar            *message_body);
+void			gossip_telepathy_message_send_state (GossipTelepathyMessage *message,
+							     guint                   handle,
+				     			     guint                   state);
+
 
 G_END_DECLS
 
