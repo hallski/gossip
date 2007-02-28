@@ -24,8 +24,8 @@
 #include <string.h>
 #include <gconf/gconf-client.h>
 #include <glib/gi18n.h>
-
 #include <dbus/dbus-glib.h>
+
 #include <libtelepathy/tp-helpers.h>
 #include <libtelepathy/tp-conn.h>
 #include <libtelepathy/tp-conn-gen.h>
@@ -54,43 +54,17 @@
 #include "gossip-telepathy-contact-list.h"
 #include "gossip-telepathy-private.h"
 
-
 #define DEBUG_DOMAIN "Telepathy"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_TELEPATHY, GossipTelepathyPriv))
 
-/* This is the timeout we will accept the user to be composing for
- * before we assume it is stuck and the server has failed to tell us
- * the user has stopped composing.
- */
-#define COMPOSING_TIMEOUT   45
-
 struct _GossipTelepathyPriv {
 	GossipContact              *contact;
 	GossipAccount              *account;
-	GossipPresence             *presence;
-	GossipVCard                *vcard;
 
-	/* Cancel registration attempt */
-	gboolean                    register_cancel;
-
-	/* Connection details */
-	guint                       connection_timeout_id;
-	gboolean                    disconnect_request;
-
-	/* Used to hold a list of composing message ids, this is so we
-	 * can send the cancelation to the last message id.
-	 */
-	GHashTable                 *composing_ids;
-	GHashTable                 *composing_timeouts;
-	GHashTable                 *composing_requests;
-
-	/* Telepathy connection object */
 	TpConn                     *tp_conn;
-
 	TelepathyConnectionStatus   status;
 
-	/* Channels and interfaces in other modules */
 	GossipTelepathyContacts    *contacts;
 	GossipTelepathyContactList *contact_list;
 	GossipTelepathyChatrooms   *chatrooms;
@@ -198,7 +172,7 @@ static GError *         telepathy_error_create                   (GossipProtocol
 static void             telepathy_newchannel_cb                  (DBusGProxy                   *proxy,
 								  const char                   *object_path,
 								  const char                   *channel_type,
-								  guint                         handle_type,
+								  TelepathyHandleType           handle_type,
 								  guint                         handle,
 								  gboolean                      suppress_handle,
 								  GossipTelepathy              *telepathy);
@@ -319,22 +293,6 @@ gossip_telepathy_init (GossipTelepathy *telepathy)
 
 	priv = GET_PRIV (telepathy);
 
-	priv->composing_ids =
-		g_hash_table_new_full (gossip_contact_hash,
-				       gossip_contact_equal,
-				       (GDestroyNotify) g_object_unref,
-				       (GDestroyNotify) g_free);
-
-	priv->composing_timeouts =
-		g_hash_table_new_full (gossip_contact_hash,
-				       gossip_contact_equal,
-				       (GDestroyNotify) g_object_unref, NULL);
-
-	priv->composing_requests =
-		g_hash_table_new_full (gossip_contact_hash,
-				       gossip_contact_equal,
-				       (GDestroyNotify) g_object_unref, NULL);
-
 	priv->status = TP_CONN_STATUS_DISCONNECTED;
 
 	priv->contact_list = gossip_telepathy_contact_list_init (telepathy);
@@ -354,29 +312,12 @@ telepathy_finalize (GObject *object)
 	telepathy = GOSSIP_TELEPATHY (object);
 	priv = GET_PRIV (telepathy);
 
-	if (priv->presence) {
-		g_object_unref (priv->presence);
-	}
-
 	if (priv->account) {
 		g_object_unref (priv->account);
 	}
 
 	if (priv->contact) {
 		g_object_unref (priv->contact);
-	}
-
-	if (priv->vcard) {
-		g_object_unref (priv->vcard);
-	}
-
-	g_hash_table_destroy (priv->composing_ids);
-	g_hash_table_destroy (priv->composing_timeouts);
-	g_hash_table_destroy (priv->composing_requests);
-
-	if (priv->connection_timeout_id != 0) {
-		g_source_remove (priv->connection_timeout_id);
-		priv->connection_timeout_id = 0;
 	}
 
 	gossip_telepathy_contact_list_finalize (priv->contact_list);
@@ -470,7 +411,7 @@ telepathy_get_existing_connection (GossipAccount *account)
 			g_array_append_val (handles, handle);
 
 			if (!tp_conn_inspect_handles (conn_iface,
-						      TP_CONN_HANDLE_TYPE_CONTACT,
+						      TP_HANDLE_TYPE_CONTACT,
 						      handles, &handle_name,
 						      &error)) {
 				gossip_debug (DEBUG_DOMAIN, "InspectHandle Error: %s, %d",
@@ -530,10 +471,6 @@ telepathy_login (GossipProtocol *protocol)
 
 	gossip_debug (DEBUG_DOMAIN, "Connecting...");
 	g_signal_emit_by_name (telepathy, "connecting", priv->account);
-
-	priv->presence = gossip_presence_new ();
-	gossip_presence_set_state (priv->presence,
-				   GOSSIP_PRESENCE_STATE_AVAILABLE);
 
 	priv->tp_conn = telepathy_get_existing_connection (priv->account);
 	if (priv->tp_conn) {
@@ -708,7 +645,7 @@ telepathy_retrieve_open_channels (GossipTelepathy *telepathy)
 		GValueArray                   *chan_struct;
 		const gchar                   *object_path;
 		const gchar                   *chan_iface;
-		guint                          handle_type;
+		TelepathyHandleType            handle_type;
 		guint                          handle;
 
 		chan_struct = g_ptr_array_index (channels, i);
@@ -760,10 +697,6 @@ telepathy_connection_status_changed_cb (DBusGProxy                      *proxy,
 			priv->tp_conn = NULL;
 		}
 
-		if (priv->presence) {
-			g_object_unref (priv->presence);
-			priv->presence = NULL;
-		}
 		gossip_debug (DEBUG_DOMAIN, "Disconnected.");
 	}
 
@@ -1067,11 +1000,6 @@ telepathy_set_presence (GossipProtocol *protocol,
 	telepathy = GOSSIP_TELEPATHY (protocol);
 	priv = GET_PRIV (telepathy);
 
-	if (priv->presence) {
-		g_object_unref (priv->presence);
-	}
-	priv->presence = g_object_ref (presence);
-
 	gossip_telepathy_contacts_send_presence (priv->contacts, presence);
 }
 
@@ -1355,13 +1283,13 @@ telepathy_get_groups (GossipProtocol *protocol)
  */
 
 static void
-telepathy_newchannel_cb (DBusGProxy      *proxy,
-			 const char      *object_path,
-			 const char      *channel_type,
-			 guint            handle_type,
-			 guint            channel_handle,
-			 gboolean         suppress_handle,
-			 GossipTelepathy *telepathy)
+telepathy_newchannel_cb (DBusGProxy          *proxy,
+			 const char          *object_path,
+			 const char          *channel_type,
+			 TelepathyHandleType  handle_type,
+			 guint                channel_handle,
+			 gboolean             suppress_handle,
+			 GossipTelepathy     *telepathy)
 {
 	GossipTelepathyPriv *priv;
 	TpChan              *new_chan;
@@ -1394,7 +1322,7 @@ telepathy_newchannel_cb (DBusGProxy      *proxy,
 							  new_chan);
 	}
 	else if (strcmp (channel_type, TP_IFACE_CHANNEL_TYPE_TEXT) == 0 &&
-		 handle_type == TP_CONN_HANDLE_TYPE_CONTACT)
+		 handle_type == TP_HANDLE_TYPE_CONTACT)
 	{
 		gossip_telepathy_message_newchannel (priv->message,
 						     new_chan,

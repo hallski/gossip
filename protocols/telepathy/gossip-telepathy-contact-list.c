@@ -211,7 +211,7 @@ gossip_telepathy_contact_list_newchannel (GossipTelepathyContactList *list,
 	gossip_debug (DEBUG_DOMAIN, "new contact list channel: handle_type: %d",
 		      new_chan->handle_type);
 
-	if (new_chan->handle_type == TP_CONN_HANDLE_TYPE_LIST) {
+	if (new_chan->handle_type == TP_HANDLE_TYPE_LIST) {
 		TelepathyListType list_type;
 
 		list_type = telepathy_contact_list_get_type (list, new_chan);
@@ -262,7 +262,7 @@ gossip_telepathy_contact_list_newchannel (GossipTelepathyContactList *list,
 		}
 		gossip_telepathy_group_setup (group);
 	}
-	else if (new_chan->handle_type == TP_CONN_HANDLE_TYPE_GROUP) {
+	else if (new_chan->handle_type == TP_HANDLE_TYPE_GROUP) {
 		const gchar *object_path;
 
 		object_path = dbus_g_proxy_get_path (DBUS_G_PROXY (new_chan));
@@ -308,7 +308,7 @@ telepathy_contact_list_get_type (GossipTelepathyContactList *list,
 	g_array_append_val (handles, list_chan->handle);
 
 	if (!tp_conn_inspect_handles (DBUS_G_PROXY (tp_conn),
-				      TP_CONN_HANDLE_TYPE_LIST,
+				      TP_HANDLE_TYPE_LIST,
 				      handles,
 				      &handle_name,
 				      &error)) {
@@ -540,7 +540,7 @@ telepathy_contact_list_get_group (GossipTelepathyContactList *list,
 	account = gossip_telepathy_get_account (list->telepathy);
 
 	if (!tp_conn_request_handles (DBUS_G_PROXY (tp_conn),
-				      TP_CONN_HANDLE_TYPE_GROUP,
+				      TP_HANDLE_TYPE_GROUP,
 				      names,
 				      &handles,
 				      &error)) {
@@ -554,7 +554,7 @@ telepathy_contact_list_get_group (GossipTelepathyContactList *list,
 
 	if (!tp_conn_request_channel (DBUS_G_PROXY (tp_conn),
 				      TP_IFACE_CHANNEL_TYPE_CONTACT_LIST,
-				      TP_CONN_HANDLE_TYPE_GROUP,
+				      TP_HANDLE_TYPE_GROUP,
 				      group_handle,
 				      FALSE,
 				      &group_object_path,
@@ -569,7 +569,7 @@ telepathy_contact_list_get_group (GossipTelepathyContactList *list,
 				     dbus_g_proxy_get_bus_name (DBUS_G_PROXY (tp_conn)),
 				     group_object_path,
 				     TP_IFACE_CHANNEL_TYPE_CONTACT_LIST,
-				     TP_CONN_HANDLE_TYPE_GROUP,
+				     TP_HANDLE_TYPE_GROUP,
 				     group_handle);
 
 	dbus_g_proxy_connect_signal (DBUS_G_PROXY (group_channel),

@@ -357,12 +357,12 @@ telepathy_group_members_changed_cb (DBusGProxy           *group_iface,
 const gchar *
 gossip_telepathy_group_get_name (GossipTelepathyGroup *group)
 {
-	TpConn                        *tp_conn;
-	TelepathyConnectionHandleType  handle_type;
-	guint                          channel_handle;
-	GArray                        *group_handles;
-	gchar                        **group_names;
-	GError                        *error = NULL;
+	TpConn              *tp_conn;
+	TelepathyHandleType  handle_type;
+	guint                channel_handle;
+	GArray              *group_handles;
+	gchar              **group_names;
+	GError              *error = NULL;
 
 	GossipTelepathyGroupPriv *priv;
 
@@ -389,7 +389,7 @@ gossip_telepathy_group_get_name (GossipTelepathyGroup *group)
 	g_array_append_val (group_handles, channel_handle);
 	tp_conn = gossip_telepathy_get_connection (priv->telepathy);
 	if (!tp_conn_inspect_handles (DBUS_G_PROXY (tp_conn),
-				      TP_CONN_HANDLE_TYPE_GROUP,
+				      TP_HANDLE_TYPE_GROUP,
 				      group_handles,
 				      &group_names,
 				      &error)) {

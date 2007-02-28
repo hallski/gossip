@@ -1,5 +1,16 @@
 2006-02-28  Xavier Claessens  <xclaesse@gmail.com>
 
+	* protocols/telepathy/gossip-telepathy-chatrooms.c:
+	* protocols/telepathy/gossip-telepathy.c:
+	* protocols/telepathy/gossip-telepathy-contact-list.c:
+	* protocols/telepathy/gossip-telepathy-contacts.c:
+	* protocols/telepathy/gossip-telepathy-message.c:
+	* protocols/telepathy/gossip-telepathy-group.c:
+	* configure.ac: Remove some unused code and don't use deprecated symbols
+	from libtelepathy. Depends on libtelepathy >= 0.0.51.
+
+2006-02-28  Xavier Claessens  <xclaesse@gmail.com>
+
 	* protocols/telepathy/gossip-telepathy.c:
 	* protocols/telepathy/gossip-telepathy-message.c:
 	* protocols/telepathy/gossip-telepathy-message.h:

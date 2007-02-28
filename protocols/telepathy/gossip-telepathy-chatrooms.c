@@ -155,7 +155,7 @@ gossip_telepathy_chatrooms_join (GossipTelepathyChatrooms *chatrooms,
 		/* Get a handle for the room */
 		room_names[0] = gossip_chatroom_get_room (room);
 		if (!tp_conn_request_handles (DBUS_G_PROXY (tp_conn),
-					      TP_CONN_HANDLE_TYPE_ROOM,
+					      TP_HANDLE_TYPE_ROOM,
 					      room_names,
 					      &room_handles,
 					      &error)) {
@@ -170,7 +170,7 @@ gossip_telepathy_chatrooms_join (GossipTelepathyChatrooms *chatrooms,
 		/* Request the object path */
 		if (!tp_conn_request_channel (DBUS_G_PROXY (tp_conn),
 					      TP_IFACE_CHANNEL_TYPE_TEXT,
-					      TP_CONN_HANDLE_TYPE_ROOM,
+					      TP_HANDLE_TYPE_ROOM,
 					      room_handle,
 					      TRUE,
 					      &room_object_path,
@@ -187,7 +187,7 @@ gossip_telepathy_chatrooms_join (GossipTelepathyChatrooms *chatrooms,
 					    bus_name,
 					    room_object_path,
 					    TP_IFACE_CHANNEL_TYPE_TEXT,
-					    TP_CONN_HANDLE_TYPE_ROOM,
+					    TP_HANDLE_TYPE_ROOM,
 					    room_handle);
 		g_free (room_object_path);
 

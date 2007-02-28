@@ -274,7 +274,7 @@ gossip_telepathy_contacts_get_handle (GossipTelepathyContacts *contacts,
 		GArray      *handles;
 
 		success = tp_conn_request_handles (DBUS_G_PROXY (tp_conn),
-						   TP_CONN_HANDLE_TYPE_CONTACT,
+						   TP_HANDLE_TYPE_CONTACT,
 						   contact_ids, &handles, &error);
 
 		handle = g_array_index(handles, guint, 0);
@@ -361,7 +361,7 @@ gossip_telepathy_contacts_get_from_handles (GossipTelepathyContacts *contacts,
 	/* Holds all handles we don't have yet.
 	 * FIXME: We should release them at some point. */
 	if (!tp_conn_hold_handles (DBUS_G_PROXY (tp_conn),
-				   TP_CONN_HANDLE_TYPE_CONTACT,
+				   TP_HANDLE_TYPE_CONTACT,
 				   new_handles, &error)) {
 		gossip_debug (DEBUG_DOMAIN, "HoldHandles Error: %s",
 			      error->message);
@@ -372,7 +372,7 @@ gossip_telepathy_contacts_get_from_handles (GossipTelepathyContacts *contacts,
 
 	/* Get the IDs of all new handles */
 	if (!tp_conn_inspect_handles (DBUS_G_PROXY (tp_conn),
-				      TP_CONN_HANDLE_TYPE_CONTACT,
+				      TP_HANDLE_TYPE_CONTACT,
 				      new_handles,
 				      &handles_names,
 				      &error)) {

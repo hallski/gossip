@@ -212,7 +212,7 @@ gossip_telepathy_message_send (GossipTelepathyMessage *message,
 						 tp_conn,
 						 bus_name,
 						 TP_IFACE_CHANNEL_TYPE_TEXT,
-						 TP_CONN_HANDLE_TYPE_CONTACT,
+						 TP_HANDLE_TYPE_CONTACT,
 						 id, TRUE);
 
 		gossip_telepathy_message_newchannel (message, text_chan, id);
@@ -297,7 +297,7 @@ telepathy_message_sent_cb (DBusGProxy           *text_iface,
 {
 	gossip_debug (DEBUG_DOMAIN, "Message sent: %s", message_body);
 
-	if (msg_chan->text_chan->handle_type == TP_CONN_HANDLE_TYPE_ROOM) {
+	if (msg_chan->text_chan->handle_type == TP_HANDLE_TYPE_ROOM) {
 		telepathy_message_emit (msg_chan, timestamp, 0, message_body);
 	}
 	telepathy_message_timeout_reset (msg_chan);
@@ -371,7 +371,7 @@ telepathy_message_emit (TelepathyMessageChan *msg_chan,
 
 	recipient = gossip_telepathy_get_own_contact (msg_chan->telepathy);
 
-	if (msg_chan->text_chan->handle_type != TP_CONN_HANDLE_TYPE_ROOM) {
+	if (msg_chan->text_chan->handle_type != TP_HANDLE_TYPE_ROOM) {
 		message = gossip_message_new (GOSSIP_MESSAGE_TYPE_NORMAL, recipient);
 	} else {
 		message = gossip_message_new (GOSSIP_MESSAGE_TYPE_CHAT_ROOM, recipient);
@@ -381,7 +381,7 @@ telepathy_message_emit (TelepathyMessageChan *msg_chan,
 	gossip_message_set_body (message, message_body);
 	gossip_message_set_timestamp (message, (GossipTime) timestamp);
 
-	if (msg_chan->text_chan->handle_type != TP_CONN_HANDLE_TYPE_ROOM) {
+	if (msg_chan->text_chan->handle_type != TP_HANDLE_TYPE_ROOM) {
 		g_signal_emit_by_name (msg_chan->telepathy, "new-message",
 				       message);
 	} else {
@@ -415,7 +415,7 @@ telepathy_message_timeout (TelepathyMessageChan *msg_chan)
 static void
 telepathy_message_timeout_reset (TelepathyMessageChan *msg_chan)
 {
-	if (msg_chan->text_chan->handle_type == TP_CONN_HANDLE_TYPE_ROOM) {
+	if (msg_chan->text_chan->handle_type == TP_HANDLE_TYPE_ROOM) {
 		return;
 	}
 
