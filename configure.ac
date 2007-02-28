@@ -170,9 +170,13 @@ if test "x$enable_telepathy" = "xyes"; then
          AC_MSG_ERROR([Couldn't find Telepathy])
       fi
    fi
+   BUGZILLA_COMPONENT=Telepathy
+else
+   BUGZILLA_COMPONENT=General
 fi
 
 AM_CONDITIONAL(USE_TELEPATHY, test x$have_telepathy = xyes)
+AC_SUBST(BUGZILLA_COMPONENT)
 
 
 dnl -----------------------------------------------------------

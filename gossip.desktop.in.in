@@ -11,5 +11,5 @@ Type=Application
 Categories=Application;Network;InstantMessaging;
 X-GNOME-Bugzilla-Bugzilla=GNOME
 X-GNOME-Bugzilla-Product=gossip
-X-GNOME-Bugzilla-Component=General
+X-GNOME-Bugzilla-Component=@BUGZILLA_COMPONENT@
 X-GNOME-Bugzilla-Version=@VERSION@

@@ -1,3 +1,9 @@
+2007-02-28  Richard Hult  <richard@imendio.com>
+
+	* configure.ac:
+	* gossip.desktop.in.in: Bring back the telepathy component for
+	bugzilla like before it was merged.
+
 2006-02-28  Xavier Claessens  <xclaesse@gmail.com>
 
 	* protocols/telepathy/gossip-telepathy-chatrooms.c:
