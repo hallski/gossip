@@ -56,40 +56,39 @@ struct _GossipTelepathyMessage {
 	GHashTable       *text_channels;
 };
 
-static void     telepathy_message_disconnected_cb (GossipProtocol         *telepathy,
-						   GossipAccount          *account,
-						   gint                    reason,
-						   GossipTelepathyMessage *message);
-static void     telepathy_message_received_cb     (DBusGProxy             *text_iface,
-						   guint                   message_id,
-						   guint                   timestamp,
-						   guint                   from_handle,
-						   guint                   message_type,
-						   guint                   message_flags,
-						   gchar                  *message_body,
-						   TelepathyMessageChan   *msg_chan);
-static void     telepathy_message_sent_cb         (DBusGProxy             *text_iface,
-						   guint                   timestamp,
-						   guint                   message_type,
-						   gchar                  *message_body,
-						   TelepathyMessageChan   *msg_chan);
-static void     telepathy_message_state_cb        (DBusGProxy             *chat_state_iface,
-						   guint                   contact_handle,
-						   guint                   state,
-						   TelepathyMessageChan   *msg_chan);
-static void     telepathy_message_ack_pending     (TelepathyMessageChan   *msg_chan);
-static void     telepathy_message_emit            (TelepathyMessageChan   *msg_chan,
-						   guint                   timestamp,
-						   guint                   from_handle,
-						   const gchar            *message_body);
-static gboolean telepathy_message_timeout         (TelepathyMessageChan   *msg_chan);
-static void     telepathy_message_timeout_reset   (TelepathyMessageChan   *msg_chan);
-static void     telepathy_message_free            (TelepathyMessageChan   *msg_chan);
-static void     telepathy_message_closed_cb       (TpChan                 *text_chan,
-						   GossipTelepathyMessage *message);
-static gboolean telepathy_message_find_chan       (guint                   key,
-						   TelepathyMessageChan   *msg_chan,
-						   TpChan                 *text_chan);
+static void     telepathy_message_disconnecting_cb (GossipProtocol         *telepathy,
+						    GossipAccount          *account,
+						    GossipTelepathyMessage *message);
+static void     telepathy_message_received_cb      (DBusGProxy             *text_iface,
+						    guint                   message_id,
+						    guint                   timestamp,
+						    guint                   from_handle,
+						    guint                   message_type,
+						    guint                   message_flags,
+						    gchar                  *message_body,
+						    TelepathyMessageChan   *msg_chan);
+static void     telepathy_message_sent_cb          (DBusGProxy             *text_iface,
+						    guint                   timestamp,
+						    guint                   message_type,
+						    gchar                  *message_body,
+						    TelepathyMessageChan   *msg_chan);
+static void     telepathy_message_state_cb         (DBusGProxy             *chat_state_iface,
+						    guint                   contact_handle,
+						    guint                   state,
+						    TelepathyMessageChan   *msg_chan);
+static void     telepathy_message_ack_pending      (TelepathyMessageChan   *msg_chan);
+static void     telepathy_message_emit             (TelepathyMessageChan   *msg_chan,
+						    guint                   timestamp,
+						    guint                   from_handle,
+						    const gchar            *message_body);
+static gboolean telepathy_message_timeout          (TelepathyMessageChan   *msg_chan);
+static void     telepathy_message_timeout_reset    (TelepathyMessageChan   *msg_chan);
+static void     telepathy_message_free             (TelepathyMessageChan   *msg_chan);
+static void     telepathy_message_closed_cb        (TpChan                 *text_chan,
+						    GossipTelepathyMessage *message);
+static gboolean telepathy_message_find_chan        (guint                   key,
+						    TelepathyMessageChan   *msg_chan,
+						    TpChan                 *text_chan);
 
 GossipTelepathyMessage *
 gossip_telepathy_message_init (GossipTelepathy *telepathy)
@@ -105,17 +104,16 @@ gossip_telepathy_message_init (GossipTelepathy *telepathy)
 							NULL,
 							(GDestroyNotify)
 							telepathy_message_free);
-	g_signal_connect (telepathy, "disconnected",
-			  G_CALLBACK (telepathy_message_disconnected_cb),
+	g_signal_connect (telepathy, "disconnecting",
+			  G_CALLBACK (telepathy_message_disconnecting_cb),
 			  message);
 	return message;
 }
 
 static void
-telepathy_message_disconnected_cb (GossipProtocol         *telepathy,
-				   GossipAccount          *account,
-				   gint                    reason,
-				   GossipTelepathyMessage *message)
+telepathy_message_disconnecting_cb (GossipProtocol         *telepathy,
+				    GossipAccount          *account,
+				    GossipTelepathyMessage *message)
 {
 	g_hash_table_remove_all (message->text_channels);
 }

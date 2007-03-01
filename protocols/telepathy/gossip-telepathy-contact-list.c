@@ -56,9 +56,8 @@ struct _GossipTelepathyContactList {
 	GHashTable           *groups;
 };
 
-static void              telepathy_contact_list_disconnected_cb          (GossipProtocol             *telepathy,
+static void              telepathy_contact_list_disconnecting_cb         (GossipProtocol             *telepathy,
 									  GossipAccount              *account,
-									  gint                        reason,
 									  GossipTelepathyContactList *list);
 static TelepathyListType telepathy_contact_list_get_type                 (GossipTelepathyContactList *list,
 									  TpChan                     *list_chan);
@@ -104,18 +103,17 @@ gossip_telepathy_contact_list_init (GossipTelepathy *telepathy)
 					      (GDestroyNotify) g_free,
 					      (GDestroyNotify) g_object_unref);
 
-	g_signal_connect (telepathy, "disconnected",
-			  G_CALLBACK (telepathy_contact_list_disconnected_cb),
+	g_signal_connect (telepathy, "disconnecting",
+			  G_CALLBACK (telepathy_contact_list_disconnecting_cb),
 			  list);
 
 	return list;
 }
 
 static void
-telepathy_contact_list_disconnected_cb (GossipProtocol             *telepathy,
-					GossipAccount              *account,
-					gint                        reason,
-					GossipTelepathyContactList *list)
+telepathy_contact_list_disconnecting_cb (GossipProtocol             *telepathy,
+					 GossipAccount              *account,
+					 GossipTelepathyContactList *list)
 {
 	g_hash_table_remove_all (list->groups);
 	if (list->known) {

@@ -53,9 +53,8 @@ typedef struct {
 	TpChan               *room_channel;
 } TelepathyChatroom;
 
-static void     telepathy_chatrooms_disconnected_cb    (GossipProtocol            *telepathy,
+static void     telepathy_chatrooms_disconnecting_cb   (GossipProtocol            *telepathy,
 							GossipAccount             *account,
-							gint                       reason,
 							GossipTelepathyChatrooms  *chatrooms);
 static void     telepathy_chatrooms_closed_cb          (TpChan                    *tp_chan,
 							GossipTelepathyChatrooms  *chatrooms);
@@ -89,18 +88,17 @@ gossip_telepathy_chatrooms_init (GossipTelepathy *telepathy)
 						  telepathy_chatrooms_chatroom_free);
 	chatrooms->message = gossip_telepathy_message_init (telepathy);
 
-	g_signal_connect (telepathy, "disconnected",
-			  G_CALLBACK (telepathy_chatrooms_disconnected_cb),
+	g_signal_connect (telepathy, "disconnecting",
+			  G_CALLBACK (telepathy_chatrooms_disconnecting_cb),
 			  chatrooms);
 
 	return chatrooms;
 }
 
 static void
-telepathy_chatrooms_disconnected_cb (GossipProtocol           *telepathy,
-				     GossipAccount            *account,
-				     gint                      reason,
-				     GossipTelepathyChatrooms *chatrooms)
+telepathy_chatrooms_disconnecting_cb (GossipProtocol           *telepathy,
+				      GossipAccount            *account,
+				      GossipTelepathyChatrooms *chatrooms)
 {
 	g_hash_table_remove_all (chatrooms->rooms);
 }

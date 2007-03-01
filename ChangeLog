@@ -1,3 +1,16 @@
+2006-03-01  Xavier Claessens  <xclaesse@gmail.com>
+
+	* protocols/telepathy/gossip-telepathy-chatrooms.c:
+	* protocols/telepathy/gossip-telepathy.c:
+	* protocols/telepathy/gossip-telepathy-contact-list.c:
+	* protocols/telepathy/gossip-telepathy-contacts.c:
+	* protocols/telepathy/gossip-telepathy-message.c: Disconnect everything
+	and set proxies to NULL as soon as "disconnecting" signal is emitted,
+	do not wait for "disconnected" signal because in some cases it can lead
+	to a crash. Fixes bug #400301, #401027.
+	Directly return from telepathy_login() if we are already connecting.
+	Fixes bug #409718
+
 2007-02-28  Richard Hult  <richard@imendio.com>
 
 	* configure.ac:

@@ -469,6 +469,10 @@ telepathy_login (GossipProtocol *protocol)
 	telepathy = GOSSIP_TELEPATHY (protocol);
 	priv = GET_PRIV (telepathy);
 
+	if (priv->tp_conn) {
+		return;
+	}
+
 	gossip_debug (DEBUG_DOMAIN, "Connecting...");
 	g_signal_emit_by_name (telepathy, "connecting", priv->account);
 
@@ -642,11 +646,11 @@ telepathy_retrieve_open_channels (GossipTelepathy *telepathy)
 	}
 
 	for (i = 0; channels->len > i; i++) {
-		GValueArray                   *chan_struct;
-		const gchar                   *object_path;
-		const gchar                   *chan_iface;
-		TelepathyHandleType            handle_type;
-		guint                          handle;
+		GValueArray         *chan_struct;
+		const gchar         *object_path;
+		const gchar         *chan_iface;
+		TelepathyHandleType  handle_type;
+		guint                handle;
 
 		chan_struct = g_ptr_array_index (channels, i);
 		object_path = g_value_get_boxed (g_value_array_get_nth (chan_struct, 0));
@@ -756,9 +760,10 @@ telepathy_logout (GossipProtocol *protocol)
 	telepathy = GOSSIP_TELEPATHY (protocol);
 	priv = GET_PRIV (telepathy);
 
-	g_signal_emit_by_name (telepathy, "disconnecting", priv->account);
-
 	if (!priv->tp_conn) {
+		g_signal_emit_by_name (telepathy, "disconnecting", priv->account);
+		g_signal_emit_by_name (telepathy, "disconnected", priv->account,
+				       GOSSIP_PROTOCOL_DISCONNECT_ASKED);
 		return;
 	}
 

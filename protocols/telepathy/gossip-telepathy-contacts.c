@@ -57,14 +57,13 @@ typedef struct {
 	guint                   *handles;
 } TelepathyContactsAliasesRequestData;
 
-static void     telepathy_contacts_disconnected_cb         (GossipProtocol                       *telepathy,
+static void     telepathy_contacts_disconnecting_cb        (GossipProtocol                       *telepathy,
 							    GossipAccount                        *account,
-							    gint                                  reason,
 							    GossipTelepathyContacts              *contacts);
 void            telepathy_contacts_connected_cb            (GossipProtocol                       *telepathy,
 							    GossipAccount                        *account,
 							    GossipTelepathyContacts              *contacts);
-static void     telepathy_contacts_disconnected_foreach    (gchar                                *id,
+static void     telepathy_contacts_disconnecting_foreach   (gchar                                *id,
 							    GossipContact                        *contact,
 							    GossipTelepathyContacts              *contacts);
 static gboolean telepathy_contacts_find_foreach            (gchar                                *id,
@@ -127,8 +126,8 @@ gossip_telepathy_contacts_init (GossipTelepathy *telepathy)
 						    g_str_equal,
 						    (GDestroyNotify) g_free,
 						    (GDestroyNotify) g_object_unref);
-	g_signal_connect (telepathy, "disconnected",
-			  G_CALLBACK (telepathy_contacts_disconnected_cb),
+	g_signal_connect (telepathy, "disconnecting",
+			  G_CALLBACK (telepathy_contacts_disconnecting_cb),
 			  contacts);
 	g_signal_connect (telepathy, "connected",
 			  G_CALLBACK (telepathy_contacts_connected_cb),
@@ -147,13 +146,12 @@ gossip_telepathy_contacts_finalize (GossipTelepathyContacts *contacts)
 }
 
 static void
-telepathy_contacts_disconnected_cb (GossipProtocol          *telepathy,
-				    GossipAccount           *account,
-				    gint                     reason,
-				    GossipTelepathyContacts *contacts)
+telepathy_contacts_disconnecting_cb (GossipProtocol          *telepathy,
+				     GossipAccount           *account,
+				     GossipTelepathyContacts *contacts)
 {
 	g_hash_table_foreach (contacts->contacts,
-			      (GHFunc) telepathy_contacts_disconnected_foreach,
+			      (GHFunc) telepathy_contacts_disconnecting_foreach,
 			      contacts);
 
 	contacts->aliasing_iface = NULL;
@@ -592,9 +590,9 @@ gossip_telepathy_contacts_send_presence (GossipTelepathyContacts *contacts,
 }
 
 static void
-telepathy_contacts_disconnected_foreach (gchar                   *id,
-					 GossipContact           *contact,
-					 GossipTelepathyContacts *contacts)
+telepathy_contacts_disconnecting_foreach (gchar                   *id,
+					  GossipContact           *contact,
+					  GossipTelepathyContacts *contacts)
 {
 	g_object_set_data (G_OBJECT (contact), "telepathy-handle", NULL);
 	g_signal_emit_by_name (contacts->telepathy, "contact-removed", contact);
