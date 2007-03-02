@@ -101,11 +101,18 @@ galago_get_account (GossipAccount *account)
 	ga = g_hash_table_lookup (accounts, account);
 	if (!ga) {
 		static GalagoPerson *me = NULL;
-		const gchar         *account_id;
+		const gchar         *account_param;
 
-		account_id = gossip_account_get_id (account);
-
-		gossip_debug (DEBUG_DOMAIN, "Added account:'%s'", account_id);
+		if (gossip_account_has_param (account, "account")) {
+			gossip_account_param_get (account, 
+						  "account", &account_param, 
+						  NULL);
+		} else {
+			/* We don't support accounts without the
+			 * "account" parameter.
+			 */
+			return NULL;
+		}
 
 		/* We could just have a person per account, but then
 		 * if those accounts exist on our roster, they are not
@@ -114,14 +121,18 @@ galago_get_account (GossipAccount *account)
 		if (!me) {
 			me = galago_create_person (NULL);
 			galago_person_set_me (me);
+		} else {
+
 		}
 
 		gs = gossip_galago_get_service (account);
-		ga = galago_service_create_account (gs, me, account_id);
+		ga = galago_service_create_account (gs, me, account_param);
 
 		g_hash_table_insert (accounts,
 				     g_object_ref (account),
 				     g_object_ref (ga));
+
+		gossip_debug (DEBUG_DOMAIN, "Added account:'%s'", account_param);
 	}
 
 	return ga;
@@ -271,7 +282,7 @@ galago_contact_removed_cb (GossipSession *session,
 	ga = galago_person_get_account (gpe, gs, contact_id, FALSE);
 #endif
 
-	ga = galago_service_get_account (gs, contact_id, FALSE);
+	ga = galago_service_get_account (gs, contact_id, TRUE);
 	galago_account_remove_contact (ga_me, ga);
 
 	g_hash_table_remove (people, contact);
@@ -305,7 +316,7 @@ galago_contact_presence_updated_cb (GossipContact *contact,
 	}
 
 	gs = gossip_galago_get_service (account);
-	ga = galago_person_get_account (gpe, gs, contact_id, FALSE);
+	ga = galago_person_get_account (gpe, gs, contact_id, TRUE);
 	if (!ga) {
 		gossip_debug (DEBUG_DOMAIN, "Can not find account from contact:'%s'", contact_id);
 		return;

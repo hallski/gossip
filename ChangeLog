@@ -1,3 +1,10 @@
+2007-03-02  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-galago.c: (galago_get_account),
+	(galago_contact_removed_cb), (galago_contact_presence_updated_cb):
+	Fixed up Galago code which broke with the new GossipAccount
+	changes we made, fixes bug #413631 (Lionel H.).
+
 2006-03-02  Xavier Claessens  <xclaesse@gmail.com>
 
 	* protocols/telepathy/gossip-telepathy-marshal-main.c:
