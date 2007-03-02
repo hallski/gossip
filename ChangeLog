@@ -1,5 +1,11 @@
 2006-03-02  Xavier Claessens  <xclaesse@gmail.com>
 
+	* protocols/telepathy/gossip-telepathy-marshal-main.c:
+	* protocols/telepathy/gossip-telepathy-marshal.list: Missing files in
+	last commit.
+
+2006-03-02  Xavier Claessens  <xclaesse@gmail.com>
+
 	* protocols/telepathy/gossip-telepathy-chatrooms.c:
 	* protocols/telepathy/gossip-telepathy-group.h:
 	* protocols/telepathy/gossip-telepathy.c:
