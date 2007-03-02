@@ -66,6 +66,7 @@ void                  gossip_telepathy_group_remove_member   (GossipTelepathyGro
 							      const gchar          *message);
 GArray *              gossip_telepathy_group_get_members     (GossipTelepathyGroup *group);
 const gchar *         gossip_telepathy_group_get_name        (GossipTelepathyGroup *group);
+guint                 gossip_telepathy_group_get_self_handle (GossipTelepathyGroup *group);
 const gchar *         gossip_telepathy_group_get_object_path (GossipTelepathyGroup *group);
 
 G_END_DECLS

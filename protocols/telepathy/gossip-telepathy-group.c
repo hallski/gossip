@@ -27,6 +27,7 @@
 #include <libgossip/gossip-debug.h>
 
 #include "gossip-telepathy-group.h"
+#include "gossip-telepathy-marshal.h"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
 		       GOSSIP_TYPE_TELEPATHY_GROUP, GossipTelepathyGroupPriv))
@@ -80,9 +81,9 @@ gossip_telepathy_group_class_init (GossipTelepathyGroupClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      g_cclosure_marshal_VOID__POINTER,
+			      gossip_telepathy_marshal_VOID__POINTER_UINT_UINT_STRING,
 			      G_TYPE_NONE,
-			      1, G_TYPE_POINTER);
+			      4, G_TYPE_POINTER, G_TYPE_UINT, G_TYPE_UINT, G_TYPE_STRING);
 
 	signals[MEMBERS_REMOVED] =
 		g_signal_new ("members-removed",
@@ -90,9 +91,9 @@ gossip_telepathy_group_class_init (GossipTelepathyGroupClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      g_cclosure_marshal_VOID__POINTER,
+			      gossip_telepathy_marshal_VOID__POINTER_UINT_UINT_STRING,
 			      G_TYPE_NONE,
-			      1, G_TYPE_POINTER);
+			      4, G_TYPE_POINTER, G_TYPE_UINT, G_TYPE_UINT, G_TYPE_STRING);
 
 	signals[LOCAL_PENDING] =
 		g_signal_new ("local-pending",
@@ -100,9 +101,9 @@ gossip_telepathy_group_class_init (GossipTelepathyGroupClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      g_cclosure_marshal_VOID__POINTER,
+			      gossip_telepathy_marshal_VOID__POINTER_UINT_UINT_STRING,
 			      G_TYPE_NONE,
-			      1, G_TYPE_POINTER);
+			      4, G_TYPE_POINTER, G_TYPE_UINT, G_TYPE_UINT, G_TYPE_STRING);
 
 	signals[REMOTE_PENDING] =
 		g_signal_new ("remote-pending",
@@ -110,9 +111,9 @@ gossip_telepathy_group_class_init (GossipTelepathyGroupClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      g_cclosure_marshal_VOID__POINTER,
+			      gossip_telepathy_marshal_VOID__POINTER_UINT_UINT_STRING,
 			      G_TYPE_NONE,
-			      1, G_TYPE_POINTER);
+			      4, G_TYPE_POINTER, G_TYPE_UINT, G_TYPE_UINT, G_TYPE_STRING);
 
 	g_type_class_add_private (object_class, sizeof (GossipTelepathyGroupPriv));
 }
@@ -202,15 +203,63 @@ gossip_telepathy_group_setup (GossipTelepathyGroup *group)
 	}
 
 	if (members->len > 0) {
-		g_signal_emit (group, signals[MEMBERS_ADDED], 0, members);
-	}
-	if (local_pending->len > 0) {
-		g_signal_emit (group, signals[LOCAL_PENDING], 0, local_pending);
+		g_signal_emit (group, signals[MEMBERS_ADDED], 0, 
+		               members, 0,
+		               TP_CHANNEL_GROUP_CHANGE_REASON_NONE,
+		               NULL);
 	}
 	if (remote_pending->len > 0) {
-		g_signal_emit (group, signals[REMOTE_PENDING], 0, remote_pending);
+		g_signal_emit (group, signals[REMOTE_PENDING], 0, 
+		               remote_pending, 0,
+		               TP_CHANNEL_GROUP_CHANGE_REASON_NONE,
+		               NULL);
 	}
+	if (local_pending->len > 0) {
+		GPtrArray *info;
 
+		if (tp_chan_iface_group_get_local_pending_members_with_info (priv->group_iface,
+									     &info,
+									     &error)) {
+			GArray *pending; 
+			gint    i;
+
+			pending = g_array_sized_new (FALSE, FALSE, sizeof (guint), 1);
+			for (i = 0; info->len > i; i++) {
+				GValueArray *pending_struct;
+				guint        member;
+				guint        invitor;
+				guint        reason;
+				const gchar *message;
+
+				pending_struct = g_ptr_array_index (info, i);
+				member = g_value_get_uint (g_value_array_get_nth (pending_struct, 0));
+				invitor = g_value_get_uint (g_value_array_get_nth (pending_struct, 1));
+				reason = g_value_get_uint (g_value_array_get_nth (pending_struct, 2));
+				message = g_value_get_string (g_value_array_get_nth (pending_struct, 3));
+
+				g_array_insert_val (pending, 0, member);
+
+				g_signal_emit (group, signals[LOCAL_PENDING], 0, 
+				               pending, invitor, reason, message);
+
+				g_value_array_free (pending_struct);
+			}
+
+			g_ptr_array_free (info, TRUE);
+			g_array_free (pending, TRUE);
+		} else {
+			gossip_debug (DEBUG_DOMAIN, "GetLocalPendingMembersWithInfo failed: %s",
+				      error->message);
+			g_clear_error (&error);
+
+			g_signal_emit (group, signals[LOCAL_PENDING], 0, 
+			               local_pending, 0, 
+			               TP_CHANNEL_GROUP_CHANGE_REASON_NONE,
+			               NULL);
+		}
+	}
+ 
+	g_array_free (members, TRUE);
 	g_array_free (local_pending, TRUE);
 	g_array_free (remote_pending, TRUE);
 }
@@ -341,16 +390,20 @@ telepathy_group_members_changed_cb (DBusGProxy           *group_iface,
 
 	/* emit signals */
 	if (added->len > 0) {
-		g_signal_emit (group, signals[MEMBERS_ADDED], 0, added);
+		g_signal_emit (group, signals[MEMBERS_ADDED], 0, 
+		               added, actor, reason, message);
 	}
 	if (removed->len > 0) {
-		g_signal_emit (group, signals[MEMBERS_REMOVED], 0, removed);
+		g_signal_emit (group, signals[MEMBERS_REMOVED], 0, 
+		               removed, actor, reason, message);
 	}
 	if (local_pending->len > 0) {
-		g_signal_emit (group, signals[LOCAL_PENDING], 0, local_pending);
+		g_signal_emit (group, signals[LOCAL_PENDING], 0,
+		               local_pending, actor, reason, message);
 	}
 	if (remote_pending->len > 0) {
-		g_signal_emit (group, signals[REMOTE_PENDING], 0, remote_pending);
+		g_signal_emit (group, signals[REMOTE_PENDING], 0,
+		               remote_pending, actor, reason, message);
 	}
 }
 
@@ -389,7 +442,7 @@ gossip_telepathy_group_get_name (GossipTelepathyGroup *group)
 	g_array_append_val (group_handles, channel_handle);
 	tp_conn = gossip_telepathy_get_connection (priv->telepathy);
 	if (!tp_conn_inspect_handles (DBUS_G_PROXY (tp_conn),
-				      TP_HANDLE_TYPE_GROUP,
+				      handle_type,
 				      group_handles,
 				      &group_names,
 				      &error)) {
@@ -405,6 +458,27 @@ gossip_telepathy_group_get_name (GossipTelepathyGroup *group)
 	g_free (group_names);
 
 	return priv->group_name;
+}
+
+guint 
+gossip_telepathy_group_get_self_handle (GossipTelepathyGroup *group)
+{
+	GossipTelepathyGroupPriv *priv;
+	guint                     handle;
+	GError                   *error = NULL;
+
+	g_return_val_if_fail (GOSSIP_IS_TELEPATHY_GROUP (group), 0 );
+
+	priv = GET_PRIV (group);
+
+	if (!tp_chan_iface_group_get_self_handle (priv->group_iface, &handle, &error)) {
+		gossip_debug (DEBUG_DOMAIN, "Failed to get self handle: %s",
+		              error->message);
+		g_clear_error (&error);
+		return 0;
+	}
+
+	return handle;
 }
 
 const gchar *

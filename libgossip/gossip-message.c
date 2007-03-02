@@ -69,7 +69,8 @@ enum {
 	PROP_BODY,
 	PROP_THREAD,
 	PROP_TIMESTAMP,
-	PROP_REQUEST_COMPOSING
+	PROP_REQUEST_COMPOSING,
+	PROP_INVITE,
 };
 
 static gpointer parent_class = NULL;
@@ -185,6 +186,13 @@ gossip_message_class_init (GossipMessageClass *class)
 							       FALSE,
 							       G_PARAM_READWRITE));
 
+	g_object_class_install_property (object_class,
+					 PROP_INVITE,
+					 g_param_spec_pointer ("invite",
+							       "invite",
+							       "invite",
+							       G_PARAM_READWRITE));
+
 	g_type_class_add_private (object_class, sizeof (GossipMessagePriv));
 
 }
@@ -274,6 +282,9 @@ message_get_property (GObject    *object,
 	case PROP_REQUEST_COMPOSING:
 		g_value_set_boolean (value, priv->request_composing);
 		break;
+	case PROP_INVITE:
+		g_value_set_pointer (value, priv->invite);
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
 		break;
@@ -320,6 +331,10 @@ message_set_property (GObject      *object,
 		break;
 	case PROP_REQUEST_COMPOSING:
 		priv->request_composing = g_value_get_boolean (value);
+		break;
+	case PROP_INVITE:
+		gossip_message_set_invite (GOSSIP_MESSAGE (object),
+					   g_value_get_pointer (value));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
@@ -596,23 +611,20 @@ void
 gossip_message_set_invite (GossipMessage        *message,
 			   GossipChatroomInvite *invite)
 {
-	GossipMessagePriv    *priv;
-	GossipChatroomInvite *old_invite;
+	GossipMessagePriv *priv;
 
 	g_return_if_fail (GOSSIP_IS_MESSAGE (message));
 
 	priv = GET_PRIV (message);
 
-	old_invite = priv->invite;
+	if (priv->invite) {
+		gossip_chatroom_invite_unref (priv->invite);
+	}
 
 	if (invite) {
 		priv->invite = gossip_chatroom_invite_ref (invite);
 	} else {
 		priv->invite = NULL;
-	}
-
-	if (old_invite) {
-		gossip_chatroom_invite_unref (old_invite);
 	}
 
 	g_object_notify (G_OBJECT (message), "invite");

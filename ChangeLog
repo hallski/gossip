@@ -1,3 +1,20 @@
+2006-03-02  Xavier Claessens  <xclaesse@gmail.com>
+
+	* protocols/telepathy/gossip-telepathy-chatrooms.c:
+	* protocols/telepathy/gossip-telepathy-group.h:
+	* protocols/telepathy/gossip-telepathy.c:
+	* protocols/telepathy/gossip-telepathy-chatrooms.h:
+	* protocols/telepathy/gossip-telepathy-contact-list.c:
+	* protocols/telepathy/gossip-telepathy.h:
+	* protocols/telepathy/Makefile.am:
+	* protocols/telepathy/gossip-telepathy-group.c: Implement Chatroom
+	invitation and make joining async. Fixes bug #405719
+	(Xavier Claessens, Sjoerd Simons).
+	* libgossip/gossip-chatroom.c: Do no remove contacts that are not in
+	the chatroom and do not add contact that already joined.
+	* libgossip/gossip-message.c: Fix a warning because INVITE was not a
+	property.
+
 2006-03-01  Xavier Claessens  <xclaesse@gmail.com>
 
 	* protocols/telepathy/gossip-telepathy-chatrooms.c:

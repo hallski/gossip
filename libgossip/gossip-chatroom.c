@@ -1014,11 +1014,13 @@ gossip_chatroom_contact_joined (GossipChatroom            *chatroom,
 		chatroom_contact->role = GOSSIP_CHATROOM_ROLE_NONE;
 		chatroom_contact->affiliation = GOSSIP_CHATROOM_AFFILIATION_NONE;
 	}
-	g_hash_table_insert (priv->contacts,
-			     g_object_ref (contact),
-			     chatroom_contact);
+	if (!g_hash_table_lookup (priv->contacts, contact)) {
+		g_hash_table_insert (priv->contacts,
+				     g_object_ref (contact),
+				     chatroom_contact);
 
-	g_signal_emit (chatroom, signals[CONTACT_JOINED], 0, contact);
+		g_signal_emit (chatroom, signals[CONTACT_JOINED], 0, contact);
+	}
 }
 
 void
@@ -1032,8 +1034,10 @@ gossip_chatroom_contact_left (GossipChatroom *chatroom,
 
 	priv = GET_PRIV (chatroom);
 
-	g_signal_emit (chatroom, signals[CONTACT_LEFT], 0, contact);
-	g_hash_table_remove (priv->contacts, contact);
+	if (g_hash_table_lookup (priv->contacts, contact)) {
+		g_signal_emit (chatroom, signals[CONTACT_LEFT], 0, contact);
+		g_hash_table_remove (priv->contacts, contact);
+	}
 }
 
 /*

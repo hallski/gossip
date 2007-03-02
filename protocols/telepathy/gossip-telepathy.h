@@ -52,6 +52,7 @@ GType           gossip_telepathy_get_type        (void) G_GNUC_CONST;
 GossipAccount * gossip_telepathy_get_account     (GossipTelepathy *telepathy);
 TpConn *        gossip_telepathy_get_connection  (GossipTelepathy *telepathy);
 GossipContact * gossip_telepathy_get_own_contact (GossipTelepathy *telepathy);
+guint           gossip_telepathy_get_self_handle (GossipTelepathy *telepathy);
 
 G_END_DECLS
 

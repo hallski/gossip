@@ -63,12 +63,21 @@ static TelepathyListType telepathy_contact_list_get_type                 (Gossip
 									  TpChan                     *list_chan);
 static void              telepathy_contact_list_contact_added_cb         (GossipTelepathyGroup       *group,
 									  GArray                     *handles,
+									  guint                       actor_handle,
+									  guint                       reason,
+									  gchar                      *message,
 									  GossipTelepathyContactList *list);
 static void              telepathy_contact_list_contact_removed_cb       (GossipTelepathyGroup       *group,
 									  GArray                     *handles,
+									  guint                       actor_handle,
+									  guint                       reason,
+									  gchar                      *message,
 									  GossipTelepathyContactList *list);
 static void              telepathy_contact_list_local_pending_cb         (GossipTelepathyGroup       *group,
 									  GArray                     *handles,
+									  guint                       actor_handle,
+									  guint                       reason,
+									  gchar                      *message,
 									  GossipTelepathyContactList *list);
 static void              telepathy_contact_list_contact_remove_foreach   (gchar                      *object_path,
 									  GossipTelepathyGroup       *group,
@@ -83,9 +92,15 @@ static void              telepathy_contact_list_group_channel_closed_cb  (TpChan
 									  GossipTelepathyContactList *list);
 static void              telepathy_contact_list_group_members_added_cb   (GossipTelepathyGroup       *group,
 									  GArray                     *members,
+									  guint                       actor_handle,
+									  guint                       reason,
+									  gchar                      *message,
 									  GossipTelepathyContactList *list);
 static void              telepathy_contact_list_group_members_removed_cb (GossipTelepathyGroup       *group,
 									  GArray                     *members,
+									  guint                       actor_handle,
+									  guint                       reason,
+									  gchar                      *message,
 									  GossipTelepathyContactList *list);
 static gboolean          telepathy_contact_list_find_group               (gchar                      *key,
 									  GossipTelepathyGroup       *group,
@@ -339,6 +354,9 @@ telepathy_contact_list_get_type (GossipTelepathyContactList *list,
 static void
 telepathy_contact_list_contact_added_cb (GossipTelepathyGroup       *group,
 					 GArray                     *handles,
+					 guint                       actor_handle,
+					 guint                       reason,
+					 gchar                      *message,
 					 GossipTelepathyContactList *list)
 {
 	GossipTelepathyContacts *contacts;
@@ -370,6 +388,9 @@ telepathy_contact_list_contact_added_cb (GossipTelepathyGroup       *group,
 static void
 telepathy_contact_list_contact_removed_cb (GossipTelepathyGroup       *group,
 					   GArray                     *handles,
+					   guint                       actor_handle,
+					   guint                       reason,
+					   gchar                      *message,
 					   GossipTelepathyContactList *list)
 {
 	GossipTelepathyContacts *contacts;
@@ -400,6 +421,9 @@ telepathy_contact_list_contact_removed_cb (GossipTelepathyGroup       *group,
 static void
 telepathy_contact_list_local_pending_cb (GossipTelepathyGroup       *group,
 					 GArray                     *handles,
+					 guint                       actor_handle,
+					 guint                       reason,
+					 gchar                      *message,
 					 GossipTelepathyContactList *list)
 {
 	GossipTelepathyContacts *contacts;
@@ -476,7 +500,10 @@ gossip_telepathy_contact_list_rename_group (GossipTelepathyContactList *list,
 	/* Remove all members from the old group */
 	members = gossip_telepathy_group_get_members (group);
 	gossip_telepathy_group_remove_members (group, members, "");
-	telepathy_contact_list_group_members_removed_cb (group, members, list);
+	telepathy_contact_list_group_members_removed_cb (group, members, 
+	                                     0, 
+	                                     TP_CHANNEL_GROUP_CHANGE_REASON_NONE, 
+	                                     NULL,list);
 	g_hash_table_remove (list->groups,
 			     gossip_telepathy_group_get_object_path (group));
 
@@ -623,6 +650,9 @@ telepathy_contact_list_group_channel_closed_cb (TpChan                     *chan
 static void
 telepathy_contact_list_group_members_added_cb (GossipTelepathyGroup       *group,
 					       GArray                     *members,
+					       guint                       actor_handle,
+					       guint                       reason,
+					       gchar                      *message,
 					       GossipTelepathyContactList *list)
 {
 	GossipTelepathyContacts *contacts;
@@ -657,6 +687,9 @@ telepathy_contact_list_group_members_added_cb (GossipTelepathyGroup       *group
 static void
 telepathy_contact_list_group_members_removed_cb (GossipTelepathyGroup       *group,
 						 GArray                     *members,
+					   guint                       actor_handle,
+					   guint                       reason,
+					   gchar                      *message,
 						 GossipTelepathyContactList *list)
 {
 	GossipTelepathyContacts *contacts;

@@ -33,6 +33,8 @@ typedef struct _GossipTelepathyChatrooms GossipTelepathyChatrooms;
 
 GossipTelepathyChatrooms * gossip_telepathy_chatrooms_init           (GossipTelepathy          *jabber);
 void                       gossip_telepathy_chatrooms_finalize       (GossipTelepathyChatrooms *chatrooms);
+void                       gossip_telepathy_chatrooms_newchannel     (GossipTelepathyChatrooms *chatrooms,
+								      TpChan                   *new_chan);
 GossipChatroomId           gossip_telepathy_chatrooms_join           (GossipTelepathyChatrooms *chatrooms,
 								      GossipChatroom           *chatroom,
 								      GossipChatroomJoinCb      callback,
@@ -52,6 +54,8 @@ void                       gossip_telepathy_chatrooms_leave          (GossipTele
 								      GossipChatroomId          id);
 GossipChatroom *           gossip_telepathy_chatrooms_find           (GossipTelepathyChatrooms *chatrooms,
 								      GossipChatroom           *chatroom);
+GossipChatroom *           gossip_telepathy_chatrooms_find_by_id     (GossipTelepathyChatrooms *chatrooms,
+								      GossipChatroomId          id);
 void                       gossip_telepathy_chatrooms_invite         (GossipTelepathyChatrooms *chatrooms,
 								      GossipChatroomId          id,
 								      GossipContact            *contact,

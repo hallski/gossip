@@ -64,6 +64,7 @@ struct _GossipTelepathyPriv {
 
 	TpConn                     *tp_conn;
 	TelepathyConnectionStatus   status;
+	guint                       self_handle;
 
 	GossipTelepathyContacts    *contacts;
 	GossipTelepathyContactList *contact_list;
@@ -200,6 +201,8 @@ static void             telepathy_chatroom_leave                 (GossipChatroom
 								  GossipChatroomId              id);
 static GossipChatroom * telepathy_chatroom_find                  (GossipChatroomProvider       *provider,
 								  GossipChatroom               *chatroom);
+static GossipChatroom * telepathy_chatroom_find_by_id            (GossipChatroomProvider       *provider,
+								  GossipChatroomId              id);
 static void             telepathy_chatroom_invite                (GossipChatroomProvider       *provider,
 								  GossipChatroomId              id,
 								  GossipContact                *contact,
@@ -603,6 +606,7 @@ telepathy_connection_setup (GossipTelepathy *telepathy)
 	}
 	priv->contact = gossip_telepathy_contacts_get_from_handle (priv->contacts,
 								   handle);
+	priv->self_handle = handle;
 	g_object_ref (priv->contact);
 	g_object_set (priv->contact,
 		      "type", GOSSIP_CONTACT_TYPE_USER,
@@ -1326,16 +1330,21 @@ telepathy_newchannel_cb (DBusGProxy          *proxy,
 		gossip_telepathy_contact_list_newchannel (priv->contact_list,
 							  new_chan);
 	}
-	else if (strcmp (channel_type, TP_IFACE_CHANNEL_TYPE_TEXT) == 0 &&
-		 handle_type == TP_HANDLE_TYPE_CONTACT)
-	{
-		gossip_telepathy_message_newchannel (priv->message,
-						     new_chan,
-						     new_chan->handle);
+	else if (strcmp (channel_type, TP_IFACE_CHANNEL_TYPE_TEXT) == 0) {
+		switch (handle_type) {
+			case TP_CONN_HANDLE_TYPE_CONTACT:
+				gossip_telepathy_message_newchannel (priv->message,
+				                                     new_chan,
+				                                     new_chan->handle);
+				break;
+			case TP_CONN_HANDLE_TYPE_ROOM:
+				gossip_telepathy_chatrooms_newchannel (priv->chatrooms,
+				                                       new_chan);
+				break;
+			default:
+				gossip_debug (DEBUG_DOMAIN, "Text channel Handle type unsupported");
+		}
 	} else {
-		/* TODO: This should be re-examined soon.
-		   We will need to provide all other channels to external handlers
-		*/
 		gossip_debug (DEBUG_DOMAIN, "Channel type unsupported");
 	}
 	g_object_unref (new_chan);
@@ -1355,6 +1364,7 @@ telepathy_chatroom_init (GossipChatroomProviderIface *iface)
 	iface->change_nick    = telepathy_chatroom_change_nick;
 	iface->leave          = telepathy_chatroom_leave;
 	iface->find           = telepathy_chatroom_find;
+	iface->find_by_id     = telepathy_chatroom_find_by_id;
 	iface->invite         = telepathy_chatroom_invite;
 	iface->invite_accept  = telepathy_chatroom_invite_accept;
 	iface->invite_decline = telepathy_chatroom_invite_decline;
@@ -1475,6 +1485,21 @@ telepathy_chatroom_find (GossipChatroomProvider *provider,
 	priv = GET_PRIV (telepathy);
 
 	return gossip_telepathy_chatrooms_find (priv->chatrooms, chatroom);
+}
+
+static GossipChatroom *
+telepathy_chatroom_find_by_id (GossipChatroomProvider *provider,
+			       GossipChatroomId        id)
+{
+	GossipTelepathy     *telepathy;
+	GossipTelepathyPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_TELEPATHY (provider), NULL);
+
+	telepathy = GOSSIP_TELEPATHY (provider);
+	priv = GET_PRIV (telepathy);
+
+	return gossip_telepathy_chatrooms_find_by_id (priv->chatrooms, id);
 }
 
 static void
@@ -1650,5 +1675,17 @@ gossip_telepathy_get_contacts (GossipTelepathy *telepathy)
 	priv = GET_PRIV (telepathy);
 
 	return priv->contacts;
+}
+
+guint           
+gossip_telepathy_get_self_handle (GossipTelepathy *telepathy)
+{
+	GossipTelepathyPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_TELEPATHY (telepathy), 0);
+
+	priv = GET_PRIV (telepathy);
+ 
+	return priv->self_handle;
 }
 
