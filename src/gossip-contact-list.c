@@ -2547,9 +2547,13 @@ contact_list_action_rename_group_selected (GossipContactList *list)
 	dialog = gtk_message_dialog_new (GTK_WINDOW (gossip_app_get_window ()),
 					 0,
 					 GTK_MESSAGE_QUESTION,
-					 GTK_BUTTONS_OK_CANCEL,
+					 GTK_BUTTONS_NONE,
 					 _("Please enter a new name for the group:\n%s"),
 					 str);
+	gtk_dialog_add_buttons (GTK_DIALOG (dialog), 
+				GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+				_("Rename"), GTK_RESPONSE_OK,
+				NULL);
 
 	g_free (str);
 
