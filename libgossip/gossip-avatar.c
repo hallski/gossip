@@ -27,6 +27,20 @@
 
 #define DEBUG_DOMAIN "Avatar"
 
+GType
+gossip_avatar_get_gtype (void)
+{
+	static GType type_id = 0;
+
+	if (!type_id) {
+		type_id = g_boxed_type_register_static ("GossipAvatar",
+							(GBoxedCopyFunc) gossip_avatar_ref,
+							(GBoxedFreeFunc) gossip_avatar_unref);
+	}
+
+	return type_id;
+}
+
 GossipAvatar *
 gossip_avatar_new (guchar *data,
 		   gsize   len,

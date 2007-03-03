@@ -188,10 +188,11 @@ gossip_message_class_init (GossipMessageClass *class)
 
 	g_object_class_install_property (object_class,
 					 PROP_INVITE,
-					 g_param_spec_pointer ("invite",
-							       "invite",
-							       "invite",
-							       G_PARAM_READWRITE));
+					 g_param_spec_boxed ("invite",
+							     "invite",
+							     "invite",
+							     GOSSIP_TYPE_CHATROOM_INVITE,
+							     G_PARAM_READWRITE));
 
 	g_type_class_add_private (object_class, sizeof (GossipMessagePriv));
 
@@ -283,7 +284,7 @@ message_get_property (GObject    *object,
 		g_value_set_boolean (value, priv->request_composing);
 		break;
 	case PROP_INVITE:
-		g_value_set_pointer (value, priv->invite);
+		g_value_set_boxed (value, priv->invite);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
@@ -334,7 +335,7 @@ message_set_property (GObject      *object,
 		break;
 	case PROP_INVITE:
 		gossip_message_set_invite (GOSSIP_MESSAGE (object),
-					   g_value_get_pointer (value));
+					   g_value_get_boxed (value));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);

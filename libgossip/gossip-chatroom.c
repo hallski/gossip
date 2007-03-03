@@ -132,6 +132,20 @@ gossip_chatroom_get_gtype (void)
 	return type;
 }
 
+GType
+gossip_chatroom_invite_get_gtype (void)
+{
+	static GType type_id = 0;
+
+	if (!type_id) {
+		type_id = g_boxed_type_register_static ("GossipChatroomInvite",
+							(GBoxedCopyFunc) gossip_chatroom_invite_ref,
+							(GBoxedFreeFunc) gossip_chatroom_invite_unref);
+	}
+
+	return type_id;
+}
+
 static void
 chatroom_class_init (GossipChatroomClass *class)
 {

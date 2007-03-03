@@ -25,6 +25,8 @@
 
 G_BEGIN_DECLS
 
+#define GOSSIP_TYPE_AVATAR (gossip_avatar_get_gtype ())
+
 typedef struct _GossipAvatar GossipAvatar;
 
 struct _GossipAvatar {
@@ -34,11 +36,12 @@ struct _GossipAvatar {
 	guint   refcount;
 };
 
-GossipAvatar *gossip_avatar_new   (guchar       *avatar,
-				   gsize         len,
-				   gchar        *format);
-GossipAvatar *gossip_avatar_ref   (GossipAvatar *avatar);
-void          gossip_avatar_unref (GossipAvatar *avatar);
+GType          gossip_avatar_get_gtype (void) G_GNUC_CONST;
+GossipAvatar * gossip_avatar_new       (guchar       *avatar,
+					gsize         len,
+					gchar        *format);
+GossipAvatar * gossip_avatar_ref       (GossipAvatar *avatar);
+void           gossip_avatar_unref     (GossipAvatar *avatar);
 
 G_END_DECLS
 

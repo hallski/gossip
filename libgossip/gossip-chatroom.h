@@ -35,16 +35,14 @@ G_BEGIN_DECLS
 #define GOSSIP_IS_CHATROOM_CLASS(k)      (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_CHATROOM))
 #define GOSSIP_CHATROOM_GET_CLASS(o)     (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_CHATROOM, GossipChatroomClass))
 
-#define GOSSIP_TYPE_CHATROOM_INVITE      (gossip_chatroom_invite_get_type ())
-#define GOSSIP_TYPE_CHATROOM_ROLE        (gossip_chatroom_role_get_gtype ())
-#define GOSSIP_TYPE_CHATROOM_AFFILIATION (gossip_chatroom_affiliation_get_gtype ())
-
+#define GOSSIP_TYPE_CHATROOM_INVITE       (gossip_chatroom_invite_get_gtype ())
 
 typedef struct _GossipChatroom            GossipChatroom;
 typedef struct _GossipChatroomClass       GossipChatroomClass;
 typedef struct _GossipChatroomContactInfo GossipChatroomContactInfo;
 typedef struct _GossipChatroomInvite      GossipChatroomInvite;
 typedef gint                              GossipChatroomId;
+
 struct _GossipChatroom {
 	GObject parent;
 };
@@ -86,6 +84,7 @@ struct _GossipChatroomContactInfo {
 };
 
 GType                      gossip_chatroom_get_gtype          (void) G_GNUC_CONST;
+GType                      gossip_chatroom_invite_get_gtype   (void) G_GNUC_CONST;
 
 /* Gets */
 GossipChatroomType         gossip_chatroom_get_type           (GossipChatroom            *chatroom);

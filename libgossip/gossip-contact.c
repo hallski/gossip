@@ -171,10 +171,11 @@ contact_class_init (GossipContactClass *class)
 
 	g_object_class_install_property (object_class,
 					 PROP_AVATAR,
-					 g_param_spec_pointer ("avatar",
-							       "Avatar image",
-							       "The avatar image",
-							       G_PARAM_READWRITE));
+					 g_param_spec_boxed ("avatar",
+							     "Avatar image",
+							     "The avatar image",
+							     GOSSIP_TYPE_AVATAR,
+							     G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class,
 					 PROP_ACCOUNT,
@@ -266,14 +267,10 @@ contact_get_property (GObject    *object,
 		g_value_set_int (value, priv->subscription);
 		break;
 	case PROP_AVATAR:
-		g_value_set_pointer (value, priv->avatar);
+		g_value_set_boxed (value, priv->avatar);
 		break;
 	case PROP_ACCOUNT:
-		if (priv->account) {
-			g_value_set_object (value, G_OBJECT (priv->account));
-		} else {
-			g_value_set_object (value, NULL);
-		}
+		g_value_set_object (value, priv->account);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
@@ -318,7 +315,7 @@ contact_set_property (GObject      *object,
 		break;
 	case PROP_AVATAR:
 		gossip_contact_set_avatar (GOSSIP_CONTACT (object),
-					   g_value_get_pointer (value));
+					   g_value_get_boxed (value));
 		break;
 	case PROP_ACCOUNT:
 		gossip_contact_set_account (GOSSIP_CONTACT (object),
