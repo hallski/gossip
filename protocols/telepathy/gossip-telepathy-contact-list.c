@@ -537,7 +537,7 @@ telepathy_contact_list_update_groups_foreach (gchar                    *object_p
 					      TelepathyContactListData *data)
 {
 	gboolean     is_member;
-	gboolean     found;
+	gboolean     found = FALSE;
 	const gchar *group_name;
 	GList       *l;
 
@@ -553,11 +553,15 @@ telepathy_contact_list_update_groups_foreach (gchar                    *object_p
 
 	if (is_member && !found) {
 		/* We are no longer member of this group */
+		gossip_debug (DEBUG_DOMAIN, "Contact %d removed from group '%s'",
+			      data->handle, group_name);
 		gossip_telepathy_group_remove_member (group, data->handle, "");
 	}
 
 	if (!is_member && found) {
 		/* We are now member of this group */
+		gossip_debug (DEBUG_DOMAIN, "Contact %d added to group '%s'",
+			      data->handle, group_name);
 		gossip_telepathy_group_add_member (group, data->handle, "");
 	}
 }
@@ -697,7 +701,7 @@ telepathy_contact_list_group_members_added_cb (GossipTelepathyGroup       *group
 		if (!g_list_find_custom (contact_groups,
 					 group_name,
 					 (GCompareFunc) strcmp)) {
-			gossip_debug (DEBUG_DOMAIN, "Contact %s added to group %s",
+			gossip_debug (DEBUG_DOMAIN, "Contact %s added to group '%s'",
 				      gossip_contact_get_name (contact),
 				      group_name);
 			contact_groups = g_list_append (contact_groups,
@@ -739,7 +743,7 @@ telepathy_contact_list_group_members_removed_cb (GossipTelepathyGroup       *gro
 						group_name,
 						(GCompareFunc) strcmp);
 		if (to_remove) {
-			gossip_debug (DEBUG_DOMAIN, "Contact %d removed from group %s",
+			gossip_debug (DEBUG_DOMAIN, "Contact %d removed from group '%s'",
 				      handle, group_name);
 			contact_groups = g_list_remove_link (contact_groups,
 							     to_remove);

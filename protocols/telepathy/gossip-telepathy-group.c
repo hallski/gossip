@@ -513,4 +513,3 @@ gossip_telepathy_group_is_member (GossipTelepathyGroup *group,
 	return found;
 }
 
-
