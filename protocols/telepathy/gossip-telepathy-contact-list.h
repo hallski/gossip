@@ -40,7 +40,7 @@ void                         gossip_telepathy_contact_list_set_subscription (Gos
 void                         gossip_telepathy_contact_list_newchannel       (GossipTelepathyContactList *list,
 									     TpChan                     *new_chan);
 void                         gossip_telepathy_contact_list_contact_update   (GossipTelepathyContactList *list,
-									     guint                       contact_handle,
+									     guint                       handle,
 									     GList                      *groups);
 void                         gossip_telepathy_contact_list_rename_group     (GossipTelepathyContactList *list,
 									     const gchar                *group,

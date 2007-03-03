@@ -1,3 +1,12 @@
+2006-03-03  Xavier Claessens  <xclaesse@gmail.com>
+
+	* protocols/telepathy/gossip-telepathy-group.h:
+	* protocols/telepathy/gossip-telepathy-contact-list.c:
+	* protocols/telepathy/gossip-telepathy-contact-list.h:
+	* protocols/telepathy/gossip-telepathy-group.c: Correctly update groups,
+	do not remove a contact from all groups and add him again in group he is
+	still member of. Fixes bug #400165.
+
 2007-03-02  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-contact-list.c:

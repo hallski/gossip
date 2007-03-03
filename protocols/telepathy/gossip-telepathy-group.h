@@ -68,6 +68,8 @@ GArray *              gossip_telepathy_group_get_members     (GossipTelepathyGro
 const gchar *         gossip_telepathy_group_get_name        (GossipTelepathyGroup *group);
 guint                 gossip_telepathy_group_get_self_handle (GossipTelepathyGroup *group);
 const gchar *         gossip_telepathy_group_get_object_path (GossipTelepathyGroup *group);
+gboolean              gossip_telepathy_group_is_member       (GossipTelepathyGroup *group,
+							      guint                 handle);
 
 G_END_DECLS
 

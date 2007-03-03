@@ -56,6 +56,11 @@ struct _GossipTelepathyContactList {
 	GHashTable           *groups;
 };
 
+typedef struct {
+	guint  handle;
+	GList *new_groups;
+} TelepathyContactListData;
+
 static void              telepathy_contact_list_disconnecting_cb         (GossipProtocol             *telepathy,
 									  GossipAccount              *account,
 									  GossipTelepathyContactList *list);
@@ -79,9 +84,9 @@ static void              telepathy_contact_list_local_pending_cb         (Gossip
 									  guint                       reason,
 									  gchar                      *message,
 									  GossipTelepathyContactList *list);
-static void              telepathy_contact_list_contact_remove_foreach   (gchar                      *object_path,
+static void              telepathy_contact_list_update_groups_foreach    (gchar                      *object_path,
 									  GossipTelepathyGroup       *group,
-									  gpointer                    handle);
+									  TelepathyContactListData   *data);
 static GossipTelepathyGroup *
 			 telepathy_contact_list_get_group                (GossipTelepathyContactList *list,
 									  const gchar                *name);
@@ -449,32 +454,22 @@ telepathy_contact_list_local_pending_cb (GossipTelepathyGroup       *group,
 
 void
 gossip_telepathy_contact_list_contact_update (GossipTelepathyContactList *list,
-					      guint                       contact_handle,
+					      guint                       handle,
 					      GList                      *groups)
 {
-	GList *l;
+	TelepathyContactListData *data;
 
 	g_return_if_fail (list != NULL);
 
-	/* FIXME: Here we remove the contact from all its group, then add the new ones back.
-	 * This can be potentially dangerous since if we fail after the removal, the contact
-	 * looses all his previous groups. Do we accept this ? */
+	data = g_slice_new0 (TelepathyContactListData);
+	data->handle = handle;
+	data->new_groups = groups;
+
 	g_hash_table_foreach (list->groups,
-			      (GHFunc) telepathy_contact_list_contact_remove_foreach,
-			      GINT_TO_POINTER (contact_handle));
+			      (GHFunc) telepathy_contact_list_update_groups_foreach,
+			      data);
 
-	for (l = groups; l; l = l->next) {
-		GossipTelepathyGroup *group;
-
-		gossip_debug (DEBUG_DOMAIN, "Adding contact %d to group: %s",
-			      contact_handle, l->data);
-
-		group = telepathy_contact_list_get_group (list, l->data);
-		if (group) {
-			gossip_telepathy_group_add_member (group,
-							   contact_handle, "");
-		}
-	}
+	g_slice_free (TelepathyContactListData, data);
 }
 
 void
@@ -531,11 +526,34 @@ gossip_telepathy_contact_list_get_groups (GossipTelepathyContactList *list)
 }
 
 static void
-telepathy_contact_list_contact_remove_foreach (gchar                *object_path,
-					       GossipTelepathyGroup *group,
-					       gpointer              handle)
+telepathy_contact_list_update_groups_foreach (gchar                    *object_path,
+					      GossipTelepathyGroup     *group,
+					      TelepathyContactListData *data)
 {
-	gossip_telepathy_group_remove_member (group, GPOINTER_TO_UINT (handle), "");
+	gboolean     is_member;
+	gboolean     found;
+	const gchar *group_name;
+	GList       *l;
+
+	is_member = gossip_telepathy_group_is_member (group, data->handle);
+	group_name = gossip_telepathy_group_get_name (group);
+
+	for (l = data->new_groups; l; l = l->next) {
+		if (strcmp (group_name, l->data) == 0) {
+			found = TRUE;
+			break;
+		}
+	}
+
+	if (is_member && !found) {
+		/* We are no longer member of this group */
+		gossip_telepathy_group_remove_member (group, data->handle, "");
+	}
+
+	if (!is_member && found) {
+		/* We are now member of this group */
+		gossip_telepathy_group_add_member (group, data->handle, "");
+	}
 }
 
 static GossipTelepathyGroup *

@@ -493,3 +493,24 @@ gossip_telepathy_group_get_object_path (GossipTelepathyGroup *group)
 	return dbus_g_proxy_get_path (DBUS_G_PROXY (priv->tp_chan));
 }
 
+gboolean
+gossip_telepathy_group_is_member (GossipTelepathyGroup *group,
+				  guint                 handle)
+{
+	GArray   *members;
+	guint     i;
+	gboolean  found = FALSE;
+
+	members = gossip_telepathy_group_get_members (group);
+	for (i = 0; i < members->len; i++) {
+		if (g_array_index (members, guint, i) == handle) {
+			found = TRUE;
+			break;
+		}
+	}
+	g_array_free (members, TRUE);
+	
+	return found;
+}
+
+
