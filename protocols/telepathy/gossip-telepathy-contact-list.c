@@ -458,8 +458,14 @@ gossip_telepathy_contact_list_contact_update (GossipTelepathyContactList *list,
 					      GList                      *groups)
 {
 	TelepathyContactListData *data;
+	GList                    *l;
 
 	g_return_if_fail (list != NULL);
+
+	/* Make sure all groups are created */
+	for (l = groups; l; l = l->next) {
+		telepathy_contact_list_get_group (list, l->data);
+	}
 
 	data = g_slice_new0 (TelepathyContactListData);
 	data->handle = handle;
