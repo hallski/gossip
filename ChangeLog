@@ -1,3 +1,9 @@
+2006-03-04  Vincent Untz  <vuntz@gnome.org>
+
+	* src/gossip-dbus.c: (gossip_dbus_set_presence): set a NULL status if
+	the status string is empty, so the default status is used.
+	Fixes bug #410398
+
 2006-03-03  Xavier Claessens  <xclaesse@gmail.com>
 
 	* libgossip/gossip-chatroom.c:

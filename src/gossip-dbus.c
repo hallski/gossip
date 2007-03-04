@@ -169,7 +169,11 @@ gossip_dbus_set_presence (GossipDBus   *obj,
 		return FALSE;
 	}
 
-	gossip_app_set_presence (show, status);
+	if (G_STR_EMPTY (status)) {
+		gossip_app_set_presence (show, NULL);
+	} else {
+		gossip_app_set_presence (show, status);
+	}
 
 	return TRUE;
 }
