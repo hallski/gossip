@@ -216,6 +216,7 @@ contact_info_dialog_update_presences (GossipContactInfoDialog *dialog)
 		widget = gtk_label_new (status);
 		gtk_label_set_line_wrap (GTK_LABEL (widget), TRUE);
 		gtk_misc_set_alignment (GTK_MISC (widget), 0, 0.5);
+		gtk_label_set_selectable(GTK_LABEL (widget), TRUE);
 		gtk_table_attach (GTK_TABLE (dialog->presence_table),
 				  widget,
 				  1, 2,
@@ -224,7 +225,7 @@ contact_info_dialog_update_presences (GossipContactInfoDialog *dialog)
 				  GTK_FILL,
 				  0, 0);
 
-		if (!resource) {
+		if (G_STR_EMPTY (resource)) {
 			continue;
 		}
 
