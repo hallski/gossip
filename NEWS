@@ -1,3 +1,43 @@
+NEW in 0.23:
+==============
+- Fixed #395588, Crash when clicking a button in the notification bubble (Dimitur Kirov)
+- Fixed #409718, [telepathy] Crash when switching wireless network (Xavier Claessens)
+- Fixed #391284, Merge TELEPATHY branch into HEAD (Xavier Claessens)
+- Fixed #393913, Display the backend used in the about dialog (Vincent Untz)
+- Fixed #395708, [telepathy] Crash when saving accounts (Sjoerd Simons)
+- Fixed #396846, Hard to enter a different port number in configuration (Joel Dimbernat)
+- Fixed #397213, Some refcount problems with GossipSession (Martyn Russell)
+- Fixed #397733, Remove GossipAccount's id property and use the name property instead for unique identifier (Xavier Claessens)
+- Fixed #398081, Remove account confirmation dialog not HIG compliant (Joel Dimbernat)
+- Fixed #398846, Store role and affiliation in GossipChatroom instead if GossipChatroomContact (Xavier Claessens)
+- Fixed #398852, Long entries expand the chat window automatically, infinitely (Marcus Leyman)
+- Fixed #399194, Crash when parsing contact presence states (Xavier Claessens)
+- Fixed #399715, We shouldn't save default values for account parameters (Xavier Claessens)
+- Fixed #399805, Don't display the "-" if the resource string is empty in contact information dialog (Filippo Argiolas)
+- Fixed #400165, Existing groups are removed when editing contact groups (Xavier Claessens)
+- Fixed #400176, Need to press "Cancel" twice in Personal Information window (Xavier Claessens)
+- Fixed #400265, Window icons and title changes (Patch) (Alex Jones, Martyn Russell)
+- Fixed #401027, [telepathy] Crash after a gabble crash ()
+- Fixed #405701, Crashes when inviting to a group with no room name (Sjoerd Simons)
+- Fixed #405719, Add support for MUC invitations (Xavier Claessens, Sjoerd Simons)
+- Fixed #407846, [telepathy] add composing state support (Guillaume Desmottes)
+- Fixed #407953, GossipContactManager shouldn't use "account" param (Xavier Claessens)
+- Fixed #408006, Remove gossip-types.h and gossip.h (Xavier Claessens)
+- Fixed #408953, Missing file in POTFILES.in (Claude Paroz)
+- Fixed #409074, Automake version should be specified in autogen.sh (Richard Hult)
+- Fixed #409393, Patch to improve appearance of close button on conversation tabs (Richard Hult)
+- Fixed #410398, Empty status string should be changed to default status string (Vincent Untz)
+- Fixed #412591, Better button labels for rename group dialog (Martyn Russell)
+- Fixed #413631, Galago compile error due to deprecated GossipAccount function (Lionel H.)
+- Fixed #414237, Use GBoxed for GossipAvatar and GossipChatroomInvite (Xavier Claessens)
+
+Translations:
+- Updated fr: Stéphane Raimbault
+- Updated lt: Žygimantas Beručka
+- Updated sv: Richard Hult, Daniel Nylander
+- Updated en_GB: David Lodge
+
+
 NEW in 0.22:
 ==============
 - Topic labels now ellipsize and are shown in the tab tooltip (Richard Hult)

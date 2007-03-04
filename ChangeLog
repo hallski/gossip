@@ -1,5 +1,9 @@
 2007-03-04  Martyn Russell  <martyn@imendio.com>
 
+	* Release 0.23.
+
+2007-03-04  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-contact-info-dialog.c:
 	(contact_info_dialog_update_presences): Don't display the "-" if the
 	resource string is empty in contact information dialog, fixes bug
