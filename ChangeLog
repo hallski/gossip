@@ -1,5 +1,11 @@
 2007-03-06  Martyn Russell  <martyn@imendio.com>
 
+	* protocols/jabber/gossip-jabber-disco.c:
+	(jabber_disco_set_last_error): Spelling error, fixes bug #408915
+	(Claude Paroz).  
+
+2007-03-06  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-time.[ch]: Uses a more compatible version of
 	timegm() to get the local time.
 	

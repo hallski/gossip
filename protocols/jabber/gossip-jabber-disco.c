@@ -307,7 +307,7 @@ jabber_disco_set_last_error (GossipJabberDisco *disco,
 			error_reason = _("This feature is not implemented");
 			break;
 		case 504:
-			error_reason = _("The remove service timed out");
+			error_reason = _("The remote service timed out");
 			break;
 		}
 	}
