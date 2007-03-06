@@ -46,7 +46,8 @@
 #include "gossip-ui-utils.h"
 
 /* This is turned off for now, but to configure the auto connect in
- * the list instead of from the edit dialog, define this variable: */
+ * the list instead of from the edit dialog, define this variable: 
+ */
 
 #define CHATROOM_AUTOCONNECT_IN_LIST
 
@@ -255,7 +256,7 @@ chatrooms_window_model_pixbuf_cell_data_func (GtkTreeViewColumn     *tree_column
 			    COL_IMAGE, &pixbuf,
 			    -1);
 
-	/* if a pixbuf, use it */
+	/* If a pixbuf, use it */
 	if (pixbuf) {
 		g_object_set (cell,
 			      "visible", TRUE,
@@ -375,7 +376,7 @@ chatrooms_window_model_refresh_data (GossipChatroomsWindow *window,
 	model = gtk_tree_view_get_model (view);
 	store = GTK_LIST_STORE (model);
 
-	/* look up chatrooms */
+	/* Look up chatrooms */
 	session = gossip_app_get_session ();
 
 	account_chooser = GOSSIP_ACCOUNT_CHOOSER (window->account_chooser);
@@ -398,6 +399,8 @@ chatrooms_window_model_refresh_data (GossipChatroomsWindow *window,
 		gtk_tree_selection_select_iter (selection, &iter);
 	}
 
+ 	chatrooms_window_update_buttons (window); 
+
 	g_object_unref (account);
 	g_list_free (chatrooms);
 }
@@ -414,7 +417,6 @@ chatrooms_window_model_add (GossipChatroomsWindow *window,
 	GtkListStore     *store;
 	GtkTreeIter       iter;
 
-	/* add to model */
 	view = GTK_TREE_VIEW (window->treeview);
 	selection = gtk_tree_view_get_selection (view);
 	model = gtk_tree_view_get_model (view);
@@ -533,7 +535,10 @@ chatrooms_window_button_remove_clicked_cb (GtkWidget             *widget,
 	view = GTK_TREE_VIEW (window->treeview);
 	selection = gtk_tree_view_get_selection (view);
 
-	gtk_tree_selection_get_selected (selection, &model, &iter); 
+	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
+		return;
+	}
+
 	gtk_tree_model_get (model, &iter, COL_POINTER, &chatroom, -1);
 	gtk_list_store_remove (GTK_LIST_STORE (model), &iter);
 

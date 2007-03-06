@@ -1,5 +1,12 @@
 2007-03-06  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-chatrooms-window.c: Don't allow the 'Remove' button
+	to be clicked when there are NO items in the list and don't try to
+	remove a chatroom when there is no selection in the remove button
+	callback either. This fixes bug #415081.
+
+2007-03-06  Martyn Russell  <martyn@imendio.com>
+
 	* configure.ac: Bumped version to 0.24.
 
 2007-03-04  Martyn Russell  <martyn@imendio.com>
