@@ -3312,7 +3312,7 @@ jabber_chatroom_cancel (GossipChatroomProvider *provider,
 	jabber = GOSSIP_JABBER (provider);
 	priv = GET_PRIV (jabber);
 
-	return gossip_jabber_chatrooms_cancel (priv->chatrooms, id);
+	gossip_jabber_chatrooms_cancel (priv->chatrooms, id);
 }
 
 static void
@@ -3543,7 +3543,7 @@ jabber_ft_cancel (GossipFTProvider *provider,
 	jabber = GOSSIP_JABBER (provider);
 	priv = GET_PRIV (jabber);
 
-	return gossip_jabber_ft_cancel (priv->fts, id);
+	gossip_jabber_ft_cancel (priv->fts, id);
 }
 
 static void
@@ -3559,7 +3559,7 @@ jabber_ft_accept (GossipFTProvider *provider,
 	jabber = GOSSIP_JABBER (provider);
 	priv = GET_PRIV (jabber);
 
-	return gossip_jabber_ft_accept (priv->fts, id);
+	gossip_jabber_ft_accept (priv->fts, id);
 }
 
 static void
@@ -3575,7 +3575,7 @@ jabber_ft_decline (GossipFTProvider *provider,
 	jabber = GOSSIP_JABBER (provider);
 	priv = GET_PRIV (jabber);
 
-	return gossip_jabber_ft_decline (priv->fts, id);
+	gossip_jabber_ft_decline (priv->fts, id);
 }
 
 /*

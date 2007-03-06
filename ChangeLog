@@ -1,5 +1,14 @@
 2007-03-06  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-time.[ch]: Uses a more compatible version of
+	timegm() to get the local time.
+	
+	* protocols/jabber/gossip-jabber.c: Don't try to return values in
+	void functions here, this breaks on SunOS. Fixes bug #415225
+	(Patrick Georgi).
+
+2007-03-06  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-chatrooms-window.c: Don't allow the 'Remove' button
 	to be clicked when there are NO items in the list and don't try to
 	remove a chatroom when there is no selection in the remove button

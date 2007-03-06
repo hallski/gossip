@@ -22,9 +22,9 @@
 
 #include "config.h"
 
-#include <string.h>
 #include <stdio.h>
-#include <time.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "gossip-time.h"
 
@@ -34,6 +34,30 @@ GossipTime
 gossip_time_get_current (void)
 {
 	return time (NULL);
+}
+
+time_t
+gossip_time_get_local_time (struct tm *tm)
+{
+	const gchar *timezone;
+	time_t       t;
+	
+	timezone = g_getenv ("TZ");
+	g_setenv ("TZ", "", TRUE);
+
+	tzset ();
+
+	t = mktime (tm);
+
+	if (timezone) {
+		g_setenv ("TZ", timezone, TRUE);
+	} else {
+		g_unsetenv ("TZ");
+	}
+
+	tzset ();
+
+	return t;
 }
 
 /* The format is: "20021209T23:51:30" and is in UTC. 0 is returned on
@@ -59,7 +83,7 @@ gossip_time_parse (const gchar *str)
 	tm.tm_mon = month - 1;
 	tm.tm_isdst = -1;
 
-	return timegm (&tm);
+	return gossip_time_get_local_time (&tm);
 }
 
 /* Converts the UTC timestamp to a string, also in UTC. Returns NULL on failure. */
@@ -98,4 +122,3 @@ gossip_time_to_string_local (GossipTime   t,
 	return g_strdup (stamp);
 }
 
-#include "gossip-time.h"
