@@ -1,3 +1,9 @@
+2006-03-07  Xavier Claessens  <xclaesse@gmail.com>
+
+	* protocols/telepathy/gossip-telepathy-contacts.c: Return the complete
+	mime type for avatar, UI will split it to only keep the format needed.
+	Fixes bug #414985 (Filippo Argiolas)
+
 2007-03-06  Martyn Russell  <martyn@imendio.com>
 
 	* protocols/jabber/gossip-jabber-disco.c:

@@ -477,7 +477,7 @@ gossip_telepathy_contacts_get_avatar_requirements (GossipTelepathyContacts  *con
 		max_s = 8*1024;
 		f = g_strdup ("image/png");
 	} else {
-		f = g_strdup (strchr (formats[0], '/') + 1);
+		f = g_strdup (formats[0]);
 		g_strfreev (formats);
 	}
 
