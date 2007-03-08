@@ -459,12 +459,13 @@ contact_manager_file_parse (GossipContactManager *manager,
 		}
 
 		account = gossip_account_manager_find (account_manager, account_name);
-		xmlFree (account_name);
-
+		
 		if (!account) {			
 			g_warning ("No GossipAccount found by name:'%s'", account_name);
 			continue;
 		}
+		
+		xmlFree (account_name);
 		
 		while (child) {
 			if (xmlNodeIsText (child)) {

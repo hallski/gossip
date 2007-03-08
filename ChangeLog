@@ -1,3 +1,9 @@
+2007-03-08  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-contact-manager.c:
+	(contact_manager_file_parse): Fixed a memory leak which is
+	reported as part of bug #416217 (Filippo Argiolas).
+
 2006-03-07  Xavier Claessens  <xclaesse@gmail.com>
 
 	* protocols/telepathy/gossip-telepathy-contacts.c: Return the complete
