@@ -1250,11 +1250,31 @@ telepathy_get_vcard (GossipProtocol       *protocol,
 		     gpointer              user_data,
 		     GError              **error)
 {
-	gossip_debug (DEBUG_DOMAIN, "telepathy_get_vcard");
+	GossipTelepathy     *telepathy;
+	GossipTelepathyPriv *priv;
+	GossipAvatar        *avatar;
+	GossipVCard         *vcard;
+
+	telepathy = GOSSIP_TELEPATHY (protocol);
+	priv = GET_PRIV (telepathy);
+
+	vcard = gossip_vcard_new ();
+	
+	if (contact) {
+		avatar = gossip_contact_get_avatar (contact);
+	} else {
+		avatar = gossip_contact_get_avatar (priv->contact);
+	}
+
+	if (avatar) {
+		gossip_vcard_set_avatar (vcard, avatar);
+	}
 
 	if (callback) {
-		callback (GOSSIP_RESULT_ERROR_UNAVAILABLE, NULL, user_data);
+		callback (GOSSIP_RESULT_OK, vcard, user_data);
 	}
+
+        g_object_unref (vcard);
 
 	return TRUE;
 }
