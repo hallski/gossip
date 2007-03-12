@@ -638,7 +638,7 @@ new_chatroom_dialog_set_defaults (GossipNewChatroomDialog *dialog)
 	}
 
 	if (gossip_account_has_param (account, "account")) {
-		gossip_account_param_get (account, "account", &account_param, NULL);
+		gossip_account_get_param (account, "account", &account_param, NULL);
 	}
 	if (account_param != NULL) {
 		server = gossip_protocol_get_default_server (protocol, account_param);

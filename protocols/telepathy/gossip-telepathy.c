@@ -53,6 +53,7 @@
 #include "gossip-telepathy-chatrooms.h"
 #include "gossip-telepathy-contact-list.h"
 #include "gossip-telepathy-private.h"
+#include "gossip-telepathy-cmgr.h"
 
 #define DEBUG_DOMAIN "Telepathy"
 
@@ -72,168 +73,170 @@ struct _GossipTelepathyPriv {
 	GossipTelepathyMessage     *message;
 };
 
-static void             gossip_telepathy_class_init              (GossipTelepathyClass         *klass);
-static void             gossip_telepathy_init                    (GossipTelepathy              *telepathy);
-static void             telepathy_finalize                       (GObject                      *obj);
-static void             telepathy_setup                          (GossipProtocol               *protocol,
-								  GossipAccount                *account);
-static void             telepathy_login                          (GossipProtocol               *protocol);
-static void             telepathy_logout                         (GossipProtocol               *protocol);
-static void             telepathy_register_account               (GossipProtocol               *protocol,
-								  GossipAccount                *account,
-								  GossipVCard                  *vcard,
-								  GossipErrorCallback           callback,
-								  gpointer                      user_data);
-static void             telepathy_register_cancel                (GossipProtocol               *protocol);
-static gboolean         telepathy_is_connected                   (GossipProtocol               *protocol);
-static gboolean         telepathy_is_connecting                  (GossipProtocol               *protocol);
-static gboolean         telepathy_is_valid_username              (GossipProtocol               *protocol,
-								  const gchar                  *username);
-static gboolean         telepathy_is_ssl_supported               (GossipProtocol               *protocol);
-static const gchar *    telepathy_get_example_username           (GossipProtocol               *protocol);
-static gchar *          telepathy_get_default_server             (GossipProtocol               *protocol,
-								  const gchar                  *username);
-static guint            telepathy_get_default_port               (GossipProtocol               *protocol,
-								  gboolean                      use_ssl);
-static void             telepathy_send_message                   (GossipProtocol               *protocol,
-								  GossipMessage                *message);
-static void             telepathy_send_composing                 (GossipProtocol               *protocol,
-								  GossipContact                *contact,
-								  gboolean                      typing);
-static void             telepathy_set_presence                   (GossipProtocol               *protocol,
-								  GossipPresence               *presence);
-static void             telepathy_set_subscription               (GossipProtocol               *protocol,
-								  GossipContact                *contact,
-								  gboolean                      subscribed);
-static gboolean         telepathy_set_vcard                      (GossipProtocol               *protocol,
-								  GossipVCard                  *vcard,
-								  GossipCallback                callback,
-								  gpointer                      user_data,
-								  GError                      **error);
-static void             telepathy_avatars_get_requirements       (GossipProtocol               *protocol,
-								  guint                        *min_width,
-								  guint                        *min_height,
-								  guint                        *max_width,
-								  guint                        *max_height,
-								  gsize                        *max_size,
-								  gchar                       **format);
-static void             telepathy_change_password                (GossipProtocol               *protocol,
-								  const gchar                  *new_password,
-								  GossipErrorCallback           callback,
-								  gpointer                      user_data);
-static void             telepathy_change_password_cancel         (GossipProtocol               *protocol);
-static GossipContact *  telepathy_contact_new                    (GossipProtocol               *protocol,
-								  const gchar                  *id,
-								  const gchar                  *name);
-static GossipContact *  telepathy_contact_find                   (GossipProtocol               *protocol,
-								  const gchar                  *id);
-static void             telepathy_contact_add                    (GossipProtocol               *protocol,
-								  const gchar                  *id,
-								  const gchar                  *name,
-								  const gchar                  *group,
-								  const gchar                  *message);
-static void             telepathy_contact_rename                 (GossipProtocol               *protocol,
-								  GossipContact                *contact,
-								  const gchar                  *new_name);
-static void             telepathy_contact_remove                 (GossipProtocol               *protocol,
-								  GossipContact                *contact);
-static void             telepathy_contact_update                 (GossipProtocol               *protocol,
-								  GossipContact                *contact);
-static void             telepathy_group_rename                   (GossipProtocol               *protocol,
-								  const gchar                  *group,
-								  const gchar                  *new_name);
-static const GList *    telepathy_get_contacts                   (GossipProtocol               *protocol);
-static GossipContact *  telepathy_get_own_contact                (GossipProtocol               *protocol);
-static const gchar *    telepathy_get_active_resource            (GossipProtocol               *protocol,
-								  GossipContact                *contact);
-static GList *          telepathy_get_groups                     (GossipProtocol               *protocol);
-static gboolean         telepathy_get_vcard                      (GossipProtocol               *protocol,
-								  GossipContact                *contact,
-								  GossipVCardCallback           callback,
-								  gpointer                      user_data,
-								  GError                      **error);
-static gboolean         telepathy_get_version                    (GossipProtocol               *protocol,
-								  GossipContact                *contact,
-								  GossipVersionCallback         callback,
-								  gpointer                      user_data,
-								  GError                      **error);
-static void             telepathy_connection_status_changed_cb   (DBusGProxy                   *proxy,
-								  guint                         status,
-								  guint                         reason,
-								  GossipTelepathy              *telepathy);
-static void             telepathy_connection_setup               (GossipTelepathy              *telepathy);
-static void             telepathy_connection_destroy_cb          (DBusGProxy                   *proxy,
-								  GossipTelepathy              *telepathy);
-void                    telepathy_retrieve_open_channels         (GossipTelepathy              *telepathy);
-static void             telepathy_error                          (GossipProtocol               *protocol,
-								  GossipProtocolError           code);
-static TpConn *         telepathy_get_existing_connection        (GossipAccount                *account);
-static GError *         telepathy_error_create                   (GossipProtocolError           code,
-								  const gchar                  *reason);
-static void             telepathy_newchannel_cb                  (DBusGProxy                   *proxy,
-								  const char                   *object_path,
-								  const char                   *channel_type,
-								  TelepathyHandleType           handle_type,
-								  guint                         handle,
-								  gboolean                      suppress_handle,
-								  GossipTelepathy              *telepathy);
-static void             telepathy_contact_rename                 (GossipProtocol               *protocol,
-								  GossipContact                *contact,
-								  const gchar                  *new_name);
+static void             gossip_telepathy_class_init             (GossipTelepathyClass         *klass);
+static void             gossip_telepathy_init                   (GossipTelepathy              *telepathy);
+static void             telepathy_finalize                      (GObject                      *obj);
+static void             telepathy_setup                         (GossipProtocol               *protocol,
+								 GossipAccount                *account);
+static void             telepathy_login                         (GossipProtocol               *protocol);
+static void             telepathy_logout                        (GossipProtocol               *protocol);
+static void             telepathy_register_account              (GossipProtocol               *protocol,
+								 GossipAccount                *account,
+								 GossipVCard                  *vcard,
+								 GossipErrorCallback           callback,
+								 gpointer                      user_data);
+static void             telepathy_register_cancel               (GossipProtocol               *protocol);
+static gboolean         telepathy_is_connected                  (GossipProtocol               *protocol);
+static gboolean         telepathy_is_connecting                 (GossipProtocol               *protocol);
+static gboolean         telepathy_is_valid_username             (GossipProtocol               *protocol,
+								 const gchar                  *username);
+static gboolean         telepathy_is_ssl_supported              (GossipProtocol               *protocol);
+static const gchar *    telepathy_get_example_username          (GossipProtocol               *protocol);
+static gchar *          telepathy_get_default_server            (GossipProtocol               *protocol,
+								 const gchar                  *username);
+static guint            telepathy_get_default_port              (GossipProtocol               *protocol,
+								 gboolean                      use_ssl);
+static void             telepathy_send_message                  (GossipProtocol               *protocol,
+								 GossipMessage                *message);
+static void             telepathy_send_composing                (GossipProtocol               *protocol,
+								 GossipContact                *contact,
+								 gboolean                      typing);
+static void             telepathy_set_presence                  (GossipProtocol               *protocol,
+								 GossipPresence               *presence);
+static void             telepathy_set_subscription              (GossipProtocol               *protocol,
+								 GossipContact                *contact,
+								 gboolean                      subscribed);
+static gboolean         telepathy_set_vcard                     (GossipProtocol               *protocol,
+								 GossipVCard                  *vcard,
+								 GossipCallback                callback,
+								 gpointer                      user_data,
+								 GError                      **error);
+static GossipAccount *  telepathy_account_new                   (GossipProtocol               *protocol,
+								 GossipAccountType             type);
+static void             telepathy_avatars_get_requirements      (GossipProtocol               *protocol,
+								 guint                        *min_width,
+								 guint                        *min_height,
+								 guint                        *max_width,
+								 guint                        *max_height,
+								 gsize                        *max_size,
+								 gchar                       **format);
+static void             telepathy_change_password               (GossipProtocol               *protocol,
+								 const gchar                  *new_password,
+								 GossipErrorCallback           callback,
+								 gpointer                      user_data);
+static void             telepathy_change_password_cancel        (GossipProtocol               *protocol);
+static GossipContact *  telepathy_contact_new                   (GossipProtocol               *protocol,
+								 const gchar                  *id,
+								 const gchar                  *name);
+static GossipContact *  telepathy_contact_find                  (GossipProtocol               *protocol,
+								 const gchar                  *id);
+static void             telepathy_contact_add                   (GossipProtocol               *protocol,
+								 const gchar                  *id,
+								 const gchar                  *name,
+								 const gchar                  *group,
+								 const gchar                  *message);
+static void             telepathy_contact_rename                (GossipProtocol               *protocol,
+								 GossipContact                *contact,
+								 const gchar                  *new_name);
+static void             telepathy_contact_remove                (GossipProtocol               *protocol,
+								 GossipContact                *contact);
+static void             telepathy_contact_update                (GossipProtocol               *protocol,
+								 GossipContact                *contact);
+static void             telepathy_group_rename                  (GossipProtocol               *protocol,
+								 const gchar                  *group,
+								 const gchar                  *new_name);
+static const GList *    telepathy_get_contacts                  (GossipProtocol               *protocol);
+static GossipContact *  telepathy_get_own_contact               (GossipProtocol               *protocol);
+static const gchar *    telepathy_get_active_resource           (GossipProtocol               *protocol,
+								 GossipContact                *contact);
+static GList *          telepathy_get_groups                    (GossipProtocol               *protocol);
+static gboolean         telepathy_get_vcard                     (GossipProtocol               *protocol,
+								 GossipContact                *contact,
+								 GossipVCardCallback           callback,
+								 gpointer                      user_data,
+								 GError                      **error);
+static gboolean         telepathy_get_version                   (GossipProtocol               *protocol,
+								 GossipContact                *contact,
+								 GossipVersionCallback         callback,
+								 gpointer                      user_data,
+								 GError                      **error);
+static void             telepathy_connection_status_changed_cb  (DBusGProxy                   *proxy,
+								 guint                         status,
+								 guint                         reason,
+								 GossipTelepathy              *telepathy);
+static void             telepathy_connection_setup              (GossipTelepathy              *telepathy);
+static void             telepathy_connection_destroy_cb         (DBusGProxy                   *proxy,
+								 GossipTelepathy              *telepathy);
+void                    telepathy_retrieve_open_channels        (GossipTelepathy              *telepathy);
+static void             telepathy_error                         (GossipProtocol               *protocol,
+								 GossipProtocolError           code);
+static const gchar *    telepathy_account_type_to_protocol_name (GossipAccountType             type);
+static const gchar *    telepathy_account_type_to_cmgr_name     (GossipAccountType             type);
+static TpConn *         telepathy_get_existing_connection       (GossipAccount                *account);
+static GError *         telepathy_error_create                  (GossipProtocolError           code,
+								 const gchar                  *reason);
+static void             telepathy_newchannel_cb                 (DBusGProxy                   *proxy,
+								 const char                   *object_path,
+								 const char                   *channel_type,
+								 TelepathyHandleType           handle_type,
+								 guint                         handle,
+								 gboolean                      suppress_handle,
+								 GossipTelepathy              *telepathy);
+static void             telepathy_contact_rename                (GossipProtocol               *protocol,
+								 GossipContact                *contact,
+								 const gchar                  *new_name);
+
 /* chatrooms */
-static void             telepathy_chatroom_init                  (GossipChatroomProviderIface  *iface);
-static GossipChatroomId telepathy_chatroom_join                  (GossipChatroomProvider       *provider,
-								  GossipChatroom               *chatroom,
-								  GossipChatroomJoinCb          callback,
-								  gpointer                      user_data);
-static void             telepathy_chatroom_cancel                (GossipChatroomProvider       *provider,
-								  GossipChatroomId              id);
-static void             telepathy_chatroom_send                  (GossipChatroomProvider       *provider,
-								  GossipChatroomId              id,
-								  const gchar                  *message);
-static void             telepathy_chatroom_change_topic          (GossipChatroomProvider       *provider,
-								  GossipChatroomId              id,
-								  const gchar                  *new_topic);
-static void             telepathy_chatroom_change_nick           (GossipChatroomProvider       *provider,
-								  GossipChatroomId              id,
-								  const gchar                  *new_nick);
-static void             telepathy_chatroom_leave                 (GossipChatroomProvider       *provider,
-								  GossipChatroomId              id);
-static GossipChatroom * telepathy_chatroom_find                  (GossipChatroomProvider       *provider,
-								  GossipChatroom               *chatroom);
-static GossipChatroom * telepathy_chatroom_find_by_id            (GossipChatroomProvider       *provider,
-								  GossipChatroomId              id);
-static void             telepathy_chatroom_invite                (GossipChatroomProvider       *provider,
-								  GossipChatroomId              id,
-								  GossipContact                *contact,
-								  const gchar                  *reason);
-static void             telepathy_chatroom_invite_accept         (GossipChatroomProvider       *provider,
-								  GossipChatroomJoinCb          callback,
-								  GossipChatroomInvite         *invite,
-								  const gchar                  *nickname);
-static void             telepathy_chatroom_invite_decline        (GossipChatroomProvider       *provider,
-								  GossipChatroomInvite         *invite,
-								  const gchar                  *reason);
-static GList *          telepathy_chatroom_get_rooms             (GossipChatroomProvider       *provider);
-static void             telepathy_chatroom_browse_rooms          (GossipChatroomProvider       *provider,
-								  const gchar                  *server,
-								  GossipChatroomBrowseCb        callback,
-								  gpointer                      user_data);
+static void             telepathy_chatroom_init                 (GossipChatroomProviderIface  *iface);
+static GossipChatroomId telepathy_chatroom_join                 (GossipChatroomProvider       *provider,
+								 GossipChatroom               *chatroom,
+								 GossipChatroomJoinCb          callback,
+								 gpointer                      user_data);
+static void             telepathy_chatroom_cancel               (GossipChatroomProvider       *provider,
+								 GossipChatroomId              id);
+static void             telepathy_chatroom_send                 (GossipChatroomProvider       *provider,
+								 GossipChatroomId              id,
+								 const gchar                  *message);
+static void             telepathy_chatroom_change_topic         (GossipChatroomProvider       *provider,
+								 GossipChatroomId              id,
+								 const gchar                  *new_topic);
+static void             telepathy_chatroom_change_nick          (GossipChatroomProvider       *provider,
+								 GossipChatroomId              id,
+								 const gchar                  *new_nick);
+static void             telepathy_chatroom_leave                (GossipChatroomProvider       *provider,
+								 GossipChatroomId              id);
+static GossipChatroom * telepathy_chatroom_find                 (GossipChatroomProvider       *provider,
+								 GossipChatroom               *chatroom);
+static GossipChatroom * telepathy_chatroom_find_by_id           (GossipChatroomProvider       *provider,
+								 GossipChatroomId              id);
+static void             telepathy_chatroom_invite               (GossipChatroomProvider       *provider,
+								 GossipChatroomId              id,
+								 GossipContact                *contact,
+								 const gchar                  *reason);
+static void             telepathy_chatroom_invite_accept        (GossipChatroomProvider       *provider,
+								 GossipChatroomJoinCb          callback,
+								 GossipChatroomInvite         *invite,
+								 const gchar                  *nickname);
+static void             telepathy_chatroom_invite_decline       (GossipChatroomProvider       *provider,
+								 GossipChatroomInvite         *invite,
+								 const gchar                  *reason);
+static GList *          telepathy_chatroom_get_rooms            (GossipChatroomProvider       *provider);
+static void             telepathy_chatroom_browse_rooms         (GossipChatroomProvider       *provider,
+								 const gchar                  *server,
+								 GossipChatroomBrowseCb        callback,
+								 gpointer                      user_data);
+
 /* fts */
-static void             telepathy_ft_init                        (GossipFTProviderIface        *iface);
-static GossipFTId       telepathy_ft_send                        (GossipFTProvider             *provider,
-								  GossipContact                *contact,
-								  const gchar                  *file);
-static void             telepathy_ft_cancel                      (GossipFTProvider             *provider,
-								  GossipFTId                    id);
-static void             telepathy_ft_accept                      (GossipFTProvider             *provider,
-								  GossipFTId                    id);
-static void             telepathy_ft_decline                     (GossipFTProvider             *provider,
-								  GossipFTId                    id);
-static void             telepathy_insert_params_foreach          (GossipAccount                *account,
-								  gchar                        *param_name,
-								  GossipAccountParam           *param,
-								  GHashTable                   *protocol_params);
+static void             telepathy_ft_init                       (GossipFTProviderIface        *iface);
+static GossipFTId       telepathy_ft_send                       (GossipFTProvider             *provider,
+								 GossipContact                *contact,
+								 const gchar                  *file);
+static void             telepathy_ft_cancel                     (GossipFTProvider             *provider,
+								 GossipFTId                    id);
+static void             telepathy_ft_accept                     (GossipFTProvider             *provider,
+								 GossipFTId                    id);
+static void             telepathy_ft_decline                    (GossipFTProvider             *provider,
+								 GossipFTId                    id);
 
 G_DEFINE_TYPE_WITH_CODE (GossipTelepathy, gossip_telepathy, GOSSIP_TYPE_PROTOCOL,
 			 G_IMPLEMENT_INTERFACE (GOSSIP_TYPE_CHATROOM_PROVIDER,
@@ -267,6 +270,7 @@ gossip_telepathy_class_init (GossipTelepathyClass *klass)
 	protocol_class->set_vcard               = telepathy_set_vcard;
 	protocol_class->send_message            = telepathy_send_message;
 	protocol_class->send_composing          = telepathy_send_composing;
+	protocol_class->new_account             = telepathy_account_new;
 	protocol_class->new_contact             = telepathy_contact_new;
 	protocol_class->find_contact            = telepathy_contact_find;
 	protocol_class->add_contact             = telepathy_contact_add;
@@ -353,6 +357,38 @@ telepathy_setup (GossipProtocol *protocol,
 	priv->contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_USER, account);
 }
 
+static const gchar *
+telepathy_account_type_to_protocol_name (GossipAccountType type)
+{
+	switch (type) {
+	case GOSSIP_ACCOUNT_TYPE_JABBER: return "jabber";
+	case GOSSIP_ACCOUNT_TYPE_AIM:    return "icq"; /* FIXME */
+	case GOSSIP_ACCOUNT_TYPE_ICQ:    return "icq";
+	case GOSSIP_ACCOUNT_TYPE_MSN:    return "msn";
+	case GOSSIP_ACCOUNT_TYPE_IRC:    return "irc";
+	default:
+		break;
+	}
+	
+	return NULL;
+}
+
+static const gchar *
+telepathy_account_type_to_cmgr_name (GossipAccountType type)
+{
+	switch (type) {
+	case GOSSIP_ACCOUNT_TYPE_JABBER: return "gabble";
+	case GOSSIP_ACCOUNT_TYPE_AIM:    return "oscar"; /* FIXME */
+	case GOSSIP_ACCOUNT_TYPE_ICQ:    return "oscar";
+	case GOSSIP_ACCOUNT_TYPE_MSN:    return "butterfly";
+	case GOSSIP_ACCOUNT_TYPE_IRC:    return "idle";
+	default:
+		break;
+	}
+	
+	return NULL;
+}
+
 static TpConn *
 telepathy_get_existing_connection (GossipAccount *account)
 {
@@ -364,7 +400,7 @@ telepathy_get_existing_connection (GossipAccount *account)
 
 	/* FIXME: We shouldn't depend on the account parameter */
 	if (gossip_account_has_param (account, "account")) {
-		gossip_account_param_get (account, "account", &account_param, NULL);
+		gossip_account_get_param (account, "account", &account_param, NULL);
 	}
 
 	dbus_g_proxy_call (tp_get_bus_proxy (),
@@ -375,14 +411,19 @@ telepathy_get_existing_connection (GossipAccount *account)
 
 	for (name = name_list; !found && *name; name++) {
 		if (g_str_has_prefix (*name, "org.freedesktop.Telepathy.Connection.")) {
-			guint         handle = 0;
-			GError       *error = NULL;
-			GArray       *handles = NULL;
-			gchar       **handle_name = NULL;
-			gchar        *obj_path = NULL;
-			gchar        *protocol = NULL;
-			const gchar  *account_protocol = NULL;
-			DBusGProxy   *conn_iface = NULL;
+			guint               handle = 0;
+			GError             *error = NULL;
+			GArray             *handles = NULL;
+			gchar             **handle_name = NULL;
+			gchar              *obj_path = NULL;
+			gchar              *protocol = NULL;
+			GossipAccountType   account_type;
+			const gchar        *protocol_name = NULL;
+			DBusGProxy         *conn_iface = NULL;
+
+			gossip_debug (DEBUG_DOMAIN, 
+				      "We have a winner with:'%s'",
+				      *name);
 
 			obj_path = g_strdup_printf ("/%s", *name);
 			g_strdelimit (obj_path, ".", '/');
@@ -398,9 +439,10 @@ telepathy_get_existing_connection (GossipAccount *account)
 				goto next;
 			}
 
-			account_protocol = gossip_account_get_protocol (account);
+			account_type = gossip_account_get_type (account);
+			protocol_name = telepathy_account_type_to_protocol_name (account_type);
 
-			if (!account_protocol || strcmp (protocol, account_protocol) != 0) {
+			if (!protocol_name || strcmp (protocol, protocol_name) != 0) {
 				goto next;
 			}
 
@@ -437,9 +479,11 @@ telepathy_get_existing_connection (GossipAccount *account)
 			g_free (protocol);
 			g_clear_error (&error);
 			g_strfreev (handle_name);
+
 			if (conn_iface) {
 				g_object_unref (conn_iface);
 			}
+
 			if (handles) {
 				g_array_free (handles, TRUE);
 			}
@@ -457,8 +501,9 @@ telepathy_login (GossipProtocol *protocol)
 	GossipTelepathy     *telepathy;
 	GossipTelepathyPriv *priv;
 	guint                status;
-	GHashTable          *connection_parameters;
+	GHashTable          *connection_params;
 	GError              *error = NULL;
+	GossipAccountType    account_type;
 	const gchar         *protocol_name;
 	const gchar         *cmgr_name;
 	TpConnMgr           *conn_manager;
@@ -466,6 +511,7 @@ telepathy_login (GossipProtocol *protocol)
 	gchar               *requested_pass = NULL;
 	GValue               requested_pass_value = {0, };
 	GossipAccountParam  *pass_param;
+	GList               *params, *l;
 
 	g_return_if_fail (GOSSIP_IS_TELEPATHY (protocol));
 
@@ -497,13 +543,24 @@ telepathy_login (GossipProtocol *protocol)
 	}
 
 	gossip_debug (DEBUG_DOMAIN, "No existing connection, connecting...");
-	connection_parameters = g_hash_table_new (g_str_hash, g_str_equal);
-	gossip_account_param_foreach (priv->account,
-				      (GossipAccountParamFunc) telepathy_insert_params_foreach,
-				      connection_parameters);
+	connection_params = g_hash_table_new (g_str_hash, g_str_equal);
+
+	params = gossip_account_get_param_all (priv->account);
+	for (l = params; l; l = l->next) {
+		GossipAccountParam *param;
+		
+		param = gossip_account_get_param_param (priv->account, l->data);
+		
+		if (!param->modified) {
+			continue;
+		}
+		
+		g_hash_table_insert (connection_params, l->data, &param->g_value);
+	}
+	g_list_free (params);
 
 	/* Request the password to the user if not set */
-	if ((pass_param = gossip_account_param_get_param (priv->account, "password")) &&
+	if ((pass_param = gossip_account_get_param_param (priv->account, "password")) &&
 	    G_VALUE_HOLDS (&pass_param->g_value, G_TYPE_STRING) &&
 	    (pass_param->flags & GOSSIP_ACCOUNT_PARAM_FLAG_REQUIRED)) {
 		const gchar *str;
@@ -515,19 +572,20 @@ telepathy_login (GossipProtocol *protocol)
 					       &requested_pass);
 
 			if (requested_pass == NULL) {
-				g_hash_table_destroy (connection_parameters);
+				g_hash_table_destroy (connection_params);
 				return;
 			}
 
 			g_value_init (&requested_pass_value, G_TYPE_STRING);
 			g_value_set_static_string (&requested_pass_value, requested_pass);
-			g_hash_table_insert (connection_parameters, "password", 
+			g_hash_table_insert (connection_params, "password", 
 					     &requested_pass_value);
 		}
 	}
 
-	protocol_name = gossip_account_get_protocol (priv->account);
-	cmgr_name = gossip_account_get_cmgr_name (priv->account);
+	account_type = gossip_account_get_type (priv->account);
+	protocol_name = telepathy_account_type_to_protocol_name (account_type);
+	cmgr_name = telepathy_account_type_to_cmgr_name (account_type);
 	cmgr_info = tp_connmgr_get_info ((gchar*) cmgr_name);
 
 	conn_manager = tp_connmgr_new (tp_get_bus (),
@@ -535,10 +593,10 @@ telepathy_login (GossipProtocol *protocol)
 				       cmgr_info->object_path,
 				       TP_IFACE_CONN_MGR_INTERFACE);
 	priv->tp_conn = tp_connmgr_new_connection (conn_manager,
-						   connection_parameters,
+						   connection_params,
 						   (gchar*) protocol_name);
 
-	g_hash_table_destroy (connection_parameters);
+	g_hash_table_destroy (connection_params);
 	g_free (requested_pass);
 	g_object_unref (conn_manager);
 	tp_connmgr_info_free (cmgr_info);
@@ -816,18 +874,6 @@ telepathy_error_create (GossipProtocolError  code,
 	return error;
 }
 
-void
-telepathy_insert_params_foreach (GossipAccount      *account,
-				 gchar              *param_name,
-				 GossipAccountParam *param,
-				 GHashTable         *protocol_params)
-{
-	if (!param->modified) {
-		return;
-	}
-	g_hash_table_insert (protocol_params, param_name, &param->g_value);
-}
-
 static void
 telepathy_register_account (GossipProtocol      *protocol,
 			    GossipAccount       *account,
@@ -840,7 +886,7 @@ telepathy_register_account (GossipProtocol      *protocol,
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 
 	if (gossip_account_has_param (account, "register")) {
-		gossip_account_param_set (account, "register", TRUE, NULL);
+		gossip_account_set_param (account, "register", TRUE, NULL);
 		result = GOSSIP_RESULT_OK;
 	}
 
@@ -913,7 +959,7 @@ telepathy_get_default_server (GossipProtocol *protocol,
 	telepathy = GOSSIP_TELEPATHY (protocol);
 	priv = GET_PRIV (telepathy);
 
-	gossip_account_param_get (priv->account,
+	gossip_account_get_param (priv->account,
 				  "server", &server,
 				  NULL);
 
@@ -935,7 +981,7 @@ telepathy_get_default_port (GossipProtocol *protocol,
 	telepathy = GOSSIP_TELEPATHY (protocol);
 	priv = GET_PRIV (telepathy);
 
-	gossip_account_param_get (priv->account,
+	gossip_account_get_param (priv->account,
 				  "port", &port,
 				  NULL);
 	return port;
@@ -1097,6 +1143,21 @@ static void
 telepathy_change_password_cancel (GossipProtocol *protocol)
 {
 	gossip_debug (DEBUG_DOMAIN, "telepathy_change_password_cancel");
+}
+
+static GossipAccount *
+telepathy_account_new (GossipProtocol    *protocol,
+		       GossipAccountType  type)
+{
+	const gchar *cmgr_name;
+	const gchar *protocol_name;
+
+	g_return_val_if_fail (GOSSIP_IS_TELEPATHY (protocol), NULL);
+	
+	cmgr_name = telepathy_account_type_to_cmgr_name (type);
+	protocol_name = telepathy_account_type_to_protocol_name (type);
+
+	return gossip_telepathy_cmgr_new_account (cmgr_name, protocol_name);
 }
 
 static GossipContact *

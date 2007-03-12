@@ -129,7 +129,7 @@ account_widget_jabber_save (GossipAccountWidgetJabber *settings)
 	port = strtol (port_str, NULL, 10);
 	use_ssl = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (settings->checkbutton_ssl));
 
-	gossip_account_param_set (settings->account,
+	gossip_account_set_param (settings->account,
 				  "password", password,
 				  "resource", resource,
 				  "server", server,
@@ -198,7 +198,7 @@ account_widget_jabber_entry_focus_cb (GtkWidget                 *widget,
 			str = gtk_entry_get_text (GTK_ENTRY (widget));
 
 			if (!gossip_protocol_is_valid_username (protocol, str)) {
-				gossip_account_param_get (settings->account,
+				gossip_account_get_param (settings->account,
 							  "account", &str,
 							  NULL);
 				settings->account_changed = FALSE;
@@ -222,11 +222,11 @@ account_widget_jabber_entry_focus_cb (GtkWidget                 *widget,
 		str = gtk_entry_get_text (GTK_ENTRY (widget));
 		if (G_STR_EMPTY (str)) {
 			if (widget == settings->entry_password) {
-				gossip_account_param_get (settings->account, "password", &str, NULL);
+				gossip_account_get_param (settings->account, "password", &str, NULL);
 			} else if (widget == settings->entry_resource) {
-				gossip_account_param_get (settings->account, "resource", &str, NULL);
+				gossip_account_get_param (settings->account, "resource", &str, NULL);
 			} else if (widget == settings->entry_server) {
-				gossip_account_param_get (settings->account, "server", &str, NULL);
+				gossip_account_get_param (settings->account, "server", &str, NULL);
 			}
 
 			gtk_entry_set_text (GTK_ENTRY (widget), str ? str : "");
@@ -242,7 +242,7 @@ account_widget_jabber_entry_focus_cb (GtkWidget                 *widget,
 			gchar   *port_str;
 			guint    port;
 
-			gossip_account_param_get (settings->account, "port", &port, NULL);
+			gossip_account_get_param (settings->account, "port", &port, NULL);
 			port_str = g_strdup_printf ("%d", port);
 			gtk_entry_set_text (GTK_ENTRY (widget), port_str);
 			g_free (port_str);
@@ -273,7 +273,7 @@ account_widget_jabber_entry_changed_cb (GtkWidget                 *widget,
 			guint  port;
 			gchar *port_str;
 			
-			gossip_account_param_get (settings->account, "port", &port, NULL);
+			gossip_account_get_param (settings->account, "port", &port, NULL);
 			port_str = g_strdup_printf ("%d", port);
 			g_signal_handlers_block_by_func (settings->entry_port, 
 							 account_widget_jabber_entry_changed_cb, 
@@ -315,7 +315,7 @@ account_widget_jabber_checkbutton_toggled_cb (GtkWidget                 *widget,
 
 		port = gossip_protocol_get_default_port (protocol, FALSE);
 		port_with_ssl = gossip_protocol_get_default_port (protocol, TRUE);
-		gossip_account_param_get (settings->account, "port", &account_port, NULL);
+		gossip_account_get_param (settings->account, "port", &account_port, NULL);
 
 		active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget));
 		
@@ -331,7 +331,7 @@ account_widget_jabber_checkbutton_toggled_cb (GtkWidget                 *widget,
 			changed = FALSE;
 		}
 		
-		gossip_account_param_set (settings->account,
+		gossip_account_set_param (settings->account,
 					  "port", account_port,
 					  "use_ssl", active,
 					  NULL);
@@ -340,7 +340,7 @@ account_widget_jabber_checkbutton_toggled_cb (GtkWidget                 *widget,
 		 *        problem ! But we don't have the choice since
 		 *        loudmouth/gnutls doesn't have any certificates. */
 		if (gossip_account_has_param (settings->account, "ignore-ssl-errors")) {
-			gossip_account_param_set (settings->account,
+			gossip_account_set_param (settings->account,
 						  "ignore-ssl-errors", active,
 						  NULL);
 		}
@@ -501,7 +501,7 @@ account_widget_jabber_button_forget_clicked_cb (GtkWidget                 *butto
 	session = gossip_app_get_session ();
  	manager = gossip_session_get_account_manager (session);
 
-	gossip_account_param_set (settings->account, "password", "", NULL);
+	gossip_account_set_param (settings->account, "password", "", NULL);
 	gossip_account_manager_store (manager);
 
 	gtk_entry_set_text (GTK_ENTRY (settings->entry_password), "");
@@ -633,7 +633,7 @@ account_widget_jabber_button_change_password_clicked_cb (GtkWidget              
 	}
 
 	/* Dialog here to get new password from user */
-	gossip_account_param_get (settings->account, "account", &account_id, NULL);
+	gossip_account_get_param (settings->account, "account", &account_id, NULL);
 	str = g_strdup_printf ("<b>%s</b>", account_id);
 	dialog = gtk_message_dialog_new (GTK_WINDOW (toplevel),
 					 0,
@@ -713,7 +713,7 @@ account_widget_jabber_setup (GossipAccountWidgetJabber *settings)
 	session = gossip_app_get_session ();
 	protocol = gossip_session_get_protocol (session, settings->account);
 
-	gossip_account_param_get (settings->account,
+	gossip_account_get_param (settings->account,
 				  "use_ssl", &use_ssl,
 				  "password", &password,
 				  "resource", &resource,

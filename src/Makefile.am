@@ -28,7 +28,7 @@ if HAVE_LIBNOTIFY
 libnotify_sources = gossip-notify.c gossip-notify.h
 endif
 
-if USE_TELEPATHY
+if HAVE_TELEPATHY
 telepathy_sources = gossip-protocol-chooser.c gossip-protocol-chooser.h
 endif
 

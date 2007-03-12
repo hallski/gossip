@@ -46,19 +46,14 @@ struct _GossipAccountPriv {
 	gchar             *name;
 	gboolean           auto_connect;
 	gboolean           use_proxy;
-#ifdef HAVE_TELEPATHY
-	gchar             *protocol;
-	gchar             *cmgr_name;
-#endif
 
 	GHashTable        *parameters;
 };
 
 typedef struct {
-	GossipAccountParamFunc  callback;
-	gpointer                user_data;
-	GossipAccount          *account;
-} GossipAccountParamData;
+	GossipAccountType  account_type;
+	GList             *params;
+} GetParamsData;
 
 static void           account_class_init            (GossipAccountClass     *class);
 static void           account_init                  (GossipAccount          *account);
@@ -82,14 +77,12 @@ static void           account_param_get_valist      (GossipAccount          *acc
 						     va_list                 var_args);
 static void           account_param_get_all_foreach (gchar                  *param_name,
 						     GossipAccountParam     *param,
-						     GList                 **params);
-static void           account_param_foreach_foreach (const gchar            *param_name,
-						     GossipAccountParam     *param,
-						     GossipAccountParamData *data);
+						     GetParamsData          *data);
 static void           account_param_free            (GossipAccountParam     *param);
+const gchar *         account_param_name_convert    (GossipAccountType       type,
+						     const gchar            *param_name);
 static void           account_set_type              (GossipAccount          *account,
 						     GossipAccountType       type);
-const gchar *         account_param_name_convert    (const gchar            *param_name);
 
 enum {
 	PROP_0,
@@ -97,10 +90,6 @@ enum {
 	PROP_NAME,
 	PROP_AUTO_CONNECT,
 	PROP_USE_PROXY,
-#ifdef HAVE_TELEPATHY
-	PROP_PROTOCOL,
-	PROP_CMGR_NAME,
-#endif
 };
 
 static gpointer  parent_class = NULL;
@@ -176,23 +165,6 @@ account_class_init (GossipAccountClass *class)
 							       "Identifies if the connection uses the environment proxy",
 							       FALSE,
 							       G_PARAM_READWRITE));
-#ifdef HAVE_TELEPATHY
-	g_object_class_install_property (object_class,
-					 PROP_PROTOCOL,
-					 g_param_spec_string ("protocol",
-							      "Protocol",
-							      "Protocol this account uses",
-							      NULL,
-							      G_PARAM_READWRITE));
-
-	g_object_class_install_property (object_class,
-					 PROP_CMGR_NAME,
-					 g_param_spec_string ("cmgr_name",
-							      "Connection Manager",
-							      "The connection manager that provides this account",
-							      NULL,
-							      G_PARAM_READWRITE));
-#endif
 
 	g_type_class_add_private (object_class, sizeof (GossipAccountPriv));
 }
@@ -208,10 +180,6 @@ account_init (GossipAccount *account)
 	priv->name         = NULL;
 	priv->auto_connect = TRUE;
 	priv->use_proxy    = FALSE;
-#ifdef HAVE_TELEPATHY
-	priv->protocol     = NULL;
-	priv->cmgr_name    = NULL;
-#endif
 
 	priv->parameters = g_hash_table_new_full (g_str_hash,
 						  g_str_equal,
@@ -227,10 +195,7 @@ account_finalize (GObject *object)
 	priv = GET_PRIV (object);
 
 	g_free (priv->name);
-#ifdef HAVE_TELEPATHY
-	g_free (priv->protocol);
-	g_free (priv->cmgr_name);
-#endif
+
 	g_hash_table_unref (priv->parameters);
 
 	(G_OBJECT_CLASS (parent_class)->finalize) (object);
@@ -261,14 +226,6 @@ account_get_property (GObject    *object,
 	case PROP_USE_PROXY:
 		g_value_set_boolean (value, priv->use_proxy);
 		break;
-#ifdef HAVE_TELEPATHY
-	case PROP_PROTOCOL:
-		g_value_set_string (value, priv->protocol);
-		break;
-	case PROP_CMGR_NAME:
-		g_value_set_string (value, priv->cmgr_name);
-		break;
-#endif
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
 		break;
@@ -302,16 +259,6 @@ account_set_property (GObject      *object,
 		gossip_account_set_use_proxy (GOSSIP_ACCOUNT (object),
 					    g_value_get_boolean (value));
 		break;
-#ifdef HAVE_TELEPATHY
-	case PROP_PROTOCOL:
-		gossip_account_set_protocol (GOSSIP_ACCOUNT (object),
-					     g_value_get_string (value));
-		break;
-	case PROP_CMGR_NAME:
-		gossip_account_set_cmgr_name (GOSSIP_ACCOUNT (object),
-					      g_value_get_string (value));
-		break;
-#endif
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
 		break;
@@ -324,19 +271,24 @@ account_param_new_valist (GossipAccount *account,
 			  va_list        var_args)
 {
 	GossipAccountPriv *priv;
-	const gchar       *name;
+	GossipAccountType  account_type;
+	const gchar       *param_name;
 
 	priv = GET_PRIV (account);
 
-	for (name = first_param_name; name; name = va_arg (var_args, gchar*)) {
+	account_type = gossip_account_get_type (account);
+
+	for (param_name = first_param_name; 
+	     param_name; 
+	     param_name = va_arg (var_args, gchar*)) {
 		GossipAccountParam *param;
 		GType               g_type;
 		gchar              *error = NULL;
 
-		name = account_param_name_convert (name);
-		param = g_hash_table_lookup (priv->parameters, name);
+		param_name = account_param_name_convert (account_type, param_name);
+		param = g_hash_table_lookup (priv->parameters, param_name);
 		if (param) {
-			g_warning ("GossipAccount already has a parameter named `%s'", name);
+			g_warning ("GossipAccount already has a parameter named `%s'", param_name);
 			break;
 		}
 
@@ -355,7 +307,7 @@ account_param_new_valist (GossipAccount *account,
 		param->flags = va_arg (var_args, GossipAccountParamFlags);
 
 		g_hash_table_insert (priv->parameters,
-				     g_strdup (name),
+				     g_strdup (param_name),
 				     param);
 	}
 }
@@ -366,19 +318,24 @@ account_param_set_valist (GossipAccount *account,
 			  va_list        var_args)
 {
 	GossipAccountPriv *priv;
-	const gchar       *name;
+	GossipAccountType  account_type;
+	const gchar       *param_name;
 
 	priv = GET_PRIV (account);
 
-	for (name = first_param_name; name; name = va_arg (var_args, gchar*)) {
+	account_type = gossip_account_get_type (account);
+
+	for (param_name = first_param_name; 
+	     param_name; 
+	     param_name = va_arg (var_args, gchar*)) {
 		GossipAccountParam *param;
 		gchar              *error = NULL;
 		GValue              g_value = {0, };
 
-		name = account_param_name_convert (name);
-		param = g_hash_table_lookup (priv->parameters, name);
+		param_name = account_param_name_convert (account_type, param_name);
+		param = g_hash_table_lookup (priv->parameters, param_name);
 		if (!param) {
-			g_warning ("GossipAccount has no parameter named `%s'", name);
+			g_warning ("GossipAccount has no parameter named `%s'", param_name);
 			break;
 		}
 
@@ -404,15 +361,18 @@ account_param_get_valist (GossipAccount *account,
 			  va_list        var_args)
 {
 	GossipAccountPriv *priv;
+	GossipAccountType  account_type;
 	const gchar       *name;
 
 	priv = GET_PRIV (account);
+
+	account_type = gossip_account_get_type (account);
 
 	for (name = first_param_name; name; name = va_arg (var_args, gchar*)) {
 		GossipAccountParam *param;
 		gchar              *error = NULL;
 
-		name = account_param_name_convert (name);
+		name = account_param_name_convert (account_type, name);
 		param = g_hash_table_lookup (priv->parameters, name);
 		if (!param) {
 			g_warning ("GossipAccount has no parameter named `%s'", name);
@@ -429,7 +389,7 @@ account_param_get_valist (GossipAccount *account,
 }
 
 void
-gossip_account_param_new (GossipAccount *account,
+gossip_account_new_param (GossipAccount *account,
 			  const gchar   *first_param_name,
 			  ...)
 {
@@ -443,17 +403,20 @@ gossip_account_param_new (GossipAccount *account,
 }
 
 void
-gossip_account_param_new_g_value (GossipAccount           *account,
+gossip_account_new_param_g_value (GossipAccount           *account,
 				  const gchar             *param_name,
 				  const GValue            *g_value,
 				  GossipAccountParamFlags  flags)
 {
 	GossipAccountParam *param;
 	GossipAccountPriv  *priv;
+	GossipAccountType   account_type;
 
 	priv = GET_PRIV (account);
 
-	param_name = account_param_name_convert (param_name);
+	account_type = gossip_account_get_type (account);
+
+	param_name = account_param_name_convert (account_type, param_name);
 	param = g_hash_table_lookup (priv->parameters, param_name);
 	if (param) {
 		g_warning ("GossipAccount already has a parameter named `%s'", param_name);
@@ -471,7 +434,7 @@ gossip_account_param_new_g_value (GossipAccount           *account,
 }
 
 void
-gossip_account_param_set (GossipAccount *account,
+gossip_account_set_param (GossipAccount *account,
 			  const gchar   *first_param_name,
 			  ...)
 {
@@ -485,18 +448,21 @@ gossip_account_param_set (GossipAccount *account,
 }
 
 void
-gossip_account_param_set_g_value (GossipAccount *account,
+gossip_account_set_param_g_value (GossipAccount *account,
 				  const gchar   *param_name,
 				  const GValue  *g_value)
 {
 	GossipAccountPriv  *priv;
 	GossipAccountParam *param;
+	GossipAccountType   account_type;
 
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 
 	priv = GET_PRIV (account);
 
-	param_name = account_param_name_convert (param_name);
+	account_type = gossip_account_get_type (account);
+
+	param_name = account_param_name_convert (account_type, param_name);
 	param = g_hash_table_lookup (priv->parameters, param_name);
 	if (!param) {
 		g_warning ("GossipAccount has no parameter named `%s'", param_name);
@@ -510,7 +476,7 @@ gossip_account_param_set_g_value (GossipAccount *account,
 }
 
 void
-gossip_account_param_get (GossipAccount *account,
+gossip_account_get_param (GossipAccount *account,
 			  const gchar   *first_param_name,
 			  ...)
 {
@@ -524,17 +490,20 @@ gossip_account_param_get (GossipAccount *account,
 }
 
 const GValue *
-gossip_account_param_get_g_value (GossipAccount *account,
+gossip_account_get_param_g_value (GossipAccount *account,
 				  const gchar   *param_name)
 {
 	GossipAccountPriv  *priv;
 	GossipAccountParam *param;
+	GossipAccountType   account_type;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
 
 	priv = GET_PRIV (account);
 
-	param_name = account_param_name_convert (param_name);
+	account_type = gossip_account_get_type (account);
+	
+	param_name = account_param_name_convert (account_type, param_name);
 	param = g_hash_table_lookup (priv->parameters, param_name);
 	if (!param) {
 		g_warning ("GossipAccount has no parameter named `%s'", param_name);
@@ -548,45 +517,54 @@ gboolean
 gossip_account_has_param (GossipAccount *account,
 			  const gchar   *param_name)
 {
-	GossipAccountPriv      *priv;
+	GossipAccountPriv *priv;
+	GossipAccountType  account_type;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), FALSE);
 
 	priv = GET_PRIV (account);
 
-	param_name = account_param_name_convert (param_name);
+	account_type = gossip_account_get_type (account);
+	param_name = account_param_name_convert (account_type, param_name);
+
 	return g_hash_table_lookup (priv->parameters, param_name) != NULL;
 }
 
 static void
-account_param_get_all_foreach (gchar               *param_name,
-			       GossipAccountParam  *param,
-			       GList              **params)
+account_param_get_all_foreach (gchar              *param_name,
+			       GossipAccountParam *param,
+			       GetParamsData      *data)
 {
-	*params = g_list_prepend (*params, g_strdup (account_param_name_convert (param_name)));
+	const gchar *final_param_name;
+
+	final_param_name = account_param_name_convert (data->account_type, param_name);
+	data->params = g_list_prepend (data->params, g_strdup (final_param_name));
 }
 
 GList *
-gossip_account_param_get_all (GossipAccount *account)
+gossip_account_get_param_all (GossipAccount *account)
 {
 	GossipAccountPriv *priv;
-	GList             *params = NULL;
+	GetParamsData      data;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
 
 	priv = GET_PRIV (account);
 
+	data.account_type = gossip_account_get_type (account);
+	data.params = NULL;
+
 	g_hash_table_foreach (priv->parameters,
 			      (GHFunc) account_param_get_all_foreach,
-			      &params);
+			      &data);
 
-	params = g_list_sort (params, (GCompareFunc) strcmp);
+	data.params = g_list_sort (data.params, (GCompareFunc) strcmp);
 
-	return params;
+	return data.params;
 }
 
 GossipAccountParam *
-gossip_account_param_get_param (GossipAccount *account,
+gossip_account_get_param_param (GossipAccount *account,
 				const gchar   *param_name)
 {
 	GossipAccountPriv *priv;
@@ -600,43 +578,27 @@ gossip_account_param_get_param (GossipAccount *account,
 
 
 static void
-account_param_foreach_foreach (const gchar            *param_name,
-			       GossipAccountParam     *param,
-			       GossipAccountParamData *data)
-{
-	data->callback (data->account,
-			account_param_name_convert (param_name),
-			param,
-			data->user_data);
-}
-
-void
-gossip_account_param_foreach (GossipAccount           *account,
-			      GossipAccountParamFunc   callback,
-			      gpointer                 user_data)
-{
-	GossipAccountPriv      *priv;
-	GossipAccountParamData *data;
-
-	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
-
-	priv = GET_PRIV (account);
-
-	data = g_new0 (GossipAccountParamData, 1);
-	data->callback = callback;
-	data->user_data = user_data;
-	data->account = account;
-
-	g_hash_table_foreach (priv->parameters,
-			      (GHFunc) account_param_foreach_foreach,
-			      data);
-}
-
-static void
 account_param_free (GossipAccountParam *param)
 {
 	g_value_unset (&param->g_value);
 	g_slice_free (GossipAccountParam, param);
+}
+
+const gchar *
+account_param_name_convert (GossipAccountType  type,
+			    const gchar       *param_name)
+{
+	if (type == GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY) {
+		return param_name;
+	} 
+
+#ifdef HAVE_TELEPATHY
+	if (strcmp (param_name, "use_ssl") == 0) {
+		return "old-ssl";
+	}
+#endif
+
+	return param_name;
 }
 
 GossipAccountType
@@ -740,64 +702,6 @@ gossip_account_set_use_proxy (GossipAccount *account,
 	g_object_notify (G_OBJECT (account), "use_proxy");
 }
 
-#ifdef HAVE_TELEPATHY
-const gchar *
-gossip_account_get_protocol (GossipAccount *account)
-{
-	GossipAccountPriv *priv;
-
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
-
-	priv = GET_PRIV (account);
-	return priv->protocol;
-}
-
-const gchar *
-gossip_account_get_cmgr_name (GossipAccount *account)
-{
-	GossipAccountPriv *priv;
-
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
-
-	priv = GET_PRIV (account);
-	return priv->cmgr_name;
-}
-
-void 
-gossip_account_set_protocol (GossipAccount *account,
-			     const gchar   *protocol)
-{
-	GossipAccountPriv *priv;
-
-	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
-	g_return_if_fail (protocol != NULL);
-	
-	priv = GET_PRIV (account);
-	
-	g_free (priv->protocol);
-	priv->protocol = g_strdup (protocol);
-
-	g_object_notify (G_OBJECT (account), "protocol");
-}
-
-void 
-gossip_account_set_cmgr_name (GossipAccount *account,
-			 const gchar   *cmgr_name)
-{
-	GossipAccountPriv *priv;
-
-	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
-	g_return_if_fail (cmgr_name != NULL);
-	
-	priv = GET_PRIV (account);
-	
-	g_free (priv->cmgr_name);
-	priv->cmgr_name = g_strdup (cmgr_name);
-
-	g_object_notify (G_OBJECT (account), "cmgr_name");
-}
-#endif
-
 guint
 gossip_account_hash (gconstpointer key)
 {
@@ -815,11 +719,12 @@ const gchar *
 gossip_account_type_to_string (GossipAccountType type)
 {
 	switch (type) {
-	case GOSSIP_ACCOUNT_TYPE_JABBER:  return "Jabber";
-	case GOSSIP_ACCOUNT_TYPE_AIM:     return "AIM";
-	case GOSSIP_ACCOUNT_TYPE_ICQ:     return "ICQ";
-	case GOSSIP_ACCOUNT_TYPE_MSN:     return "MSN";
-	case GOSSIP_ACCOUNT_TYPE_YAHOO:   return "Yahoo!";
+	case GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY:  return "Jabber-Legacy";
+	case GOSSIP_ACCOUNT_TYPE_JABBER:         return "Jabber";
+	case GOSSIP_ACCOUNT_TYPE_AIM:            return "AIM";
+	case GOSSIP_ACCOUNT_TYPE_ICQ:            return "ICQ";
+	case GOSSIP_ACCOUNT_TYPE_MSN:            return "MSN";
+	case GOSSIP_ACCOUNT_TYPE_YAHOO:          return "Yahoo!";
 
 	case GOSSIP_ACCOUNT_TYPE_UNKNOWN:
 	default:
@@ -832,7 +737,10 @@ gossip_account_type_to_string (GossipAccountType type)
 GossipAccountType
 gossip_account_string_to_type (const gchar *str)
 {
-	if (gossip_strncasecmp (str, "Jabber", -1) == 0) {
+	if (gossip_strncasecmp (str, "Jabber-Legacy", -1) == 0) {
+		return GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY;
+	}
+	else if (gossip_strncasecmp (str, "Jabber", -1) == 0) {
 		return GOSSIP_ACCOUNT_TYPE_JABBER;
 	}
 	else if (gossip_strncasecmp (str, "AIM", -1) == 0) {
@@ -847,18 +755,11 @@ gossip_account_string_to_type (const gchar *str)
 	else if (gossip_strncasecmp (str, "Yahoo!", -1) == 0) {
 		return GOSSIP_ACCOUNT_TYPE_YAHOO;
 	}
+	else if (gossip_strncasecmp (str, "IRC", -1) == 0) {
+		return GOSSIP_ACCOUNT_TYPE_IRC;
+	}
 
 	return GOSSIP_ACCOUNT_TYPE_UNKNOWN;
 }
 
-const gchar *
-account_param_name_convert (const gchar *param_name)
-{
-#ifdef HAVE_TELEPATHY
-	if (strcmp (param_name, "use_ssl") == 0) {
-		return "old-ssl";
-	}
-#endif
-	return param_name;
-}
 

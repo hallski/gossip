@@ -924,7 +924,7 @@ gossip_session_new_account (GossipSession     *session,
 	protocol = gossip_protocol_new_from_account_type (type);
 	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), NULL);
 
-	account = gossip_protocol_new_account (protocol);
+	account = gossip_protocol_new_account (protocol, type);
 	priv->protocols = g_list_append (priv->protocols,
 					 g_object_ref (protocol));
 

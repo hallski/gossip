@@ -87,13 +87,13 @@ account_widget_generic_save_foreach (GtkWidget                  *widget,
 
 		str = gtk_entry_get_text (GTK_ENTRY (widget));
 
-		g_type = G_VALUE_TYPE (gossip_account_param_get_g_value (settings->account, param_name));
+		g_type = G_VALUE_TYPE (gossip_account_get_param_g_value (settings->account, param_name));
 		g_value = gossip_string_to_g_value (str, g_type);
 	} else {
 		return;
 	}
 
-	gossip_account_param_set_g_value (settings->account, param_name, g_value);
+	gossip_account_set_param_g_value (settings->account, param_name, g_value);
 	g_value_unset (g_value);
 	g_free (g_value);
 }
@@ -173,7 +173,7 @@ account_widget_generic_setup_foreach (gchar                      *param_name,
 	GtkWidget          *widget;
 	GossipAccountParam *param;
 
-	param = gossip_account_param_get_param (settings->account, param_name);
+	param = gossip_account_get_param_param (settings->account, param_name);
 		
 	gtk_table_resize (GTK_TABLE (settings->table_settings),
 			  ++settings->n_rows,
@@ -281,14 +281,10 @@ gossip_account_widget_generic_new (GossipAccount *account,
 		gtk_size_group_add_widget (settings->size_group, label_name);
 	}
 	
-	params = gossip_account_param_get_all (settings->account);
+	params = gossip_account_get_param_all (settings->account);
 	g_list_foreach (params, (GFunc) account_widget_generic_setup_foreach, settings);
 	g_list_foreach (params, (GFunc) g_free, NULL);
 	g_list_free (params);
-
-/* 	gossip_account_param_foreach (settings->account, */
-/* 				      (GossipAccountParamFunc) account_widget_generic_setup_foreach, */
-/* 				      settings); */
 
 	g_signal_connect (settings->table_settings, "destroy",
 			  G_CALLBACK (account_widget_generic_destroy_cb),

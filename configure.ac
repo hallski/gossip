@@ -139,7 +139,7 @@ dnl -----------------------------------------------------------
 AC_ARG_ENABLE(telepathy,
               AS_HELP_STRING([--enable-telepathy=@<:@no/yes/auto@:>@],
                              [compile with telepathy support]), ,
-              enable_telepathy=no)
+              enable_telepathy=auto)
 
 if test "x$enable_telepathy" != "xno" -a "x$have_dbus" = "xyes"; then
    telepathy_pkgconfig_tmp="libtelepathy >= 0.0.51 "
@@ -175,7 +175,7 @@ else
    BUGZILLA_COMPONENT=General
 fi
 
-AM_CONDITIONAL(USE_TELEPATHY, test x$have_telepathy = xyes)
+AM_CONDITIONAL(HAVE_TELEPATHY, test x$have_telepathy = xyes)
 AC_SUBST(BUGZILLA_COMPONENT)
 
 

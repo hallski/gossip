@@ -1,3 +1,27 @@
+2007-03-12  Martyn Russell  <martyn@imendio.com>
+
+	* configure.ac:
+	* libgossip/Makefile.am:
+	* libgossip/gossip-account-manager.c:
+	* libgossip/gossip-account.[ch]:
+	* libgossip/gossip-account.dtd:
+	* libgossip/gossip-protocol.[ch]:
+	* libgossip/gossip-session.c:
+	* protocols/Makefile.am:
+	* protocols/jabber/gossip-jabber.c:
+	* protocols/telepathy/gossip-telepathy-cmgr.c:
+	* protocols/telepathy/gossip-telepathy.c:
+	* src/Makefile.am:
+	* src/gossip-account-widget-generic.c:
+	* src/gossip-account-widget-jabber.c:
+	* src/gossip-accounts-dialog.c:
+	* src/gossip-new-chatroom-dialog.c:
+	* src/gossip-ui-utils.c: Make Telepathy automatic now when running
+	configure, so we don't have to have separate packages for
+	telepathy enabled Gossip and the legacy backend. Now you can
+	choose to create accounts using the Telepathy Jabber backend OR
+	the legacy Jabber backend too, i.e. they can co-exist.
+
 2006-03-10  Xavier Claessens  <xclaesse@gmail.com>
 
 	* protocols/telepathy/gossip-telepathy.c: Create a GossipVCard in 

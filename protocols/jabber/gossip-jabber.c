@@ -147,6 +147,8 @@ typedef struct {
 static void             gossip_jabber_class_init            (GossipJabberClass          *klass);
 static void             gossip_jabber_init                  (GossipJabber               *jabber);
 static void             jabber_finalize                     (GObject                    *object);
+static GossipAccount *  jabber_new_account                  (GossipProtocol             *protocol,
+							     GossipAccountType           type);
 static GossipContact *  jabber_new_contact                  (GossipProtocol             *protocol,
 							     const gchar                *id,
 							     const gchar                *name);
@@ -190,7 +192,6 @@ static void             jabber_change_password              (GossipProtocol     
 							     GossipErrorCallback         callback,
 							     gpointer                    user_data);
 static void             jabber_change_password_cancel       (GossipProtocol             *protocol);
-static GossipAccount *  jabber_new_account                  (GossipProtocol             *protocol);
 static void             jabber_get_avatar_requirements      (GossipProtocol             *protocol,
 							     guint                      *min_width,
 							     guint                      *min_height,
@@ -384,6 +385,7 @@ gossip_jabber_class_init (GossipJabberClass *klass)
 
 	object_class->finalize = jabber_finalize;
 
+	protocol_class->new_account             = jabber_new_account;
 	protocol_class->new_contact             = jabber_new_contact;
 	protocol_class->setup                   = jabber_setup;
 	protocol_class->login                   = jabber_login;
@@ -416,7 +418,6 @@ gossip_jabber_class_init (GossipJabberClass *klass)
 	protocol_class->register_cancel         = jabber_register_cancel;
 	protocol_class->change_password         = jabber_change_password;
 	protocol_class->change_password_cancel  = jabber_change_password_cancel;
-	protocol_class->new_account             = jabber_new_account;
 	protocol_class->get_avatar_requirements = jabber_get_avatar_requirements;
 
 	g_type_class_add_private (object_class, sizeof (GossipJabberPriv));
@@ -500,6 +501,43 @@ jabber_finalize (GObject *object)
 	(G_OBJECT_CLASS (gossip_jabber_parent_class)->finalize) (object);
 }
 
+static GossipAccount *
+jabber_new_account (GossipProtocol    *protocol,
+		    GossipAccountType  type)
+{
+	GossipAccount *account;
+	const gchar   *id;
+	const gchar   *server;
+	gboolean       ssl;
+	guint          port;
+
+	g_return_val_if_fail (GOSSIP_IS_JABBER (protocol), NULL);
+
+	id = jabber_get_example_username (protocol);
+	server = jabber_get_default_server (protocol, id);
+	ssl = jabber_is_ssl_supported (protocol);
+	port = jabber_get_default_port (protocol, ssl);
+	
+	/* Set a default value for each account parameter */
+	account = g_object_new (GOSSIP_TYPE_ACCOUNT,
+				"type", GOSSIP_ACCOUNT_TYPE_JABBER,
+				"name", _("new account"),
+				"auto_connect", TRUE,
+				"use_proxy", FALSE,
+				NULL);
+ 
+	gossip_account_new_param (account,
+				  "password", G_TYPE_STRING, "", 0,
+				  "resource", G_TYPE_STRING, _("Home"), 0,
+				  "server", G_TYPE_STRING, server, 0,
+				  "port", G_TYPE_UINT, port, 0,
+				  "use_ssl", G_TYPE_BOOLEAN, ssl, 0,
+				  "account", G_TYPE_STRING, id, 0,
+				  NULL);
+
+	return account;
+}
+
 static GossipContact *
 jabber_new_contact (GossipProtocol *protocol,
 		    const gchar    *id,
@@ -547,7 +585,7 @@ jabber_setup (GossipProtocol *protocol,
 	priv->contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_USER,
 					    priv->account);
 
-	gossip_account_param_get (account,
+	gossip_account_get_param (account,
 				  "server", &server,
 				  "port", &port,
 				  "account", &account_param,
@@ -616,7 +654,7 @@ jabber_setup_connection (GossipJabber *jabber)
 
 	priv->disconnect_request = FALSE;
 
-	gossip_account_param_get (priv->account,
+	gossip_account_get_param (priv->account,
 				  "use_ssl", &use_ssl,
 				  "port", &port,
 				  NULL);
@@ -867,7 +905,7 @@ jabber_connection_open_cb (LmConnection *connection,
 	}
 
 	account = priv->account;
-	gossip_account_param_get (account,
+	gossip_account_get_param (account,
 				  "password", &account_password,
 				  "resource", &account_resource,
 				  "account", &account_param,
@@ -1313,7 +1351,7 @@ jabber_change_password (GossipProtocol      *protocol,
 	priv->change_password_cancel = FALSE;
 
 	/* Get credentials */
-	gossip_account_param_get (priv->account,
+	gossip_account_get_param (priv->account,
 				  "account", &account_param,
 				  "server", &server,
 				  NULL);
@@ -1377,42 +1415,6 @@ jabber_change_password_cancel (GossipProtocol *protocol)
 	priv = GET_PRIV (jabber);
 
 	priv->change_password_cancel = TRUE;
-}
-
-static GossipAccount *
-jabber_new_account (GossipProtocol *protocol)
-{
-	GossipAccount *account;
-	const gchar   *id;
-	const gchar   *server;
-	gboolean       ssl;
-	guint          port;
-
-	g_return_val_if_fail (GOSSIP_IS_JABBER (protocol), NULL);
-
-	id = jabber_get_example_username (protocol);
-	server = jabber_get_default_server (protocol, id);
-	ssl = jabber_is_ssl_supported (protocol);
-	port = jabber_get_default_port (protocol, ssl);
-	
-	/* Set a default value for each account parameter */
-	account = g_object_new (GOSSIP_TYPE_ACCOUNT,
-				"type", GOSSIP_ACCOUNT_TYPE_JABBER,
-				"name", _("new account"),
-				"auto_connect", TRUE,
-				"use_proxy", FALSE,
-				NULL);
-
-	gossip_account_param_new (account,
-				  "password", G_TYPE_STRING, "", 0,
-				  "resource", G_TYPE_STRING, _("Home"), 0,
-				  "server", G_TYPE_STRING, server, 0,
-				  "port", G_TYPE_UINT, port, 0,
-				  "use_ssl", G_TYPE_BOOLEAN, ssl, 0,
-				  "account", G_TYPE_STRING, id, 0,
-				  NULL);
-
-	return account;
 }
 
 static void
@@ -1493,7 +1495,7 @@ jabber_register_connection_open_cb (LmConnection *connection,
 						      ad,
 						      NULL);
 
-	gossip_account_param_get (priv->account,
+	gossip_account_get_param (priv->account,
 				  "server", &server,
 				  "password", &password,
 				  "account", &account_param,

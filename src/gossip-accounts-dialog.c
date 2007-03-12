@@ -1124,6 +1124,7 @@ accounts_dialog_choose_protocol_response_cb (GtkDialog            *widget,
 	chooser = g_object_get_data (G_OBJECT (widget), "chooser");
 
 	gossip_protocol_chooser_get_protocol (chooser, &cmgr, &protocol);
+	gossip_debug (DEBUG_DOMAIN, "Choosen cmgr:'%s', protocol:'%s'", cmgr, protocol);
 	account = gossip_telepathy_cmgr_new_account (cmgr, protocol);
 	gossip_account_manager_add (manager, account);
 	accounts_dialog_model_set_selected (dialog, account);

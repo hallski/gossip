@@ -23,14 +23,17 @@
 #include <glib/gi18n.h>
 #include <libtelepathy/tp-helpers.h>
 
+#include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-utils.h>
 
 #include "gossip-telepathy-cmgr.h"
 
-static void telepathy_cmgr_list_protocols_foreach (gchar              *key,
+#define DEBUG_DOMAIN "TelepathyCmgr"
+
+static void telepathy_cmgr_list_protocols_foreach (const gchar        *key,
 						   gpointer            value,
 						   GSList            **list);
-static void telepathy_cmgr_list_params_foreach    (gchar              *key,
+static void telepathy_cmgr_list_params_foreach    (const gchar        *key,
 						   TpConnMgrProtParam *param,
 						   GossipAccount      *account);
 
@@ -59,30 +62,35 @@ gossip_telepathy_cmgr_list_protocols (const gchar *cmgr)
 }
 
 GossipAccount *
-gossip_telepathy_cmgr_new_account (const gchar *cmgr,
-				   const gchar *protocol)
+gossip_telepathy_cmgr_new_account (const gchar *cmgr_name,
+				   const gchar *protocol_name)
 {
 	TpConnMgrInfo     *cmgr_info;
 	GossipAccount     *account;
 	GossipAccountType  type;
 	GHashTable        *params;
 
-	g_return_val_if_fail (cmgr != NULL, NULL);
-	g_return_val_if_fail (protocol != NULL, NULL);
+	g_return_val_if_fail (cmgr_name != NULL, NULL);
+	g_return_val_if_fail (protocol_name != NULL, NULL);
 
-	cmgr_info = tp_connmgr_get_info ((gchar*) cmgr);
-	params = g_hash_table_lookup (cmgr_info->protocols, protocol);
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Trying to create account with cmgr name:'%s', protocol:'%s'", 
+		      cmgr_name, 
+		      protocol_name);
+
+	cmgr_info = tp_connmgr_get_info (cmgr_name);
+	g_return_val_if_fail (cmgr_info != NULL, NULL);
+
+	params = g_hash_table_lookup (cmgr_info->protocols, protocol_name);
 	g_return_val_if_fail (params != NULL, NULL);
 
-	type = gossip_account_string_to_type (protocol);
+	type = gossip_account_string_to_type (protocol_name);
 
 	account = g_object_new (GOSSIP_TYPE_ACCOUNT,
 				"type", type,
 				"name", _("new account"),
 				"auto_connect", TRUE,
 				"use_proxy", FALSE,
-				"protocol", protocol,
-				"cmgr_name", cmgr,
 				NULL);
 
 	g_hash_table_foreach (params,
@@ -95,20 +103,26 @@ gossip_telepathy_cmgr_new_account (const gchar *cmgr,
 }
 
 static void
-telepathy_cmgr_list_protocols_foreach (gchar     *key,
-				       gpointer   value,
-				       GSList   **list)
+telepathy_cmgr_list_protocols_foreach (const gchar  *key,
+				       gpointer      value,
+				       GSList      **list)
 {
 	*list = g_slist_prepend (*list, g_strdup (key));
 }
 
 static void
-telepathy_cmgr_list_params_foreach (gchar              *key,
+telepathy_cmgr_list_params_foreach (const gchar        *key,
 				    TpConnMgrProtParam *param,
 				    GossipAccount      *account)
 {
 	GValue *g_value;
-	GType  type;
+	GType   type;
+
+	gossip_debug (DEBUG_DOMAIN, 
+		      "- key:'%s' %s", 
+		      key, 
+		      param->default_value ? "(has default)" : "");
+
 
 	type = gossip_dbus_type_to_g_type (param->dbus_type);
 	if (param->default_value) {
@@ -118,9 +132,7 @@ telepathy_cmgr_list_params_foreach (gchar              *key,
 		g_value_init (g_value, type);
 	}
 
-	gossip_account_param_new_g_value (account, key,
-					  g_value,
-					  param->flags);
+	gossip_account_new_param_g_value (account, key, g_value, param->flags);
 
 	g_value_unset (g_value);
 	g_free (g_value);

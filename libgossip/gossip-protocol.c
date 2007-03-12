@@ -26,9 +26,9 @@
 
 #ifdef HAVE_TELEPATHY
 #include <protocols/telepathy/gossip-telepathy.h>
-#else 
-#include <protocols/jabber/gossip-jabber.h>
 #endif
+
+#include <protocols/jabber/gossip-jabber.h>
 
 #include "gossip-protocol.h"
 
@@ -216,20 +216,32 @@ gossip_protocol_new_from_account_type (GossipAccountType type)
 {
 	GossipProtocol *protocol = NULL;
 
-#ifdef HAVE_TELEPATHY
-	protocol = g_object_new (GOSSIP_TYPE_TELEPATHY, NULL);
-#else
-	/* create protocol for account type */
-	switch (type) {
-	case GOSSIP_ACCOUNT_TYPE_JABBER:
+	if (type == GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY) {
 		protocol = g_object_new (GOSSIP_TYPE_JABBER, NULL);
-		break;
-	default:
-		break;
-	}
+#ifdef HAVE_TELEPATHY
+	} else {
+
+		protocol = g_object_new (GOSSIP_TYPE_TELEPATHY, NULL);
 #endif
+	}
 
 	return protocol;
+}
+
+GossipAccount *
+gossip_protocol_new_account (GossipProtocol    *protocol,
+			     GossipAccountType  type)
+{
+	GossipProtocolClass *klass;
+
+	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), NULL);
+
+	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
+	if (klass->new_account) {
+		return klass->new_account (protocol, type);
+	}
+
+	return NULL;
 }
 
 GossipContact *
@@ -738,21 +750,6 @@ gossip_protocol_change_password_cancel (GossipProtocol *protocol)
 	if (klass->change_password_cancel) {
 		klass->change_password_cancel (protocol);
 	}
-}
-
-GossipAccount *
-gossip_protocol_new_account (GossipProtocol *protocol)
-{
-	GossipProtocolClass *klass;
-
-	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), NULL);
-
-	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
-	if (klass->new_account) {
-		return klass->new_account (protocol);
-	}
-
-	return NULL;
 }
 
 void

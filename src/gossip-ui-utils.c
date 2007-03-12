@@ -285,7 +285,7 @@ gossip_password_dialog_run (GossipAccount *account,
 			session = gossip_app_get_session ();
 			manager = gossip_session_get_account_manager (session);
 
-			gossip_account_param_set (account, "password", password, NULL);
+			gossip_account_set_param (account, "password", password, NULL);
 			gossip_account_manager_store (manager);
 		}
 	} else {

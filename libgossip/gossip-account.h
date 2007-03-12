@@ -55,11 +55,13 @@ typedef enum {
 } GossipAccountParamFlags;
 
 typedef enum {
+	GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY,
 	GOSSIP_ACCOUNT_TYPE_JABBER,
 	GOSSIP_ACCOUNT_TYPE_AIM,
 	GOSSIP_ACCOUNT_TYPE_ICQ,
 	GOSSIP_ACCOUNT_TYPE_MSN,
 	GOSSIP_ACCOUNT_TYPE_YAHOO,
+	GOSSIP_ACCOUNT_TYPE_IRC,
 	GOSSIP_ACCOUNT_TYPE_UNKNOWN,
 	GOSSIP_ACCOUNT_TYPE_COUNT
 } GossipAccountType;
@@ -70,66 +72,49 @@ struct _GossipAccountParam {
 	gboolean                modified;
 };
 
-typedef void (*GossipAccountParamFunc) (GossipAccount      *account,
-					const gchar        *param_name,
-					GossipAccountParam *param,
-					gpointer            user_data);
-
-GType             gossip_account_get_gtype         (void) G_GNUC_CONST;
+GType             gossip_account_get_gtype                 (void) G_GNUC_CONST;
 
 /* Account parameter functions */
-void              gossip_account_param_new         (GossipAccount           *account,
-						    const gchar             *first_param_name,
-						    ...);
-void              gossip_account_param_new_g_value (GossipAccount           *account,
-						    const gchar             *param_name,
-						    const GValue            *g_value,
-						    GossipAccountParamFlags  flags);
-void              gossip_account_param_set         (GossipAccount           *account,
-						    const gchar             *first_param_name,
-						    ...);
-void              gossip_account_param_set_g_value (GossipAccount           *account,
-						    const gchar             *param_name,
-						    const GValue            *g_value);
-void              gossip_account_param_get         (GossipAccount           *account,
-						    const gchar             *first_param_name,
-						    ...);
-const GValue *    gossip_account_param_get_g_value (GossipAccount           *account,
-						    const gchar             *param_name);
-gboolean          gossip_account_has_param         (GossipAccount           *account,
-						    const gchar             *param_name);
-GList *           gossip_account_param_get_all     (GossipAccount           *account);
-GossipAccountParam *
-                  gossip_account_param_get_param   (GossipAccount           *account,
-						    const gchar             *param_name);
-void              gossip_account_param_foreach     (GossipAccount           *account,
-						    GossipAccountParamFunc   callback,
-						    gpointer                 user_data);
+void                gossip_account_new_param               (GossipAccount           *account,
+							    const gchar             *first_param_name,
+							    ...);
+void                gossip_account_new_param_g_value       (GossipAccount           *account,
+							    const gchar             *param_name,
+							    const GValue            *g_value,
+							    GossipAccountParamFlags  flags);
+void                gossip_account_set_param               (GossipAccount           *account,
+							    const gchar             *first_param_name,
+							    ...);
+void                gossip_account_set_param_g_value       (GossipAccount           *account,
+							    const gchar             *param_name,
+							    const GValue            *g_value);
+void                gossip_account_get_param               (GossipAccount           *account,
+							    const gchar             *first_param_name,
+							    ...);
+const GValue *      gossip_account_get_param_g_value       (GossipAccount           *account,
+							    const gchar             *param_name);
+gboolean            gossip_account_has_param               (GossipAccount           *account,
+							    const gchar             *param_name);
+GList *             gossip_account_get_param_all           (GossipAccount           *account);
+GossipAccountParam *gossip_account_get_param_param         (GossipAccount           *account,
+							    const gchar             *param_name);
 
 /* Account functions */
-GossipAccountType gossip_account_get_type          (GossipAccount           *account);
-const gchar *     gossip_account_get_name          (GossipAccount           *account);
-gboolean          gossip_account_get_auto_connect  (GossipAccount           *account);
-gboolean          gossip_account_get_use_proxy     (GossipAccount           *account);
-void              gossip_account_set_name          (GossipAccount           *account,
-						    const gchar             *name);
-void              gossip_account_set_auto_connect  (GossipAccount           *account,
-						    gboolean                 auto_connect);
-void              gossip_account_set_use_proxy     (GossipAccount           *account,
-						    gboolean                 use_proxy);
-#ifdef HAVE_TELEPATHY
-const gchar *     gossip_account_get_protocol      (GossipAccount           *account);
-const gchar *     gossip_account_get_cmgr_name     (GossipAccount           *account);
-void              gossip_account_set_protocol      (GossipAccount           *account,
-						    const gchar             *protocol);
-void              gossip_account_set_cmgr_name     (GossipAccount           *account,
-						    const gchar             *cmgr_name);
-#endif
-guint             gossip_account_hash              (gconstpointer            key);
-gboolean          gossip_account_equal             (gconstpointer            a,
-						    gconstpointer            b);
-const gchar *     gossip_account_type_to_string    (GossipAccountType        type);
-GossipAccountType gossip_account_string_to_type    (const gchar             *str);
+GossipAccountType   gossip_account_get_type                (GossipAccount           *account);
+const gchar *       gossip_account_get_name                (GossipAccount           *account);
+gboolean            gossip_account_get_auto_connect        (GossipAccount           *account);
+gboolean            gossip_account_get_use_proxy           (GossipAccount           *account);
+void                gossip_account_set_name                (GossipAccount           *account,
+							    const gchar             *name);
+void                gossip_account_set_auto_connect        (GossipAccount           *account,
+							    gboolean                 auto_connect);
+void                gossip_account_set_use_proxy           (GossipAccount           *account,
+							    gboolean                 use_proxy);
+guint               gossip_account_hash                    (gconstpointer            key);
+gboolean            gossip_account_equal                   (gconstpointer            a,
+							    gconstpointer            b);
+const gchar *       gossip_account_type_to_string          (GossipAccountType        type);
+GossipAccountType   gossip_account_string_to_type          (const gchar             *str);
 
 G_END_DECLS
 

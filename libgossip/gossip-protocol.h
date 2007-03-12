@@ -67,6 +67,8 @@ struct _GossipProtocolClass {
 	GObjectClass parent_class;
 
 	/* virtual functions */
+	GossipAccount * (*new_account)             (GossipProtocol         *protocol,
+						    GossipAccountType       type);
 	GossipContact * (*new_contact)             (GossipProtocol         *protocol,
 						    const gchar            *id,
 						    const gchar            *name);
@@ -142,8 +144,6 @@ struct _GossipProtocolClass {
 						    GossipErrorCallback     callback,
 						    gpointer                user_data);
 	void            (*change_password_cancel)  (GossipProtocol         *protocol);
-	
-	GossipAccount * (*new_account)             (GossipProtocol         *protocol);
 	void            (*get_avatar_requirements) (GossipProtocol         *protocol,
 						    guint                  *min_width,
 						    guint                  *min_height,
@@ -156,6 +156,8 @@ struct _GossipProtocolClass {
 GType           gossip_protocol_get_type                (void) G_GNUC_CONST;
 
 GossipProtocol *gossip_protocol_new_from_account_type   (GossipAccountType       type);
+GossipAccount * gossip_protocol_new_account             (GossipProtocol         *protocol,
+							 GossipAccountType       type);
 GossipContact  *gossip_protocol_new_contact             (GossipProtocol         *protocol,
 							 const gchar            *id,
 							 const gchar            *name);
@@ -231,7 +233,6 @@ void            gossip_protocol_change_password         (GossipProtocol         
 							 GossipErrorCallback     callback,
 							 gpointer                user_data);
 void            gossip_protocol_change_password_cancel  (GossipProtocol         *protocol);
-GossipAccount * gossip_protocol_new_account             (GossipProtocol         *protocol);
 void            gossip_protocol_get_avatar_requirements (GossipProtocol         *protocol,
 							 guint                  *min_width,
 							 guint                  *min_height,
