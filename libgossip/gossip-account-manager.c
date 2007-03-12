@@ -292,7 +292,8 @@ gossip_account_manager_find_by_id (GossipAccountManager *manager,
 	GossipAccountType         type = GOSSIP_ACCOUNT_TYPE_COUNT;
 
 	/* WARNING: This function is used for compatibility with old log format,
-	 *          it shouldn't be used for new code. */
+	 *          it shouldn't be used for new code.
+	 */
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager), NULL);
 	g_return_val_if_fail (id != NULL || type_str != NULL, NULL);

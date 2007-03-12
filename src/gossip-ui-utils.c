@@ -424,6 +424,7 @@ gossip_pixbuf_from_account_type (GossipAccountType type,
 	}
 
 	switch (type) {
+	case GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY:
 	case GOSSIP_ACCOUNT_TYPE_JABBER:
 		icon_id = "im-jabber";
 		break;

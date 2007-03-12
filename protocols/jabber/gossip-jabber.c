@@ -520,7 +520,7 @@ jabber_new_account (GossipProtocol    *protocol,
 	
 	/* Set a default value for each account parameter */
 	account = g_object_new (GOSSIP_TYPE_ACCOUNT,
-				"type", GOSSIP_ACCOUNT_TYPE_JABBER,
+				"type", GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY,
 				"name", _("new account"),
 				"auto_connect", TRUE,
 				"use_proxy", FALSE,

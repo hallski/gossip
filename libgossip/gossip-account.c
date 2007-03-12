@@ -719,8 +719,8 @@ const gchar *
 gossip_account_type_to_string (GossipAccountType type)
 {
 	switch (type) {
-	case GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY:  return "Jabber-Legacy";
-	case GOSSIP_ACCOUNT_TYPE_JABBER:         return "Jabber";
+	case GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY:  return "Jabber (Legacy)";
+	case GOSSIP_ACCOUNT_TYPE_JABBER:         return "Jabber (Telepathy)";
 	case GOSSIP_ACCOUNT_TYPE_AIM:            return "AIM";
 	case GOSSIP_ACCOUNT_TYPE_ICQ:            return "ICQ";
 	case GOSSIP_ACCOUNT_TYPE_MSN:            return "MSN";
@@ -737,10 +737,10 @@ gossip_account_type_to_string (GossipAccountType type)
 GossipAccountType
 gossip_account_string_to_type (const gchar *str)
 {
-	if (gossip_strncasecmp (str, "Jabber-Legacy", -1) == 0) {
+	if (gossip_strncasecmp (str, "Jabber (Legacy)", -1) == 0) {
 		return GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY;
 	}
-	else if (gossip_strncasecmp (str, "Jabber", -1) == 0) {
+	else if (gossip_strncasecmp (str, "Jabber (Telepathy)", -1) == 0) {
 		return GOSSIP_ACCOUNT_TYPE_JABBER;
 	}
 	else if (gossip_strncasecmp (str, "AIM", -1) == 0) {

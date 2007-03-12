@@ -1,5 +1,17 @@
 2007-03-12  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-account-manager.c:
+	* libgossip/gossip-account.c: 
+	* protocols/jabber/gossip-jabber.c:
+	* src/gossip-accounts-dialog.c:
+	* src/gossip-ui-utils.c: 
+	* ui/main.glade: Fix up the accounts dialog so we now have a nice
+	way to choose the account type we want to create, instead of that
+	monstrosity that was the GossipProtocolChooser. This will be given
+	more love to include icons later, but for now, it is a start.
+
+2007-03-12  Martyn Russell  <martyn@imendio.com>
+
 	* configure.ac:
 	* libgossip/Makefile.am:
 	* libgossip/gossip-account-manager.c:
