@@ -276,8 +276,9 @@ gossip_telepathy_chatrooms_leave (GossipTelepathyChatrooms *chatrooms,
 	gossip_chatroom_set_last_error (room->chatroom, NULL);
 
 	if (!tp_chan_close (DBUS_G_PROXY (room->room_channel), &error)) {
-		gossip_debug (DEBUG_DOMAIN, "Error closing room channel: %s",
-			      error->message);
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Error closing room channel: %s",
+			      error ? error->message : "No error given");
 		g_clear_error (&error);
 	}
 
@@ -416,8 +417,9 @@ gossip_telepathy_chatrooms_invite_decline (GossipTelepathyChatrooms *chatrooms,
 					      reason);
 
 	if (!tp_chan_close (DBUS_G_PROXY (tp_room->room_channel), &error)) {
-		gossip_debug (DEBUG_DOMAIN, "Error closing room channel: %s",
-			      error->message);
+		gossip_debug (DEBUG_DOMAIN,
+			      "Error closing room channel: %s",
+			      error ? error->message : "No error given");
 		g_clear_error (&error);
 	}
 }
@@ -476,8 +478,9 @@ telepathy_chatrooms_join_cb (DBusGProxy         *proxy,
 	room_id = gossip_chatroom_get_id (room);
 
 	if (error) {
-		gossip_debug (DEBUG_DOMAIN, "Error requesting room handle: %s",
-			      error->message);
+		gossip_debug (DEBUG_DOMAIN,
+			      "Error requesting room handle: %s",
+			      error ? error->message : "No error given");
 		goto exit;
 	}
 
@@ -510,8 +513,9 @@ telepathy_chatrooms_join_cb (DBusGProxy         *proxy,
 					      TRUE,
 					      &room_object_path,
 					      &error)) {
-			gossip_debug (DEBUG_DOMAIN, "Error requesting room channel:%s",
-				      error->message);
+			gossip_debug (DEBUG_DOMAIN,
+				      "Error requesting room channel:%s",
+				      error ? error->message : "No error given");
 			g_clear_error (&error);
 			goto exit;
 		}
@@ -600,8 +604,9 @@ telepathy_chatrooms_find (GossipTelepathyChatrooms *chatrooms,
 				      room_names,
 				      &room_handles,
 				      &error)) {
-		gossip_debug (DEBUG_DOMAIN, "Error requesting room handle:%s",
-		              error->message);
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Error requesting room handle:%s",
+			      error ? error->message : "No error given");
 		g_clear_error (&error);
 		return NULL;
 	}
@@ -741,8 +746,9 @@ telepathy_chatrooms_local_pending_cb (GossipTelepathyGroup *group,
 		              gossip_telepathy_group_get_name(group));
 		
 		if (!tp_chan_close (DBUS_G_PROXY (room->room_channel), &error)) {
-			gossip_debug (DEBUG_DOMAIN, "Error closing room channel: %s",
-				      error->message);
+			gossip_debug (DEBUG_DOMAIN, 
+				      "Error closing room channel: %s",
+				      error ? error->message : "No error given");
 			g_clear_error (&error);
 		}
 

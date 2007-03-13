@@ -196,8 +196,9 @@ gossip_telepathy_group_setup (GossipTelepathyGroup *group)
 						  &local_pending,
 						  &remote_pending,
 						  &error)) {
-		gossip_debug (DEBUG_DOMAIN, "Couldn't get all members: %s",
-			      error->message);
+		gossip_debug (DEBUG_DOMAIN,
+			      "Couldn't get all members: %s",
+			      error ? error->message : "No error given");
 		g_clear_error (&error);
 		return;
 	}
@@ -248,8 +249,9 @@ gossip_telepathy_group_setup (GossipTelepathyGroup *group)
 			g_ptr_array_free (info, TRUE);
 			g_array_free (pending, TRUE);
 		} else {
-			gossip_debug (DEBUG_DOMAIN, "GetLocalPendingMembersWithInfo failed: %s",
-				      error->message);
+			gossip_debug (DEBUG_DOMAIN, 
+				      "GetLocalPendingMembersWithInfo failed: %s",
+				      error ? error->message : "No error given");
 			g_clear_error (&error);
 
 			g_signal_emit (group, signals[LOCAL_PENDING], 0, 
@@ -281,8 +283,9 @@ gossip_telepathy_group_add_members (GossipTelepathyGroup *group,
 					      handles,
 					      message,
 					      &error)) {
-		gossip_debug (DEBUG_DOMAIN, "Failed to add members: %s",
-			      error->message);
+		gossip_debug (DEBUG_DOMAIN,
+			      "Failed to add members: %s",
+			      error ? error->message : "No error given");
 		g_clear_error (&error);
 	}
 }
@@ -318,8 +321,9 @@ gossip_telepathy_group_remove_members (GossipTelepathyGroup *group,
 						 handles,
 						 message,
 						 &error)) {
-		gossip_debug (DEBUG_DOMAIN, "Failed to remove members: %s",
-			      error->message);
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Failed to remove members: %s",
+			      error ? error->message : "No error given");
 		g_clear_error (&error);
 	}
 }
@@ -353,8 +357,9 @@ gossip_telepathy_group_get_members (GossipTelepathyGroup *group)
 	if (!tp_chan_iface_group_get_members (priv->group_iface,
 					      &members,
 					      &error)) {
-		gossip_debug (DEBUG_DOMAIN, "Couldn't get members: %s",
-			      error->message);
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Couldn't get members: %s",
+			      error ? error->message : "No error given");
 		g_clear_error (&error);
 		return NULL;
 	}
@@ -432,8 +437,9 @@ gossip_telepathy_group_get_name (GossipTelepathyGroup *group)
 				 &handle_type,
 				 &channel_handle,
 				 &error)) {
-		gossip_debug (DEBUG_DOMAIN, "Couldn't retreive channel handle for group: %s",
-			      error->message);
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Couldn't retreive channel handle for group: %s",
+			      error ? error->message : "No error given");
 		g_clear_error (&error);
 		return NULL;
 	}
@@ -446,8 +452,9 @@ gossip_telepathy_group_get_name (GossipTelepathyGroup *group)
 				      group_handles,
 				      &group_names,
 				      &error)) {
-		gossip_debug (DEBUG_DOMAIN, "Couldn't get group name: %s",
-			      error->message);
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Couldn't get group name: %s",
+			      error ? error->message : "No error given");
 		g_clear_error (&error);
 		g_array_free (group_handles, TRUE);
 		return NULL;
@@ -472,8 +479,9 @@ gossip_telepathy_group_get_self_handle (GossipTelepathyGroup *group)
 	priv = GET_PRIV (group);
 
 	if (!tp_chan_iface_group_get_self_handle (priv->group_iface, &handle, &error)) {
-		gossip_debug (DEBUG_DOMAIN, "Failed to get self handle: %s",
-		              error->message);
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Failed to get self handle: %s",
+			      error ? error->message : "No error given");
 		g_clear_error (&error);
 		return 0;
 	}

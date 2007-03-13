@@ -434,8 +434,9 @@ telepathy_get_existing_connection (GossipAccount *account)
 								TP_IFACE_CONN_INTERFACE);
 
 			if (!tp_conn_get_protocol (conn_iface, &protocol, &error)) {
-				gossip_debug (DEBUG_DOMAIN, "Error getting protocol : %s",
-					      error->message);
+				gossip_debug (DEBUG_DOMAIN, 
+					      "Error getting protocol : %s",
+					      error ? error->message : "No error given");
 				goto next;
 			}
 
@@ -447,8 +448,9 @@ telepathy_get_existing_connection (GossipAccount *account)
 			}
 
 			if (!tp_conn_get_self_handle (conn_iface, &handle, &error)) {
-				gossip_debug (DEBUG_DOMAIN, "Error getting self handle: %s",
-					      error->message);
+				gossip_debug (DEBUG_DOMAIN, 
+					      "Error getting self handle: %s",
+					      error ? error->message : "No error given");
 				goto next;
 			}
 
@@ -459,8 +461,10 @@ telepathy_get_existing_connection (GossipAccount *account)
 						      TP_HANDLE_TYPE_CONTACT,
 						      handles, &handle_name,
 						      &error)) {
-				gossip_debug (DEBUG_DOMAIN, "InspectHandle Error: %s, %d",
-					      error->message, handle);
+				gossip_debug (DEBUG_DOMAIN, 
+					      "InspectHandle Error: %s, %d",
+					      error ? error->message : "No error given",
+					      handle);
 				goto next;
 			}
 
@@ -668,7 +672,7 @@ telepathy_connection_setup (GossipTelepathy *telepathy)
 	if (!tp_conn_get_self_handle (DBUS_G_PROXY (priv->tp_conn),
 				      &handle, &error)) {
 		gossip_debug (DEBUG_DOMAIN, "GetSelfHandle Error: %s",
-			      error->message);
+			      error ? error->message : "No error given");
 		g_clear_error (&error);
 		return;
 	}
@@ -716,7 +720,7 @@ telepathy_retrieve_open_channels (GossipTelepathy *telepathy)
 				    &channels, &error)) {
 		gossip_debug (DEBUG_DOMAIN,
 			      "Failed to get list of open channels: %s",
-			      error->message);
+			      error ? error->message : "No error given");
 		g_clear_error (&error);
 		return;
 	}
@@ -844,8 +848,9 @@ telepathy_logout (GossipProtocol *protocol)
 	}
 
 	if (!tp_conn_disconnect (DBUS_G_PROXY (priv->tp_conn), &error)) {
-		gossip_debug (DEBUG_DOMAIN, "Error logging out: %s",
-			      error->message);
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Error logging out: %s",
+			      error ? error->message : "No error given");
 		g_clear_error (&error);
 	}
 }

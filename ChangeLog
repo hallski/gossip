@@ -1,5 +1,15 @@
 2007-03-13  Martyn Russell  <martyn@imendio.com>
 
+	* protocols/telepathy/gossip-telepathy-chatrooms.c:
+	* protocols/telepathy/gossip-telepathy-contact-list.c:
+	* protocols/telepathy/gossip-telepathy-contacts.c:
+	* protocols/telepathy/gossip-telepathy-group.c:
+	* protocols/telepathy/gossip-telepathy-message.c:
+	* protocols/telepathy/gossip-telepathy.c: Don't de-reference
+	GError pointers without NULL checking them first.
+
+2007-03-13  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-account.c: 
 	* src/gossip-accounts-dialog.c:
 	* src/gossip-ui-utils.c: 

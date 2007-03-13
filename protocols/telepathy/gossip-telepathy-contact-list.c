@@ -330,8 +330,9 @@ telepathy_contact_list_get_type (GossipTelepathyContactList *list,
 				      handles,
 				      &handle_name,
 				      &error)) {
-		gossip_debug (DEBUG_DOMAIN, "InspectHandle Error: %s",
-			      error->message);
+		gossip_debug (DEBUG_DOMAIN, 
+			      "InspectHandle Error: %s",
+			      error ? error->message : "No error given");
 		g_clear_error (&error);
 		g_array_free (handles, TRUE);
 		return 0;
@@ -597,8 +598,9 @@ telepathy_contact_list_get_group (GossipTelepathyContactList *list,
 				      names,
 				      &handles,
 				      &error)) {
-		gossip_debug (DEBUG_DOMAIN, "Couldn't request the creation of a new handle for group: %s",
-			      error->message);
+		gossip_debug (DEBUG_DOMAIN,
+			      "Couldn't request the creation of a new handle for group: %s",
+			      error ? error->message : "No error given");
 		g_clear_error (&error);
 		return NULL;
 	}
@@ -612,8 +614,9 @@ telepathy_contact_list_get_group (GossipTelepathyContactList *list,
 				      FALSE,
 				      &group_object_path,
 				      &error)) {
-		gossip_debug (DEBUG_DOMAIN, "Couldn't request the creation of a new group channel: %s",
-			      error->message);
+		gossip_debug (DEBUG_DOMAIN,
+			      "Couldn't request the creation of a new group channel: %s",
+			      error ? error->message : "No error given");
 		g_clear_error (&error);
 		return NULL;
 	}

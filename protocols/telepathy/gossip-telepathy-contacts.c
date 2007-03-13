@@ -280,8 +280,10 @@ gossip_telepathy_contacts_get_handle (GossipTelepathyContacts *contacts,
 	}
 
 	if (!success) {
-		gossip_debug (DEBUG_DOMAIN, "RequestHandle Error: %s, %d",
-			      error->message, handle);
+		gossip_debug (DEBUG_DOMAIN, 
+			      "RequestHandle Error: %s, %d",
+			      error ? error->message : "No error given",
+			      handle);
 		g_clear_error (&error);
 		return 0;
 	}
@@ -361,8 +363,9 @@ gossip_telepathy_contacts_get_from_handles (GossipTelepathyContacts *contacts,
 	if (!tp_conn_hold_handles (DBUS_G_PROXY (tp_conn),
 				   TP_HANDLE_TYPE_CONTACT,
 				   new_handles, &error)) {
-		gossip_debug (DEBUG_DOMAIN, "HoldHandles Error: %s",
-			      error->message);
+		gossip_debug (DEBUG_DOMAIN, 
+			      "HoldHandles Error: %s",
+			      error ? error->message : "No error given");
 		g_clear_error (&error);
 		g_array_free (new_handles, TRUE);
 		return list;
@@ -374,8 +377,9 @@ gossip_telepathy_contacts_get_from_handles (GossipTelepathyContacts *contacts,
 				      new_handles,
 				      &handles_names,
 				      &error)) {
-		gossip_debug (DEBUG_DOMAIN, "InspectHandle Error: %s",
-			      error->message);
+		gossip_debug (DEBUG_DOMAIN, 
+			      "InspectHandle Error: %s",
+			      error ? error->message : "No error given");
 		g_clear_error (&error);
 		g_array_free (new_handles, TRUE);
 		return list;
@@ -468,8 +472,9 @@ gossip_telepathy_contacts_get_avatar_requirements (GossipTelepathyContacts  *con
 							    &min_w, &min_h,
 							    &max_w, &max_h,
 							    &max_s, &error)) {
-		gossip_debug (DEBUG_DOMAIN, "Couldn't get avatar requirements: %s",
-			      error->message);
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Couldn't get avatar requirements: %s",
+			      error ? error->message : "No error given");
 		g_clear_error (&error);
 		/* Set default values */
 		min_w = 96; min_h = 96;
@@ -528,8 +533,9 @@ gossip_telepathy_contacts_rename (GossipTelepathyContacts *contacts,
 	if (!tp_conn_iface_aliasing_set_aliases (contacts->aliasing_iface,
 						 new_alias,
 						 &error)) {
-		gossip_debug (DEBUG_DOMAIN, "Couldn't rename contact: %s",
-			      error->message);
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Couldn't rename contact: %s",
+			      error ? error->message : "No error given");
 		g_clear_error (&error);
 	}
 
@@ -582,7 +588,9 @@ gossip_telepathy_contacts_send_presence (GossipTelepathyContacts *contacts,
 	if (!tp_conn_iface_presence_set_status (contacts->presence_iface,
 						status_ids,
 						&error)) {
-		gossip_debug ("Could not set presence: %s", error->message);
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Could not set presence: %s", 
+			      error ? error->message : "No error given");
 		g_clear_error (&error);
 	}
 
@@ -648,8 +656,9 @@ telepathy_contacts_get_info (GossipTelepathyContacts *contacts,
 		/* FIXME: We should use GetPresence instead */
 		if (!tp_conn_iface_presence_request_presence (contacts->presence_iface,
 							      handles, &error)) {
-			gossip_debug (DEBUG_DOMAIN, "Could not request presences: %s",
-				      error->message);
+			gossip_debug (DEBUG_DOMAIN, 
+				      "Could not request presences: %s",
+				      error ? error->message : "No error given");
 			g_clear_error (&error);
 		}
 	}
@@ -741,7 +750,7 @@ telepathy_contacts_request_avatar_cb (DBusGProxy                         *proxy,
 	if (error) {
 		gossip_debug (DEBUG_DOMAIN, "Error requesting avatar %s: %s",
 			      gossip_contact_get_name (contact),
-			      error->message);
+			      error ? error->message : "No error given");
 	} else {
 		GossipAvatar *avatar;
 
@@ -770,8 +779,9 @@ telepathy_contacts_set_avatar_cb (DBusGProxy         *proxy,
 	callback = data->callback;
 
 	if (error) {
-		gossip_debug (DEBUG_DOMAIN, "Couldn't set your own avatar: %s",
-				error->message);
+		gossip_debug (DEBUG_DOMAIN,
+			      "Couldn't set your own avatar: %s",
+			      error ? error->message : "No error given");
 		result = GOSSIP_RESULT_ERROR_INVALID_REPLY;
 	}
 

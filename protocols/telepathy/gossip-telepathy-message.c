@@ -226,7 +226,9 @@ gossip_telepathy_message_send (GossipTelepathyMessage *message,
 				     TP_CHANNEL_TEXT_MESSAGE_TYPE_NORMAL,
 				     message_body,
 				     &error)) {
-		gossip_debug (DEBUG_DOMAIN, "Send Error: %s", error->message);
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Send Error: %s", 
+			      error ? error->message : "No error given");
 		g_clear_error (&error);
 	}
 
@@ -251,8 +253,9 @@ gossip_telepathy_message_send_state (GossipTelepathyMessage *message,
 		if (!tp_chan_iface_chat_state_set_chat_state (msg_chan->chat_state_iface,
 							      state,
 							      &error)) {
-			gossip_debug (DEBUG_DOMAIN, "Set Chat State Error: %s",
-				      error->message);
+			gossip_debug (DEBUG_DOMAIN,
+				      "Set Chat State Error: %s",
+				      error ? error->message : "No error given");
 			g_clear_error (&error);
 		}
 	}
@@ -314,8 +317,9 @@ telepathy_message_ack_pending (TelepathyMessageChan *msg_chan)
 						      TRUE,
 						      &messages_list,
 						      &error)) {
-		gossip_debug (DEBUG_DOMAIN, "Error retrieving pending messages: %s",
-			      error->message);
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Error retrieving pending messages: %s",
+			      error ? error->message : "No error given");
 		g_clear_error (&error);
 		return;
 	}
@@ -402,8 +406,9 @@ telepathy_message_timeout (TelepathyMessageChan *msg_chan)
 	msg_chan->timeout_id = 0;
 
 	if (!tp_chan_close (DBUS_G_PROXY (msg_chan->text_chan), &error)) {
-		gossip_debug (DEBUG_DOMAIN, "Error closing text channel: %s",
-			      error->message);
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Error closing text channel: %s",
+			      error ? error->message : "No error given");
 		g_clear_error (&error);
 	}
 
