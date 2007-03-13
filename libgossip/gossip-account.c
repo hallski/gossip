@@ -725,6 +725,7 @@ gossip_account_type_to_string (GossipAccountType type)
 	case GOSSIP_ACCOUNT_TYPE_ICQ:            return "ICQ";
 	case GOSSIP_ACCOUNT_TYPE_MSN:            return "MSN";
 	case GOSSIP_ACCOUNT_TYPE_YAHOO:          return "Yahoo!";
+	case GOSSIP_ACCOUNT_TYPE_IRC:            return "IRC";
 
 	case GOSSIP_ACCOUNT_TYPE_UNKNOWN:
 	default:

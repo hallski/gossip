@@ -440,18 +440,19 @@ gossip_pixbuf_from_account_type (GossipAccountType type,
 	case GOSSIP_ACCOUNT_TYPE_YAHOO:
 		icon_id = "im-yahoo";
 		break;
+
+	/* FIXME: we should have an artwork for these protocols */
+	case GOSSIP_ACCOUNT_TYPE_IRC:
 	case GOSSIP_ACCOUNT_TYPE_UNKNOWN:
-		/* FIXME: we should have an artwork for unknown protocols */
-		icon_id = "im-jabber";
-		break;
 	default:
-		g_assert_not_reached ();
+		icon_id = "im";
+		break;
 	}
 
 	pixbuf = gtk_icon_theme_load_icon (theme,
-					   icon_id,     /* icon name */
-					   size,        /* size */
-					   0,           /* flags */
+					   icon_id,     /* Icon name */
+					   size,        /* Size */
+					   0,           /* Flags */
 					   &error);
 
 	return pixbuf;

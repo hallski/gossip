@@ -1,5 +1,15 @@
 2007-03-13  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-account.c: 
+	* src/gossip-accounts-dialog.c:
+	* src/gossip-ui-utils.c: 
+	* ui/main.glade: Create the IM protocol list ourselves in code
+	instead of the glade file so we use the same string translation
+	for the account type everywhere in Gossip. Also don't crash when
+	we don't have an icon for the account type.
+
+2007-03-13  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-account.dtd:
 	* libgossip/gossip-account-manager.c: Don't store old element
 	"type" which is not longer used.

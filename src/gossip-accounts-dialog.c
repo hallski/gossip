@@ -1423,7 +1423,9 @@ gossip_accounts_dialog_show (GossipAccount *account)
 	GossipAccountManager        *manager;
 	static GossipAccountsDialog *dialog = NULL;
 	GladeXML                    *glade;
-	GtkWidget                   *bbox, *button_close;
+	GtkWidget                   *bbox;
+	GtkWidget                   *button_close;
+	const gchar                 *str;
 
 	if (dialog) {
 		gtk_window_present (GTK_WINDOW (dialog->window));
@@ -1477,6 +1479,22 @@ gossip_accounts_dialog_show (GossipAccount *account)
 
 	g_object_unref (glade);
 
+	/* Set up combo */
+	str = gossip_account_type_to_string (GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY);
+	gtk_combo_box_append_text (GTK_COMBO_BOX (dialog->combobox_type), str);
+
+#ifdef HAVE_TELEPATHY
+ 	str = gossip_account_type_to_string (GOSSIP_ACCOUNT_TYPE_JABBER);
+	gtk_combo_box_append_text (GTK_COMBO_BOX (dialog->combobox_type), str);
+
+ 	str = gossip_account_type_to_string (GOSSIP_ACCOUNT_TYPE_MSN);
+	gtk_combo_box_append_text (GTK_COMBO_BOX (dialog->combobox_type), str);
+
+ 	str = gossip_account_type_to_string (GOSSIP_ACCOUNT_TYPE_IRC);
+	gtk_combo_box_append_text (GTK_COMBO_BOX (dialog->combobox_type), str);
+#endif
+
+	/* Set up signalling */
 	session = gossip_app_get_session ();
 	manager = gossip_session_get_account_manager (session);
 
@@ -1512,7 +1530,7 @@ gossip_accounts_dialog_show (GossipAccount *account)
 	gtk_widget_show (dialog->window);
 
 	if (GOSSIP_IS_ACCOUNT (account)) {
-		/* if account was specified then we select it */
+		/* If account was specified then we select it */
 		accounts_dialog_model_set_selected (dialog, account);
 	} else {
 		accounts_dialog_model_select_first (dialog);
