@@ -1,3 +1,22 @@
+2007-03-13  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-account.dtd:
+	* libgossip/gossip-account-manager.c: Don't store old element
+	"type" which is not longer used.
+
+	* libgossip/gossip-account.c: Make sure the type can only be
+	within the values of the enum, not the min/max of a GINT.
+	
+	* protocols/telepathy/gossip-telepathy-cmgr.[ch]: Don't try and
+	guess the account type by the connection manager string used by
+	Telepathy. 
+	
+	* protocols/telepathy/gossip-telepathy.c: Don't try to find the
+	connection manager if the account type is unknown and certainly
+	don't just use the connection manager info structure without
+	checking for NULL first, since we can't guarantee that it won't be
+	so. 
+
 2007-03-12  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-account-manager.c:

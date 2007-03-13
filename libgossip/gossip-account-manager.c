@@ -516,12 +516,6 @@ account_manager_parse_account (GossipAccountManager *manager,
 		else if (strcmp (tag, "use_proxy") == 0) {
 			gossip_account_set_use_proxy (account, strcmp (str, "yes") == 0);
 		}
-		else if (strcmp (tag, "type") == 0) {
-			g_object_set (account,
-				      "type",
-				      gossip_account_string_to_type (str),
-				      NULL);
-		}
 		else if (strcmp (tag, "parameter") == 0) {
 			gchar  *param_name;
 			gchar  *type_str;

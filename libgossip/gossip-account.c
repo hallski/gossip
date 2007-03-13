@@ -137,9 +137,9 @@ account_class_init (GossipAccountClass *class)
 					 g_param_spec_int ("type",
 							   "Account Type",
 							   "The account protocol type, e.g. MSN",
-							   G_MININT,
-							   G_MAXINT,
-							   GOSSIP_ACCOUNT_TYPE_JABBER,
+							   GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY,
+							   GOSSIP_ACCOUNT_TYPE_UNKNOWN,
+							   GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY,
 							   G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class,

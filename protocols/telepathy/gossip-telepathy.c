@@ -583,10 +583,24 @@ telepathy_login (GossipProtocol *protocol)
 		}
 	}
 
+	/* FIXME: This leaks */
 	account_type = gossip_account_get_type (priv->account);
+	if (account_type == GOSSIP_ACCOUNT_TYPE_UNKNOWN) {
+		g_warning ("Can not setup an account by type '%s'",
+			   gossip_account_type_to_string (account_type));
+		return;
+	}
+
 	protocol_name = telepathy_account_type_to_protocol_name (account_type);
 	cmgr_name = telepathy_account_type_to_cmgr_name (account_type);
 	cmgr_info = tp_connmgr_get_info ((gchar*) cmgr_name);
+
+	/* FIXME: This leaks */
+	if (!cmgr_info) {
+		g_warning ("Could not find connection manager by the name:'%s'",
+			   cmgr_name);
+		return;
+	}
 
 	conn_manager = tp_connmgr_new (tp_get_bus (),
 				       cmgr_info->bus_name,
@@ -1157,7 +1171,7 @@ telepathy_account_new (GossipProtocol    *protocol,
 	cmgr_name = telepathy_account_type_to_cmgr_name (type);
 	protocol_name = telepathy_account_type_to_protocol_name (type);
 
-	return gossip_telepathy_cmgr_new_account (cmgr_name, protocol_name);
+	return gossip_telepathy_cmgr_new_account (type, cmgr_name, protocol_name);
 }
 
 static GossipContact *

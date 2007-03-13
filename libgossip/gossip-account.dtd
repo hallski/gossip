@@ -9,7 +9,7 @@
 <!ELEMENT default (#PCDATA)>
 
 <!ELEMENT account 
-    ((type?),name,(id?),(resource?),(password?),(server?),(port?),(enabled?),(auto_connect?),(use_ssl?),(use_proxy?),(parameter*))>
+    (name,(id?),(resource?),(password?),(server?),(port?),(enabled?),(auto_connect?),(use_ssl?),(use_proxy?),(parameter*))>
 
 <!ATTLIST account type CDATA #IMPLIED>
 

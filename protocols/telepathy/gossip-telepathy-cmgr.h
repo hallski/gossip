@@ -29,8 +29,9 @@ G_BEGIN_DECLS
 
 GSList *        gossip_telepathy_cmgr_list           (void);
 GSList *        gossip_telepathy_cmgr_list_protocols (const gchar *cmgr);
-GossipAccount  *gossip_telepathy_cmgr_new_account    (const gchar *cmgr,
-						      const gchar *protocol);
+GossipAccount  *gossip_telepathy_cmgr_new_account    (GossipAccountType  type,
+						      const gchar       *cmgr,
+						      const gchar       *protocol);
 G_END_DECLS
 
 #endif /* __GOSSIP_TELEPATHY_CMGR_H__ */

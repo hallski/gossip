@@ -62,13 +62,13 @@ gossip_telepathy_cmgr_list_protocols (const gchar *cmgr)
 }
 
 GossipAccount *
-gossip_telepathy_cmgr_new_account (const gchar *cmgr_name,
-				   const gchar *protocol_name)
+gossip_telepathy_cmgr_new_account (GossipAccountType  type,
+				   const gchar       *cmgr_name,
+				   const gchar       *protocol_name)
 {
-	TpConnMgrInfo     *cmgr_info;
-	GossipAccount     *account;
-	GossipAccountType  type;
-	GHashTable        *params;
+	TpConnMgrInfo *cmgr_info;
+	GossipAccount *account;
+	GHashTable    *params;
 
 	g_return_val_if_fail (cmgr_name != NULL, NULL);
 	g_return_val_if_fail (protocol_name != NULL, NULL);
@@ -83,8 +83,6 @@ gossip_telepathy_cmgr_new_account (const gchar *cmgr_name,
 
 	params = g_hash_table_lookup (cmgr_info->protocols, protocol_name);
 	g_return_val_if_fail (params != NULL, NULL);
-
-	type = gossip_account_string_to_type (protocol_name);
 
 	account = g_object_new (GOSSIP_TYPE_ACCOUNT,
 				"type", type,
