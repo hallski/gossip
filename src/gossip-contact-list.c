@@ -1872,6 +1872,7 @@ contact_list_cell_set_background (GossipContactList  *list,
 {
 	GdkColor  color;
 	GtkStyle *style;
+	gint color_sum_normal, color_sum_selected;
 
 	g_return_if_fail (list != NULL);
 	g_return_if_fail (cell != NULL);
@@ -1900,11 +1901,23 @@ contact_list_cell_set_background (GossipContactList  *list,
 				      NULL);
 		}
 	} else {
+		color = style->base[GTK_STATE_SELECTED];
+		color_sum_normal = color.red+color.green+color.blue;
+		color = style->base[GTK_STATE_NORMAL];
+		color_sum_selected = color.red+color.green+color.blue;
 		color = style->text_aa[GTK_STATE_INSENSITIVE];
 
-		color.red = (color.red + (style->white).red) / 2;
-		color.green = (color.green + (style->white).green) / 2;
-		color.blue = (color.blue + (style->white).blue) / 2;
+		if(color_sum_normal < color_sum_selected) { 
+			/* found a light theme */
+			color.red = (color.red + (style->white).red) / 2;
+			color.green = (color.green + (style->white).green) / 2;
+			color.blue = (color.blue + (style->white).blue) / 2;
+		} else { 
+			/* found a dark theme */
+			color.red = (color.red + (style->black).red) / 2;
+			color.green = (color.green + (style->black).green) / 2;
+			color.blue = (color.blue + (style->black).blue) / 2;
+		}
 
 		g_object_set (cell,
 			      "cell-background-gdk", &color,

@@ -1,5 +1,10 @@
 2007-03-14  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-contact-list.c: Group header background does not work
+	nicely with dark themes, fixes bug #414891 (Filippo Argiolas). 
+
+2007-03-14  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-account-manager.c: Check if the protocol could
 	be created before continuing, it may be that we are trying to
 	create a protocol for an old configuration and this causes a lot
