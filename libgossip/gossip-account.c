@@ -719,13 +719,13 @@ const gchar *
 gossip_account_type_to_string (GossipAccountType type)
 {
 	switch (type) {
-	case GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY:  return "Jabber (Legacy)";
-	case GOSSIP_ACCOUNT_TYPE_JABBER:         return "Jabber (Telepathy)";
-	case GOSSIP_ACCOUNT_TYPE_AIM:            return "AIM";
-	case GOSSIP_ACCOUNT_TYPE_ICQ:            return "ICQ";
-	case GOSSIP_ACCOUNT_TYPE_MSN:            return "MSN";
-	case GOSSIP_ACCOUNT_TYPE_YAHOO:          return "Yahoo!";
-	case GOSSIP_ACCOUNT_TYPE_IRC:            return "IRC";
+	case GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY:  return "Jabber";
+	case GOSSIP_ACCOUNT_TYPE_JABBER:         return "Experimental: Jabber";
+	case GOSSIP_ACCOUNT_TYPE_AIM:            return "Experimental: AIM";
+	case GOSSIP_ACCOUNT_TYPE_ICQ:            return "Experimental: ICQ";
+	case GOSSIP_ACCOUNT_TYPE_MSN:            return "Experimental: MSN";
+	case GOSSIP_ACCOUNT_TYPE_YAHOO:          return "Experimental: Yahoo!";
+	case GOSSIP_ACCOUNT_TYPE_IRC:            return "Experimental: IRC";
 
 	case GOSSIP_ACCOUNT_TYPE_UNKNOWN:
 	default:
@@ -738,25 +738,25 @@ gossip_account_type_to_string (GossipAccountType type)
 GossipAccountType
 gossip_account_string_to_type (const gchar *str)
 {
-	if (gossip_strncasecmp (str, "Jabber (Legacy)", -1) == 0) {
+	if (gossip_strncasecmp (str, "Jabber", -1) == 0) {
 		return GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY;
 	}
-	else if (gossip_strncasecmp (str, "Jabber (Telepathy)", -1) == 0) {
+	else if (gossip_strncasecmp (str, "Experimental: Jabber", -1) == 0) {
 		return GOSSIP_ACCOUNT_TYPE_JABBER;
 	}
-	else if (gossip_strncasecmp (str, "AIM", -1) == 0) {
+	else if (gossip_strncasecmp (str, "Experimental: AIM", -1) == 0) {
 		return GOSSIP_ACCOUNT_TYPE_AIM;
 	}
-	else if (gossip_strncasecmp (str, "ICQ", -1) == 0) {
+	else if (gossip_strncasecmp (str, "Experimental: ICQ", -1) == 0) {
 		return GOSSIP_ACCOUNT_TYPE_ICQ;
 	}
-	else if (gossip_strncasecmp (str, "MSN", -1) == 0) {
+	else if (gossip_strncasecmp (str, "Experimental: MSN", -1) == 0) {
 		return GOSSIP_ACCOUNT_TYPE_MSN;
 	}
-	else if (gossip_strncasecmp (str, "Yahoo!", -1) == 0) {
+	else if (gossip_strncasecmp (str, "Experimental: Yahoo!", -1) == 0) {
 		return GOSSIP_ACCOUNT_TYPE_YAHOO;
 	}
-	else if (gossip_strncasecmp (str, "IRC", -1) == 0) {
+	else if (gossip_strncasecmp (str, "Experimental: IRC", -1) == 0) {
 		return GOSSIP_ACCOUNT_TYPE_IRC;
 	}
 

@@ -493,6 +493,14 @@ account_manager_parse_account (GossipAccountManager *manager,
 	xmlFree (str);
 
 	protocol = gossip_protocol_new_from_account_type (account_type);
+	if (!protocol) {
+		/* Maybe this Gossip setup doesn't support this account type */
+		gossip_debug (DEBUG_DOMAIN, 
+	                      "Protocol couldn't be created from account type:%d->'%s'",
+		              account_type, gossip_account_type_to_string (account_type));
+		return;
+	}
+
 	account = gossip_protocol_new_account (protocol, account_type);
 	g_object_unref (protocol);
 

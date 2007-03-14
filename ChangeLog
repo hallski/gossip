@@ -1,3 +1,17 @@
+2007-03-14  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-account-manager.c: Check if the protocol could
+	be created before continuing, it may be that we are trying to
+	create a protocol for an old configuration and this causes a lot
+	of warnings. 
+	
+	* libgossip/gossip-account.c: Change the account type strings so
+	that everything except the inhouse Jabber backend has
+	"Experimental" prefixed.
+	
+	* protocols/Makefile.am: Make sure we can compile without
+	Telepathy enabled again.
+
 2007-03-13  Martyn Russell  <martyn@imendio.com>
 
 	* protocols/telepathy/gossip-telepathy-chatrooms.c:
