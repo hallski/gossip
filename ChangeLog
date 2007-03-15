@@ -1,3 +1,28 @@
+2007-03-15  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-account.c: Don't set the function's parameter
+	'name' when converting variable names for telepathy.
+	
+	* protocols/telepathy/gossip-telepathy.c:
+	(telepathy_get_default_server), (telepathy_get_default_port):
+	Implement these so we now return the default server for Jabber
+	servers based on the username. Also, we now return nice jabber
+	ports depending on the use of SSL and also, we should stop getting
+	complaints about Google Talk not working with Telepathy now we
+	special case their servers like we do in the Jabber backend.
+	
+	* src/gossip-account-widget-jabber.c:  Clean up the code here.
+
+	* src/Makefile.am: 
+	* src/gossip-account-widget-msn.[ch]: Added to make MSN
+	configuration nicer, still need to fix up some advanced
+	configuration page here.
+	
+	* ui/main.glade:
+	* src/gossip-accounts-dialog.c: Change the way we show the account
+	name, type and icon, hopefully it looks better now.
+	
+
 2007-03-14  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-contact-list.c: Group header background does not work

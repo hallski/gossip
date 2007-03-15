@@ -973,20 +973,62 @@ telepathy_get_default_server (GossipProtocol *protocol,
 {
 	GossipTelepathy     *telepathy;
 	GossipTelepathyPriv *priv;
-	const gchar         *server;
+	GossipAccountType    account_type;
+	gchar               *server;
+
+	g_return_val_if_fail (username != NULL, NULL);
 
 	telepathy = GOSSIP_TELEPATHY (protocol);
 	priv = GET_PRIV (telepathy);
 
-	gossip_account_get_param (priv->account,
-				  "server", &server,
-				  NULL);
+	account_type = gossip_account_get_type (priv->account);
+
+	if (account_type == GOSSIP_ACCOUNT_TYPE_JABBER) {
+		gchar              *user_id_no_resource, *p;
+		const gchar        *str, *ch;
+		gint                i = 0;
+		static const gchar *server_conversions[] = {
+			"gmail.com", "talk.google.com",
+			"googlemail.com", "talk.google.com",
+			NULL
+		};
+
+		user_id_no_resource = g_strdup (username);
+		p = strchr (user_id_no_resource, '/');
+		if (p) {
+			p[0] = '\0';
+		}
+
+		for (ch = user_id_no_resource, str = ""; *ch; ++ch) {
+			if (*ch == '@') {
+				str = ch + 1;
+				break;
+			}
+		}
+		
+		g_free (user_id_no_resource);
+
+		while (server_conversions[i] != NULL) {
+			if (g_ascii_strncasecmp (str, server_conversions[i], -1) == 0) {
+				str = server_conversions[i + 1];
+				break;
+			}
+			
+			i += 2;
+		}
+		
+		server = g_strdup (str);
+
+		return server;
+	} 
+
+	gossip_account_get_param (priv->account, "server", &server, NULL);
 
 	if (server) {
 		return g_strdup (server);
-	} else {
-		return g_strdup ("");
-	}
+	} 
+
+	return g_strdup ("");
 }
 
 static guint
@@ -995,14 +1037,20 @@ telepathy_get_default_port (GossipProtocol *protocol,
 {
 	GossipTelepathy     *telepathy;
 	GossipTelepathyPriv *priv;
-	guint                port = 0;
+	GossipAccountType    account_type;
+	guint16              port = 0;
 
 	telepathy = GOSSIP_TELEPATHY (protocol);
 	priv = GET_PRIV (telepathy);
 
-	gossip_account_get_param (priv->account,
-				  "port", &port,
-				  NULL);
+	account_type = gossip_account_get_type (priv->account);
+
+	if (account_type == GOSSIP_ACCOUNT_TYPE_JABBER) {
+		return use_ssl ? 5223 : 5222;
+	}
+
+	gossip_account_get_param (priv->account, "port", &port, NULL);
+
 	return port;
 }
 

@@ -44,6 +44,7 @@ gossip_SOURCES = 				                        	\
 	gossip-accounts-dialog.c           gossip-accounts-dialog.h		\
 	gossip-account-chooser.c	   gossip-account-chooser.h		\
 	gossip-account-widget-jabber.c	   gossip-account-widget-jabber.h	\
+	gossip-account-widget-msn.c	   gossip-account-widget-msn.h		\
 	gossip-account-widget-generic.c	   gossip-account-widget-generic.h	\
 	gossip-add-contact-dialog.c        gossip-add-contact-dialog.h		\
 	gossip-app.c	 	           gossip-app.h				\

@@ -41,6 +41,7 @@
 
 #include "gossip-app.h"
 #include "gossip-account-widget-jabber.h"
+#include "gossip-account-widget-msn.h"
 #include "gossip-account-widget-generic.h"
 #include "gossip-accounts-dialog.h"
 #include "gossip-ui-utils.h"
@@ -411,15 +412,21 @@ accounts_dialog_update_account (GossipAccountsDialog *dialog,
 		gtk_widget_show (dialog->vbox_details);
 
 		switch (gossip_account_get_type (account)) {
+		case GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY:
 		case GOSSIP_ACCOUNT_TYPE_JABBER:
-			dialog->settings_widget = gossip_account_widget_jabber_new 
-				(account, dialog->label_name);
+			dialog->settings_widget = 
+				gossip_account_widget_jabber_new (account, dialog->label_name);
 			break;
-		default:
-			dialog->settings_widget = gossip_account_widget_generic_new 
-				(account, dialog->label_name);
-		}
 
+		case GOSSIP_ACCOUNT_TYPE_MSN:
+			dialog->settings_widget = 
+				gossip_account_widget_msn_new (account, dialog->label_name);
+			break;
+
+		default:
+			dialog->settings_widget = 
+				gossip_account_widget_generic_new (account, dialog->label_name);
+		}
 		
 		gtk_widget_grab_focus (dialog->settings_widget);
 	}
@@ -434,7 +441,7 @@ accounts_dialog_update_account (GossipAccountsDialog *dialog,
 		const gchar       *account_type_str;
 		GdkPixbuf         *pixbuf;
 
-		pixbuf = gossip_pixbuf_from_account (account, GTK_ICON_SIZE_MENU);
+		pixbuf = gossip_pixbuf_from_account (account, GTK_ICON_SIZE_DIALOG);
 		gtk_image_set_from_pixbuf (GTK_IMAGE (dialog->image_type), pixbuf);
 		if (pixbuf) {
 			g_object_unref (pixbuf);
