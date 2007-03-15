@@ -40,6 +40,7 @@
 #endif
 
 #include "gossip-app.h"
+#include "gossip-account-widget-irc.h"
 #include "gossip-account-widget-jabber.h"
 #include "gossip-account-widget-msn.h"
 #include "gossip-account-widget-generic.h"
@@ -412,20 +413,25 @@ accounts_dialog_update_account (GossipAccountsDialog *dialog,
 		gtk_widget_show (dialog->vbox_details);
 
 		switch (gossip_account_get_type (account)) {
+		case GOSSIP_ACCOUNT_TYPE_IRC:
+			dialog->settings_widget = 
+				gossip_account_widget_irc_new (account);
+			break;
+
 		case GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY:
 		case GOSSIP_ACCOUNT_TYPE_JABBER:
 			dialog->settings_widget = 
-				gossip_account_widget_jabber_new (account, dialog->label_name);
+				gossip_account_widget_jabber_new (account);
 			break;
 
 		case GOSSIP_ACCOUNT_TYPE_MSN:
 			dialog->settings_widget = 
-				gossip_account_widget_msn_new (account, dialog->label_name);
+				gossip_account_widget_msn_new (account);
 			break;
 
 		default:
 			dialog->settings_widget = 
-				gossip_account_widget_generic_new (account, dialog->label_name);
+				gossip_account_widget_generic_new (account);
 		}
 		
 		gtk_widget_grab_focus (dialog->settings_widget);

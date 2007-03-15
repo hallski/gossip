@@ -255,15 +255,13 @@ account_widget_generic_destroy_cb (GtkWidget                  *widget,
 	g_list_free (settings->widgets);
 	g_object_unref (settings->account);
 
-
 	g_object_unref (settings->size_group);
 
 	g_free (settings);
 }
 
 GtkWidget *
-gossip_account_widget_generic_new (GossipAccount *account,
-				   GtkWidget     *label_name)
+gossip_account_widget_generic_new (GossipAccount *account)
 {
 	GossipAccountWidgetGeneric *settings;
 	GList                      *params;
@@ -277,9 +275,6 @@ gossip_account_widget_generic_new (GossipAccount *account,
 	gtk_table_set_col_spacings (GTK_TABLE (settings->table_settings), 6);
 
 	settings->size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
-	if (label_name) {
-		gtk_size_group_add_widget (settings->size_group, label_name);
-	}
 	
 	params = gossip_account_get_param_all (settings->account);
 	g_list_foreach (params, (GFunc) account_widget_generic_setup_foreach, settings);

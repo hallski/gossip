@@ -27,8 +27,7 @@
 
 G_BEGIN_DECLS
 
-GtkWidget *gossip_account_widget_jabber_new (GossipAccount *account,
-					     GtkWidget     *label_name);
+GtkWidget *gossip_account_widget_jabber_new (GossipAccount *account);
 
 G_END_DECLS
 

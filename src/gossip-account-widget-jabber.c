@@ -53,9 +53,9 @@ typedef struct {
 	GtkWidget     *button_change_password;
 
 	GtkWidget     *entry_id;
+	GtkWidget     *entry_password;
 	GtkWidget     *entry_resource;
 	GtkWidget     *entry_server;
-	GtkWidget     *entry_password;
 	GtkWidget     *entry_port;
 
 	GtkWidget     *checkbutton_ssl;
@@ -705,16 +705,17 @@ account_widget_jabber_destroy_cb (GtkWidget                 *widget,
 static void
 account_widget_jabber_setup (GossipAccountWidgetJabber *settings)
 {
-	GossipSession  *session;
-	GossipProtocol *protocol;
-	guint16         port;
-	gchar          *port_str; 
-	const gchar    *id;
-	const gchar    *resource;
-	const gchar    *server;
-	const gchar    *password;
-	gboolean        use_ssl;
-	gboolean        is_connected;
+	GossipSession      *session;
+	GossipProtocol     *protocol;
+	GossipAccountParam *param;
+	guint16             port;
+	gchar              *port_str; 
+	const gchar        *id;
+	const gchar        *resource;
+	const gchar        *server;
+	const gchar        *password;
+	gboolean            use_ssl;
+	gboolean            is_connected;
 
 	session = gossip_app_get_session ();
 	protocol = gossip_session_get_protocol (session, settings->account);
@@ -734,15 +735,11 @@ account_widget_jabber_setup (GossipAccountWidgetJabber *settings)
 		gtk_widget_set_sensitive (settings->checkbutton_ssl, FALSE);
 	}
 
-	/* Don't set the resource to be exclusively 'Telepathy' */
-	if (resource && strcmp (resource, "Telepathy") == 0) {
-		gchar *str;
-		
-		str = g_strdup_printf ("%s (%s)", _("Home"), "Telepathy");
-		gossip_account_set_param (settings->account, "resource", str, NULL);
-		g_free (str);
-
-		gossip_account_get_param (settings->account, "resource", &resource, NULL);
+	/* Don't use Telepathy defaults here */
+	param = gossip_account_get_param_param (settings->account, "resource");
+	if (param->flags & GOSSIP_ACCOUNT_PARAM_FLAG_HAS_DEFAULT && 
+	    param->modified == FALSE) {
+		resource = _("Home");
 	}
 
 	gtk_entry_set_text (GTK_ENTRY (settings->entry_id), id ? id : "");
@@ -777,8 +774,7 @@ account_widget_jabber_setup (GossipAccountWidgetJabber *settings)
 }
 
 GtkWidget *
-gossip_account_widget_jabber_new (GossipAccount *account,
-				  GtkWidget     *label_name)
+gossip_account_widget_jabber_new (GossipAccount *account)
 {
 	GossipAccountWidgetJabber *settings;
 	GladeXML                  *glade;
@@ -802,9 +798,9 @@ gossip_account_widget_jabber_new (GossipAccount *account,
 				       "label_server", &label_server,
 				       "label_port", &label_port,
 				       "entry_id", &settings->entry_id,
+				       "entry_password", &settings->entry_password,
 				       "entry_resource", &settings->entry_resource,
 				       "entry_server", &settings->entry_server,
-				       "entry_password", &settings->entry_password,
 				       "entry_port", &settings->entry_port,
 				       "checkbutton_ssl", &settings->checkbutton_ssl,
 				       NULL);
@@ -838,18 +834,9 @@ gossip_account_widget_jabber_new (GossipAccount *account,
 
 	gtk_size_group_add_widget (size_group, label_id);
 	gtk_size_group_add_widget (size_group, label_password);
-
-	g_object_unref (size_group);
-
-	size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
-
 	gtk_size_group_add_widget (size_group, label_resource);
 	gtk_size_group_add_widget (size_group, label_server);
 	gtk_size_group_add_widget (size_group, label_port);
-
-	if (label_name) {
-		gtk_size_group_add_widget (size_group, label_name);
-	}
 
 	g_object_unref (size_group);
 
