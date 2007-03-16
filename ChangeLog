@@ -1,5 +1,24 @@
 2007-03-15  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-account-widget-generic.[ch]: Remove the need for the
+	name label in the _new() function, since we no longer need that.
+	
+	* src/Makefile.am:
+	* src/gossip-account-widget-irc.[ch]: 
+	* src/gossip-accounts-dialog.c: 
+	* ui/main.glade: Added to present IRC account details nicely. 
+	
+	* src/gossip-account-widget-jabber.[ch]: Instead of string
+	checking the resource to see if it is the Telepathy default, we
+	now use the GossipAccountParam flags and members to find out
+	instead and set the resource to something better.
+	
+	* src/gossip-account-widget-msn.[ch]: Clean up the code, we were
+	creating two different size groups for the list of labels here,
+	why?  
+
+2007-03-15  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-account.c: Don't set the function's parameter
 	'name' when converting variable names for telepathy.
 	
