@@ -1,3 +1,12 @@
+2007-03-17  Martyn Russell  <martyn@imendio.com>
+
+	* ui/group-chat.glade: 
+	* src/gossip-new-chatroom-dialog.c: Make sure we only show the
+	pertinent options in this dialog depending on the account type.
+	
+	* ui/main.glade: Clean up the add-contact dialog, the buttons were
+	a little weird.
+
 2007-03-15  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-account-widget-generic.[ch]: Remove the need for the

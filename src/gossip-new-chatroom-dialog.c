@@ -56,16 +56,20 @@ typedef struct {
 	GtkWidget        *label_account;
 	GtkWidget        *account_chooser;
 
+	GtkWidget        *hbox_server;
 	GtkWidget        *label_server;
 	GtkWidget        *entry_server;
+	GtkWidget        *togglebutton_refresh;
+	
+	GtkWidget        *hbox_room;
 	GtkWidget        *label_room;
 	GtkWidget        *entry_room;
 
-	GtkWidget        *togglebutton_refresh;
-
+	GtkWidget        *hbox_nick;
 	GtkWidget        *label_nick;
 	GtkWidget        *entry_nick;
 
+	GtkWidget        *vbox_browse;
 	GtkWidget        *image_status;
 	GtkWidget        *label_status;
 	GtkWidget        *hbox_status;
@@ -80,63 +84,61 @@ typedef struct {
 	GossipChatroomId  last_selected_id;
 } GossipNewChatroomDialog;
 
-static void     new_chatroom_dialog_update_buttons                  (GossipNewChatroomDialog  *dialog);
-static void     new_chatroom_dialog_model_add                       (GossipNewChatroomDialog  *dialog,
-								     GossipChatroom           *chatroom,
-								     gboolean                  prepend);
-static void     new_chatroom_dialog_model_clear                     (GossipNewChatroomDialog  *dialog);
-static GList *  new_chatroom_dialog_model_get_selected              (GossipNewChatroomDialog  *dialog);
-static gboolean new_chatroom_dialog_model_filter_func               (GtkTreeModel             *model,
-								     GtkTreeIter              *iter,
-								     GossipNewChatroomDialog  *dialog);
-static void     new_chatroom_dialog_model_row_activated_cb          (GtkTreeView              *tree_view,
-								     GtkTreePath              *path,
-								     GtkTreeViewColumn        *column,
-								     GossipNewChatroomDialog  *dialog);
-static void     new_chatroom_dialog_model_row_inserted_cb           (GtkTreeModel             *model,
-								     GtkTreePath              *path,
-								     GtkTreeIter              *iter,
-								     GossipNewChatroomDialog  *dialog);
-static void     new_chatroom_dialog_model_row_deleted_cb            (GtkTreeModel             *model,
-								     GtkTreePath              *path,
-								     GossipNewChatroomDialog  *dialog);
-static void     new_chatroom_dialog_model_selection_changed         (GtkTreeSelection         *selection,
-								     GossipNewChatroomDialog  *dialog);
-static void     new_chatroom_dialog_model_pixbuf_cell_data_func     (GtkTreeViewColumn        *tree_column,
-								     GtkCellRenderer          *cell,
-								     GtkTreeModel             *model,
-								     GtkTreeIter              *iter,
-								     GossipNewChatroomDialog  *dialog);
-static void     new_chatroom_dialog_model_text_cell_data_func       (GtkTreeViewColumn        *tree_column,
-								     GtkCellRenderer          *cell,
-								     GtkTreeModel             *model,
-								     GtkTreeIter              *iter,
-								     GossipNewChatroomDialog  *dialog);
-static void     new_chatroom_dialog_model_add_columns               (GossipNewChatroomDialog  *dialog);
-static gboolean new_chatroom_dialog_model_separator_func            (GtkTreeModel             *model,
-								     GtkTreeIter              *iter,
-								     GossipNewChatroomDialog  *dialog);
-static void     new_chatroom_dialog_model_setup                     (GossipNewChatroomDialog  *dialog);
-static void     new_chatroom_dialog_set_defaults                    (GossipNewChatroomDialog  *dialog);
-static void     new_chatroom_dialog_join                            (GossipNewChatroomDialog  *window);
-static void     new_chatroom_dialog_entry_changed_cb                (GtkWidget                *widget,
-								     GossipNewChatroomDialog  *window);
-static void     new_chatroom_dialog_browse_cb                       (GossipChatroomProvider   *provider,
-								     const gchar              *server,
-								     GList                    *rooms,
-								     GError                   *error,
-								     GossipNewChatroomDialog  *dialog);
-static void     new_chatroom_dialog_browse_start                    (GossipNewChatroomDialog  *dialog);
-static void     new_chatroom_dialog_browse_stop                     (GossipNewChatroomDialog  *dialog);
-static void     new_chatroom_dialog_entry_server_activate_cb        (GtkWidget                *widget,
-								     GossipNewChatroomDialog  *window);
-static void     new_chatroom_dialog_togglebutton_refresh_toggled_cb (GtkWidget                *widget,
-								     GossipNewChatroomDialog  *dialog);
-static void     new_chatroom_dialog_response_cb                     (GtkWidget                *widget,
-								     gint                      response,
-								     GossipNewChatroomDialog  *dialog);
-static void     new_chatroom_dialog_destroy_cb                      (GtkWidget                *widget,
-								     GossipNewChatroomDialog  *dialog);
+static void     new_chatroom_dialog_update_buttons                  (GossipNewChatroomDialog *dialog);
+static void     new_chatroom_dialog_update_widgets                  (GossipNewChatroomDialog *dialog);
+static void     new_chatroom_dialog_model_add                       (GossipNewChatroomDialog *dialog,
+								     GossipChatroom          *chatroom,
+								     gboolean                 prepend);
+static void     new_chatroom_dialog_model_clear                     (GossipNewChatroomDialog *dialog);
+static GList *  new_chatroom_dialog_model_get_selected              (GossipNewChatroomDialog *dialog);
+static gboolean new_chatroom_dialog_model_filter_func               (GtkTreeModel            *model,
+								     GtkTreeIter             *iter,
+								     GossipNewChatroomDialog *dialog);
+static void     new_chatroom_dialog_model_row_activated_cb          (GtkTreeView             *tree_view,
+								     GtkTreePath             *path,
+								     GtkTreeViewColumn       *column,
+								     GossipNewChatroomDialog *dialog);
+static void     new_chatroom_dialog_model_row_inserted_cb           (GtkTreeModel            *model,
+								     GtkTreePath             *path,
+								     GtkTreeIter             *iter,
+								     GossipNewChatroomDialog *dialog);
+static void     new_chatroom_dialog_model_row_deleted_cb            (GtkTreeModel            *model,
+								     GtkTreePath             *path,
+								     GossipNewChatroomDialog *dialog);
+static void     new_chatroom_dialog_model_selection_changed         (GtkTreeSelection        *selection,
+								     GossipNewChatroomDialog *dialog);
+static void     new_chatroom_dialog_model_pixbuf_cell_data_func     (GtkTreeViewColumn       *tree_column,
+								     GtkCellRenderer         *cell,
+								     GtkTreeModel            *model,
+								     GtkTreeIter             *iter,
+								     GossipNewChatroomDialog *dialog);
+static void     new_chatroom_dialog_model_text_cell_data_func       (GtkTreeViewColumn       *tree_column,
+								     GtkCellRenderer         *cell,
+								     GtkTreeModel            *model,
+								     GtkTreeIter             *iter,
+								     GossipNewChatroomDialog *dialog);
+static void     new_chatroom_dialog_model_add_columns               (GossipNewChatroomDialog *dialog);
+static void     new_chatroom_dialog_model_setup                     (GossipNewChatroomDialog *dialog);
+static void     new_chatroom_dialog_set_defaults                    (GossipNewChatroomDialog *dialog);
+static void     new_chatroom_dialog_join                            (GossipNewChatroomDialog *window);
+static void     new_chatroom_dialog_entry_changed_cb                (GtkWidget               *widget,
+								     GossipNewChatroomDialog *window);
+static void     new_chatroom_dialog_browse_cb                       (GossipChatroomProvider  *provider,
+								     const gchar             *server,
+								     GList                   *rooms,
+								     GError                  *error,
+								     GossipNewChatroomDialog *dialog);
+static void     new_chatroom_dialog_browse_start                    (GossipNewChatroomDialog *dialog);
+static void     new_chatroom_dialog_browse_stop                     (GossipNewChatroomDialog *dialog);
+static void     new_chatroom_dialog_entry_server_activate_cb        (GtkWidget               *widget,
+								     GossipNewChatroomDialog *window);
+static void     new_chatroom_dialog_togglebutton_refresh_toggled_cb (GtkWidget               *widget,
+								     GossipNewChatroomDialog *dialog);
+static void     new_chatroom_dialog_response_cb                     (GtkWidget               *widget,
+								     gint                     response,
+								     GossipNewChatroomDialog *dialog);
+static void     new_chatroom_dialog_destroy_cb                      (GtkWidget               *widget,
+								     GossipNewChatroomDialog *dialog);
 
 enum {
 	COL_IMAGE,
@@ -150,6 +152,9 @@ static GossipNewChatroomDialog *dialog_p = NULL;
 static void
 new_chatroom_dialog_update_buttons (GossipNewChatroomDialog *dialog)
 {
+	GossipAccount        *account;
+	GossipAccountChooser *account_chooser;
+	GossipAccountType     account_type;
 	GtkButton            *button;
 	GtkWidget            *image;
 	GList                *chatrooms;
@@ -163,60 +168,132 @@ new_chatroom_dialog_update_buttons (GossipNewChatroomDialog *dialog)
 
 	const gchar          *room;
 
-	/* Collect necessary information first. */
-	view = GTK_TREE_VIEW (dialog->treeview);
-	model = gtk_tree_view_get_model (view);
-	items = gtk_tree_model_iter_n_children (model, NULL);
-
-	room = gtk_entry_get_text (GTK_ENTRY (dialog->entry_room));
+	/* Get account information */
+	account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
+	account = gossip_account_chooser_get_account (account_chooser);
+	account_type = gossip_account_get_type (account);
 
 	/* Sort out Join button. */
 	button = GTK_BUTTON (dialog->button_join);
-
+	
 	image = gtk_button_get_image (button);
 	if (!image) {
 		image = gtk_image_new ();
 		gtk_button_set_image (button, image);
 	}
 
-	chatrooms = new_chatroom_dialog_model_get_selected (dialog);
-	chatroom = g_list_nth_data (chatrooms, 0);
-	if (chatroom) {
-		status = gossip_chatroom_get_status (chatroom);
-		gtk_button_set_use_stock (button, FALSE);
-		gtk_button_set_label (button, _("Join"));
-		gtk_image_set_from_stock (GTK_IMAGE (image),
-					  GTK_STOCK_EXECUTE,
-					  GTK_ICON_SIZE_BUTTON);
-	} else {
-		if (items < 1 && !G_STR_EMPTY (room)) {
-			gtk_button_set_use_stock (button, FALSE);
-			gtk_button_set_label (button, _("Create"));
-			gtk_image_set_from_stock (GTK_IMAGE (image),
-						  GTK_STOCK_NEW,
-						  GTK_ICON_SIZE_BUTTON);
-		} else {
+	room = gtk_entry_get_text (GTK_ENTRY (dialog->entry_room));
+
+	/* Handle sensitivity of button per account type */
+	if (account_type == GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY ||
+	    account_type == GOSSIP_ACCOUNT_TYPE_JABBER) {
+		/* Collect necessary information first. */
+		view = GTK_TREE_VIEW (dialog->treeview);
+		model = gtk_tree_view_get_model (view);
+		items = gtk_tree_model_iter_n_children (model, NULL);
+		
+		chatrooms = new_chatroom_dialog_model_get_selected (dialog);
+		chatroom = g_list_nth_data (chatrooms, 0);
+		if (chatroom) {
+			status = gossip_chatroom_get_status (chatroom);
 			gtk_button_set_use_stock (button, FALSE);
 			gtk_button_set_label (button, _("Join"));
 			gtk_image_set_from_stock (GTK_IMAGE (image),
 						  GTK_STOCK_EXECUTE,
 						  GTK_ICON_SIZE_BUTTON);
+		} else {
+			if (items < 1 && !G_STR_EMPTY (room)) {
+				gtk_button_set_use_stock (button, FALSE);
+				gtk_button_set_label (button, _("Create"));
+				gtk_image_set_from_stock (GTK_IMAGE (image),
+							  GTK_STOCK_NEW,
+							  GTK_ICON_SIZE_BUTTON);
+			} else {
+				gtk_button_set_use_stock (button, FALSE);
+				gtk_button_set_label (button, _("Join"));
+				gtk_image_set_from_stock (GTK_IMAGE (image),
+							  GTK_STOCK_EXECUTE,
+							  GTK_ICON_SIZE_BUTTON);
+			}
 		}
+
+		/* 1. If we are not ALREADY in the room 
+		 * 2. If we are Creating the room
+		 * 3. If we have items in the list and one or more is selected
+		 */
+		sensitive &= status != GOSSIP_CHATROOM_STATUS_ACTIVE;
+		sensitive &= ((items < 1 && !G_STR_EMPTY (room)) || 
+			      (items > 0 && chatroom));
+
+		g_list_foreach (chatrooms, (GFunc) g_object_unref, NULL);
+		g_list_free (chatrooms);
+	}
+	else if (account_type == GOSSIP_ACCOUNT_TYPE_MSN || 
+		 account_type == GOSSIP_ACCOUNT_TYPE_IRC) {
+		gtk_button_set_use_stock (button, FALSE);
+		gtk_button_set_label (button, _("Join"));
+		gtk_image_set_from_stock (GTK_IMAGE (image),
+					  GTK_STOCK_EXECUTE,
+					  GTK_ICON_SIZE_BUTTON);
+
+		sensitive &= !G_STR_EMPTY (room);
+	}
+	
+	gtk_widget_set_sensitive (dialog->button_join, sensitive);
+}
+
+static void
+new_chatroom_dialog_update_widgets (GossipNewChatroomDialog *dialog)
+{
+	GossipAccount        *account;
+	GossipAccountChooser *account_chooser;
+	GossipAccountType     account_type;
+	
+	account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
+	account = gossip_account_chooser_get_account (account_chooser);
+	account_type = gossip_account_get_type (account);
+
+	switch (account_type) {
+	case GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY:
+	case GOSSIP_ACCOUNT_TYPE_JABBER: 
+		gtk_widget_show (dialog->hbox_server);
+		gtk_widget_show (dialog->hbox_nick);
+
+		gtk_widget_show (dialog->vbox_browse);
+		break;
+
+	case GOSSIP_ACCOUNT_TYPE_MSN:
+		gtk_widget_hide (dialog->hbox_server);
+		gtk_widget_hide (dialog->hbox_nick);
+
+		gtk_widget_hide (dialog->vbox_browse);
+		break;
+
+	case GOSSIP_ACCOUNT_TYPE_IRC:
+		gtk_widget_hide (dialog->hbox_server);
+		gtk_widget_hide (dialog->hbox_nick);
+
+		gtk_widget_hide (dialog->vbox_browse);
+		break;
+
+	default:
+		g_assert_not_reached();
 	}
 
-	/* 1. If we are not ALREADY in the room 
-	   2. If we are Creating the room
-	   3. If we have items in the list and one or more is selected
-	 */
-	sensitive &= status != GOSSIP_CHATROOM_STATUS_ACTIVE;
-	sensitive &= ((items < 1 && !G_STR_EMPTY (room)) || 
-		      (items > 0 && chatroom));
-		      
-	gtk_widget_set_sensitive (dialog->button_join, sensitive);
+	new_chatroom_dialog_set_defaults (dialog);
+	new_chatroom_dialog_update_buttons (dialog);
 
-	g_list_foreach (chatrooms, (GFunc) g_object_unref, NULL);
-	g_list_free (chatrooms);
+	/* Final set up of the dialog */
+	gtk_widget_grab_focus (dialog->entry_room);
 }
+
+static void
+new_chatroom_dialog_account_changed_cb (GtkComboBox             *combobox,
+					GossipNewChatroomDialog *dialog)
+{
+	new_chatroom_dialog_update_widgets (dialog);
+}
+
 
 static void
 new_chatroom_dialog_model_add (GossipNewChatroomDialog *dialog,
@@ -542,18 +619,6 @@ new_chatroom_dialog_model_add_columns (GossipNewChatroomDialog *dialog)
 	gtk_tree_view_append_column (view, column);
 }
 
-static gboolean
-new_chatroom_dialog_model_separator_func (GtkTreeModel            *model,
-					  GtkTreeIter             *iter,
-					  GossipNewChatroomDialog *dialog)
-{
-	GossipChatroom *chatroom;
-
-	gtk_tree_model_get (model, iter, COL_POINTER, &chatroom, -1);
-
-	return chatroom == NULL;
-}
-
 static void
 new_chatroom_dialog_model_setup (GossipNewChatroomDialog *dialog)
 {
@@ -593,13 +658,6 @@ new_chatroom_dialog_model_setup (GossipNewChatroomDialog *dialog)
 	g_signal_connect (dialog->filter, "row-deleted",
 			  G_CALLBACK (new_chatroom_dialog_model_row_deleted_cb),
 			  dialog);
-
-	/* Separator */
-	gtk_tree_view_set_row_separator_func (view, 
-					      (GtkTreeViewRowSeparatorFunc) 
-					      new_chatroom_dialog_model_separator_func,
-					      dialog,
-					      NULL);
 
 	/* Selection */
 	selection = gtk_tree_view_get_selection (view);
@@ -707,11 +765,11 @@ new_chatroom_dialog_join (GossipNewChatroomDialog *dialog)
 	/* New or existing? */
 	if (new_chatroom) {
 		chatroom = g_object_new (GOSSIP_TYPE_CHATROOM,
+					 "account", account,
 					 "name", room,
 					 "nick", nick,
 					 "server", server,
 					 "room", room,
-					 "account", account,
 					 NULL);
 
 		/* Now do the join */
@@ -948,10 +1006,14 @@ gossip_new_chatroom_dialog_show (GtkWindow *parent)
 				       "label_server", &dialog->label_server,
 				       "label_room", &dialog->label_room,
 				       "label_nick", &dialog->label_nick,
+				       "hbox_server", &dialog->hbox_server,
+				       "hbox_room", &dialog->hbox_room,
+				       "hbox_nick", &dialog->hbox_nick,
 				       "entry_server", &dialog->entry_server,
 				       "entry_room", &dialog->entry_room,
 				       "entry_nick", &dialog->entry_nick,
 				       "togglebutton_refresh", &dialog->togglebutton_refresh,
+				       "vbox_browse", &dialog->vbox_browse,
 				       "image_status", &dialog->image_status,
 				       "label_status", &dialog->label_status,
 				       "hbox_status", &dialog->hbox_status,
@@ -993,8 +1055,11 @@ gossip_new_chatroom_dialog_show (GtkWindow *parent)
 	gtk_box_pack_start (GTK_BOX (dialog->hbox_account),
 			    dialog->account_chooser,
 			    TRUE, TRUE, 0);
-
 	gtk_widget_show (dialog->account_chooser);
+
+	g_signal_connect (GTK_COMBO_BOX (dialog->account_chooser), "changed",
+			  G_CALLBACK (new_chatroom_dialog_account_changed_cb),
+			  dialog);
 
 	/* Populate */
 	accounts = gossip_session_get_accounts (session);
@@ -1021,15 +1086,13 @@ gossip_new_chatroom_dialog_show (GtkWindow *parent)
 	/* Set up chatrooms treeview */
 	new_chatroom_dialog_model_setup (dialog);
 
-	/* Set defaults */
-	new_chatroom_dialog_set_defaults (dialog);
+	/* Set things up according to the account type */
+	new_chatroom_dialog_update_widgets (dialog);
 
-	/* Populate rooms on current server */
 #if 0
-/* 	new_chatroom_dialog_browse_start (dialog); */
+	/* Populate rooms on current server */
+ 	new_chatroom_dialog_browse_start (dialog); 
 #endif
-
-	gtk_widget_grab_focus (dialog->entry_room);
 
 	if (parent) {
 		gtk_window_set_transient_for (GTK_WINDOW (dialog->window),
