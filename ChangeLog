@@ -1,5 +1,11 @@
 2007-03-22  Martyn Russell  <martyn@imendio.com>
 
+	* ui/main.glade: Account ID's were being cut off by the width of
+	the window if they were too long, fixes bug #415395 (Filippo
+	Argiolas). 
+
+2007-03-22  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-account.[ch]:
 	* protocols/telepathy/gossip-telepathy.c:
 	* src/gossip-accounts-dialog.c:
