@@ -443,6 +443,7 @@ gossip_pixbuf_from_account_type (GossipAccountType type,
 
 	/* FIXME: we should have an artwork for these protocols */
 	case GOSSIP_ACCOUNT_TYPE_IRC:
+	case GOSSIP_ACCOUNT_TYPE_SALUT:
 	case GOSSIP_ACCOUNT_TYPE_UNKNOWN:
 	default:
 		icon_id = "im";

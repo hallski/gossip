@@ -728,8 +728,8 @@ gossip_account_type_to_string (GossipAccountType type)
 	case GOSSIP_ACCOUNT_TYPE_MSN:            return "Experimental: MSN";
 	case GOSSIP_ACCOUNT_TYPE_YAHOO:          return "Experimental: Yahoo!";
 	case GOSSIP_ACCOUNT_TYPE_IRC:            return "Experimental: IRC";
-
-	case GOSSIP_ACCOUNT_TYPE_UNKNOWN:
+	case GOSSIP_ACCOUNT_TYPE_SALUT:          return "Experimental: Salut";
+       	case GOSSIP_ACCOUNT_TYPE_UNKNOWN:
 	default:
 		break;
 	}
@@ -760,6 +760,8 @@ gossip_account_string_to_type (const gchar *str)
 	}
 	else if (gossip_strncasecmp (str, "Experimental: IRC", -1) == 0) {
 		return GOSSIP_ACCOUNT_TYPE_IRC;
+	} else if (gossip_strncasecmp (str, "Experimental: Salut", -1) == 0) {
+		return GOSSIP_ACCOUNT_TYPE_SALUT;
 	}
 
 	return GOSSIP_ACCOUNT_TYPE_UNKNOWN;

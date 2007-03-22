@@ -1139,6 +1139,11 @@ accounts_dialog_button_create_clicked_cb (GtkWidget             *button,
 	if (strcmp (account_type_str, str) == 0) {
 		account_type = GOSSIP_ACCOUNT_TYPE_IRC;
 	}
+
+ 	str = gossip_account_type_to_string (GOSSIP_ACCOUNT_TYPE_SALUT);
+	if (strcmp (account_type_str, str) == 0) {
+		account_type = GOSSIP_ACCOUNT_TYPE_SALUT;
+	}
 #endif
 	
 	if (account_type == GOSSIP_ACCOUNT_TYPE_UNKNOWN) {
@@ -1504,6 +1509,9 @@ gossip_accounts_dialog_show (GossipAccount *account)
 	gtk_combo_box_append_text (GTK_COMBO_BOX (dialog->combobox_type), str);
 
  	str = gossip_account_type_to_string (GOSSIP_ACCOUNT_TYPE_IRC);
+	gtk_combo_box_append_text (GTK_COMBO_BOX (dialog->combobox_type), str);
+
+ 	str = gossip_account_type_to_string (GOSSIP_ACCOUNT_TYPE_SALUT);
 	gtk_combo_box_append_text (GTK_COMBO_BOX (dialog->combobox_type), str);
 #endif
 

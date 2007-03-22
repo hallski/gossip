@@ -366,6 +366,7 @@ telepathy_account_type_to_protocol_name (GossipAccountType type)
 	case GOSSIP_ACCOUNT_TYPE_ICQ:    return "icq";
 	case GOSSIP_ACCOUNT_TYPE_MSN:    return "msn";
 	case GOSSIP_ACCOUNT_TYPE_IRC:    return "irc";
+	case GOSSIP_ACCOUNT_TYPE_SALUT:  return "salut";
 	default:
 		break;
 	}
@@ -382,6 +383,7 @@ telepathy_account_type_to_cmgr_name (GossipAccountType type)
 	case GOSSIP_ACCOUNT_TYPE_ICQ:    return "oscar";
 	case GOSSIP_ACCOUNT_TYPE_MSN:    return "butterfly";
 	case GOSSIP_ACCOUNT_TYPE_IRC:    return "idle";
+	case GOSSIP_ACCOUNT_TYPE_SALUT:  return "salut";
 	default:
 		break;
 	}

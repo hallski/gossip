@@ -1,3 +1,14 @@
+2007-03-22  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-account.[ch]:
+	* protocols/telepathy/gossip-telepathy.c:
+	* src/gossip-accounts-dialog.c:
+	* src/gossip-ui-utils.c: Add support for Salut via Telepathy,
+	fixes bug #418660 (Sjoerd Simons).
+
+	* src/gossip-contact-list.c: Make sure we disconnect all contact
+	related signals here, nice catch from Sjoerd.
+
 2007-03-17  Martyn Russell  <martyn@imendio.com>
 
 	* ui/group-chat.glade: 
