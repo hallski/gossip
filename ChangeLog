@@ -1,5 +1,12 @@
 2007-03-22  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-chat-manager.[ch]:
+	* src/gossip-notify.c: Make a way to acknowledge that a new
+	message has been read via the notification by clicking the
+	notification area, fixes bug #336193 (Filippo Argiolas).
+
+2007-03-22  Martyn Russell  <martyn@imendio.com>
+
 	* ui/main.glade: Account ID's were being cut off by the width of
 	the window if they were too long, fixes bug #415395 (Filippo
 	Argiolas). 

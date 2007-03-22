@@ -287,21 +287,20 @@ gossip_chat_manager_get_chats (GossipChatManager *manager)
 }
 
 void
-gossip_chat_manager_show_chat (GossipChatManager *manager,
-			       GossipContact     *contact)
+gossip_chat_manager_remove_events (GossipChatManager *manager,
+				   GossipContact     *contact)
 {
 	GossipChatManagerPriv *priv;
-	GossipPrivateChat     *chat;
 	GossipEvent           *event;
 
 	g_return_if_fail (GOSSIP_IS_CHAT_MANAGER (manager));
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Removing events for contact:'%s'",
+		      gossip_contact_get_id (contact));
+
 	priv = GET_PRIV (manager);
-
-	chat = gossip_chat_manager_get_chat (manager, contact);
-
-	gossip_chat_present (GOSSIP_CHAT (chat));
 
 	event = g_hash_table_lookup (priv->events, contact);
 	if (event) {
@@ -311,3 +310,18 @@ gossip_chat_manager_show_chat (GossipChatManager *manager,
 	}
 }
 
+void
+gossip_chat_manager_show_chat (GossipChatManager *manager,
+			       GossipContact     *contact)
+{
+	GossipPrivateChat     *chat;
+
+	g_return_if_fail (GOSSIP_IS_CHAT_MANAGER (manager));
+	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
+
+	chat = gossip_chat_manager_get_chat (manager, contact);
+
+	gossip_chat_present (GOSSIP_CHAT (chat));
+
+	gossip_chat_manager_remove_events(manager, contact);
+}

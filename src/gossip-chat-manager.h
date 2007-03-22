@@ -54,6 +54,8 @@ GossipChatManager *gossip_chat_manager_new       (void);
 GossipPrivateChat *gossip_chat_manager_get_chat  (GossipChatManager *manager,
 						  GossipContact     *contact);
 GList *            gossip_chat_manager_get_chats (GossipChatManager *manager);
+void               gossip_chat_manager_remove_events (GossipChatManager *manager,
+						      GossipContact     *contact);
 void               gossip_chat_manager_show_chat (GossipChatManager *manager,
 						  GossipContact     *contact);
 

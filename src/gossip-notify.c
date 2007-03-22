@@ -347,6 +347,31 @@ notify_new_message_default_cb (NotifyNotification *notify,
 	if (event) {
 		message = GOSSIP_MESSAGE (gossip_event_get_data (event));
 		contact = gossip_message_get_sender (message);
+		
+		gossip_chat_manager_remove_events(gossip_app_get_chat_manager(),contact);
+		
+		g_hash_table_remove (event_notifications, notify);
+		g_hash_table_remove (message_notifications, contact);
+	} else {
+		g_warning ("No event found for NotifyNotification: %p", notify);
+	}
+
+	g_object_unref (event_manager);
+}
+
+static void
+notify_new_message_respond_cb (NotifyNotification *notify,
+			       gchar              *label,
+			       GossipEventManager *event_manager)
+{
+	GossipEvent   *event;
+	GossipMessage *message;
+	GossipContact *contact = NULL;
+
+	event = g_hash_table_lookup (event_notifications, notify);
+	if (event) {
+		message = GOSSIP_MESSAGE (gossip_event_get_data (event));
+		contact = gossip_message_get_sender (message);
 
 		gossip_event_manager_activate (event_manager, event);
 
@@ -468,7 +493,7 @@ notify_new_message (GossipEventManager *event_manager,
 					(NotifyActionCallback) notify_new_message_default_cb,
 					g_object_ref (event_manager), NULL);
 	notify_notification_add_action (notify, "respond", _("Show"),
-					(NotifyActionCallback) notify_new_message_default_cb,
+					(NotifyActionCallback) notify_new_message_respond_cb,
 					g_object_ref (event_manager), NULL);
 
 	if (gossip_contact_get_type (contact) == GOSSIP_CONTACT_TYPE_TEMPORARY) {
