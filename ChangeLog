@@ -1,3 +1,8 @@
+2007-03-23  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-contact-list.c: (contact_list_remove_contact): Don't
+	use g_signal_handlers_disconnect_matched.
+
 2007-03-22  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-chat-manager.[ch]:

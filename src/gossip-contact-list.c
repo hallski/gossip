@@ -1355,11 +1355,22 @@ contact_list_remove_contact (GossipContactList *list,
 	}
 
 	/* Disconnect signals */
-	g_signal_handlers_disconnect_matched (contact, 
-					      G_SIGNAL_MATCH_DATA,
-					      0, 0, NULL, NULL, 
+	g_signal_handlers_disconnect_by_func (contact, 
+					      G_CALLBACK (contact_list_contact_groups_updated_cb),
 					      list);
-
+	g_signal_handlers_disconnect_by_func (contact,
+					      G_CALLBACK (contact_list_contact_updated_cb),
+					      list);
+	g_signal_handlers_disconnect_by_func (contact, 
+					      G_CALLBACK (contact_list_contact_updated_cb),
+					      list);
+	g_signal_handlers_disconnect_by_func (contact,
+					      G_CALLBACK (contact_list_contact_updated_cb),
+					      list);
+	g_signal_handlers_disconnect_by_func (contact,
+					      G_CALLBACK (contact_list_contact_updated_cb),
+					      list);
+	
 	/* Clean up model */
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 
