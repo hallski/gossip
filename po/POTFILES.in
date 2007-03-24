@@ -18,6 +18,7 @@ protocols/telepathy/gossip-telepathy-cmgr.c
 
 src/gossip-about-dialog.c
 src/gossip-accounts-dialog.c
+src/gossip-account-widget-irc.c
 src/gossip-account-widget-jabber.c
 src/gossip-account-widget-generic.c
 src/gossip-add-contact-dialog.c
