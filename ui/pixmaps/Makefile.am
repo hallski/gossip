@@ -14,8 +14,18 @@ image_DATA =				\
 	vcard_16.png			\
 	vcard_48.png
 
-icondir = $(datadir)/icons/hicolor/48x48/apps
-icon_DATA = gossip.png
+icon16dir = $(datadir)/icons/hicolor/16x16/apps
+icon16_DATA = 16x16/gossip.png
+
+icon22dir = $(datadir)/icons/hicolor/22x22/apps
+icon22_DATA = 22x22/gossip.png
+
+icon32dir = $(datadir)/icons/hicolor/32x32/apps
+icon32_DATA = 32x32/gossip.png
+
+icon48dir = $(datadir)/icons/hicolor/48x48/apps
+icon48_DATA = 48x48/gossip.png
+
 svgicondir = $(datadir)/icons/hicolor/scalable/apps
 svgicon_DATA = gossip.svg
 
@@ -30,6 +40,11 @@ install-data-hook:
 		echo "***   $(gtk_update_icon_cache)"; \
 	fi
 
-EXTRA_DIST = $(image_DATA) $(icon_DATA) $(svgicon_DATA)
+EXTRA_DIST = 		\
+	$(icon16_DATA)  \
+	$(icon22_DATA)  \
+	$(icon32_DATA)  \
+	$(svgicon_DATA) \
+	$(image_DATA)
 
 

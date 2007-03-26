@@ -1,3 +1,12 @@
+2007-03-26  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-new-message-dialog.c: Don't allow more than one
+	instance of this dialog to be open at a time, fixes bug #418739.
+
+	* ui/pixmaps/Makefile.am: Added icons for 16², 22² and 32² so we
+	don't now have blank icons for the peekaboo applet and in the main
+	menu.  
+
 2007-03-23  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-contact-list.c: (contact_list_remove_contact): Don't

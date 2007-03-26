@@ -393,31 +393,38 @@ new_message_dialog_response (GtkWidget              *widget,
 void
 gossip_new_message_dialog_show (GtkWindow *parent)
 {
-	GossipNewMessageDialog *dialog;
-	GossipSession          *session;
-	GList                  *accounts;
-	GladeXML               *ui;
+	static GossipNewMessageDialog *dialog = NULL;
+	GossipSession                 *session;
+	GList                         *accounts;
+	GladeXML                      *glade;
+
+	if (dialog) {
+		gtk_window_present (GTK_WINDOW (dialog->dialog));
+		return;
+	}
 
 	dialog = g_new0 (GossipNewMessageDialog, 1);
 
-	ui = gossip_glade_get_file ("main.glade",
-				    "new_message_dialog",
-				    NULL,
-				    "new_message_dialog", &dialog->dialog,
-				    "accounts_vbox", &dialog->accounts_vbox,
-				    "name_entry", &dialog->name_entry,
-				    "chat_button", &dialog->chat_button,
-				    "treeview", &dialog->treeview,
-				    NULL);
+	glade = gossip_glade_get_file ("main.glade",
+				       "new_message_dialog",
+				       NULL,
+				       "new_message_dialog", &dialog->dialog,
+				       "accounts_vbox", &dialog->accounts_vbox,
+				       "name_entry", &dialog->name_entry,
+				       "chat_button", &dialog->chat_button,
+				       "treeview", &dialog->treeview,
+				       NULL);
 
-	gossip_glade_connect (ui,
+	gossip_glade_connect (glade,
 			      dialog,
 			      "new_message_dialog", "response", new_message_dialog_response,
 			      "new_message_dialog", "destroy", new_message_dialog_destroy,
 			      "name_entry", "changed", new_message_dialog_name_entry_changed,
 			      NULL);
 
-	g_object_unref (ui);
+	g_object_unref (glade);
+
+	g_object_add_weak_pointer (G_OBJECT (dialog->dialog), (gpointer) &dialog);
 
 	new_message_dialog_setup_view (dialog);
 	new_message_dialog_setup_contacts (dialog);
