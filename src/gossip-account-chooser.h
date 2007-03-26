@@ -49,13 +49,18 @@ struct _GossipAccountChooserClass {
 };
 
 GType          gossip_account_chooser_get_type           (void) G_GNUC_CONST;
-
 GtkWidget *    gossip_account_chooser_new                (GossipSession        *session);
+
+GossipAccount *gossip_account_chooser_get_account        (GossipAccountChooser *chooser);
+gboolean       gossip_account_chooser_get_can_select_all (GossipAccountChooser *account_chooser);
+gboolean       gossip_account_chooser_get_has_all_option (GossipAccountChooser *account_chooser);
+
 gboolean       gossip_account_chooser_set_account        (GossipAccountChooser *account_chooser,
 							  GossipAccount        *account);
-GossipAccount *gossip_account_chooser_get_account        (GossipAccountChooser *chooser);
 void           gossip_account_chooser_set_can_select_all (GossipAccountChooser *account_chooser,
 							  gboolean              can_select_all);
+void           gossip_account_chooser_set_has_all_option (GossipAccountChooser *account_chooser,
+							  gboolean              has_all_option);
 
 G_END_DECLS
 

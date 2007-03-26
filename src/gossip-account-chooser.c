@@ -42,6 +42,7 @@ typedef struct {
 
 	gboolean              set_active_item;
 	gboolean              can_select_all;
+	gboolean              has_all_option;
 } GossipAccountChooserPriv;
 
 struct SetAccountData {
@@ -53,13 +54,24 @@ struct SetAccountData {
 enum {
 	COL_ACCOUNT_IMAGE,
 	COL_ACCOUNT_TEXT,
-	COL_ACCOUNT_ENABLED, /* usually tied to connected state */
+	COL_ACCOUNT_ENABLED, /* Usually tied to connected state */
 	COL_ACCOUNT_POINTER,
 	COL_ACCOUNT_COUNT
 };
 
 static void     account_chooser_finalize                 (GObject               *object);
+static void     account_chooser_get_property             (GObject               *object,
+							  guint                  param_id,
+							  GValue                *value,
+							  GParamSpec            *pspec);
+static void     account_chooser_set_property             (GObject               *object,
+							  guint                  param_id,
+							  const GValue          *value,
+							  GParamSpec            *pspec);
 static void     account_chooser_setup                    (GossipAccountChooser  *account_chooser);
+static gboolean account_chooser_separator_func           (GtkTreeModel          *model,
+							  GtkTreeIter           *iter,
+							  GossipAccountChooser  *account_chooser);
 static void     account_chooser_account_added_cb         (GossipAccountManager  *manager,
 							  GossipAccount         *account,
 							  GossipAccountChooser  *account_chooser);
@@ -94,10 +106,16 @@ static gboolean account_chooser_set_account_foreach      (GtkTreeModel          
 							  GtkTreePath           *path,
 							  GtkTreeIter           *iter,
 							  struct SetAccountData *data);
-static gboolean account_chooser_set_enabled_foreach      (GtkTreeModel         *model,
-							  GtkTreePath          *path,
-							  GtkTreeIter          *iter,
-							  GossipAccountChooser *account_chooser);
+static gboolean account_chooser_set_enabled_foreach      (GtkTreeModel          *model,
+							  GtkTreePath           *path,
+							  GtkTreeIter           *iter,
+							  GossipAccountChooser  *account_chooser);
+
+enum {
+	PROP_0,
+	PROP_CAN_SELECT_ALL,
+	PROP_HAS_ALL_OPTION,
+};
 
 G_DEFINE_TYPE (GossipAccountChooser, gossip_account_chooser, GTK_TYPE_COMBO_BOX);
 
@@ -107,6 +125,24 @@ gossip_account_chooser_class_init (GossipAccountChooserClass *klass)
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
 	object_class->finalize = account_chooser_finalize;
+	object_class->get_property = account_chooser_get_property;
+	object_class->set_property = account_chooser_set_property;
+
+	g_object_class_install_property (object_class,
+					 PROP_CAN_SELECT_ALL,
+					 g_param_spec_boolean ("can-select-all",
+							       "Can Select All",
+							       "Should the user be able to select offline accounts",
+							       FALSE,
+							       G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
+					 PROP_HAS_ALL_OPTION,
+					 g_param_spec_boolean ("has-all-option",
+							       "Has All Option",
+							       "Have a separate option in the list to mean ALL accounts",
+							       FALSE,
+							       G_PARAM_READWRITE));
 
 	g_type_class_add_private (object_class, sizeof (GossipAccountChooserPriv));
 }
@@ -153,26 +189,73 @@ account_chooser_finalize (GObject *object)
 }
 
 static void
+account_chooser_get_property (GObject    *object,
+			      guint       param_id,
+			      GValue     *value,
+			      GParamSpec *pspec)
+{
+	GossipAccountChooserPriv *priv;
+
+	priv = GET_PRIV (object);
+
+	switch (param_id) {
+	case PROP_CAN_SELECT_ALL:
+		g_value_set_boolean (value, priv->can_select_all);
+		break;
+	case PROP_HAS_ALL_OPTION:
+		g_value_set_boolean (value, priv->has_all_option);
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
+		break;
+	};
+}
+
+static void
+account_chooser_set_property (GObject      *object,
+			      guint         param_id,
+			      const GValue *value,
+			      GParamSpec   *pspec)
+{
+	GossipAccountChooserPriv *priv;
+
+	priv = GET_PRIV (object);
+
+	switch (param_id) {
+	case PROP_CAN_SELECT_ALL:
+		gossip_account_chooser_set_can_select_all (GOSSIP_ACCOUNT_CHOOSER (object),
+							   g_value_get_boolean (value));
+		break;
+	case PROP_HAS_ALL_OPTION:
+		gossip_account_chooser_set_has_all_option (GOSSIP_ACCOUNT_CHOOSER (object),
+							   g_value_get_boolean (value));
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
+		break;
+	};
+}
+
+static void
 account_chooser_setup (GossipAccountChooser *account_chooser)
 {
 	GossipAccountChooserPriv *priv;
 	GList                    *accounts;
-
 	GtkListStore             *store;
 	GtkCellRenderer          *renderer;
 	GtkComboBox              *combobox;
 
 	priv = GET_PRIV (account_chooser);
 
-	/* set up combo box with new store */
+	/* Set up combo box with new store */
 	combobox = GTK_COMBO_BOX (account_chooser);
 
 	gtk_cell_layout_clear (GTK_CELL_LAYOUT (combobox));
 
 	store = gtk_list_store_new (COL_ACCOUNT_COUNT,
 				    GDK_TYPE_PIXBUF,
-				    G_TYPE_STRING,    /* name */
-				    G_TYPE_BOOLEAN,
+				    G_TYPE_STRING,    /* Name */
+				    G_TYPE_BOOLEAN,   /* Enabled */
 				    GOSSIP_TYPE_ACCOUNT);
 
 	gtk_combo_box_set_model (combobox, GTK_TREE_MODEL (store));
@@ -191,13 +274,35 @@ account_chooser_setup (GossipAccountChooser *account_chooser)
 					"sensitive", COL_ACCOUNT_ENABLED,
 					NULL);
 
-	/* populate accounts */
+	/* Populate accounts */
 	accounts = gossip_account_manager_get_accounts (priv->account_manager);
-	g_list_foreach (accounts, (GFunc)account_chooser_account_add_foreach, account_chooser);
-	g_list_foreach (accounts, (GFunc)g_object_unref, NULL);
+	g_list_foreach (accounts, (GFunc) account_chooser_account_add_foreach, account_chooser);
+	g_list_foreach (accounts, (GFunc) g_object_unref, NULL);
 	g_list_free (accounts);
 
 	g_object_unref (store);
+}
+
+static gboolean
+account_chooser_separator_func (GtkTreeModel         *model,
+				GtkTreeIter          *iter,
+				GossipAccountChooser *account_chooser)
+{
+	GossipAccountChooserPriv *priv;
+	gchar                    *text;
+	gboolean                  is_separator;
+
+	priv = GET_PRIV (account_chooser);
+	
+	if (!priv->has_all_option) {
+		return FALSE;
+	}
+	
+	gtk_tree_model_get (model, iter, COL_ACCOUNT_TEXT, &text, -1);
+	is_separator = text == NULL;
+	g_free (text);
+
+	return is_separator;
 }
 
 static void
@@ -289,6 +394,9 @@ account_chooser_account_name_foreach (GtkTreeModel          *model,
 
 	account1 = GOSSIP_ACCOUNT (data->account);
 	gtk_tree_model_get (model, iter, COL_ACCOUNT_POINTER, &account2, -1);
+	if (!account2) {
+		return FALSE;
+	}
 
 	equal = gossip_account_equal (account1, account2);
 	g_object_unref (account2);
@@ -344,6 +452,9 @@ account_chooser_account_update_foreach (GtkTreeModel          *model,
 
 	account1 = GOSSIP_ACCOUNT (data->account);
 	gtk_tree_model_get (model, iter, COL_ACCOUNT_POINTER, &account2, -1);
+	if (!account2) {
+		return FALSE;
+	}
 
 	equal = gossip_account_equal (account1, account2);
 	g_object_unref (account2);
@@ -511,8 +622,13 @@ account_chooser_set_account_foreach (GtkTreeModel          *model,
 	account1 = GOSSIP_ACCOUNT (data->account);
 	gtk_tree_model_get (model, iter, COL_ACCOUNT_POINTER, &account2, -1);
 
-	equal = gossip_account_equal (account1, account2);
-	g_object_unref (account2);
+	/* Special case so we can make it possible to select the All option */
+	if (!account1 && !account2) {
+		equal = TRUE;
+	} else {
+		equal = gossip_account_equal (account1, account2);
+		g_object_unref (account2);
+	}
 
 	if (equal) {
 		GtkComboBox *combobox;
@@ -533,11 +649,9 @@ gossip_account_chooser_set_account (GossipAccountChooser *account_chooser,
 	GtkComboBox           *combobox;
 	GtkTreeModel          *model;
 	GtkTreeIter            iter;
-
 	struct SetAccountData  data;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_CHOOSER (account_chooser), FALSE);
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), FALSE);
 
 	combobox = GTK_COMBO_BOX (account_chooser);
 	model = gtk_combo_box_get_model (combobox);
@@ -570,6 +684,9 @@ account_chooser_set_enabled_foreach (GtkTreeModel         *model,
 	store = GTK_LIST_STORE (model);
 
 	gtk_tree_model_get (model, iter, COL_ACCOUNT_POINTER, &account, -1);
+	if (!account) {
+		return FALSE;
+	}
 
 	is_connected = gossip_session_is_connected (priv->session, account);
 	g_object_unref (account);
@@ -596,6 +713,30 @@ account_chooser_set_enabled_foreach (GtkTreeModel         *model,
 	return FALSE;
 }
 
+gboolean
+gossip_account_chooser_get_can_select_all (GossipAccountChooser *account_chooser)
+{
+	GossipAccountChooserPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_CHOOSER (account_chooser), FALSE);
+
+	priv = GET_PRIV (account_chooser);
+	
+	return priv->can_select_all;
+}
+
+gboolean
+gossip_account_chooser_get_has_all_option (GossipAccountChooser *account_chooser)
+{
+	GossipAccountChooserPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_CHOOSER (account_chooser), FALSE);
+
+	priv = GET_PRIV (account_chooser);
+	
+	return priv->has_all_option;
+}
+
 void
 gossip_account_chooser_set_can_select_all (GossipAccountChooser *account_chooser,
 					   gboolean              can_select_all)
@@ -608,6 +749,10 @@ gossip_account_chooser_set_can_select_all (GossipAccountChooser *account_chooser
 
 	priv = GET_PRIV (account_chooser);
 
+	if (priv->can_select_all == can_select_all) {
+		return;
+	}
+
 	combobox = GTK_COMBO_BOX (account_chooser);
 	model = gtk_combo_box_get_model (combobox);
 
@@ -616,4 +761,71 @@ gossip_account_chooser_set_can_select_all (GossipAccountChooser *account_chooser
 	gtk_tree_model_foreach (model,
 				(GtkTreeModelForeachFunc) account_chooser_set_enabled_foreach,
 				account_chooser);
+
+	g_object_notify (G_OBJECT (account_chooser), "can-select-all");
+}
+
+void
+gossip_account_chooser_set_has_all_option (GossipAccountChooser *account_chooser,
+					   gboolean              has_all_option)
+{
+	GossipAccountChooserPriv *priv;
+	GtkComboBox              *combobox;
+	GtkListStore             *store;
+	GtkTreeModel             *model;
+	GtkTreeIter               iter;
+
+	g_return_if_fail (GOSSIP_IS_ACCOUNT_CHOOSER (account_chooser));
+
+	priv = GET_PRIV (account_chooser);
+
+	if (priv->has_all_option == has_all_option) {
+		return;
+	}
+
+	combobox = GTK_COMBO_BOX (account_chooser);
+	model = gtk_combo_box_get_model (combobox);
+	store = GTK_LIST_STORE (model);
+
+	priv->has_all_option = has_all_option;
+
+	/*
+	 * The first 2 options are the ALL and separator
+	 */
+
+	if (has_all_option) {
+		gtk_combo_box_set_row_separator_func (GTK_COMBO_BOX (account_chooser), 
+						      (GtkTreeViewRowSeparatorFunc)
+						      account_chooser_separator_func,
+						      account_chooser, 
+						      NULL);
+
+		gtk_list_store_prepend (store, &iter);
+		gtk_list_store_set (store, &iter, 
+				    COL_ACCOUNT_TEXT, NULL,
+				    COL_ACCOUNT_ENABLED, TRUE,
+				    COL_ACCOUNT_POINTER, NULL,
+				    -1);
+
+		gtk_list_store_prepend (store, &iter);
+		gtk_list_store_set (store, &iter, 
+				    COL_ACCOUNT_TEXT, _("All"), 
+				    COL_ACCOUNT_ENABLED, TRUE,
+				    COL_ACCOUNT_POINTER, NULL,
+				    -1);
+	} else {
+		if (gtk_tree_model_get_iter_first (model, &iter)) {
+			if (gtk_list_store_remove (GTK_LIST_STORE (model), &iter)) {
+				gtk_list_store_remove (GTK_LIST_STORE (model), &iter);
+			}
+		}
+
+		gtk_combo_box_set_row_separator_func (GTK_COMBO_BOX (account_chooser), 
+						      (GtkTreeViewRowSeparatorFunc)
+						      NULL,
+						      NULL, 
+						      NULL);
+	}
+
+	g_object_notify (G_OBJECT (account_chooser), "has-all-option");
 }

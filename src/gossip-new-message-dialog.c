@@ -42,7 +42,7 @@ typedef struct {
 	GtkWidget    *dialog;
 
 	GtkWidget    *accounts_vbox;
-	GtkWidget    *accounts_chooser;
+	GtkWidget    *account_chooser;
 	GtkWidget    *name_entry;
 	GtkWidget    *treeview;
 	GtkWidget    *chat_button;
@@ -51,35 +51,38 @@ typedef struct {
 	GtkTreeModel *filter;
 } GossipNewMessageDialog;
 
-static void     new_message_dialog_update_buttons     (GossipNewMessageDialog *dialog);
-static void     new_message_dialog_pixbuf_data_func   (GtkCellLayout          *cell_layout,
-						       GtkCellRenderer        *cell,
-						       GtkTreeModel           *tree_model,
-						       GtkTreeIter            *iter,
-						       GossipNewMessageDialog *dialog);
-static void     new_message_dialog_text_data_func     (GtkCellLayout          *cell_layout,
-						       GtkCellRenderer        *cell,
-						       GtkTreeModel           *tree_model,
-						       GtkTreeIter            *iter,
-						       GossipNewMessageDialog *dialog);
-static gboolean new_message_dialog_filter_func        (GtkTreeModel           *model,
-						       GtkTreeIter            *iter,
-						       GossipNewMessageDialog *dialog);
-static void     new_message_dialog_row_activated      (GtkTreeView            *view,
-						       GtkTreePath            *path,
-						       GtkTreeViewColumn      *column,
-						       GossipNewMessageDialog *dialog);
-static void     new_message_dialog_selection_changed  (GtkTreeSelection       *selection,
-						       GossipNewMessageDialog *dialog);
-static void     new_message_dialog_setup_contacts     (GossipNewMessageDialog *dialog);
-static void     new_message_dialog_setup_view         (GossipNewMessageDialog *dialog);
-static void     new_message_dialog_name_entry_changed (GtkEntry               *entry,
-						       GossipNewMessageDialog *dialog);
-static void     new_message_dialog_destroy            (GtkWidget              *widget,
-						       GossipNewMessageDialog *dialog);
-static void     new_message_dialog_response           (GtkWidget              *widget,
-						       gint                    response,
-						       GossipNewMessageDialog *dialog);
+static void     new_message_dialog_update_buttons             (GossipNewMessageDialog *dialog);
+static void     new_message_dialog_update                     (GossipNewMessageDialog *dialog);
+static void     new_message_dialog_pixbuf_data_func           (GtkCellLayout          *cell_layout,
+							       GtkCellRenderer        *cell,
+							       GtkTreeModel           *tree_model,
+							       GtkTreeIter            *iter,
+							       GossipNewMessageDialog *dialog);
+static void     new_message_dialog_text_data_func             (GtkCellLayout          *cell_layout,
+							       GtkCellRenderer        *cell,
+							       GtkTreeModel           *tree_model,
+							       GtkTreeIter            *iter,
+							       GossipNewMessageDialog *dialog);
+static gboolean new_message_dialog_filter_func                (GtkTreeModel           *model,
+							       GtkTreeIter            *iter,
+							       GossipNewMessageDialog *dialog);
+static void     new_message_dialog_row_activated              (GtkTreeView            *view,
+							       GtkTreePath            *path,
+							       GtkTreeViewColumn      *column,
+							       GossipNewMessageDialog *dialog);
+static void     new_message_dialog_selection_changed          (GtkTreeSelection       *selection,
+							       GossipNewMessageDialog *dialog);
+static void     new_message_dialog_setup_contacts             (GossipNewMessageDialog *dialog);
+static void     new_message_dialog_setup_view                 (GossipNewMessageDialog *dialog);
+static void     new_message_dialog_name_entry_changed         (GtkEntry               *entry,
+							       GossipNewMessageDialog *dialog);
+static void     new_message_dialog_account_chooser_changed_cb (GtkWidget              *combobox,
+							       GossipNewMessageDialog *dialog);
+static void     new_message_dialog_destroy                    (GtkWidget              *widget,
+							       GossipNewMessageDialog *dialog);
+static void     new_message_dialog_response                   (GtkWidget              *widget,
+							       gint                    response,
+							       GossipNewMessageDialog *dialog);
 
 enum {
 	COL_STATUS,
@@ -107,6 +110,29 @@ new_message_dialog_update_buttons (GossipNewMessageDialog *dialog)
 	can_chat |= gtk_tree_selection_get_selected (selection, &model, &iter);
 
 	gtk_widget_set_sensitive (dialog->chat_button, can_chat);
+}
+
+static void
+new_message_dialog_update (GossipNewMessageDialog *dialog)
+{
+	GtkTreeView  *view;
+	GtkTreeModel *model;
+
+	gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (dialog->filter));
+
+	view = GTK_TREE_VIEW (dialog->treeview);
+	model = gtk_tree_view_get_model (view);
+
+	if (gtk_tree_model_iter_n_children (model, NULL) > 0) {
+		GtkTreeSelection *selection;
+		GtkTreeIter       iter;
+
+		selection = gtk_tree_view_get_selection (view);
+		gtk_tree_model_get_iter_first (model, &iter);
+		gtk_tree_selection_select_iter (selection, &iter);
+	}
+
+	new_message_dialog_update_buttons (dialog);
 }
 
 static void
@@ -148,14 +174,19 @@ new_message_dialog_filter_func (GtkTreeModel           *model,
 				GtkTreeIter            *iter,
 				GossipNewMessageDialog *dialog)
 {
-	GossipContact *contact;
-	const gchar   *id;
-	const gchar   *name;
-	const gchar   *text;
-	gchar         *id_nocase;
-	gchar         *name_nocase;
-	gchar         *text_nocase;
-	gboolean       found = FALSE;
+	GossipAccountChooser *account_chooser;
+	GossipAccount        *account;
+	GossipContact        *contact;
+	const gchar          *id;
+	const gchar          *name;
+	const gchar          *text;
+	gchar                *id_nocase;
+	gchar                *name_nocase;
+	gchar                *text_nocase;
+	gboolean              found = FALSE;
+
+	account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
+	account = gossip_account_chooser_get_account (account_chooser);
 
 	gtk_tree_model_get (model, iter, COL_POINTER, &contact, -1);
 
@@ -163,17 +194,22 @@ new_message_dialog_filter_func (GtkTreeModel           *model,
 		return TRUE;
 	}
 
+	if (account && 
+	    !gossip_account_equal (account, gossip_contact_get_account (contact))) {
+		return FALSE;
+	}
+
 	id = gossip_contact_get_id (contact);
 	name = gossip_contact_get_name (contact);
 
 	text = gtk_entry_get_text (GTK_ENTRY (dialog->name_entry));
 
-	/* casefold */
+	/* Casefold */
 	id_nocase = g_utf8_casefold (id, -1);
 	name_nocase = g_utf8_casefold (name, -1);
 	text_nocase = g_utf8_casefold (text, -1);
 
-	/* compare */
+	/* Compare */
 	if (G_STR_EMPTY (text_nocase) ||
 	    strstr (id_nocase, text_nocase) ||
 	    strstr (name_nocase, text_nocase)) {
@@ -257,7 +293,8 @@ new_message_dialog_setup_view (GossipNewMessageDialog *dialog)
 	filter = gtk_tree_model_filter_new (model, NULL);
 
 	gtk_tree_model_filter_set_visible_func (GTK_TREE_MODEL_FILTER (filter),
-						(GtkTreeModelFilterVisibleFunc)new_message_dialog_filter_func,
+						(GtkTreeModelFilterVisibleFunc)
+						new_message_dialog_filter_func,
 						dialog,
 						NULL);
 
@@ -311,24 +348,14 @@ static void
 new_message_dialog_name_entry_changed (GtkEntry               *entry,
 				       GossipNewMessageDialog *dialog)
 {
-	GtkTreeView  *view;
-	GtkTreeModel *model;
+	new_message_dialog_update (dialog);
+}
 
-	gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (dialog->filter));
-
-	view = GTK_TREE_VIEW (dialog->treeview);
-	model = gtk_tree_view_get_model (view);
-
-	if (gtk_tree_model_iter_n_children (model, NULL) > 0) {
-		GtkTreeSelection *selection;
-		GtkTreeIter       iter;
-
-		selection = gtk_tree_view_get_selection (view);
-		gtk_tree_model_get_iter_first (model, &iter);
-		gtk_tree_selection_select_iter (selection, &iter);
-	}
-
-	new_message_dialog_update_buttons (dialog);
+static void
+new_message_dialog_account_chooser_changed_cb (GtkWidget              *combobox,
+					       GossipNewMessageDialog *dialog)
+{
+	new_message_dialog_update (dialog);
 }
 
 static void
@@ -362,11 +389,11 @@ new_message_dialog_response (GtkWidget              *widget,
 
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
 		GossipAccount        *account;
-		GossipAccountChooser *accounts_chooser;
+		GossipAccountChooser *account_chooser;
 		const gchar          *text;
 
-		accounts_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->accounts_chooser);
-		account = gossip_account_chooser_get_account (accounts_chooser);
+		account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
+		account = gossip_account_chooser_get_account (account_chooser);
 
 		text = gtk_entry_get_text (GTK_ENTRY (dialog->name_entry));
 
@@ -395,6 +422,7 @@ gossip_new_message_dialog_show (GtkWindow *parent)
 {
 	static GossipNewMessageDialog *dialog = NULL;
 	GossipSession                 *session;
+	GossipAccountChooser          *account_chooser;
 	GList                         *accounts;
 	GladeXML                      *glade;
 
@@ -426,28 +454,42 @@ gossip_new_message_dialog_show (GtkWindow *parent)
 
 	g_object_add_weak_pointer (G_OBJECT (dialog->dialog), (gpointer) &dialog);
 
-	new_message_dialog_setup_view (dialog);
-	new_message_dialog_setup_contacts (dialog);
-
-	/* set up account chooser */
+	/* Set up account chooser */
 	session = gossip_app_get_session ();
 
-	dialog->accounts_chooser = gossip_account_chooser_new (session);
+	dialog->account_chooser = gossip_account_chooser_new (session);
+	g_object_set (dialog->account_chooser, 
+		      "can-select-all", TRUE,
+		      "has-all-option", TRUE,
+		      NULL);
+
+	account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
+	gossip_account_chooser_set_account (account_chooser, NULL);
+
 	gtk_box_pack_start (GTK_BOX (dialog->accounts_vbox),
-			    dialog->accounts_chooser,
+			    dialog->account_chooser,
 			    TRUE, TRUE, 0);
-	gtk_widget_show (dialog->accounts_chooser);
+
+	g_signal_connect (GTK_COMBO_BOX (dialog->account_chooser), "changed",
+			  G_CALLBACK (new_message_dialog_account_chooser_changed_cb),
+			  dialog);
+
+	gtk_widget_show (dialog->account_chooser);
 
 	accounts = gossip_session_get_accounts (session);
 	if (g_list_length (accounts) > 1) {
 		gtk_widget_show (dialog->accounts_vbox);
 	} else {
-		/* show no accounts combo box */
+		/* Show no accounts combo box */
 		gtk_widget_hide (dialog->accounts_vbox);
 	}
 
 	g_list_foreach (accounts, (GFunc) g_object_unref, NULL);
 	g_list_free (accounts);
+
+	/* Set up list of contacts */
+	new_message_dialog_setup_view (dialog);
+	new_message_dialog_setup_contacts (dialog);
 
 	if (parent) {
 		gtk_window_set_transient_for (GTK_WINDOW (dialog->dialog), parent);

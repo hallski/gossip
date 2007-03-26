@@ -1,5 +1,13 @@
 2007-03-26  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-new-message-dialog.c: 
+	* src/gossip-account-chooser.[ch]: Improve this widget so we can
+	now select an "All" option which is used by dialogs like the new
+	message dialog where we need to filter contacts from ALL accounts,
+	this makes Peekaboo quite powerful now too.
+
+2007-03-26  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-account-button.[ch]: Remove these, since they are no
 	longer used.
 
