@@ -1,3 +1,47 @@
+2007-03-26  Martyn Russell  <martyn@imendio.com>
+
+	* ar.po:
+	* az.po:
+	* bg.po:
+	* ca.po:
+	* cs.po:
+	* cy.po:
+	* da.po:
+	* de.po:
+	* dz.po:
+	* el.po:
+	* en_CA.po:
+	* en_GB.po:
+	* eo.po:
+	* es.po:
+	* eu.po:
+	* fi.po:
+	* fr.po:
+	* ga.po:
+	* hr.po:
+	* hu.po:
+	* it.po:
+	* lt.po:
+	* ml.po:
+	* ms.po:
+	* nb.po:
+	* ne.po:
+	* nl.po:
+	* pl.po:
+	* pt.po:
+	* pt_BR.po:
+	* ru.po:
+	* sq.po:
+	* sr.po:
+	* sr@Latn.po:
+	* sv.po:
+	* tr.po:
+	* uk.po:
+	* vi.po:
+	* zh_CN.po:
+	* zh_HK.po:
+	* zh_TW.po: Ran make update-po.
+
 2007-03-26 Pema Geyleg <pema.geyleg@gmail.com>
 
 	* dz.po: Updated dzongkha translation.
