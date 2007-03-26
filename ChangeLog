@@ -1,5 +1,10 @@
 2007-03-26  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-account-button.[ch]: Remove these, since they are no
+	longer used.
+
+2007-03-26  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-contact.c: Revert the g_direct_hash() and
 	g_direct_equal() changes we made here, we have found many
 	regressions with this - we will fix up Telepathy to do something
