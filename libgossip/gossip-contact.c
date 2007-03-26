@@ -609,7 +609,7 @@ gossip_contact_set_avatar (GossipContact *contact,
 		gossip_avatar_unref (priv->avatar);
 		priv->avatar = NULL;
 	}
-	
+
 	if (avatar) {
 		priv->avatar = gossip_avatar_ref (avatar);
 	}
@@ -682,7 +682,7 @@ gossip_contact_add_presence (GossipContact  *contact,
 	}
 
 	/* Add new presence */
-	priv->presences = g_list_insert_sorted (priv->presences, 
+	priv->presences = g_list_insert_sorted (priv->presences,
 						g_object_ref (presence),
 						gossip_presence_sort_func);
 
@@ -816,16 +816,38 @@ gboolean
 gossip_contact_equal (gconstpointer v1,
 		      gconstpointer v2)
 {
-	return g_direct_equal (v1, v2);
+	GossipAccount *account_a;
+	GossipAccount *account_b;
+	const gchar   *id_a;
+	const gchar   *id_b;
+
+	g_return_val_if_fail (GOSSIP_IS_CONTACT (v1), FALSE);
+	g_return_val_if_fail (GOSSIP_IS_CONTACT (v2), FALSE);
+
+	account_a = gossip_contact_get_account (GOSSIP_CONTACT (v1));
+	account_b = gossip_contact_get_account (GOSSIP_CONTACT (v2));
+
+	id_a = gossip_contact_get_id (GOSSIP_CONTACT (v1));
+	id_b = gossip_contact_get_id (GOSSIP_CONTACT (v2));
+
+	return gossip_account_equal (account_a, account_b) && g_str_equal (id_a, id_b);
 }
 
 guint
 gossip_contact_hash (gconstpointer key)
 {
-	return g_direct_hash (key);
-}
+	GossipContactPriv *priv;
+	guint              hash = 0;
 
-/* convenience functions */
+	g_return_val_if_fail (GOSSIP_IS_CONTACT (key), +1);
+
+	priv = GET_PRIV (GOSSIP_CONTACT (key));
+
+	hash += gossip_account_hash (gossip_contact_get_account (GOSSIP_CONTACT (key)));
+	hash += g_str_hash (gossip_contact_get_id (GOSSIP_CONTACT (key)));
+
+	return hash;
+}
 
 gboolean
 gossip_contact_is_online (GossipContact *contact)

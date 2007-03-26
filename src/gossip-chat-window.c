@@ -1403,7 +1403,8 @@ chat_window_new_message_cb (GossipChat       *chat,
 
 	gossip_request_user_attention ();
 
-	if (gossip_chat_window_has_focus (window)) {
+	if (gossip_chat_window_has_focus (window) &&
+	    priv->current_chat == chat) {
 		gossip_debug (DEBUG_DOMAIN, "New message, we have focus");
 		return;
 	}

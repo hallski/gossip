@@ -1,5 +1,20 @@
 2007-03-26  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-contact.c: Revert the g_direct_hash() and
+	g_direct_equal() changes we made here, we have found many
+	regressions with this - we will fix up Telepathy to do something
+	special with contacts that have no ID.
+	
+	* src/gossip-chat-window.c: Don't just settle for focus on the
+	window to know if we should show the new message icon for tabs,
+	instead check we have focus and if the current tab is being shown
+	before deciding.
+	
+	* src/gossip-private-chat.c: Emit the 'status-changed' signal
+	AFTER the 'composing' signal.
+
+2007-03-26  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-new-message-dialog.c: Don't allow more than one
 	instance of this dialog to be open at a time, fixes bug #418739.
 

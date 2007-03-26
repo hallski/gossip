@@ -482,8 +482,6 @@ private_chat_contact_presence_updated (GossipContact     *contact,
 	gossip_debug (DEBUG_DOMAIN, "Presence update for contact: %s",
 		      gossip_contact_get_id (contact));
 
-	g_signal_emit_by_name (chat, "status-changed");
-
 	if (!gossip_contact_is_online (contact)) {
 		private_chat_composing_remove_timeout (chat);
 
@@ -492,8 +490,7 @@ private_chat_contact_presence_updated (GossipContact     *contact,
 
 			msg = g_strdup_printf (_("%s went offline"),
 					       gossip_contact_get_name (priv->contact));
-			gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view,
-						       msg);
+			gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, msg);
 			g_free (msg);
 		}
 
@@ -507,13 +504,14 @@ private_chat_contact_presence_updated (GossipContact     *contact,
 
 			msg = g_strdup_printf (_("%s has come online"),
 					       gossip_contact_get_name (priv->contact));
-			gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view,
-						       msg);
+			gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, msg);
 			g_free (msg);
 		}
 
 		priv->is_online = TRUE;
 	}
+
+	g_signal_emit_by_name (chat, "status-changed");
 }
 
 static void
