@@ -132,7 +132,9 @@ gossip_edit_chatroom_dialog_show (GtkWindow      *parent,
 				  GossipChatroom *chatroom)
 {
 	GossipEditChatroomDialog *dialog;
+	GossipAccount            *account;
 	GladeXML                 *glade;
+	GtkWidget                *label_server;
 
 	g_return_if_fail (chatroom != NULL);
 
@@ -146,6 +148,7 @@ gossip_edit_chatroom_dialog_show (GtkWindow      *parent,
 				       "edit_chatroom_dialog", &dialog->dialog,
 				       "entry_name", &dialog->entry_name,
 				       "entry_nickname", &dialog->entry_nickname,
+				       "label_server", &label_server,
 				       "entry_server", &dialog->entry_server,
 				       "entry_room", &dialog->entry_room,
 				       "checkbutton_auto_connect", &dialog->checkbutton_auto_connect,
@@ -163,6 +166,28 @@ gossip_edit_chatroom_dialog_show (GtkWindow      *parent,
 			      NULL);
 
 	g_object_unref (glade);
+
+	account = gossip_chatroom_get_account (chatroom);
+	switch (gossip_account_get_type (account)) {
+	case GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY:
+	case GOSSIP_ACCOUNT_TYPE_JABBER:
+		gtk_widget_show (label_server);
+		gtk_widget_show (dialog->entry_server);
+		break;
+
+	case GOSSIP_ACCOUNT_TYPE_AIM:
+	case GOSSIP_ACCOUNT_TYPE_ICQ:
+	case GOSSIP_ACCOUNT_TYPE_MSN:
+	case GOSSIP_ACCOUNT_TYPE_YAHOO:
+	case GOSSIP_ACCOUNT_TYPE_IRC:
+	case GOSSIP_ACCOUNT_TYPE_SALUT:
+		gtk_widget_hide (label_server);
+		gtk_widget_hide (dialog->entry_server);
+		break;
+
+	default:
+		break;
+	}
 
 	gtk_entry_set_text (GTK_ENTRY (dialog->entry_name),
 			    gossip_chatroom_get_name (chatroom));

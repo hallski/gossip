@@ -1,5 +1,16 @@
 2007-03-27  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-chatrooms-window.c: Fix the server column title to
+	say "Server" not "Room". Make it possible to view ALL chatrooms
+	across ALL accounts. Don't show "Server" column for protocols that
+	don't need it.
+
+	* src/gossip-edit-chatroom-dialog.c:
+	(gossip_edit_chatroom_dialog_show): Don't show "Server" entry and
+	label for protocols that don't need it.
+
+2007-03-27  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-add-contact-dialog.c:
 	(add_contact_dialog_response_cb): Fix the response to add a
 	contact, it was only adding contacts for an internally defined
