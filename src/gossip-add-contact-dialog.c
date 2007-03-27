@@ -43,8 +43,6 @@
 
 #define DEBUG_DOMAIN "AddContact"
 
-#define RESPONSE_ADD 1
-
 typedef struct {
 	GtkWidget   *dialog;
 
@@ -326,7 +324,7 @@ add_contact_dialog_response_cb (GtkDialog              *widget,
 				gint                    response,
 				GossipAddContactDialog *dialog)
 {
-	if (response == RESPONSE_ADD) {
+	if (response == GTK_RESPONSE_OK) {
 		GossipAccount        *account;
 		GossipAccountChooser *account_chooser;
 		const gchar          *id;
