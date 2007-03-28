@@ -1,3 +1,15 @@
+2007-03-28  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat-window.c: (chat_window_update_title),
+	(chat_window_new_message_cb), (chat_window_detach_hook),
+	(chat_window_page_switched_cb), (chat_window_focus_in_event_cb),
+	(chat_window_drag_data_received): Rework how we change the window
+	icon. Leave the window icon as new-message as long as there is a
+	tab with an unread message. Only set the urgency hint for
+	unfocused windows, and always unset the urgency when the window is
+	focused. Make switching to a tab with a new message mark that tab
+	as read.
+
 2007-03-28  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-account-manager.c: Optimise _get_accounts().

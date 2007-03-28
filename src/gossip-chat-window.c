@@ -65,7 +65,6 @@ struct _GossipChatWindowPriv {
 
 	GossipChat  *current_chat;
 
-	gboolean     new_msg;
 	gboolean     page_added;
 	gboolean     dnd_same_window;
 
@@ -724,7 +723,7 @@ chat_window_update_title (GossipChatWindow *window,
 	
 	n_chats = g_list_length (priv->chats);
 	if (n_chats == 1) {
-		if (priv->new_msg) {
+		if (priv->chats_new_msg) {
 			title = g_strdup_printf (
 				"%s - %s",
 				gossip_chat_get_name (priv->current_chat),
@@ -770,11 +769,10 @@ chat_window_update_title (GossipChatWindow *window,
 	gtk_window_set_title (GTK_WINDOW (priv->dialog), title);
 	g_free (title);
 
-	if (priv->new_msg) {
+	if (priv->chats_new_msg) {
 		pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE,
 						   GTK_ICON_SIZE_MENU);
 	} else {
-		chat_window_set_urgency_hint (window, FALSE);
 		pixbuf = NULL;
 	}
 
@@ -1398,30 +1396,35 @@ chat_window_new_message_cb (GossipChat       *chat,
 {
 	GossipChatWindowPriv *priv;
 	GossipContact        *own_contact;
+	gboolean              has_focus;
+	gboolean              needs_urgency;
 
 	priv = GET_PRIV (window);
 
-	gossip_request_user_attention ();
-
-	if (gossip_chat_window_has_focus (window) &&
-	    priv->current_chat == chat) {
+	has_focus = gossip_chat_window_has_focus (window);
+	
+	if (has_focus && priv->current_chat == chat) {
 		gossip_debug (DEBUG_DOMAIN, "New message, we have focus");
 		return;
 	}
 	
 	gossip_debug (DEBUG_DOMAIN, "New message, no focus");
 
-	priv->new_msg = TRUE;
-
+	needs_urgency = FALSE;
 	if (gossip_chat_is_group_chat (chat)) {
 		own_contact = gossip_chat_get_own_contact (chat);
 		
 		if (gossip_chat_should_highlight_nick (message, own_contact)) {
 			gossip_debug (DEBUG_DOMAIN, "Highlight this nick");
-			chat_window_set_urgency_hint (window, TRUE);
+			needs_urgency = TRUE;
 		}
 	} else {
+		needs_urgency = TRUE;
+	}
+
+	if (needs_urgency && !has_focus) {
 		chat_window_set_urgency_hint (window, TRUE);
+		gossip_request_user_attention ();
 	}
 
 	if (!g_list_find (priv->chats_new_msg, chat)) {
@@ -1480,9 +1483,9 @@ chat_window_detach_hook (GtkNotebook *source,
 }
 
 static void
-chat_window_page_switched_cb (GtkNotebook	     *notebook,
+chat_window_page_switched_cb (GtkNotebook      *notebook,
 			      GtkNotebookPage  *page,
-			      gint	      page_num,
+			      gint	        page_num,
 			      GossipChatWindow *window)
 {
 	GossipChatWindowPriv *priv;
@@ -1499,7 +1502,8 @@ chat_window_page_switched_cb (GtkNotebook	     *notebook,
 	if (priv->page_added) {
 		priv->page_added = FALSE;
 		gossip_chat_scroll_down (chat);
-	} else if (priv->current_chat == chat) {
+	}
+	else if (priv->current_chat == chat) {
 		return;
 	}
 
@@ -1658,9 +1662,11 @@ chat_window_focus_in_event_cb (GtkWidget        *widget,
 	gossip_debug (DEBUG_DOMAIN, "Focus in event, updating title");
 
 	priv = GET_PRIV (window);
-	priv->new_msg = FALSE;
+
 	priv->chats_new_msg = g_list_remove (priv->chats_new_msg, priv->current_chat);
 
+	chat_window_set_urgency_hint (window, FALSE);
+	
 	/* Update the title, since we now mark all unread messages as read. */
 	chat_window_update_status (window, priv->current_chat);
 
@@ -1720,7 +1726,8 @@ chat_window_drag_data_received (GtkWidget        *widget,
 		 * anyway with add_chat() and remove_chat().
 		 */
 		gtk_drag_finish (context, TRUE, FALSE, time);
-	} else if (info == DND_DRAG_TYPE_TAB) {
+	}
+	else if (info == DND_DRAG_TYPE_TAB) {
 		GossipChat        *chat = NULL;
 		GossipChatWindow  *old_window;
 		GtkWidget        **child = NULL;
