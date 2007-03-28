@@ -1,3 +1,10 @@
+2006-03-10  Xavier Claessens  <xclaesse@gmail.com>
+
+	* protocols/telepathy/gossip-telepathy-contacts.c: Queue avatar requests
+	per connection, don't mix handles from different connections.
+	* src/gossip-contact-list.h: Remove unused priv pointer in
+	GossipContactList.
+
 2007-03-27  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-chatrooms-window.c: Fix the server column title to

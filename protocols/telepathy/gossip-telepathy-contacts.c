@@ -45,6 +45,8 @@ struct _GossipTelepathyContacts {
 	DBusGProxy      *presence_iface;
 
 	GHashTable      *contacts;
+
+	GList           *avatar_requests_queue;
 };
 
 typedef struct {
@@ -110,8 +112,8 @@ static GossipPresenceState
 		    telepathy_presence_state_from_str      (const gchar                          *str);
 static const gchar *telepathy_presence_state_to_str        (GossipPresenceState                   presence_state);
 
-static GList *avatar_requests_queue = NULL;
-static guint  n_avatar_requests = 0;
+static guint n_avatar_requests = 0;
+
 
 GossipTelepathyContacts *
 gossip_telepathy_contacts_init (GossipTelepathy *telepathy)
@@ -696,8 +698,8 @@ telepathy_contacts_request_avatar (GossipTelepathyContacts *contacts,
 	/* We queue avatar requests to not send too many dbus async
 	 * calls at once. If we don't we reach the dbus's limit of
 	 * pending calls */
-	avatar_requests_queue = g_list_append (avatar_requests_queue,
-					       GUINT_TO_POINTER (handle));
+	contacts->avatar_requests_queue = g_list_append (contacts->avatar_requests_queue,
+							 GUINT_TO_POINTER (handle));
 	telepathy_contacts_start_avatar_requests (contacts);
 }
 
@@ -706,14 +708,15 @@ telepathy_contacts_start_avatar_requests (GossipTelepathyContacts *contacts)
 {
 	TelepathyContactsAvatarRequestData *data;
 
-	while (n_avatar_requests <  MAX_AVATAR_REQUESTS && avatar_requests_queue) {
+	while (n_avatar_requests <  MAX_AVATAR_REQUESTS &&
+	       contacts->avatar_requests_queue) {
 		data = g_slice_new (TelepathyContactsAvatarRequestData);
 		data->contacts = contacts;
-		data->handle = GPOINTER_TO_UINT (avatar_requests_queue->data);
+		data->handle = GPOINTER_TO_UINT (contacts->avatar_requests_queue->data);
 
 		n_avatar_requests++;
-		avatar_requests_queue = g_list_remove (avatar_requests_queue,
-						       avatar_requests_queue->data);
+		contacts->avatar_requests_queue = g_list_remove (contacts->avatar_requests_queue,
+								 contacts->avatar_requests_queue->data);
 
 		tp_conn_iface_avatars_request_avatar_async (contacts->avatars_iface,
 							    data->handle,

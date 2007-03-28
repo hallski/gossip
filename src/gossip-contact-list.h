@@ -43,8 +43,6 @@ typedef struct _GossipContactListPriv  GossipContactListPriv;
 
 struct _GossipContactList {
 	GtkTreeView            parent;
-
-	GossipContactListPriv *priv;
 };
 
 struct _GossipContactListClass {
