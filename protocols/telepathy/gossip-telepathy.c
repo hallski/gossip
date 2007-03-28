@@ -599,7 +599,7 @@ telepathy_login (GossipProtocol *protocol)
 
 	protocol_name = telepathy_account_type_to_protocol_name (account_type);
 	cmgr_name = telepathy_account_type_to_cmgr_name (account_type);
-	cmgr_info = tp_connmgr_get_info ((gchar*) cmgr_name);
+	cmgr_info = tp_connmgr_get_info (cmgr_name);
 
 	/* FIXME: This leaks */
 	if (!cmgr_info) {

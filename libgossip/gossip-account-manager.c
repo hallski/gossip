@@ -237,7 +237,7 @@ gossip_account_manager_get_accounts (GossipAccountManager *manager)
 	priv = GET_PRIV (manager);
 
 	accounts = g_list_copy (priv->accounts);
-	g_list_foreach (accounts, (GFunc)g_object_ref, NULL);
+	g_list_foreach (accounts, (GFunc) g_object_ref, NULL);
 
 	return accounts;
 }
@@ -401,16 +401,11 @@ gossip_account_manager_get_default (GossipAccountManager *manager)
 		/* if one or more entries, use that */
 		if (gossip_account_manager_get_count (manager) >= 1) {
 			GossipAccount *account;
-			GList         *l;
 
-			l = gossip_account_manager_get_accounts (manager);
-			account = l->data;
+			account = priv->accounts->data;
 
 			name = gossip_account_get_name (account);
 			gossip_account_manager_set_default (manager, account);
-
-			g_list_foreach (l, (GFunc) g_object_unref, NULL);
-			g_list_free (l);
 
 			/* We return the default account ref here. */
 			return account;

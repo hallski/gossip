@@ -51,7 +51,7 @@ gossip_telepathy_cmgr_list_protocols (const gchar *cmgr)
 
 	g_return_val_if_fail (cmgr != NULL, NULL);
 
-	cmgr_info = tp_connmgr_get_info ((gchar*) cmgr);
+	cmgr_info = tp_connmgr_get_info (cmgr);
 	g_hash_table_foreach (cmgr_info->protocols,
 			      (GHFunc) telepathy_cmgr_list_protocols_foreach,
 			      &list);
@@ -120,7 +120,6 @@ telepathy_cmgr_list_params_foreach (const gchar        *key,
 		      "- key:'%s' %s", 
 		      key, 
 		      param->default_value ? "(has default)" : "");
-
 
 	type = gossip_dbus_type_to_g_type (param->dbus_type);
 	if (param->default_value) {

@@ -1,7 +1,22 @@
+2007-03-28  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-account-manager.c: Optimise _get_accounts().
+	
+	* libgossip/gossip-account.c:
+	* libgossip/gossip-utils.c: 
+	* protocols/telepathy/gossip-telepathy-cmgr.c:
+	* protocols/telepathy/gossip-telepathy.c: Code clean ups.
+	
+	* src/gossip-accounts-dialog.c:
+	* ui/main.glade: Change the buttons when we create an account from
+	"Cancel" to "Back", and remove the "!" on the "Create" button.
+
 2006-03-28  Xavier Claessens  <xclaesse@gmail.com>
 
-	* protocols/telepathy/gossip-telepathy-contacts.c: Queue avatar requests
-	per connection, don't mix handles from different connections.
+	* protocols/telepathy/gossip-telepathy-contacts.c: Queue avatar
+	requests per connection, don't mix handles from different
+	connections. 
+	
 	* src/gossip-contact-list.h: Remove unused priv pointer in
 	GossipContactList.
 

@@ -184,7 +184,7 @@ account_init (GossipAccount *account)
 	priv->parameters = g_hash_table_new_full (g_str_hash,
 						  g_str_equal,
 						  g_free,
-						  (GDestroyNotify)account_param_free);
+						  (GDestroyNotify) account_param_free);
 }
 
 static void

@@ -333,7 +333,7 @@ gchar *
 gossip_g_value_to_string (const GValue *value)
 {
 	gchar  *return_string = NULL;
-	GValue string_g_value = {0, };
+	GValue  string_g_value = {0, };
 
 	g_value_init (&string_g_value, G_TYPE_STRING);
 	g_value_transform (value, &string_g_value);
@@ -351,8 +351,7 @@ gossip_string_to_g_value (const gchar *str, GType type)
 	g_value = g_new0 (GValue, 1);
 	g_value_init (g_value, type);
 
-	switch (type)
-	{
+	switch (type) {
 	case G_TYPE_STRING:
 		g_value_set_string (g_value, str);
 		break;
