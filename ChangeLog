@@ -1,4 +1,4 @@
-2006-03-10  Xavier Claessens  <xclaesse@gmail.com>
+2006-03-28  Xavier Claessens  <xclaesse@gmail.com>
 
 	* protocols/telepathy/gossip-telepathy-contacts.c: Queue avatar requests
 	per connection, don't mix handles from different connections.
