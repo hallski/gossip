@@ -1,5 +1,9 @@
 2007-03-29  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-sound.c: Call gnome_sound_shutdown when finalizing.
+
+2007-03-29  Mikael Hallendal  <micke@imendio.com>
+
 	* protocols/jabber/gossip-jabber.c: Free the server variable returned
 	from jabber_get_default_server. Fixes a memory leak.
 

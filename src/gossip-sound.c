@@ -326,6 +326,8 @@ gossip_sound_finalize (void)
 {
 	g_assert (saved_session != NULL);
 
+	gnome_sound_shutdown ();
+
 	g_signal_handlers_disconnect_by_func (saved_session,
 					      sound_protocol_connected_cb,
 					      NULL);
