@@ -507,7 +507,7 @@ jabber_new_account (GossipProtocol    *protocol,
 {
 	GossipAccount *account;
 	const gchar   *id;
-	const gchar   *server;
+	gchar         *server;
 	gboolean       ssl;
 	guint          port;
 
@@ -534,6 +534,8 @@ jabber_new_account (GossipProtocol    *protocol,
 				  "use_ssl", G_TYPE_BOOLEAN, ssl, 0,
 				  "account", G_TYPE_STRING, id, 0,
 				  NULL);
+
+	g_free (server);
 
 	return account;
 }
