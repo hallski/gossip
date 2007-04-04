@@ -1,3 +1,11 @@
+2007-04-04  Martyn Russell  <martyn@imendio.com>
+
+	* protocols/telepathy/gossip-telepathy-message.c:
+	(telepathy_message_received_cb), (telepathy_message_sent_cb),
+	(telepathy_message_ack_pending), (telepathy_message_emit): If we
+	have a message of type _ACTION, we prepend "/me " to the message
+	body, fixes bug #423850.
+
 2007-03-29  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-sound.c: Call gnome_sound_shutdown when finalizing.

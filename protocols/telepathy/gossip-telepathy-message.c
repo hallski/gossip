@@ -78,6 +78,7 @@ static void     telepathy_message_state_cb         (DBusGProxy             *chat
 						    TelepathyMessageChan   *msg_chan);
 static void     telepathy_message_ack_pending      (TelepathyMessageChan   *msg_chan);
 static void     telepathy_message_emit             (TelepathyMessageChan   *msg_chan,
+						    guint                   message_type,
 						    guint                   timestamp,
 						    guint                   from_handle,
 						    const gchar            *message_body);
@@ -276,6 +277,7 @@ telepathy_message_received_cb (DBusGProxy           *text_iface,
 	gossip_debug (DEBUG_DOMAIN, "Message received: %s", message_body);
 
 	telepathy_message_emit (msg_chan,
+				message_type,
 				timestamp,
 				from_handle,
 				message_body);
@@ -299,7 +301,7 @@ telepathy_message_sent_cb (DBusGProxy           *text_iface,
 	gossip_debug (DEBUG_DOMAIN, "Message sent: %s", message_body);
 
 	if (msg_chan->text_chan->handle_type == TP_HANDLE_TYPE_ROOM) {
-		telepathy_message_emit (msg_chan, timestamp, 0, message_body);
+		telepathy_message_emit (msg_chan, message_type, timestamp, 0, message_body);
 	}
 	telepathy_message_timeout_reset (msg_chan);
 }
@@ -343,6 +345,7 @@ telepathy_message_ack_pending (TelepathyMessageChan *msg_chan)
 		message_body = g_value_get_string (g_value_array_get_nth (message_struct, 5));
 
 		telepathy_message_emit (msg_chan,
+					message_type,
 					timestamp,
 					from_handle,
 					message_body);
@@ -353,6 +356,7 @@ telepathy_message_ack_pending (TelepathyMessageChan *msg_chan)
 
 static void
 telepathy_message_emit (TelepathyMessageChan *msg_chan,
+			guint                 type,
 			guint                 timestamp,
 			guint                 from_handle,
 			const gchar          *message_body)
@@ -379,8 +383,19 @@ telepathy_message_emit (TelepathyMessageChan *msg_chan,
 		message = gossip_message_new (GOSSIP_MESSAGE_TYPE_CHAT_ROOM, recipient);
 	}
 
+	gossip_debug (DEBUG_DOMAIN, "New message of type:%d\n", type);
+	
+	if (type == TP_CHANNEL_TEXT_MESSAGE_TYPE_ACTION) {
+		gchar *str;
+
+		str = g_strconcat ("/me ", message_body, NULL);
+		gossip_message_set_body (message, str);
+		g_free (str);
+	} else {
+		gossip_message_set_body (message, message_body);
+	}
+
 	gossip_message_set_sender (message, from);
-	gossip_message_set_body (message, message_body);
 	gossip_message_set_timestamp (message, (GossipTime) timestamp);
 
 	if (msg_chan->text_chan->handle_type != TP_HANDLE_TYPE_ROOM) {
