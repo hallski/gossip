@@ -132,6 +132,9 @@ static void     contact_list_set_property                    (GObject           
 							      guint                   param_id,
 							      const GValue           *value,
 							      GParamSpec             *pspec);
+static gboolean contact_list_row_separator_func              (GtkTreeModel           *model,
+							      GtkTreeIter            *iter,
+							      gpointer                data);
 static void     contact_list_connected_cb                    (GossipSession          *session,
 							      GossipContactList      *list);
 static gboolean contact_list_show_active_users_cb            (GossipContactList      *list);
@@ -168,7 +171,8 @@ static gchar *  contact_list_get_parent_group                (GtkTreeModel      
 							      gboolean               *path_is_group);
 static void     contact_list_get_group                       (GossipContactList      *list,
 							      const gchar            *name,
-							      GtkTreeIter            *iter_to_set,
+							      GtkTreeIter            *iter_group_to_set,
+							      GtkTreeIter            *iter_separator_to_set,
 							      gboolean               *created);
 static gboolean contact_list_get_group_foreach               (GtkTreeModel           *model,
 							      GtkTreePath            *path,
@@ -306,6 +310,7 @@ enum {
 	COL_IS_ACTIVE,
 	COL_IS_ONLINE,
 	COL_IS_COMPOSING,
+	COL_IS_SEPARATOR,
 	COL_COUNT
 };
 
@@ -504,6 +509,10 @@ gossip_contact_list_init (GossipContactList *list)
 
 	g_object_unref (action_group);
 
+	gtk_tree_view_set_row_separator_func (GTK_TREE_VIEW (list), 
+					      contact_list_row_separator_func,
+					      NULL, NULL);
+
 	/* Signal connection. */
 	g_signal_connect (priv->session,
 			  "connected",
@@ -620,6 +629,20 @@ contact_list_set_property (GObject      *object,
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
 		break;
 	};
+}
+
+static gboolean
+contact_list_row_separator_func (GtkTreeModel *model,
+				 GtkTreeIter  *iter,
+				 gpointer      data)
+{
+	gboolean is_separator = FALSE;
+
+	gtk_tree_model_get (model, iter,
+			    COL_IS_SEPARATOR, &is_separator,
+			    -1);
+
+	return is_separator;
 }
 
 static void
@@ -1147,10 +1170,12 @@ contact_list_get_parent_group (GtkTreeModel *model,
 static void
 contact_list_get_group (GossipContactList *list,
 			const gchar       *name,
-			GtkTreeIter       *iter_to_set,
+			GtkTreeIter       *iter_group_to_set,
+			GtkTreeIter       *iter_separator_to_set,
 			gboolean          *created)
 {
 	GtkTreeModel *model;
+	GtkTreeIter   iter_group, iter_separator;
 	FindGroup     fg;
 
 	memset (&fg, 0, sizeof (fg));
@@ -1167,20 +1192,52 @@ contact_list_get_group (GossipContactList *list,
 			*created = TRUE;
 		}
 
-		gtk_tree_store_append (GTK_TREE_STORE (model), iter_to_set, NULL);
-		gtk_tree_store_set (GTK_TREE_STORE (model), iter_to_set,
+		gtk_tree_store_append (GTK_TREE_STORE (model), &iter_group, NULL);
+		gtk_tree_store_set (GTK_TREE_STORE (model), &iter_group,
 				    COL_PIXBUF_STATUS, NULL,
 				    COL_NAME, name,
 				    COL_IS_GROUP, TRUE,
 				    COL_IS_ACTIVE, FALSE,
 				    COL_IS_COMPOSING, FALSE,
+				    COL_IS_SEPARATOR, FALSE,
 				    -1);
+
+		if (iter_group_to_set) {
+			*iter_group_to_set = iter_group;
+		}
+
+		gtk_tree_store_append (GTK_TREE_STORE (model), 
+				       &iter_separator, 
+				       &iter_group);
+		gtk_tree_store_set (GTK_TREE_STORE (model), &iter_separator,
+				    COL_IS_SEPARATOR, TRUE,
+				    -1);
+
+		if (iter_separator_to_set) {
+			*iter_separator_to_set = iter_separator;
+		}
 	} else {
 		if (created) {
 			*created = FALSE;
 		}
 
-		*iter_to_set = fg.iter;
+		if (iter_group_to_set) {
+			*iter_group_to_set = fg.iter;
+		}
+
+		iter_separator = fg.iter;
+
+		if (gtk_tree_model_iter_next (model, &iter_separator)) {
+			gboolean is_separator;
+
+			gtk_tree_model_get (model, &iter_separator,
+					    COL_IS_SEPARATOR, &is_separator,
+					    -1);
+
+			if (is_separator && iter_separator_to_set) {
+				*iter_separator_to_set = iter_separator;
+			}
+		}
 	}
 }
 
@@ -1202,6 +1259,7 @@ contact_list_get_group_foreach (GtkTreeModel *model,
 			    COL_NAME, &str,
 			    COL_IS_GROUP, &is_group,
 			    -1);
+
 	if (is_group && strcmp (str, fg->name) == 0) {
 		fg->found = TRUE;
 		fg->iter = *iter;
@@ -1217,7 +1275,7 @@ contact_list_add_contact (GossipContactList *list,
 			  GossipContact     *contact)
 {
 	GossipContactListPriv *priv;
-	GtkTreeIter            iter, iter_group;
+	GtkTreeIter            iter, iter_group, iter_separator;
 	GtkTreeModel          *model;
 	GList                 *l, *groups;
 
@@ -1253,6 +1311,7 @@ contact_list_add_contact (GossipContactList *list,
 				    COL_IS_ACTIVE, FALSE,
 				    COL_IS_ONLINE, gossip_contact_is_online (contact),
 				    COL_IS_COMPOSING, FALSE,
+				    COL_IS_SEPARATOR, FALSE,
 				    -1);
 
 		if (pixbuf_avatar) {
@@ -1277,16 +1336,17 @@ contact_list_add_contact (GossipContactList *list,
 		}
 
 		pixbuf_status = gossip_pixbuf_for_contact (contact);
-		pixbuf_avatar = gossip_pixbuf_avatar_from_contact_scaled (
-			contact, 32, 32);
+		pixbuf_avatar = gossip_pixbuf_avatar_from_contact_scaled (contact, 32, 32);
 
-		contact_list_get_group (list, name, &iter_group, &created);
+		contact_list_get_group (list, name, &iter_group, &iter_separator, &created);
 
 		if (priv->show_avatars && !priv->is_compact) {
 			show_avatar = TRUE;
 		}
 
-		gtk_tree_store_append (GTK_TREE_STORE (model), &iter, &iter_group);
+		/* Add separator */
+		gtk_tree_store_insert_after (GTK_TREE_STORE (model),
+					     &iter, &iter_group, NULL);
 		gtk_tree_store_set (GTK_TREE_STORE (model), &iter,
 				    COL_PIXBUF_STATUS, pixbuf_status,
 				    COL_PIXBUF_AVATAR, pixbuf_avatar,
@@ -1299,6 +1359,7 @@ contact_list_add_contact (GossipContactList *list,
 				    COL_IS_ACTIVE, FALSE,
 				    COL_IS_ONLINE, gossip_contact_is_online (contact),
 				    COL_IS_COMPOSING, FALSE,
+				    COL_IS_SEPARATOR, FALSE,
 				    -1);
 
 		if (pixbuf_avatar) {
@@ -1377,8 +1438,12 @@ contact_list_remove_contact (GossipContactList *list,
 	for (l = iters; l; l = l->next) {
 		GtkTreeIter parent;
 
+		/* NOTE: it is only <= 2 here because we have
+		 * separators after the group name, otherwise it
+		 * should be 1. 
+		 */
 		if (gtk_tree_model_iter_parent (model, &parent, l->data) &&
-		    gtk_tree_model_iter_n_children (model, &parent) <= 1) {
+		    gtk_tree_model_iter_n_children (model, &parent) <= 2) {
 			gtk_tree_store_remove (GTK_TREE_STORE (model), &parent);
 		} else {
 			gtk_tree_store_remove (GTK_TREE_STORE (model), l->data);
@@ -1410,7 +1475,8 @@ contact_list_create_model (GossipContactList *list)
 				    G_TYPE_BOOLEAN,      /* Is group */
 				    G_TYPE_BOOLEAN,      /* Is active */
 				    G_TYPE_BOOLEAN,      /* Is online */
-				    G_TYPE_BOOLEAN));    /* Is composing */
+				    G_TYPE_BOOLEAN,      /* Is composing */
+				    G_TYPE_BOOLEAN));    /* Is separator */
 
 	gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (model),
 					 COL_NAME,
@@ -1890,7 +1956,6 @@ contact_list_cell_set_background (GossipContactList  *list,
 {
 	GdkColor  color;
 	GtkStyle *style;
-	gint color_sum_normal, color_sum_selected;
 
 	g_return_if_fail (list != NULL);
 	g_return_if_fail (cell != NULL);
@@ -1919,19 +1984,23 @@ contact_list_cell_set_background (GossipContactList  *list,
 				      NULL);
 		}
 	} else {
+#if 0
+		gint color_sum_normal;
+		gint color_sum_selected;
+		
 		color = style->base[GTK_STATE_SELECTED];
 		color_sum_normal = color.red+color.green+color.blue;
 		color = style->base[GTK_STATE_NORMAL];
 		color_sum_selected = color.red+color.green+color.blue;
 		color = style->text_aa[GTK_STATE_INSENSITIVE];
 
-		if(color_sum_normal < color_sum_selected) { 
-			/* found a light theme */
+		if (color_sum_normal < color_sum_selected) { 
+			/* Found a light theme */
 			color.red = (color.red + (style->white).red) / 2;
 			color.green = (color.green + (style->white).green) / 2;
 			color.blue = (color.blue + (style->white).blue) / 2;
 		} else { 
-			/* found a dark theme */
+			/* Found a dark theme */
 			color.red = (color.red + (style->black).red) / 2;
 			color.green = (color.green + (style->black).green) / 2;
 			color.blue = (color.blue + (style->black).blue) / 2;
@@ -1940,6 +2009,7 @@ contact_list_cell_set_background (GossipContactList  *list,
 		g_object_set (cell,
 			      "cell-background-gdk", &color,
 			      NULL);
+#endif
 	}
 }
 
@@ -2234,20 +2304,29 @@ contact_list_sort_func (GtkTreeModel *model,
 {
 	gchar         *name_a, *name_b;
 	GossipContact *contact_a, *contact_b;
+	gboolean       is_separator_a, is_separator_b;
 	gint           ret_val;
 
 	gtk_tree_model_get (model, iter_a,
 			    COL_NAME, &name_a,
 			    COL_CONTACT, &contact_a,
+			    COL_IS_SEPARATOR, &is_separator_a,
 			    -1);
 	gtk_tree_model_get (model, iter_b,
 			    COL_NAME, &name_b,
 			    COL_CONTACT, &contact_b,
+			    COL_IS_SEPARATOR, &is_separator_b,
 			    -1);
 
 	/* If contact is NULL it means it's a group. */
 
-	if (!contact_a && contact_b) {
+	if (is_separator_a || is_separator_b) {
+		if (is_separator_a) {
+			ret_val = -1;
+		} else if (is_separator_b) {
+			ret_val = 1;
+		}
+	} else if (!contact_a && contact_b) {
 		ret_val = 1;
 	} else if (contact_a && !contact_b) {
 		ret_val = -1;
