@@ -878,10 +878,10 @@ contact_list_contact_added_cb (GossipSession     *session,
 
 	priv = GET_PRIV (list);
 
-	gossip_debug (DEBUG_DOMAIN, "Contact:'%s' added",
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Contact:'%s' added",
 		      gossip_contact_get_name (contact));
 
-	/* Connect notifications for contact updates */
 	g_signal_connect (contact, "notify::groups",
 			  G_CALLBACK (contact_list_contact_groups_updated_cb),
 			  list);
@@ -924,13 +924,14 @@ contact_list_contact_groups_updated_cb (GossipContact     *contact,
 	type = gossip_contact_get_type (contact);
 	if (type != GOSSIP_CONTACT_TYPE_CONTACTLIST) {
 		gossip_debug (DEBUG_DOMAIN,
-			      "Update to none-contact list "
+			      "Update to non-contact list "
 			      "contact %s (doing nothing)",
 			      gossip_contact_get_name (contact));
 		return;
 	}
 
-	gossip_debug (DEBUG_DOMAIN, "Contact:'%s' groups updated",
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Contact:'%s' groups updated",
 		      gossip_contact_get_name (contact));
 
 	/* We do this to make sure the groups are correct, if not, we
@@ -946,6 +947,10 @@ contact_list_contact_updated_cb (GossipContact     *contact,
 				 GParamSpec        *param,
 				 GossipContactList *list)
 {
+	gossip_debug (DEBUG_DOMAIN,
+		      "Contact:'%s' updated, checking roster is in sync...",
+		      gossip_contact_get_name (contact));
+
 	contact_list_contact_update (list, contact);
 }
 
@@ -954,9 +959,17 @@ contact_list_contact_removed_cb (GossipSession     *session,
 				 GossipContact     *contact,
 				 GossipContactList *list)
 {
-	gossip_debug (DEBUG_DOMAIN, "Contact:'%s' removed",
-		   gossip_contact_get_name (contact));
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Contact:'%s' removed",
+		      gossip_contact_get_name (contact));
 
+	g_signal_handlers_disconnect_by_func (contact, 
+					      G_CALLBACK (contact_list_contact_groups_updated_cb),
+					      list);
+	g_signal_handlers_disconnect_by_func (contact,
+					      G_CALLBACK (contact_list_contact_updated_cb),
+					      list);
+	
 	contact_list_remove_contact (list, contact, TRUE);
 }
 
@@ -971,7 +984,8 @@ contact_list_contact_composing_cb (GossipSession     *session,
 	GList                 *iters, *l;
 	GdkPixbuf             *pixbuf = NULL;
 
-	gossip_debug (DEBUG_DOMAIN, "Contact:'%s' %s typing",
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Contact:'%s' %s typing",
 		      gossip_contact_get_name (contact),
 		      composing ? "is" : "is not");
 
@@ -1415,23 +1429,6 @@ contact_list_remove_contact (GossipContactList *list,
 		return;
 	}
 
-	/* Disconnect signals */
-	g_signal_handlers_disconnect_by_func (contact, 
-					      G_CALLBACK (contact_list_contact_groups_updated_cb),
-					      list);
-	g_signal_handlers_disconnect_by_func (contact,
-					      G_CALLBACK (contact_list_contact_updated_cb),
-					      list);
-	g_signal_handlers_disconnect_by_func (contact, 
-					      G_CALLBACK (contact_list_contact_updated_cb),
-					      list);
-	g_signal_handlers_disconnect_by_func (contact,
-					      G_CALLBACK (contact_list_contact_updated_cb),
-					      list);
-	g_signal_handlers_disconnect_by_func (contact,
-					      G_CALLBACK (contact_list_contact_updated_cb),
-					      list);
-	
 	/* Clean up model */
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 

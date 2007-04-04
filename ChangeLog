@@ -1,5 +1,13 @@
 2007-04-04  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-contact.c: 
+	* src/gossip-contact-list.c: Added some debugging and also fixed a
+	problem were we would disconnect signals for presence updates
+	which would lead to contacts not being synchronised properly in
+	the roster according to their real state. Fixes bug #425341.
+	
+2007-04-04  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-contact-list.c: Don't use a background colour which
 	isn't quite right anyway for groups, instead use a nice separator
 	underneath the group name.
