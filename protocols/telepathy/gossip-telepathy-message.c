@@ -188,6 +188,7 @@ gossip_telepathy_message_send (GossipTelepathyMessage *message,
 			       const gchar            *message_body)
 {
 	TelepathyMessageChan *msg_chan;
+	guint                 message_type;
 	GError               *error = NULL;
 
 	g_return_if_fail (message != NULL);
@@ -222,9 +223,15 @@ gossip_telepathy_message_send (GossipTelepathyMessage *message,
 		g_return_if_fail (msg_chan != NULL);
 	}
 
+	if (g_str_has_prefix (message_body, "/me ")) {
+		message_type = TP_CHANNEL_TEXT_MESSAGE_TYPE_ACTION;
+	} else {
+		message_type = TP_CHANNEL_TEXT_MESSAGE_TYPE_NORMAL;
+	}
+
 	gossip_debug (DEBUG_DOMAIN, "Real sending message: %s", message_body);
 	if (!tp_chan_type_text_send (msg_chan->text_iface,
-				     TP_CHANNEL_TEXT_MESSAGE_TYPE_NORMAL,
+				     message_type,
 				     message_body,
 				     &error)) {
 		gossip_debug (DEBUG_DOMAIN, 
