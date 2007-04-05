@@ -1,3 +1,16 @@
+2007-04-05  Martyn Russell  <martyn@imendio.com>
+
+	* protocols/jabber/gossip-jabber.c: If the person on our roster
+	removes us, we emit the contact-removed signal so the roster can
+	clean up. Currently this is a bit shit, really we should be able
+	to tell if we removed them or if we were removed and signal that
+	up the stack. At least now contacts are not left in some pending
+	subscription state when they have been removed.
+
+	* src/gossip-notify.c:
+	* src/gossip-private-chat.c:
+	* src/gossip-sound.c: Code clean ups.
+
 2007-04-04  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-contact.c: 

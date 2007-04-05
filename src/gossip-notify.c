@@ -95,7 +95,6 @@ static void                notify_contact_added_cb                (GossipSession
 static void                notify_contact_removed_cb              (GossipSession      *session,
 								   GossipContact      *contact,
 								   gpointer            user_data);
-static void                notify_contact_remove                  (GossipContact      *contact);
 static gboolean            notify_subscription_request_show_cb    (GossipContact      *contact);
 static void                notify_event_added_cb                  (GossipEventManager *event_manager,
 								   GossipEvent        *event,
@@ -661,16 +660,11 @@ notify_contact_removed_cb (GossipSession *session,
 			   GossipContact *contact,
 			   gpointer       user_data)
 {
-	g_hash_table_remove (contact_states, contact);
-}
-
-static void
-notify_contact_remove (GossipContact *contact)
-{
 	g_signal_handlers_disconnect_by_func (contact,
 					      notify_contact_presence_updated_cb,
 					      NULL);
-	g_object_unref (contact);
+
+	g_hash_table_remove (contact_states, contact);
 }
 
 static gboolean
@@ -888,7 +882,7 @@ gossip_notify_init (GossipSession      *session,
 
 	contact_states = g_hash_table_new_full (gossip_contact_hash,
 						gossip_contact_equal,
-						(GDestroyNotify) notify_contact_remove,
+						(GDestroyNotify) g_object_unref,
 						(GDestroyNotify) g_object_unref);
 
 	g_signal_connect (session, "protocol-connected",

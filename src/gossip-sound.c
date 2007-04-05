@@ -56,7 +56,6 @@ static void sound_contact_added_cb            (GossipSession *session,
 static void sound_contact_removed_cb          (GossipSession *session,
 					       GossipContact *contact,
 					       gpointer       user_data);
-static void sound_contact_remove              (GossipContact *contact);
 
 static GHashTable    *account_states = NULL;
 static GHashTable    *contact_states = NULL;
@@ -194,16 +193,11 @@ sound_contact_removed_cb (GossipSession *session,
 			  GossipContact *contact,
 			  gpointer       user_data)
 {
-	g_hash_table_remove (contact_states, contact);
-}
-
-static void
-sound_contact_remove (GossipContact *contact)
-{
 	g_signal_handlers_disconnect_by_func (contact,
 					      sound_contact_presence_updated_cb,
 					      NULL);
-	g_object_unref (contact);
+
+	g_hash_table_remove (contact_states, contact);
 }
 
 void
@@ -304,7 +298,7 @@ gossip_sound_init (GossipSession *session)
 
 	contact_states = g_hash_table_new_full (gossip_contact_hash,
 						gossip_contact_equal,
-						(GDestroyNotify) sound_contact_remove,
+						(GDestroyNotify) g_object_unref,
 						(GDestroyNotify) g_object_unref);
 
 	g_signal_connect (session, "protocol-connected",

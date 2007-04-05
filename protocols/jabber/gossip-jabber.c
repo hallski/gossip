@@ -2870,12 +2870,14 @@ jabber_presence_handler (LmMessageHandler *handler,
 	}
 
 	if (strcmp (type, "subscribe") == 0) {
-		g_signal_emit_by_name (jabber, "subscription-request",
-				       contact, NULL);
+		g_signal_emit_by_name (jabber, "subscription-request", contact, NULL);
 
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 	} else if (strcmp (type, "subscribed") == 0) {
-		/* FIXME: Handle this? */
+		/* Handled in the roster handling code */
+		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
+	} else if (strcmp (type, "unsubscribed") == 0) {
+		/* Handled in the roster handling code */
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 	}
 
@@ -3104,7 +3106,8 @@ jabber_request_roster (GossipJabber *jabber,
 		GossipContactType  type;
 		const gchar       *jid_str;
 		const gchar       *subscription;
-		gboolean           new_item = FALSE;
+		gboolean           added_item = FALSE;
+		gboolean           removed_item = FALSE;
 		LmMessageNode     *subnode;
 		LmMessageNode     *child;
 		GList             *groups;
@@ -3122,7 +3125,7 @@ jabber_request_roster (GossipJabber *jabber,
 
 		contact = gossip_jabber_get_contact_from_jid (jabber,
 							      jid_str,
-							      &new_item,
+							      &added_item,
 							      FALSE);
 
 		type = gossip_contact_get_type (contact);
@@ -3150,22 +3153,21 @@ jabber_request_roster (GossipJabber *jabber,
 		/* Subscription */
 		subscription = lm_message_node_get_attribute (node, "subscription");
 		if (contact && subscription) {
-			GossipSubscription type;
+			GossipContactType  contact_type;
+			GossipSubscription subscription_type;
 
 			if (strcmp (subscription, "remove") == 0) {
-				g_signal_emit_by_name (jabber,
-						       "contact-removed", contact);
-				g_hash_table_remove (priv->contacts,
-						     gossip_contact_get_id (contact));
+				g_signal_emit_by_name (jabber, "contact-removed", contact);
+				g_hash_table_remove (priv->contacts, gossip_contact_get_id (contact));
 				continue;
 			} else if (strcmp (subscription, "both") == 0) {
-				type = GOSSIP_SUBSCRIPTION_BOTH;
+				subscription_type = GOSSIP_SUBSCRIPTION_BOTH;
 			} else if (strcmp (subscription, "to") == 0) {
-				type = GOSSIP_SUBSCRIPTION_TO;
+				subscription_type = GOSSIP_SUBSCRIPTION_TO;
 			} else if (strcmp (subscription, "from") == 0) {
-				type = GOSSIP_SUBSCRIPTION_FROM;
+				subscription_type = GOSSIP_SUBSCRIPTION_FROM;
 			} else {
-				type = GOSSIP_SUBSCRIPTION_NONE;
+				subscription_type = GOSSIP_SUBSCRIPTION_NONE;
 			}
 
 			/* In the rare cases where we have this state,
@@ -3182,17 +3184,25 @@ jabber_request_roster (GossipJabber *jabber,
 			 * subscription requests for people already on
 			 * the roster with "to" or "from" conditions.
 			 */
-			if (type != GOSSIP_SUBSCRIPTION_NONE) {
-				g_object_get (contact, "type", &type, NULL);
-				if (type != GOSSIP_CONTACT_TYPE_CONTACTLIST) {
-					new_item = TRUE;
+			if (subscription_type != GOSSIP_SUBSCRIPTION_NONE) {
+				g_object_get (contact, "type", &contact_type, NULL);
+				if (contact_type != GOSSIP_CONTACT_TYPE_CONTACTLIST) {
+					added_item = TRUE;
 				}
 				
-				type = GOSSIP_CONTACT_TYPE_CONTACTLIST;
-				g_object_set (contact, "type", type, NULL);
+				contact_type = GOSSIP_CONTACT_TYPE_CONTACTLIST;
+				g_object_set (contact, "type", contact_type, NULL);
+			} else {
+				g_object_get (contact, "type", &contact_type, NULL);
+				if (contact_type == GOSSIP_CONTACT_TYPE_CONTACTLIST) {
+					removed_item = TRUE;
+				}
+
+				contact_type = GOSSIP_CONTACT_TYPE_TEMPORARY;
+				g_object_set (contact, "type", contact_type, NULL);
 			}
 
-			gossip_contact_set_subscription (contact, type);
+			gossip_contact_set_subscription (contact, subscription_type);
 		}
 
 		name = lm_message_node_get_attribute (node, "name");
@@ -3213,9 +3223,13 @@ jabber_request_roster (GossipJabber *jabber,
 
 		g_list_free (new_groups);
 
-		if (new_item) {
-			g_signal_emit_by_name (jabber,
-					       "contact-added", contact);
+		if (added_item) {
+			g_signal_emit_by_name (jabber, "contact-added", contact);
+		}
+
+		if (removed_item) {
+			g_signal_emit_by_name (jabber, "contact-removed", contact);
+			g_hash_table_remove (priv->contacts, gossip_contact_get_id (contact));
 		}
 	}
 }
