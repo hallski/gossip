@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip 0.7.8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-03-26 18:22+0100\n"
-"PO-Revision-Date: 2007-03-19 11:13+0100\n"
+"POT-Creation-Date: 2007-04-07 09:13+0200\n"
+"PO-Revision-Date: 2007-04-06 00:09+0100\n"
 "Last-Translator: Damien Durand <splinux@fedoraproject.org>\n"
 "Language-Team: GNOME French Team <gnomefr@traduc.org>\n"
 "MIME-Version: 1.0\n"
@@ -288,7 +288,7 @@ msgid "Joining the chatroom was canceled."
 msgstr "L'entrée dans la salle de discussion a été annulée."
 
 #. i18n: The current state of the connection.
-#: ../libgossip/gossip-contact.c:866 ../libgossip/gossip-presence.c:242
+#: ../libgossip/gossip-contact.c:888 ../libgossip/gossip-presence.c:242
 #: ../src/gossip-app.c:1903 ../src/gossip-app.c:2527
 #: ../src/gossip-contact-info-dialog.c:159 ../src/gossip-galago.c:197
 msgid "Offline"
@@ -364,12 +364,12 @@ msgstr "nouveau compte"
 msgid "Home"
 msgstr "Domicile"
 
-#: ../protocols/jabber/gossip-jabber.c:1386
-#: ../protocols/jabber/gossip-jabber.c:1527
+#: ../protocols/jabber/gossip-jabber.c:1388
+#: ../protocols/jabber/gossip-jabber.c:1529
 msgid "Couldn't send message!"
 msgstr "Impossible d'envoyer le message !"
 
-#: ../protocols/jabber/gossip-jabber.c:1474
+#: ../protocols/jabber/gossip-jabber.c:1476
 msgid "Connection could not be opened"
 msgstr "La connexion n'a pas pu être ouverte"
 
@@ -547,7 +547,7 @@ msgstr ""
 
 #: ../src/gossip-account-widget-irc.c:355
 msgid "Bye bye"
-msgstr ""
+msgstr "Au revoir"
 
 #: ../src/gossip-account-widget-jabber.c:429
 msgid "Successfully registered your new account settings."
@@ -590,15 +590,15 @@ msgstr ""
 msgid "%s:"
 msgstr "%s :"
 
-#: ../src/gossip-add-contact-dialog.c:125
+#: ../src/gossip-add-contact-dialog.c:123
 msgid "No information is available for this contact."
 msgstr "Aucune information disponible pour ce contact."
 
-#: ../src/gossip-add-contact-dialog.c:236
+#: ../src/gossip-add-contact-dialog.c:234
 msgid "Information requested, please wait..."
 msgstr "Informations demandées, veuillez patienter..."
 
-#: ../src/gossip-add-contact-dialog.c:337
+#: ../src/gossip-add-contact-dialog.c:335
 #: ../src/gossip-edit-contact-dialog.c:613
 #: ../src/gossip-subscription-dialog.c:455
 msgid "I would like to add you to my contact list."
@@ -713,7 +713,7 @@ msgstr "Sélectionnez la personne à inviter dans la salle :"
 msgid "Select which room you would like to invite:"
 msgstr "Sélectionnez la salle dans laquelle vous voulez inviter :"
 
-#: ../src/gossip-chat-manager.c:158 ../src/gossip-notify.c:464
+#: ../src/gossip-chat-manager.c:158 ../src/gossip-notify.c:463
 #, c-format
 msgid "New message from %s"
 msgstr "Nouveau message de %s"
@@ -746,37 +746,41 @@ msgstr "Accepter"
 msgid "Decline"
 msgstr "Décliner"
 
-#: ../src/gossip-chat-window.c:731 ../src/gossip-chat-window.c:761
+#: ../src/gossip-chat-window.c:730 ../src/gossip-chat-window.c:760
 #: ../ui/main.glade.h:63
 msgid "New Message"
 msgid_plural "New Messages"
 msgstr[0] "Nouveau message"
 msgstr[1] "Nouveaux messages"
 
-#: ../src/gossip-chat-window.c:737
+#: ../src/gossip-chat-window.c:736
 msgid "Chat Room"
 msgstr "Salle de discussion"
 
-#: ../src/gossip-chat-window.c:742 ../src/gossip-chat-window.c:765
+#: ../src/gossip-chat-window.c:741 ../src/gossip-chat-window.c:764
 #, c-format
 msgid "Conversation"
 msgid_plural "Conversations (%d)"
 msgstr[0] "Conversation"
 msgstr[1] "Conversations (%d)"
 
-#: ../src/gossip-chat-window.c:1349
+#: ../src/gossip-chat-window.c:1347
 msgid "Typing a message."
 msgstr "Saisie d'un message."
 
-#: ../src/gossip-chatrooms-window.c:145
+#: ../src/gossip-chatrooms-window.c:137
 msgid "Name"
 msgstr "Nom"
 
-#: ../src/gossip-chatrooms-window.c:167 ../src/gossip-chatrooms-window.c:176
+#: ../src/gossip-chatrooms-window.c:159
 msgid "Room"
 msgstr "Salle"
 
-#: ../src/gossip-chatrooms-window.c:185
+#: ../src/gossip-chatrooms-window.c:167
+msgid "Server"
+msgstr "Serveur"
+
+#: ../src/gossip-chatrooms-window.c:176
 msgid "Auto Connect"
 msgstr "Connexion automatique"
 
@@ -784,85 +788,85 @@ msgstr "Connexion automatique"
 msgid "Information requested..."
 msgstr "Requête des informations en cours..."
 
-#: ../src/gossip-contact-list.c:321
+#: ../src/gossip-contact-list.c:326
 msgid "_Contact"
 msgstr "_Contact"
 
-#: ../src/gossip-contact-list.c:325
+#: ../src/gossip-contact-list.c:330
 msgid "_Group"
 msgstr "_Groupe"
 
-#: ../src/gossip-contact-list.c:329 ../ui/main.glade.h:109
+#: ../src/gossip-contact-list.c:334 ../ui/main.glade.h:109
 msgid "_Chat"
 msgstr "_Discuter"
 
-#: ../src/gossip-contact-list.c:329
+#: ../src/gossip-contact-list.c:334
 msgid "Chat with contact"
 msgstr "Discuter avec un contact"
 
-#: ../src/gossip-contact-list.c:333
+#: ../src/gossip-contact-list.c:338
 msgid "Infor_mation"
 msgstr "Infor_mations"
 
-#: ../src/gossip-contact-list.c:333
+#: ../src/gossip-contact-list.c:338
 msgid "View contact information"
 msgstr "Voir les informations sur le contact"
 
-#: ../src/gossip-contact-list.c:337
+#: ../src/gossip-contact-list.c:342
 msgid "Re_name"
 msgstr "Re_nommer"
 
-#: ../src/gossip-contact-list.c:337 ../src/gossip-contact-list.c:2586
+#: ../src/gossip-contact-list.c:342 ../src/gossip-contact-list.c:2662
 msgid "Rename"
 msgstr "Renommer"
 
-#: ../src/gossip-contact-list.c:341 ../ui/chat.glade.h:21
+#: ../src/gossip-contact-list.c:346 ../ui/chat.glade.h:21
 #: ../ui/main.glade.h:115
 msgid "_Edit"
 msgstr "É_diter"
 
-#: ../src/gossip-contact-list.c:341
+#: ../src/gossip-contact-list.c:346
 msgid "Edit the groups and name for this contact"
 msgstr "Éditer les groupes et le nom de ce contact"
 
-#: ../src/gossip-contact-list.c:345
+#: ../src/gossip-contact-list.c:350
 msgid "_Remove"
 msgstr "_Supprimer"
 
-#: ../src/gossip-contact-list.c:345
+#: ../src/gossip-contact-list.c:350
 msgid "Remove contact"
 msgstr "Supprimer le contact"
 
-#: ../src/gossip-contact-list.c:349
+#: ../src/gossip-contact-list.c:354
 msgid "_Invite to Chat Room"
 msgstr "_Inviter dans la salle de discussion"
 
-#: ../src/gossip-contact-list.c:349
+#: ../src/gossip-contact-list.c:354
 msgid "Invite to a currently open chat room"
 msgstr "Inviter dans une salle de discussion actuellement ouverte"
 
-#: ../src/gossip-contact-list.c:353
+#: ../src/gossip-contact-list.c:358
 msgid "_Send File..."
 msgstr "_Envoyer un fichier..."
 
-#: ../src/gossip-contact-list.c:353
+#: ../src/gossip-contact-list.c:358
 msgid "Send a file"
 msgstr "Envoyer un fichier"
 
-#: ../src/gossip-contact-list.c:357 ../ui/chat.glade.h:28
+#: ../src/gossip-contact-list.c:362 ../ui/chat.glade.h:28
 #: ../ui/main.glade.h:142
 msgid "_View Previous Conversations"
 msgstr "_Afficher les conversations précédentes"
 
-#: ../src/gossip-contact-list.c:357
+#: ../src/gossip-contact-list.c:362
 msgid "View previous conversations with this contact"
 msgstr "Afficher les conversations précédentes avec ce contact"
 
-#: ../src/gossip-contact-list.c:2497
+#: ../src/gossip-contact-list.c:2573
 msgid "Do you want to remove this contact from your roster?"
 msgstr "Voulez vous supprimer ce contact de votre liste de contacts ?"
 
-#: ../src/gossip-contact-list.c:2582
+#: ../src/gossip-contact-list.c:2658
 #, c-format
 msgid ""
 "Please enter a new name for the group:\n"
@@ -940,11 +944,12 @@ msgstr "Connexion..."
 msgid "Retry connection"
 msgstr "Réessayer la connexion"
 
-#: ../src/gossip-group-chat.c:508 ../src/gossip-private-chat.c:595
+#. i18n: An event, as in "has now been connected".
+#: ../src/gossip-group-chat.c:508 ../src/gossip-private-chat.c:615
 msgid "Connected"
 msgstr "Connecté"
 
-#: ../src/gossip-group-chat.c:561 ../src/gossip-private-chat.c:621
+#: ../src/gossip-group-chat.c:561 ../src/gossip-private-chat.c:641
 msgid "Disconnected"
 msgstr "Déconnecté"
 
@@ -1062,38 +1067,38 @@ msgstr "Recherche des salles de conférence, veuillez patienter..."
 msgid "Browsing cancelled!"
 msgstr "Recherche annulée !"
 
-#: ../src/gossip-notify.c:229 ../src/gossip-private-chat.c:508
+#: ../src/gossip-notify.c:228 ../src/gossip-private-chat.c:511
 #, c-format
 msgid "%s has come online"
 msgstr "%s s'est connecté"
 
-#: ../src/gossip-notify.c:246 ../src/gossip-notify.c:319
-#: ../src/gossip-notify.c:492
+#: ../src/gossip-notify.c:245 ../src/gossip-notify.c:318
+#: ../src/gossip-notify.c:491
 msgid "Default"
 msgstr "Par défaut"
 
-#: ../src/gossip-notify.c:249
+#: ../src/gossip-notify.c:248
 msgid "Chat!"
 msgstr "Discuter !"
 
-#: ../src/gossip-notify.c:286 ../src/gossip-subscription-dialog.c:335
+#: ../src/gossip-notify.c:285 ../src/gossip-subscription-dialog.c:335
 #, c-format
 msgid "%s wants to be added to your contact list."
 msgstr "%s souhaite être ajouté à votre liste de contacts."
 
-#: ../src/gossip-notify.c:288 ../src/gossip-subscription-dialog.c:272
+#: ../src/gossip-notify.c:287 ../src/gossip-subscription-dialog.c:272
 msgid "Someone wants to be added to your contact list."
 msgstr "Quelqu'un souhaite être ajouté à votre liste de contacts."
 
-#: ../src/gossip-notify.c:305
+#: ../src/gossip-notify.c:304
 msgid "Subscription request"
 msgstr "Requête d'abonnement"
 
-#: ../src/gossip-notify.c:495
+#: ../src/gossip-notify.c:494
 msgid "Show"
 msgstr "Afficher"
 
-#: ../src/gossip-notify.c:501
+#: ../src/gossip-notify.c:500
 msgid "Contact Information"
 msgstr "Informations sur le contact"
 
@@ -1126,12 +1131,17 @@ msgstr "Message personnalisé..."
 msgid "Clear List..."
 msgstr "Effacer la liste..."
 
-#: ../src/gossip-private-chat.c:493
+#: ../src/gossip-private-chat.c:497
 #, c-format
 msgid "%s went offline"
 msgstr "%s s'est déconnecté"
 
-#: ../src/gossip-private-chat.c:1103
+#. i18n: An event, as in "has now been connected".
+#: ../src/gossip-private-chat.c:592
+msgid "Contact has been removed"
+msgstr "Le contact a été supprimé"
+
+#: ../src/gossip-private-chat.c:1128
 #, c-format
 msgid "Subject: %s"
 msgstr "Sujet : %s"
@@ -1598,7 +1608,7 @@ msgid "Country:"
 msgstr "Pays :"
 
 #: ../ui/main.glade.h:41
-msgid "Cr_eate!"
+msgid "Cr_eate"
 msgstr "C_réer"
 
 #: ../ui/main.glade.h:42
