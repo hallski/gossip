@@ -1500,14 +1500,21 @@ contact_list_search_equal_func (GtkTreeModel *model,
 	gchar    *key_folded;
 	gboolean  ret;
 
-	gtk_tree_model_get (model, iter,
-			    COL_NAME, &name,
-			    -1);
+	if (!key) {
+		return FALSE;
+	}
+
+	gtk_tree_model_get (model, iter, COL_NAME, &name, -1);
+
+	if (!name) {
+		return FALSE;
+	}
 
 	name_folded = g_utf8_casefold (name, -1);
 	key_folded = g_utf8_casefold (key, -1);
 
-	if (strstr (name_folded, key_folded)) {
+	if (name_folded && key_folded && 
+	    strstr (name_folded, key_folded)) {
 		ret = FALSE;
 	} else {
 		ret = TRUE;

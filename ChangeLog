@@ -1,3 +1,9 @@
+2007-04-07  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-contact-list.c: (contact_list_search_equal_func):
+	Don't crash when typing something in the roster, fixes bug
+	#426982. 
+
 2007-04-05  Martyn Russell  <martyn@imendio.com>
 
 	* protocols/jabber/gossip-jabber.c: If the person on our roster
