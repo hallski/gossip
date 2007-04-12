@@ -225,6 +225,7 @@ gossip_telepathy_message_send (GossipTelepathyMessage *message,
 
 	if (g_str_has_prefix (message_body, "/me ")) {
 		message_type = TP_CHANNEL_TEXT_MESSAGE_TYPE_ACTION;
+		message_body += 4;
 	} else {
 		message_type = TP_CHANNEL_TEXT_MESSAGE_TYPE_NORMAL;
 	}

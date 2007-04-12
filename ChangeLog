@@ -1,3 +1,10 @@
+2007-04-12  Martyn Russell  <martyn@imendio.com>
+
+	* protocols/telepathy/gossip-telepathy-message.c: Don't forget to
+	exclude the /me in the message we send when we send actions with
+	Telepathy. This partially fixes bug #423850 (Sjoerd Simons, Martyn
+	Russell).
+
 2007-04-07  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-contact-list.c: (contact_list_search_equal_func):
