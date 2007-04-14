@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-03-26 18:22+0100\n"
+"POT-Creation-Date: 2007-04-14 18:23+0100\n"
 "PO-Revision-Date: 2006-11-17 23:55+0100\n"
 "Last-Translator: Djihed Afifi <djihed@gmail.com>\n"
 "Language-Team: Arabic <support@eglug.org>\n"
@@ -304,7 +304,7 @@ msgid "Joining the chatroom was canceled."
 msgstr "حجم نافذة المحادثة"
 
 #. i18n: The current state of the connection.
-#: ../libgossip/gossip-contact.c:866 ../libgossip/gossip-presence.c:242
+#: ../libgossip/gossip-contact.c:888 ../libgossip/gossip-presence.c:242
 #: ../src/gossip-app.c:1903 ../src/gossip-app.c:2527
 #: ../src/gossip-contact-info-dialog.c:159 ../src/gossip-galago.c:197
 msgid "Offline"
@@ -390,13 +390,13 @@ msgstr "إسم الحساب:"
 msgid "Home"
 msgstr "المنزل"
 
-#: ../protocols/jabber/gossip-jabber.c:1386
-#: ../protocols/jabber/gossip-jabber.c:1527
+#: ../protocols/jabber/gossip-jabber.c:1388
+#: ../protocols/jabber/gossip-jabber.c:1529
 #, fuzzy
 msgid "Couldn't send message!"
 msgstr "إرسال هذه الرسالة"
 
-#: ../protocols/jabber/gossip-jabber.c:1474
+#: ../protocols/jabber/gossip-jabber.c:1476
 #, fuzzy
 msgid "Connection could not be opened"
 msgstr "لم يمكن فتح الفيلم."
@@ -605,16 +605,16 @@ msgstr "أكتب إسما جديدا للشعار المعروض:"
 msgid "%s:"
 msgstr "%s:"
 
-#: ../src/gossip-add-contact-dialog.c:125
+#: ../src/gossip-add-contact-dialog.c:123
 msgid "No information is available for this contact."
 msgstr ""
 
-#: ../src/gossip-add-contact-dialog.c:236
+#: ../src/gossip-add-contact-dialog.c:234
 #, fuzzy
 msgid "Information requested, please wait..."
 msgstr "جاري تدريب داشر·-·الرجاء الإنتظار"
 
-#: ../src/gossip-add-contact-dialog.c:337
+#: ../src/gossip-add-contact-dialog.c:335
 #: ../src/gossip-edit-contact-dialog.c:613
 #: ../src/gossip-subscription-dialog.c:455
 msgid "I would like to add you to my contact list."
@@ -732,7 +732,7 @@ msgstr ""
 msgid "Select which room you would like to invite:"
 msgstr ""
 
-#: ../src/gossip-chat-manager.c:158 ../src/gossip-notify.c:464
+#: ../src/gossip-chat-manager.c:158 ../src/gossip-notify.c:463
 #, c-format
 msgid "New message from %s"
 msgstr "رسالة جديدة من %s"
@@ -752,7 +752,7 @@ msgstr "%A·%d·%B·%Y"
 #: ../src/gossip-chat-view.c:1426
 #, fuzzy
 msgid "Your invitation has been declined"
-msgstr "تمّ تغيير كلمة المرور."
+msgstr "تمّ تغيير كلمة السر."
 
 #: ../src/gossip-chat-view.c:1709 ../ui/chat.glade.h:14
 msgid "You have been invited to join a chat conference."
@@ -768,7 +768,7 @@ msgstr "اقبل"
 msgid "Decline"
 msgstr "رفض"
 
-#: ../src/gossip-chat-window.c:731 ../src/gossip-chat-window.c:761
+#: ../src/gossip-chat-window.c:730 ../src/gossip-chat-window.c:760
 #: ../ui/main.glade.h:63
 #, fuzzy
 msgid "New Message"
@@ -778,12 +778,12 @@ msgstr[1] "رسالة بريديّة جديدة"
 msgstr[2] "رسالة بريديّة جديدة"
 msgstr[3] "رسالة بريديّة جديدة"
 
-#: ../src/gossip-chat-window.c:737
+#: ../src/gossip-chat-window.c:736
 #, fuzzy
 msgid "Chat Room"
 msgstr "نافذة المحادثة"
 
-#: ../src/gossip-chat-window.c:742 ../src/gossip-chat-window.c:765
+#: ../src/gossip-chat-window.c:741 ../src/gossip-chat-window.c:764
 #, fuzzy, c-format
 msgid "Conversation"
 msgid_plural "Conversations (%d)"
@@ -792,22 +792,27 @@ msgstr[1] "ّم_حادثَة"
 msgstr[2] "ّم_حادثَة"
 msgstr[3] "ّم_حادثَة"
 
-#: ../src/gossip-chat-window.c:1349
+#: ../src/gossip-chat-window.c:1347
 #, fuzzy
 msgid "Typing a message."
 msgstr "إر_سال رسالة"
 
-#: ../src/gossip-chatrooms-window.c:145
+#: ../src/gossip-chatrooms-window.c:137
 #, fuzzy
 msgid "Name"
 msgstr "الإسم:"
 
-#: ../src/gossip-chatrooms-window.c:167 ../src/gossip-chatrooms-window.c:176
+#: ../src/gossip-chatrooms-window.c:159
 #, fuzzy
 msgid "Room"
 msgstr "الغرفة"
 
-#: ../src/gossip-chatrooms-window.c:185
+#: ../src/gossip-chatrooms-window.c:167
+#, fuzzy
+msgid "Server"
+msgstr "الخادم:"
+
+#: ../src/gossip-chatrooms-window.c:176
 #, fuzzy
 msgid "Auto Connect"
 msgstr "الاتّصال كم_جهول"
@@ -817,99 +822,99 @@ msgstr "الاتّصال كم_جهول"
 msgid "Information requested..."
 msgstr "بيانات سيّئة"
 
-#: ../src/gossip-contact-list.c:321
+#: ../src/gossip-contact-list.c:326
 #, fuzzy
 msgid "_Contact"
 msgstr "_مراسَل"
 
-#: ../src/gossip-contact-list.c:325
+#: ../src/gossip-contact-list.c:330
 #, fuzzy
 msgid "_Group"
 msgstr "مجموعة"
 
-#: ../src/gossip-contact-list.c:329 ../ui/main.glade.h:109
+#: ../src/gossip-contact-list.c:334 ../ui/main.glade.h:109
 msgid "_Chat"
 msgstr "_دردشة"
 
-#: ../src/gossip-contact-list.c:329
+#: ../src/gossip-contact-list.c:334
 #, fuzzy
 msgid "Chat with contact"
 msgstr "عنوان البريد الالكتروني للموصول"
 
-#: ../src/gossip-contact-list.c:333
+#: ../src/gossip-contact-list.c:338
 #, fuzzy
 msgid "Infor_mation"
 msgstr "_معلومات المراسل"
 
-#: ../src/gossip-contact-list.c:333
+#: ../src/gossip-contact-list.c:338
 #, fuzzy
 msgid "View contact information"
 msgstr "عدّل معلومات الاتصال"
 
-#: ../src/gossip-contact-list.c:337
+#: ../src/gossip-contact-list.c:342
 #, fuzzy
 msgid "Re_name"
 msgstr "إعادة ال_تسمية"
 
-#: ../src/gossip-contact-list.c:337 ../src/gossip-contact-list.c:2586
+#: ../src/gossip-contact-list.c:342 ../src/gossip-contact-list.c:2669
 #, fuzzy
 msgid "Rename"
 msgstr "اعادة التسمية"
 
-#: ../src/gossip-contact-list.c:341 ../ui/chat.glade.h:21
+#: ../src/gossip-contact-list.c:346 ../ui/chat.glade.h:21
 #: ../ui/main.glade.h:115
 #, fuzzy
 msgid "_Edit"
 msgstr "_تحرير"
 
-#: ../src/gossip-contact-list.c:341
+#: ../src/gossip-contact-list.c:346
 #, fuzzy
 msgid "Edit the groups and name for this contact"
 msgstr ""
 "الرجاء إدخال كنية جديدة للمراسَل\n"
 "%s"
 
-#: ../src/gossip-contact-list.c:345
+#: ../src/gossip-contact-list.c:350
 #, fuzzy
 msgid "_Remove"
 msgstr "إ_زالة"
 
-#: ../src/gossip-contact-list.c:345
+#: ../src/gossip-contact-list.c:350
 #, fuzzy
 msgid "Remove contact"
 msgstr "اسم الموصول"
 
-#: ../src/gossip-contact-list.c:349
+#: ../src/gossip-contact-list.c:354
 #, fuzzy
 msgid "_Invite to Chat Room"
 msgstr "كُسِّب - تحرير الدَّردشات الجماعيَّة"
 
-#: ../src/gossip-contact-list.c:349
+#: ../src/gossip-contact-list.c:354
 msgid "Invite to a currently open chat room"
 msgstr ""
 
-#: ../src/gossip-contact-list.c:353
+#: ../src/gossip-contact-list.c:358
 #, fuzzy
 msgid "_Send File..."
 msgstr "إنتقاء ملف"
 
-#: ../src/gossip-contact-list.c:353
+#: ../src/gossip-contact-list.c:358
 #, fuzzy
 msgid "Send a file"
 msgstr "إنتقاء ملف"
 
-#: ../src/gossip-contact-list.c:357 ../ui/chat.glade.h:28
+#: ../src/gossip-contact-list.c:362 ../ui/chat.glade.h:28
 #: ../ui/main.glade.h:142
 #, fuzzy
 msgid "_View Previous Conversations"
 msgstr "تنشيط اللسان السابق"
 
-#: ../src/gossip-contact-list.c:357
+#: ../src/gossip-contact-list.c:362
 #, fuzzy
 msgid "View previous conversations with this contact"
 msgstr "ّم_حادثَة"
 
-#: ../src/gossip-contact-list.c:2497
+#: ../src/gossip-contact-list.c:2580
 #, fuzzy
 msgid "Do you want to remove this contact from your roster?"
 msgstr ""
@@ -917,7 +922,7 @@ msgstr ""
 "%s\n"
 "من قائمة مراسَليك؟"
 
-#: ../src/gossip-contact-list.c:2582
+#: ../src/gossip-contact-list.c:2665
 #, fuzzy, c-format
 msgid ""
 "Please enter a new name for the group:\n"
@@ -993,11 +998,12 @@ msgstr "إتَّصال"
 msgid "Retry connection"
 msgstr "إتَّصال"
 
-#: ../src/gossip-group-chat.c:508 ../src/gossip-private-chat.c:595
+#. i18n: An event, as in "has now been connected".
+#: ../src/gossip-group-chat.c:508 ../src/gossip-private-chat.c:615
 msgid "Connected"
 msgstr "متَّصل"
 
-#: ../src/gossip-group-chat.c:561 ../src/gossip-private-chat.c:621
+#: ../src/gossip-group-chat.c:561 ../src/gossip-private-chat.c:641
 msgid "Disconnected"
 msgstr "غير متَّصل"
 
@@ -1125,43 +1131,43 @@ msgstr "جاري تدريب داشر·-·الرجاء الإنتظار"
 msgid "Browsing cancelled!"
 msgstr ""
 
-#: ../src/gossip-notify.c:229 ../src/gossip-private-chat.c:508
+#: ../src/gossip-notify.c:228 ../src/gossip-private-chat.c:511
 #, fuzzy, c-format
 msgid "%s has come online"
 msgstr "انتهت صلاحيّة الشهادة"
 
-#: ../src/gossip-notify.c:246 ../src/gossip-notify.c:319
-#: ../src/gossip-notify.c:492
+#: ../src/gossip-notify.c:245 ../src/gossip-notify.c:318
+#: ../src/gossip-notify.c:491
 #, fuzzy
 msgid "Default"
 msgstr "الافتراضي"
 
-#: ../src/gossip-notify.c:249
+#: ../src/gossip-notify.c:248
 #, fuzzy
 msgid "Chat!"
 msgstr "نافذة المحادثة"
 
-#: ../src/gossip-notify.c:286 ../src/gossip-subscription-dialog.c:335
+#: ../src/gossip-notify.c:285 ../src/gossip-subscription-dialog.c:335
 #, fuzzy, c-format
 msgid "%s wants to be added to your contact list."
 msgstr "سيضاف %s إلى قائمة مراسليك."
 
-#: ../src/gossip-notify.c:288 ../src/gossip-subscription-dialog.c:272
+#: ../src/gossip-notify.c:287 ../src/gossip-subscription-dialog.c:272
 #, fuzzy
 msgid "Someone wants to be added to your contact list."
 msgstr "سيضاف %s إلى قائمة مراسليك."
 
-#: ../src/gossip-notify.c:305
+#: ../src/gossip-notify.c:304
 #, fuzzy
 msgid "Subscription request"
 msgstr "طلب غير صحيح"
 
-#: ../src/gossip-notify.c:495
+#: ../src/gossip-notify.c:494
 #, fuzzy
 msgid "Show"
 msgstr "عرض"
 
-#: ../src/gossip-notify.c:501
+#: ../src/gossip-notify.c:500
 #, fuzzy
 msgid "Contact Information"
 msgstr "عدّل معلومات الاتصال"
@@ -1198,12 +1204,18 @@ msgstr "إر_سال رسالة"
 msgid "Clear List..."
 msgstr " مسح قائمة المستندات الأخيرة؟"
 
-#: ../src/gossip-private-chat.c:493
+#: ../src/gossip-private-chat.c:497
 #, c-format
 msgid "%s went offline"
 msgstr "%s صار دون اتِّصال"
 
-#: ../src/gossip-private-chat.c:1103
+#. i18n: An event, as in "has now been connected".
+#: ../src/gossip-private-chat.c:592
+#, fuzzy
+msgid "Contact has been removed"
+msgstr "تمّ تغيير كلمة السر."
+
+#: ../src/gossip-private-chat.c:1128
 #, fuzzy, c-format
 msgid "Subject: %s"
 msgstr "<b>الموضوع:</b>"
@@ -1732,8 +1744,8 @@ msgstr "البلد:"
 
 #: ../ui/main.glade.h:41
 #, fuzzy
-msgid "Cr_eate!"
-msgstr "نافذة المحادثة"
+msgid "Cr_eate"
+msgstr "التاريخ"
 
 #: ../ui/main.glade.h:42
 #, fuzzy
@@ -2138,9 +2150,8 @@ msgid "_Subscribe"
 msgstr "_إشتراك"
 
 #: ../ui/main.glade.h:140
-#, fuzzy
 msgid "_Type:"
-msgstr "ال_موضوع:"
+msgstr ""
 
 #: ../ui/main.glade.h:141
 #, fuzzy
@@ -2167,18 +2178,6 @@ msgstr "ابق الإعدادات الحالية"
 msgid "msn account settings"
 msgstr "ابق الإعدادات الحالية"
 
-#, fuzzy
-#~ msgid "Add to _favourites"
-#~ msgstr "مُرفق للإضافة."
-
-#, fuzzy
-#~ msgid "Na_me:"
-#~ msgstr "إدراج إس_م المستخدم"
-
-#, fuzzy
-#~ msgid "New Chat Room"
-#~ msgstr "حجم نافذة المحادثة"
-
 #~ msgid "    "
 #~ msgstr "    "
 
@@ -2196,6 +2195,18 @@ msgstr "ابق الإعدادات الحالية"
 #, fuzzy
 #~ msgid "Web Site:"
 #~ msgstr "موقع الإنترنت"
+
+#, fuzzy
+#~ msgid "Add to _favourites"
+#~ msgstr "مُرفق للإضافة."
+
+#, fuzzy
+#~ msgid "Na_me:"
+#~ msgstr "إدراج إس_م المستخدم"
+
+#, fuzzy
+#~ msgid "New Chat Room"
+#~ msgstr "حجم نافذة المحادثة"
 
 #, fuzzy
 #~ msgid "_Group Chat"
@@ -2323,9 +2334,6 @@ msgstr "ابق الإعدادات الحالية"
 #, fuzzy
 #~ msgid "Resource:"
 #~ msgstr "الم_ورد:"
-
-#~ msgid "Server:"
-#~ msgstr "الخادم:"
 
 #~ msgid "Welcome to Gossip"
 #~ msgstr "أهلاً بكم في كُسِّب"
