@@ -1,3 +1,31 @@
+
+NEW in 0.24:
+==============
+- Fixed #415081, Crash when clicking Remove in favourite chatrooms window with nothing selected (Martyn Russell)
+- Fixed #336193, Way to acknowledge messages as read via notifications (Filippo Argiolas)
+- Fixed #408915, Typo in gossip-jabber-disco.c (Claude Paroz)
+- Fixed #414891, Group header background does not work nicely with dark themes (Filippo Argiolas)
+- Fixed #414985, Setting the avatar with telepathy fails due to format string error (Filippo Argiolas)
+- Fixed #415225, Compilation errors on SunOS (Patrick Georgi)
+- Fixed #415395, Contact info dialog id & name labels not wrapping or ellipsizing (Filippo Argiolas)
+- Fixed #415630, Avatar is not shown in contact info dialog (Filippo Argiolas)
+- Fixed #418660, Add support for Salut (Sjoerd Simons)
+- Fixed #418739, "New message" dialog should be unique (Martyn Russell)
+- Fixed #423454, "Add Contact" does not work (Martyn Russell)
+- Fixed #423850, The /me handling is broken for Telepathy backend (Martyn Russell)
+- Fixed #425341, Contact status in contact list is frequently outdated (Martyn Russell)
+- Fixed #426982, Crash when typing in the roster (Martyn Russell)
+
+Translations:
+- Updated fr: Claude Paroz, Stéphane Raimbault
+- Updated nl: Wouter Bolsterlee
+- Updated zh_TW: Martyn Russell
+- Updated sv: Daniel Nylander
+- Updated ar: Djihed Afifi
+- Updated dz: Pema Geyleg
+- Updated en_GB: British
+
+
 NEW in 0.23:
 ==============
 - Fixed #395588, Crash when clicking a button in the notification bubble (Dimitur Kirov)
