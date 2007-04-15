@@ -1,3 +1,10 @@
+2007-04-15  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chatrooms-window.c:
+	(chatrooms_window_model_add_columns),
+	(chatrooms_window_model_refresh_data): Only show the "name" column
+	when we show ALL chatrooms.
+
 2007-04-12  Martyn Russell  <martyn@imendio.com>
 
 	* protocols/telepathy/gossip-telepathy-message.c: Don't forget to

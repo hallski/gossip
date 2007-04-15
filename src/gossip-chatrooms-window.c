@@ -59,6 +59,7 @@ typedef struct {
 	GtkWidget *button_close;
 
 	gint       server_column;
+	gint       room_column;
 } GossipChatroomsWindow;
 
 static void            chatrooms_window_model_add_columns               (GossipChatroomsWindow *window);
@@ -161,6 +162,7 @@ chatrooms_window_model_add_columns (GossipChatroomsWindow *window)
 							   NULL);
 	count = gtk_tree_view_append_column (view, column);
 	gtk_tree_view_column_set_sort_column_id (column, count - 1);
+	window->room_column = count - 1;
 
 	/* Server */
 	cell = gtk_cell_renderer_text_new ();
@@ -358,7 +360,7 @@ chatrooms_window_model_refresh_data (GossipChatroomsWindow *window,
 	GossipAccountChooser  *account_chooser;
 	GossipAccount         *account;
 	GossipChatroomManager *manager;
-	GossipChatroom        *chatroom;
+	GtkTreeViewColumn     *column;
 	GList                 *chatrooms, *l;
 
 	view = GTK_TREE_VIEW (window->treeview);
@@ -379,21 +381,28 @@ chatrooms_window_model_refresh_data (GossipChatroomsWindow *window,
 	 * selected protocol types, such as Jabber. 
 	 */
 	if (account) {
-		GtkTreeViewColumn *column;
-		GossipAccountType  type;
+		GossipAccountType type;
 		
 		type = gossip_account_get_type (account);
-		column = gtk_tree_view_get_column (view, window->server_column);
 
 		if (type == GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY ||
 		    type == GOSSIP_ACCOUNT_TYPE_JABBER) {
+			column = gtk_tree_view_get_column (view, window->room_column);
+			gtk_tree_view_column_set_visible (column, TRUE);
+
+			column = gtk_tree_view_get_column (view, window->server_column);
 			gtk_tree_view_column_set_visible (column, TRUE);
 		} else {
+			column = gtk_tree_view_get_column (view, window->room_column);
+			gtk_tree_view_column_set_visible (column, FALSE);
+
+			column = gtk_tree_view_get_column (view, window->server_column);
 			gtk_tree_view_column_set_visible (column, FALSE);
 		}
 	} else {
-		GtkTreeViewColumn *column;
-		
+		column = gtk_tree_view_get_column (view, window->room_column);
+		gtk_tree_view_column_set_visible (column, FALSE);
+
 		column = gtk_tree_view_get_column (view, window->server_column);
 		gtk_tree_view_column_set_visible (column, FALSE);
 	}
@@ -403,10 +412,7 @@ chatrooms_window_model_refresh_data (GossipChatroomsWindow *window,
 
 	/* Populate with chatroom list. */
 	for (l = chatrooms; l; l = l->next) {
-		chatroom = l->data;
-
-		chatrooms_window_model_add (window, chatroom,
-					    FALSE, first_time);
+		chatrooms_window_model_add (window, l->data,  FALSE, first_time);
 	}
 
 	if (gtk_tree_model_get_iter_first (model, &iter)) {
