@@ -1,5 +1,9 @@
 2007-04-15  Martyn Russell  <martyn@imendio.com>
 
+	* Release 0.24.
+	
+2007-04-15  Martyn Russell  <martyn@imendio.com>
+
 	* ui/pixmaps/Makefile.am: Fixed make distcheck failure.
 
 2007-04-15  Martyn Russell  <martyn@imendio.com>
