@@ -1,5 +1,9 @@
 2007-04-15  Martyn Russell  <martyn@imendio.com>
 
+	* ui/pixmaps/Makefile.am: Fixed make distcheck failure.
+
+2007-04-15  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-chatrooms-window.c:
 	(chatrooms_window_model_add_columns),
 	(chatrooms_window_model_refresh_data): Only show the "name" column

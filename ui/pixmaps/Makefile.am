@@ -44,6 +44,7 @@ EXTRA_DIST = 		\
 	$(icon16_DATA)  \
 	$(icon22_DATA)  \
 	$(icon32_DATA)  \
+	$(icon48_DATA)  \
 	$(svgicon_DATA) \
 	$(image_DATA)
 
