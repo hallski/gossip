@@ -1,3 +1,7 @@
+2007-04-22  Martyn Russell  <martyn@imendio.com>
+
+	* configure.ac: Bumped version to 0.25.
+
 2007-04-18  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-sound.c: (gossip_sound_finalize):
