@@ -1,5 +1,13 @@
 2007-04-22  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-chat.[ch]: 
+	* src/gossip-group-chat.c:
+	* src/gossip-private-chat.c: Support sent message recall with
+	Ctrl+Up and Ctrl+Down in group and private chats, fixes bug
+	#395693 (Martyn Russell, Diego Escalante Urrelo).
+
+2007-04-22  Martyn Russell  <martyn@imendio.com>
+
 	* ui/pixmaps/Makefile.am: Fix gtk-update-icon-cache fixes bug
 	#431565 (Brian Pepple). 
 

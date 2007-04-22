@@ -60,6 +60,9 @@ struct _GossipChatPriv {
 
 	GtkTooltips      *tooltips;
 
+	GSList           *sent_messages;
+	gint              sent_messages_index;
+
 	/* Used to automatically shrink a window that has temporarily
 	 * grown due to long input. 
 	 */
@@ -185,8 +188,11 @@ gossip_chat_init (GossipChat *chat)
 		      NULL);
 
 	priv = GET_PRIV (chat);
-
+	
 	priv->tooltips = gtk_tooltips_new ();
+
+	priv->sent_messages = NULL;
+	priv->sent_messages_index = -1;
 
 	priv->default_window_height = -1;
 	priv->vscroll_visible = FALSE;
@@ -228,6 +234,9 @@ chat_finalize (GObject *object)
 	chat = GOSSIP_CHAT (object);
 	priv = GET_PRIV (chat);
 
+	g_slist_foreach (priv->sent_messages, (GFunc) g_free, NULL);
+	g_slist_free (priv->sent_messages);
+	
 	G_OBJECT_CLASS (gossip_chat_parent_class)->finalize (object);
 }
 
@@ -973,4 +982,100 @@ finished:
 	g_free (cf_to);
 
 	return ret_val;
+}
+
+void 
+gossip_chat_sent_message_add (GossipChat  *chat,
+			      const gchar *str)
+{
+	GossipChatPriv *priv;
+	GSList         *list;
+	GSList         *item;
+
+	g_return_if_fail (GOSSIP_IS_CHAT (chat));
+	g_return_if_fail (!G_STR_EMPTY (str));
+
+	priv = GET_PRIV (chat);
+
+	/* Save the sent message in our repeat buffer */
+	list = priv->sent_messages;
+	
+	/* Remove any other occurances of this msg */
+	while ((item = g_slist_find_custom (list, str, (GCompareFunc) strcmp)) != NULL) {
+		list = g_slist_remove_link (list, item);
+		g_free (item->data);
+		g_slist_free1 (item);
+	}
+
+	/* Trim the list to the last 10 items */
+	while (g_slist_length (list) > 10) {
+		item = g_slist_last (list);
+		if (item) {
+			list = g_slist_remove_link (list, item);
+			g_free (item->data);
+			g_slist_free1 (item);
+		}
+	}
+
+	/* Add new message */
+	list = g_slist_prepend (list, g_strdup (str));
+
+	/* Set list and reset the index */
+	priv->sent_messages = list;
+	priv->sent_messages_index = -1;
+}
+
+const gchar *
+gossip_chat_sent_message_get_next (GossipChat *chat)
+{
+	GossipChatPriv *priv;
+	gint            max;
+
+	g_return_val_if_fail (GOSSIP_IS_CHAT (chat), NULL);
+	
+	priv = GET_PRIV (chat);
+
+	if (!priv->sent_messages) {
+		gossip_debug (DEBUG_DOMAIN, 
+			      "No sent messages, next message is NULL");
+		return NULL;
+	}
+
+	max = g_slist_length (priv->sent_messages) - 1;
+
+	if (priv->sent_messages_index < max) {
+		priv->sent_messages_index++;
+	}
+	
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Returning next message index:%d",
+		      priv->sent_messages_index);
+
+	return g_slist_nth_data (priv->sent_messages, priv->sent_messages_index);
+}
+
+const gchar *
+gossip_chat_sent_message_get_last (GossipChat *chat)
+{
+	GossipChatPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_CHAT (chat), NULL);
+
+	priv = GET_PRIV (chat);
+	
+	if (!priv->sent_messages) {
+		gossip_debug (DEBUG_DOMAIN, 
+			      "No sent messages, last message is NULL");
+		return NULL;
+	}
+
+	if (priv->sent_messages_index >= 0) {
+		priv->sent_messages_index--;
+	}
+
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Returning last message index:%d",
+		      priv->sent_messages_index);
+
+	return g_slist_nth_data (priv->sent_messages, priv->sent_messages_index);
 }

@@ -375,7 +375,7 @@ private_chat_send (GossipPrivateChat *chat,
 	GossipPrivateChatPriv *priv;
 	GossipLogManager      *log_manager;
 	GossipMessage         *message;
-
+	
 	priv = GET_PRIV (chat);
 
 	if (msg == NULL || msg[0] == '\0') {
@@ -412,6 +412,8 @@ private_chat_send (GossipPrivateChat *chat,
 						   priv->own_avatar);
 
 	gossip_session_send_message (gossip_app_get_session (), message);
+
+	gossip_chat_sent_message_add (GOSSIP_CHAT (chat), msg);
 
 	g_object_unref (message);
 }
@@ -699,11 +701,31 @@ private_chat_input_key_press_event_cb (GtkWidget         *widget,
 	GossipPrivateChatPriv *priv;
 	GtkAdjustment         *adj;
 	gdouble                val;
-
+	
 	priv = GET_PRIV (chat);
 
 	if (event->keyval == GDK_Tab && !(event->state & GDK_CONTROL_MASK)) {
 		return TRUE;
+	}
+
+	/* Catch ctrl+up/down so we can traverse messages we sent */
+	if (event->state & GDK_CONTROL_MASK) {
+		GtkTextBuffer *buffer;
+		const gchar   *str;
+
+		buffer = gtk_text_view_get_buffer 
+			(GTK_TEXT_VIEW (GOSSIP_CHAT (chat)->input_text_view));
+
+		if (event->keyval == GDK_Up) {
+			str = gossip_chat_sent_message_get_next (GOSSIP_CHAT (chat));
+			gtk_text_buffer_set_text (buffer, str ? str : "", -1);
+		}
+		else if (event->keyval == GDK_Down) {
+			str = gossip_chat_sent_message_get_last (GOSSIP_CHAT (chat));
+			gtk_text_buffer_set_text (buffer, str ? str : "", -1);
+		}
+		
+		return TRUE;    
 	}
 
 	/* Catch enter but not ctrl/shift-enter */

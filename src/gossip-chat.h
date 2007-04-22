@@ -145,6 +145,12 @@ gboolean          gossip_chat_should_play_sound     (GossipChat       *chat);
 gboolean          gossip_chat_should_highlight_nick (GossipMessage    *message,
 						     GossipContact    *my_contact);
 
+/* Sent messages API, for buffer recall */
+void              gossip_chat_sent_message_add      (GossipChat       *chat,
+						     const gchar      *str);
+const gchar *     gossip_chat_sent_message_get_next (GossipChat       *chat);
+const gchar *     gossip_chat_sent_message_get_last (GossipChat       *chat);
+
 G_END_DECLS
 
 #endif /* __GOSSIP_CHAT_H__ */
