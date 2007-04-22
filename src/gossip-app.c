@@ -132,6 +132,7 @@ struct _GossipAppPriv {
 	/* Main widgets */
 	GtkWidget             *window;
 	GtkWidget             *main_vbox;
+	GtkWidget             *filter_entry;
 	GtkWidget             *errors_vbox;
 	GHashTable            *errors;
 	GHashTable            *reconnects;
@@ -142,6 +143,7 @@ struct _GossipAppPriv {
 	/* Menu widgets */
 	GtkWidget             *chat_connect;
 	GtkWidget             *chat_disconnect;
+	GtkWidget             *chat_search;
 	GtkWidget             *room;
 	GtkWidget             *room_menu;
 	GtkWidget             *room_sep;
@@ -198,6 +200,8 @@ static gboolean        app_main_window_delete_event_cb        (GtkWidget        
 static gboolean        app_main_window_key_press_event_cb     (GtkWidget                *window,
 							       GdkEventKey              *event,
 							       GossipApp                *app);
+static void            app_filter_entry_changed_cb            (GtkEditable              *editable,
+							       GossipApp                *app);
 static void            app_favorite_chatroom_menu_activate_cb (GtkMenuItem              *menu_item,
 							       GossipChatroom           *chatroom);
 static void            app_favorite_chatroom_menu_update      (void);
@@ -217,6 +221,8 @@ static void            app_chat_quit_cb                       (GtkWidget        
 static void            app_chat_connect_cb                    (GtkWidget                *window,
 							       GossipApp                *app);
 static void            app_chat_disconnect_cb                 (GtkWidget                *window,
+							       GossipApp                *app);
+static void            app_chat_search_cb                     (GtkWidget                *window,
 							       GossipApp                *app);
 static void            app_chat_new_message_cb                (GtkWidget                *widget,
 							       GossipApp                *app);
@@ -559,16 +565,18 @@ app_setup (GossipSession *session)
 			  G_CALLBACK (app_event_removed_cb),
 			  NULL);
 
-	/* set up interface */
+	/* Set up interface */
 	gossip_debug (DEBUG_DOMAIN_SETUP, "Initialising interface");
 	glade = gossip_glade_get_file ("main.glade",
 				       "main_window",
 				       NULL,
 				       "main_window", &priv->window,
 				       "main_vbox", &priv->main_vbox,
+				       "filter_entry", &priv->filter_entry,
 				       "errors_vbox", &priv->errors_vbox,
 				       "chat_connect", &priv->chat_connect,
 				       "chat_disconnect", &priv->chat_disconnect,
+				       "chat_search", &priv->chat_search,
 				       "chat_show_offline", &show_offline_widget,
 				       "room", &priv->room,
 				       "room_sep", &priv->room_sep,
@@ -585,9 +593,11 @@ app_setup (GossipSession *session)
 			      "main_window", "delete_event", app_main_window_delete_event_cb,
 			      "main_window", "configure_event", app_window_configure_event_cb,
 			      "main_window", "key_press_event", app_main_window_key_press_event_cb,
+			      "filter_entry", "changed", app_filter_entry_changed_cb, 
 			      "chat_quit", "activate", app_chat_quit_cb,
 			      "chat_connect", "activate", app_chat_connect_cb,
 			      "chat_disconnect", "activate", app_chat_disconnect_cb,
+			      "chat_search", "activate", app_chat_search_cb,
 			      "chat_new_message", "activate", app_chat_new_message_cb,
 			      "chat_history", "activate", app_chat_history_cb,
 			      "room_join_new", "activate", app_room_join_new_cb,
@@ -969,6 +979,19 @@ app_main_window_key_press_event_cb (GtkWidget   *window,
 }
 
 static void
+app_filter_entry_changed_cb (GtkEditable *editable,
+			     GossipApp   *app)
+{
+	GossipAppPriv *priv;
+	const gchar   *filter;
+
+	priv = GET_PRIV (app);
+
+	filter = gtk_entry_get_text (GTK_ENTRY (priv->filter_entry));
+	gossip_contact_list_set_filter (priv->contact_list, filter);
+}
+
+static void
 app_favorite_chatroom_menu_activate_cb (GtkMenuItem    *menu_item,
 					GossipChatroom *chatroom)
 {
@@ -1169,8 +1192,6 @@ static void
 app_chat_connect_cb (GtkWidget *window,
 		     GossipApp *app)
 {
-	g_return_if_fail (GOSSIP_IS_APP (app));
-
 	gossip_app_connect (NULL, FALSE);
 }
 
@@ -1178,9 +1199,23 @@ static void
 app_chat_disconnect_cb (GtkWidget *window,
 			GossipApp *app)
 {
-	g_return_if_fail (GOSSIP_IS_APP (app));
-
 	app_disconnect ();
+}
+
+static void
+app_chat_search_cb (GtkWidget *window,
+		    GossipApp *app)
+{
+	GossipAppPriv *priv;
+
+	priv = GET_PRIV (app);
+	
+	if (GTK_WIDGET_VISIBLE (priv->filter_entry)) {
+		gtk_widget_hide (priv->filter_entry);
+	} else {
+		gtk_widget_show (priv->filter_entry);
+		gtk_widget_grab_focus (priv->filter_entry);
+	}
 }
 
 static void
