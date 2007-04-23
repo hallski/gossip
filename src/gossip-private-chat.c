@@ -709,7 +709,9 @@ private_chat_input_key_press_event_cb (GtkWidget         *widget,
 	}
 
 	/* Catch ctrl+up/down so we can traverse messages we sent */
-	if (event->state & GDK_CONTROL_MASK) {
+	if ((event->state & GDK_CONTROL_MASK) && 
+	    (event->keyval == GDK_Up || 
+	     event->keyval == GDK_Down)) {
 		GtkTextBuffer *buffer;
 		const gchar   *str;
 
@@ -718,16 +720,19 @@ private_chat_input_key_press_event_cb (GtkWidget         *widget,
 
 		if (event->keyval == GDK_Up) {
 			str = gossip_chat_sent_message_get_next (GOSSIP_CHAT (chat));
-			gtk_text_buffer_set_text (buffer, str ? str : "", -1);
-
-			return TRUE;    
-		}
-		else if (event->keyval == GDK_Down) {
+		} else {
 			str = gossip_chat_sent_message_get_last (GOSSIP_CHAT (chat));
-			gtk_text_buffer_set_text (buffer, str ? str : "", -1);
+		}
 
-			return TRUE;    
-		}		
+		g_signal_handlers_block_by_func (buffer, 
+						 private_chat_input_text_buffer_changed_cb,
+						 chat);
+		gtk_text_buffer_set_text (buffer, str ? str : "", -1);
+		g_signal_handlers_unblock_by_func (buffer, 
+						   private_chat_input_text_buffer_changed_cb,
+						   chat);
+
+		return TRUE;    
 	}
 
 	/* Catch enter but not ctrl/shift-enter */

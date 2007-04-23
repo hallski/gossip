@@ -1,5 +1,11 @@
 2007-04-23  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-group-chat.c:
+	* src/gossip-private-chat.c: Don't announce that we are composing
+	when looking through the sent message history with Ctrl+{Up|Down}. 
+
+2007-04-23  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-group-chat.c: Fixed a bug in the implementation of
 	bug fix #395693 which meant Ctrl+{Left|Right} failed to work with
 	the Ctrl+{Up|Down} enhancement added today.
