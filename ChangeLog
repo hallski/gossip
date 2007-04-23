@@ -1,3 +1,9 @@
+2007-04-23  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-group-chat.c: Fixed a bug in the implementation of
+	bug fix #395693 which meant Ctrl+{Left|Right} failed to work with
+	the Ctrl+{Up|Down} enhancement added today.
+
 2007-04-22  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-contact.[ch]: 
