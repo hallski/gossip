@@ -2068,6 +2068,9 @@ contact_list_cell_set_background (GossipContactList  *list,
 				      NULL);
 		}
 	} else {
+		g_object_set (cell,
+			      "cell-background-gdk", NULL,
+			      NULL);
 #if 0
 		gint color_sum_normal;
 		gint color_sum_selected;

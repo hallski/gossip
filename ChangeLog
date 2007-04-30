@@ -1,3 +1,9 @@
+2007-04-30  Kristian Rietveld  <kris@gtk.org>
+
+	* src/gossip-contact-list.c (contact_list_cell_set_background): reset
+	the cell-background for group headers, so group headers don't get
+	wrongly highlighted.
+
 2007-04-30  Richard Hult  <richard@imendio.com>
 
 	* ui/chat.glade:
