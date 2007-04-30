@@ -1,3 +1,9 @@
+2007-04-30  Richard Hult  <richard@imendio.com>
+
+	* ui/chat.glade:
+	* ui/main.glade:
+	* ui/transports.glade: Remove old unused gnome "requires" tag.
+
 2007-04-23  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-group-chat.c:
