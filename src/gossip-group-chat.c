@@ -1255,14 +1255,20 @@ void
 gossip_group_chat_set_topic (GossipGroupChat *chat)
 {
 	GossipGroupChatPriv *priv;
+	GossipChatWindow    *chat_window;
+	GtkWidget           *chat_dialog;
 	GtkWidget           *dialog;
 	GtkWidget           *entry;
 	GtkWidget           *hbox;
 	const gchar         *topic;
 
+
 	priv = GET_PRIV (chat);
 
-	dialog = gtk_message_dialog_new (GTK_WINDOW (gossip_app_get_window ()),
+	chat_window = gossip_chat_get_window (GOSSIP_CHAT (chat));
+	chat_dialog = gossip_chat_window_get_dialog (chat_window);
+
+	dialog = gtk_message_dialog_new (GTK_WINDOW (chat_dialog),
 					 0,
 					 GTK_MESSAGE_QUESTION,
 					 GTK_BUTTONS_OK_CANCEL,

@@ -1,5 +1,11 @@
 2007-04-30  Kristian Rietveld  <kris@gtk.org>
 
+	* src/gossip-group-chat.c (gossip_group_chat_set_topic): make sure
+	the "change topic" dialog is popped up on top of the group chat
+	window and not above the contact list.
+
+2007-04-30  Kristian Rietveld  <kris@gtk.org>
+
 	* src/gossip-contact-list.c (contact_list_cell_set_background): reset
 	the cell-background for group headers, so group headers don't get
 	wrongly highlighted.
