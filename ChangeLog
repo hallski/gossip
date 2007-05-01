@@ -8,7 +8,7 @@
 
 	* src/gossip-contact-list.c (contact_list_cell_set_background): reset
 	the cell-background for group headers, so group headers don't get
-	wrongly highlighted.
+	wrongly highlighted. Fixes bug #426495.
 
 2007-04-30  Richard Hult  <richard@imendio.com>
 
