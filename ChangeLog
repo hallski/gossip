@@ -1,3 +1,13 @@
+2007-05-04  Martyn Russell  <martyn@imendio.com>
+
+	* gossip.schemas.in:
+	* src/gossip-app.c:
+	* src/gossip-contact-list.[ch]:
+	* src/gossip-preferences.[ch]: 
+	* ui/main.glade: Make it possible to sort contacts in the roster
+	by state as well as name, and make it optional in the preferences,
+	fixes bug #434692 (Kristian Rietveld).
+
 2007-04-30  Kristian Rietveld  <kris@gtk.org>
 
 	* src/gossip-group-chat.c (gossip_group_chat_set_topic): make sure

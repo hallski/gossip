@@ -302,6 +302,9 @@ static void            app_notify_show_offline_cb             (GossipConf       
 static void            app_notify_show_avatars_cb             (GossipConf               *conf,
 							       const gchar              *key,
 							       gpointer                  user_data);
+static void            app_notify_sort_criterium_cb           (GossipConf               *conf,
+							       const gchar              *key,
+							       gpointer                  user_data);
 static void            app_notify_compact_contact_list_cb     (GossipConf               *conf,
 							       const gchar              *key,
 							       gpointer                  user_data);
@@ -746,6 +749,12 @@ app_setup (GossipSession *session)
 				GOSSIP_PREFS_UI_SHOW_AVATARS,
 				app_notify_show_avatars_cb,
 				NULL);
+
+	g_object_set (priv->contact_list,
+		      "show-avatars", show_avatars,
+		      NULL);
+
+	/* Compact contact list? */
 	gossip_conf_get_bool (conf,
 			      GOSSIP_PREFS_UI_COMPACT_CONTACT_LIST,
 			      &compact_contact_list);
@@ -755,9 +764,35 @@ app_setup (GossipSession *session)
 				NULL);
 
 	g_object_set (priv->contact_list,
-		      "show-avatars", show_avatars,
 		      "is-compact", compact_contact_list,
 		      NULL);
+
+	/* Sort criterium */
+	str = NULL;
+
+	gossip_conf_get_string (conf,
+				GOSSIP_PREFS_CONTACTS_SORT_CRITERIUM,
+				&str);
+	gossip_conf_notify_add (conf,
+				GOSSIP_PREFS_CONTACTS_SORT_CRITERIUM,
+				app_notify_sort_criterium_cb,
+				NULL);
+
+	if (str) {
+		GType       type;
+		GEnumClass *enum_class;
+		GEnumValue *enum_value;
+		
+		type = gossip_contact_list_sort_get_type ();
+		enum_class = G_ENUM_CLASS (g_type_class_peek (type));
+		enum_value = g_enum_get_value_by_nick (enum_class, str);
+
+		if (enum_value) {
+			g_object_set (priv->contact_list,
+				      "sort-criterium", enum_value->value,
+				      NULL);
+		}
+	} 
 
 	/* Set window to be hidden. If doesn't have status icon, show window
 	 * and mask "chat_hide_list".
@@ -2001,6 +2036,32 @@ app_notify_show_avatars_cb (GossipConf  *conf,
 	if (gossip_conf_get_bool (conf, key, &show_avatars)) {
 		gossip_contact_list_set_show_avatars (priv->contact_list,
 						      show_avatars);
+	}
+}
+
+static void
+app_notify_sort_criterium_cb (GossipConf  *conf,
+			      const gchar *key,
+			      gpointer     user_data)
+{
+	GossipAppPriv *priv;
+	gchar         *str = NULL;
+
+	priv = GET_PRIV (app);
+
+	if (gossip_conf_get_string (conf, key, &str)) {
+		GType       type;
+		GEnumClass *enum_class;
+		GEnumValue *enum_value;
+
+		type = gossip_contact_list_sort_get_type ();
+		enum_class = G_ENUM_CLASS (g_type_class_peek (type));
+		enum_value = g_enum_get_value_by_nick (enum_class, str);
+
+		if (enum_value) {
+			gossip_contact_list_set_sort_criterium (priv->contact_list, 
+								enum_value->value);
+		}
 	}
 }
 
