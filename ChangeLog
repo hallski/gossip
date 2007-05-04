@@ -1,3 +1,13 @@
+2007-05-04  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-account-widget-jabber.c:
+	(gossip_account_widget_jabber_new):
+	* src/gossip-accounts-dialog.c: (accounts_dialog_setup),
+	(gossip_accounts_dialog_show):
+	* ui/main.glade: Get rid of flickering by not showing the accounts
+	dialog by default in the glade file but showing it after we have
+	filled in the details.
+
 2007-05-04  Martyn Russell  <martyn@imendio.com>
 
 	* gossip.schemas.in:

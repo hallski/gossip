@@ -237,16 +237,16 @@ accounts_dialog_setup (GossipAccountsDialog *dialog)
 			      is_connected ? "YES" : "NO",
 			      is_connecting ? "YES" : "NO");
 
-		gtk_list_store_append (store, &iter);
-		gtk_list_store_set (store, &iter,
-				    COL_NAME, name,
-				    COL_EDITABLE, is_editable,
-				    COL_DEFAULT, is_default,
-				    COL_CONNECTED, is_connected,
-				    COL_CONNECTING, is_connecting,
-				    COL_AUTO_CONNECT, gossip_account_get_auto_connect (account),
-				    COL_ACCOUNT_POINTER, account,
-				    -1);
+		gtk_list_store_insert_with_values (store, &iter,
+						   -1,
+						   COL_NAME, name,
+						   COL_EDITABLE, is_editable,
+						   COL_DEFAULT, is_default,
+						   COL_CONNECTED, is_connected,
+						   COL_CONNECTING, is_connecting,
+						   COL_AUTO_CONNECT, gossip_account_get_auto_connect (account),
+						   COL_ACCOUNT_POINTER, account,
+						   -1);
 
 		g_signal_connect (account, "notify::name",
 				  G_CALLBACK (accounts_dialog_account_name_changed_cb), 
@@ -1548,7 +1548,6 @@ gossip_accounts_dialog_show (GossipAccount *account)
 
 	gtk_window_set_transient_for (GTK_WINDOW (dialog->window),
 				      GTK_WINDOW (gossip_app_get_window ()));
-	gtk_widget_show (dialog->window);
 
 	if (GOSSIP_IS_ACCOUNT (account)) {
 		/* If account was specified then we select it */
@@ -1556,6 +1555,8 @@ gossip_accounts_dialog_show (GossipAccount *account)
 	} else {
 		accounts_dialog_model_select_first (dialog);
 	}
+
+	gtk_widget_show (dialog->window);
 }
 
 gboolean
