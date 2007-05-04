@@ -140,9 +140,9 @@ gossip_chat_class_init (GossipChatClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      G_STRUCT_OFFSET (GossipChatClass, new_message),
 			      NULL, NULL,
-			      gossip_marshal_VOID__OBJECT,
+			      gossip_marshal_VOID__OBJECT_BOOLEAN,
 			      G_TYPE_NONE,
-			      1, GOSSIP_TYPE_MESSAGE);
+			      2, GOSSIP_TYPE_MESSAGE, G_TYPE_BOOLEAN);
 
 	chat_signals[NAME_CHANGED] =
 		g_signal_new ("name-changed",

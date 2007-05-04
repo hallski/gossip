@@ -1,3 +1,13 @@
+2007-05-04  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chat-window.c:
+	* src/gossip-chat.c: 
+	* src/gossip-group-chat.c:
+	* src/gossip-private-chat.c: Detect new messages as backlog
+	messages or new messages since joining group chats so we know if
+	we should play sounds, show the new message icon, log the new
+	messages, etc. Fixes bug #435113.
+
 2007-05-04  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-account-widget-jabber.c:

@@ -1174,7 +1174,7 @@ gossip_private_chat_append_message (GossipPrivateChat *chat,
 		gossip_sound_play (GOSSIP_SOUND_CHAT);
 	}
 
-	g_signal_emit_by_name (chat, "new-message", message);
+	g_signal_emit_by_name (chat, "new-message", message, FALSE);
 }
 
 /* Pads a pixbuf to the specified size, by centering it in a larger transparent

@@ -90,6 +90,8 @@ struct _GossipGroupChatPriv {
 
 	gint                    contacts_width;
 	gboolean                contacts_visible;
+
+	GossipTime              time_joined;
 };
 
 typedef struct {
@@ -1123,6 +1125,8 @@ group_chat_new_message_cb (GossipChatroomProvider *provider,
 	GossipGroupChatPriv  *priv;
 	GossipChatroomInvite *invite;
 	GossipLogManager     *log_manager;
+	GossipTime            timestamp;
+	gboolean              is_backlog;
 
 	priv = GET_PRIV (chat);
 
@@ -1130,7 +1134,12 @@ group_chat_new_message_cb (GossipChatroomProvider *provider,
 		return;
 	}
 
-	gossip_debug (DEBUG_DOMAIN, "[%d] New message", id);
+	timestamp = gossip_message_get_timestamp (message);
+	is_backlog = timestamp < priv->time_joined;
+
+	gossip_debug (DEBUG_DOMAIN, 
+		      "[%d] New message with timestamp:%d, message %s backlog", 
+		      id, timestamp, is_backlog ? "IS" : "IS NOT");
 
 	invite = gossip_message_get_invite (message);
 	if (invite) {
@@ -1155,15 +1164,18 @@ group_chat_new_message_cb (GossipChatroomProvider *provider,
 		}
 	}
 
-	if (gossip_chat_should_play_sound (GOSSIP_CHAT (chat)) &&
+	if (!is_backlog && 
+	    gossip_chat_should_play_sound (GOSSIP_CHAT (chat)) &&
 	    gossip_chat_should_highlight_nick (message, priv->own_contact)) {
 		gossip_sound_play (GOSSIP_SOUND_CHAT);
 	}
 
-	log_manager = gossip_session_get_log_manager (gossip_app_get_session ());
-	gossip_log_message_for_chatroom (log_manager, priv->chatroom, message, FALSE);
+	if (!is_backlog) {
+		log_manager = gossip_session_get_log_manager (gossip_app_get_session ());
+		gossip_log_message_for_chatroom (log_manager, priv->chatroom, message, FALSE);
+	}
 
-	g_signal_emit_by_name (chat, "new-message", message);
+	g_signal_emit_by_name (chat, "new-message", message, is_backlog);
 }
 
 static void
@@ -1462,6 +1474,8 @@ group_chat_contact_joined_cb (GossipChatroom  *chatroom,
 		gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, str);
 		g_free (str);
 	}
+
+	priv->time_joined = gossip_time_get_current ();
 }
 
 static void

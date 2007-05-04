@@ -183,6 +183,7 @@ static void       chat_window_composing_cb              (GossipChat            *
 							 GossipChatWindow      *window);
 static void       chat_window_new_message_cb            (GossipChat            *chat,
 							 GossipMessage         *message,
+							 gboolean               is_backlog,
 							 GossipChatWindow      *window);
 static void       chat_window_disconnected_cb           (GossipApp             *app,
 							 GossipChatWindow      *window);
@@ -1392,6 +1393,7 @@ chat_window_composing_cb (GossipChat       *chat,
 static void
 chat_window_new_message_cb (GossipChat       *chat,
 			    GossipMessage    *message,
+			    gboolean          is_backlog,
 			    GossipChatWindow *window)
 {
 	GossipChatWindowPriv *priv;
@@ -1414,7 +1416,8 @@ chat_window_new_message_cb (GossipChat       *chat,
 	if (gossip_chat_is_group_chat (chat)) {
 		own_contact = gossip_chat_get_own_contact (chat);
 		
-		if (gossip_chat_should_highlight_nick (message, own_contact)) {
+		if (!is_backlog && 
+		    gossip_chat_should_highlight_nick (message, own_contact)) {
 			gossip_debug (DEBUG_DOMAIN, "Highlight this nick");
 			needs_urgency = TRUE;
 		}
@@ -1427,7 +1430,8 @@ chat_window_new_message_cb (GossipChat       *chat,
 		gossip_request_user_attention ();
 	}
 
-	if (!g_list_find (priv->chats_new_msg, chat)) {
+	if (!is_backlog && 
+	    !g_list_find (priv->chats_new_msg, chat)) {
 		priv->chats_new_msg = g_list_prepend (priv->chats_new_msg, chat);
 		chat_window_update_status (window, chat);
 	}
