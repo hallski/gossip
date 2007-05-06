@@ -1,3 +1,9 @@
+2007-05-06  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-notify.c: (notify_subscription_request_show):
+	Associate subscription notifications with the status icon, fixes
+	bug #423465 (Chris RIvas).
+
 2007-05-04  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-chat-window.c:

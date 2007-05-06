@@ -307,6 +307,10 @@ notify_subscription_request_show (GossipContact *contact)
 					  NULL);
 	g_free (message);
 
+	if (attach_status_icon) {
+		notify_notification_attach_to_status_icon (notify, attach_status_icon);
+	}
+
 	notify_notification_set_urgency (notify, NOTIFY_URGENCY_NORMAL);
 	notify_notification_set_timeout (notify, NOTIFY_SUBSCRIPTION_TIME);
 
