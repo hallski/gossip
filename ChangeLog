@@ -1,3 +1,9 @@
+2007-05-08  Martyn Russell  <martyn@imendio.com>
+
+	* gossip.desktop.in.in (Categories): fix categories for
+	GNOME Goal. http://live.gnome.org/GnomeGoals/ApplicationCategory
+	Fixes bug #436663 (Brian Pepple).
+
 2007-05-06  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-notify.c: (notify_subscription_request_show):
