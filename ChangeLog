@@ -1,5 +1,12 @@
 2007-05-08  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-account-manager.h:
+	* src/gossip-new-message-dialog.c:
+	* ui/main.glade: Fixed the critical errors in the new message
+	dialog, fixes bug #433636 (Richard Hult, Martyn Russell).
+
+2007-05-08  Martyn Russell  <martyn@imendio.com>
+
 	* gossip.desktop.in.in (Categories): fix categories for
 	GNOME Goal. http://live.gnome.org/GnomeGoals/ApplicationCategory
 	Fixes bug #436663 (Brian Pepple).
