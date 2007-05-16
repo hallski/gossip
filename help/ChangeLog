@@ -1,3 +1,8 @@
+2007-05-16  Claude Paroz  <claude@2xlibre.net>
+
+	* Makefile.am: Added fr to LINGUAS.
+	* fr/fr.po: Added French translation of help.
+
 2007-01-01  Martyn Russell  <martyn@imendio.com>
 
 	* Makefile.am: Updated image names.
