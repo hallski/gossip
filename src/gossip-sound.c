@@ -59,7 +59,6 @@ static void sound_contact_removed_cb          (GossipSession *session,
 
 static GHashTable    *account_states = NULL;
 static GHashTable    *contact_states = NULL;
-static gboolean       sound_disabled = FALSE;
 static GossipSession *saved_session = NULL;
 
 static gboolean
@@ -212,15 +211,6 @@ gossip_sound_play (GossipSound sound)
 
 	session = gossip_app_get_session ();
 
-	/* This is the internal sound enable/disable for when events
-	 * happen that we need to mute sound - e.g. changing roster
-	 * contacts.
-	 */
-	if (sound_disabled) {
-		gossip_debug (DEBUG_DOMAIN, "Play request ignored, sound currently disabled.");
-		return;
-	}
-
 	gossip_conf_get_bool (gossip_conf_get (),
 			       GOSSIP_PREFS_SOUNDS_FOR_MESSAGES,
 			       &enabled);
@@ -267,12 +257,6 @@ gossip_sound_play (GossipSound sound)
 		return;
 	}
 #endif
-}
-
-void
-gossip_sound_set_enabled (gboolean enabled)
-{
-	sound_disabled = !enabled;
 }
 
 void

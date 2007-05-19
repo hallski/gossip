@@ -1330,10 +1330,7 @@ app_chat_show_offline_cb (GtkCheckMenuItem *item,
 			      GOSSIP_PREFS_CONTACTS_SHOW_OFFLINE,
 			      current);
 
-	/* Turn off sound just while we alter the contact list. */
-	gossip_sound_set_enabled (FALSE);
 	g_object_set (priv->contact_list, "show_offline", current, NULL);
-	gossip_sound_set_enabled (TRUE);
 }
 
 static gboolean
