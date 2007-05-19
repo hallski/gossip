@@ -1,3 +1,9 @@
+2007-05-19  Mikael Hallendal  <micke@imendio.com>
+	
+	* src/gossip-app.c:
+	* src/gossip-sound.c:
+	- Remove old use of gossip_sound_set_enabled
+
 2007-05-08  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-account-manager.h:
