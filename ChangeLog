@@ -1,4 +1,9 @@
 2007-05-19  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-throbber.[ch]: Removed unused GossipThrobber as we are 
+	using EphySpinner for this now.
+
+2007-05-19  Mikael Hallendal  <micke@imendio.com>
 	
 	* src/gossip-app.c:
 	* src/gossip-sound.c:
