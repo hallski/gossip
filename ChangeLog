@@ -1,3 +1,8 @@
+2007-05-19  Richard Hult  <richard@imendio.com>
+
+	* ui/main.glade: Don't show the add_contact_dialog by default, the
+	code does it when it's fully setup, fixes some flickering.
+
 2007-05-19  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-throbber.[ch]: Removed unused GossipThrobber as we are 
