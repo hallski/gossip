@@ -1,3 +1,9 @@
+2007-05-21  Mikael Hallendal  <micke@imendio.com>
+
+	* libgossip/gossip-log.c: Refactored out log_get_contact_log_dir and
+	reused it for gossip_log_get_dates_for_contact and
+	log_get_filename_by_date_for_contact.
+
 2007-05-19  Richard Hult  <richard@imendio.com>
 
 	* ui/main.glade: Don't show the add_contact_dialog by default, the

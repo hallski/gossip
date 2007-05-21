@@ -201,6 +201,7 @@ static gchar *         log_get_filename_by_date_for_chatroom   (GossipChatroom  
 								const gchar           *particular_date);
 static gboolean        log_set_name                            (GossipLogManager      *manager,
 								GossipContact         *contact);
+static gchar *         log_get_contact_log_dir                 (GossipContact *contact);
 
 G_DEFINE_TYPE (GossipLogManager, gossip_log_manager, G_TYPE_OBJECT);
 
@@ -1159,16 +1160,17 @@ static gchar *
 log_get_filename_by_date_for_contact (GossipContact *contact,
 				      const gchar   *particular_date)
 {
-	GossipAccount *account;
-	const gchar   *contact_id;
-	gchar         *contact_id_escaped;
-	gchar         *log_directory;
 	gchar         *filename;
 	gchar         *dirname;
+	gchar         *directory;
 	gchar         *basename;
-	gchar         *basedir;
 	gchar         *todays_date = NULL;
 	const gchar   *date;
+
+	directory = log_get_contact_log_dir (contact);
+	if (!directory) {
+		return NULL;
+	}
 
 	if (!particular_date) {
 		date = todays_date = log_get_timestamp_filename ();
@@ -1176,26 +1178,15 @@ log_get_filename_by_date_for_contact (GossipContact *contact,
 		date = particular_date;
 	}
 
-	account = gossip_contact_get_account (contact);
-	if (!account) {
-		gossip_debug (DEBUG_DOMAIN, "Contact has no account, can not get log filename");
-		return NULL;
-	}
-
-	log_check_dir (&log_directory);
 	basename = g_strconcat (date, LOG_FILENAME_SUFFIX, NULL);
-	basedir = log_get_basedir (account, log_directory);
 
-	contact_id = gossip_contact_get_id (contact);
-	contact_id_escaped = log_escape (contact_id);
-
-	filename = g_build_filename (basedir,
-				     contact_id_escaped,
+	filename = g_build_filename (directory,
 				     basename,
 				     NULL);
+	
+	g_free (todays_date);
+	g_free (directory);
 	g_free (basename);
-	g_free (contact_id_escaped);
-	g_free (basedir);
 
 	gossip_debug (DEBUG_DOMAIN, "Using file:'%s' for contact:'%s'",
 		    filename,
@@ -1206,10 +1197,7 @@ log_get_filename_by_date_for_contact (GossipContact *contact,
 		gossip_debug (DEBUG_DOMAIN, "Creating directory:'%s'", dirname);
 		g_mkdir_with_parents (dirname, LOG_DIR_CREATE_MODE);
 	}
-
 	g_free (dirname);
-	g_free (log_directory);
-	g_free (todays_date);
 
 	return filename;
 }
@@ -1444,24 +1432,16 @@ gossip_log_get_date_readable (const gchar *date)
 	return gossip_time_to_string_local (t, "%a %d %b %Y");
 }
 
-/*
- * Contact functions
- */
-GList *
-gossip_log_get_dates_for_contact (GossipContact *contact)
+static gchar *
+log_get_contact_log_dir (GossipContact *contact)
 {
 	GossipAccount  *account;
-	GList          *dates = NULL;
-	gchar          *date;
-	gchar          *log_directory;
 	gchar          *directory;
-	gchar          *basedir;
+	gchar          *log_directory;
 	const gchar    *contact_id;
 	gchar          *contact_id_escaped;
-	GDir           *dir;
-	const gchar    *filename;
-	const gchar    *p;
-
+	gchar          *basedir;
+		
 	account = gossip_contact_get_account (contact);
 
 	if (log_check_dir (&log_directory)) {
@@ -1483,6 +1463,27 @@ gossip_log_get_dates_for_contact (GossipContact *contact)
 	g_free (contact_id_escaped);
 	g_free (basedir);
 	g_free (log_directory);
+
+	return directory;
+}
+
+/*
+ * Contact functions
+ */
+GList *
+gossip_log_get_dates_for_contact (GossipContact *contact)
+{
+	GList       *dates = NULL;
+	gchar       *date;
+	gchar       *directory;
+	GDir        *dir;
+	const gchar *filename;
+	const gchar *p;
+
+	directory = log_get_contact_log_dir (contact);
+	if (!directory) {
+		return NULL;
+	}
 
 	dir = g_dir_open (directory, 0, NULL);
 	if (!dir) {
