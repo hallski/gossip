@@ -1,5 +1,10 @@
 2007-05-21  Mikael Hallendal  <micke@imendio.com>
 
+	* libgossip/gossip-log.c (log_get_basedir): Call log_check_dir from
+	here instead of passing in the result every time we call it. 
+
+2007-05-21  Mikael Hallendal  <micke@imendio.com>
+
 	* libgossip/gossip-log.c: Refactored out log_get_chatroom_log_dir and
 	reused it for gossip_log_get_dates_for_chatroom and
 	log_get_filename_by_date_for_chatroom.
