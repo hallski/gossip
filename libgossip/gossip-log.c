@@ -180,11 +180,9 @@ static GossipChatroom *log_get_chatroom_from_filename          (GossipLogManager
 								GossipAccount         *account,
 								const gchar           *filename);
 static gboolean        log_get_all_log_files                   (GList                **files);
-static void            log_get_all_log_files_for_chatroom_dir  (const gchar           *chatrooms_dir,
-								GList                **files);
 static void            log_get_all_log_files_for_chatrooms_dir (const gchar           *chatrooms_dir,
 								GList                **files);
-static void            log_get_all_log_files_for_contact_dir   (const gchar           *contact_dir,
+static void            log_get_all_log_files_in_directory      (const gchar           *directory,
 								GList                **files);
 static void            log_get_all_log_files_for_account_dir   (const gchar           *account_dir,
 								GList                **files);
@@ -967,42 +965,6 @@ log_get_date_from_filename (const gchar *filename)
 }
 
 static void
-log_get_all_log_files_for_chatroom_dir (const gchar  *chatroom_dir,
-					 GList       **files)
-{
-	GDir        *dir;
-	const gchar *name;
-	gchar       *path;
-
-	dir = g_dir_open (chatroom_dir, 0, NULL);
-	if (!dir) {
-		gossip_debug (DEBUG_DOMAIN, "Could not open directory:'%s'", chatroom_dir);
-		return;
-	}
-
-	while ((name = g_dir_read_name (dir)) != NULL) {
-		if (!g_str_has_suffix (name, LOG_FILENAME_SUFFIX)) {
-			continue;
-		}
-
-		path = g_build_filename (chatroom_dir, name, NULL);
-
-		if (g_file_test (path, G_FILE_TEST_IS_REGULAR)) {
-			*files = g_list_insert_sorted (*files,
-						       path,
-						       (GCompareFunc) strcmp);
-
-			/* Don't free path. */
-			continue;
-		}
-
-		g_free (path);
-	}
-
-	g_dir_close (dir);
-}
-
-static void
 log_get_all_log_files_for_chatrooms_dir (const gchar  *chatrooms_dir,
 					 GList       **files)
 {
@@ -1018,7 +980,7 @@ log_get_all_log_files_for_chatrooms_dir (const gchar  *chatrooms_dir,
 
 	while ((name = g_dir_read_name (dir)) != NULL) {
 		path = g_build_filename (chatrooms_dir, name, NULL);
-		log_get_all_log_files_for_chatroom_dir (path, files);
+		log_get_all_log_files_in_directory (path, files);
 		g_free (path);
 	}
 
@@ -1026,16 +988,15 @@ log_get_all_log_files_for_chatrooms_dir (const gchar  *chatrooms_dir,
 }
 
 static void
-log_get_all_log_files_for_contact_dir (const gchar  *contact_dir,
-				       GList       **files)
+log_get_all_log_files_in_directory (const gchar *directory, GList **files)
 {
 	GDir        *dir;
 	const gchar *name;
 	gchar       *path;
 
-	dir = g_dir_open (contact_dir, 0, NULL);
+	dir = g_dir_open (directory, 0, NULL);
 	if (!dir) {
-		gossip_debug (DEBUG_DOMAIN, "Could not open directory:'%s'", contact_dir);
+		gossip_debug (DEBUG_DOMAIN, "Could not open directory:'%s'", directory);
 		return;
 	}
 
@@ -1044,7 +1005,7 @@ log_get_all_log_files_for_contact_dir (const gchar  *contact_dir,
 			continue;
 		}
 
-		path = g_build_filename (contact_dir, name, NULL);
+		path = g_build_filename (directory, name, NULL);
 
 		if (g_file_test (path, G_FILE_TEST_IS_REGULAR)) {
 			*files = g_list_insert_sorted (*files,
@@ -1086,7 +1047,7 @@ log_get_all_log_files_for_account_dir (const gchar  *account_dir,
 		if (strcmp (name, LOG_DIR_CHATROOMS) == 0) {
 			log_get_all_log_files_for_chatrooms_dir (path, files);
 		} else {
-			log_get_all_log_files_for_contact_dir (path, files);
+			log_get_all_log_files_in_directory (path, files);
 		}
 
 		g_free (path);

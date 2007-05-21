@@ -1,5 +1,11 @@
 2007-05-21  Mikael Hallendal  <micke@imendio.com>
 
+	* libgossip/gossip-log.c (log_get_all_log_files_in_directory): 
+	Renamed from log_get_all_log_files_for_contact_dir and resuse for
+	both contacts and chatrooms.
+
+2007-05-21  Mikael Hallendal  <micke@imendio.com>
+
 	* libgossip/gossip-log.c (log_get_basedir): Call log_check_dir from
 	here instead of passing in the result every time we call it. 
 
