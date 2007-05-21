@@ -16,8 +16,6 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * Authors: Martyn Russell <martyn@imendio.com>
  */
 
 /*
@@ -202,6 +200,7 @@ static gchar *         log_get_filename_by_date_for_chatroom   (GossipChatroom  
 static gboolean        log_set_name                            (GossipLogManager      *manager,
 								GossipContact         *contact);
 static gchar *         log_get_contact_log_dir                 (GossipContact *contact);
+static gchar *         log_get_chatroom_log_dir                (GossipChatroom *chatroom);
 
 G_DEFINE_TYPE (GossipLogManager, gossip_log_manager, G_TYPE_OBJECT);
 
@@ -1189,8 +1188,8 @@ log_get_filename_by_date_for_contact (GossipContact *contact,
 	g_free (basename);
 
 	gossip_debug (DEBUG_DOMAIN, "Using file:'%s' for contact:'%s'",
-		    filename,
-		    gossip_contact_get_id (contact));
+		      filename,
+		      gossip_contact_get_id (contact));
 
 	dirname = g_path_get_dirname (filename);
 	if (!g_file_test (dirname, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
@@ -1206,16 +1205,17 @@ static gchar *
 log_get_filename_by_date_for_chatroom (GossipChatroom *chatroom,
 				       const gchar    *particular_date)
 {
-	GossipAccount *account;
-	const gchar   *chatroom_id;
-	gchar         *chatroom_id_escaped;
-	gchar         *log_directory;
 	gchar         *filename;
 	gchar         *dirname;
 	gchar         *basename;
-	gchar         *basedir;
+	gchar         *directory;
 	gchar         *todays_date = NULL;
 	const gchar   *date;
+
+	directory = log_get_chatroom_log_dir (chatroom);
+	if (!directory) {
+		return NULL;
+	}
 
 	if (!particular_date) {
 		date = todays_date = log_get_timestamp_filename ();
@@ -1223,31 +1223,17 @@ log_get_filename_by_date_for_chatroom (GossipChatroom *chatroom,
 		date = particular_date;
 	}
 
-	account = gossip_chatroom_get_account (chatroom);
-	if (!account) {
-		gossip_debug (DEBUG_DOMAIN, "Contact has no account, can not get log filename");
-		return NULL;
-	}
-
-	log_check_dir (&log_directory);
 	basename = g_strconcat (date, LOG_FILENAME_SUFFIX, NULL);
-	basedir = log_get_basedir (account, log_directory);
 
-	chatroom_id = gossip_chatroom_get_id_str (chatroom);
-	chatroom_id_escaped = log_escape (chatroom_id);
-	filename = g_build_filename (basedir,
-				     LOG_DIR_CHATROOMS,
-				     chatroom_id_escaped,
-				     basename,
-				     NULL);
+	filename = g_build_filename (directory, basename, NULL);
 	
 	g_free (basename);
-	g_free (chatroom_id_escaped);
-	g_free (basedir);
+	g_free (directory);
+	g_free (todays_date);
 
 	gossip_debug (DEBUG_DOMAIN, "Using file:'%s' for chatroom:'%s'",
-		    filename,
-		    gossip_chatroom_get_id_str (chatroom));
+		      filename,
+		      gossip_chatroom_get_id_str (chatroom));
 
 	dirname = g_path_get_dirname (filename);
 	if (!g_file_test (dirname, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
@@ -1256,8 +1242,6 @@ log_get_filename_by_date_for_chatroom (GossipChatroom *chatroom,
 	}
 
 	g_free (dirname);
-	g_free (log_directory);
-	g_free (todays_date);
 
 	return filename;
 }
@@ -1283,8 +1267,7 @@ log_set_name (GossipLogManager *manager,
 }
 
 GList *
-gossip_log_get_contacts (GossipLogManager *manager,
-			 GossipAccount    *account)
+gossip_log_get_contacts (GossipLogManager *manager, GossipAccount *account)
 {
 	GossipLogManagerPriv *priv;
 	GossipContactManager *contact_manager;
@@ -1874,26 +1857,16 @@ gossip_log_get_last_for_contact (GossipLogManager *manager,
 	return messages;
 }
 
-/*
- * Chatroom functions
- */
-GList *
-gossip_log_get_dates_for_chatroom (GossipChatroom *chatroom)
+static gchar *
+log_get_chatroom_log_dir (GossipChatroom *chatroom)
 {
-	GossipAccount  *account;
-	GList          *dates = NULL;
-	gchar          *date;
-	gchar          *log_directory;
-	gchar          *directory;
-	gchar          *basedir;
-	const gchar    *chatroom_id;
-	gchar          *chatroom_id_escaped;
-	GDir           *dir;
-	const gchar    *filename;
-	const gchar    *p;
-
-	account = gossip_chatroom_get_account (chatroom);
-	if (!account) {
+	gchar       *directory;
+	const gchar *chatroom_id;
+	gchar       *chatroom_id_escaped;
+	gchar       *basedir;
+	gchar       *log_directory;
+	
+	if (!gossip_chatroom_get_account (chatroom)) {
 		return NULL;
 	}
 
@@ -1903,7 +1876,8 @@ gossip_log_get_dates_for_chatroom (GossipChatroom *chatroom)
 		return NULL;
 	}
 
-	basedir = log_get_basedir (account, log_directory);
+	basedir = log_get_basedir (gossip_chatroom_get_account (chatroom),
+				   log_directory);
 
 	chatroom_id = gossip_chatroom_get_id_str (chatroom);
 	chatroom_id_escaped = log_escape (chatroom_id);
@@ -1913,10 +1887,27 @@ gossip_log_get_dates_for_chatroom (GossipChatroom *chatroom)
 				  LOG_DIR_CHATROOMS,
 				  chatroom_id_escaped,
 				  NULL);
-
 	g_free (basedir);
 	g_free (chatroom_id_escaped);
 	g_free (log_directory);
+
+	return directory;
+}
+
+/*
+ * Chatroom functions
+ */
+GList *
+gossip_log_get_dates_for_chatroom (GossipChatroom *chatroom)
+{
+	GList          *dates = NULL;
+	gchar          *date;
+	gchar          *directory;
+	GDir           *dir;
+	const gchar    *filename;
+	const gchar    *p;
+
+	directory = log_get_chatroom_log_dir (chatroom);
 
 	dir = g_dir_open (directory, 0, NULL);
 	if (!dir) {
@@ -1926,6 +1917,8 @@ gossip_log_get_dates_for_chatroom (GossipChatroom *chatroom)
 	}
 
 	gossip_debug (DEBUG_DOMAIN, "Collating a list of dates in:'%s'", directory);
+	
+	g_free (directory);
 
 	while ((filename = g_dir_read_name (dir)) != NULL) {
 		if (!g_str_has_suffix (filename, LOG_FILENAME_SUFFIX)) {
@@ -1941,7 +1934,6 @@ gossip_log_get_dates_for_chatroom (GossipChatroom *chatroom)
 		dates = g_list_insert_sorted (dates, date, (GCompareFunc) strcmp);
 	}
 
-	g_free (directory);
 	g_dir_close (dir);
 
 	gossip_debug (DEBUG_DOMAIN, "Parsed %d dates", g_list_length (dates));
