@@ -1478,7 +1478,6 @@ log_window_chatrooms_get_messages (GossipLogWindow *window,
 	GossipAccount  *account;
 	GossipChatroom *chatroom;
 	GossipContact  *own_contact;
-	GossipContact  *sender;
 	GossipMessage  *message;
 	GList          *messages;
 	GList          *dates = NULL;
@@ -1613,19 +1612,10 @@ log_window_chatrooms_get_messages (GossipLogWindow *window,
 	for (l = messages; l; l = l->next) {
 		message = l->data;
 
-		sender = gossip_message_get_sender (message);
-
-		if (gossip_contact_equal (own_contact, sender)) {
-			gossip_chat_view_append_message_from_self (window->chatview_chatrooms,
-								   message,
-								   own_contact,
-								   NULL);
-		} else {
-			gossip_chat_view_append_message_from_other (window->chatview_chatrooms,
-								    message,
-								    sender,
-								    NULL);
-		}
+		gossip_chat_view_append_message_from_other (window->chatview_chatrooms,
+							    message,
+							    gossip_message_get_sender (message),
+							    NULL);
 	}
 
 	g_list_foreach (messages, (GFunc) g_object_unref, NULL);

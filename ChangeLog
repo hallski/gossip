@@ -1,3 +1,14 @@
+2007-05-22  Mikael Hallendal  <micke@imendio.com>
+
+	* libgossip/gossip-log.c (gossip_log_get_messages_from_chatroom):
+	- Create the GossipContact here directly instead of passing it down to
+	the protocol backend, fixes bug #425906 (Mikael Hallendal)
+
+	* src/gossip-log-window.c (log_window_chatrooms_get_messages):
+	- Mark all messages as sent by someone else as we don't know which ID
+	we happened to have at the time (as it depends on our nick in the
+	chatroom at the time).
+
 2007-05-21  Mikael Hallendal  <micke@imendio.com>
 
 	* libgossip/gossip-log.c (log_get_all_log_files_in_directory): 

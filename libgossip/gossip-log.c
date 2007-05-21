@@ -1294,8 +1294,7 @@ gossip_log_get_contacts (GossipLogManager *manager, GossipAccount *account)
 }
 
 GList *
-gossip_log_get_chatrooms (GossipLogManager *manager,
-			  GossipAccount    *account)
+gossip_log_get_chatrooms (GossipLogManager *manager, GossipAccount *account)
 {
 	GList          *chatrooms = NULL;
 	GossipChatroom *chatroom;
@@ -1445,7 +1444,6 @@ gossip_log_get_messages_for_contact (GossipLogManager *manager,
 				     const gchar      *date)
 {
 	GossipLogManagerPriv *priv;
-	GossipAccount        *account;
 	GossipContact        *own_contact;
 	gchar                *filename;
 	GList                *messages = NULL;
@@ -1492,8 +1490,8 @@ gossip_log_get_messages_for_contact (GossipLogManager *manager,
 		return NULL;
 	}
 
-	account = gossip_contact_get_account (contact);
-	own_contact = gossip_session_get_own_contact (priv->session, account);
+	own_contact = gossip_session_get_own_contact (priv->session, 
+						      gossip_contact_get_account (contact));
 
 	if (gossip_contact_get_name (own_contact) == NULL ||
 	    strcmp (gossip_contact_get_id (own_contact),
@@ -1878,7 +1876,6 @@ gossip_log_get_messages_for_chatroom (GossipLogManager *manager,
 				      const gchar      *date)
 {
 	GossipLogManagerPriv *priv;
-	GossipAccount        *account;
 	GossipContact        *own_contact;
 	gchar                *filename;
 	GList                *messages = NULL;
@@ -1903,8 +1900,8 @@ gossip_log_get_messages_for_chatroom (GossipLogManager *manager,
 	}
 
 	/* Get own contact from log contact. */
-	account = gossip_chatroom_get_account (chatroom);
-	own_contact = gossip_session_get_own_contact (priv->session, account);
+	own_contact = gossip_session_get_own_contact (priv->session, 
+						      gossip_chatroom_get_account (chatroom));
 
 	/* Create parser. */
 	ctxt = xmlNewParserCtxt ();
@@ -1931,7 +1928,6 @@ gossip_log_get_messages_for_chatroom (GossipLogManager *manager,
 
 	/* Now get the messages. */
 	for (node = log_node->children; node; node = node->next) {
-		GossipProtocol *protocol;
 		GossipMessage  *message;
 		GossipContact  *contact;
 		gchar          *time;
@@ -1939,7 +1935,6 @@ gossip_log_get_messages_for_chatroom (GossipLogManager *manager,
 		gchar          *who;
 		gchar          *name;
 		gchar          *body;
-		gboolean        sent = FALSE;
 
 		if (strcmp (node->name, "message") != 0) {
 			continue;
@@ -1956,22 +1951,20 @@ gossip_log_get_messages_for_chatroom (GossipLogManager *manager,
 			continue;
 		}
 
- 		protocol = gossip_session_get_protocol (priv->session, account); 
-		contact = gossip_protocol_new_contact (protocol, who, name);
 		body = xmlNodeGetContent (node);
 
 		time = xmlGetProp (node, "time");
 		t = gossip_time_parse (time);
+		
+		contact = gossip_contact_new_full (GOSSIP_CONTACT_TYPE_CHATROOM,
+						   gossip_chatroom_get_account (chatroom),
+						   who, name);
 
-		sent = gossip_contact_equal (contact, own_contact);
+		message = gossip_message_new (GOSSIP_MESSAGE_TYPE_CHAT_ROOM,
+					      own_contact);
 
-		if (sent) {
-			message = gossip_message_new (GOSSIP_MESSAGE_TYPE_CHAT_ROOM, contact);
-			gossip_message_set_sender (message, own_contact);
-		} else {
-			message = gossip_message_new (GOSSIP_MESSAGE_TYPE_CHAT_ROOM, own_contact);
-			gossip_message_set_sender (message, contact);
-		}
+		gossip_message_set_sender (message, contact);
+		g_object_unref (contact);
 
 		gossip_message_set_body (message, body);
 		gossip_message_set_timestamp (message, t);
@@ -2000,7 +1993,6 @@ gossip_log_message_for_chatroom (GossipLogManager *manager,
 				 gboolean          incoming)
 {
 	GossipLogManagerPriv *priv;
-	GossipAccount        *account;
 	GossipContact        *contact;
 	GossipContact        *own_contact;
 	gchar                *filename;
@@ -2027,8 +2019,8 @@ gossip_log_message_for_chatroom (GossipLogManager *manager,
 
 	contact = gossip_message_get_sender (message);
 
-	account = gossip_chatroom_get_account (chatroom);
-	own_contact = gossip_session_get_own_contact (priv->session, account);
+	own_contact = gossip_session_get_own_contact (priv->session, 
+						      gossip_chatroom_get_account (chatroom));
 
 	filename = log_get_filename_by_date_for_chatroom (chatroom, NULL);
 
