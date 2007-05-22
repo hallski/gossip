@@ -16,8 +16,6 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * Authors: Martyn Russell <martyn@imendio.com>
  */
 
 #include "config.h"
@@ -773,6 +771,16 @@ gossip_chatroom_set_favourite (GossipChatroom *chatroom,
 	g_object_notify (G_OBJECT (chatroom), "favourite");
 }
 
+static void
+chatroom_clear_contacts (GossipChatroom *chatroom)
+{
+	GossipChatroomPriv *priv;
+
+	priv = GET_PRIV (chatroom);
+
+	g_hash_table_remove_all (priv->contacts);
+}
+
 void
 gossip_chatroom_set_status (GossipChatroom       *chatroom,
 			    GossipChatroomStatus  status)
@@ -784,6 +792,10 @@ gossip_chatroom_set_status (GossipChatroom       *chatroom,
 	priv = GET_PRIV (chatroom);
 
 	priv->status = status;
+
+	if (status == GOSSIP_CHATROOM_STATUS_INACTIVE) {
+		chatroom_clear_contacts (chatroom);
+	}
 
 	g_object_notify (G_OBJECT (chatroom), "status");
 }

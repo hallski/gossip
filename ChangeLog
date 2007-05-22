@@ -1,5 +1,11 @@
 2007-05-22  Mikael Hallendal  <micke@imendio.com>
 
+	* libgossip/gossip-chatroom.c (gossip_chatroom_set_status):
+	- Clear the contact list when leaving the chatroom.
+	- Fixes bug #433637 (Mikael Hallendal)
+
+2007-05-22  Mikael Hallendal  <micke@imendio.com>
+
 	* libgossip/gossip-log.c (gossip_log_get_messages_from_chatroom):
 	- Create the GossipContact here directly instead of passing it down to
 	the protocol backend, fixes bug #425906 (Mikael Hallendal)
