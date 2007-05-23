@@ -590,6 +590,25 @@ app_restore_main_window_geometry (GtkWidget *main_window)
 }
 
 static void
+app_setup_contact_list (GtkWidget *scrolled_window)
+{
+	GossipAppPriv *priv;
+
+	priv = GET_PRIV (app);
+
+	priv->contact_list = gossip_contact_list_new ();
+
+	g_signal_connect (priv->contact_list, "contact-activated",
+			  G_CALLBACK (app_contact_activated_cb),
+			  NULL);
+
+	/* Finish setting up contact list. */
+	gtk_widget_show (GTK_WIDGET (priv->contact_list));
+	gtk_container_add (GTK_CONTAINER (scrolled_window),
+			   GTK_WIDGET (priv->contact_list));
+}
+
+static void
 app_setup (GossipSession *session)
 {
 	GossipAppPriv *priv;
@@ -739,12 +758,7 @@ app_setup (GossipSession *session)
 	
 	app_setup_throbber ();
 
-	/* Set up contact list. */
-	priv->contact_list = gossip_contact_list_new ();
-
-	g_signal_connect (priv->contact_list, "contact-activated",
-			  G_CALLBACK (app_contact_activated_cb),
-			  NULL);
+	app_setup_contact_list (sw);
 
 	/* Set up notification area / tray. */
 	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring notification area widgets");
@@ -752,11 +766,6 @@ app_setup (GossipSession *session)
 	app_status_icon_create ();
 
 	app_setup_presences ();
-
-	/* Finish setting up contact list. */
-	gtk_widget_show (GTK_WIDGET (priv->contact_list));
-	gtk_container_add (GTK_CONTAINER (sw),
-			   GTK_WIDGET (priv->contact_list));
 
 	app_restore_user_accels ();
 

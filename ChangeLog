@@ -1,5 +1,9 @@
 2007-05-24  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-app.c (app_setup): Factored out app_setup_main_window.
+
+2007-05-24  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-app.c (app_restore_user_accels, app_save_user_accels):
 	- Renamed from app_accels_load/app_accels_save to make the name a bit
 	more descriptive and remove reduntant code comment.
