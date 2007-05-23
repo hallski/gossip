@@ -758,7 +758,6 @@ app_setup (GossipSession *session)
 	
 	app_setup_throbber ();
 
-	app_setup_contact_list (sw);
 
 	/* Set up notification area / tray. */
 	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring notification area widgets");
@@ -770,6 +769,9 @@ app_setup (GossipSession *session)
 	app_restore_user_accels ();
 
 	app_restore_main_window_geometry (priv->window);
+
+	/* Setup the contact list */
+	app_setup_contact_list (sw);
 
 	/* Set up 'show_offline' config hooks to know when it changes. */
 	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring miscellaneous settings");
