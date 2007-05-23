@@ -16,11 +16,6 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * Authors: Mikael Hallendal <micke@imendio.com>
- *          Richard Hult <richard@imendio.com>
- *          Martyn Russell <martyn@imendio.com>
- *          Kevin Dougherty <gossip@kdough.net>
  */
 
 #include "config.h"
@@ -1471,6 +1466,14 @@ app_session_protocol_connecting_cb (GossipSession  *session,
 
 	ephy_spinner_start (EPHY_SPINNER (priv->throbber));
 }
+static void
+app_restore_saved_presence (void)
+{
+	gossip_app_set_presence (gossip_status_presets_get_default_state (),
+				 gossip_status_presets_get_default_status());
+
+	app_presence_updated ();
+}
 
 static void
 app_session_protocol_connected_cb (GossipSession  *session,
@@ -1502,11 +1505,7 @@ app_session_protocol_connected_cb (GossipSession  *session,
 	app_connection_items_update ();
 	app_favorite_chatroom_menu_update ();
 
-	/* Use saved presence */
-	gossip_app_set_presence (gossip_status_presets_get_default_state (),
-				 gossip_status_presets_get_default_status());
-
-	app_presence_updated ();
+	app_restore_saved_presence ();
 }
 
 static void
