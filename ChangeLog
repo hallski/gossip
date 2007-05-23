@@ -1,5 +1,9 @@
 2007-05-23  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-app.c (app_setup): Factor out app_setup_presences. 
+
+2007-05-23  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-app.c (app_setup): Factor out app_setup_presence_chooser
 	and app_setup_throbber.
 

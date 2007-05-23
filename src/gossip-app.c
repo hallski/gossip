@@ -538,6 +538,27 @@ app_setup_throbber (void)
 }
 
 static void
+app_setup_presences (void)
+{
+	GossipAppPriv *priv;
+
+	priv = GET_PRIV (app);
+
+	/* Get saved presence presets. */
+	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring presets");
+	gossip_status_presets_get_all ();
+
+	/* Set up saved presence information. */
+	priv->presence = gossip_presence_new ();
+	gossip_presence_set_state (priv->presence,
+				   GOSSIP_PRESENCE_STATE_AVAILABLE);
+	priv->away_presence = NULL;
+
+	/* Set the idle time checker. */
+	g_timeout_add (2 * 1000, (GSourceFunc) app_idle_check_cb, app);
+}
+
+static void
 app_setup (GossipSession *session)
 {
 	GossipAppPriv *priv;
@@ -695,15 +716,7 @@ app_setup (GossipSession *session)
 			  G_CALLBACK (app_contact_activated_cb),
 			  NULL);
 
-	/* Get saved presence presets. */
-	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring presets");
-	gossip_status_presets_get_all ();
-
-	/* Set up saved presence information. */
-	priv->presence = gossip_presence_new ();
-	gossip_presence_set_state (priv->presence,
-				   GOSSIP_PRESENCE_STATE_AVAILABLE);
-	priv->away_presence = NULL;
+	app_setup_presences ();
 
 	/* Finish setting up contact list. */
 	gtk_widget_show (GTK_WIDGET (priv->contact_list));
@@ -713,9 +726,6 @@ app_setup (GossipSession *session)
 	/* Load user-defined accelerators. */
 	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring accels");
 	app_accels_load ();
-
-	/* Set the idle time checker. */
-	g_timeout_add (2 * 1000, (GSourceFunc) app_idle_check_cb, app);
 
 	/* Set window size. */
 	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring window geometry...");
