@@ -476,6 +476,68 @@ app_finalize (GObject *object)
 }
 
 static void
+app_setup_presence_chooser ()
+{
+	GossipAppPriv *priv;
+	GtkToolItem   *item;
+
+	priv = GET_PRIV (app);
+
+	priv->presence_chooser = gossip_presence_chooser_new ();
+	gtk_widget_show (priv->presence_chooser);
+	gossip_presence_chooser_set_flash_interval (GOSSIP_PRESENCE_CHOOSER (priv->presence_chooser),
+						    FLASH_TIMEOUT);
+
+	item = gtk_tool_item_new ();
+	gtk_widget_show (GTK_WIDGET (item));
+	gtk_container_add (GTK_CONTAINER (item), priv->presence_chooser);
+	gtk_tool_item_set_is_important (item, TRUE);
+	gtk_tool_item_set_expand (item, TRUE);
+	gtk_toolbar_insert (GTK_TOOLBAR (priv->presence_toolbar), item, -1);
+
+	g_signal_connect (priv->presence_chooser,
+			  "changed",
+			  G_CALLBACK (app_presence_chooser_changed_cb),
+			  NULL);
+
+	priv->widgets_connected = g_list_prepend (priv->widgets_connected,
+						  priv->presence_chooser);
+}
+
+static void
+app_setup_throbber (void)
+{
+	GossipAppPriv *priv;
+	GtkWidget     *ebox;
+	GtkToolItem   *item;
+	gchar         *str;
+
+	priv = GET_PRIV (app);
+
+	ebox = gtk_event_box_new ();
+	gtk_event_box_set_visible_window (GTK_EVENT_BOX (ebox), FALSE);
+
+	priv->throbber = ephy_spinner_new ();
+	ephy_spinner_set_size (EPHY_SPINNER (priv->throbber), GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_container_add (GTK_CONTAINER (ebox), priv->throbber);
+
+	item = gtk_tool_item_new ();
+	gtk_container_add (GTK_CONTAINER (item), ebox);
+	gtk_widget_show_all (GTK_WIDGET (item));
+
+	gtk_toolbar_insert (GTK_TOOLBAR (priv->presence_toolbar), item, -1);
+
+	str = _("Show and edit accounts");
+	gtk_tooltips_set_tip (GTK_TOOLTIPS (priv->tooltips),
+			      ebox, str, str);
+
+	g_signal_connect (ebox,
+			  "button-press-event",
+			  G_CALLBACK (app_throbber_button_press_event_cb),
+			  NULL);
+}
+
+static void
 app_setup (GossipSession *session)
 {
 	GossipAppPriv *priv;
@@ -483,8 +545,6 @@ app_setup (GossipSession *session)
 	GladeXML      *glade;
 	GtkWidget     *sw;
 	GtkWidget     *show_offline_widget;
-	GtkWidget     *ebox;
-	GtkToolItem   *item;
 	gchar         *str;
 	gboolean       show_offline;
 	gboolean       show_avatars;
@@ -621,50 +681,12 @@ app_setup (GossipSession *session)
 	app_connection_items_setup (glade);
 	g_object_unref (glade);
 
-	/* Set up presence chooser */
+	/* Setup specialised widgets */
 	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring specialised widgets");
-	priv->presence_chooser = gossip_presence_chooser_new ();
-	gtk_widget_show (priv->presence_chooser);
-	gossip_presence_chooser_set_flash_interval (GOSSIP_PRESENCE_CHOOSER (priv->presence_chooser),
-						    FLASH_TIMEOUT);
 
-	item = gtk_tool_item_new ();
-	gtk_widget_show (GTK_WIDGET (item));
-	gtk_container_add (GTK_CONTAINER (item), priv->presence_chooser);
-	gtk_tool_item_set_is_important (item, TRUE);
-	gtk_tool_item_set_expand (item, TRUE);
-	gtk_toolbar_insert (GTK_TOOLBAR (priv->presence_toolbar), item, -1);
-
-	g_signal_connect (priv->presence_chooser,
-			  "changed",
-			  G_CALLBACK (app_presence_chooser_changed_cb),
-			  NULL);
-
-	priv->widgets_connected = g_list_prepend (priv->widgets_connected,
-						  priv->presence_chooser);
-
-	/* Set up the throbber */
-	ebox = gtk_event_box_new ();
-	gtk_event_box_set_visible_window (GTK_EVENT_BOX (ebox), FALSE);
-
-	priv->throbber = ephy_spinner_new ();
-	ephy_spinner_set_size (EPHY_SPINNER (priv->throbber), GTK_ICON_SIZE_LARGE_TOOLBAR);
-	gtk_container_add (GTK_CONTAINER (ebox), priv->throbber);
-
-	item = gtk_tool_item_new ();
-	gtk_container_add (GTK_CONTAINER (item), ebox);
-	gtk_widget_show_all (GTK_WIDGET (item));
-
-	gtk_toolbar_insert (GTK_TOOLBAR (priv->presence_toolbar), item, -1);
-
-	str = _("Show and edit accounts");
-	gtk_tooltips_set_tip (GTK_TOOLTIPS (priv->tooltips),
-			      ebox, str, str);
-
-	g_signal_connect (ebox,
-			  "button-press-event",
-			  G_CALLBACK (app_throbber_button_press_event_cb),
-			  NULL);
+	app_setup_presence_chooser ();
+	
+	app_setup_throbber ();
 
 	/* Set up contact list. */
 	priv->contact_list = gossip_contact_list_new ();
@@ -1466,6 +1488,7 @@ app_session_protocol_connecting_cb (GossipSession  *session,
 
 	ephy_spinner_start (EPHY_SPINNER (priv->throbber));
 }
+
 static void
 app_restore_saved_presence (void)
 {

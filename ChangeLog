@@ -1,5 +1,10 @@
 2007-05-23  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-app.c (app_setup): Factor out app_setup_presence_chooser
+	and app_setup_throbber.
+
+2007-05-23  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-app.c (app_session_protocol_connected_cb): Split out
 	app_restore_saved_presence.
 
