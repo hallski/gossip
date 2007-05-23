@@ -272,8 +272,8 @@ static void            app_session_protocol_error_cb          (GossipSession    
 static gchar *         app_session_get_password_cb            (GossipSession            *session,
 							       GossipAccount            *account,
 							       gpointer                  user_data);
-static void            app_accels_load                        (void);
-static void            app_accels_save                        (void);
+static void            app_restore_user_accels                (void);
+static void            app_save_user_accels                   (void);
 static void            app_show_hide_list_cb                  (GtkWidget                *widget,
 							       GossipApp                *app);
 static void            app_popup_new_message_cb               (GtkWidget                *widget,
@@ -758,9 +758,7 @@ app_setup (GossipSession *session)
 	gtk_container_add (GTK_CONTAINER (sw),
 			   GTK_WIDGET (priv->contact_list));
 
-	/* Load user-defined accelerators. */
-	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring accels");
-	app_accels_load ();
+	app_restore_user_accels ();
 
 	app_restore_main_window_geometry (priv->window);
 
@@ -973,8 +971,7 @@ app_main_window_destroy_cb (GtkWidget *window,
 		gossip_session_disconnect (priv->session, NULL);
 	}
 
-	/* Save user-defined accelerators. */
-	app_accels_save ();
+	app_save_user_accels ();
 
 #ifdef DEBUG_QUIT
 	gtk_main_quit ();
@@ -1679,10 +1676,11 @@ app_session_get_password_cb (GossipSession *session,
  * Accels
  */
 static void
-app_accels_load (void)
+app_restore_user_accels (void)
 {
 	gchar *filename;
 
+	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring accels");
 	filename = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, ACCELS_FILENAME, NULL);
 	if (g_file_test (filename, G_FILE_TEST_EXISTS)) {
 		gossip_debug (DEBUG_DOMAIN_ACCELS, "Loading from:'%s'", filename);
@@ -1693,7 +1691,7 @@ app_accels_load (void)
 }
 
 static void
-app_accels_save (void)
+app_save_user_accels (void)
 {
 	gchar *dir;
 	gchar *file_with_path;
