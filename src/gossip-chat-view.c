@@ -308,7 +308,7 @@ gossip_chat_view_init (GossipChatView *view)
 
 	priv->notify_system_fonts_id =
 		gossip_conf_notify_add (gossip_conf_get (),
-					 "/desktop/gnome/interface/document_font_name",
+					 "/desktop/gnome/interface/monospace_font_name",
 					 chat_view_notify_system_font_cb,
 					 view);
 	chat_view_system_font_update (view);
@@ -433,7 +433,7 @@ chat_view_system_font_update (GossipChatView *view)
 	gchar                *font_name;
 
 	if (gossip_conf_get_string (gossip_conf_get (),
-				     "/desktop/gnome/interface/document_font_name",
+				     "/desktop/gnome/interface/monospace_font_name",
 				     &font_name) && font_name) {
 		font_description = pango_font_description_from_string (font_name);
 		g_free (font_name);
