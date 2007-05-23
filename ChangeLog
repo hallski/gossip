@@ -1,3 +1,14 @@
+2007-05-24  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-app.c (app_setup_presences): Call app_presence_update
+	from here.
+
+	* src/gossip-app.c (app_setup): Create the status icon and menu before
+	calling app_setup_presences.
+
+	* src/gossip-app.c (app_status_icon_create): Use offline icon here as
+	we are always going to be offline when starting.
+
 2007-05-23  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-app.c (app_setup): Factor out app_setup_presences. 

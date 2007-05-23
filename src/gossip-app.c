@@ -556,6 +556,9 @@ app_setup_presences (void)
 
 	/* Set the idle time checker. */
 	g_timeout_add (2 * 1000, (GSourceFunc) app_idle_check_cb, app);
+
+	/* Set up current presence. */
+	app_presence_updated ();
 }
 
 static void
@@ -716,6 +719,11 @@ app_setup (GossipSession *session)
 			  G_CALLBACK (app_contact_activated_cb),
 			  NULL);
 
+	/* Set up notification area / tray. */
+	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring notification area widgets");
+	app_status_icon_create_menu ();
+	app_status_icon_create ();
+
 	app_setup_presences ();
 
 	/* Finish setting up contact list. */
@@ -747,13 +755,6 @@ app_setup (GossipSession *session)
 		gtk_window_move (GTK_WINDOW (priv->window), x, y);
 	}
 
-	/* Set up notification area / tray. */
-	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring notification area widgets");
-	app_status_icon_create_menu ();
-	app_status_icon_create ();
-
-	/* Set up current presence. */
-	app_presence_updated ();
 
 	/* Set up 'show_offline' config hooks to know when it changes. */
 	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring miscellaneous settings");
@@ -1889,7 +1890,9 @@ app_status_icon_create (void)
 
 	priv = GET_PRIV (app);
 
-	pixbuf = app_get_current_status_pixbuf ();
+	pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_OFFLINE,
+					   GTK_ICON_SIZE_MENU);
+	
 	priv->status_icon = gtk_status_icon_new_from_pixbuf (pixbuf);
 	g_object_unref (pixbuf);
 
