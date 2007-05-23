@@ -1,5 +1,10 @@
 2007-05-24  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-app.c (app_setup): Factored out
+	app_restore_main_window_geometry.
+
+2007-05-24  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-app.c (app_setup_presences): Call app_presence_update
 	from here.
 

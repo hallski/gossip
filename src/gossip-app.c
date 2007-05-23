@@ -562,6 +562,34 @@ app_setup_presences (void)
 }
 
 static void
+app_restore_main_window_geometry (GtkWidget *main_window)
+{
+	GossipAppPriv *priv;
+	gint           x, y, w, h;
+
+	priv = GET_PRIV (app);
+
+	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring window geometry...");
+	gossip_geometry_load_for_main_window (&x, &y, &w, &h);
+
+	if (w >= 1 && h >= 1) {
+		/* Use the defaults from the glade file if we
+		 * don't have good w, h geometry.
+		 */
+		gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring window default size w:%d, h:%d", w, h);
+		gtk_window_set_default_size (GTK_WINDOW (main_window), w, h);
+	}
+
+	if (x >= 0 && y >= 0) {
+		/* Let the window manager position it if we
+		 * don't have good x, y coordinates.
+		 */
+		gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring window default position x:%d, y:%d", x, y);
+		gtk_window_move (GTK_WINDOW (main_window), x, y);
+	}
+}
+
+static void
 app_setup (GossipSession *session)
 {
 	GossipAppPriv *priv;
@@ -573,7 +601,6 @@ app_setup (GossipSession *session)
 	gboolean       show_offline;
 	gboolean       show_avatars;
 	gboolean       compact_contact_list;
-	gint           x, y, w, h;
 
 	gossip_debug (DEBUG_DOMAIN_SETUP, "Beginning...");
 
@@ -735,26 +762,7 @@ app_setup (GossipSession *session)
 	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring accels");
 	app_accels_load ();
 
-	/* Set window size. */
-	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring window geometry...");
-	gossip_geometry_load_for_main_window (&x, &y, &w, &h);
-
-	if (w >= 1 && h >= 1) {
-		/* Use the defaults from the glade file if we
-		 * don't have good w, h geometry.
-		 */
-		gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring window default size w:%d, h:%d", w, h);
-		gtk_window_set_default_size (GTK_WINDOW (priv->window), w, h);
-	}
-
-	if (x >= 0 && y >= 0) {
-		/* Let the window manager position it if we
-		 * don't have good x, y coordinates.
-		 */
-		gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring window default position x:%d, y:%d", x, y);
-		gtk_window_move (GTK_WINDOW (priv->window), x, y);
-	}
-
+	app_restore_main_window_geometry (priv->window);
 
 	/* Set up 'show_offline' config hooks to know when it changes. */
 	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring miscellaneous settings");
