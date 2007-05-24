@@ -1,5 +1,9 @@
 2007-05-24  Mikael Hallendal  <micke@imendio.com>
 
+	* configure.ac: Bumped Loudmouth requirement to 1.2.2
+
+2007-05-24  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-app.c (app_setup): Moved call to app_setup_contact_list.
 
 2007-05-24  Mikael Hallendal  <micke@imendio.com>
