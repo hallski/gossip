@@ -1,4 +1,12 @@
 2007-05-25  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-foo.[ch] (gossip_foo_get_current_state): Factored
+	out from GossipApp.
+
+	* src/gosspi-app.c: Factored out app_get_current_state and put it in
+	GossipFoo.
+
+2007-05-25  Mikael Hallendal  <micke@imendio.com>
 	
 	* src/gossip-foo.[ch] (gossip_foo_get_effective_presence): Factored
 	out from GossipApp.

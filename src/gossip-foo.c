@@ -20,6 +20,7 @@
 
 #include "config.h"
 
+#include "gossip-app.h"
 #include "gossip-foo.h"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_FOO, GossipFooPriv))
@@ -220,5 +221,18 @@ gossip_foo_get_effective_presence (GossipFoo *foo)
 	}
 
 	return priv->presence;
+}
+
+GossipPresenceState
+gossip_foo_get_current_state (GossipFoo *foo)
+{
+	g_return_val_if_fail (GOSSIP_IS_FOO (foo), 
+			      GOSSIP_PRESENCE_STATE_UNAVAILABLE);
+
+	if (!gossip_session_is_connected (gossip_app_get_session (), NULL)) {
+		return GOSSIP_PRESENCE_STATE_UNAVAILABLE;
+	}
+
+	return gossip_presence_get_state (gossip_foo_get_effective_presence (foo));
 }
 

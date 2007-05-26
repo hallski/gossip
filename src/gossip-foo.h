@@ -55,6 +55,7 @@ void              gossip_foo_set_away_presence      (GossipFoo *foo,
 						     GossipPresence *presence);
 
 GossipPresence *  gossip_foo_get_effective_presence (GossipFoo *foo);
+GossipPresenceState  gossip_foo_get_current_state   (GossipFoo *foo);
 
 G_END_DECLS
 
