@@ -75,6 +75,9 @@ static GossipPresence *   foo_get_presence (GossipFoo           *foo);
 static GossipPresence *   foo_get_away_presence (GossipFoo *foo);
 static void               foo_set_away_presence (GossipFoo *foo,
 						 GossipPresence *presence);
+static void               foo_set_away          (GossipFoo   *foo,
+						 const gchar *status);
+
 
 enum {
 	PROP_0,
@@ -265,7 +268,7 @@ foo_set_away_presence (GossipFoo *foo, GossipPresence *presence)
 }
 
 void
-gossip_foo_set_away (GossipFoo *foo, const gchar *status)
+foo_set_away (GossipFoo *foo, const gchar *status)
 {
 	GossipFooPriv *priv;
 
@@ -463,7 +466,7 @@ gossip_foo_idle_check_cb (GossipFoo *foo)
 		 state != GOSSIP_PRESENCE_STATE_EXT_AWAY &&
 		 idle > AWAY_TIME) {
 		gossip_debug (DEBUG_DOMAIN_IDLE, "Going to away...");
-		gossip_foo_set_away (foo, NULL);
+		foo_set_away (foo, NULL);
 		presence_changed = TRUE;
 	}
 	else if (state == GOSSIP_PRESENCE_STATE_AWAY ||
@@ -537,7 +540,7 @@ gossip_foo_set_state_status (GossipFoo           *foo,
 		gossip_foo_clear_away (foo);
 	} else {
 		gossip_foo_start_flash (foo);
-		gossip_foo_set_away (foo, status);
+		foo_set_away (foo, status);
 		gossip_foo_updated (foo);
 	}
 }
