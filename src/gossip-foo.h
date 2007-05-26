@@ -55,15 +55,9 @@ GdkPixbuf *          gossip_foo_get_current_status_pixbuf (GossipFoo *foo);
 GdkPixbuf *          gossip_foo_get_explicit_status_pixbuf (GossipFoo *foo);
 
 time_t               gossip_foo_get_leave_time            (GossipFoo *foo);
-void                 gossip_foo_set_leave_time            (GossipFoo *foo,
-							   time_t     t);
-void                 gossip_foo_start_flash               (GossipFoo *foo);
 void                 gossip_foo_stop_flash                (GossipFoo *foo);
 void                 gossip_foo_updated                   (GossipFoo *foo);
 
-/* clears status data from autoaway mode */
-void                 gossip_foo_clear_away                (GossipFoo *foo);
-gboolean             gossip_foo_idle_check_cb             (GossipFoo *foo);
 void                 gossip_foo_set_not_away              (GossipFoo *foo);
 void                 gossip_foo_set_state_status          (GossipFoo *foo,
 							   GossipPresenceState state,

@@ -77,7 +77,13 @@ static void               foo_set_away_presence (GossipFoo *foo,
 						 GossipPresence *presence);
 static void               foo_set_away          (GossipFoo   *foo,
 						 const gchar *status);
+static void               foo_set_leave_time    (GossipFoo *foo,
+						 time_t     t);
 
+static void               foo_start_flash       (GossipFoo *foo);
+/* clears status data from autoaway mode */
+static void               foo_clear_away        (GossipFoo *foo);
+static gboolean           foo_idle_check_cb     (GossipFoo *foo);
 
 enum {
 	PROP_0,
@@ -163,7 +169,7 @@ gossip_foo_init (GossipFoo *foo)
 
 	/* Set the idle time checker. */
 	g_timeout_add (2 * 1000, 
-		       (GSourceFunc) gossip_foo_idle_check_cb, foo);
+		       (GSourceFunc) foo_idle_check_cb, foo);
 
 }
 
@@ -236,6 +242,124 @@ foo_get_presence (GossipFoo *foo)
 	return priv->presence;
 }
 
+static void
+foo_set_leave_time (GossipFoo *foo, time_t t)
+{
+	GossipFooPriv *priv;
+
+	priv = GET_PRIV (foo);
+
+	priv->leave_time = t;
+}
+
+static void
+foo_start_flash (GossipFoo *foo)
+{
+	g_signal_emit (foo, signals[START_FLASH], 0);
+}
+
+static void
+foo_clear_away (GossipFoo *foo)
+{
+	GossipFooPriv *priv;
+
+	priv = GET_PRIV (foo);
+
+	foo_set_away_presence (foo, NULL);
+
+	/* Clear the default state */
+	gossip_status_presets_clear_default ();
+
+	foo_set_leave_time (foo, 0);
+	gossip_foo_stop_flash (foo);
+
+	/* Force this so we don't get a delay in the display */
+	gossip_foo_updated (foo);
+}
+
+static gboolean
+foo_idle_check_cb (GossipFoo *foo)
+{
+	GossipFooPriv       *priv;
+	gint32               idle;
+	GossipPresenceState  state;
+	gboolean             presence_changed = FALSE;
+
+	priv = GET_PRIV (foo);
+
+	if (!gossip_app_is_connected ()) {
+		return TRUE;
+	}
+
+	idle = gossip_idle_get_seconds ();
+	state = gossip_presence_get_state (gossip_foo_get_effective_presence (foo));
+
+	/* gossip_debug (DEBUG_DOMAIN_IDLE, "Idle for:%d", idle); */
+
+	/* We're going away, allow some slack. */
+	if (gossip_foo_get_leave_time (foo) > 0) {
+		if (time (NULL) - gossip_foo_get_leave_time (foo) > LEAVE_SLACK) {
+			foo_set_leave_time (foo, 0);
+			gossip_foo_stop_flash (foo);
+
+			gossip_idle_reset ();
+			gossip_debug (DEBUG_DOMAIN_IDLE, "OK, away now.");
+		}
+
+		return TRUE;
+	}
+	else if (state != GOSSIP_PRESENCE_STATE_EXT_AWAY &&
+		 idle > EXT_AWAY_TIME) {
+		/* Presence may be idle if the screensaver has been started and
+		 * hence no away_presence set.
+		 */
+		if (!foo_get_away_presence (foo)) {
+			GossipPresence *presence;
+
+			presence = gossip_presence_new ();
+			foo_set_away_presence (foo, presence);
+			g_object_unref (presence);
+		}
+
+		/* Presence will already be away. */
+		gossip_debug (DEBUG_DOMAIN_IDLE, "Going to ext away...");
+		gossip_presence_set_state (foo_get_away_presence (foo),
+					   GOSSIP_PRESENCE_STATE_EXT_AWAY);
+		presence_changed = TRUE;
+	}
+	else if (state != GOSSIP_PRESENCE_STATE_AWAY &&
+		 state != GOSSIP_PRESENCE_STATE_EXT_AWAY &&
+		 idle > AWAY_TIME) {
+		gossip_debug (DEBUG_DOMAIN_IDLE, "Going to away...");
+		foo_set_away (foo, NULL);
+		presence_changed = TRUE;
+	}
+	else if (state == GOSSIP_PRESENCE_STATE_AWAY ||
+		 state == GOSSIP_PRESENCE_STATE_EXT_AWAY) {
+		/* Allow some slack before returning from away. */
+		if (idle >= -BACK_SLACK && idle <= 0) {
+			/* gossip_debug (DEBUG_DOMAIN_IDLE, "Slack, do nothing."); */
+			foo_start_flash (foo);
+		}
+		else if (idle < -BACK_SLACK) {
+			gossip_debug (DEBUG_DOMAIN_IDLE, "No more slack, break interrupted.");
+			foo_clear_away (foo);
+			return TRUE;
+		}
+		else if (idle > BACK_SLACK) {
+			/* gossip_debug (DEBUG_DOMAIN_IDLE, "Don't interrupt break."); */
+			gossip_foo_stop_flash (foo);
+		}
+	}
+
+	if (presence_changed) {
+		gossip_foo_updated (foo);
+	}
+
+	return TRUE;
+}
+
+
 GossipPresence *
 foo_get_away_presence (GossipFoo *foo)
 {
@@ -284,7 +408,7 @@ foo_set_away (GossipFoo *foo, const gchar *status)
 		g_object_unref (presence);
 	}
 
-	gossip_foo_set_leave_time (foo, time (NULL));
+	foo_set_leave_time (foo, time (NULL));
 	gossip_idle_reset ();
 
 	if (status) {
@@ -366,22 +490,6 @@ gossip_foo_get_leave_time (GossipFoo *foo)
 }
 
 void
-gossip_foo_set_leave_time (GossipFoo *foo, time_t t)
-{
-	GossipFooPriv *priv;
-
-	priv = GET_PRIV (foo);
-
-	priv->leave_time = t;
-}
-
-void
-gossip_foo_start_flash (GossipFoo *foo)
-{
-	g_signal_emit (foo, signals[START_FLASH], 0);
-}
-
-void
 gossip_foo_stop_flash (GossipFoo *foo)
 {
 	g_signal_emit (foo, signals[STOP_FLASH], 0);
@@ -394,107 +502,6 @@ gossip_foo_updated (GossipFoo *foo)
 }
 
 void
-gossip_foo_clear_away (GossipFoo *foo)
-{
-	GossipFooPriv *priv;
-
-	priv = GET_PRIV (foo);
-
-	foo_set_away_presence (foo, NULL);
-
-	/* Clear the default state */
-	gossip_status_presets_clear_default ();
-
-	gossip_foo_set_leave_time (foo, 0);
-	gossip_foo_stop_flash (foo);
-
-	/* Force this so we don't get a delay in the display */
-	gossip_foo_updated (foo);
-}
-
-gboolean
-gossip_foo_idle_check_cb (GossipFoo *foo)
-{
-	GossipFooPriv       *priv;
-	gint32               idle;
-	GossipPresenceState  state;
-	gboolean             presence_changed = FALSE;
-
-	priv = GET_PRIV (foo);
-
-	if (!gossip_app_is_connected ()) {
-		return TRUE;
-	}
-
-	idle = gossip_idle_get_seconds ();
-	state = gossip_presence_get_state (gossip_foo_get_effective_presence (foo));
-
-	/* gossip_debug (DEBUG_DOMAIN_IDLE, "Idle for:%d", idle); */
-
-	/* We're going away, allow some slack. */
-	if (gossip_foo_get_leave_time (foo) > 0) {
-		if (time (NULL) - gossip_foo_get_leave_time (foo) > LEAVE_SLACK) {
-			gossip_foo_set_leave_time (foo, 0);
-			gossip_foo_stop_flash (foo);
-
-			gossip_idle_reset ();
-			gossip_debug (DEBUG_DOMAIN_IDLE, "OK, away now.");
-		}
-
-		return TRUE;
-	}
-	else if (state != GOSSIP_PRESENCE_STATE_EXT_AWAY &&
-		 idle > EXT_AWAY_TIME) {
-		/* Presence may be idle if the screensaver has been started and
-		 * hence no away_presence set.
-		 */
-		if (!foo_get_away_presence (foo)) {
-			GossipPresence *presence;
-
-			presence = gossip_presence_new ();
-			foo_set_away_presence (foo, presence);
-			g_object_unref (presence);
-		}
-
-		/* Presence will already be away. */
-		gossip_debug (DEBUG_DOMAIN_IDLE, "Going to ext away...");
-		gossip_presence_set_state (foo_get_away_presence (foo),
-					   GOSSIP_PRESENCE_STATE_EXT_AWAY);
-		presence_changed = TRUE;
-	}
-	else if (state != GOSSIP_PRESENCE_STATE_AWAY &&
-		 state != GOSSIP_PRESENCE_STATE_EXT_AWAY &&
-		 idle > AWAY_TIME) {
-		gossip_debug (DEBUG_DOMAIN_IDLE, "Going to away...");
-		foo_set_away (foo, NULL);
-		presence_changed = TRUE;
-	}
-	else if (state == GOSSIP_PRESENCE_STATE_AWAY ||
-		 state == GOSSIP_PRESENCE_STATE_EXT_AWAY) {
-		/* Allow some slack before returning from away. */
-		if (idle >= -BACK_SLACK && idle <= 0) {
-			/* gossip_debug (DEBUG_DOMAIN_IDLE, "Slack, do nothing."); */
-			gossip_foo_start_flash (foo);
-		}
-		else if (idle < -BACK_SLACK) {
-			gossip_debug (DEBUG_DOMAIN_IDLE, "No more slack, break interrupted.");
-			gossip_foo_clear_away (foo);
-			return TRUE;
-		}
-		else if (idle > BACK_SLACK) {
-			/* gossip_debug (DEBUG_DOMAIN_IDLE, "Don't interrupt break."); */
-			gossip_foo_stop_flash (foo);
-		}
-	}
-
-	if (presence_changed) {
-		gossip_foo_updated (foo);
-	}
-
-	return TRUE;
-}
-
-void
 gossip_foo_set_not_away (GossipFoo *foo)
 {
 	/* If we just left, allow some slack. */
@@ -503,7 +510,7 @@ gossip_foo_set_not_away (GossipFoo *foo)
 	}
 
 	if (foo_get_away_presence (foo)) {
-		gossip_foo_clear_away (foo);
+		foo_clear_away (foo);
 	}
 }
 
@@ -537,9 +544,9 @@ gossip_foo_set_state_status (GossipFoo           *foo,
 			      "state", state, NULL);
 
 		gossip_foo_stop_flash (foo);
-		gossip_foo_clear_away (foo);
+		foo_clear_away (foo);
 	} else {
-		gossip_foo_start_flash (foo);
+		foo_start_flash (foo);
 		foo_set_away (foo, status);
 		gossip_foo_updated (foo);
 	}

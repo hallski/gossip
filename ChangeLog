@@ -1,5 +1,9 @@
 2007-05-26  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-foo.[ch]: Privatized functions.
+
+2007-05-26  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-foo.[ch]: Privatized gossip_foo_set_away.
 
 2007-05-26  Mikael Hallendal  <micke@imendio.com>
