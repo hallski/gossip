@@ -229,10 +229,13 @@ subscription_dialog_event_activated_cb (GossipEventManager *event_manager,
 static void
 subscription_dialog_show (GossipSubscriptionDialog *dialog)
 {
-	GtkSizeGroup *size_group;
-	gchar        *who;
-	gchar        *question;
-	gchar        *str;
+	GossipSession        *session;
+	GossipAccountManager *account_manager;
+	guint                 n;
+	GtkSizeGroup         *size_group;
+	gchar                *who;
+	gchar                *question;
+	gchar                *str;
 
 	gossip_session_get_vcard (gossip_app_get_session (),
 				  NULL,
@@ -269,7 +272,26 @@ subscription_dialog_show (GossipSubscriptionDialog *dialog)
 
 	gtk_entry_set_text (GTK_ENTRY (dialog->name_entry),
 			    gossip_contact_get_id (dialog->contact));
-	who = g_strdup (_("Someone wants to be added to your contact list."));
+
+	session = gossip_app_get_session ();
+	account_manager = gossip_session_get_account_manager (session);
+	n = gossip_account_manager_get_count (account_manager);
+
+	if (n > 1) {
+		GossipAccount *account;
+		const gchar   *account_name;
+
+		account = gossip_contact_get_account (dialog->contact);
+		account_name = gossip_account_get_name (account);
+
+		who = g_strdup_printf (
+			_("Someone wants to be added to your contact list for your '%s' account."),
+			account_name);
+	} else { 
+		who = g_strdup_printf (
+			_("Someone wants to be added to your contact list."));
+	}
+
 	question = g_strdup (_("Do you want to add this person to your contact list?"));
 
 	gtk_widget_grab_focus (dialog->name_entry);
@@ -305,7 +327,7 @@ subscription_dialog_vcard_cb (GossipResult   result,
 			      GossipContact *contact)
 {
 	GossipSubscriptionDialog *dialog;
-	const gchar              *name = NULL;
+	const gchar              *contact_name = NULL;
 	const gchar              *url = NULL;
 	gint                      num_matches = 0;
 
@@ -319,23 +341,44 @@ subscription_dialog_vcard_cb (GossipResult   result,
 	if (GOSSIP_IS_VCARD (vcard)) {
 		dialog->vcard = g_object_ref (vcard);
 
-		name = gossip_vcard_get_name (vcard);
+		contact_name = gossip_vcard_get_name (vcard);
 		url = gossip_vcard_get_url (vcard);
 	}
 
 	gtk_widget_hide (dialog->info_requested_hbox);
 
-	if (name) {
-		gchar        *who;
-		gchar        *question;
-		gchar        *str;
+	if (contact_name) {
+		GossipSession        *session;
+		GossipAccountManager *account_manager;
+		gchar                *who;
+		gchar                *question;
+		gchar                *str;
+		guint                 n;
 
-		gtk_entry_set_text (GTK_ENTRY (dialog->name_entry), name);
+		session = gossip_app_get_session ();
+		account_manager = gossip_session_get_account_manager (session);
+		n = gossip_account_manager_get_count (account_manager);
 
-		who = g_strdup_printf (_("%s wants to be added to your contact list."),
-				       name);
+		if (n > 1) {
+			GossipAccount *account;
+			const gchar   *account_name;
+
+			account = gossip_contact_get_account (contact);
+			account_name = gossip_account_get_name (account);
+
+			who = g_strdup_printf (
+				_("%s wants to be added to your contact list for your '%s' account."), 
+				contact_name, account_name);
+		} else { 
+			who = g_strdup_printf (
+				_("%s wants to be added to your contact list."), 
+				contact_name);
+		}
+
+		gtk_entry_set_text (GTK_ENTRY (dialog->name_entry), contact_name);
+
 		question = g_strdup_printf (_("Do you want to add %s to your contact list?"),
-					    name);
+					    contact_name);
 
 		str = g_strdup_printf ("<span weight='bold' size='larger'>%s</span>", who);
 		gtk_label_set_markup (GTK_LABEL (dialog->who_label), str);

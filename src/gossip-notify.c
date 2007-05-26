@@ -273,18 +273,46 @@ notify_subscription_request_default_cb (NotifyNotification *notify,
 static void
 notify_subscription_request_show (GossipContact *contact)
 {
-	NotifyNotification  *notify;
-	GdkPixbuf           *pixbuf = NULL;
-	GError              *error = NULL;
-	const gchar         *name;
-	gchar               *message;
-	gboolean             show_avatars = FALSE;
+	GossipSession        *session;
+	GossipAccountManager *account_manager;
+	const gchar          *contact_name;
+	guint                 n;
+	NotifyNotification   *notify;
+	GdkPixbuf            *pixbuf = NULL;
+	GError               *error = NULL;
+	gchar                *message;
+	gboolean              show_avatars = FALSE;
 
-	name = gossip_contact_get_name (contact);
-	if (name) {
-		message = g_strdup_printf (_("%s wants to be added to your contact list."), name);
-	} else {
-		message = g_strdup (_("Someone wants to be added to your contact list."));
+	session = gossip_app_get_session ();
+	account_manager = gossip_session_get_account_manager (session);
+	n = gossip_account_manager_get_count (account_manager);
+	contact_name = gossip_contact_get_name (contact);
+
+	if (n > 1) {
+		GossipAccount *account;
+		const gchar   *account_name;
+
+		account = gossip_contact_get_account (contact);
+		account_name = gossip_account_get_name (account);
+
+		if (contact_name) {
+			message = g_strdup_printf (
+				_("%s wants to be added to your contact list for your '%s' account."), 
+				contact_name, account_name);
+		} else {
+			message = g_strdup_printf (
+				_("Someone wants to be added to your contact list for your '%s' account."),
+				account_name);
+		}
+	} else { 
+		if (contact_name) {
+			message = g_strdup_printf (
+				_("%s wants to be added to your contact list."), 
+				contact_name);
+		} else {
+			message = g_strdup_printf (
+				_("Someone wants to be added to your contact list."));
+		}
 	}
 
 	gossip_conf_get_bool (gossip_conf_get (),

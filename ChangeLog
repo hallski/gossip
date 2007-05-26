@@ -1,3 +1,10 @@
+2007-05-26  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-notify.c:
+	* src/gossip-subscription-dialog.c: (subscription_dialog_show),
+	(subscription_dialog_vcard_cb): Include the account name in the
+	subscription request, fixes #412055 (Chris RIvas, Martyn
+	Russell). 
 2007-05-26  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-app.c: Some minor style fixes.
