@@ -149,6 +149,8 @@ GossipPresence *
 gossip_foo_get_presence (GossipFoo *foo)
 {
 	GossipFooPriv *priv;
+	
+	g_return_val_if_fail (GOSSIP_IS_FOO (foo), NULL);
 
 	priv = GET_PRIV (foo);
 
@@ -160,6 +162,9 @@ gossip_foo_set_presence (GossipFoo *foo, GossipPresence *presence)
 {
 	GossipFooPriv *priv;
 
+	g_return_if_fail (GOSSIP_IS_FOO (foo));
+	g_return_if_fail (GOSSIP_IS_PRESENCE (presence));
+
 	priv = GET_PRIV (foo);
 
 	if (priv->presence) {
@@ -167,15 +172,15 @@ gossip_foo_set_presence (GossipFoo *foo, GossipPresence *presence)
 		priv->presence = NULL;
 	}
 
-	if (presence) {
-		priv->presence = g_object_ref (presence);
-	}
+	priv->presence = g_object_ref (presence);
 }
 
 GossipPresence *
 gossip_foo_get_away_presence (GossipFoo *foo)
 {
 	GossipFooPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_FOO (foo), NULL);
 
 	priv = GET_PRIV (foo);
 
@@ -187,6 +192,8 @@ gossip_foo_set_away_presence (GossipFoo *foo, GossipPresence *presence)
 {
 	GossipFooPriv *priv;
 
+	g_return_if_fail (GOSSIP_IS_FOO (foo));
+
 	priv = GET_PRIV (foo);
 
 	if (priv->away_presence) {
@@ -197,5 +204,21 @@ gossip_foo_set_away_presence (GossipFoo *foo, GossipPresence *presence)
 	if (presence) {
 		priv->away_presence = g_object_ref (presence);
 	} 
+}
+
+GossipPresence *
+gossip_foo_get_effective_presence (GossipFoo *foo)
+{
+	GossipFooPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_FOO (foo), NULL);
+
+	priv = GET_PRIV (foo);
+
+	if (priv->away_presence) {
+		return priv->away_presence;
+	}
+
+	return priv->presence;
 }
 

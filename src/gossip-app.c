@@ -310,7 +310,6 @@ static void            app_accounts_error_clear_clicked_cb    (GtkButton        
 							       GossipAccount            *account);
 static void            app_accounts_error_display             (GossipAccount            *account,
 							       GError                   *error);
-static GossipPresence *app_get_effective_presence             (void);
 static void            app_set_away                           (const gchar              *status);
 static GdkPixbuf *     app_get_current_status_pixbuf          (void);
 static GossipPresenceState
@@ -454,9 +453,6 @@ app_finalize (GObject *object)
 	g_signal_handlers_disconnect_by_func (priv->event_manager,
 					      app_event_removed_cb,
 					      NULL);
-
-	gossip_foo_set_presence (priv->foo, NULL);
-	gossip_foo_set_away_presence (priv->foo, NULL);
 
 	gossip_ft_window_finalize (priv->session);
 	gossip_subscription_dialog_finalize (priv->session);
@@ -2009,7 +2005,7 @@ app_status_icon_update_tooltip (void)
 			GossipPresence      *presence;
 			GossipPresenceState  state;
 
-			presence = app_get_effective_presence ();
+			presence = gossip_foo_get_effective_presence (priv->foo);
 			state = gossip_presence_get_state (presence);
 			status = gossip_presence_get_status (presence);
 
@@ -2145,7 +2141,7 @@ app_idle_check_cb (GossipApp *app)
 	}
 
 	idle = gossip_idle_get_seconds ();
-	presence = app_get_effective_presence ();
+	presence = gossip_foo_get_effective_presence (priv->foo);
 	state = gossip_presence_get_state (presence);
 
 	/* gossip_debug (DEBUG_DOMAIN_IDLE, "Idle for:%d", idle); */
@@ -2572,20 +2568,6 @@ app_accounts_error_display (GossipAccount *account,
 	g_hash_table_insert (priv->errors, g_object_ref (account), child);
 }
 
-static GossipPresence *
-app_get_effective_presence (void)
-{
-	GossipAppPriv *priv;
-
-	priv = GET_PRIV (app);
-
-	if (gossip_foo_get_away_presence (priv->foo)) {
-		return gossip_foo_get_away_presence (priv->foo);
-	}
-
-	return gossip_foo_get_presence (priv->foo);
-}
-
 static void
 app_set_away (const gchar *status)
 {
@@ -2624,7 +2606,7 @@ app_get_current_state (void)
 		return GOSSIP_PRESENCE_STATE_UNAVAILABLE;
 	}
 
-	presence = app_get_effective_presence ();
+	presence = gossip_foo_get_effective_presence (priv->foo);
 	return gossip_presence_get_state (presence);
 }
 
@@ -2655,7 +2637,7 @@ app_get_current_status_pixbuf (void)
 						 GTK_ICON_SIZE_MENU);
 	}
 
-	presence = app_get_effective_presence ();
+	presence = gossip_foo_get_effective_presence (priv->foo);
 	return gossip_pixbuf_for_presence (presence);
 }
 
@@ -2682,7 +2664,7 @@ app_presence_updated (void)
 		return;
 	}
 
-	presence = app_get_effective_presence ();
+	presence = gossip_foo_get_effective_presence (priv->foo);
 	state = gossip_presence_get_state (presence);
 	status = gossip_presence_get_status (presence);
 
