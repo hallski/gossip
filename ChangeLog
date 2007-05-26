@@ -1,5 +1,13 @@
 2007-05-24  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-foo.[ch]: Added a new class with temporary name for now,
+	it will keep track of the users presence and auto away.
+	
+	* src/gossip-app.c: Changed app_[get|set]_presence and 
+	app_[get|set]_away_presence to use GossipFoo instead.
+
+2007-05-24  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-app.c (app_set_presence, app_set_away_presence): Added as
 	set functions for the priv->presence and priv->away_presence.
 

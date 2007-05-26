@@ -47,6 +47,7 @@
 #include "gossip-chat.h"
 #include "gossip-chatrooms-window.h"
 #include "gossip-contact-list.h"
+#include "gossip-foo.h"
 #include "gossip-ft-window.h"
 #include "gossip-geometry.h"
 #include "gossip-group-chat.h"
@@ -168,11 +169,7 @@ struct _GossipAppPriv {
 
 	time_t                 leave_time;
 
-	/* Presence set by the user (available/busy) */
-	GossipPresence        *presence;
-
-	/* Away presence (away/xa), overrides priv->presence */
-	GossipPresence        *away_presence;
+	GossipFoo             *foo;
 
 	/* Misc */
 	guint                  size_timeout_id;
@@ -346,10 +343,6 @@ static void            app_contact_activated_cb               (GossipContactList
 							       GossipContact            *contact,
 							       GossipEventId             event_id,
 							       gpointer                  user_data);
-static GossipPresence * app_get_presence                      (void);
-static void             app_set_presence                      (GossipPresence *presence);
-static GossipPresence * app_get_away_presence                 (void);
-static void             app_set_away_presence                 (GossipPresence *presence);
 
 static GossipApp *app = NULL;
 
@@ -383,6 +376,8 @@ gossip_app_init (GossipApp *singleton_app)
 						  gossip_account_equal,
 						  g_object_unref,
 						  (GDestroyNotify) app_reconnect_remove);
+
+	priv->foo = g_object_new (GOSSIP_TYPE_FOO, NULL);
 
 	priv->tooltips = g_object_ref (gtk_tooltips_new ());
 	gtk_object_sink (GTK_OBJECT (priv->tooltips));
@@ -460,11 +455,13 @@ app_finalize (GObject *object)
 					      app_event_removed_cb,
 					      NULL);
 
-	app_set_presence (NULL);
-	app_set_away_presence (NULL);
+	gossip_foo_set_presence (priv->foo, NULL);
+	gossip_foo_set_away_presence (priv->foo, NULL);
 
 	gossip_ft_window_finalize (priv->session);
 	gossip_subscription_dialog_finalize (priv->session);
+	
+	g_object_unref (priv->foo);
 
 	g_object_unref (priv->event_manager);
 	g_object_unref (priv->chat_manager);
@@ -551,10 +548,10 @@ app_setup_presences (void)
 	/* Set up saved presence information. */
 	presence = gossip_presence_new ();
 	gossip_presence_set_state (presence, GOSSIP_PRESENCE_STATE_AVAILABLE);
-	app_set_presence (presence);
+	gossip_foo_set_presence (priv->foo, presence);
 	g_object_unref (presence);
 
-	app_set_away_presence (NULL);
+	gossip_foo_set_away_presence (priv->foo, NULL);
 
 	/* Set the idle time checker. */
 	g_timeout_add (2 * 1000, (GSourceFunc) app_idle_check_cb, app);
@@ -2170,17 +2167,17 @@ app_idle_check_cb (GossipApp *app)
 		/* Presence may be idle if the screensaver has been started and
 		 * hence no away_presence set.
 		 */
-		if (!app_get_away_presence ()) {
+		if (!gossip_foo_get_away_presence (priv->foo)) {
 			GossipPresence *presence;
 
 			presence = gossip_presence_new ();
-			app_set_away_presence (presence);
+			gossip_foo_set_away_presence (priv->foo, presence);
 			g_object_unref (presence);
 		}
 
 		/* Presence will already be away. */
 		gossip_debug (DEBUG_DOMAIN_IDLE, "Going to ext away...");
-		gossip_presence_set_state (app_get_away_presence (),
+		gossip_presence_set_state (gossip_foo_get_away_presence (priv->foo),
 					   GOSSIP_PRESENCE_STATE_EXT_AWAY);
 		presence_changed = TRUE;
 	}
@@ -2582,11 +2579,11 @@ app_get_effective_presence (void)
 
 	priv = GET_PRIV (app);
 
-	if (app_get_away_presence ()) {
-		return app_get_away_presence ();
+	if (gossip_foo_get_away_presence (priv->foo)) {
+		return gossip_foo_get_away_presence (priv->foo);
 	}
 
-	return app_get_presence ();
+	return gossip_foo_get_presence (priv->foo);
 }
 
 static void
@@ -2596,13 +2593,13 @@ app_set_away (const gchar *status)
 
 	priv = GET_PRIV (app);
 
-	if (!app_get_away_presence ()) {
+	if (!gossip_foo_get_away_presence (priv->foo)) {
 		GossipPresence *presence;
 
 		presence = gossip_presence_new ();
 		gossip_presence_set_state (presence, 
 					   GOSSIP_PRESENCE_STATE_AWAY);
-		app_set_away_presence (presence);
+		gossip_foo_set_away_presence (priv->foo, presence);
 		g_object_unref (presence);
 	}
 
@@ -2610,7 +2607,8 @@ app_set_away (const gchar *status)
 	gossip_idle_reset ();
 
 	if (status) {
-		gossip_presence_set_status (app_get_away_presence (), status);
+		gossip_presence_set_status (gossip_foo_get_away_presence (priv->foo),
+					    status);
 	}
 }
 
@@ -2641,7 +2639,7 @@ app_get_previous_state (void)
 		return GOSSIP_PRESENCE_STATE_UNAVAILABLE;
 	}
 
-	return gossip_presence_get_state (app_get_presence ());
+	return gossip_presence_get_state (gossip_foo_get_presence (priv->foo));
 }
 
 static GdkPixbuf *
@@ -2710,7 +2708,7 @@ app_status_clear_away (void)
 
 	priv = GET_PRIV (app);
 
-	app_set_away_presence (NULL);
+	gossip_foo_set_away_presence (priv->foo, NULL);
 
 	/* Clear the default state */
 	gossip_status_presets_clear_default ();
@@ -2734,7 +2732,7 @@ gossip_app_set_not_away (void)
 		return;
 	}
 
-	if (app_get_away_presence ()) {
+	if (gossip_foo_get_away_presence (priv->foo)) {
 		app_status_clear_away ();
 	}
 }
@@ -2757,12 +2755,15 @@ gossip_app_set_presence (GossipPresenceState  state,
 		default_status = gossip_presence_state_get_default_status (state);
 
 		if (status && strcmp (status, default_status) == 0) {
-			g_object_set (app_get_presence (), "status", NULL, NULL);
+			g_object_set (gossip_foo_get_presence (priv->foo),
+				      "status", NULL, NULL);
 		} else {
-			g_object_set (app_get_presence (), "status", status, NULL);
+			g_object_set (gossip_foo_get_presence (priv->foo),
+				      "status", status, NULL);
 		}
 
-		g_object_set (app_get_presence (), "state", state, NULL);
+		g_object_set (gossip_foo_get_presence (priv->foo), 
+			      "state", state, NULL);
 
 		app_status_flash_stop ();
 		app_status_clear_away ();
@@ -2846,7 +2847,7 @@ app_status_icon_flash_timeout_func (gpointer data)
 
 	if (on) {
 		if (is_flashing) {
-			pixbuf = gossip_pixbuf_for_presence (app_get_presence ());
+			pixbuf = gossip_pixbuf_for_presence (gossip_foo_get_presence (priv->foo));
 		}
 		else if (priv->status_icon_flash_icons != NULL) {
 			GossipEvent *event;
@@ -3011,60 +3012,6 @@ app_contact_activated_cb (GossipContactList *contact_list,
 	}
 
 	gossip_chat_manager_show_chat (priv->chat_manager, contact);
-}
-
-static GossipPresence *
-app_get_presence (void)
-{
-	GossipAppPriv *priv;
-
-	priv = GET_PRIV (app);
-
-	return priv->presence;
-}
-
-static void
-app_set_presence (GossipPresence *presence)
-{
-	GossipAppPriv *priv;
-
-	priv = GET_PRIV (app);
-
-	if (priv->presence) {
-		g_object_unref (priv->presence);
-		priv->presence = NULL;
-	}
-
-	if (presence) {
-		priv->presence = g_object_ref (presence);
-	}
-}
-
-static GossipPresence *
-app_get_away_presence (void)
-{
-	GossipAppPriv *priv;
-
-	priv = GET_PRIV (app);
-
-	return priv->away_presence;
-}
-
-static void
-app_set_away_presence (GossipPresence *presence)
-{
-	GossipAppPriv *priv;
-
-	priv = GET_PRIV (app);
-
-	if (priv->away_presence) {
-		g_object_unref (priv->away_presence);
-		priv->away_presence = NULL;
-	}
-
-	if (presence) {
-		priv->away_presence = g_object_ref (presence);
-	}
 }
 
 GossipSession *
