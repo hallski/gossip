@@ -1,5 +1,14 @@
 2007-05-25  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-foo.[ch]:
+	(gossip_foo_get_leave_time, gossip_foo_set_leave_time): Factored out
+	from GossipApp.
+
+	* src/gosspi-app.c: Factored out priv->leave_time and put in
+	GossipFoo.
+
+2007-05-25  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gosspi-app.c (app_idle_check_cb): Removed a temporal variable.
 
 2007-05-25  Mikael Hallendal  <micke@imendio.com>

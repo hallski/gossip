@@ -37,6 +37,8 @@ struct _GossipFooPriv {
 	
 	/* Away presence (away/xa), overrides priv->presence */
 	GossipPresence *away_presence;
+
+	time_t          leave_time;
 };
 
 static void         foo_finalize           (GObject             *object);
@@ -264,5 +266,29 @@ gossip_foo_get_current_status_pixbuf (GossipFoo *foo)
 	}
 
 	return gossip_pixbuf_for_presence (gossip_foo_get_effective_presence (foo));
+}
+
+time_t
+gossip_foo_get_leave_time (GossipFoo *foo)
+{
+	GossipFooPriv *priv;
+
+	priv = GET_PRIV (foo);
+	
+	g_print ("%s called\n", G_STRFUNC);
+
+	return priv->leave_time;
+}
+
+void
+gossip_foo_set_leave_time (GossipFoo *foo, time_t t)
+{
+	GossipFooPriv *priv;
+
+	priv = GET_PRIV (foo);
+
+	g_print ("%s called\n", G_STRFUNC);
+
+	priv->leave_time = t;
 }
 

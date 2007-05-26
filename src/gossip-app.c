@@ -167,8 +167,6 @@ struct _GossipAppPriv {
 	GtkWidget             *presence_toolbar;
 	GtkWidget             *presence_chooser;
 
-	time_t                 leave_time;
-
 	GossipFoo             *foo;
 
 	/* Misc */
@@ -2131,9 +2129,9 @@ app_idle_check_cb (GossipApp *app)
 	/* gossip_debug (DEBUG_DOMAIN_IDLE, "Idle for:%d", idle); */
 
 	/* We're going away, allow some slack. */
-	if (priv->leave_time > 0) {
-		if (time (NULL) - priv->leave_time > LEAVE_SLACK) {
-			priv->leave_time = 0;
+	if (gossip_foo_get_leave_time (priv->foo) > 0) {
+		if (time (NULL) - gossip_foo_get_leave_time (priv->foo) > LEAVE_SLACK) {
+			gossip_foo_set_leave_time (priv->foo, 0);
 			app_status_flash_stop ();
 
 			gossip_idle_reset ();
@@ -2569,7 +2567,7 @@ app_set_away (const gchar *status)
 		g_object_unref (presence);
 	}
 
-	priv->leave_time = time (NULL);
+	gossip_foo_set_leave_time (priv->foo, time (NULL));
 	gossip_idle_reset ();
 
 	if (status) {
@@ -2632,7 +2630,7 @@ app_status_clear_away (void)
 	/* Clear the default state */
 	gossip_status_presets_clear_default ();
 
-	priv->leave_time = 0;
+	gossip_foo_set_leave_time (priv->foo, 0);
 	app_status_flash_stop ();
 
 	/* Force this so we don't get a delay in the display */
@@ -2647,7 +2645,7 @@ gossip_app_set_not_away (void)
 	priv = GET_PRIV (app);
 
 	/* If we just left, allow some slack. */
-	if (priv->leave_time) {
+	if (gossip_foo_get_leave_time (priv->foo)) {
 		return;
 	}
 
@@ -2833,7 +2831,7 @@ app_status_icon_flash_maybe_stop (void)
 
 	priv = GET_PRIV (app);
 
-	if (priv->status_icon_flash_icons != NULL || priv->leave_time > 0) {
+	if (priv->status_icon_flash_icons != NULL || gossip_foo_get_leave_time (priv->foo) > 0) {
 		return;
 	}
 
