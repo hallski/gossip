@@ -1,4 +1,10 @@
 2007-05-26  Mikael Hallendal  <micke@imendio.com>
+	
+	* src/gossip-foo.[ch]: 
+	(gossip_foo_get_presence): Made private
+	(gossip_foo_set_presence): Unused, removed.
+
+2007-05-26  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-foo.[ch]: (gossip_foo_get_explicit_status_pixbuf): Added
 	function to get the explicit status pixbuf.

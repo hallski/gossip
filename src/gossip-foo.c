@@ -71,6 +71,7 @@ static void         foo_set_property       (GObject             *object,
 					    guint                param_id,
 					    const GValue        *value,
 					    GParamSpec          *pspec);
+static GossipPresence *   foo_get_presence (GossipFoo           *foo);
 
 enum {
 	PROP_0,
@@ -217,8 +218,8 @@ foo_set_property (GObject      *object,
 	}
 }
 
-GossipPresence *
-gossip_foo_get_presence (GossipFoo *foo)
+static GossipPresence *
+foo_get_presence (GossipFoo *foo)
 {
 	GossipFooPriv *priv;
 	
@@ -227,24 +228,6 @@ gossip_foo_get_presence (GossipFoo *foo)
 	priv = GET_PRIV (foo);
 
 	return priv->presence;
-}
-
-void
-gossip_foo_set_presence (GossipFoo *foo, GossipPresence *presence)
-{
-	GossipFooPriv *priv;
-
-	g_return_if_fail (GOSSIP_IS_FOO (foo));
-	g_return_if_fail (GOSSIP_IS_PRESENCE (presence));
-
-	priv = GET_PRIV (foo);
-
-	if (priv->presence) {
-		g_object_unref (priv->presence);
-		priv->presence = NULL;
-	}
-
-	priv->presence = g_object_ref (presence);
 }
 
 GossipPresence *
@@ -344,7 +327,7 @@ gossip_foo_get_previous_state (GossipFoo *foo)
 		return GOSSIP_PRESENCE_STATE_UNAVAILABLE;
 	}
 
-	return gossip_presence_get_state (gossip_foo_get_presence (foo));
+	return gossip_presence_get_state (foo_get_presence (foo));
 }
 
 GdkPixbuf *
@@ -365,7 +348,7 @@ gossip_foo_get_explicit_status_pixbuf (GossipFoo *foo)
 {
 	g_print ("%s called\n", G_STRFUNC);
 
-	return gossip_pixbuf_for_presence (gossip_foo_get_presence (foo));
+	return gossip_pixbuf_for_presence (foo_get_presence (foo));
 }
 
 time_t
@@ -539,14 +522,14 @@ gossip_foo_set_state_status (GossipFoo           *foo,
 		default_status = gossip_presence_state_get_default_status (state);
 
 		if (status && strcmp (status, default_status) == 0) {
-			g_object_set (gossip_foo_get_presence (foo),
+			g_object_set (foo_get_presence (foo),
 				      "status", NULL, NULL);
 		} else {
-			g_object_set (gossip_foo_get_presence (foo),
+			g_object_set (foo_get_presence (foo),
 				      "status", status, NULL);
 		}
 
-		g_object_set (gossip_foo_get_presence (foo), 
+		g_object_set (foo_get_presence (foo), 
 			      "state", state, NULL);
 
 		gossip_foo_stop_flash (foo);

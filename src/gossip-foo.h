@@ -48,9 +48,6 @@ struct _GossipFooClass {
 
 GType                gossip_foo_get_type                  (void) G_GNUC_CONST;
 
-GossipPresence *     gossip_foo_get_presence              (GossipFoo      *foo);
-void                 gossip_foo_set_presence              (GossipFoo      *foo,
-							   GossipPresence *presence);
 GossipPresence *     gossip_foo_get_away_presence         (GossipFoo *foo);
 void                 gossip_foo_set_away_presence         (GossipFoo *foo,
 							   GossipPresence *presence);
