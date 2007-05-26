@@ -1,5 +1,10 @@
 2007-05-24  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-app.c (app_set_presence, app_set_away_presence): Added as
+	set functions for the priv->presence and priv->away_presence.
+
+2007-05-24  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-app.c (app_get_presence, app_get_away_presence): Added as
 	access functions for priv->presence and priv->away_presence.
 
