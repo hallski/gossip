@@ -2515,14 +2515,7 @@ gossip_app_set_not_away (void)
 
 	priv = GET_PRIV (app);
 
-	/* If we just left, allow some slack. */
-	if (gossip_foo_get_leave_time (priv->foo)) {
-		return;
-	}
-
-	if (gossip_foo_get_away_presence (priv->foo)) {
-		gossip_foo_clear_away (priv->foo);
-	}
+	gossip_foo_set_not_away (priv->foo);
 }
 
 void

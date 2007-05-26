@@ -497,3 +497,16 @@ gossip_foo_idle_check_cb (GossipFoo *foo)
 	return TRUE;
 }
 
+void
+gossip_foo_set_not_away (GossipFoo *foo)
+{
+	/* If we just left, allow some slack. */
+	if (gossip_foo_get_leave_time (foo)) {
+		return;
+	}
+
+	if (gossip_foo_get_away_presence (foo)) {
+		gossip_foo_clear_away (foo);
+	}
+}
+

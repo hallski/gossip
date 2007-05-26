@@ -72,6 +72,7 @@ void                 gossip_foo_updated                   (GossipFoo *foo);
 /* clears status data from autoaway mode */
 void                 gossip_foo_clear_away                (GossipFoo *foo);
 gboolean             gossip_foo_idle_check_cb             (GossipFoo *foo);
+void                 gossip_foo_set_not_away              (GossipFoo *foo);
 
 G_END_DECLS
 
