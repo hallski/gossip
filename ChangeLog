@@ -1,5 +1,16 @@
 2007-05-25  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-foo.[ch] (gossip_foo_get_current_status_pixbuf): Factored
+	out from GossipApp.
+
+	* src/gosspi-app.c: Factored out app_get_current_status_pixbuf and put 
+	it in GossipFoo.
+
+	* src/gossip-ui-utils.h: Added copyright to Paolo Maggi and Jeroen
+	Zwartepoorte from gtk source view.
+
+2007-05-25  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-foo.[ch] (gossip_foo_get_current_state): Factored
 	out from GossipApp.
 
