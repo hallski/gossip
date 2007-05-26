@@ -1,5 +1,11 @@
 2007-05-26  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-self-presence.[ch]: 
+	(gossip_self_presence_get_effective,
+	gossip_self_presence_get_current_pixbuf): Shorted the names a bit.
+
+2007-05-26  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-self-presence.[ch]: Renamed from GossipFoo.
 
 	* src/gossip-app.c: Updated to reflect the name change from GossipFoo

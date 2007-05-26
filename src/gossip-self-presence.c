@@ -51,8 +51,6 @@
 typedef struct _GossipSelfPresencePriv GossipSelfPresencePriv;
 
 struct _GossipSelfPresencePriv {
-	gint            my_prop;
-	
 	/* Presence set by the user (available/busy) */
 	GossipPresence *presence;
 	
@@ -62,33 +60,20 @@ struct _GossipSelfPresencePriv {
 	time_t          leave_time;
 };
 
-static void         self_presence_finalize           (GObject             *object);
-static void         self_presence_get_property       (GObject             *object,
-					    guint                param_id,
-					    GValue              *value,
-					    GParamSpec          *pspec);
-static void         self_presence_set_property       (GObject             *object,
-					    guint                param_id,
-					    const GValue        *value,
-					    GParamSpec          *pspec);
-static GossipPresence *   self_presence_get_presence (GossipSelfPresence           *self_presence);
-static GossipPresence *   self_presence_get_away_presence (GossipSelfPresence *self_presence);
-static void               self_presence_set_away_presence (GossipSelfPresence *self_presence,
-						 GossipPresence *presence);
-static void               self_presence_set_away          (GossipSelfPresence   *self_presence,
-						 const gchar *status);
-static void               self_presence_set_leave_time    (GossipSelfPresence *self_presence,
-						 time_t     t);
+static void             self_presence_finalize           (GObject            *object);
+static GossipPresence * self_presence_get_presence       (GossipSelfPresence *self_presence);
+static GossipPresence * self_presence_get_away_presence  (GossipSelfPresence *self_presence);
+static void             self_presence_set_away_presence  (GossipSelfPresence *self_presence,
+							  GossipPresence     *presence);
+static void             self_presence_set_away           (GossipSelfPresence *self_presence,
+							  const gchar        *status);
+static void             self_presence_set_leave_time     (GossipSelfPresence *self_presence,
+							  time_t              t);
 
-static void               self_presence_start_flash       (GossipSelfPresence *self_presence);
+static void             self_presence_start_flash        (GossipSelfPresence *self_presence);
 /* clears status data from autoaway mode */
-static void               self_presence_clear_away        (GossipSelfPresence *self_presence);
-static gboolean           self_presence_idle_check_cb     (GossipSelfPresence *self_presence);
-
-enum {
-	PROP_0,
-	PROP_MY_PROP
-};
+static void             self_presence_clear_away         (GossipSelfPresence *self_presence);
+static gboolean         self_presence_idle_check_cb      (GossipSelfPresence *self_presence);
 
 enum {
 	START_FLASH,
@@ -108,18 +93,7 @@ gossip_self_presence_class_init (GossipSelfPresenceClass *class)
 
 	object_class = G_OBJECT_CLASS (class);
 
-	object_class->finalize     = self_presence_finalize;
-	object_class->get_property = self_presence_get_property;
-	object_class->set_property = self_presence_set_property;
-
-	g_object_class_install_property (object_class,
-					 PROP_MY_PROP,
-					 g_param_spec_int ("my-prop",
-							   "",
-							   "",
-							   0, 1,
-							   1,
-							   G_PARAM_READWRITE));
+	object_class->finalize = self_presence_finalize;
 
 	signals[START_FLASH] =
 		g_signal_new ("start-flash",
@@ -191,45 +165,6 @@ self_presence_finalize (GObject *object)
 	(G_OBJECT_CLASS (gossip_self_presence_parent_class)->finalize) (object);
 }
 
-static void
-self_presence_get_property (GObject    *object,
-		    guint       param_id,
-		    GValue     *value,
-		    GParamSpec *pspec)
-{
-	GossipSelfPresencePriv *priv;
-
-	priv = GET_PRIV (object);
-
-	switch (param_id) {
-	case PROP_MY_PROP:
-		g_value_set_int (value, priv->my_prop);
-		break;
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
-		break;
-	}
-}
-static void
-self_presence_set_property (GObject      *object,
-		    guint         param_id,
-		    const GValue *value,
-		    GParamSpec   *pspec)
-{
-	GossipSelfPresencePriv *priv;
-
-	priv = GET_PRIV (object);
-
-	switch (param_id) {
-	case PROP_MY_PROP:
-		priv->my_prop = g_value_get_int (value);
-		break;
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
-		break;
-	}
-}
-
 static GossipPresence *
 self_presence_get_presence (GossipSelfPresence *self_presence)
 {
@@ -292,7 +227,7 @@ self_presence_idle_check_cb (GossipSelfPresence *self_presence)
 	}
 
 	idle = gossip_idle_get_seconds ();
-	state = gossip_presence_get_state (gossip_self_presence_get_effective_presence (self_presence));
+	state = gossip_presence_get_state (gossip_self_presence_get_effective (self_presence));
 
 	/* gossip_debug (DEBUG_DOMAIN_IDLE, "Idle for:%d", idle); */
 
@@ -373,7 +308,8 @@ self_presence_get_away_presence (GossipSelfPresence *self_presence)
 }
 
 void
-self_presence_set_away_presence (GossipSelfPresence *self_presence, GossipPresence *presence)
+self_presence_set_away_presence (GossipSelfPresence *self_presence, 
+				 GossipPresence     *presence)
 {
 	GossipSelfPresencePriv *priv;
 
@@ -419,7 +355,7 @@ self_presence_set_away (GossipSelfPresence *self_presence, const gchar *status)
 }
 
 GossipPresence *
-gossip_self_presence_get_effective_presence (GossipSelfPresence *self_presence)
+gossip_self_presence_get_effective (GossipSelfPresence *self_presence)
 {
 	GossipSelfPresencePriv *priv;
 
@@ -444,7 +380,7 @@ gossip_self_presence_get_current_state (GossipSelfPresence *self_presence)
 		return GOSSIP_PRESENCE_STATE_UNAVAILABLE;
 	}
 
-	return gossip_presence_get_state (gossip_self_presence_get_effective_presence (self_presence));
+	return gossip_presence_get_state (gossip_self_presence_get_effective (self_presence));
 }
 
 GossipPresenceState
@@ -461,7 +397,7 @@ gossip_self_presence_get_previous_state (GossipSelfPresence *self_presence)
 }
 
 GdkPixbuf *
-gossip_self_presence_get_current_status_pixbuf (GossipSelfPresence *self_presence)
+gossip_self_presence_get_current_pixbuf (GossipSelfPresence *self_presence)
 {
 	g_return_val_if_fail (GOSSIP_IS_SELF_PRESENCE (self_presence), NULL);
 
@@ -470,11 +406,11 @@ gossip_self_presence_get_current_status_pixbuf (GossipSelfPresence *self_presenc
 						 GTK_ICON_SIZE_MENU);
 	}
 
-	return gossip_pixbuf_for_presence (gossip_self_presence_get_effective_presence (self_presence));
+	return gossip_pixbuf_for_presence (gossip_self_presence_get_effective (self_presence));
 }
 
 GdkPixbuf *
-gossip_self_presence_get_explicit_status_pixbuf (GossipSelfPresence *self_presence)
+gossip_self_presence_get_explicit_pixbuf (GossipSelfPresence *self_presence)
 {
 	return gossip_pixbuf_for_presence (self_presence_get_presence (self_presence));
 }
@@ -515,9 +451,9 @@ gossip_self_presence_set_not_away (GossipSelfPresence *self_presence)
 }
 
 void
-gossip_self_presence_set_state_status (GossipSelfPresence           *self_presence,
-			     GossipPresenceState  state,
-			     const gchar         *status)
+gossip_self_presence_set_state_status (GossipSelfPresence  *self_presence,
+				       GossipPresenceState  state,
+				       const gchar         *status)
 {
 	GossipSelfPresencePriv *priv;
 

@@ -31,8 +31,8 @@ G_BEGIN_DECLS
 #define GOSSIP_TYPE_SELF_PRESENCE            (gossip_self_presence_get_type ())
 #define GOSSIP_SELF_PRESENCE(o)              (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_SELF_PRESENCE, GossipSelfPresence))
 #define GOSSIP_SELF_PRESENCE_CLASS(k)        (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_SELF_PRESENCE, GossipSelfPresenceClass))
-#define GOSSIP_IS_SELF_PRESENCE(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), GOSSIP_TYPE_SELF_PRESENCE))
-#define GOSSIP_IS_SELF_PRESENCE_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_SELF_PRESENCE))
+#define GOSSIP_IS_SELF_PRESENCE(o)           (G_TYPE_CHECK_INSTANCE_TYPE ((o), GOSSIP_TYPE_SELF_PRESENCE))
+#define GOSSIP_IS_SELF_PRESENCE_CLASS(k)     (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_SELF_PRESENCE))
 #define GOSSIP_SELF_PRESENCE_GET_CLASS(o)    (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_SELF_PRESENCE, GossipSelfPresenceClass))
 
 typedef struct _GossipSelfPresence      GossipSelfPresence;
@@ -48,11 +48,11 @@ struct _GossipSelfPresenceClass {
 
 GType                gossip_self_presence_get_type                  (void) G_GNUC_CONST;
 
-GossipPresence *     gossip_self_presence_get_effective_presence    (GossipSelfPresence *self_presence);
+GossipPresence *     gossip_self_presence_get_effective             (GossipSelfPresence *self_presence);
 GossipPresenceState  gossip_self_presence_get_current_state         (GossipSelfPresence *self_presence);
 GossipPresenceState  gossip_self_presence_get_previous_state        (GossipSelfPresence *self_presence);
-GdkPixbuf *          gossip_self_presence_get_current_status_pixbuf (GossipSelfPresence *self_presence);
-GdkPixbuf *          gossip_self_presence_get_explicit_status_pixbuf (GossipSelfPresence *self_presence);
+GdkPixbuf *          gossip_self_presence_get_current_pixbuf        (GossipSelfPresence *self_presence);
+GdkPixbuf *          gossip_self_presence_get_explicit_pixbuf       (GossipSelfPresence *self_presence);
 
 time_t               gossip_self_presence_get_leave_time            (GossipSelfPresence *self_presence);
 void                 gossip_self_presence_stop_flash                (GossipSelfPresence *self_presence);

@@ -1988,7 +1988,7 @@ app_status_icon_update_tooltip (void)
 			GossipPresence      *presence;
 			GossipPresenceState  state;
 
-			presence = gossip_self_presence_get_effective_presence (priv->self_presence);
+			presence = gossip_self_presence_get_effective (priv->self_presence);
 			state = gossip_presence_get_state (presence);
 			status = gossip_presence_get_status (presence);
 
@@ -2478,7 +2478,7 @@ app_presence_updated_cb (GossipSelfPresence *self_presence, gpointer user_data)
 
 	priv = GET_PRIV (app);
 
-	pixbuf = gossip_self_presence_get_current_status_pixbuf (priv->self_presence);
+	pixbuf = gossip_self_presence_get_current_pixbuf (priv->self_presence);
 	gtk_status_icon_set_from_pixbuf (priv->status_icon, pixbuf);
 	g_object_unref (pixbuf);
 
@@ -2490,7 +2490,7 @@ app_presence_updated_cb (GossipSelfPresence *self_presence, gpointer user_data)
 		return;
 	}
 
-	presence = gossip_self_presence_get_effective_presence (priv->self_presence);
+	presence = gossip_self_presence_get_effective (priv->self_presence);
 	state = gossip_presence_get_state (presence);
 	status = gossip_presence_get_status (presence);
 
@@ -2602,7 +2602,7 @@ app_status_icon_flash_timeout_func (gpointer data)
 
 	if (on) {
 		if (is_flashing) {
-			pixbuf = gossip_self_presence_get_explicit_status_pixbuf (priv->self_presence);
+			pixbuf = gossip_self_presence_get_explicit_pixbuf (priv->self_presence);
 		}
 		else if (priv->status_icon_flash_icons != NULL) {
 			GossipEvent *event;
@@ -2634,7 +2634,7 @@ app_status_icon_flash_timeout_func (gpointer data)
 	}
 
 	if (pixbuf == NULL) {
-		pixbuf = gossip_self_presence_get_current_status_pixbuf (priv->self_presence);
+		pixbuf = gossip_self_presence_get_current_pixbuf (priv->self_presence);
 	}
 
 	gtk_status_icon_set_from_pixbuf (priv->status_icon, pixbuf);
@@ -2673,7 +2673,7 @@ app_status_icon_flash_maybe_stop (void)
 		return;
 	}
 
-	pixbuf = gossip_self_presence_get_current_status_pixbuf (priv->self_presence);
+	pixbuf = gossip_self_presence_get_current_pixbuf (priv->self_presence);
 	gtk_status_icon_set_from_pixbuf (priv->status_icon, pixbuf);
 	g_object_unref (pixbuf);
 
