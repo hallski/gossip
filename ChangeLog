@@ -1,3 +1,7 @@
+2007-05-26  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-app.c: Aligned function declarations.
+
 2007-05-26  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-notify.c:
