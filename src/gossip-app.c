@@ -82,25 +82,12 @@
 
 #define DEBUG_DOMAIN_SETUP     "AppSetup"
 #define DEBUG_DOMAIN_ACCELS    "AppAccels"
-#define DEBUG_DOMAIN_IDLE      "AppIdle"
 #define DEBUG_DOMAIN_ACCOUNTS  "AppAccounts"
 #define DEBUG_DOMAIN_CHATROOMS "AppChatrooms"
 #define DEBUG_DOMAIN_TRAY      "AppTray"
 #define DEBUG_DOMAIN_SESSION   "AppSession"
 
 #define DEBUG_QUIT
-
-/* Number of seconds before entering autoaway and extended autoaway. */
-#define	AWAY_TIME (5*60)
-#define	EXT_AWAY_TIME (30*60)
-
-/* Number of seconds to flash the icon when explicitly entering away status
- * (activity is also allowed during this period).
- */
-#define	LEAVE_SLACK 15
-
-/* Number of seconds of slack when returning from autoaway. */
-#define	BACK_SLACK 15
 
 /* Flashing delay for icons (milliseconds). */
 #define FLASH_TIMEOUT 500
@@ -297,7 +284,6 @@ static void            app_notify_sort_criterium_cb           (GossipConf       
 static void            app_notify_compact_contact_list_cb     (GossipConf               *conf,
 							       const gchar              *key,
 							       gpointer                  user_data);
-static gboolean        app_idle_check_cb                      (GossipApp                *app);
 static void            app_disconnect                         (void);
 static void            app_connection_items_setup             (GladeXML                 *glade);
 static void            app_connection_items_update            (void);
@@ -544,9 +530,6 @@ app_setup_presences (void)
 	/* Get saved presence presets. */
 	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring presets");
 	gossip_status_presets_get_all ();
-
-	/* Set the idle time checker. */
-	g_timeout_add (2 * 1000, (GSourceFunc) app_idle_check_cb, app);
 
 	/* Set up current presence. */
 	gossip_foo_updated (priv->foo);
@@ -2123,88 +2106,6 @@ app_notify_compact_contact_list_cb (GossipConf  *conf,
 		gossip_contact_list_set_is_compact (priv->contact_list,
 						    compact_contact_list);
 	}
-}
-
-static gboolean
-app_idle_check_cb (GossipApp *app)
-{
-	GossipAppPriv       *priv;
-	gint32               idle;
-	GossipPresenceState  state;
-	gboolean             presence_changed = FALSE;
-
-	priv = GET_PRIV (app);
-
-	if (!gossip_app_is_connected ()) {
-		return TRUE;
-	}
-
-	idle = gossip_idle_get_seconds ();
-	state = gossip_presence_get_state (gossip_foo_get_effective_presence (priv->foo));
-
-	/* gossip_debug (DEBUG_DOMAIN_IDLE, "Idle for:%d", idle); */
-
-	/* We're going away, allow some slack. */
-	if (gossip_foo_get_leave_time (priv->foo) > 0) {
-		if (time (NULL) - gossip_foo_get_leave_time (priv->foo) > LEAVE_SLACK) {
-			gossip_foo_set_leave_time (priv->foo, 0);
-			gossip_foo_stop_flash (priv->foo);
-
-			gossip_idle_reset ();
-			gossip_debug (DEBUG_DOMAIN_IDLE, "OK, away now.");
-		}
-
-		return TRUE;
-	}
-	else if (state != GOSSIP_PRESENCE_STATE_EXT_AWAY &&
-		 idle > EXT_AWAY_TIME) {
-		/* Presence may be idle if the screensaver has been started and
-		 * hence no away_presence set.
-		 */
-		if (!gossip_foo_get_away_presence (priv->foo)) {
-			GossipPresence *presence;
-
-			presence = gossip_presence_new ();
-			gossip_foo_set_away_presence (priv->foo, presence);
-			g_object_unref (presence);
-		}
-
-		/* Presence will already be away. */
-		gossip_debug (DEBUG_DOMAIN_IDLE, "Going to ext away...");
-		gossip_presence_set_state (gossip_foo_get_away_presence (priv->foo),
-					   GOSSIP_PRESENCE_STATE_EXT_AWAY);
-		presence_changed = TRUE;
-	}
-	else if (state != GOSSIP_PRESENCE_STATE_AWAY &&
-		 state != GOSSIP_PRESENCE_STATE_EXT_AWAY &&
-		 idle > AWAY_TIME) {
-		gossip_debug (DEBUG_DOMAIN_IDLE, "Going to away...");
-		gossip_foo_set_away (priv->foo, NULL);
-		presence_changed = TRUE;
-	}
-	else if (state == GOSSIP_PRESENCE_STATE_AWAY ||
-		 state == GOSSIP_PRESENCE_STATE_EXT_AWAY) {
-		/* Allow some slack before returning from away. */
-		if (idle >= -BACK_SLACK && idle <= 0) {
-			/* gossip_debug (DEBUG_DOMAIN_IDLE, "Slack, do nothing."); */
-			gossip_foo_start_flash (priv->foo);
-		}
-		else if (idle < -BACK_SLACK) {
-			gossip_debug (DEBUG_DOMAIN_IDLE, "No more slack, break interrupted.");
-			gossip_foo_clear_away (priv->foo);
-			return TRUE;
-		}
-		else if (idle > BACK_SLACK) {
-			/* gossip_debug (DEBUG_DOMAIN_IDLE, "Don't interrupt break."); */
-			gossip_foo_stop_flash (priv->foo);
-		}
-	}
-
-	if (presence_changed) {
-		gossip_foo_updated (priv->foo);
-	}
-
-	return TRUE;
 }
 
 /*

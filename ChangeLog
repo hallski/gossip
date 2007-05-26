@@ -1,4 +1,12 @@
-2007-05-25  Mikael Hallendal  <micke@imendio.com>
+2007-05-26  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-foo.[ch]: (gossip_foo_idle_check_cb): Factored out from
+	GossipApp.
+
+	* src/gossip-app.c: Factored out the idle checking and put it in
+	GossipFoo.
+
+2007-05-26  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-foo.[ch]: (gossip_foo_clear_away): Factored out from
 	GossipApp.
