@@ -1,5 +1,9 @@
 2007-05-26  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-app.c: Some minor style fixes.
+
+2007-05-26  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-self-presence.[ch]: 
 	(gossip_self_presence_get_effective,
 	gossip_self_presence_get_current_pixbuf): Shorted the names a bit.

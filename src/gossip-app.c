@@ -153,7 +153,7 @@ struct _GossipAppPriv {
 	GtkWidget             *presence_toolbar;
 	GtkWidget             *presence_chooser;
 
-	GossipSelfPresence             *self_presence;
+	GossipSelfPresence    *self_presence;
 
 	/* Misc */
 	guint                  size_timeout_id;
@@ -2011,7 +2011,8 @@ app_status_icon_update_tooltip (void)
 }
 
 static void
-app_status_start_flash_cb (GossipSelfPresence *self_presence, gpointer user_data)
+app_status_start_flash_cb (GossipSelfPresence *self_presence, 
+			   gpointer            user_data)
 {
 	GossipAppPriv *priv;
 
@@ -2025,7 +2026,8 @@ app_status_start_flash_cb (GossipSelfPresence *self_presence, gpointer user_data
 }
 
 static void
-app_status_stop_flash_cb (GossipSelfPresence *self_presence, gpointer user_data)
+app_status_stop_flash_cb (GossipSelfPresence *self_presence,
+			  gpointer            user_data)
 {
 	GossipAppPriv *priv;
 
@@ -2113,8 +2115,7 @@ app_notify_compact_contact_list_cb (GossipConf  *conf,
  */
 
 void
-gossip_app_connect (GossipAccount *account,
-		    gboolean       startup)
+gossip_app_connect (GossipAccount *account, gboolean startup)
 {
 	GossipAppPriv        *priv;
 	GossipAccountManager *manager;
@@ -2319,8 +2320,7 @@ gossip_app_is_connected (void)
  */
 
 static void
-app_accounts_error_edit_clicked_cb (GtkButton     *button,
-				    GossipAccount *account)
+app_accounts_error_edit_clicked_cb (GtkButton *button, GossipAccount *account)
 {
 	GossipAppPriv *priv;
 
@@ -2331,8 +2331,7 @@ app_accounts_error_edit_clicked_cb (GtkButton     *button,
 }
 
 static void
-app_accounts_error_clear_clicked_cb (GtkButton     *button,
-				     GossipAccount *account)
+app_accounts_error_clear_clicked_cb (GtkButton *button, GossipAccount *account)
 {
 	GossipAppPriv *priv;
 
@@ -2342,8 +2341,7 @@ app_accounts_error_clear_clicked_cb (GtkButton     *button,
 }
 
 static void
-app_accounts_error_display (GossipAccount *account,
-			    GError        *error)
+app_accounts_error_display (GossipAccount *account, GError *error)
 {
 	GossipAppPriv *priv;
 	GtkWidget     *child;
@@ -2519,14 +2517,14 @@ gossip_app_set_not_away (void)
 }
 
 void
-gossip_app_set_presence (GossipPresenceState  state,
-			 const gchar         *status)
+gossip_app_set_presence (GossipPresenceState state, const gchar *status)
 {
 	GossipAppPriv *priv;
 
 	priv = GET_PRIV (app);
 
-	gossip_self_presence_set_state_status (priv->self_presence, state, status);
+	gossip_self_presence_set_state_status (priv->self_presence, 
+					       state, status);
 }
 
 static void
@@ -2684,10 +2682,10 @@ app_status_icon_flash_maybe_stop (void)
 }
 
 static void
-app_session_chatroom_auto_connect_cb (GossipSession            *session,
-				      GossipChatroomProvider   *provider,
-				      GossipChatroom           *chatroom,
-				      gpointer                  user_data)
+app_session_chatroom_auto_connect_cb (GossipSession          *session,
+				      GossipChatroomProvider *provider,
+				      GossipChatroom         *chatroom,
+				      gpointer                user_data)
 {
 	GossipGroupChat *chat;
 
