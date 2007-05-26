@@ -1,5 +1,9 @@
 2007-05-25  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gosspi-app.c (app_idle_check_cb): Removed a temporal variable.
+
+2007-05-25  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gosspi-app.c (app_setup_presences): No need to set the initial
 	presences from here as they are set in GossipFoo's init function.
 

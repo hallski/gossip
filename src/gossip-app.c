@@ -2116,7 +2116,6 @@ app_idle_check_cb (GossipApp *app)
 {
 	GossipAppPriv       *priv;
 	gint32               idle;
-	GossipPresence      *presence;
 	GossipPresenceState  state;
 	gboolean             presence_changed = FALSE;
 
@@ -2127,8 +2126,7 @@ app_idle_check_cb (GossipApp *app)
 	}
 
 	idle = gossip_idle_get_seconds ();
-	presence = gossip_foo_get_effective_presence (priv->foo);
-	state = gossip_presence_get_state (presence);
+	state = gossip_presence_get_state (gossip_foo_get_effective_presence (priv->foo));
 
 	/* gossip_debug (DEBUG_DOMAIN_IDLE, "Idle for:%d", idle); */
 
