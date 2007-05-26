@@ -1,5 +1,10 @@
 2007-05-25  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-foo.[ch]: (gossip_foo_clear_away): Factored out from
+	GossipApp.
+
+2007-05-25  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-foo.[ch]: (gossip_foo_updated):
 	- Added updated signal to GossipFoo 
 	- Factored out updated from gossip-app.

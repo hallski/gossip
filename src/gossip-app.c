@@ -309,7 +309,6 @@ static void            app_accounts_error_display             (GossipAccount    
 							       GError                   *error);
 static void            app_presence_updated_cb                (GossipFoo *foo,
 							       gpointer   user_data);
-static void            app_status_clear_away                  (void);
 static void            app_presence_chooser_changed_cb        (GtkWidget                *chooser,
 							       GossipPresenceState       state,
 							       const gchar              *status,
@@ -2192,7 +2191,7 @@ app_idle_check_cb (GossipApp *app)
 		}
 		else if (idle < -BACK_SLACK) {
 			gossip_debug (DEBUG_DOMAIN_IDLE, "No more slack, break interrupted.");
-			app_status_clear_away ();
+			gossip_foo_clear_away (priv->foo);
 			return TRUE;
 		}
 		else if (idle > BACK_SLACK) {
@@ -2608,26 +2607,6 @@ app_presence_updated_cb (GossipFoo *foo, gpointer user_data)
 	app_status_icon_update_tooltip ();
 }
 
-/* clears status data from autoaway mode */
-static void
-app_status_clear_away (void)
-{
-	GossipAppPriv *priv;
-
-	priv = GET_PRIV (app);
-
-	gossip_foo_set_away_presence (priv->foo, NULL);
-
-	/* Clear the default state */
-	gossip_status_presets_clear_default ();
-
-	gossip_foo_set_leave_time (priv->foo, 0);
-	gossip_foo_stop_flash (priv->foo);
-
-	/* Force this so we don't get a delay in the display */
-	gossip_foo_updated (priv->foo);
-}
-
 void
 gossip_app_set_not_away (void)
 {
@@ -2641,7 +2620,7 @@ gossip_app_set_not_away (void)
 	}
 
 	if (gossip_foo_get_away_presence (priv->foo)) {
-		app_status_clear_away ();
+		gossip_foo_clear_away (priv->foo);
 	}
 }
 
@@ -2674,7 +2653,7 @@ gossip_app_set_presence (GossipPresenceState  state,
 			      "state", state, NULL);
 
 		gossip_foo_stop_flash (priv->foo);
-		app_status_clear_away ();
+		gossip_foo_clear_away (priv->foo);
 	} else {
 		gossip_foo_start_flash (priv->foo);
 		gossip_foo_set_away (priv->foo, status);

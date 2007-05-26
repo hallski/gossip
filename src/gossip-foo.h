@@ -69,6 +69,9 @@ void                 gossip_foo_start_flash               (GossipFoo *foo);
 void                 gossip_foo_stop_flash                (GossipFoo *foo);
 void                 gossip_foo_updated                   (GossipFoo *foo);
 
+/* clears status data from autoaway mode */
+void                 gossip_foo_clear_away                (GossipFoo *foo);
+
 G_END_DECLS
 
 #endif /* __GOSSIP_FOO_H__ */

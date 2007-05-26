@@ -23,6 +23,7 @@
 #include "gossip-app.h"
 #include "gossip-idle.h"
 #include "gossip-marshal.h"
+#include "gossip-status-presets.h"
 #include "gossip-stock.h"
 #include "gossip-ui-utils.h"
 #include "gossip-foo.h"
@@ -372,5 +373,24 @@ void
 gossip_foo_updated (GossipFoo *foo)
 {
 	g_signal_emit (foo, signals[UPDATED], 0);
+}
+
+void
+gossip_foo_clear_away (GossipFoo *foo)
+{
+	GossipFooPriv *priv;
+
+	priv = GET_PRIV (foo);
+
+	gossip_foo_set_away_presence (foo, NULL);
+
+	/* Clear the default state */
+	gossip_status_presets_clear_default ();
+
+	gossip_foo_set_leave_time (foo, 0);
+	gossip_foo_stop_flash (foo);
+
+	/* Force this so we don't get a delay in the display */
+	gossip_foo_updated (foo);
 }
 
