@@ -1,5 +1,12 @@
 2007-05-26  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-self-presence.[ch]: Renamed from GossipFoo.
+
+	* src/gossip-app.c: Updated to reflect the name change from GossipFoo
+	to GossipSelfPresence.
+
+2007-05-26  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-foo.[ch]: Privatized functions.
 
 2007-05-26  Mikael Hallendal  <micke@imendio.com>

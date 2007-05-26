@@ -47,7 +47,7 @@
 #include "gossip-chat.h"
 #include "gossip-chatrooms-window.h"
 #include "gossip-contact-list.h"
-#include "gossip-foo.h"
+#include "gossip-self-presence.h"
 #include "gossip-ft-window.h"
 #include "gossip-geometry.h"
 #include "gossip-group-chat.h"
@@ -153,7 +153,7 @@ struct _GossipAppPriv {
 	GtkWidget             *presence_toolbar;
 	GtkWidget             *presence_chooser;
 
-	GossipFoo             *foo;
+	GossipSelfPresence             *self_presence;
 
 	/* Misc */
 	guint                  size_timeout_id;
@@ -293,7 +293,7 @@ static void            app_accounts_error_clear_clicked_cb    (GtkButton        
 							       GossipAccount            *account);
 static void            app_accounts_error_display             (GossipAccount            *account,
 							       GError                   *error);
-static void            app_presence_updated_cb                (GossipFoo *foo,
+static void            app_presence_updated_cb                (GossipSelfPresence *self_presence,
 							       gpointer   user_data);
 static void            app_presence_chooser_changed_cb        (GtkWidget                *chooser,
 							       GossipPresenceState       state,
@@ -317,9 +317,9 @@ static void            app_contact_activated_cb               (GossipContactList
 							       GossipContact            *contact,
 							       GossipEventId             event_id,
 							       gpointer                  user_data);
-static void            app_status_start_flash_cb              (GossipFoo   *foo,
+static void            app_status_start_flash_cb              (GossipSelfPresence   *self_presence,
 							       gpointer user_data);
-static void            app_status_stop_flash_cb               (GossipFoo   *foo,
+static void            app_status_stop_flash_cb               (GossipSelfPresence   *self_presence,
 							       gpointer user_data);
 
 static GossipApp *app = NULL;
@@ -355,17 +355,17 @@ gossip_app_init (GossipApp *singleton_app)
 						  g_object_unref,
 						  (GDestroyNotify) app_reconnect_remove);
 
-	priv->foo = g_object_new (GOSSIP_TYPE_FOO, NULL);
+	priv->self_presence = g_object_new (GOSSIP_TYPE_SELF_PRESENCE, NULL);
 
-	g_signal_connect (priv->foo, "start-flash",
+	g_signal_connect (priv->self_presence, "start-flash",
 			  G_CALLBACK (app_status_start_flash_cb),
 			  NULL);
 
-	g_signal_connect (priv->foo, "stop-flash",
+	g_signal_connect (priv->self_presence, "stop-flash",
 			  G_CALLBACK (app_status_stop_flash_cb),
 			  NULL);
 
-	g_signal_connect (priv->foo, "updated",
+	g_signal_connect (priv->self_presence, "updated",
 			  G_CALLBACK (app_presence_updated_cb),
 			  NULL);
 
@@ -448,7 +448,7 @@ app_finalize (GObject *object)
 	gossip_ft_window_finalize (priv->session);
 	gossip_subscription_dialog_finalize (priv->session);
 	
-	g_object_unref (priv->foo);
+	g_object_unref (priv->self_presence);
 
 	g_object_unref (priv->event_manager);
 	g_object_unref (priv->chat_manager);
@@ -532,7 +532,7 @@ app_setup_presences (void)
 	gossip_status_presets_get_all ();
 
 	/* Set up current presence. */
-	gossip_foo_updated (priv->foo);
+	gossip_self_presence_updated (priv->self_presence);
 }
 
 static void
@@ -1500,7 +1500,7 @@ app_restore_saved_presence (void)
 	gossip_app_set_presence (gossip_status_presets_get_default_state (),
 				 gossip_status_presets_get_default_status());
 
-	gossip_foo_updated (priv->foo);
+	gossip_self_presence_updated (priv->self_presence);
 }
 
 static void
@@ -1589,7 +1589,7 @@ app_session_protocol_disconnected_cb (GossipSession  *session,
 
 	app_connection_items_update ();
 	app_favorite_chatroom_menu_update ();
-	gossip_foo_updated (priv->foo);
+	gossip_self_presence_updated (priv->self_presence);
 
 	should_reconnect = reason != GOSSIP_PROTOCOL_DISCONNECT_ASKED;
 
@@ -1988,7 +1988,7 @@ app_status_icon_update_tooltip (void)
 			GossipPresence      *presence;
 			GossipPresenceState  state;
 
-			presence = gossip_foo_get_effective_presence (priv->foo);
+			presence = gossip_self_presence_get_effective_presence (priv->self_presence);
 			state = gossip_presence_get_state (presence);
 			status = gossip_presence_get_status (presence);
 
@@ -2011,28 +2011,28 @@ app_status_icon_update_tooltip (void)
 }
 
 static void
-app_status_start_flash_cb (GossipFoo *foo, gpointer user_data)
+app_status_start_flash_cb (GossipSelfPresence *self_presence, gpointer user_data)
 {
 	GossipAppPriv *priv;
 
 	priv = GET_PRIV (app);
 
 	gossip_presence_chooser_flash_start (GOSSIP_PRESENCE_CHOOSER (priv->presence_chooser),
-					     gossip_foo_get_current_state (priv->foo),
-					     gossip_foo_get_previous_state (priv->foo));
+					     gossip_self_presence_get_current_state (priv->self_presence),
+					     gossip_self_presence_get_previous_state (priv->self_presence));
 
 	app_status_icon_flash_start ();
 }
 
 static void
-app_status_stop_flash_cb (GossipFoo *foo, gpointer user_data)
+app_status_stop_flash_cb (GossipSelfPresence *self_presence, gpointer user_data)
 {
 	GossipAppPriv *priv;
 
 	priv = GET_PRIV (app);
 
 	gossip_presence_chooser_flash_stop (GOSSIP_PRESENCE_CHOOSER (priv->presence_chooser),
-					    gossip_foo_get_current_state (priv->foo));
+					    gossip_self_presence_get_current_state (priv->self_presence));
 
 	app_status_icon_flash_maybe_stop ();
 }
@@ -2300,7 +2300,7 @@ app_connection_items_update (void)
 	}
 
 	if (connected == 0) {
-		gossip_foo_stop_flash (priv->foo);
+		gossip_self_presence_stop_flash (priv->self_presence);
 	}
 }
 
@@ -2468,7 +2468,7 @@ app_accounts_error_display (GossipAccount *account,
 }
 
 static void
-app_presence_updated_cb (GossipFoo *foo, gpointer user_data)
+app_presence_updated_cb (GossipSelfPresence *self_presence, gpointer user_data)
 {
 	GossipAppPriv       *priv;
 	GdkPixbuf           *pixbuf;
@@ -2478,7 +2478,7 @@ app_presence_updated_cb (GossipFoo *foo, gpointer user_data)
 
 	priv = GET_PRIV (app);
 
-	pixbuf = gossip_foo_get_current_status_pixbuf (priv->foo);
+	pixbuf = gossip_self_presence_get_current_status_pixbuf (priv->self_presence);
 	gtk_status_icon_set_from_pixbuf (priv->status_icon, pixbuf);
 	g_object_unref (pixbuf);
 
@@ -2490,7 +2490,7 @@ app_presence_updated_cb (GossipFoo *foo, gpointer user_data)
 		return;
 	}
 
-	presence = gossip_foo_get_effective_presence (priv->foo);
+	presence = gossip_self_presence_get_effective_presence (priv->self_presence);
 	state = gossip_presence_get_state (presence);
 	status = gossip_presence_get_status (presence);
 
@@ -2515,7 +2515,7 @@ gossip_app_set_not_away (void)
 
 	priv = GET_PRIV (app);
 
-	gossip_foo_set_not_away (priv->foo);
+	gossip_self_presence_set_not_away (priv->self_presence);
 }
 
 void
@@ -2526,7 +2526,7 @@ gossip_app_set_presence (GossipPresenceState  state,
 
 	priv = GET_PRIV (app);
 
-	gossip_foo_set_state_status (priv->foo, state, status);
+	gossip_self_presence_set_state_status (priv->self_presence, state, status);
 }
 
 static void
@@ -2602,7 +2602,7 @@ app_status_icon_flash_timeout_func (gpointer data)
 
 	if (on) {
 		if (is_flashing) {
-			pixbuf = gossip_foo_get_explicit_status_pixbuf (priv->foo);
+			pixbuf = gossip_self_presence_get_explicit_status_pixbuf (priv->self_presence);
 		}
 		else if (priv->status_icon_flash_icons != NULL) {
 			GossipEvent *event;
@@ -2634,7 +2634,7 @@ app_status_icon_flash_timeout_func (gpointer data)
 	}
 
 	if (pixbuf == NULL) {
-		pixbuf = gossip_foo_get_current_status_pixbuf (priv->foo);
+		pixbuf = gossip_self_presence_get_current_status_pixbuf (priv->self_presence);
 	}
 
 	gtk_status_icon_set_from_pixbuf (priv->status_icon, pixbuf);
@@ -2669,11 +2669,11 @@ app_status_icon_flash_maybe_stop (void)
 
 	priv = GET_PRIV (app);
 
-	if (priv->status_icon_flash_icons != NULL || gossip_foo_get_leave_time (priv->foo) > 0) {
+	if (priv->status_icon_flash_icons != NULL || gossip_self_presence_get_leave_time (priv->self_presence) > 0) {
 		return;
 	}
 
-	pixbuf = gossip_foo_get_current_status_pixbuf (priv->foo);
+	pixbuf = gossip_self_presence_get_current_status_pixbuf (priv->self_presence);
 	gtk_status_icon_set_from_pixbuf (priv->status_icon, pixbuf);
 	g_object_unref (pixbuf);
 
