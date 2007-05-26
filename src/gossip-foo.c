@@ -22,6 +22,7 @@
 
 #include "gossip-app.h"
 #include "gossip-idle.h"
+#include "gossip-marshal.h"
 #include "gossip-stock.h"
 #include "gossip-ui-utils.h"
 #include "gossip-foo.h"
@@ -57,6 +58,14 @@ enum {
 	PROP_MY_PROP
 };
 
+enum {
+	START_FLASH,
+	STOP_FLASH,
+	LAST_SIGNAL
+};
+
+static guint signals[LAST_SIGNAL] = { 0 };
+
 G_DEFINE_TYPE (GossipFoo, gossip_foo, G_TYPE_OBJECT);
 
 static void
@@ -78,6 +87,26 @@ gossip_foo_class_init (GossipFooClass *class)
 							   0, 1,
 							   1,
 							   G_PARAM_READWRITE));
+
+	signals[START_FLASH] =
+		g_signal_new ("start-flash",
+			      G_OBJECT_CLASS_TYPE (object_class),
+			      G_SIGNAL_RUN_LAST,
+			      0,
+			      NULL, NULL,
+			      gossip_marshal_VOID__VOID,
+			      G_TYPE_NONE,
+			      0);
+
+	signals[STOP_FLASH] =
+		g_signal_new ("stop-flash",
+			      G_OBJECT_CLASS_TYPE (object_class),
+			      G_SIGNAL_RUN_LAST,
+			      0,
+			      NULL, NULL,
+			      gossip_marshal_VOID__VOID,
+			      G_TYPE_NONE,
+			      0);
 
 	g_type_class_add_private (object_class, sizeof (GossipFooPriv));
 }
@@ -315,4 +344,17 @@ gossip_foo_set_leave_time (GossipFoo *foo, time_t t)
 
 	priv->leave_time = t;
 }
+
+void
+gossip_foo_start_flash (GossipFoo *foo)
+{
+	g_signal_emit (foo, signals[START_FLASH], 0);
+}
+
+void
+gossip_foo_stop_flash (GossipFoo *foo)
+{
+	g_signal_emit (foo, signals[STOP_FLASH], 0);
+}
+
 

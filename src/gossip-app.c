@@ -53,7 +53,6 @@
 #include "gossip-group-chat.h"
 #include "gossip-idle.h"
 #include "gossip-log-window.h"
-#include "gossip-marshal.h"
 #include "gossip-new-chatroom-dialog.h"
 #include "gossip-new-message-dialog.h"
 #include "gossip-preferences.h"
@@ -318,8 +317,6 @@ static gboolean        configure_event_timeout_cb             (GtkWidget        
 static gboolean        app_window_configure_event_cb          (GtkWidget                *widget,
 							       GdkEventConfigure        *event,
 							       GossipApp                *app);
-static void            app_status_flash_start                 (void);
-static void            app_status_flash_stop                  (void);
 static void            app_session_chatroom_auto_connect_cb   (GossipSession            *session,
 							       GossipChatroomProvider   *provider,
 							       GossipChatroom           *chatroom,
@@ -334,6 +331,10 @@ static void            app_contact_activated_cb               (GossipContactList
 							       GossipContact            *contact,
 							       GossipEventId             event_id,
 							       gpointer                  user_data);
+static void            app_status_start_flash_cb              (GossipFoo   *foo,
+							       gpointer user_data);
+static void            app_status_stop_flash_cb               (GossipFoo   *foo,
+							       gpointer user_data);
 
 static GossipApp *app = NULL;
 
@@ -369,6 +370,14 @@ gossip_app_init (GossipApp *singleton_app)
 						  (GDestroyNotify) app_reconnect_remove);
 
 	priv->foo = g_object_new (GOSSIP_TYPE_FOO, NULL);
+
+	g_signal_connect (priv->foo, "start-flash",
+			  G_CALLBACK (app_status_start_flash_cb),
+			  NULL);
+
+	g_signal_connect (priv->foo, "stop-flash",
+			  G_CALLBACK (app_status_stop_flash_cb),
+			  NULL);
 
 	priv->tooltips = g_object_ref (gtk_tooltips_new ());
 	gtk_object_sink (GTK_OBJECT (priv->tooltips));
@@ -2011,7 +2020,7 @@ app_status_icon_update_tooltip (void)
 }
 
 static void
-app_status_flash_start (void)
+app_status_start_flash_cb (GossipFoo *foo, gpointer user_data)
 {
 	GossipAppPriv *priv;
 
@@ -2025,7 +2034,7 @@ app_status_flash_start (void)
 }
 
 static void
-app_status_flash_stop (void)
+app_status_stop_flash_cb (GossipFoo *foo, gpointer user_data)
 {
 	GossipAppPriv *priv;
 
@@ -2131,7 +2140,7 @@ app_idle_check_cb (GossipApp *app)
 	if (gossip_foo_get_leave_time (priv->foo) > 0) {
 		if (time (NULL) - gossip_foo_get_leave_time (priv->foo) > LEAVE_SLACK) {
 			gossip_foo_set_leave_time (priv->foo, 0);
-			app_status_flash_stop ();
+			gossip_foo_stop_flash (priv->foo);
 
 			gossip_idle_reset ();
 			gossip_debug (DEBUG_DOMAIN_IDLE, "OK, away now.");
@@ -2170,7 +2179,7 @@ app_idle_check_cb (GossipApp *app)
 		/* Allow some slack before returning from away. */
 		if (idle >= -BACK_SLACK && idle <= 0) {
 			/* gossip_debug (DEBUG_DOMAIN_IDLE, "Slack, do nothing."); */
-			app_status_flash_start ();
+			gossip_foo_start_flash (priv->foo);
 		}
 		else if (idle < -BACK_SLACK) {
 			gossip_debug (DEBUG_DOMAIN_IDLE, "No more slack, break interrupted.");
@@ -2179,7 +2188,7 @@ app_idle_check_cb (GossipApp *app)
 		}
 		else if (idle > BACK_SLACK) {
 			/* gossip_debug (DEBUG_DOMAIN_IDLE, "Don't interrupt break."); */
-			app_status_flash_stop ();
+			gossip_foo_stop_flash (priv->foo);
 		}
 	}
 
@@ -2382,7 +2391,7 @@ app_connection_items_update (void)
 	}
 
 	if (connected == 0) {
-		app_status_flash_stop ();
+		gossip_foo_stop_flash (priv->foo);
 	}
 }
 
@@ -2604,7 +2613,7 @@ app_status_clear_away (void)
 	gossip_status_presets_clear_default ();
 
 	gossip_foo_set_leave_time (priv->foo, 0);
-	app_status_flash_stop ();
+	gossip_foo_stop_flash (priv->foo);
 
 	/* Force this so we don't get a delay in the display */
 	app_presence_updated ();
@@ -2655,10 +2664,10 @@ gossip_app_set_presence (GossipPresenceState  state,
 		g_object_set (gossip_foo_get_presence (priv->foo), 
 			      "state", state, NULL);
 
-		app_status_flash_stop ();
+		gossip_foo_stop_flash (priv->foo);
 		app_status_clear_away ();
 	} else {
-		app_status_flash_start ();
+		gossip_foo_start_flash (priv->foo);
 		gossip_foo_set_away (priv->foo, status);
 		app_presence_updated ();
 	}
