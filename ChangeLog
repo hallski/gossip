@@ -1,4 +1,10 @@
 2007-05-26  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-foo.[ch]:
+	(gossip_foo_get_away_presence, gossip_foo_set_away_presence): 
+	- Made private.
+
+2007-05-26  Mikael Hallendal  <micke@imendio.com>
 	
 	* src/gossip-foo.[ch]: 
 	(gossip_foo_get_presence): Made private

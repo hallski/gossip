@@ -72,6 +72,9 @@ static void         foo_set_property       (GObject             *object,
 					    const GValue        *value,
 					    GParamSpec          *pspec);
 static GossipPresence *   foo_get_presence (GossipFoo           *foo);
+static GossipPresence *   foo_get_away_presence (GossipFoo *foo);
+static void               foo_set_away_presence (GossipFoo *foo,
+						 GossipPresence *presence);
 
 enum {
 	PROP_0,
@@ -231,7 +234,7 @@ foo_get_presence (GossipFoo *foo)
 }
 
 GossipPresence *
-gossip_foo_get_away_presence (GossipFoo *foo)
+foo_get_away_presence (GossipFoo *foo)
 {
 	GossipFooPriv *priv;
 
@@ -243,7 +246,7 @@ gossip_foo_get_away_presence (GossipFoo *foo)
 }
 
 void
-gossip_foo_set_away_presence (GossipFoo *foo, GossipPresence *presence)
+foo_set_away_presence (GossipFoo *foo, GossipPresence *presence)
 {
 	GossipFooPriv *priv;
 
@@ -268,13 +271,13 @@ gossip_foo_set_away (GossipFoo *foo, const gchar *status)
 
 	priv = GET_PRIV (foo);
 
-	if (!gossip_foo_get_away_presence (foo)) {
+	if (!foo_get_away_presence (foo)) {
 		GossipPresence *presence;
 
 		presence = gossip_presence_new ();
 		gossip_presence_set_state (presence, 
 					   GOSSIP_PRESENCE_STATE_AWAY);
-		gossip_foo_set_away_presence (foo, presence);
+		foo_set_away_presence (foo, presence);
 		g_object_unref (presence);
 	}
 
@@ -282,7 +285,7 @@ gossip_foo_set_away (GossipFoo *foo, const gchar *status)
 	gossip_idle_reset ();
 
 	if (status) {
-		gossip_presence_set_status (gossip_foo_get_away_presence (foo),
+		gossip_presence_set_status (foo_get_away_presence (foo),
 					    status);
 	}
 	
@@ -346,8 +349,6 @@ gossip_foo_get_current_status_pixbuf (GossipFoo *foo)
 GdkPixbuf *
 gossip_foo_get_explicit_status_pixbuf (GossipFoo *foo)
 {
-	g_print ("%s called\n", G_STRFUNC);
-
 	return gossip_pixbuf_for_presence (foo_get_presence (foo));
 }
 
@@ -396,7 +397,7 @@ gossip_foo_clear_away (GossipFoo *foo)
 
 	priv = GET_PRIV (foo);
 
-	gossip_foo_set_away_presence (foo, NULL);
+	foo_set_away_presence (foo, NULL);
 
 	/* Clear the default state */
 	gossip_status_presets_clear_default ();
@@ -444,17 +445,17 @@ gossip_foo_idle_check_cb (GossipFoo *foo)
 		/* Presence may be idle if the screensaver has been started and
 		 * hence no away_presence set.
 		 */
-		if (!gossip_foo_get_away_presence (foo)) {
+		if (!foo_get_away_presence (foo)) {
 			GossipPresence *presence;
 
 			presence = gossip_presence_new ();
-			gossip_foo_set_away_presence (foo, presence);
+			foo_set_away_presence (foo, presence);
 			g_object_unref (presence);
 		}
 
 		/* Presence will already be away. */
 		gossip_debug (DEBUG_DOMAIN_IDLE, "Going to ext away...");
-		gossip_presence_set_state (gossip_foo_get_away_presence (foo),
+		gossip_presence_set_state (foo_get_away_presence (foo),
 					   GOSSIP_PRESENCE_STATE_EXT_AWAY);
 		presence_changed = TRUE;
 	}
@@ -498,7 +499,7 @@ gossip_foo_set_not_away (GossipFoo *foo)
 		return;
 	}
 
-	if (gossip_foo_get_away_presence (foo)) {
+	if (foo_get_away_presence (foo)) {
 		gossip_foo_clear_away (foo);
 	}
 }
