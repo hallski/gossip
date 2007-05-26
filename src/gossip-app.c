@@ -308,7 +308,6 @@ static void            app_accounts_error_clear_clicked_cb    (GtkButton        
 							       GossipAccount            *account);
 static void            app_accounts_error_display             (GossipAccount            *account,
 							       GError                   *error);
-static void            app_set_away                           (const gchar              *status);
 static void            app_presence_updated                   (void);
 static void            app_status_clear_away                  (void);
 static void            app_presence_chooser_changed_cb        (GtkWidget                *chooser,
@@ -2163,7 +2162,7 @@ app_idle_check_cb (GossipApp *app)
 		 state != GOSSIP_PRESENCE_STATE_EXT_AWAY &&
 		 idle > AWAY_TIME) {
 		gossip_debug (DEBUG_DOMAIN_IDLE, "Going to away...");
-		app_set_away (NULL);
+		gossip_foo_set_away (priv->foo, NULL);
 		presence_changed = TRUE;
 	}
 	else if (state == GOSSIP_PRESENCE_STATE_AWAY ||
@@ -2551,32 +2550,6 @@ app_accounts_error_display (GossipAccount *account,
 }
 
 static void
-app_set_away (const gchar *status)
-{
-	GossipAppPriv *priv;
-
-	priv = GET_PRIV (app);
-
-	if (!gossip_foo_get_away_presence (priv->foo)) {
-		GossipPresence *presence;
-
-		presence = gossip_presence_new ();
-		gossip_presence_set_state (presence, 
-					   GOSSIP_PRESENCE_STATE_AWAY);
-		gossip_foo_set_away_presence (priv->foo, presence);
-		g_object_unref (presence);
-	}
-
-	gossip_foo_set_leave_time (priv->foo, time (NULL));
-	gossip_idle_reset ();
-
-	if (status) {
-		gossip_presence_set_status (gossip_foo_get_away_presence (priv->foo),
-					    status);
-	}
-}
-
-static void
 app_presence_updated (void)
 {
 	GossipAppPriv       *priv;
@@ -2686,7 +2659,7 @@ gossip_app_set_presence (GossipPresenceState  state,
 		app_status_clear_away ();
 	} else {
 		app_status_flash_start ();
-		app_set_away (status);
+		gossip_foo_set_away (priv->foo, status);
 		app_presence_updated ();
 	}
 }

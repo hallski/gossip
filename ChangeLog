@@ -1,5 +1,12 @@
 2007-05-25  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-foo.[ch]: (gossip_foo_set_away): Factored out from 
+	GossipApp.
+
+	* src/gosspi-app.c: Factored out app_set_away and put in GossipFoo.
+
+2007-05-25  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-foo.[ch]:
 	(gossip_foo_get_leave_time, gossip_foo_set_leave_time): Factored out
 	from GossipApp.

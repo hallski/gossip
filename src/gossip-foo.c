@@ -21,6 +21,7 @@
 #include "config.h"
 
 #include "gossip-app.h"
+#include "gossip-idle.h"
 #include "gossip-stock.h"
 #include "gossip-ui-utils.h"
 #include "gossip-foo.h"
@@ -213,6 +214,33 @@ gossip_foo_set_away_presence (GossipFoo *foo, GossipPresence *presence)
 	} 
 }
 
+void
+gossip_foo_set_away (GossipFoo *foo, const gchar *status)
+{
+	GossipFooPriv *priv;
+
+	priv = GET_PRIV (foo);
+
+	if (!gossip_foo_get_away_presence (foo)) {
+		GossipPresence *presence;
+
+		presence = gossip_presence_new ();
+		gossip_presence_set_state (presence, 
+					   GOSSIP_PRESENCE_STATE_AWAY);
+		gossip_foo_set_away_presence (foo, presence);
+		g_object_unref (presence);
+	}
+
+	gossip_foo_set_leave_time (foo, time (NULL));
+	gossip_idle_reset ();
+
+	if (status) {
+		gossip_presence_set_status (gossip_foo_get_away_presence (foo),
+					    status);
+	}
+	
+}
+
 GossipPresence *
 gossip_foo_get_effective_presence (GossipFoo *foo)
 {
@@ -275,8 +303,6 @@ gossip_foo_get_leave_time (GossipFoo *foo)
 
 	priv = GET_PRIV (foo);
 	
-	g_print ("%s called\n", G_STRFUNC);
-
 	return priv->leave_time;
 }
 
@@ -286,8 +312,6 @@ gossip_foo_set_leave_time (GossipFoo *foo, time_t t)
 	GossipFooPriv *priv;
 
 	priv = GET_PRIV (foo);
-
-	g_print ("%s called\n", G_STRFUNC);
 
 	priv->leave_time = t;
 }
