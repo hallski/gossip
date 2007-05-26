@@ -67,6 +67,7 @@ void                 gossip_foo_set_leave_time            (GossipFoo *foo,
 							   time_t     t);
 void                 gossip_foo_start_flash               (GossipFoo *foo);
 void                 gossip_foo_stop_flash                (GossipFoo *foo);
+void                 gossip_foo_updated                   (GossipFoo *foo);
 
 G_END_DECLS
 

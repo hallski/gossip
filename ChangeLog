@@ -1,5 +1,11 @@
 2007-05-25  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-foo.[ch]: (gossip_foo_updated):
+	- Added updated signal to GossipFoo 
+	- Factored out updated from gossip-app.
+
+2007-05-25  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-foo.[ch]: (gossip_foo_start_flash, gossip_foo_stop_flash):
 	- Added start-flash and stop-flash signals to GossipFoo 
 	- Factored out start-flash and stop-flash from gossip-app.

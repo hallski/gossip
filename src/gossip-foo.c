@@ -61,6 +61,7 @@ enum {
 enum {
 	START_FLASH,
 	STOP_FLASH,
+	UPDATED,
 	LAST_SIGNAL
 };
 
@@ -100,6 +101,16 @@ gossip_foo_class_init (GossipFooClass *class)
 
 	signals[STOP_FLASH] =
 		g_signal_new ("stop-flash",
+			      G_OBJECT_CLASS_TYPE (object_class),
+			      G_SIGNAL_RUN_LAST,
+			      0,
+			      NULL, NULL,
+			      gossip_marshal_VOID__VOID,
+			      G_TYPE_NONE,
+			      0);
+
+	signals[UPDATED] =
+		g_signal_new ("updated",
 			      G_OBJECT_CLASS_TYPE (object_class),
 			      G_SIGNAL_RUN_LAST,
 			      0,
@@ -357,4 +368,9 @@ gossip_foo_stop_flash (GossipFoo *foo)
 	g_signal_emit (foo, signals[STOP_FLASH], 0);
 }
 
+void
+gossip_foo_updated (GossipFoo *foo)
+{
+	g_signal_emit (foo, signals[UPDATED], 0);
+}
 

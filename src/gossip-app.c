@@ -307,7 +307,8 @@ static void            app_accounts_error_clear_clicked_cb    (GtkButton        
 							       GossipAccount            *account);
 static void            app_accounts_error_display             (GossipAccount            *account,
 							       GError                   *error);
-static void            app_presence_updated                   (void);
+static void            app_presence_updated_cb                (GossipFoo *foo,
+							       gpointer   user_data);
 static void            app_status_clear_away                  (void);
 static void            app_presence_chooser_changed_cb        (GtkWidget                *chooser,
 							       GossipPresenceState       state,
@@ -377,6 +378,10 @@ gossip_app_init (GossipApp *singleton_app)
 
 	g_signal_connect (priv->foo, "stop-flash",
 			  G_CALLBACK (app_status_stop_flash_cb),
+			  NULL);
+
+	g_signal_connect (priv->foo, "updated",
+			  G_CALLBACK (app_presence_updated_cb),
 			  NULL);
 
 	priv->tooltips = g_object_ref (gtk_tooltips_new ());
@@ -545,7 +550,7 @@ app_setup_presences (void)
 	g_timeout_add (2 * 1000, (GSourceFunc) app_idle_check_cb, app);
 
 	/* Set up current presence. */
-	app_presence_updated ();
+	gossip_foo_updated (priv->foo);
 }
 
 static void
@@ -1506,10 +1511,14 @@ app_session_protocol_connecting_cb (GossipSession  *session,
 static void
 app_restore_saved_presence (void)
 {
+	GossipAppPriv *priv;
+
+	priv = GET_PRIV (app);
+
 	gossip_app_set_presence (gossip_status_presets_get_default_state (),
 				 gossip_status_presets_get_default_status());
 
-	app_presence_updated ();
+	gossip_foo_updated (priv->foo);
 }
 
 static void
@@ -1598,7 +1607,7 @@ app_session_protocol_disconnected_cb (GossipSession  *session,
 
 	app_connection_items_update ();
 	app_favorite_chatroom_menu_update ();
-	app_presence_updated ();
+	gossip_foo_updated (priv->foo);
 
 	should_reconnect = reason != GOSSIP_PROTOCOL_DISCONNECT_ASKED;
 
@@ -2193,7 +2202,7 @@ app_idle_check_cb (GossipApp *app)
 	}
 
 	if (presence_changed) {
-		app_presence_updated ();
+		gossip_foo_updated (priv->foo);
 	}
 
 	return TRUE;
@@ -2559,7 +2568,7 @@ app_accounts_error_display (GossipAccount *account,
 }
 
 static void
-app_presence_updated (void)
+app_presence_updated_cb (GossipFoo *foo, gpointer user_data)
 {
 	GossipAppPriv       *priv;
 	GdkPixbuf           *pixbuf;
@@ -2616,7 +2625,7 @@ app_status_clear_away (void)
 	gossip_foo_stop_flash (priv->foo);
 
 	/* Force this so we don't get a delay in the display */
-	app_presence_updated ();
+	gossip_foo_updated (priv->foo);
 }
 
 void
@@ -2669,7 +2678,7 @@ gossip_app_set_presence (GossipPresenceState  state,
 	} else {
 		gossip_foo_start_flash (priv->foo);
 		gossip_foo_set_away (priv->foo, status);
-		app_presence_updated ();
+		gossip_foo_updated (priv->foo);
 	}
 }
 
