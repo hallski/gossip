@@ -1,5 +1,13 @@
 2007-05-26  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-foo.[ch]: (gossip_foo_get_explicit_status_pixbuf): Added
+	function to get the explicit status pixbuf.
+	
+	* src/gossip-app.c: (app_status_icon_flash_timeout_func): Use the new
+	function.
+
+2007-05-26  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-foo.[ch]: (gossip_foo_set_state_status): Factored out from
 	GossipApp::set_presence.
 

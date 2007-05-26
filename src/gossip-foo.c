@@ -360,6 +360,14 @@ gossip_foo_get_current_status_pixbuf (GossipFoo *foo)
 	return gossip_pixbuf_for_presence (gossip_foo_get_effective_presence (foo));
 }
 
+GdkPixbuf *
+gossip_foo_get_explicit_status_pixbuf (GossipFoo *foo)
+{
+	g_print ("%s called\n", G_STRFUNC);
+
+	return gossip_pixbuf_for_presence (gossip_foo_get_presence (foo));
+}
+
 time_t
 gossip_foo_get_leave_time (GossipFoo *foo)
 {

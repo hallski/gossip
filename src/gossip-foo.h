@@ -61,6 +61,7 @@ GossipPresence *     gossip_foo_get_effective_presence    (GossipFoo *foo);
 GossipPresenceState  gossip_foo_get_current_state         (GossipFoo *foo);
 GossipPresenceState  gossip_foo_get_previous_state        (GossipFoo *foo);
 GdkPixbuf *          gossip_foo_get_current_status_pixbuf (GossipFoo *foo);
+GdkPixbuf *          gossip_foo_get_explicit_status_pixbuf (GossipFoo *foo);
 
 time_t               gossip_foo_get_leave_time            (GossipFoo *foo);
 void                 gossip_foo_set_leave_time            (GossipFoo *foo,

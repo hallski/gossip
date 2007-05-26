@@ -2602,7 +2602,7 @@ app_status_icon_flash_timeout_func (gpointer data)
 
 	if (on) {
 		if (is_flashing) {
-			pixbuf = gossip_pixbuf_for_presence (gossip_foo_get_presence (priv->foo));
+			pixbuf = gossip_foo_get_explicit_status_pixbuf (priv->foo);
 		}
 		else if (priv->status_icon_flash_icons != NULL) {
 			GossipEvent *event;
