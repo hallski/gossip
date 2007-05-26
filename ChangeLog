@@ -1,5 +1,15 @@
 2007-05-24  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-app.c (app_get_presence, app_get_away_presence): Added as
+	access functions for priv->presence and priv->away_presence.
+
+2007-05-24  Mikael Hallendal  <micke@imendio.com>
+	
+	* src/Makefile.am: Fixed the style a bit and added GossipDummy.
+	* src/gossip-dummy.[ch]: Dummy object for boilerplate.
+
+2007-05-24  Mikael Hallendal  <micke@imendio.com>
+
 	* configure.ac: Bumped Loudmouth requirement to 1.2.2
 
 2007-05-24  Mikael Hallendal  <micke@imendio.com>

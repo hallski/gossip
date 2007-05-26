@@ -28,8 +28,8 @@ G_BEGIN_DECLS
 #define GOSSIP_TYPE_DUMMY            (gossip_dummy_get_type ())
 #define GOSSIP_DUMMY(o)              (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_DUMMY, GossipDummy))
 #define GOSSIP_DUMMY_CLASS(k)        (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_DUMMY, GossipDummyClass))
-#define GOSSIP_IS_PRESENCE(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), GOSSIP_TYPE_DUMMY))
-#define GOSSIP_IS_PRESENCE_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_DUMMY))
+#define GOSSIP_IS_DUMMY(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), GOSSIP_TYPE_DUMMY))
+#define GOSSIP_IS_DUMMY_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_DUMMY))
 #define GOSSIP_DUMMY_GET_CLASS(o)    (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_DUMMY, GossipDummyClass))
 
 typedef struct _GossipDummy      GossipDummy;
