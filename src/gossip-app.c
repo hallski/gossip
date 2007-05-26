@@ -2526,33 +2526,7 @@ gossip_app_set_presence (GossipPresenceState  state,
 
 	priv = GET_PRIV (app);
 
-	if (state != GOSSIP_PRESENCE_STATE_AWAY) {
-		const gchar *default_status;
-
-		/* Send NULL if it's not changed from default status string. We
-		 * do this so that the translated default strings will work
-		 * across two Gossips.
-		 */
-		default_status = gossip_presence_state_get_default_status (state);
-
-		if (status && strcmp (status, default_status) == 0) {
-			g_object_set (gossip_foo_get_presence (priv->foo),
-				      "status", NULL, NULL);
-		} else {
-			g_object_set (gossip_foo_get_presence (priv->foo),
-				      "status", status, NULL);
-		}
-
-		g_object_set (gossip_foo_get_presence (priv->foo), 
-			      "state", state, NULL);
-
-		gossip_foo_stop_flash (priv->foo);
-		gossip_foo_clear_away (priv->foo);
-	} else {
-		gossip_foo_start_flash (priv->foo);
-		gossip_foo_set_away (priv->foo, status);
-		gossip_foo_updated (priv->foo);
-	}
+	gossip_foo_set_state_status (priv->foo, state, status);
 }
 
 static void

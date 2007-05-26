@@ -1,5 +1,10 @@
 2007-05-26  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-foo.[ch]: (gossip_foo_set_state_status): Factored out from
+	GossipApp::set_presence.
+
+2007-05-26  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-foo.[ch]: (gossip_foo_set_not_away): Factored out from
 	GossipApp.
 

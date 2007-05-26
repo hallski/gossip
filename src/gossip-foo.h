@@ -73,6 +73,9 @@ void                 gossip_foo_updated                   (GossipFoo *foo);
 void                 gossip_foo_clear_away                (GossipFoo *foo);
 gboolean             gossip_foo_idle_check_cb             (GossipFoo *foo);
 void                 gossip_foo_set_not_away              (GossipFoo *foo);
+void                 gossip_foo_set_state_status          (GossipFoo *foo,
+							   GossipPresenceState state,
+							   const gchar *status);
 
 G_END_DECLS
 

@@ -20,6 +20,8 @@
 
 #include "config.h"
 
+#include <string.h>
+
 #include <libgossip/gossip-debug.h>
 
 #include "gossip-app.h"
@@ -509,4 +511,43 @@ gossip_foo_set_not_away (GossipFoo *foo)
 		gossip_foo_clear_away (foo);
 	}
 }
+
+void
+gossip_foo_set_state_status (GossipFoo           *foo,
+			     GossipPresenceState  state,
+			     const gchar         *status)
+{
+	GossipFooPriv *priv;
+
+	priv = GET_PRIV (foo);
+
+	if (state != GOSSIP_PRESENCE_STATE_AWAY) {
+		const gchar *default_status;
+
+		/* Send NULL if it's not changed from default status string. We
+		 * do this so that the translated default strings will work
+		 * across two Gossips.
+		 */
+		default_status = gossip_presence_state_get_default_status (state);
+
+		if (status && strcmp (status, default_status) == 0) {
+			g_object_set (gossip_foo_get_presence (foo),
+				      "status", NULL, NULL);
+		} else {
+			g_object_set (gossip_foo_get_presence (foo),
+				      "status", status, NULL);
+		}
+
+		g_object_set (gossip_foo_get_presence (foo), 
+			      "state", state, NULL);
+
+		gossip_foo_stop_flash (foo);
+		gossip_foo_clear_away (foo);
+	} else {
+		gossip_foo_start_flash (foo);
+		gossip_foo_set_away (foo, status);
+		gossip_foo_updated (foo);
+	}
+}
+
 
