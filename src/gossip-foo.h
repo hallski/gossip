@@ -46,18 +46,18 @@ struct _GossipFooClass {
 	GObjectClass parent_class;
 };
 
-GType             gossip_foo_get_type               (void) G_GNUC_CONST;
+GType                gossip_foo_get_type                  (void) G_GNUC_CONST;
 
-GossipPresence *  gossip_foo_get_presence           (GossipFoo      *foo);
-void              gossip_foo_set_presence           (GossipFoo      *foo,
-						     GossipPresence *presence);
-GossipPresence *  gossip_foo_get_away_presence      (GossipFoo *foo);
-void              gossip_foo_set_away_presence      (GossipFoo *foo,
-						     GossipPresence *presence);
+GossipPresence *     gossip_foo_get_presence              (GossipFoo      *foo);
+void                 gossip_foo_set_presence              (GossipFoo      *foo,
+							   GossipPresence *presence);
+GossipPresence *     gossip_foo_get_away_presence         (GossipFoo *foo);
+void                 gossip_foo_set_away_presence         (GossipFoo *foo,
+							   GossipPresence *presence);
 
-GossipPresence *  gossip_foo_get_effective_presence (GossipFoo *foo);
-GossipPresenceState  gossip_foo_get_current_state   (GossipFoo *foo);
-GossipPresenceState  gossip_foo_get_previous_state  (GossipFoo *foo);
+GossipPresence *     gossip_foo_get_effective_presence    (GossipFoo *foo);
+GossipPresenceState  gossip_foo_get_current_state         (GossipFoo *foo);
+GossipPresenceState  gossip_foo_get_previous_state        (GossipFoo *foo);
 GdkPixbuf *          gossip_foo_get_current_status_pixbuf (GossipFoo *foo);
 
 G_END_DECLS

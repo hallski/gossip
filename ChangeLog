@@ -1,5 +1,10 @@
 2007-05-25  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gosspi-app.c (app_setup_presences): No need to set the initial
+	presences from here as they are set in GossipFoo's init function.
+
+2007-05-25  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-foo.[ch] (gossip_foo_get_current_status_pixbuf): Factored
 	out from GossipApp.
 

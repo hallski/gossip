@@ -528,21 +528,12 @@ static void
 app_setup_presences (void)
 {
 	GossipAppPriv  *priv;
-	GossipPresence *presence;
 
 	priv = GET_PRIV (app);
 
 	/* Get saved presence presets. */
 	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring presets");
 	gossip_status_presets_get_all ();
-
-	/* Set up saved presence information. */
-	presence = gossip_presence_new ();
-	gossip_presence_set_state (presence, GOSSIP_PRESENCE_STATE_AVAILABLE);
-	gossip_foo_set_presence (priv->foo, presence);
-	g_object_unref (presence);
-
-	gossip_foo_set_away_presence (priv->foo, NULL);
 
 	/* Set the idle time checker. */
 	g_timeout_add (2 * 1000, (GSourceFunc) app_idle_check_cb, app);

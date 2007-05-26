@@ -89,6 +89,8 @@ gossip_foo_init (GossipFoo *presence)
 	priv->presence = gossip_presence_new ();
 	gossip_presence_set_state (priv->presence,
 				   GOSSIP_PRESENCE_STATE_AVAILABLE);
+
+	priv->away_presence = NULL;
 }
 
 static void
@@ -255,8 +257,6 @@ GdkPixbuf *
 gossip_foo_get_current_status_pixbuf (GossipFoo *foo)
 {
 	g_return_val_if_fail (GOSSIP_IS_FOO (foo), NULL);
-
-	g_print ("%s called\n", G_STRFUNC);
 
 	if (!gossip_session_is_connected (gossip_app_get_session (), NULL)) {
 		return gossip_pixbuf_from_stock (GOSSIP_STOCK_OFFLINE,
