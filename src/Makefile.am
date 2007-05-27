@@ -82,7 +82,6 @@ gossip_SOURCES = 				                        	\
 	gossip-preferences.c               gossip-preferences.h	           \
 	gossip-private-chat.c              gossip-private-chat.h           \
 	gossip-sound.c		           gossip-sound.h		   \
-	gossip-stock.c		           gossip-stock.h		   \
 	gossip-spell.c                     gossip-spell.h                  \
 	gossip-spell-dialog.c 		   gossip-spell-dialog.h           \
 	gossip-status-icon.c               gossip-status-icon.h            \

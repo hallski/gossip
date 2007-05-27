@@ -28,11 +28,11 @@
 #include <glade/glade.h>
 
 #include <libgossip/gossip-utils.h>
+#include <libgossip/gossip-stock.h>
 
 #include "gossip-marshal.h"
 #include "gossip-app.h"
 #include "gossip-ui-utils.h"
-#include "gossip-stock.h"
 #include "gossip-presence-chooser.h"
 #include "gossip-status-presets.h"
 

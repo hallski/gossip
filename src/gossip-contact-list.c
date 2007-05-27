@@ -32,6 +32,7 @@
 #include <libgossip/gossip-session.h>
 #include <libgossip/gossip-message.h>
 #include <libgossip/gossip-event-manager.h>
+#include <libgossip/gossip-stock.h>
 #include <libgossip/gossip-utils.h>
 
 #include "gossip-app.h"
@@ -46,7 +47,6 @@
 #include "gossip-log-window.h"
 #include "gossip-marshal.h"
 #include "gossip-sound.h"
-#include "gossip-stock.h"
 #include "gossip-ui-utils.h"
 
 #define DEBUG_DOMAIN "ContactList"

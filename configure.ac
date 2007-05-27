@@ -237,6 +237,7 @@ PKG_CHECK_MODULES(LIBGOSSIP,
 [
    libxml-2.0 >= $LIBXML_REQUIRED
    glib-2.0 >= $GLIB_REQUIRED
+   gtk+-2.0 >= $GTK_REQUIRED
    gobject-2.0
    $gconf_pkgconfig
    $dbus_pkgconfig

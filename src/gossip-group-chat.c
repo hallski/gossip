@@ -31,6 +31,8 @@
 #include <glade/glade.h>
 #include <glib/gi18n.h>
 
+#include <libgossip/gossip-stock.h>
+
 #include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-session.h>
 #include <libgossip/gossip-protocol.h>
@@ -50,7 +52,6 @@
 #include "gossip-group-chat.h"
 #include "gossip-private-chat.h"
 #include "gossip-sound.h"
-#include "gossip-stock.h"
 #include "gossip-ui-utils.h"
 
 #define DEBUG_DOMAIN "GroupChat"

@@ -56,22 +56,23 @@ typedef enum {
 	GOSSIP_EVENT_ERROR
 } GossipEventType;
 
-GType           gossip_event_get_gtype   (void) G_GNUC_CONST;
-GossipEvent *   gossip_event_new         (GossipEventType  type);
-GossipEventId   gossip_event_get_id      (GossipEvent     *event);
-GossipEventType gossip_event_get_type    (GossipEvent     *event);
-const gchar *   gossip_event_get_message (GossipEvent     *event);
-GossipContact * gossip_event_get_contact (GossipEvent     *event);
+GType           gossip_event_get_gtype    (void) G_GNUC_CONST;
+GossipEvent *   gossip_event_new          (GossipEventType  type);
+GossipEventId   gossip_event_get_id       (GossipEvent     *event);
+GossipEventType gossip_event_get_type     (GossipEvent     *event);
+const gchar *   gossip_event_get_message  (GossipEvent     *event);
+GossipContact * gossip_event_get_contact  (GossipEvent     *event);
 
 /* Should probably subclass event instead */
-GObject *       gossip_event_get_data    (GossipEvent     *event);
-void            gossip_event_set_data    (GossipEvent     *event,
-					  GObject         *data);
-guint           gossip_event_hash        (gconstpointer    key);
-gboolean        gossip_event_equal       (gconstpointer    a,
-					  gconstpointer    b);
-gint            gossip_event_compare     (gconstpointer    a,
-					  gconstpointer    b);
+GObject *       gossip_event_get_data     (GossipEvent     *event);
+void            gossip_event_set_data     (GossipEvent     *event,
+					   GObject         *data);
+guint           gossip_event_hash         (gconstpointer    key);
+gboolean        gossip_event_equal        (gconstpointer    a,
+					   gconstpointer    b);
+gint            gossip_event_compare      (gconstpointer    a,
+					   gconstpointer    b);
+const gchar *   gossip_event_get_stock_id (GossipEvent     *event); 
 
 G_END_DECLS
 

@@ -23,12 +23,12 @@
 #include <string.h>
 
 #include <libgossip/gossip-debug.h>
+#include <libgossip/gossip-stock.h>
 
 #include "gossip-app.h"
 #include "gossip-idle.h"
 #include "gossip-marshal.h"
 #include "gossip-status-presets.h"
-#include "gossip-stock.h"
 #include "gossip-ui-utils.h"
 #include "gossip-self-presence.h"
 

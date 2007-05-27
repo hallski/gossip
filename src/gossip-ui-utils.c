@@ -46,13 +46,13 @@
 #include <libgossip/gossip-account-manager.h>
 #include <libgossip/gossip-conf.h>
 #include <libgossip/gossip-paths.h>
+#include <libgossip/gossip-stock.h>
 
 #ifdef HAVE_LIBNOTIFY
 #include "gossip-notify.h"
 #endif
 
 #include "gossip-app.h"
-#include "gossip-stock.h"
 #include "gossip-ui-utils.h"
 
 struct SizeData {

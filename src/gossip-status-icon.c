@@ -24,8 +24,9 @@
 #include <gtk/gtkstatusicon.h>
 #include <gtk/gtkstock.h>
 
+#include <libgossip/gossip-stock.h>
+
 #include "gossip-app.h"
-#include "gossip-stock.h"
 #include "gossip-ui-utils.h"
 #include "gossip-status-icon.h"
 
@@ -191,7 +192,6 @@ static GdkPixbuf *
 status_icon_get_event_pixbuf (GossipStatusIcon *status_icon)
 {
 	GossipStatusIconPriv *priv;
-	GossipEvent          *event;
 	const gchar          *stock_id = NULL;
 
 	priv = GET_PRIV (status_icon);
@@ -201,23 +201,7 @@ status_icon_get_event_pixbuf (GossipStatusIcon *status_icon)
 		return NULL;
 	}
 
-	event = status_icon_get_next_event (status_icon);
-	switch (gossip_event_get_type (event)) {
-	case GOSSIP_EVENT_NEW_MESSAGE:
-	case GOSSIP_EVENT_SERVER_MESSAGE:
-		stock_id = GOSSIP_STOCK_MESSAGE;
-		break;
-
-	case GOSSIP_EVENT_SUBSCRIPTION_REQUEST:
-	case GOSSIP_EVENT_FILE_TRANSFER_REQUEST:
-		stock_id = GTK_STOCK_DIALOG_QUESTION;
-		break;
-
-	default:
-		/* Shouldn't happen */
-		stock_id = GTK_STOCK_DIALOG_WARNING;
-		break;
-	}
+	stock_id = gossip_event_get_stock_id (status_icon_get_next_event (status_icon));
 
 	if (stock_id) {
 		return gossip_pixbuf_from_stock (stock_id, GTK_ICON_SIZE_MENU);

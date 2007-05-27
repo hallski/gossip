@@ -41,6 +41,7 @@
 #include <libgossip/gossip-session.h>
 #include <libgossip/gossip-account-manager.h>
 #include <libgossip/gossip-paths.h>
+#include <libgossip/gossip-stock.h>
 
 #ifdef HAVE_DBUS
 #include "gossip-dbus.h"
@@ -52,7 +53,6 @@
 
 #include "gossip-app.h"
 #include "gossip-preferences.h"
-#include "gossip-stock.h"
 #include "gossip-ui-utils.h"
 
 static gboolean  no_connect = FALSE;

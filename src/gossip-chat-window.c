@@ -38,6 +38,7 @@
 #include <libgossip/gossip-message.h>
 #include <libgossip/gossip-chatroom-manager.h>
 #include <libgossip/gossip-conf.h>
+#include <libgossip/gossip-stock.h>
 
 #include "gossip-add-contact-dialog.h"
 #include "gossip-app.h"
@@ -49,7 +50,6 @@
 #include "gossip-preferences.h"
 #include "gossip-private-chat.h"
 #include "gossip-sound.h"
-#include "gossip-stock.h"
 #include "gossip-ui-utils.h"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHAT_WINDOW, GossipChatWindowPriv))

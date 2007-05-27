@@ -20,10 +20,13 @@
 
 #include "config.h"
 
+#include <gtk/gtkstock.h>
+
 #include "gossip-contact.h"
 #include "gossip-message.h"
 #include "gossip-ft.h"
 #include "gossip-debug.h"
+#include "gossip-stock.h"
 #include "gossip-event.h"
 
 #define DEBUG_DOMAIN "Event"
@@ -395,5 +398,28 @@ gossip_event_compare (gconstpointer a,
 	}
 
 	return 1;
+}
+
+const gchar *
+gossip_event_get_stock_id (GossipEvent *event)
+{
+	switch (gossip_event_get_type (event)) {
+	case GOSSIP_EVENT_NEW_MESSAGE:
+	case GOSSIP_EVENT_SERVER_MESSAGE:
+		return GOSSIP_STOCK_MESSAGE;
+		break;
+
+	case GOSSIP_EVENT_SUBSCRIPTION_REQUEST:
+	case GOSSIP_EVENT_FILE_TRANSFER_REQUEST:
+		return GTK_STOCK_DIALOG_QUESTION;
+		break;
+
+	default:
+		/* Shouldn't happen */
+		return GTK_STOCK_DIALOG_WARNING;
+		break;
+	}
+
+	return NULL;
 }
 

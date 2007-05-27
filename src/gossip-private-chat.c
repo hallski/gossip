@@ -38,6 +38,7 @@
 #include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-protocol.h>
 #include <libgossip/gossip-log.h>
+#include <libgossip/gossip-stock.h>
 
 #include "gossip-app.h"
 #include "gossip-chat-window.h"
@@ -46,7 +47,6 @@
 #include "gossip-preferences.h"
 #include "gossip-private-chat.h"
 #include "gossip-sound.h"
-#include "gossip-stock.h"
 #include "gossip-ui-utils.h"
 
 #define DEBUG_DOMAIN "PrivateChat"

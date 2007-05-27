@@ -1,5 +1,20 @@
 2007-05-27  Mikael Hallendal  <micke@imendio.com>
 
+	* configure.ac:
+	* src/*.[ch]: 
+	* libgossip/gossip-stock.[ch]: 
+	- Moved gossip-stock to libgossip.
+	- Made libgossip depend on GTK+.
+	
+	* libgossip/gossip-event.[ch] (gossip_event_get_stock_id): 
+	- Added a function to get the stock icon id from a GossipEvent.
+
+	* src/gossip-status-icon.c (status_icon_get_event_pixbuf): 
+	- Get the stock icon id from GossipEvent instead of figuring it out
+	here.
+
+2007-05-27  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-app.c: 
 	* src/gossip-presence-chooser.c:
 	- Use the flash heartbeat for GossipPresenceChooser.

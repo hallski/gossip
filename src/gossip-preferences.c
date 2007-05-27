@@ -31,9 +31,9 @@
 #include <glib/gi18n.h>
 
 #include <libgossip/gossip-conf.h>
+#include <libgossip/gossip-stock.h>
 
 #include "gossip-app.h"
-#include "gossip-stock.h"
 #include "gossip-ui-utils.h"
 #include "gossip-preferences.h"
 #include "gossip-theme-manager.h"

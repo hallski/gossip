@@ -71,6 +71,8 @@ libgossip_la_SOURCES =             			\
 	gossip-protocol.h          			\
 	gossip-session.c           			\
 	gossip-session.h           			\
+	gossip-stock.c                                  \
+	gossip-stock.h                                  \
 	gossip-time.c              			\
 	gossip-time.h              			\
 	gossip-utils.c             			\

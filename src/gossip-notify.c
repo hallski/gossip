@@ -37,13 +37,13 @@
 #include <libgossip/gossip-presence.h>
 #include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-conf.h>
+#include <libgossip/gossip-stock.h>
 
 #include "gossip-chat-manager.h"
 #include "gossip-app.h"
 #include "gossip-contact-info-dialog.h"
 #include "gossip-notify.h"
 #include "gossip-preferences.h"
-#include "gossip-stock.h"
 #include "gossip-ui-utils.h"
 
 #define DEBUG_DOMAIN "Notify"

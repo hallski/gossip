@@ -39,6 +39,7 @@
 #include <libgossip/gossip-account-manager.h>
 #include <libgossip/gossip-conf.h>
 #include <libgossip/gossip-debug.h>
+#include <libgossip/gossip-stock.h>
 
 #include "gossip-about-dialog.h"
 #include "gossip-accounts-dialog.h"
@@ -61,7 +62,6 @@
 #include "gossip-sound.h"
 #include "gossip-status-icon.h"
 #include "gossip-status-presets.h"
-#include "gossip-stock.h"
 #include "gossip-subscription-dialog.h"
 #include "gossip-ui-utils.h"
 #include "gossip-vcard-dialog.h"
