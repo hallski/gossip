@@ -1909,16 +1909,10 @@ static void
 app_status_icon_create (void)
 {
 	GossipAppPriv *priv;
-	GdkPixbuf     *pixbuf;
 
 	priv = GET_PRIV (app);
 
-	pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_OFFLINE,
-					   GTK_ICON_SIZE_MENU);
-	
 	priv->status_icon = gossip_status_icon_get ();
-	gtk_status_icon_set_from_pixbuf (priv->status_icon, pixbuf);
-	g_object_unref (pixbuf);
 
 	g_signal_connect (priv->status_icon,
 			  "activate",

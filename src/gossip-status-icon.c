@@ -22,6 +22,8 @@
 
 #include <gtk/gtkstatusicon.h>
 
+#include "gossip-stock.h"
+#include "gossip-ui-utils.h"
 #include "gossip-status-icon.h"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_STATUS_ICON, GossipStatusIconPriv))
@@ -49,6 +51,13 @@ gossip_status_icon_class_init (GossipStatusIconClass *klass)
 static void
 gossip_status_icon_init (GossipStatusIcon *status_icon)
 {
+	GdkPixbuf *pixbuf;
+
+	pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_OFFLINE,
+					   GTK_ICON_SIZE_MENU);
+
+	gtk_status_icon_set_from_pixbuf (GTK_STATUS_ICON (status_icon), pixbuf);
+	g_object_unref (pixbuf);
 }
 
 static void
