@@ -1,4 +1,9 @@
 2007-05-26  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-app.c: Preparing for factoring out the status icon by
+	using public functions to access the GossipSelfPresence.
+
+2007-05-26  Mikael Hallendal  <micke@imendio.com>
 	
 	* src/gossip-app.c:
 	(app_status_icon_add_event, app_status_icon_remove_event): Split out 
