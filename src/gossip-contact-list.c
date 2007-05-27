@@ -91,7 +91,8 @@ struct _GossipContactListPriv {
 typedef struct {
 	GossipEvent *event;
 	gboolean     flash_on;
-	guint        flash_timeout_id;
+
+	guint        heartbeat_id;
 } FlashData;
 
 typedef struct {
@@ -288,7 +289,6 @@ static void     contact_list_action_invite_selected          (GossipContactList 
 static void     contact_list_action_rename_group_selected    (GossipContactList      *list);
 static void     contact_list_free_flash_timeout_data         (FlashTimeoutData       *timeout_data);
 static void     contact_list_flash_free_data                 (FlashData              *data);
-static gboolean contact_list_flash_timeout_func              (FlashTimeoutData       *timeout_data);
 static void     contact_list_event_added_cb                  (GossipEventManager     *manager,
 							      GossipEvent            *event,
 							      GossipContactList      *list);
@@ -3047,15 +3047,16 @@ contact_list_flash_free_data (FlashData *data)
 		g_object_unref (data->event);
 	}
 
-	if (data->flash_timeout_id) {
-		g_source_remove (data->flash_timeout_id);
+	if (data->heartbeat_id) {
+		gossip_heartbeat_callback_remove (gossip_app_get_flash_heartbeat (),
+						  data->heartbeat_id);
 	}
 
 	g_slice_free (FlashData, data);
 }
 
 static gboolean
-contact_list_flash_timeout_func (FlashTimeoutData *timeout_data)
+contact_list_flash (FlashTimeoutData *timeout_data)
 {
 	GossipContactList     *list;
 	GossipContactListPriv *priv;
@@ -3115,6 +3116,14 @@ contact_list_flash_timeout_func (FlashTimeoutData *timeout_data)
 	g_list_free (iters);
 
 	return retval;
+
+}
+
+static gboolean
+contact_list_flash_heartbeat_func (GossipHeartbeat  *heartbeat,
+				   gpointer          user_data)
+{
+	return contact_list_flash ((FlashTimeoutData *) user_data);
 }
 
 static void
@@ -3155,11 +3164,12 @@ contact_list_event_added_cb (GossipEventManager *manager,
 	data->event = g_object_ref (event);
 
 	data->flash_on = TRUE;
-	data->flash_timeout_id =
-		g_timeout_add_full (G_PRIORITY_DEFAULT, FLASH_TIMEOUT,
-				    (GSourceFunc) contact_list_flash_timeout_func,
-				    timeout_data,
-				    (GDestroyNotify) contact_list_free_flash_timeout_data);
+
+	data->heartbeat_id =
+		gossip_heartbeat_callback_add_full (gossip_app_get_flash_heartbeat (),
+						    contact_list_flash_heartbeat_func,
+						    timeout_data,
+						    (GDestroyNotify) contact_list_free_flash_timeout_data);
 
 	g_hash_table_insert (priv->flash_table, g_object_ref (contact), data);
 

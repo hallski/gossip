@@ -1,5 +1,10 @@
 2007-05-27  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-contact-list.c: Use the flash heartbeat for contact list
+	flashing.
+
+2007-05-27  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-heartbeat.[ch] (gossip_heartbeat_callback_add_full):
 	- Added function to add a callback with a free function.
 
