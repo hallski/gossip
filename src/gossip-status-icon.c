@@ -61,10 +61,10 @@ status_icon_finalize (GObject *object)
 	G_OBJECT_CLASS (gossip_status_icon_parent_class)->finalize (object);
 }
 
-GossipStatusIcon *
+GtkStatusIcon *
 gossip_status_icon_get (void)
 {
-	static GossipStatusIcon *status_icon = NULL;
+	static GtkStatusIcon *status_icon = NULL;
 
 	if (!status_icon) {
 		status_icon = g_object_new (GOSSIP_TYPE_STATUS_ICON, NULL);

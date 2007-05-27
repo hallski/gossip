@@ -1,5 +1,10 @@
 2007-05-26  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-app.c: Use GossipStatusIcon instead of GtkStatusIcon
+	directly.
+
+2007-05-26  Mikael Hallendal  <micke@imendio.com>
+
 	* src/Makefile.am:
 	* src/gossip-status-icon.[ch]: Added boilerplate for GossipStatusIcon.
 

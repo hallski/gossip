@@ -59,6 +59,7 @@
 #include "gossip-presence-chooser.h"
 #include "gossip-private-chat.h"
 #include "gossip-sound.h"
+#include "gossip-status-icon.h"
 #include "gossip-status-presets.h"
 #include "gossip-stock.h"
 #include "gossip-subscription-dialog.h"
@@ -1915,7 +1916,8 @@ app_status_icon_create (void)
 	pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_OFFLINE,
 					   GTK_ICON_SIZE_MENU);
 	
-	priv->status_icon = gtk_status_icon_new_from_pixbuf (pixbuf);
+	priv->status_icon = gossip_status_icon_get ();
+	gtk_status_icon_set_from_pixbuf (priv->status_icon, pixbuf);
 	g_object_unref (pixbuf);
 
 	g_signal_connect (priv->status_icon,

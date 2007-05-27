@@ -45,8 +45,8 @@ struct _GossipStatusIconClass {
 	GtkStatusIconClass parent_class;
 };
 
-GType              gossip_status_icon_get_type   (void) G_GNUC_CONST;
-GossipStatusIcon * gossip_status_icon_get        (void);
+GType           gossip_status_icon_get_type   (void) G_GNUC_CONST;
+GtkStatusIcon * gossip_status_icon_get        (void);
 
 G_END_DECLS
 
