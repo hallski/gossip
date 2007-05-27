@@ -38,6 +38,7 @@ typedef struct {
 	guint               id;
 	GossipHeartbeatFunc func;
 	gpointer            user_data;
+	GDestroyNotify      free_func;
 } HeartbeatCallback;
 
 static void         heartbeat_finalize         (GObject             *object);
@@ -56,7 +57,8 @@ static void         heartbeat_maybe_stop       (GossipHeartbeat     *heartbeat);
 
 static HeartbeatCallback *
 heartbeat_callback_new                         (GossipHeartbeatFunc  func,
-						gpointer             user_data);
+						gpointer             user_data,
+						GDestroyNotify       free_func);
 static void         heartbeat_callback_free    (HeartbeatCallback   *callback);
 static gboolean     heartbeat_callback_execute (GossipHeartbeat     *heartbeat,
 						HeartbeatCallback   *callback);
@@ -231,7 +233,9 @@ heartbeat_maybe_stop (GossipHeartbeat *heartbeat)
 }
 
 static HeartbeatCallback *
-heartbeat_callback_new (GossipHeartbeatFunc func, gpointer user_data)
+heartbeat_callback_new (GossipHeartbeatFunc func, 
+			gpointer            user_data,
+			GDestroyNotify      free_func)
 {
 	HeartbeatCallback *callback;
 	static guint       id = 0;
@@ -240,6 +244,7 @@ heartbeat_callback_new (GossipHeartbeatFunc func, gpointer user_data)
 	callback->id = ++id;
 	callback->func = func;
 	callback->user_data = user_data;
+	callback->free_func = free_func;
 
 	return callback;
 }
@@ -247,6 +252,10 @@ heartbeat_callback_new (GossipHeartbeatFunc func, gpointer user_data)
 static void
 heartbeat_callback_free (HeartbeatCallback *callback)
 {
+	if (callback->free_func) {
+		(callback->free_func) (callback->user_data);
+	}
+
 	g_slice_free (HeartbeatCallback, callback);
 }
 
@@ -262,6 +271,16 @@ gossip_heartbeat_callback_add (GossipHeartbeat     *heartbeat,
 			       GossipHeartbeatFunc  func,
 			       gpointer             user_data)
 {
+	return gossip_heartbeat_callback_add_full (heartbeat, func, 
+						   user_data, NULL);
+}
+
+guint
+gossip_heartbeat_callback_add_full (GossipHeartbeat     *heartbeat,
+				    GossipHeartbeatFunc  func,
+				    gpointer             user_data,
+				    GDestroyNotify       free_func)
+{
 	GossipHeartbeatPriv *priv;
 	HeartbeatCallback   *callback;
 
@@ -270,7 +289,7 @@ gossip_heartbeat_callback_add (GossipHeartbeat     *heartbeat,
 
 	priv = GET_PRIV (heartbeat);
 
-	callback = heartbeat_callback_new (func, user_data);
+	callback = heartbeat_callback_new (func, user_data, free_func);
 	priv->callbacks = g_slist_append (priv->callbacks, callback);
 
 	if (!priv->timeout_id) {

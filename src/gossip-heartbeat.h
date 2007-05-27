@@ -43,16 +43,20 @@ struct _GossipHeartbeatClass {
 	GObjectClass parent_class;
 };
 
-typedef gboolean (*GossipHeartbeatFunc)     (GossipHeartbeat *beat,
-					     gpointer         user_data);
+typedef gboolean (*GossipHeartbeatFunc)       (GossipHeartbeat     *heartbeat,
+					       gpointer             user_data);
 
-GType      gossip_heartbeat_get_type        (void) G_GNUC_CONST;
+GType      gossip_heartbeat_get_type          (void) G_GNUC_CONST;
 
-guint      gossip_heartbeat_callback_add    (GossipHeartbeat     *heartbeat,
-					     GossipHeartbeatFunc  func,
-					     gpointer             user_data);
-void       gossip_heartbeat_callback_remove (GossipHeartbeat     *heartbeat,
-					     guint                id);
+guint      gossip_heartbeat_callback_add      (GossipHeartbeat     *heartbeat,
+					       GossipHeartbeatFunc  func,
+					       gpointer             user_data);
+guint      gossip_heartbeat_callback_add_full (GossipHeartbeat     *heartbeat,
+					       GossipHeartbeatFunc  func,
+					       gpointer             user_data,
+					       GDestroyNotify       free_func);
+void       gossip_heartbeat_callback_remove   (GossipHeartbeat     *heartbeat,
+					       guint                id);
 
 G_END_DECLS
 
