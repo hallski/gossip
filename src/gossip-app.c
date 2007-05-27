@@ -335,10 +335,6 @@ static void     app_contact_activated_cb     (GossipContactList     *contact_lis
 					      GossipContact         *contact,
 					      GossipEventId          event_id,
 					      gpointer               user_data);
-static void     app_status_start_flash_cb    (GossipSelfPresence    *self_presence,
-					      gpointer               user_data);
-static void     app_status_stop_flash_cb     (GossipSelfPresence    *self_presence,
-					      gpointer               user_data);
 
 static GossipApp *app = NULL;
 
@@ -374,14 +370,6 @@ gossip_app_init (GossipApp *singleton_app)
 						  (GDestroyNotify) app_reconnect_remove);
 
 	priv->self_presence = g_object_new (GOSSIP_TYPE_SELF_PRESENCE, NULL);
-
-	g_signal_connect (priv->self_presence, "start-flash",
-			  G_CALLBACK (app_status_start_flash_cb),
-			  NULL);
-
-	g_signal_connect (priv->self_presence, "stop-flash",
-			  G_CALLBACK (app_status_stop_flash_cb),
-			  NULL);
 
 	g_signal_connect (priv->self_presence, "updated",
 			  G_CALLBACK (app_presence_updated_cb),
@@ -1965,32 +1953,6 @@ app_status_icon_check_embedded_cb (gpointer user_data)
 	gossip_debug (DEBUG_DOMAIN_SETUP, "Complete!");
 
 	return FALSE;
-}
-
-static void
-app_status_start_flash_cb (GossipSelfPresence *self_presence, 
-			   gpointer            user_data)
-{
-	GossipAppPriv *priv;
-
-	priv = GET_PRIV (app);
-
-	gossip_presence_chooser_flash_start (GOSSIP_PRESENCE_CHOOSER (priv->presence_chooser),
-					     gossip_self_presence_get_current_state (gossip_app_get_self_presence ()),
-					     gossip_self_presence_get_previous_state (gossip_app_get_self_presence ()));
-
-}
-
-static void
-app_status_stop_flash_cb (GossipSelfPresence *self_presence,
-			  gpointer            user_data)
-{
-	GossipAppPriv *priv;
-
-	priv = GET_PRIV (app);
-
-	gossip_presence_chooser_flash_stop (GOSSIP_PRESENCE_CHOOSER (priv->presence_chooser),
-					    gossip_self_presence_get_current_state (gossip_app_get_self_presence ()));
 }
 
 static void

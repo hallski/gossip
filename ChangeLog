@@ -1,5 +1,11 @@
 2007-05-27  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-presence-chooser.c
+	* src/gossip-app.c:
+	- Let GossipPresenceChooesr handle the status flashing on it's own.
+
+2007-05-27  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-status-icon.c
 	* src/gossip-app.c:
 	- Let GossipStatusIcon handle the status flashing on it's own.

@@ -16,9 +16,6 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * Authors: Richard Hult <richard@imendio.com>
- *          Martyn Russell <martyn@imendio.com>
  */
 
 #include "config.h"
@@ -106,6 +103,10 @@ static gboolean presence_chooser_scroll_event_cb        (GtkWidget             *
 							 GdkEventScroll        *event,
 							 gpointer               user_data);
 static gboolean presence_chooser_flash_timeout_cb       (GossipPresenceChooser *chooser);
+static void     presence_chooser_flash_start_cb         (GossipSelfPresence *self_presence,
+							 GossipPresenceChooser *chooser);
+static void     presence_chooser_flash_stop_cb          (GossipSelfPresence *self_presence,
+							 GossipPresenceChooser *chooser);
 
 G_DEFINE_TYPE (GossipPresenceChooser, gossip_presence_chooser, GTK_TYPE_TOGGLE_BUTTON);
 
@@ -188,6 +189,14 @@ gossip_presence_chooser_init (GossipPresenceChooser *chooser)
 	g_signal_connect (chooser, "scroll-event",
 			  G_CALLBACK (presence_chooser_scroll_event_cb),
 			  NULL);
+
+	g_signal_connect (gossip_app_get_self_presence (), "start-flash",
+			  G_CALLBACK (presence_chooser_flash_start_cb),
+			  chooser);
+
+	g_signal_connect (gossip_app_get_self_presence (), "stop-flash",
+			  G_CALLBACK (presence_chooser_flash_stop_cb),
+			  chooser);
 }
 
 static void
@@ -204,6 +213,14 @@ presence_chooser_finalize (GObject *object)
 	if (priv->scroll_timeout_id) {
 		g_source_remove (priv->scroll_timeout_id);
 	}
+
+	g_signal_handlers_disconnect_by_func (gossip_app_get_self_presence (),
+					      presence_chooser_flash_stop_cb,
+					      object);
+
+	g_signal_handlers_disconnect_by_func (gossip_app_get_self_presence (),
+					      presence_chooser_flash_start_cb,
+					      object);
 
 	G_OBJECT_CLASS (gossip_presence_chooser_parent_class)->finalize (object);
 }
@@ -777,6 +794,25 @@ presence_chooser_scroll_timeout_cb (GossipPresenceChooser *chooser)
 
 	return FALSE;
 }
+
+static void
+presence_chooser_flash_start_cb (GossipSelfPresence    *self_presence,
+				 GossipPresenceChooser *chooser)
+{
+	gossip_presence_chooser_flash_start (chooser,
+					     gossip_self_presence_get_current_state (gossip_app_get_self_presence ()),
+					     gossip_self_presence_get_previous_state (gossip_app_get_self_presence ()));
+	
+}
+
+static void
+presence_chooser_flash_stop_cb (GossipSelfPresence    *self_presence,
+				GossipPresenceChooser *chooser)
+{
+	gossip_presence_chooser_flash_stop (chooser,
+					    gossip_self_presence_get_current_state (gossip_app_get_self_presence ()));
+}
+
 
 static gboolean
 presence_chooser_scroll_event_cb (GtkWidget      *chooser,
