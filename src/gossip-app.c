@@ -283,11 +283,6 @@ static void     app_status_icon_create_menu  (void);
 static void     app_status_icon_create       (void);
 static gboolean 
 app_status_icon_check_embedded_cb            (gpointer               user_data);
-static void     app_status_icon_flash_start  (void);
-static void     
-app_status_icon_flash_maybe_stop             (void);
-static gboolean 
-app_status_icon_flash_timeout_func           (gpointer               data);
 static void     app_notify_show_offline_cb   (GossipConf            *conf,
 					      const gchar           *key,
 					      gpointer               check_menu_item);
@@ -1899,6 +1894,8 @@ app_status_icon_create (void)
 			  app);
 
 	gtk_status_icon_set_visible (priv->status_icon, TRUE);
+	gossip_status_icon_set_flash_interval (GOSSIP_STATUS_ICON (priv->status_icon),
+					       FLASH_TIMEOUT);
 
 #ifdef HAVE_LIBNOTIFY
 	gossip_notify_set_attach_status_icon (priv->status_icon);
@@ -1982,7 +1979,7 @@ app_status_start_flash_cb (GossipSelfPresence *self_presence,
 					     gossip_self_presence_get_current_state (gossip_app_get_self_presence ()),
 					     gossip_self_presence_get_previous_state (gossip_app_get_self_presence ()));
 
-	app_status_icon_flash_start ();
+	gossip_status_icon_start_flash (GOSSIP_STATUS_ICON (priv->status_icon));
 }
 
 static void
@@ -1996,7 +1993,7 @@ app_status_stop_flash_cb (GossipSelfPresence *self_presence,
 	gossip_presence_chooser_flash_stop (GOSSIP_PRESENCE_CHOOSER (priv->presence_chooser),
 					    gossip_self_presence_get_current_state (gossip_app_get_self_presence ()));
 
-	app_status_icon_flash_maybe_stop ();
+	gossip_status_icon_maybe_stop_flash (GOSSIP_STATUS_ICON (priv->status_icon));
 }
 
 static void
@@ -2545,103 +2542,6 @@ gossip_app_get_window (void)
 	return priv->window;
 }
 
-static gboolean
-app_status_icon_flash_timeout_func (gpointer data)
-{
-	GossipAppPriv   *priv;
-	GdkPixbuf       *pixbuf = NULL;
-	gboolean         is_flashing;
-	static gboolean  on = FALSE;
-
-	priv = GET_PRIV (app);
-
-	is_flashing = gossip_presence_chooser_is_flashing
-		(GOSSIP_PRESENCE_CHOOSER (priv->presence_chooser));
-
-	if (on) {
-		if (is_flashing) {
-			pixbuf = gossip_self_presence_get_explicit_pixbuf (gossip_app_get_self_presence ());
-		}
-		else if (gossip_status_icon_get_events (GOSSIP_STATUS_ICON (priv->status_icon)) != NULL) {
-			GossipEvent *event;
-			const gchar *stock_id = NULL;
-
-			event = gossip_status_icon_get_next_event (GOSSIP_STATUS_ICON (priv->status_icon));
-			
-			switch (gossip_event_get_type (event)) {
-			case GOSSIP_EVENT_NEW_MESSAGE:
-			case GOSSIP_EVENT_SERVER_MESSAGE:
-				stock_id = GOSSIP_STOCK_MESSAGE;
-				break;
-
-			case GOSSIP_EVENT_SUBSCRIPTION_REQUEST:
-			case GOSSIP_EVENT_FILE_TRANSFER_REQUEST:
-				stock_id = GTK_STOCK_DIALOG_QUESTION;
-				break;
-
-			default:
-				/* Shouldn't happen */
-				stock_id = GTK_STOCK_DIALOG_WARNING;
-				break;
-			}
-
-			if (stock_id) {
-				pixbuf = gossip_pixbuf_from_stock (stock_id,
-								   GTK_ICON_SIZE_MENU);
-			}
-		}
-	}
-
-	if (pixbuf == NULL) {
-		pixbuf = gossip_self_presence_get_current_pixbuf (gossip_app_get_self_presence ());
-	}
-
-	gtk_status_icon_set_from_pixbuf (priv->status_icon, pixbuf);
-	g_object_unref (pixbuf);
-
-	on = !on;
-
-	return TRUE;
-}
-
-static void
-app_status_icon_flash_start (void)
-{
-	GossipAppPriv *priv;
-
-	priv = GET_PRIV (app);
-
-	if (!priv->status_icon_flash_timeout_id) {
-		priv->status_icon_flash_timeout_id =
-			g_timeout_add (FLASH_TIMEOUT,
-				       app_status_icon_flash_timeout_func,
-				       NULL);
-	}
-}
-
-/* Stop if there are no flashing messages or status change. */
-static void
-app_status_icon_flash_maybe_stop (void)
-{
-	GossipAppPriv *priv;
-	GdkPixbuf     *pixbuf;
-
-	priv = GET_PRIV (app);
-
-	if (gossip_status_icon_get_events (GOSSIP_STATUS_ICON (priv->status_icon)) != NULL || gossip_self_presence_get_leave_time (gossip_app_get_self_presence ()) > 0) {
-		return;
-	}
-
-	pixbuf = gossip_self_presence_get_current_pixbuf (gossip_app_get_self_presence ());
-	gtk_status_icon_set_from_pixbuf (priv->status_icon, pixbuf);
-	g_object_unref (pixbuf);
-
-	if (priv->status_icon_flash_timeout_id) {
-		g_source_remove (priv->status_icon_flash_timeout_id);
-		priv->status_icon_flash_timeout_id = 0;
-	}
-}
-
 static void
 app_session_chatroom_auto_connect_cb (GossipSession          *session,
 				      GossipChatroomProvider *provider,
@@ -2671,7 +2571,7 @@ app_event_added_cb (GossipEventManager *manager,
 	gossip_status_icon_add_event (GOSSIP_STATUS_ICON (priv->status_icon),
 				      event);
 
-	app_status_icon_flash_start ();
+	gossip_status_icon_start_flash (GOSSIP_STATUS_ICON (priv->status_icon));
 	gossip_status_icon_update_tooltip (GOSSIP_STATUS_ICON (priv->status_icon));
 }
 
@@ -2687,7 +2587,7 @@ app_event_removed_cb (GossipEventManager *manager,
 	gossip_status_icon_remove_event (GOSSIP_STATUS_ICON (priv->status_icon),
 					 event);
 
-	app_status_icon_flash_maybe_stop ();
+	gossip_status_icon_maybe_stop_flash (GOSSIP_STATUS_ICON (priv->status_icon));
 	gossip_status_icon_update_tooltip (GOSSIP_STATUS_ICON (priv->status_icon));
 }
 

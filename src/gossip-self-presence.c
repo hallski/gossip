@@ -482,7 +482,6 @@ gossip_self_presence_set_state_status (GossipSelfPresence  *self_presence,
 		gossip_self_presence_stop_flash (self_presence);
 		self_presence_clear_away (self_presence);
 	} else {
-		self_presence_start_flash (self_presence);
 		self_presence_set_away (self_presence, status);
 		gossip_self_presence_updated (self_presence);
 	}

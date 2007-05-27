@@ -57,7 +57,10 @@ void          gossip_status_icon_remove_event   (GossipStatusIcon *status_icon,
 GList *       gossip_status_icon_get_events     (GossipStatusIcon *status_icon);
 GossipEvent * gossip_status_icon_get_next_event (GossipStatusIcon *status_icon);
 void          gossip_status_icon_update_tooltip (GossipStatusIcon *status_icon);
-
+void          gossip_status_icon_maybe_stop_flash (GossipStatusIcon *status_icon);
+void          gossip_status_icon_start_flash    (GossipStatusIcon *status_icon);
+void          gossip_status_icon_set_flash_interval (GossipStatusIcon *status_icon,
+						     gint              interval);
 G_END_DECLS
 
 #endif /* __GOSSIP_STATUS_ICON_H__ */
