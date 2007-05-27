@@ -1,5 +1,9 @@
 2007-05-28  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-async.h: Unused, removed.
+
+2007-05-28  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-tray.[ch]: Removed.
 	- Old attempt at extracting the status icon that was obsoleted by 
 	  GossipStatusIcon.
