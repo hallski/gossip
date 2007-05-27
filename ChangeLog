@@ -1,5 +1,10 @@
 2007-05-27  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-status-icon.c (status_icon_set_tooltip_to_status): 
+	Extracted from gossip_status_icon_update_tooltip.
+
+2007-05-27  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-status-icon.c (status_icon_get_event_pixbuf): Factored
 	out from status_icon_flash_timeout_func to make the timeout function
 	easier to read.
