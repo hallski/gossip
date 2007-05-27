@@ -203,7 +203,7 @@ presence_chooser_finalize (GObject *object)
 	priv = GET_PRIV (object);
 
 	if (priv->heartbeat_id) {
-		gossip_heartbeat_remove_callback (gossip_app_get_flash_heartbeat (), 
+		gossip_heartbeat_callback_remove (gossip_app_get_flash_heartbeat (), 
 						  priv->heartbeat_id);
 	}
 
@@ -811,7 +811,7 @@ presence_chooser_flash_start (GossipPresenceChooser *chooser,
 	priv->flash_state_1 = state_1;
 	priv->flash_state_2 = state_2;
 
-	priv->heartbeat_id = gossip_heartbeat_add_callback (gossip_app_get_flash_heartbeat (),
+	priv->heartbeat_id = gossip_heartbeat_callback_add (gossip_app_get_flash_heartbeat (),
 							    presence_chooser_flash_heartbeat_func,
 							    chooser);
 }
@@ -828,7 +828,7 @@ presence_chooser_flash_stop (GossipPresenceChooser *chooser,
 	priv = GET_PRIV (chooser);
 
 	if (priv->heartbeat_id) {
-		gossip_heartbeat_remove_callback (gossip_app_get_flash_heartbeat (),
+		gossip_heartbeat_callback_remove (gossip_app_get_flash_heartbeat (),
 						  priv->heartbeat_id);
 		priv->heartbeat_id = 0;
 	}

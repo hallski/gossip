@@ -258,7 +258,7 @@ heartbeat_callback_execute (GossipHeartbeat   *heartbeat,
 }
 
 guint
-gossip_heartbeat_add_callback (GossipHeartbeat     *heartbeat,
+gossip_heartbeat_callback_add (GossipHeartbeat     *heartbeat,
 			       GossipHeartbeatFunc  func,
 			       gpointer             user_data)
 {
@@ -281,7 +281,7 @@ gossip_heartbeat_add_callback (GossipHeartbeat     *heartbeat,
 }
 
 void
-gossip_heartbeat_remove_callback (GossipHeartbeat *heartbeat, guint id)
+gossip_heartbeat_callback_remove (GossipHeartbeat *heartbeat, guint id)
 {
 	GossipHeartbeatPriv *priv;
 	GSList              *l;

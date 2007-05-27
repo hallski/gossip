@@ -259,7 +259,7 @@ status_icon_start_flash (GossipStatusIcon *status_icon)
 
 	if (!priv->heartbeat_id) {
 		priv->heartbeat_id = 
-			gossip_heartbeat_add_callback (gossip_app_get_flash_heartbeat (),
+			gossip_heartbeat_callback_add (gossip_app_get_flash_heartbeat (),
 						       status_icon_flash_heartbeat_func,
 						       status_icon);
 	}
@@ -293,7 +293,7 @@ status_icon_maybe_stop_flash (GossipStatusIcon *status_icon)
 	g_object_unref (pixbuf);
 
 	if (priv->heartbeat_id) {
-		gossip_heartbeat_remove_callback (gossip_app_get_flash_heartbeat (),
+		gossip_heartbeat_callback_remove (gossip_app_get_flash_heartbeat (),
 						  priv->heartbeat_id);
 		priv->heartbeat_id = 0;
 	}
