@@ -89,10 +89,9 @@ struct _GossipContactListPriv {
 };
 
 typedef struct {
-	gint            event_id;
-	GossipEventType event_type;
-	gboolean        flash_on;
-	guint           flash_timeout_id;
+	GossipEvent *event;
+	gboolean     flash_on;
+	guint        flash_timeout_id;
 } FlashData;
 
 typedef struct {
@@ -2852,7 +2851,7 @@ contact_list_action_activated (GossipContactList *list,
 
 	data = g_hash_table_lookup (priv->flash_table, contact);
 	if (data) {
-		event_id = data->event_id;
+		event_id = gossip_event_get_id (data->event);
 	}
 
 	g_signal_emit (list, signals[CONTACT_ACTIVATED], 0, contact, event_id);
@@ -3044,6 +3043,10 @@ contact_list_flash_free_data (FlashData *data)
 {
 	g_return_if_fail (data != NULL);
 
+	if (data->event) {
+		g_object_unref (data->event);
+	}
+
 	if (data->flash_timeout_id) {
 		g_source_remove (data->flash_timeout_id);
 	}
@@ -3084,20 +3087,7 @@ contact_list_flash_timeout_func (FlashTimeoutData *timeout_data)
 		retval = TRUE;
 
 		if (data->flash_on) {
-			switch (data->event_type) {
-			case GOSSIP_EVENT_NEW_MESSAGE:
-			case GOSSIP_EVENT_SERVER_MESSAGE:
-				stock_id = GOSSIP_STOCK_MESSAGE;
-				break;
-			case GOSSIP_EVENT_FILE_TRANSFER_REQUEST:
-			case GOSSIP_EVENT_SUBSCRIPTION_REQUEST:
-				stock_id = GTK_STOCK_DIALOG_QUESTION;
-				break;
-			default:
-				/* Shouldn't happen */
-				stock_id = GTK_STOCK_DIALOG_WARNING;
-				break;
-			}
+			stock_id = gossip_event_get_stock_id (data->event);
 		}
 	} else {
 		gossip_debug (DEBUG_DOMAIN,
@@ -3162,8 +3152,7 @@ contact_list_event_added_cb (GossipEventManager *manager,
 
 	data = g_slice_new0 (FlashData);
 
-	data->event_id = gossip_event_get_id (event);
-	data->event_type = gossip_event_get_type (event);
+	data->event = g_object_ref (event);
 
 	data->flash_on = TRUE;
 	data->flash_timeout_id =

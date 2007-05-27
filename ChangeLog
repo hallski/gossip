@@ -1,5 +1,12 @@
 2007-05-27  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-contact-list.c: 
+	- Store the GossipEvent in the FlashData instead of event_id and type.
+	- This allows us to use gossip_event_get_stock_id instead of switching
+	  on the type.
+
+2007-05-27  Mikael Hallendal  <micke@imendio.com>
+
 	* configure.ac:
 	* src/*.[ch]: 
 	* libgossip/gossip-stock.[ch]: 
