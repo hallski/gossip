@@ -469,8 +469,6 @@ app_setup_presence_chooser ()
 
 	priv->presence_chooser = gossip_presence_chooser_new ();
 	gtk_widget_show (priv->presence_chooser);
-	gossip_presence_chooser_set_flash_interval (GOSSIP_PRESENCE_CHOOSER (priv->presence_chooser),
-						    FLASH_TIMEOUT);
 
 	item = gtk_tool_item_new ();
 	gtk_widget_show (GTK_WIDGET (item));

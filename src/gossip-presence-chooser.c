@@ -47,12 +47,10 @@ typedef struct {
 
 	GossipPresenceState  last_state;
 
-	guint                flash_interval;
+	guint                heartbeat_id;
 
 	GossipPresenceState  flash_state_1;
 	GossipPresenceState  flash_state_2;
-
-	guint                flash_timeout_id;
 
 	/* The handle the kind of unnessecary scroll support. */
 	guint                scroll_timeout_id;
@@ -102,7 +100,8 @@ static gboolean presence_chooser_button_press_event_cb  (GtkWidget             *
 static gboolean presence_chooser_scroll_event_cb        (GtkWidget             *chooser,
 							 GdkEventScroll        *event,
 							 gpointer               user_data);
-static gboolean presence_chooser_flash_timeout_cb       (GossipPresenceChooser *chooser);
+static gboolean presence_chooser_flash_heartbeat_func   (GossipHeartbeat       *heartbeat,
+							 gpointer               user_data);
 static void     presence_chooser_flash_start_cb         (GossipSelfPresence *self_presence,
 							 GossipPresenceChooser *chooser);
 static void     presence_chooser_flash_stop_cb          (GossipSelfPresence *self_presence,
@@ -145,9 +144,6 @@ gossip_presence_chooser_init (GossipPresenceChooser *chooser)
 	GtkWidget                 *alignment;
 
 	priv = GET_PRIV (chooser);
-
-	/* Default to 1/2 a second flash interval */
-	priv->flash_interval = 500;
 
 	gtk_button_set_relief (GTK_BUTTON (chooser), GTK_RELIEF_NONE);
 	gtk_button_set_focus_on_click (GTK_BUTTON (chooser), FALSE);
@@ -206,8 +202,9 @@ presence_chooser_finalize (GObject *object)
 
 	priv = GET_PRIV (object);
 
-	if (priv->flash_timeout_id) {
-		g_source_remove (priv->flash_timeout_id);
+	if (priv->heartbeat_id) {
+		gossip_heartbeat_remove_callback (gossip_app_get_flash_heartbeat (), 
+						  priv->heartbeat_id);
 	}
 
 	if (priv->scroll_timeout_id) {
@@ -806,16 +803,17 @@ presence_chooser_flash_start (GossipPresenceChooser *chooser,
 
 	priv = GET_PRIV (chooser);
 
-	if (priv->flash_timeout_id != 0) {
+	if (priv->heartbeat_id) {
+		/* Already blinking */
 		return;
 	}
 
 	priv->flash_state_1 = state_1;
 	priv->flash_state_2 = state_2;
 
-	priv->flash_timeout_id = g_timeout_add (priv->flash_interval,
-						(GSourceFunc) presence_chooser_flash_timeout_cb,
-						chooser);
+	priv->heartbeat_id = gossip_heartbeat_add_callback (gossip_app_get_flash_heartbeat (),
+							    presence_chooser_flash_heartbeat_func,
+							    chooser);
 }
 
 static void
@@ -829,9 +827,10 @@ presence_chooser_flash_stop (GossipPresenceChooser *chooser,
 
 	priv = GET_PRIV (chooser);
 
-	if (priv->flash_timeout_id) {
-		g_source_remove (priv->flash_timeout_id);
-		priv->flash_timeout_id = 0;
+	if (priv->heartbeat_id) {
+		gossip_heartbeat_remove_callback (gossip_app_get_flash_heartbeat (),
+						  priv->heartbeat_id);
+		priv->heartbeat_id = 0;
 	}
 
 	pixbuf = gossip_pixbuf_for_presence_state (state);
@@ -1086,22 +1085,8 @@ gossip_presence_chooser_set_status (GossipPresenceChooser *chooser,
 	gtk_label_set_text (GTK_LABEL (priv->label), status);
 }
 
-void
-gossip_presence_chooser_set_flash_interval (GossipPresenceChooser *chooser,
-					    guint                  ms)
-{
-	GossipPresenceChooserPriv *priv;
-
-	g_return_if_fail (GOSSIP_IS_PRESENCE_CHOOSER (chooser));
-	g_return_if_fail (ms > 1 && ms < 30000);
-
-	priv = GET_PRIV (chooser);
-
-	priv->flash_interval = ms;
-}
-
-static gboolean
-presence_chooser_flash_timeout_cb (GossipPresenceChooser *chooser)
+static void
+presence_chooser_flash (GossipPresenceChooser *chooser)
 {
 	GossipPresenceChooserPriv *priv;
 	GossipPresenceState        state;
@@ -1110,7 +1095,7 @@ presence_chooser_flash_timeout_cb (GossipPresenceChooser *chooser)
 
 	priv = GET_PRIV (chooser);
 
-	if (on) {
+	if (!on) {
 		state = priv->flash_state_1;
 	} else {
 		state = priv->flash_state_2;
@@ -1121,8 +1106,14 @@ presence_chooser_flash_timeout_cb (GossipPresenceChooser *chooser)
 	g_object_unref (pixbuf);
 
 	on = !on;
-
-	return TRUE;
 }
 
+static gboolean
+presence_chooser_flash_heartbeat_func (GossipHeartbeat *heartbeat,
+				       gpointer         user_data)
+{
+	presence_chooser_flash (GOSSIP_PRESENCE_CHOOSER (user_data));
+	
+	return TRUE;
+}
 

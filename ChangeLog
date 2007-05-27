@@ -1,8 +1,14 @@
 2007-05-27  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-app.c: 
+	* src/gossip-presence-chooser.c:
+	- Use the flash heartbeat for GossipPresenceChooser.
+
+2007-05-27  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-app.c: 
 	* src/gossip-status-icon.c:
-	- Use the flash heart beat for GossipStatusIcon.
+	- Use the flash heartbeat for GossipStatusIcon.
 
 2007-05-27  Mikael Hallendal  <micke@imendio.com>
 

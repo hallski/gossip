@@ -165,8 +165,6 @@ heartbeat_timeout_cb (GossipHeartbeat *heartbeat)
 
 	priv = GET_PRIV (heartbeat);
 
-	g_print ("%s called\n", G_STRFUNC);
-
 	l = priv->callbacks;
 	while (l) {
 		HeartbeatCallback *callback = (HeartbeatCallback *) l->data;
