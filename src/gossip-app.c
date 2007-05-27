@@ -274,8 +274,6 @@ static void     app_show_hide_list_cb        (GtkWidget             *widget,
 					      GossipApp             *app);
 static void     app_popup_new_message_cb     (GtkWidget             *widget,
 					      gpointer               user_data);
-static void     app_status_icon_activate_cb  (GtkStatusIcon         *status_icon,
-					      GossipApp             *app);
 static void     
 app_status_icon_popup_menu_cb                (GtkStatusIcon         *status_icon,
 					      guint                  button,
@@ -1819,22 +1817,6 @@ app_popup_new_message_cb (GtkWidget *widget,
 }
 
 static void
-app_status_icon_activate_cb (GtkStatusIcon  *status_icon,
-			     GossipApp      *app)
-{
-	GossipAppPriv *priv;
-
-	priv = GET_PRIV (app);
-
-	if (!gossip_status_icon_get_events (GOSSIP_STATUS_ICON (priv->status_icon))) {
-		gossip_app_toggle_visibility ();
-	} else {
-		gossip_event_manager_activate (gossip_app_get_event_manager (),
-					       gossip_status_icon_get_next_event (GOSSIP_STATUS_ICON (priv->status_icon)));
-	}
-}
-
-static void
 app_status_icon_popup_menu_cb (GtkStatusIcon  *status_icon,
 			       guint          button,
 			       guint          activate_time,
@@ -1912,11 +1894,6 @@ app_status_icon_create (void)
 	priv = GET_PRIV (app);
 
 	priv->status_icon = gossip_status_icon_get ();
-
-	g_signal_connect (priv->status_icon,
-			  "activate",
-			  G_CALLBACK (app_status_icon_activate_cb),
-			  app);
 
 	g_signal_connect (priv->status_icon,
 			  "popup_menu",

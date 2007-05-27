@@ -1,3 +1,11 @@
+2007-05-27  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-status-icon.c (status_icon_activate): 
+	- Override the activate signal and implemenent behaviour on activate
+	here.
+	* src/gossip-app.c (app_status_icon_activate_cb): 
+	- Removed as functionality was moved to GossipStatusIcon.
+
 2007-05-26  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-app.c: Removed the wrapper functions and call

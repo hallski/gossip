@@ -22,6 +22,7 @@
 
 #include <gtk/gtkstatusicon.h>
 
+#include "gossip-app.h"
 #include "gossip-stock.h"
 #include "gossip-ui-utils.h"
 #include "gossip-status-icon.h"
@@ -31,21 +32,25 @@
 typedef struct _GossipStatusIconPriv GossipStatusIconPriv;
 
 struct _GossipStatusIconPriv {
-	gint my_prop;
-
 	GList *events;
+
+	guint  flash_timeout_id;
 };
 
-static void     status_icon_finalize           (GObject            *object);
+static void     status_icon_finalize           (GObject          *object);
+static void     status_icon_activate           (GtkStatusIcon    *status_icon);
 
 G_DEFINE_TYPE (GossipStatusIcon, gossip_status_icon, GTK_TYPE_STATUS_ICON);
 
 static void
 gossip_status_icon_class_init (GossipStatusIconClass *klass)
 {
-	GObjectClass *object_class = G_OBJECT_CLASS (klass);
+	GObjectClass       *object_class = G_OBJECT_CLASS (klass);
+	GtkStatusIconClass *status_icon_class = GTK_STATUS_ICON_CLASS (klass);
 
 	object_class->finalize = status_icon_finalize;
+
+	status_icon_class->activate = status_icon_activate;
 
 	g_type_class_add_private (object_class, sizeof (GossipStatusIconPriv));
 }
@@ -70,6 +75,19 @@ status_icon_finalize (GObject *object)
 	priv = GET_PRIV (object);
 
 	G_OBJECT_CLASS (gossip_status_icon_parent_class)->finalize (object);
+}
+
+static void
+status_icon_activate (GtkStatusIcon  *status_icon)
+{
+	g_print ("%s called\n", G_STRFUNC);
+
+	if (!gossip_status_icon_get_events (GOSSIP_STATUS_ICON (status_icon))) {
+		gossip_app_toggle_visibility ();
+	} else {
+		gossip_event_manager_activate (gossip_app_get_event_manager (),
+					       gossip_status_icon_get_next_event (GOSSIP_STATUS_ICON (status_icon)));
+	}
 }
 
 GtkStatusIcon *
