@@ -28,6 +28,7 @@
 #include <libgossip/gossip-event-manager.h>
 #include <libgossip/gossip-chatroom-manager.h>
 
+#include "gossip-heartbeat.h"
 #include "gossip-self-presence.h"
 #include "gossip-chat-manager.h"
 
@@ -72,6 +73,7 @@ GossipChatroomManager *gossip_app_get_chatroom_manager (void);
 GossipChatManager *    gossip_app_get_chat_manager     (void);
 GossipEventManager *   gossip_app_get_event_manager    (void);
 GossipSelfPresence *   gossip_app_get_self_presence    (void);
+GossipHeartbeat *      gossip_app_get_flash_heartbeat  (void);
 
 G_END_DECLS
 

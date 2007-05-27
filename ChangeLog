@@ -1,5 +1,9 @@
 2007-05-27  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-app.c: Added flash heartbeat object.
+
+2007-05-27  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-heartbeat.c: Implemented 
 
 2007-05-27  Mikael Hallendal  <micke@imendio.com>

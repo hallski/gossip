@@ -136,7 +136,6 @@ struct _GossipAppPriv {
 
 	/* Status Icon */
 	GtkStatusIcon         *status_icon;
-	guint                  status_icon_flash_timeout_id;
 
 	GtkWidget             *popup_menu;
 	GtkWidget             *popup_menu_status_item;
@@ -154,6 +153,7 @@ struct _GossipAppPriv {
 	GtkWidget             *presence_chooser;
 
 	GossipSelfPresence    *self_presence;
+	GossipHeartbeat       *flash_heartbeat;
 
 	/* Misc */
 	guint                  size_timeout_id;
@@ -356,6 +356,10 @@ gossip_app_init (GossipApp *singleton_app)
 
 	priv = GET_PRIV (app);
 
+	priv->flash_heartbeat = g_object_new (GOSSIP_TYPE_HEARTBEAT,
+					      "interval", FLASH_TIMEOUT,
+					      NULL);
+
 	priv->errors = g_hash_table_new_full (gossip_account_hash,
 					      gossip_account_equal,
 					      g_object_unref,
@@ -387,10 +391,6 @@ app_finalize (GObject *object)
 
 	if (priv->size_timeout_id) {
 		g_source_remove (priv->size_timeout_id);
-	}
-
-	if (priv->status_icon_flash_timeout_id) {
-		g_source_remove (priv->status_icon_flash_timeout_id);
 	}
 
 	g_list_free (priv->widgets_connected);
@@ -454,6 +454,7 @@ app_finalize (GObject *object)
 	g_object_unref (priv->chat_manager);
 	g_object_unref (priv->chatroom_manager);
 	g_object_unref (priv->session);
+	g_object_unref (priv->flash_heartbeat);
 
 	G_OBJECT_CLASS (gossip_app_parent_class)->finalize (object);
 }
@@ -2585,5 +2586,15 @@ gossip_app_get_self_presence (void)
 	priv = GET_PRIV (app);
 
 	return priv->self_presence;
+}
+
+GossipHeartbeat *
+gossip_app_get_flash_heartbeat (void)
+{
+	GossipAppPriv *priv;
+
+	priv = GET_PRIV (app);
+
+	return priv->flash_heartbeat;
 }
 
