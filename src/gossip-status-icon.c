@@ -44,11 +44,18 @@ struct _GossipStatusIconPriv {
 
 static void     status_icon_finalize           (GObject          *object);
 static void     status_icon_activate           (GtkStatusIcon    *status_icon);
+
+static void     status_icon_event_added_cb     (GossipEventManager *manager,
+						GossipEvent        *event,
+						GossipStatusIcon   *status_icon);
+static void     status_icon_event_removed_cb   (GossipEventManager *manager,
+						GossipEvent        *event,
+						GossipStatusIcon   *status_icon);
+
 static void     status_icon_flash_start_cb     (GossipSelfPresence *self_presence,
 						GossipStatusIcon   *status_icon);
 static void     status_icon_flash_stop_cb      (GossipSelfPresence *self_presence,
 						GossipStatusIcon   *status_icon);
-
 G_DEFINE_TYPE (GossipStatusIcon, gossip_status_icon, GTK_TYPE_STATUS_ICON);
 
 static void
@@ -75,6 +82,14 @@ gossip_status_icon_init (GossipStatusIcon *status_icon)
 	gtk_status_icon_set_from_pixbuf (GTK_STATUS_ICON (status_icon), pixbuf);
 	g_object_unref (pixbuf);
 
+	g_signal_connect (gossip_app_get_event_manager (), "event-added",
+			  G_CALLBACK (status_icon_event_added_cb),
+			  status_icon);
+
+	g_signal_connect (gossip_app_get_event_manager (), "event-removed",
+			  G_CALLBACK (status_icon_event_removed_cb),
+			  status_icon);
+
 	g_signal_connect (gossip_app_get_self_presence (), "start-flash",
 			  G_CALLBACK (status_icon_flash_start_cb),
 			  status_icon);
@@ -99,60 +114,44 @@ status_icon_finalize (GObject *object)
 					      status_icon_flash_start_cb,
 					      object);
 
+	g_signal_handlers_disconnect_by_func (gossip_app_get_event_manager (),
+					      status_icon_event_added_cb,
+					      object);
+
+	g_signal_handlers_disconnect_by_func (gossip_app_get_event_manager (),
+					      status_icon_event_removed_cb,
+					      object);
+
 	G_OBJECT_CLASS (gossip_status_icon_parent_class)->finalize (object);
+}
+
+static GossipEvent *
+status_icon_get_next_event (GossipStatusIcon *status_icon)
+{
+	GossipStatusIconPriv *priv;
+
+	priv = GET_PRIV (status_icon);
+
+	return (GossipEvent *) priv->events->data;
 }
 
 static void
 status_icon_activate (GtkStatusIcon  *status_icon)
 {
-	if (!gossip_status_icon_get_events (GOSSIP_STATUS_ICON (status_icon))) {
+	GossipStatusIconPriv *priv;
+
+	priv = GET_PRIV (status_icon);
+
+	if (!priv->events) {
 		gossip_app_toggle_visibility ();
 	} else {
 		gossip_event_manager_activate (gossip_app_get_event_manager (),
-					       gossip_status_icon_get_next_event (GOSSIP_STATUS_ICON (status_icon)));
+					       status_icon_get_next_event (GOSSIP_STATUS_ICON (status_icon)));
 	}
 }
 
-static void
-status_icon_flash_start_cb (GossipSelfPresence *self_presence,
-			    GossipStatusIcon   *status_icon)
-{
-	GossipStatusIconPriv *priv;
-
-	priv = GET_PRIV (status_icon);
-
-	priv->is_status_flashing = TRUE;
-
-	gossip_status_icon_start_flash (status_icon);
-}
-
-static void
-status_icon_flash_stop_cb (GossipSelfPresence *self_presence,
-			   GossipStatusIcon   *status_icon)
-{
-	GossipStatusIconPriv *priv;
-
-	priv = GET_PRIV (status_icon);
-
-	priv->is_status_flashing = FALSE;
-	
-	gossip_status_icon_maybe_stop_flash (status_icon);
-}
-
-GtkStatusIcon *
-gossip_status_icon_get (void)
-{
-	static GtkStatusIcon *status_icon = NULL;
-
-	if (!status_icon) {
-		status_icon = g_object_new (GOSSIP_TYPE_STATUS_ICON, NULL);
-	}
-
-	return status_icon;
-}
-
-void 
-gossip_status_icon_add_event (GossipStatusIcon *status_icon, GossipEvent *event)
+static void 
+status_icon_add_event (GossipStatusIcon *status_icon, GossipEvent *event)
 {
 	GossipStatusIconPriv *priv;
 	GList                *l;
@@ -168,9 +167,8 @@ gossip_status_icon_add_event (GossipStatusIcon *status_icon, GossipEvent *event)
 	priv->events = g_list_append (priv->events, g_object_ref (event));
 }
 
-void
-gossip_status_icon_remove_event (GossipStatusIcon *status_icon, 
-				 GossipEvent      *event)
+static void
+status_icon_remove_event (GossipStatusIcon *status_icon,  GossipEvent *event)
 {
 	GossipStatusIconPriv *priv;
 	GList                *l;
@@ -189,82 +187,6 @@ gossip_status_icon_remove_event (GossipStatusIcon *status_icon,
 	g_object_unref (event);
 }
 
-GList *
-gossip_status_icon_get_events (GossipStatusIcon *status_icon)
-{
-	GossipStatusIconPriv *priv;
-
-	priv = GET_PRIV (status_icon);
-
-	return priv->events;
-}
-
-GossipEvent *
-gossip_status_icon_get_next_event (GossipStatusIcon *status_icon)
-{
-	GossipStatusIconPriv *priv;
-
-	priv = GET_PRIV (status_icon);
-
-	return (GossipEvent *) priv->events->data;
-}
-
-void
-gossip_status_icon_update_tooltip (GossipStatusIcon *status_icon)
-{
-	GossipEvent *event;
-
-	if (!gossip_status_icon_get_events (status_icon)) {
-		const gchar *status;
-
-		if (gossip_app_is_connected ()) {
-			GossipPresence      *presence;
-			GossipPresenceState  state;
-
-			presence = gossip_self_presence_get_effective (gossip_app_get_self_presence ());
-			state = gossip_presence_get_state (presence);
-			status = gossip_presence_get_status (presence);
-
-			if (!status) {
-				status = gossip_presence_state_get_default_status (state);
-			}
-		} else {
-			/* i18n: The current state of the connection. */
-			status = _("Offline");
-		}
-
-		gtk_status_icon_set_tooltip (gossip_status_icon_get (), status);
-		return;
-	}
-
-	event = gossip_status_icon_get_next_event (status_icon);
-
-	gtk_status_icon_set_tooltip (gossip_status_icon_get (),
-				     gossip_event_get_message (event));
-}
-
-void
-gossip_status_icon_maybe_stop_flash (GossipStatusIcon *status_icon)
-{
-	GossipStatusIconPriv *priv;
-	GdkPixbuf            *pixbuf;
-
-	priv = GET_PRIV (status_icon);
-	
-	if (gossip_status_icon_get_events (status_icon) != NULL || gossip_self_presence_get_leave_time (gossip_app_get_self_presence ()) > 0) {
-		return;
-	}
-
-	pixbuf = gossip_self_presence_get_current_pixbuf (gossip_app_get_self_presence ());
-	gtk_status_icon_set_from_pixbuf (GTK_STATUS_ICON (status_icon), pixbuf);
-	g_object_unref (pixbuf);
-
-	if (priv->flash_timeout_id) {
-		g_source_remove (priv->flash_timeout_id);
-		priv->flash_timeout_id = 0;
-	}
-}
-
 static gboolean
 status_icon_flash_timeout_func (gpointer data)
 {
@@ -280,11 +202,11 @@ status_icon_flash_timeout_func (gpointer data)
 		if (priv->is_status_flashing) {
 			pixbuf = gossip_self_presence_get_explicit_pixbuf (gossip_app_get_self_presence ());
 		}
-		else if (gossip_status_icon_get_events (GOSSIP_STATUS_ICON (status_icon)) != NULL) {
+		else if (priv->events != NULL) {
 			GossipEvent *event;
 			const gchar *stock_id = NULL;
 
-			event = gossip_status_icon_get_next_event (GOSSIP_STATUS_ICON (status_icon));
+			event = status_icon_get_next_event (status_icon);
 			
 			switch (gossip_event_get_type (event)) {
 			case GOSSIP_EVENT_NEW_MESSAGE:
@@ -322,8 +244,9 @@ status_icon_flash_timeout_func (gpointer data)
 	return TRUE;
 }
 
-void
-gossip_status_icon_start_flash (GossipStatusIcon *status_icon)
+
+static void
+status_icon_start_flash (GossipStatusIcon *status_icon)
 {
 	GossipStatusIconPriv *priv;
 
@@ -335,6 +258,129 @@ gossip_status_icon_start_flash (GossipStatusIcon *status_icon)
 				       status_icon_flash_timeout_func,
 				       status_icon);
 	}
+}
+
+
+
+static void
+status_icon_event_added_cb (GossipEventManager *manager,
+			    GossipEvent        *event,
+			    GossipStatusIcon   *status_icon)
+{
+	status_icon_add_event (status_icon, event);
+
+	status_icon_start_flash (status_icon);
+	gossip_status_icon_update_tooltip (status_icon);
+}
+
+static void
+status_icon_maybe_stop_flash (GossipStatusIcon *status_icon)
+{
+	GossipStatusIconPriv *priv;
+	GdkPixbuf            *pixbuf;
+
+	priv = GET_PRIV (status_icon);
+	
+	if (priv->events != NULL || gossip_self_presence_get_leave_time (gossip_app_get_self_presence ()) > 0) {
+		return;
+	}
+
+	pixbuf = gossip_self_presence_get_current_pixbuf (gossip_app_get_self_presence ());
+	gtk_status_icon_set_from_pixbuf (GTK_STATUS_ICON (status_icon), pixbuf);
+	g_object_unref (pixbuf);
+
+	if (priv->flash_timeout_id) {
+		g_source_remove (priv->flash_timeout_id);
+		priv->flash_timeout_id = 0;
+	}
+}
+
+
+static void
+status_icon_event_removed_cb (GossipEventManager *manager,
+			      GossipEvent        *event,
+			      GossipStatusIcon   *status_icon)
+{
+	status_icon_remove_event (status_icon, event);
+
+	status_icon_maybe_stop_flash (status_icon);
+	gossip_status_icon_update_tooltip (status_icon);
+}
+
+static void
+status_icon_flash_start_cb (GossipSelfPresence *self_presence,
+			    GossipStatusIcon   *status_icon)
+{
+	GossipStatusIconPriv *priv;
+
+	priv = GET_PRIV (status_icon);
+
+	priv->is_status_flashing = TRUE;
+
+	status_icon_start_flash (status_icon);
+}
+
+static void
+status_icon_flash_stop_cb (GossipSelfPresence *self_presence,
+			   GossipStatusIcon   *status_icon)
+{
+	GossipStatusIconPriv *priv;
+
+	priv = GET_PRIV (status_icon);
+
+	priv->is_status_flashing = FALSE;
+	
+	status_icon_maybe_stop_flash (status_icon);
+}
+
+GtkStatusIcon *
+gossip_status_icon_get (void)
+{
+	static GtkStatusIcon *status_icon = NULL;
+
+	if (!status_icon) {
+		status_icon = g_object_new (GOSSIP_TYPE_STATUS_ICON, NULL);
+	}
+
+	return status_icon;
+}
+
+
+void
+gossip_status_icon_update_tooltip (GossipStatusIcon *status_icon)
+{
+	GossipStatusIconPriv *priv;
+	GossipEvent          *event;
+
+	priv = GET_PRIV (status_icon);
+
+	if (!priv->events) {
+		const gchar *status;
+
+		if (gossip_app_is_connected ()) {
+			GossipPresence      *presence;
+			GossipPresenceState  state;
+
+			presence = gossip_self_presence_get_effective (gossip_app_get_self_presence ());
+			state = gossip_presence_get_state (presence);
+			status = gossip_presence_get_status (presence);
+
+			if (!status) {
+				status = gossip_presence_state_get_default_status (state);
+			}
+		} else {
+			/* i18n: The current state of the connection. */
+			status = _("Offline");
+		}
+
+		gtk_status_icon_set_tooltip (gossip_status_icon_get (), status);
+		return;
+	}
+
+	event = status_icon_get_next_event (status_icon);
+
+	gtk_status_icon_set_tooltip (gossip_status_icon_get (),
+				     gossip_event_get_message (event));
 }
 
 void

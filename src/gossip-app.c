@@ -328,9 +328,6 @@ app_session_chatroom_auto_connect_cb         (GossipSession         *session,
 static void     app_event_added_cb           (GossipEventManager    *manager,
 					      GossipEvent           *event,
 					      gpointer               user_data);
-static void     app_event_removed_cb         (GossipEventManager    *manager,
-					      GossipEvent           *event,
-					      gpointer               user_data);
 static void     app_contact_activated_cb     (GossipContactList     *contact_list,
 					      GossipContact         *contact,
 					      GossipEventId          event_id,
@@ -446,9 +443,6 @@ app_finalize (GObject *object)
 
 	g_signal_handlers_disconnect_by_func (priv->event_manager,
 					      app_event_added_cb,
-					      NULL);
-	g_signal_handlers_disconnect_by_func (priv->event_manager,
-					      app_event_removed_cb,
 					      NULL);
 
 	gossip_ft_window_finalize (priv->session);
@@ -668,9 +662,6 @@ app_setup (GossipSession *session)
 
 	g_signal_connect (priv->event_manager, "event-added",
 			  G_CALLBACK (app_event_added_cb),
-			  NULL);
-	g_signal_connect (priv->event_manager, "event-removed",
-			  G_CALLBACK (app_event_removed_cb),
 			  NULL);
 
 	/* Set up interface */
@@ -2526,28 +2517,6 @@ app_event_added_cb (GossipEventManager *manager,
 	priv = GET_PRIV (app);
 
 	gossip_request_user_attention ();
-
-	gossip_status_icon_add_event (GOSSIP_STATUS_ICON (priv->status_icon),
-				      event);
-
-	gossip_status_icon_start_flash (GOSSIP_STATUS_ICON (priv->status_icon));
-	gossip_status_icon_update_tooltip (GOSSIP_STATUS_ICON (priv->status_icon));
-}
-
-static void
-app_event_removed_cb (GossipEventManager *manager,
-		      GossipEvent        *event,
-		      gpointer            user_data)
-{
-	GossipAppPriv *priv;
-
-	priv = GET_PRIV (app);
-
-	gossip_status_icon_remove_event (GOSSIP_STATUS_ICON (priv->status_icon),
-					 event);
-
-	gossip_status_icon_maybe_stop_flash (GOSSIP_STATUS_ICON (priv->status_icon));
-	gossip_status_icon_update_tooltip (GOSSIP_STATUS_ICON (priv->status_icon));
 }
 
 static void

@@ -1,23 +1,32 @@
 2007-05-27  Mikael Hallendal  <micke@imendio.com>
 
-	* src/gossip-presence-chooser.c
+	* src/gossip-status-icon.[ch]: 
+	- Privatized functions only used from within gossip-status-icon.c 
+	- Add/Remove events in event manager callbacks.
+
+	* src/gossip-app.c:
+	- Don't add/remove events on GossipStatusIcon from here.
+
+2007-05-27  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-presence-chooser.c:
 	- Privatized the functions to start/stop flashing as they are not used
 	from the outside anymore.
 	- Removed is_flashing.
 
 2007-05-27  Mikael Hallendal  <micke@imendio.com>
 
-	* src/gossip-presence-chooser.c
+	* src/gossip-presence-chooser.c:
 	* src/gossip-app.c:
 	- Let GossipPresenceChooesr handle the status flashing on it's own.
 
 2007-05-27  Mikael Hallendal  <micke@imendio.com>
 
-	* src/gossip-status-icon.c
+	* src/gossip-status-icon.c:
 	* src/gossip-app.c:
 	- Let GossipStatusIcon handle the status flashing on it's own.
 
-	* src/gossip-status-icon.c
+	* src/gossip-status-icon.c:
 	- Renamed is_flashing ot is_status_flashing to distinguish it from
 	event flashing.
 
