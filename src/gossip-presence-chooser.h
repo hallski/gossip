@@ -54,13 +54,6 @@ void       gossip_presence_chooser_set_status         (GossipPresenceChooser *ch
 void       gossip_presence_chooser_set_flash_interval (GossipPresenceChooser *chooser,
 						       guint                  ms);
 
-void       gossip_presence_chooser_flash_start        (GossipPresenceChooser *chooser,
-						       GossipPresenceState    state_1,
-						       GossipPresenceState    state_2);
-void       gossip_presence_chooser_flash_stop         (GossipPresenceChooser *chooser,
-						       GossipPresenceState    state);
-gboolean   gossip_presence_chooser_is_flashing        (GossipPresenceChooser *chooser);
-
 G_END_DECLS
 
 #endif /* __GOSSIP_PRESENCE_CHOOSER_H__ */

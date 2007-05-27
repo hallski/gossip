@@ -796,12 +796,58 @@ presence_chooser_scroll_timeout_cb (GossipPresenceChooser *chooser)
 }
 
 static void
+presence_chooser_flash_start (GossipPresenceChooser *chooser,
+			      GossipPresenceState    state_1,
+			      GossipPresenceState    state_2)
+{
+	GossipPresenceChooserPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_PRESENCE_CHOOSER (chooser));
+
+	priv = GET_PRIV (chooser);
+
+	if (priv->flash_timeout_id != 0) {
+		return;
+	}
+
+	priv->flash_state_1 = state_1;
+	priv->flash_state_2 = state_2;
+
+	priv->flash_timeout_id = g_timeout_add (priv->flash_interval,
+						(GSourceFunc) presence_chooser_flash_timeout_cb,
+						chooser);
+}
+
+static void
+presence_chooser_flash_stop (GossipPresenceChooser *chooser,
+			     GossipPresenceState    state)
+{
+	GossipPresenceChooserPriv *priv;
+	GdkPixbuf                 *pixbuf;
+
+	g_return_if_fail (GOSSIP_IS_PRESENCE_CHOOSER (chooser));
+
+	priv = GET_PRIV (chooser);
+
+	if (priv->flash_timeout_id) {
+		g_source_remove (priv->flash_timeout_id);
+		priv->flash_timeout_id = 0;
+	}
+
+	pixbuf = gossip_pixbuf_for_presence_state (state);
+	gtk_image_set_from_pixbuf (GTK_IMAGE (priv->image), pixbuf);
+	g_object_unref (pixbuf);
+
+	priv->last_state = state;
+}
+
+static void
 presence_chooser_flash_start_cb (GossipSelfPresence    *self_presence,
 				 GossipPresenceChooser *chooser)
 {
-	gossip_presence_chooser_flash_start (chooser,
-					     gossip_self_presence_get_current_state (gossip_app_get_self_presence ()),
-					     gossip_self_presence_get_previous_state (gossip_app_get_self_presence ()));
+	presence_chooser_flash_start (chooser,
+				      gossip_self_presence_get_current_state (gossip_app_get_self_presence ()),
+				      gossip_self_presence_get_previous_state (gossip_app_get_self_presence ()));
 	
 }
 
@@ -809,8 +855,8 @@ static void
 presence_chooser_flash_stop_cb (GossipSelfPresence    *self_presence,
 				GossipPresenceChooser *chooser)
 {
-	gossip_presence_chooser_flash_stop (chooser,
-					    gossip_self_presence_get_current_state (gossip_app_get_self_presence ()));
+	presence_chooser_flash_stop (chooser,
+				     gossip_self_presence_get_current_state (gossip_app_get_self_presence ()));
 }
 
 
@@ -1024,7 +1070,7 @@ gossip_presence_chooser_set_state (GossipPresenceChooser *chooser,
 
 	priv = GET_PRIV (chooser);
 
-	gossip_presence_chooser_flash_stop (chooser, state);
+	presence_chooser_flash_stop (chooser, state);
 }
 
 void
@@ -1079,64 +1125,4 @@ presence_chooser_flash_timeout_cb (GossipPresenceChooser *chooser)
 	return TRUE;
 }
 
-void
-gossip_presence_chooser_flash_start (GossipPresenceChooser *chooser,
-				     GossipPresenceState    state_1,
-				     GossipPresenceState    state_2)
-{
-	GossipPresenceChooserPriv *priv;
 
-	g_return_if_fail (GOSSIP_IS_PRESENCE_CHOOSER (chooser));
-
-	priv = GET_PRIV (chooser);
-
-	if (priv->flash_timeout_id != 0) {
-		return;
-	}
-
-	priv->flash_state_1 = state_1;
-	priv->flash_state_2 = state_2;
-
-	priv->flash_timeout_id = g_timeout_add (priv->flash_interval,
-						(GSourceFunc) presence_chooser_flash_timeout_cb,
-						chooser);
-}
-
-void
-gossip_presence_chooser_flash_stop (GossipPresenceChooser *chooser,
-				    GossipPresenceState    state)
-{
-	GossipPresenceChooserPriv *priv;
-	GdkPixbuf                 *pixbuf;
-
-	g_return_if_fail (GOSSIP_IS_PRESENCE_CHOOSER (chooser));
-
-	priv = GET_PRIV (chooser);
-
-	if (priv->flash_timeout_id) {
-		g_source_remove (priv->flash_timeout_id);
-		priv->flash_timeout_id = 0;
-	}
-
-	pixbuf = gossip_pixbuf_for_presence_state (state);
-	gtk_image_set_from_pixbuf (GTK_IMAGE (priv->image), pixbuf);
-	g_object_unref (pixbuf);
-
-	priv->last_state = state;
-}
-
-gboolean
-gossip_presence_chooser_is_flashing (GossipPresenceChooser *chooser)
-{
-	GossipPresenceChooserPriv *priv;
-
-	g_return_val_if_fail (GOSSIP_IS_PRESENCE_CHOOSER (chooser), FALSE);
-
-	priv = GET_PRIV (chooser);
-
-	if (priv->flash_timeout_id) {
-		return TRUE;
-	}
-
-	return FALSE;
-}
