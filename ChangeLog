@@ -1,5 +1,10 @@
 2007-05-26  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-app.c: Removed the wrapper functions and call
+	GossipStatusIcon functions directly instead.
+
+2007-05-26  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-status-icon.c: Renamed statust_icon_flash_icons to
 	events.
 
