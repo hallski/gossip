@@ -1,5 +1,15 @@
 2007-05-27  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-contact-list.c:
+	(contact_list_event_added_cb, contact_list_event_removed_cb):
+	- Factored out duplicated code and moved it to libgossip/gossip-event.
+	
+	* libgossip/gossip-event.[ch] (gossip_event_get_contact):
+	- Added function to get the contact for an event. This code is used
+	for adding and removing events in the contact list.
+
+2007-05-27  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-status-icon.c (status_icon_set_tooltip_to_status): 
 	Extracted from gossip_status_icon_update_tooltip.
 

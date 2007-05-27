@@ -16,9 +16,6 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * Authors: Mikael Hallendal <micke@imendio.com>
- *          Martyn Russell <martyn@imendio.com>
  */
 
 #include "config.h"
@@ -3136,37 +3133,16 @@ contact_list_event_added_cb (GossipEventManager *manager,
 			     GossipContactList  *list)
 {
 	GossipContactListPriv *priv;
-	GossipMessage         *message;
-	GossipFT              *ft;
 	GossipContact         *contact;
-	GossipEventType        type;
 	FlashData             *data;
 	FlashTimeoutData      *timeout_data;
 
 	priv = GET_PRIV (list);
 
-	type = gossip_event_get_type (event);
-
-	switch (type) {
-	case GOSSIP_EVENT_NEW_MESSAGE:
-		message = GOSSIP_MESSAGE (gossip_event_get_data (event));
-		contact = gossip_message_get_sender (message);
-		break;
-
-	case GOSSIP_EVENT_SUBSCRIPTION_REQUEST:
-		contact = GOSSIP_CONTACT (gossip_event_get_data (event));
-		break;
-
-	case GOSSIP_EVENT_FILE_TRANSFER_REQUEST:
-		ft = GOSSIP_FT (gossip_event_get_data (event));
-		contact = gossip_ft_get_contact (ft);
-		break;
-
-	default:
-		/* Not handled */
+	contact = gossip_event_get_contact (event);
+	if (!contact) {
 		gossip_debug (DEBUG_DOMAIN,
-			      "Event type not added to the flashing event table",
-			      type);
+			      "Event type not added to the flashing event table");
 		return;
 	}
 
@@ -3187,7 +3163,7 @@ contact_list_event_added_cb (GossipEventManager *manager,
 	data = g_slice_new0 (FlashData);
 
 	data->event_id = gossip_event_get_id (event);
-	data->event_type = type;
+	data->event_type = gossip_event_get_type (event);
 
 	data->flash_on = TRUE;
 	data->flash_timeout_id =
@@ -3215,33 +3191,15 @@ contact_list_event_removed_cb (GossipEventManager *manager,
 			       GossipContactList  *list)
 {
 	GossipContactListPriv *priv;
-	GossipMessage         *message;
-	GossipFT              *ft;
 	GossipContact         *contact;
-	GossipEventType        type;
 	FlashData             *data;
 
 	priv = GET_PRIV (list);
 
-	type = gossip_event_get_type (event);
-
-	switch (type) {
-	case GOSSIP_EVENT_NEW_MESSAGE:
-		message = GOSSIP_MESSAGE (gossip_event_get_data (event));
-		contact = gossip_message_get_sender (message);
-		break;
-
-	case GOSSIP_EVENT_SUBSCRIPTION_REQUEST:
-		contact = GOSSIP_CONTACT (gossip_event_get_data (event));
-		break;
-
-	case GOSSIP_EVENT_FILE_TRANSFER_REQUEST:
-		ft = GOSSIP_FT (gossip_event_get_data (event));
-		contact = gossip_ft_get_contact (ft);
-		break;
-
-	default:
-		/* Not handled */
+	contact = gossip_event_get_contact (event);
+	if (!contact) {
+		/* Only events with contacts is added to the list */
+		/* Do nothing */
 		return;
 	}
 

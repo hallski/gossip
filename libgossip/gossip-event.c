@@ -16,16 +16,15 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * Authors: Mikael Hallendal <micke@imendio.com>
  */
 
 #include "config.h"
 
 #include "gossip-contact.h"
-#include "gossip-event.h"
 #include "gossip-message.h"
+#include "gossip-ft.h"
 #include "gossip-debug.h"
+#include "gossip-event.h"
 
 #define DEBUG_DOMAIN "Event"
 
@@ -270,6 +269,39 @@ gossip_event_get_message (GossipEvent *event)
 	priv = GET_PRIV (event);
 
 	return priv->msg;
+}
+
+GossipContact *
+gossip_event_get_contact (GossipEvent *event)
+{
+	GossipMessage *message;
+	GossipContact *contact;
+	GossipFT      *ft;
+
+	switch (gossip_event_get_type (event)) {
+	case GOSSIP_EVENT_NEW_MESSAGE:
+		message = GOSSIP_MESSAGE (gossip_event_get_data (event));
+		contact = gossip_message_get_sender (message);
+		break;
+
+	case GOSSIP_EVENT_SUBSCRIPTION_REQUEST:
+		contact = GOSSIP_CONTACT (gossip_event_get_data (event));
+		break;
+
+	case GOSSIP_EVENT_FILE_TRANSFER_REQUEST:
+		ft = GOSSIP_FT (gossip_event_get_data (event));
+		contact = gossip_ft_get_contact (ft);
+		break;
+
+	default:
+		/* Not handled */
+		gossip_debug (DEBUG_DOMAIN,
+			      "Event type does not have a contact: %d",
+			      gossip_event_get_type (event));
+		return NULL;
+	}
+
+	return contact;
 }
 
 GossipEventType

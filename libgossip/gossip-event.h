@@ -23,6 +23,8 @@
 
 #include <glib-object.h>
 
+#include <libgossip/gossip-contact.h>
+
 G_BEGIN_DECLS
 
 #define GOSSIP_TYPE_EVENT         (gossip_event_get_gtype ())
@@ -59,6 +61,7 @@ GossipEvent *   gossip_event_new         (GossipEventType  type);
 GossipEventId   gossip_event_get_id      (GossipEvent     *event);
 GossipEventType gossip_event_get_type    (GossipEvent     *event);
 const gchar *   gossip_event_get_message (GossipEvent     *event);
+GossipContact * gossip_event_get_contact (GossipEvent     *event);
 
 /* Should probably subclass event instead */
 GObject *       gossip_event_get_data    (GossipEvent     *event);
