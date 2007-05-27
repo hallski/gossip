@@ -1830,7 +1830,7 @@ app_status_icon_activate_cb (GtkStatusIcon  *status_icon,
 	if (!priv->status_icon_flash_icons) {
 		gossip_app_toggle_visibility ();
 	} else {
-		gossip_event_manager_activate (priv->event_manager,
+		gossip_event_manager_activate (gossip_app_get_event_manager (),
 					       priv->status_icon_flash_icons->data);
 	}
 }
@@ -2720,16 +2720,12 @@ app_session_chatroom_auto_connect_cb (GossipSession          *session,
 }
 
 static void
-app_event_added_cb (GossipEventManager *manager,
-		    GossipEvent        *event,
-		    gpointer            user_data)
+app_status_icon_add_event (GossipEvent *event)
 {
 	GossipAppPriv *priv;
 	GList         *l;
 
 	priv = GET_PRIV (app);
-
-	gossip_request_user_attention ();
 
 	l = g_list_find_custom (priv->status_icon_flash_icons,
 				event, gossip_event_compare);
@@ -2741,15 +2737,10 @@ app_event_added_cb (GossipEventManager *manager,
 	priv->status_icon_flash_icons =
 		g_list_append (priv->status_icon_flash_icons,
 			       g_object_ref (event));
-
-	app_status_icon_flash_start ();
-	app_status_icon_update_tooltip ();
 }
 
 static void
-app_event_removed_cb (GossipEventManager *manager,
-		      GossipEvent        *event,
-		      gpointer            user_data)
+app_status_icon_remove_event (GossipEvent *event)
 {
 	GossipAppPriv *priv;
 	GList         *l;
@@ -2765,11 +2756,40 @@ app_event_removed_cb (GossipEventManager *manager,
 	}
 
 	priv->status_icon_flash_icons = g_list_delete_link (priv->status_icon_flash_icons, l);
+	
+	g_object_unref (event);
+}
+
+static void
+app_event_added_cb (GossipEventManager *manager,
+		    GossipEvent        *event,
+		    gpointer            user_data)
+{
+	GossipAppPriv *priv;
+
+	priv = GET_PRIV (app);
+
+	gossip_request_user_attention ();
+
+	app_status_icon_add_event (event);
+
+	app_status_icon_flash_start ();
+	app_status_icon_update_tooltip ();
+}
+
+static void
+app_event_removed_cb (GossipEventManager *manager,
+		      GossipEvent        *event,
+		      gpointer            user_data)
+{
+	GossipAppPriv *priv;
+
+	priv = GET_PRIV (app);
+
+	app_status_icon_remove_event (event);
 
 	app_status_icon_flash_maybe_stop ();
 	app_status_icon_update_tooltip ();
-
-	g_object_unref (event);
 }
 
 static void
@@ -2828,5 +2848,15 @@ gossip_app_get_event_manager (void)
 	priv = GET_PRIV (app);
 
 	return priv->event_manager;
+}
+
+GossipSelfPresence *
+gossip_app_get_self_presence (void)
+{
+	GossipAppPriv *priv;
+
+	priv = GET_PRIV (app);
+
+	return priv->self_presence;
 }
 

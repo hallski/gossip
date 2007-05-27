@@ -1,4 +1,13 @@
 2007-05-26  Mikael Hallendal  <micke@imendio.com>
+	
+	* src/gossip-app.c:
+	(app_status_icon_add_event, app_status_icon_remove_event): Split out 
+	from app_event_added_cb and app_event_removed_cb.
+
+	(gossip_app_get_self_presence): Added access function for
+	priv->self_presence.
+
+2007-05-26  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-app.c (app_status_icon_create): Moved the setting of the
 	initial pixbuf to GossipStatusIcon.
