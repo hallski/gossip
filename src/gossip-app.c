@@ -1874,8 +1874,6 @@ app_status_icon_create (void)
 			  app);
 
 	gtk_status_icon_set_visible (priv->status_icon, TRUE);
-	gossip_status_icon_set_flash_interval (GOSSIP_STATUS_ICON (priv->status_icon),
-					       FLASH_TIMEOUT);
 
 #ifdef HAVE_LIBNOTIFY
 	gossip_notify_set_attach_status_icon (priv->status_icon);

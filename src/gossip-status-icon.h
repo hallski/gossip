@@ -51,8 +51,7 @@ GtkStatusIcon *
 gossip_status_icon_get                          (void);
 
 void          gossip_status_icon_update_tooltip (GossipStatusIcon *status_icon);
-void          gossip_status_icon_set_flash_interval (GossipStatusIcon *status_icon,
-						     gint              interval);
+
 G_END_DECLS
 
 #endif /* __GOSSIP_STATUS_ICON_H__ */

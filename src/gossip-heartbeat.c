@@ -211,6 +211,11 @@ heartbeat_stop (GossipHeartbeat *heartbeat)
 
 	priv = GET_PRIV (heartbeat);
 
+	if (!priv->timeout_id) {
+		/* No running timeout */
+		return;
+	}
+
 	g_source_remove (priv->timeout_id);
 	priv->timeout_id = 0;
 }

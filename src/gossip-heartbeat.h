@@ -48,10 +48,10 @@ typedef gboolean (*GossipHeartbeatFunc)     (GossipHeartbeat *beat,
 
 GType      gossip_heartbeat_get_type        (void) G_GNUC_CONST;
 
-guint      gossip_heartbeat_add_callback    (GossipHeartbeat     *beat,
+guint      gossip_heartbeat_add_callback    (GossipHeartbeat     *heartbeat,
 					     GossipHeartbeatFunc  func,
 					     gpointer             user_data);
-void       gossip_heartbeat_remove_callback (GossipHeartbeat     *beat,
+void       gossip_heartbeat_remove_callback (GossipHeartbeat     *heartbeat,
 					     guint                id);
 
 G_END_DECLS

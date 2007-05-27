@@ -38,8 +38,7 @@ struct _GossipStatusIconPriv {
 
 	gboolean  is_status_flashing;
 
-	gint      flash_interval;
-	guint     flash_timeout_id;
+	guint     heartbeat_id;
 };
 
 static void     status_icon_finalize           (GObject          *object);
@@ -56,6 +55,7 @@ static void     status_icon_flash_start_cb     (GossipSelfPresence *self_presenc
 						GossipStatusIcon   *status_icon);
 static void     status_icon_flash_stop_cb      (GossipSelfPresence *self_presence,
 						GossipStatusIcon   *status_icon);
+
 G_DEFINE_TYPE (GossipStatusIcon, gossip_status_icon, GTK_TYPE_STATUS_ICON);
 
 static void
@@ -226,15 +226,13 @@ status_icon_get_event_pixbuf (GossipStatusIcon *status_icon)
 	return NULL;
 }
 
-static gboolean
-status_icon_flash_timeout_func (gpointer data)
+static void
+status_icon_flash (GossipStatusIcon *status_icon)
 {
-	GossipStatusIcon     *status_icon;
 	GossipStatusIconPriv *priv;
 	GdkPixbuf            *pixbuf = NULL;
 	static gboolean       on = FALSE;
 
-	status_icon = GOSSIP_STATUS_ICON (data);
 	priv = GET_PRIV (status_icon);
 
 	if (on) {
@@ -257,10 +255,16 @@ status_icon_flash_timeout_func (gpointer data)
 	g_object_unref (pixbuf);
 
 	on = !on;
+}
+
+static gboolean
+status_icon_flash_heartbeat_func (GossipHeartbeat *heartbeat, 
+				  gpointer         user_data)
+{
+	status_icon_flash (GOSSIP_STATUS_ICON (user_data));
 
 	return TRUE;
 }
-
 
 static void
 status_icon_start_flash (GossipStatusIcon *status_icon)
@@ -269,15 +273,13 @@ status_icon_start_flash (GossipStatusIcon *status_icon)
 
 	priv = GET_PRIV (status_icon);
 
-	if (!priv->flash_timeout_id) { /* If already flashing, do nothing */
-		priv->flash_timeout_id =
-			g_timeout_add (priv->flash_interval,
-				       status_icon_flash_timeout_func,
-				       status_icon);
+	if (!priv->heartbeat_id) {
+		priv->heartbeat_id = 
+			gossip_heartbeat_add_callback (gossip_app_get_flash_heartbeat (),
+						       status_icon_flash_heartbeat_func,
+						       status_icon);
 	}
 }
-
-
 
 static void
 status_icon_event_added_cb (GossipEventManager *manager,
@@ -306,12 +308,12 @@ status_icon_maybe_stop_flash (GossipStatusIcon *status_icon)
 	gtk_status_icon_set_from_pixbuf (GTK_STATUS_ICON (status_icon), pixbuf);
 	g_object_unref (pixbuf);
 
-	if (priv->flash_timeout_id) {
-		g_source_remove (priv->flash_timeout_id);
-		priv->flash_timeout_id = 0;
+	if (priv->heartbeat_id) {
+		gossip_heartbeat_remove_callback (gossip_app_get_flash_heartbeat (),
+						  priv->heartbeat_id);
+		priv->heartbeat_id = 0;
 	}
 }
-
 
 static void
 status_icon_event_removed_cb (GossipEventManager *manager,
@@ -403,16 +405,5 @@ gossip_status_icon_update_tooltip (GossipStatusIcon *status_icon)
 
 	gtk_status_icon_set_tooltip (gossip_status_icon_get (),
 				     gossip_event_get_message (event));
-}
-
-void
-gossip_status_icon_set_flash_interval (GossipStatusIcon *status_icon,
-				       gint              interval)
-{
-	GossipStatusIconPriv *priv;
-
-	priv = GET_PRIV (status_icon);
-
-	priv->flash_interval = interval;
 }
 
