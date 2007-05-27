@@ -1,5 +1,11 @@
 2007-05-27  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-status-icon.c (status_icon_get_event_pixbuf): Factored
+	out from status_icon_flash_timeout_func to make the timeout function
+	easier to read.
+
+2007-05-27  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-status-icon.[ch]: 
 	- Privatized functions only used from within gossip-status-icon.c 
 	- Add/Remove events in event manager callbacks.

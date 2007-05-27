@@ -187,6 +187,45 @@ status_icon_remove_event (GossipStatusIcon *status_icon,  GossipEvent *event)
 	g_object_unref (event);
 }
 
+static GdkPixbuf *
+status_icon_get_event_pixbuf (GossipStatusIcon *status_icon)
+{
+	GossipStatusIconPriv *priv;
+	GossipEvent          *event;
+	const gchar          *stock_id = NULL;
+
+	priv = GET_PRIV (status_icon);
+
+	if (!priv->events) {
+		/* No events */
+		return NULL;
+	}
+
+	event = status_icon_get_next_event (status_icon);
+	switch (gossip_event_get_type (event)) {
+	case GOSSIP_EVENT_NEW_MESSAGE:
+	case GOSSIP_EVENT_SERVER_MESSAGE:
+		stock_id = GOSSIP_STOCK_MESSAGE;
+		break;
+
+	case GOSSIP_EVENT_SUBSCRIPTION_REQUEST:
+	case GOSSIP_EVENT_FILE_TRANSFER_REQUEST:
+		stock_id = GTK_STOCK_DIALOG_QUESTION;
+		break;
+
+	default:
+		/* Shouldn't happen */
+		stock_id = GTK_STOCK_DIALOG_WARNING;
+		break;
+	}
+
+	if (stock_id) {
+		return gossip_pixbuf_from_stock (stock_id, GTK_ICON_SIZE_MENU);
+	} 
+	
+	return NULL;
+}
+
 static gboolean
 status_icon_flash_timeout_func (gpointer data)
 {
@@ -199,36 +238,14 @@ status_icon_flash_timeout_func (gpointer data)
 	priv = GET_PRIV (status_icon);
 
 	if (on) {
+		/* If the status is flashing we will use that, otherwise flash 
+		 * the first event in the event queue.
+		 */
 		if (priv->is_status_flashing) {
 			pixbuf = gossip_self_presence_get_explicit_pixbuf (gossip_app_get_self_presence ());
 		}
 		else if (priv->events != NULL) {
-			GossipEvent *event;
-			const gchar *stock_id = NULL;
-
-			event = status_icon_get_next_event (status_icon);
-			
-			switch (gossip_event_get_type (event)) {
-			case GOSSIP_EVENT_NEW_MESSAGE:
-			case GOSSIP_EVENT_SERVER_MESSAGE:
-				stock_id = GOSSIP_STOCK_MESSAGE;
-				break;
-
-			case GOSSIP_EVENT_SUBSCRIPTION_REQUEST:
-			case GOSSIP_EVENT_FILE_TRANSFER_REQUEST:
-				stock_id = GTK_STOCK_DIALOG_QUESTION;
-				break;
-
-			default:
-				/* Shouldn't happen */
-				stock_id = GTK_STOCK_DIALOG_WARNING;
-				break;
-			}
-
-			if (stock_id) {
-				pixbuf = gossip_pixbuf_from_stock (stock_id,
-								   GTK_ICON_SIZE_MENU);
-			}
+			pixbuf = status_icon_get_event_pixbuf (status_icon);
 		}
 	}
 
