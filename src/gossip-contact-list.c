@@ -51,9 +51,6 @@
 
 #define DEBUG_DOMAIN "ContactList"
 
-/* Flashing delay for icons (milliseconds). */
-#define FLASH_TIMEOUT 500
-
 /* Active users are those which have recently changed state
  * (e.g. online, offline or from normal to a busy state).
  */
@@ -85,20 +82,11 @@ struct _GossipContactListPriv {
 	gboolean               is_compact;
 	gboolean               show_active;
 
+	gboolean               flash_on;
+	guint                  flash_heartbeat_id;
+
 	GossipContactListSort sort_criterium;
 };
-
-typedef struct {
-	GossipEvent *event;
-	gboolean     flash_on;
-
-	guint        heartbeat_id;
-} FlashData;
-
-typedef struct {
-	GossipContactList *list;
-	GossipContact     *contact;
-} FlashTimeoutData;
 
 typedef struct {
 	GtkTreeIter  iter;
@@ -287,8 +275,6 @@ static void     contact_list_action_remove_response_cb       (GtkWidget         
 static void     contact_list_action_remove_selected          (GossipContactList      *list);
 static void     contact_list_action_invite_selected          (GossipContactList      *list);
 static void     contact_list_action_rename_group_selected    (GossipContactList      *list);
-static void     contact_list_free_flash_timeout_data         (FlashTimeoutData       *timeout_data);
-static void     contact_list_flash_free_data                 (FlashData              *data);
 static void     contact_list_event_added_cb                  (GossipEventManager     *manager,
 							      GossipEvent            *event,
 							      GossipContactList      *list);
@@ -299,6 +285,8 @@ static gboolean contact_list_update_list_mode_foreach        (GtkTreeModel      
 							      GtkTreePath            *path,
 							      GtkTreeIter            *iter,
 							      GossipContactList      *list);
+static void     contact_list_ensure_flash_heartbeat          (GossipContactList      *list);
+static void     contact_list_flash_heartbeat_maybe_stop      (GossipContactList      *list);
 
 enum {
 	CONTACT_ACTIVATED,
@@ -524,10 +512,11 @@ gossip_contact_list_init (GossipContactList *list)
 
 	priv->is_compact = FALSE;
 
+	priv->flash_on = TRUE;
 	priv->flash_table = g_hash_table_new_full (gossip_contact_hash,
 						   gossip_contact_equal,
 						   (GDestroyNotify) g_object_unref,
-						   (GDestroyNotify) contact_list_flash_free_data);
+						   (GDestroyNotify) g_object_unref);
 
 	contact_list_create_model (list);
 	contact_list_setup_view (list);
@@ -2844,14 +2833,14 @@ contact_list_action_activated (GossipContactList *list,
 			       GossipContact     *contact)
 {
 	GossipContactListPriv *priv;
-	FlashData             *data;
+	GossipEvent           *event;
 	gint                   event_id = 0;
 
 	priv = GET_PRIV (list);
 
-	data = g_hash_table_lookup (priv->flash_table, contact);
-	if (data) {
-		event_id = gossip_event_get_id (data->event);
+	event = g_hash_table_lookup (priv->flash_table, contact);
+	if (event) {
+		event_id = gossip_event_get_id (event);
 	}
 
 	g_signal_emit (list, signals[CONTACT_ACTIVATED], 0, contact, event_id);
@@ -3025,36 +3014,53 @@ contact_list_action_rename_group_selected (GossipContactList *list)
 }
 
 static void
-contact_list_free_flash_timeout_data (FlashTimeoutData *timeout_data)
+contact_list_foreach_contact_flash (GossipContact     *contact,
+				    GossipEvent       *event,
+				    GossipContactList *list)
 {
-	g_return_if_fail (timeout_data != NULL);
+	GossipContactListPriv *priv;
+	GList                 *l, *iters;
+	GtkTreeModel          *model;
+	GdkPixbuf             *pixbuf = NULL;
+	const gchar           *stock_id = NULL;
 
-	gossip_debug (DEBUG_DOMAIN,
-		      "Contact:'%s' Cleaning up event flash data",
-		      gossip_contact_get_name (timeout_data->contact));
+	priv = GET_PRIV (list);
 
-	g_object_unref (timeout_data->contact);
+	iters = contact_list_find_contact (list, contact);
+	if (!iters) {
+		gossip_debug (DEBUG_DOMAIN,
+			      "Contact:'%s' not found in treeview?",
+			      gossip_contact_get_name (contact));
 
-	g_slice_free (FlashTimeoutData, timeout_data);
-}
-
-static void
-contact_list_flash_free_data (FlashData *data)
-{
-	g_return_if_fail (data != NULL);
-
-	if (data->event) {
-		g_object_unref (data->event);
+		return;
 	}
 
-	if (data->heartbeat_id) {
-		gossip_heartbeat_callback_remove (gossip_app_get_flash_heartbeat (),
-						  data->heartbeat_id);
+	if (priv->flash_on) {
+		stock_id = gossip_event_get_stock_id (event);
 	}
 
-	g_slice_free (FlashData, data);
+	if (stock_id) {
+		pixbuf = gossip_pixbuf_from_stock (stock_id, 
+						   GTK_ICON_SIZE_MENU);
+	} else {
+		pixbuf = gossip_pixbuf_for_contact (contact);
+	}
+
+	model = GTK_TREE_MODEL (priv->store);
+
+	for (l = iters; l; l = l->next) {
+		gtk_tree_store_set (priv->store, l->data,
+				    COL_PIXBUF_STATUS, pixbuf,
+				    -1);
+	}
+
+	g_object_unref (pixbuf);
+
+	g_list_foreach (iters, (GFunc) gtk_tree_iter_free, NULL);
+	g_list_free (iters);
 }
 
+#if 0
 static gboolean
 contact_list_flash (FlashTimeoutData *timeout_data)
 {
@@ -3118,12 +3124,23 @@ contact_list_flash (FlashTimeoutData *timeout_data)
 	return retval;
 
 }
+#endif
 
 static gboolean
 contact_list_flash_heartbeat_func (GossipHeartbeat  *heartbeat,
 				   gpointer          user_data)
 {
-	return contact_list_flash ((FlashTimeoutData *) user_data);
+	GossipContactListPriv *priv;
+
+	priv = GET_PRIV (user_data);
+	
+	priv->flash_on = !priv->flash_on;
+
+	g_hash_table_foreach (priv->flash_table,
+			      (GHFunc) contact_list_foreach_contact_flash,
+			      GOSSIP_CONTACT_LIST (user_data));
+
+	return TRUE;
 }
 
 static void
@@ -3133,8 +3150,6 @@ contact_list_event_added_cb (GossipEventManager *manager,
 {
 	GossipContactListPriv *priv;
 	GossipContact         *contact;
-	FlashData             *data;
-	FlashTimeoutData      *timeout_data;
 
 	priv = GET_PRIV (list);
 
@@ -3145,8 +3160,7 @@ contact_list_event_added_cb (GossipEventManager *manager,
 		return;
 	}
 
-	data = g_hash_table_lookup (priv->flash_table, contact);
-	if (data) {
+	if (g_hash_table_lookup (priv->flash_table, contact)) {
 		/* Already flashing this item. */
 		gossip_debug (DEBUG_DOMAIN,
 			      "Event already flashing for contact:'%s'",
@@ -3154,24 +3168,11 @@ contact_list_event_added_cb (GossipEventManager *manager,
 		return;
 	}
 
-	timeout_data = g_slice_new0 (FlashTimeoutData);
+	g_hash_table_insert (priv->flash_table, 
+			     g_object_ref (contact),
+			     g_object_ref (event));
 
-	timeout_data->list = list;
-	timeout_data->contact = g_object_ref (contact);
-
-	data = g_slice_new0 (FlashData);
-
-	data->event = g_object_ref (event);
-
-	data->flash_on = TRUE;
-
-	data->heartbeat_id =
-		gossip_heartbeat_callback_add_full (gossip_app_get_flash_heartbeat (),
-						    contact_list_flash_heartbeat_func,
-						    timeout_data,
-						    (GDestroyNotify) contact_list_free_flash_timeout_data);
-
-	g_hash_table_insert (priv->flash_table, g_object_ref (contact), data);
+	contact_list_ensure_flash_heartbeat (list);
 
 	gossip_debug (DEBUG_DOMAIN,
 		      "Contact:'%s' added to the flashing event table",
@@ -3191,7 +3192,6 @@ contact_list_event_removed_cb (GossipEventManager *manager,
 {
 	GossipContactListPriv *priv;
 	GossipContact         *contact;
-	FlashData             *data;
 
 	priv = GET_PRIV (list);
 
@@ -3202,13 +3202,14 @@ contact_list_event_removed_cb (GossipEventManager *manager,
 		return;
 	}
 
-	data = g_hash_table_lookup (priv->flash_table, contact);
-	if (!data) {
+	if (!g_hash_table_lookup (priv->flash_table, contact)) {
 		/* Not flashing this contact. */
 		return;
 	}
 
 	g_hash_table_remove (priv->flash_table, contact);
+	
+	contact_list_flash_heartbeat_maybe_stop (list);
 
 	gossip_debug (DEBUG_DOMAIN,
 		      "Contact:'%s' removed from flashing event table",
@@ -3277,6 +3278,43 @@ contact_list_update_list_mode_foreach (GtkTreeModel      *model,
 			    -1);
 
 	return FALSE;
+}
+
+static void
+contact_list_ensure_flash_heartbeat (GossipContactList *list)
+{
+	GossipContactListPriv *priv;
+
+	priv = GET_PRIV (list);
+
+	if (priv->flash_heartbeat_id) {
+		return;
+	}
+
+	priv->flash_heartbeat_id = 
+		gossip_heartbeat_callback_add (gossip_app_get_flash_heartbeat (),
+					       contact_list_flash_heartbeat_func,
+					       list);
+}
+
+static void
+contact_list_flash_heartbeat_maybe_stop (GossipContactList *list)
+{
+	GossipContactListPriv *priv;
+
+	priv = GET_PRIV (list);
+
+	if (priv->flash_heartbeat_id == 0) {
+		return;
+	}
+
+	if (g_hash_table_size (priv->flash_table) > 0) {
+		return;
+	}
+
+	gossip_heartbeat_callback_remove (gossip_app_get_flash_heartbeat (),
+					  priv->flash_heartbeat_id);
+	priv->flash_heartbeat_id = 0;
 }
 
 GossipContactList *
