@@ -33,7 +33,7 @@ typedef struct _GossipStatusIconPriv GossipStatusIconPriv;
 struct _GossipStatusIconPriv {
 	gint my_prop;
 
-	GList *status_icon_flash_icons;
+	GList *events;
 };
 
 static void     status_icon_finalize           (GObject            *object);
@@ -92,16 +92,13 @@ gossip_status_icon_add_event (GossipStatusIcon *status_icon, GossipEvent *event)
 
 	priv = GET_PRIV (status_icon);
 
-	l = g_list_find_custom (priv->status_icon_flash_icons,
-				event, gossip_event_compare);
+	l = g_list_find_custom (priv->events, event, gossip_event_compare);
 	if (l) {
 		/* Already in list */
 		return;
 	}
 
-	priv->status_icon_flash_icons =
-		g_list_append (priv->status_icon_flash_icons,
-			       g_object_ref (event));
+	priv->events = g_list_append (priv->events, g_object_ref (event));
 }
 
 void
@@ -113,15 +110,14 @@ gossip_status_icon_remove_event (GossipStatusIcon *status_icon,
 
 	priv = GET_PRIV (status_icon);
 
-	l = g_list_find_custom (priv->status_icon_flash_icons, event,
-				gossip_event_compare);
+	l = g_list_find_custom (priv->events, event, gossip_event_compare);
 
 	if (!l) {
 		/* Not flashing this event */
 		return;
 	}
 
-	priv->status_icon_flash_icons = g_list_delete_link (priv->status_icon_flash_icons, l);
+	priv->events = g_list_delete_link (priv->events, l);
 	
 	g_object_unref (event);
 }
@@ -133,7 +129,7 @@ gossip_status_icon_get_events (GossipStatusIcon *status_icon)
 
 	priv = GET_PRIV (status_icon);
 
-	return priv->status_icon_flash_icons;
+	return priv->events;
 }
 
 GossipEvent *
@@ -143,6 +139,6 @@ gossip_status_icon_get_next_event (GossipStatusIcon *status_icon)
 
 	priv = GET_PRIV (status_icon);
 
-	return (GossipEvent *) priv->status_icon_flash_icons->data;
+	return (GossipEvent *) priv->events->data;
 }
 
