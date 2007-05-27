@@ -36,7 +36,7 @@ typedef struct _GossipStatusIconPriv GossipStatusIconPriv;
 struct _GossipStatusIconPriv {
 	GList    *events;
 
-	gboolean  is_flashing;
+	gboolean  is_status_flashing;
 
 	gint      flash_interval;
 	guint     flash_timeout_id;
@@ -121,7 +121,9 @@ status_icon_flash_start_cb (GossipSelfPresence *self_presence,
 
 	priv = GET_PRIV (status_icon);
 
-	priv->is_flashing = TRUE;
+	priv->is_status_flashing = TRUE;
+
+	gossip_status_icon_start_flash (status_icon);
 }
 
 static void
@@ -132,7 +134,9 @@ status_icon_flash_stop_cb (GossipSelfPresence *self_presence,
 
 	priv = GET_PRIV (status_icon);
 
-	priv->is_flashing = FALSE;
+	priv->is_status_flashing = FALSE;
+	
+	gossip_status_icon_maybe_stop_flash (status_icon);
 }
 
 GtkStatusIcon *
@@ -273,7 +277,7 @@ status_icon_flash_timeout_func (gpointer data)
 	priv = GET_PRIV (status_icon);
 
 	if (on) {
-		if (priv->is_flashing) {
+		if (priv->is_status_flashing) {
 			pixbuf = gossip_self_presence_get_explicit_pixbuf (gossip_app_get_self_presence ());
 		}
 		else if (gossip_status_icon_get_events (GOSSIP_STATUS_ICON (status_icon)) != NULL) {

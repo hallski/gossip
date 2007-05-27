@@ -1979,7 +1979,6 @@ app_status_start_flash_cb (GossipSelfPresence *self_presence,
 					     gossip_self_presence_get_current_state (gossip_app_get_self_presence ()),
 					     gossip_self_presence_get_previous_state (gossip_app_get_self_presence ()));
 
-	gossip_status_icon_start_flash (GOSSIP_STATUS_ICON (priv->status_icon));
 }
 
 static void
@@ -1992,8 +1991,6 @@ app_status_stop_flash_cb (GossipSelfPresence *self_presence,
 
 	gossip_presence_chooser_flash_stop (GOSSIP_PRESENCE_CHOOSER (priv->presence_chooser),
 					    gossip_self_presence_get_current_state (gossip_app_get_self_presence ()));
-
-	gossip_status_icon_maybe_stop_flash (GOSSIP_STATUS_ICON (priv->status_icon));
 }
 
 static void
