@@ -1,4 +1,9 @@
 2007-05-27  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-heartbeat.c: Implemented 
+
+2007-05-27  Mikael Hallendal  <micke@imendio.com>
+
 	* src/Makefile.am:
 	* src/gossip-heartbeat.c:
 	- Added initial boilerplate code for GossipHeartbeat.

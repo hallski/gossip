@@ -27,18 +27,39 @@
 typedef struct _GossipHeartbeatPriv GossipHeartbeatPriv;
 
 struct _GossipHeartbeatPriv {
-	gint interval;
+	gint    interval;
+
+	GSList *callbacks;
+
+	guint   timeout_id;
 };
 
-static void         heartbeat_finalize           (GObject             *object);
-static void         heartbeat_get_property       (GObject             *object,
-					      guint                param_id,
-					      GValue              *value,
-					      GParamSpec          *pspec);
-static void         heartbeat_set_property       (GObject             *object,
-					      guint                param_id,
-					      const GValue        *value,
-					      GParamSpec          *pspec);
+typedef struct {
+	guint               id;
+	GossipHeartbeatFunc func;
+	gpointer            user_data;
+} HeartbeatCallback;
+
+static void         heartbeat_finalize         (GObject             *object);
+static void         heartbeat_get_property     (GObject             *object,
+						guint                param_id,
+						GValue              *value,
+						GParamSpec          *pspec);
+static void         heartbeat_set_property     (GObject             *object,
+						guint                param_id,
+						const GValue        *value,
+						GParamSpec          *pspec);
+static gboolean     heartbeat_timeout_cb       (GossipHeartbeat     *heartbeat);
+static void         heartbeat_start            (GossipHeartbeat     *heartbeat);
+static void         heartbeat_stop             (GossipHeartbeat     *heartbeat);
+static void         heartbeat_maybe_stop       (GossipHeartbeat     *heartbeat);
+
+static HeartbeatCallback *
+heartbeat_callback_new                         (GossipHeartbeatFunc  func,
+						gpointer             user_data);
+static void         heartbeat_callback_free    (HeartbeatCallback   *callback);
+static gboolean     heartbeat_callback_execute (GossipHeartbeat     *heartbeat,
+						HeartbeatCallback   *callback);
 
 enum {
 	PROP_0,
@@ -82,8 +103,17 @@ static void
 heartbeat_finalize (GObject *object)
 {
 	GossipHeartbeatPriv *priv;
+	GSList              *l;
 
 	priv = GET_PRIV (object);
+
+	heartbeat_stop (GOSSIP_HEARTBEAT (object));
+
+	for (l = priv->callbacks; l; l = l->next) {
+		heartbeat_callback_free ((HeartbeatCallback *) l->data);
+	}
+
+	g_slist_free (priv->callbacks);
 
 	(G_OBJECT_CLASS (gossip_heartbeat_parent_class)->finalize) (object);
 }
@@ -127,17 +157,147 @@ heartbeat_set_property (GObject      *object,
 	}
 }
 
+static gboolean
+heartbeat_timeout_cb (GossipHeartbeat *heartbeat)
+{
+	GossipHeartbeatPriv *priv;
+	GSList              *l;
+
+	priv = GET_PRIV (heartbeat);
+
+	g_print ("%s called\n", G_STRFUNC);
+
+	l = priv->callbacks;
+	while (l) {
+		HeartbeatCallback *callback = (HeartbeatCallback *) l->data;
+		GSList            *current_link = l;
+
+		l = l->next;
+
+		if (!heartbeat_callback_execute (heartbeat, callback)) {
+			/* Remove callback if it returned FALSE */
+			priv->callbacks = g_slist_delete_link (priv->callbacks,
+							       current_link);
+			heartbeat_callback_free (callback);
+		}
+	}
+
+	heartbeat_maybe_stop (heartbeat);
+
+	return TRUE;
+}
+
+static void
+heartbeat_start (GossipHeartbeat *heartbeat)
+{
+	GossipHeartbeatPriv *priv;
+
+	priv = GET_PRIV (heartbeat);
+
+	if (priv->timeout_id != 0) {
+		/* Already running */
+		return;
+	}
+
+	priv->timeout_id = g_timeout_add (priv->interval,
+					  (GSourceFunc) heartbeat_timeout_cb,
+					  heartbeat);
+}
+
+static void
+heartbeat_stop (GossipHeartbeat *heartbeat)
+{
+	GossipHeartbeatPriv *priv;
+
+	priv = GET_PRIV (heartbeat);
+
+	g_source_remove (priv->timeout_id);
+	priv->timeout_id = 0;
+}
+
+static void
+heartbeat_maybe_stop (GossipHeartbeat *heartbeat) 
+{
+	GossipHeartbeatPriv *priv;
+
+	priv = GET_PRIV (heartbeat);
+
+	if (g_slist_length (priv->callbacks) == 0) {
+		heartbeat_stop (heartbeat);
+	}
+}
+
+static HeartbeatCallback *
+heartbeat_callback_new (GossipHeartbeatFunc func, gpointer user_data)
+{
+	HeartbeatCallback *callback;
+	static guint       id = 0;
+
+	callback = g_slice_new (HeartbeatCallback);
+	callback->id = ++id;
+	callback->func = func;
+	callback->user_data = user_data;
+
+	return callback;
+}
+
+static void
+heartbeat_callback_free (HeartbeatCallback *callback)
+{
+	g_slice_free (HeartbeatCallback, callback);
+}
+
+static gboolean
+heartbeat_callback_execute (GossipHeartbeat   *heartbeat,
+			    HeartbeatCallback *callback)
+{
+	return (callback->func) (heartbeat, callback->user_data);
+}
+
 guint
-gossip_heartbeat_add_callback (GossipHeartbeat     *beat,
+gossip_heartbeat_add_callback (GossipHeartbeat     *heartbeat,
 			       GossipHeartbeatFunc  func,
 			       gpointer             user_data)
 {
+	GossipHeartbeatPriv *priv;
+	HeartbeatCallback   *callback;
 
-	return 0;
+	g_return_val_if_fail (GOSSIP_IS_HEARTBEAT (heartbeat), 0);
+	g_return_val_if_fail (func != NULL, 0);
+
+	priv = GET_PRIV (heartbeat);
+
+	callback = heartbeat_callback_new (func, user_data);
+	priv->callbacks = g_slist_append (priv->callbacks, callback);
+
+	if (!priv->timeout_id) {
+		heartbeat_start (heartbeat);
+	}
+
+	return callback->id;
 }
 
 void
-gossip_heartbeat_remove_callback (GossipHeartbeat *beat, guint id)
+gossip_heartbeat_remove_callback (GossipHeartbeat *heartbeat, guint id)
 {
+	GossipHeartbeatPriv *priv;
+	GSList              *l;
+
+	g_return_if_fail (GOSSIP_IS_HEARTBEAT (heartbeat));
+
+	priv = GET_PRIV (heartbeat);
+
+	for (l = priv->callbacks; l; l = l->next) {
+		HeartbeatCallback *callback = (HeartbeatCallback *) l->data;
+
+		if (callback->id == id) {
+			heartbeat_callback_free (callback);
+			priv->callbacks = g_slist_delete_link (priv->callbacks,
+							       l);
+			break;
+		}
+	}
+
+	heartbeat_maybe_stop (heartbeat);
 }
 
