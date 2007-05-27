@@ -1,5 +1,11 @@
 2007-05-28  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-tray.[ch]: Removed.
+	- Old attempt at extracting the status icon that was obsoleted by 
+	  GossipStatusIcon.
+
+2007-05-28  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-contact-list.c:
 	- Reworked the flashing to have one heartbeat callback for the entire 
 	  contact list.
