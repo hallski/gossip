@@ -22,8 +22,9 @@
 #define __GOSSIP_STATUS_ICON_H__
 
 #include <glib-object.h>
-
 #include <gtk/gtkstatusicon.h>
+
+#include <libgossip/gossip-event.h>
 
 G_BEGIN_DECLS
 
@@ -45,8 +46,16 @@ struct _GossipStatusIconClass {
 	GtkStatusIconClass parent_class;
 };
 
-GType           gossip_status_icon_get_type   (void) G_GNUC_CONST;
-GtkStatusIcon * gossip_status_icon_get        (void);
+GType           gossip_status_icon_get_type     (void) G_GNUC_CONST;
+GtkStatusIcon *
+gossip_status_icon_get                          (void);
+
+void          gossip_status_icon_add_event      (GossipStatusIcon *status_icon,
+						 GossipEvent      *event);
+void          gossip_status_icon_remove_event   (GossipStatusIcon *status_icon,
+						 GossipEvent      *event);
+GList *       gossip_status_icon_get_events     (GossipStatusIcon *status_icon);
+GossipEvent * gossip_status_icon_get_next_event (GossipStatusIcon *status_icon);
 
 G_END_DECLS
 
