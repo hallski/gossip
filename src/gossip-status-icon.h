@@ -56,6 +56,7 @@ void          gossip_status_icon_remove_event   (GossipStatusIcon *status_icon,
 						 GossipEvent      *event);
 GList *       gossip_status_icon_get_events     (GossipStatusIcon *status_icon);
 GossipEvent * gossip_status_icon_get_next_event (GossipStatusIcon *status_icon);
+void          gossip_status_icon_update_tooltip (GossipStatusIcon *status_icon);
 
 G_END_DECLS
 

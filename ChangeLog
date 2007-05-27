@@ -1,5 +1,11 @@
 2007-05-27  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-status-icon.c
+	* src/gossip-app.c:
+	- Moved status_icon_update_tooltip from GossipApp to GossipStatusIcon.
+
+2007-05-27  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-status-icon.c (status_icon_activate): 
 	- Override the activate signal and implemenent behaviour on activate
 	here.

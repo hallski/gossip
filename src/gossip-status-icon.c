@@ -20,6 +20,7 @@
 
 #include "config.h"
 
+#include <glib/gi18n.h>
 #include <gtk/gtkstatusicon.h>
 
 #include "gossip-app.h"
@@ -80,8 +81,6 @@ status_icon_finalize (GObject *object)
 static void
 status_icon_activate (GtkStatusIcon  *status_icon)
 {
-	g_print ("%s called\n", G_STRFUNC);
-
 	if (!gossip_status_icon_get_events (GOSSIP_STATUS_ICON (status_icon))) {
 		gossip_app_toggle_visibility ();
 	} else {
@@ -158,5 +157,39 @@ gossip_status_icon_get_next_event (GossipStatusIcon *status_icon)
 	priv = GET_PRIV (status_icon);
 
 	return (GossipEvent *) priv->events->data;
+}
+
+void
+gossip_status_icon_update_tooltip (GossipStatusIcon *status_icon)
+{
+	GossipEvent *event;
+
+	if (!gossip_status_icon_get_events (status_icon)) {
+		const gchar *status;
+
+		if (gossip_app_is_connected ()) {
+			GossipPresence      *presence;
+			GossipPresenceState  state;
+
+			presence = gossip_self_presence_get_effective (gossip_app_get_self_presence ());
+			state = gossip_presence_get_state (presence);
+			status = gossip_presence_get_status (presence);
+
+			if (!status) {
+				status = gossip_presence_state_get_default_status (state);
+			}
+		} else {
+			/* i18n: The current state of the connection. */
+			status = _("Offline");
+		}
+
+		gtk_status_icon_set_tooltip (gossip_status_icon_get (), status);
+		return;
+	}
+
+	event = gossip_status_icon_get_next_event (status_icon);
+
+	gtk_status_icon_set_tooltip (gossip_status_icon_get (),
+				     gossip_event_get_message (event));
 }
 

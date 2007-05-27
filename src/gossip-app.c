@@ -283,8 +283,6 @@ static void     app_status_icon_create_menu  (void);
 static void     app_status_icon_create       (void);
 static gboolean 
 app_status_icon_check_embedded_cb            (gpointer               user_data);
-static void     
-app_status_icon_update_tooltip               (void);
 static void     app_status_icon_flash_start  (void);
 static void     
 app_status_icon_flash_maybe_stop             (void);
@@ -1906,7 +1904,7 @@ app_status_icon_create (void)
 	gossip_notify_set_attach_status_icon (priv->status_icon);
 #endif
 
-	app_status_icon_update_tooltip ();
+	gossip_status_icon_update_tooltip (GOSSIP_STATUS_ICON (priv->status_icon));
 }
 
 #define MAX_CHECKS 5
@@ -1970,43 +1968,6 @@ app_status_icon_check_embedded_cb (gpointer user_data)
 	gossip_debug (DEBUG_DOMAIN_SETUP, "Complete!");
 
 	return FALSE;
-}
-
-static void
-app_status_icon_update_tooltip (void)
-{
-	GossipAppPriv *priv;
-	GossipEvent   *event;
-
-	priv = GET_PRIV (app);
-
-	if (!gossip_status_icon_get_events (GOSSIP_STATUS_ICON (priv->status_icon))) {
-		const gchar *status;
-
-		if (gossip_app_is_connected ()) {
-			GossipPresence      *presence;
-			GossipPresenceState  state;
-
-			presence = gossip_self_presence_get_effective (gossip_app_get_self_presence ());
-			state = gossip_presence_get_state (presence);
-			status = gossip_presence_get_status (presence);
-
-			if (!status) {
-				status = gossip_presence_state_get_default_status (state);
-			}
-		} else {
-			/* i18n: The current state of the connection. */
-			status = _("Offline");
-		}
-
-		gtk_status_icon_set_tooltip (gossip_status_icon_get (), status);
-		return;
-	}
-
-	event = gossip_status_icon_get_next_event (GOSSIP_STATUS_ICON (priv->status_icon));
-
-	gtk_status_icon_set_tooltip (gossip_status_icon_get (),
-				     gossip_event_get_message (event));
 }
 
 static void
@@ -2483,7 +2444,7 @@ app_presence_updated_cb (GossipSelfPresence *self_presence, gpointer user_data)
 		gossip_presence_chooser_set_status (
 			GOSSIP_PRESENCE_CHOOSER (priv->presence_chooser),
 			_("Offline"));
-		app_status_icon_update_tooltip ();
+		gossip_status_icon_update_tooltip (GOSSIP_STATUS_ICON (priv->status_icon));
 		return;
 	}
 
@@ -2502,7 +2463,7 @@ app_presence_updated_cb (GossipSelfPresence *self_presence, gpointer user_data)
 
 	gossip_session_set_presence (priv->session, presence);
 
-	app_status_icon_update_tooltip ();
+	gossip_status_icon_update_tooltip (GOSSIP_STATUS_ICON (priv->status_icon));
 }
 
 void
@@ -2711,7 +2672,7 @@ app_event_added_cb (GossipEventManager *manager,
 				      event);
 
 	app_status_icon_flash_start ();
-	app_status_icon_update_tooltip ();
+	gossip_status_icon_update_tooltip (GOSSIP_STATUS_ICON (priv->status_icon));
 }
 
 static void
@@ -2727,7 +2688,7 @@ app_event_removed_cb (GossipEventManager *manager,
 					 event);
 
 	app_status_icon_flash_maybe_stop ();
-	app_status_icon_update_tooltip ();
+	gossip_status_icon_update_tooltip (GOSSIP_STATUS_ICON (priv->status_icon));
 }
 
 static void
