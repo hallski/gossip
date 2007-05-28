@@ -1,5 +1,11 @@
 2007-05-28  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-ui-utils.c: 
+	- Cleaned up the code a bit and made it match Gossip code style.
+	- Fixes #441568.
+
+2007-05-28  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-avatar-image.c: 
 	(gossip_avatar_image_class_init);
 	(gossip_avatar_image_init):

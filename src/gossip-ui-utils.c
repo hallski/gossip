@@ -55,21 +55,9 @@
 #include "gossip-app.h"
 #include "gossip-ui-utils.h"
 
-struct SizeData {
-	gint     width;
-	gint     height;
-	gboolean preserve_aspect_ratio;
-};
-
 static void hint_dialog_response_cb             (GtkWidget       *widget,
 						 gint             response,
 						 GtkWidget       *checkbutton);
-#if 0
-static void pixbuf_from_avatar_size_prepared_cb (GdkPixbufLoader *loader,
-						 gint             width,
-						 gint             height,
-						 struct SizeData *data);
-#endif
 
 static GladeXML *
 get_glade_file (const gchar *filename,
@@ -902,71 +890,34 @@ gossip_pixbuf_avatar_from_contact (GossipContact *contact)
 	return pixbuf;
 }
 
-#if 0
-static void
-pixbuf_from_avatar_size_prepared_cb (GdkPixbufLoader *loader,
-				     int              width,
-				     int              height,
-				     struct SizeData *data)
-{
-	g_return_if_fail (width > 0 && height > 0);
-
-	if (data->preserve_aspect_ratio && (data->width > 0 || data->height > 0)) {
-		if (width < data->width && height < data->height) {
-			width = width;
-			height = height;
-		}
-
-		if (data->width < 0) {
-			width = width * (double) data->height / (gdouble) height;
-			height = data->height;
-		} else if (data->height < 0) {
-			height = height * (double) data->width / (double) width;
-			width = data->width;
-		} else if ((double) height * (double) data->width >
-			   (double) width * (double) data->height) {
-			width = 0.5 + (double) width * (double) data->height / (double) height;
-			height = data->height;
-		} else {
-			height = 0.5 + (double) height * (double) data->width / (double) width;
-			width = data->width;
-		}
-	} else {
-		if (data->width > 0) {
-			width = data->width;
-		}
-
-		if (data->height > 0) {
-			height = data->height;
-		}
-	}
-
-	gdk_pixbuf_loader_set_size (loader, width, height);
-}
-#endif
-
 static gboolean
-pidgin_gdk_pixbuf_is_opaque(GdkPixbuf *pixbuf) {
-        int width, height, rowstride, i;
+ui_utils_gdk_pixbuf_is_opaque (GdkPixbuf *pixbuf)
+{
+	int            width;
+	int            height;
+	int            rowstride; 
+	int            i;
         unsigned char *pixels;
         unsigned char *row;
 
-        if (!gdk_pixbuf_get_has_alpha(pixbuf))
+        if (!gdk_pixbuf_get_has_alpha(pixbuf)) {
                 return TRUE;
+	}
 
-        width = gdk_pixbuf_get_width (pixbuf);
-        height = gdk_pixbuf_get_height (pixbuf);
+        width     = gdk_pixbuf_get_width (pixbuf);
+        height    = gdk_pixbuf_get_height (pixbuf);
         rowstride = gdk_pixbuf_get_rowstride (pixbuf);
-        pixels = gdk_pixbuf_get_pixels (pixbuf);
+        pixels    = gdk_pixbuf_get_pixels (pixbuf);
 
         row = pixels;
         for (i = 3; i < rowstride; i+=4) {
-                if (row[i] != 0xff)
+                if (row[i] != 0xff) {
                         return FALSE;
+		}
         }
 
         for (i = 1; i < height - 1; i++) {
-                row = pixels + (i*rowstride);
+		row = pixels + (i * rowstride);
                 if (row[3] != 0xff || row[rowstride-1] != 0xff) {
                         return FALSE;
                 }
@@ -974,8 +925,9 @@ pidgin_gdk_pixbuf_is_opaque(GdkPixbuf *pixbuf) {
 
         row = pixels + ((height-1) * rowstride);
         for (i = 3; i < rowstride; i+=4) {
-                if (row[i] != 0xff)
+                if (row[i] != 0xff) {
                         return FALSE;
+		}
         }
 
         return TRUE;
@@ -983,24 +935,25 @@ pidgin_gdk_pixbuf_is_opaque(GdkPixbuf *pixbuf) {
 
 /* From pidgin */
 static void
-roundify(GdkPixbuf *pixbuf) {
-	int width, height, rowstride;
+ui_utils_pixbuf_roundify (GdkPixbuf *pixbuf)
+{
+	int     width;
+	int     height;
+	int     rowstride;
 	guchar *pixels;
 
 	g_print ("%s called\n", G_STRFUNC);
 
 	if (!gdk_pixbuf_get_has_alpha(pixbuf)) {
-		g_print ("Foo\n");
 		return;
 	}
 
-	width = gdk_pixbuf_get_width(pixbuf);
-	height = gdk_pixbuf_get_height(pixbuf);
+	width     = gdk_pixbuf_get_width(pixbuf);
+	height    = gdk_pixbuf_get_height(pixbuf);
 	rowstride = gdk_pixbuf_get_rowstride(pixbuf);
-	pixels = gdk_pixbuf_get_pixels(pixbuf);
+	pixels    = gdk_pixbuf_get_pixels(pixbuf);
 
 	if (width < 6 || height < 6) {
-		g_print ("Bar\n");
 		return;
 	}
 
@@ -1038,29 +991,20 @@ gossip_pixbuf_from_avatar_scaled (GossipAvatar *avatar,
 				  gint          width,
 				  gint          height)
 {
-	GdkPixbuf        *pixbuf1;
-	GdkPixbuf        *pixbuf2;
+	GdkPixbuf        *tmp_pixbuf;
+	GdkPixbuf        *ret_pixbuf;
 	GdkPixbufLoader	 *loader;
-	struct SizeData   data;
 	GError           *error = NULL;
-	int               orig_width, orig_height;
-	int               scale_width, scale_height;
+	int               orig_width;
+	int               orig_height;
+	int               scale_width;
+	int               scale_height;
 
 	if (!avatar) {
 		return NULL;
 	}
 
-	data.width = width;
-	data.height = height;
-	data.preserve_aspect_ratio = TRUE;
-
 	loader = gdk_pixbuf_loader_new ();
-
-#if 0
-	g_signal_connect (loader, "size-prepared",
-			  G_CALLBACK (pixbuf_from_avatar_size_prepared_cb),
-			  &data);
-#endif
 
 	if (!gdk_pixbuf_loader_write (loader, avatar->data, avatar->len, &error)) {
 		g_warning ("Couldn't write avatar image:%p with "
@@ -1072,9 +1016,9 @@ gossip_pixbuf_from_avatar_scaled (GossipAvatar *avatar,
 
 	gdk_pixbuf_loader_close (loader, NULL);
 
-	pixbuf1 = gdk_pixbuf_loader_get_pixbuf (loader);
-	scale_width = orig_width = gdk_pixbuf_get_width(pixbuf1);
-	scale_height = orig_height = gdk_pixbuf_get_height(pixbuf1);
+	tmp_pixbuf = gdk_pixbuf_loader_get_pixbuf (loader);
+	scale_width = orig_width = gdk_pixbuf_get_width (tmp_pixbuf);
+	scale_height = orig_height = gdk_pixbuf_get_height (tmp_pixbuf);
 	if(scale_height > scale_width) {
 		scale_width = (gdouble) width * (double)scale_width / (double)scale_height;
 		scale_height = height;
@@ -1083,17 +1027,26 @@ gossip_pixbuf_from_avatar_scaled (GossipAvatar *avatar,
 		scale_width = width;
 	}
 
-	pixbuf2 = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, 32, 32);
-	gdk_pixbuf_fill(pixbuf2, 0x00000000);
-	gdk_pixbuf_scale(pixbuf1, pixbuf2, (width-scale_width)/2, (height-scale_height)/2, scale_width, scale_height, (width-scale_width)/2, (height-scale_height)/2, (double)scale_width/(double)orig_width, (double)scale_height/(double)orig_height, GDK_INTERP_BILINEAR);
+	ret_pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, 32, 32);
+	gdk_pixbuf_fill (ret_pixbuf, 0x00000000);
+	gdk_pixbuf_scale (tmp_pixbuf, ret_pixbuf, 
+			  (width-scale_width)/2,
+			  (height-scale_height)/2,
+			  scale_width, 
+			  scale_height, 
+			  (width-scale_width)/2, 
+			  (height-scale_height)/2, 
+			  (double)scale_width/(double)orig_width, 
+			  (double)scale_height/(double)orig_height,
+			  GDK_INTERP_BILINEAR);
 
-	if (pidgin_gdk_pixbuf_is_opaque(pixbuf2))
-		roundify (pixbuf2);
+	if (ui_utils_gdk_pixbuf_is_opaque (ret_pixbuf)) {
+		ui_utils_pixbuf_roundify (ret_pixbuf);
+	}
 
-	//g_object_unref (pixbuf1);
 	g_object_unref (loader);
 
-	return pixbuf2;
+	return ret_pixbuf;
 }
 
 GdkPixbuf *
