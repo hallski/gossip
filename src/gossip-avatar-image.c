@@ -16,8 +16,6 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- * 
- * Authors: Richard Hult <richard@imendio.com>
  */
 
 #include "config.h"
@@ -48,23 +46,26 @@ typedef struct {
 static void     avatar_image_finalize                (GObject           *object);
 static void     avatar_image_add_filter              (GossipAvatarImage *avatar_image);
 static void     avatar_image_remove_filter           (GossipAvatarImage *avatar_image);
-static gboolean avatar_image_button_press_event_cb   (GtkWidget         *widget,
-						      GdkEventButton    *event,
-						      GossipAvatarImage *avatar_image);
-static gboolean avatar_image_button_release_event_cb (GtkWidget         *widget,
-						      GdkEventButton    *event,
-						      GossipAvatarImage *avatar_image);
+static gboolean avatar_image_button_press_event      (GtkWidget         *widget,
+						      GdkEventButton    *event);
+static gboolean avatar_image_button_release_event    (GtkWidget         *widget,
+						      GdkEventButton    *event);
 
 G_DEFINE_TYPE (GossipAvatarImage, gossip_avatar_image, GTK_TYPE_EVENT_BOX);
 
 static void
 gossip_avatar_image_class_init (GossipAvatarImageClass *klass)
 {
-	GObjectClass *object_class;
+	GObjectClass   *object_class;
+	GtkWidgetClass *widget_class;
 
-	object_class = (GObjectClass*) klass;
+	object_class = G_OBJECT_CLASS (klass);
+	widget_class = GTK_WIDGET_CLASS (klass);
 
 	object_class->finalize = avatar_image_finalize;
+
+	widget_class->button_press_event   = avatar_image_button_press_event;
+	widget_class->button_release_event = avatar_image_button_release_event;
 
 	g_type_class_add_private (object_class, sizeof (GossipAvatarImagePriv));
 }
@@ -79,16 +80,6 @@ gossip_avatar_image_init (GossipAvatarImage *avatar_image)
 	priv->image = gtk_image_new ();
 
 	gtk_container_add (GTK_CONTAINER (avatar_image), priv->image);
-
-	/* FIXME: Should just override the methods instead. */
-	g_signal_connect (avatar_image,
-			  "button-press-event",
-			  G_CALLBACK (avatar_image_button_press_event_cb),
-			  avatar_image);
-	g_signal_connect (avatar_image,
-			  "button-release-event",
-			  G_CALLBACK (avatar_image_button_release_event_cb),
-			  avatar_image);
 
 	priv->tooltips = gtk_tooltips_new ();
 	g_object_ref (priv->tooltips);
@@ -209,9 +200,7 @@ avatar_image_scale_down_if_necessary (GdkPixbuf *pixbuf, gint max_size)
 }
 
 static gboolean
-avatar_image_button_press_event_cb (GtkWidget         *widget,
-				    GdkEventButton    *event,
-				    GossipAvatarImage *avatar_image)
+avatar_image_button_press_event (GtkWidget *widget, GdkEventButton *event)
 {
 	GossipAvatarImagePriv *priv;
 	GtkWidget             *popup;
@@ -222,7 +211,7 @@ avatar_image_button_press_event_cb (GtkWidget         *widget,
 	gint                   width, height;
 	GdkPixbuf             *pixbuf;
 
-	priv = GET_PRIV (avatar_image);
+	priv = GET_PRIV (widget);
 
 	if (priv->popup) {
 		gtk_widget_destroy (priv->popup);
@@ -278,13 +267,11 @@ avatar_image_button_press_event_cb (GtkWidget         *widget,
 }
 
 static gboolean
-avatar_image_button_release_event_cb (GtkWidget         *widget,
-				      GdkEventButton    *event,
-				      GossipAvatarImage *avatar_image)
+avatar_image_button_release_event (GtkWidget *widget, GdkEventButton *event)
 {
 	GossipAvatarImagePriv *priv;
 
-	priv = GET_PRIV (avatar_image);
+	priv = GET_PRIV (widget);
 
 	if (event->button != 1 || event->type != GDK_BUTTON_RELEASE) {
 		return FALSE;

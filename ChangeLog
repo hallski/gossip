@@ -1,5 +1,15 @@
 2007-05-28  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-avatar-image.c: 
+	(gossip_avatar_image_class_init);
+	(gossip_avatar_image_init):
+	(avatar_image_button_press_event):
+	(avatar_image_button_release_event):
+	- Override button-press-event and button-release-event instead of
+	  connecting to the signals.
+
+2007-05-28  Mikael Hallendal  <micke@imendio.com>
+
 	* configure.ac: 
 	- Disable telepathy support by default (instead of auto).
 	- Put up a warning about unsupported build when building with
