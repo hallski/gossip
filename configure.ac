@@ -137,9 +137,9 @@ dnl -----------------------------------------------------------
 dnl Telepathy
 dnl -----------------------------------------------------------
 AC_ARG_ENABLE(telepathy,
-              AS_HELP_STRING([--enable-telepathy=@<:@no/yes/auto@:>@],
+              AS_HELP_STRING([--enable-telepathy=@<:@no/yes@:>@],
                              [compile with telepathy support]), ,
-              enable_telepathy=auto)
+              enable_telepathy=no)
 
 if test "x$enable_telepathy" != "xno" -a "x$have_dbus" = "xyes"; then
    telepathy_pkgconfig_tmp="libtelepathy >= 0.0.51 "
@@ -403,3 +403,8 @@ echo "Notify:    $have_libnotify"
 echo "XSS:       $have_xss (only with GNOME)"
 echo "Peekaboo:  $have_peekaboo (only with DBUS)"
 echo
+if test "x$have_telepathy" = "xyes"; then
+	echo "WARNING: You are building against Telepathy. "
+	echo "This is unsupported and the support for it was forked into Empathy."
+fi
+

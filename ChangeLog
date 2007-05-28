@@ -1,5 +1,13 @@
 2007-05-28  Mikael Hallendal  <micke@imendio.com>
 
+	* configure.ac: 
+	- Disable telepathy support by default (instead of auto).
+	- Put up a warning about unsupported build when building with
+	  Telepathy and notify the user that Telepathy-gossip was forked into
+	  Empathy.
+
+2007-05-28  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-app.c: 
 	(app_setup_contact_list_show_offline):
 	(app_setup_contact_list_compact):
