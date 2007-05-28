@@ -11,8 +11,13 @@
 2007-05-28  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-ui-utils.c (gossip_pixbuf_from_avatar_scaled):
+	- Scaling in the code so no need for size-prepared signal callback.
+
+2007-05-28  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-ui-utils.c (gossip_pixbuf_from_avatar_scaled):
 	- Initial code lift from Pidgin to add support for rounded corners on
-	opaque avatars.
+	  opaque avatars.
 
 2007-05-28  Mikael Hallendal  <micke@imendio.com>
 

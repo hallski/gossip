@@ -64,10 +64,12 @@ struct SizeData {
 static void hint_dialog_response_cb             (GtkWidget       *widget,
 						 gint             response,
 						 GtkWidget       *checkbutton);
+#if 0
 static void pixbuf_from_avatar_size_prepared_cb (GdkPixbufLoader *loader,
 						 gint             width,
 						 gint             height,
 						 struct SizeData *data);
+#endif
 
 static GladeXML *
 get_glade_file (const gchar *filename,
@@ -900,6 +902,7 @@ gossip_pixbuf_avatar_from_contact (GossipContact *contact)
 	return pixbuf;
 }
 
+#if 0
 static void
 pixbuf_from_avatar_size_prepared_cb (GdkPixbufLoader *loader,
 				     int              width,
@@ -940,6 +943,7 @@ pixbuf_from_avatar_size_prepared_cb (GdkPixbufLoader *loader,
 
 	gdk_pixbuf_loader_set_size (loader, width, height);
 }
+#endif
 
 static gboolean
 pidgin_gdk_pixbuf_is_opaque(GdkPixbuf *pixbuf) {
@@ -1039,9 +1043,9 @@ gossip_pixbuf_from_avatar_scaled (GossipAvatar *avatar,
 	GdkPixbufLoader	 *loader;
 	struct SizeData   data;
 	GError           *error = NULL;
+	int               orig_width, orig_height;
+	int               scale_width, scale_height;
 
-		int orig_width, orig_height;
-		int scale_width, scale_height;
 	if (!avatar) {
 		return NULL;
 	}
@@ -1052,9 +1056,11 @@ gossip_pixbuf_from_avatar_scaled (GossipAvatar *avatar,
 
 	loader = gdk_pixbuf_loader_new ();
 
+#if 0
 	g_signal_connect (loader, "size-prepared",
 			  G_CALLBACK (pixbuf_from_avatar_size_prepared_cb),
 			  &data);
+#endif
 
 	if (!gdk_pixbuf_loader_write (loader, avatar->data, avatar->len, &error)) {
 		g_warning ("Couldn't write avatar image:%p with "
@@ -1070,21 +1076,21 @@ gossip_pixbuf_from_avatar_scaled (GossipAvatar *avatar,
 	scale_width = orig_width = gdk_pixbuf_get_width(pixbuf1);
 	scale_height = orig_height = gdk_pixbuf_get_height(pixbuf1);
 	if(scale_height > scale_width) {
-		scale_width = 32.0 * (double)scale_width / (double)scale_height;
-		scale_height = 32;
+		scale_width = (gdouble) width * (double)scale_width / (double)scale_height;
+		scale_height = height;
 	} else {
-		scale_height = 32.0 * (double)scale_height / (double)scale_width;
-		scale_width = 32;
+		scale_height = (gdouble) height * (double)scale_height / (double)scale_width;
+		scale_width = width;
 	}
 
 	pixbuf2 = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, 32, 32);
 	gdk_pixbuf_fill(pixbuf2, 0x00000000);
-	gdk_pixbuf_scale(pixbuf1, pixbuf2, (32-scale_width)/2, (32-scale_height)/2, scale_width, scale_height, (32-scale_width)/2, (32-scale_height)/2, (double)scale_width/(double)orig_width, (double)scale_height/(double)orig_height, GDK_INTERP_BILINEAR);
+	gdk_pixbuf_scale(pixbuf1, pixbuf2, (width-scale_width)/2, (height-scale_height)/2, scale_width, scale_height, (width-scale_width)/2, (height-scale_height)/2, (double)scale_width/(double)orig_width, (double)scale_height/(double)orig_height, GDK_INTERP_BILINEAR);
 
 	if (pidgin_gdk_pixbuf_is_opaque(pixbuf2))
 		roundify (pixbuf2);
 
-	g_object_unref (pixbuf1);
+	//g_object_unref (pixbuf1);
 	g_object_unref (loader);
 
 	return pixbuf2;
