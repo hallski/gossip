@@ -941,16 +941,107 @@ pixbuf_from_avatar_size_prepared_cb (GdkPixbufLoader *loader,
 	gdk_pixbuf_loader_set_size (loader, width, height);
 }
 
+static gboolean
+pidgin_gdk_pixbuf_is_opaque(GdkPixbuf *pixbuf) {
+        int width, height, rowstride, i;
+        unsigned char *pixels;
+        unsigned char *row;
+
+        if (!gdk_pixbuf_get_has_alpha(pixbuf))
+                return TRUE;
+
+        width = gdk_pixbuf_get_width (pixbuf);
+        height = gdk_pixbuf_get_height (pixbuf);
+        rowstride = gdk_pixbuf_get_rowstride (pixbuf);
+        pixels = gdk_pixbuf_get_pixels (pixbuf);
+
+        row = pixels;
+        for (i = 3; i < rowstride; i+=4) {
+                if (row[i] != 0xff)
+                        return FALSE;
+        }
+
+        for (i = 1; i < height - 1; i++) {
+                row = pixels + (i*rowstride);
+                if (row[3] != 0xff || row[rowstride-1] != 0xff) {
+                        return FALSE;
+                }
+        }
+
+        row = pixels + ((height-1) * rowstride);
+        for (i = 3; i < rowstride; i+=4) {
+                if (row[i] != 0xff)
+                        return FALSE;
+        }
+
+        return TRUE;
+}
+
+/* From pidgin */
+static void
+roundify(GdkPixbuf *pixbuf) {
+	int width, height, rowstride;
+	guchar *pixels;
+
+	g_print ("%s called\n", G_STRFUNC);
+
+	if (!gdk_pixbuf_get_has_alpha(pixbuf)) {
+		g_print ("Foo\n");
+		return;
+	}
+
+	width = gdk_pixbuf_get_width(pixbuf);
+	height = gdk_pixbuf_get_height(pixbuf);
+	rowstride = gdk_pixbuf_get_rowstride(pixbuf);
+	pixels = gdk_pixbuf_get_pixels(pixbuf);
+
+	if (width < 6 || height < 6) {
+		g_print ("Bar\n");
+		return;
+	}
+
+	/* Top left */
+	pixels[3] = 0;
+	pixels[7] = 0x80;
+	pixels[11] = 0xC0;
+	pixels[rowstride + 3] = 0x80;
+	pixels[rowstride * 2 + 3] = 0xC0;
+
+	/* Top right */
+	pixels[width * 4 - 1] = 0;
+	pixels[width * 4 - 5] = 0x80;
+	pixels[width * 4 - 9] = 0xC0;
+	pixels[rowstride + (width * 4) - 1] = 0x80;
+	pixels[(2 * rowstride) + (width * 4) - 1] = 0xC0;
+
+	/* Bottom left */
+	pixels[(height - 1) * rowstride + 3] = 0;
+	pixels[(height - 1) * rowstride + 7] = 0x80;
+	pixels[(height - 1) * rowstride + 11] = 0xC0;
+	pixels[(height - 2) * rowstride + 3] = 0x80;
+	pixels[(height - 3) * rowstride + 3] = 0xC0;
+
+	/* Bottom right */
+	pixels[height * rowstride - 1] = 0;
+	pixels[(height - 1) * rowstride - 1] = 0x80;
+	pixels[(height - 2) * rowstride - 1] = 0xC0;
+	pixels[height * rowstride - 5] = 0x80;
+	pixels[height * rowstride - 9] = 0xC0;
+}
+
 GdkPixbuf *
 gossip_pixbuf_from_avatar_scaled (GossipAvatar *avatar,
 				  gint          width,
 				  gint          height)
 {
-	GdkPixbuf        *pixbuf;
+	GdkPixbuf        *pixbuf1;
+	GdkPixbuf        *pixbuf2;
 	GdkPixbufLoader	 *loader;
 	struct SizeData   data;
 	GError           *error = NULL;
 
+		int orig_width, orig_height;
+		int scale_width, scale_height;
 	if (!avatar) {
 		return NULL;
 	}
@@ -975,12 +1066,28 @@ gossip_pixbuf_from_avatar_scaled (GossipAvatar *avatar,
 
 	gdk_pixbuf_loader_close (loader, NULL);
 
-	pixbuf = gdk_pixbuf_loader_get_pixbuf (loader);
+	pixbuf1 = gdk_pixbuf_loader_get_pixbuf (loader);
+	scale_width = orig_width = gdk_pixbuf_get_width(pixbuf1);
+	scale_height = orig_height = gdk_pixbuf_get_height(pixbuf1);
+	if(scale_height > scale_width) {
+		scale_width = 32.0 * (double)scale_width / (double)scale_height;
+		scale_height = 32;
+	} else {
+		scale_height = 32.0 * (double)scale_height / (double)scale_width;
+		scale_width = 32;
+	}
 
-	g_object_ref (pixbuf);
+	pixbuf2 = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, 32, 32);
+	gdk_pixbuf_fill(pixbuf2, 0x00000000);
+	gdk_pixbuf_scale(pixbuf1, pixbuf2, (32-scale_width)/2, (32-scale_height)/2, scale_width, scale_height, (32-scale_width)/2, (32-scale_height)/2, (double)scale_width/(double)orig_width, (double)scale_height/(double)orig_height, GDK_INTERP_BILINEAR);
+
+	if (pidgin_gdk_pixbuf_is_opaque(pixbuf2))
+		roundify (pixbuf2);
+
+	g_object_unref (pixbuf1);
 	g_object_unref (loader);
 
-	return pixbuf;
+	return pixbuf2;
 }
 
 GdkPixbuf *

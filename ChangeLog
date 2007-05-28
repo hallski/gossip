@@ -10,6 +10,12 @@
 
 2007-05-28  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-ui-utils.c (gossip_pixbuf_from_avatar_scaled):
+	- Initial code lift from Pidgin to add support for rounded corners on
+	opaque avatars.
+
+2007-05-28  Mikael Hallendal  <micke@imendio.com>
+
 	* configure.ac: 
 	- Disable telepathy support by default (instead of auto).
 	- Put up a warning about unsupported build when building with
