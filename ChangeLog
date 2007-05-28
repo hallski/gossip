@@ -1,5 +1,16 @@
 2007-05-28  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-app.c: 
+	(app_setup_contact_list_show_offline):
+	(app_setup_contact_list_compact):
+	(app_setup_contact_list_show_avatars):
+	(app_setup_contact_list_sort_criterium):
+	(app_setup_contact_list):
+	- Extracted functions from app_setup for the various contact list 
+	  settings.
+
+2007-05-28  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-async.h: Unused, removed.
 
 2007-05-28  Mikael Hallendal  <micke@imendio.com>

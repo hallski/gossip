@@ -563,7 +563,108 @@ app_restore_main_window_geometry (GtkWidget *main_window)
 }
 
 static void
-app_setup_contact_list (GtkWidget *scrolled_window)
+app_setup_contact_list_show_offline (GtkWidget *show_offline_widget)
+{
+	GossipAppPriv *priv;
+	gboolean       show_offline;
+
+	priv = GET_PRIV (app);
+	/* Set up 'show_offline' config hooks to know when it changes. */
+	gossip_conf_get_bool (gossip_conf_get (),
+			      GOSSIP_PREFS_CONTACTS_SHOW_OFFLINE,
+			      &show_offline);
+	gossip_conf_notify_add (gossip_conf_get (),
+				GOSSIP_PREFS_CONTACTS_SHOW_OFFLINE,
+				app_notify_show_offline_cb,
+				show_offline_widget);
+
+	gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (show_offline_widget),
+					show_offline);
+}
+
+static void
+app_setup_contact_list_compact (void)
+{
+	GossipAppPriv *priv;
+	gboolean       compact_contact_list;
+
+	priv = GET_PRIV (app);
+
+	/* Compact contact list? */
+	gossip_conf_get_bool (gossip_conf_get (),
+			      GOSSIP_PREFS_UI_COMPACT_CONTACT_LIST,
+			      &compact_contact_list);
+
+	gossip_conf_notify_add (gossip_conf_get (),
+				GOSSIP_PREFS_UI_COMPACT_CONTACT_LIST,
+				app_notify_compact_contact_list_cb,
+				NULL);
+
+	g_object_set (priv->contact_list,
+		      "is-compact", compact_contact_list,
+		      NULL);
+}
+
+static void
+app_setup_contact_list_show_avatars (void)
+{
+	GossipAppPriv *priv;
+	gboolean       show_avatars;
+
+	priv = GET_PRIV (app);
+
+	/* Show avatars? */
+	gossip_conf_get_bool (gossip_conf_get (),
+			      GOSSIP_PREFS_UI_SHOW_AVATARS,
+			      &show_avatars);
+	gossip_conf_notify_add (gossip_conf_get (),
+				GOSSIP_PREFS_UI_SHOW_AVATARS,
+				app_notify_show_avatars_cb,
+				NULL);
+
+	g_object_set (priv->contact_list,
+		      "show-avatars", show_avatars,
+		      NULL);
+}
+
+static void
+app_setup_contact_list_sort_criterium (void)
+{
+	GossipAppPriv *priv;
+	gchar         *str;
+
+	priv = GET_PRIV (app);
+
+	str = NULL;
+
+	gossip_conf_get_string (gossip_conf_get (),
+				GOSSIP_PREFS_CONTACTS_SORT_CRITERIUM,
+				&str);
+	gossip_conf_notify_add (gossip_conf_get (),
+				GOSSIP_PREFS_CONTACTS_SORT_CRITERIUM,
+				app_notify_sort_criterium_cb,
+				NULL);
+
+	if (str) {
+		GType       type;
+		GEnumClass *enum_class;
+		GEnumValue *enum_value;
+		
+		type = gossip_contact_list_sort_get_type ();
+		enum_class = G_ENUM_CLASS (g_type_class_peek (type));
+		enum_value = g_enum_get_value_by_nick (enum_class, str);
+
+		if (enum_value) {
+			g_object_set (priv->contact_list,
+				      "sort-criterium", enum_value->value,
+				      NULL);
+		}
+	} 
+}
+
+static void
+app_setup_contact_list (GtkWidget *scrolled_window,
+			GtkWidget *show_offline_widget)
 {
 	GossipAppPriv *priv;
 
@@ -579,6 +680,12 @@ app_setup_contact_list (GtkWidget *scrolled_window)
 	gtk_widget_show (GTK_WIDGET (priv->contact_list));
 	gtk_container_add (GTK_CONTAINER (scrolled_window),
 			   GTK_WIDGET (priv->contact_list));
+
+	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring contact list settings");
+	app_setup_contact_list_show_offline (show_offline_widget);
+	app_setup_contact_list_compact ();
+	app_setup_contact_list_show_avatars ();
+	app_setup_contact_list_sort_criterium ();
 }
 
 static void
@@ -589,10 +696,6 @@ app_setup (GossipSession *session)
 	GladeXML      *glade;
 	GtkWidget     *sw;
 	GtkWidget     *show_offline_widget;
-	gchar         *str;
-	gboolean       show_offline;
-	gboolean       show_avatars;
-	gboolean       compact_contact_list;
 
 	gossip_debug (DEBUG_DOMAIN_SETUP, "Beginning...");
 
@@ -741,74 +844,9 @@ app_setup (GossipSession *session)
 	app_restore_main_window_geometry (priv->window);
 
 	/* Setup the contact list */
-	app_setup_contact_list (sw);
-
-	/* Set up 'show_offline' config hooks to know when it changes. */
-	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring miscellaneous settings");
-	gossip_conf_get_bool (conf,
-			      GOSSIP_PREFS_CONTACTS_SHOW_OFFLINE,
-			      &show_offline);
-	gossip_conf_notify_add (conf,
-				GOSSIP_PREFS_CONTACTS_SHOW_OFFLINE,
-				app_notify_show_offline_cb,
-				show_offline_widget);
-
-	gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (show_offline_widget),
-					show_offline);
-
-	/* Show avatars? */
-	gossip_conf_get_bool (conf,
-			      GOSSIP_PREFS_UI_SHOW_AVATARS,
-			      &show_avatars);
-	gossip_conf_notify_add (conf,
-				GOSSIP_PREFS_UI_SHOW_AVATARS,
-				app_notify_show_avatars_cb,
-				NULL);
-
-	g_object_set (priv->contact_list,
-		      "show-avatars", show_avatars,
-		      NULL);
-
-	/* Compact contact list? */
-	gossip_conf_get_bool (conf,
-			      GOSSIP_PREFS_UI_COMPACT_CONTACT_LIST,
-			      &compact_contact_list);
-	gossip_conf_notify_add (conf,
-				GOSSIP_PREFS_UI_COMPACT_CONTACT_LIST,
-				app_notify_compact_contact_list_cb,
-				NULL);
-
-	g_object_set (priv->contact_list,
-		      "is-compact", compact_contact_list,
-		      NULL);
+	app_setup_contact_list (sw, show_offline_widget);
 
 	/* Sort criterium */
-	str = NULL;
-
-	gossip_conf_get_string (conf,
-				GOSSIP_PREFS_CONTACTS_SORT_CRITERIUM,
-				&str);
-	gossip_conf_notify_add (conf,
-				GOSSIP_PREFS_CONTACTS_SORT_CRITERIUM,
-				app_notify_sort_criterium_cb,
-				NULL);
-
-	if (str) {
-		GType       type;
-		GEnumClass *enum_class;
-		GEnumValue *enum_value;
-		
-		type = gossip_contact_list_sort_get_type ();
-		enum_class = G_ENUM_CLASS (g_type_class_peek (type));
-		enum_value = g_enum_get_value_by_nick (enum_class, str);
-
-		if (enum_value) {
-			g_object_set (priv->contact_list,
-				      "sort-criterium", enum_value->value,
-				      NULL);
-		}
-	} 
-
 	/* Set window to be hidden. If doesn't have status icon, show window
 	 * and mask "chat_hide_list".
 	 */
