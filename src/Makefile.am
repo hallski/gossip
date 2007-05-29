@@ -68,6 +68,7 @@ gossip_SOURCES = 				                        	\
 	gossip-self-presence.c             gossip-self-presence.h          \
 	gossip-ft-window.c		   gossip-ft-window.h		   \
 	gossip-geometry.c		   gossip-geometry.h		   \
+	gossip-glade.c                     gossip-glade.h                  \
 	gossip-group-chat.c	           gossip-group-chat.h		   \
 	gossip-heartbeat.c                 gossip-heartbeat.h              \
 	gossip-hint.c                      gossip-hint.h                   \

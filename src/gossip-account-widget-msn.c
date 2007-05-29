@@ -16,8 +16,6 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- * 
- * Authors: Martyn Russell <martyn@imendio.com>
  */
 
 #include "config.h"
@@ -38,6 +36,7 @@
 
 #include "gossip-account-widget-msn.h"
 #include "gossip-app.h"
+#include "gossip-glade.h"
 #include "gossip-marshal.h"
 #include "gossip-ui-utils.h"
 

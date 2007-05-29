@@ -45,11 +45,12 @@
 
 #include "gossip-account-chooser.h"
 #include "gossip-app.h"
-#include "gossip-vcard-dialog.h"
+#include "gossip-glade.h"
 #include "gossip-image-chooser.h"
 #include "gossip-preferences.h"
 #include "gossip-popup-button.h"
 #include "gossip-ui-utils.h"
+#include "gossip-vcard-dialog.h"
 
 #define DEBUG_DOMAIN "VCardDialog"
 

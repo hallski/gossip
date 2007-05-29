@@ -35,6 +35,7 @@
 
 #include "gossip-account-chooser.h"
 #include "gossip-app.h"
+#include "gossip-glade.h"
 #include "gossip-new-message-dialog.h"
 #include "gossip-ui-utils.h"
 

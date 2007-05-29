@@ -24,6 +24,7 @@
 #include <glib/gi18n.h>
 
 #include "gossip-app.h"
+#include "gossip-glade.h"
 #include "gossip-stock.h"
 #include "gossip-add-contact.h"
 

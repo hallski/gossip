@@ -25,8 +25,6 @@
 #ifndef __GOSSIP_UI_UTILS_H__
 #define __GOSSIP_UI_UTILS_H__
 
-#include <glade/glade.h>
-#include <gtk/gtksizegroup.h>
 #include <libgossip/gossip-account.h>
 #include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-vcard.h>
@@ -37,26 +35,6 @@
 #include "gossip-chat-view.h"
 
 G_BEGIN_DECLS
-
-/* Glade */
-void       gossip_glade_get_file_simple             (const gchar         *filename,
-						     const gchar         *root,
-						     const gchar         *domain,
-						     const gchar         *first_required_widget,
-						     ...);
-GladeXML * gossip_glade_get_file                    (const gchar         *filename,
-						     const gchar         *root,
-						     const gchar         *domain,
-						     const gchar         *first_required_widget,
-						     ...);
-void       gossip_glade_connect                     (GladeXML            *gui,
-						     gpointer             user_data,
-						     gchar               *first_widget,
-						     ...);
-void       gossip_glade_setup_size_group            (GladeXML            *gui,
-						     GtkSizeGroupMode     mode,
-						     gchar               *first_widget,
-						     ...);
 
 /* Dialogs */
 gchar *    gossip_password_dialog_run               (GossipAccount       *account,

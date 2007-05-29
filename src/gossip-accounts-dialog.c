@@ -45,6 +45,7 @@
 #include "gossip-account-widget-msn.h"
 #include "gossip-account-widget-generic.h"
 #include "gossip-accounts-dialog.h"
+#include "gossip-glade.h"
 #include "gossip-ui-utils.h"
 
 #define DEBUG_DOMAIN "AccountsDialog"

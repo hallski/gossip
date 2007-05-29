@@ -32,6 +32,7 @@
 
 #include "gossip-marshal.h"
 #include "gossip-app.h"
+#include "gossip-glade.h"
 #include "gossip-ui-utils.h"
 #include "gossip-presence-chooser.h"
 #include "gossip-status-presets.h"

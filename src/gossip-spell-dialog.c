@@ -16,9 +16,6 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * Authors: Martyn Russell <martyn@imendio.com>
- *          Richard Hult <richard@imendio.com>
  */
 
 #include "config.h"
@@ -36,6 +33,7 @@
 #include <glade/glade.h>
 
 #include "gossip-chat.h"
+#include "gossip-glade.h"
 #include "gossip-spell-dialog.h"
 #include "gossip-ui-utils.h"
 

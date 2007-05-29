@@ -48,6 +48,7 @@
 #include "gossip-chat.h"
 #include "gossip-chatrooms-window.h"
 #include "gossip-contact-list.h"
+#include "gossip-glade.h"
 #include "gossip-self-presence.h"
 #include "gossip-ft-window.h"
 #include "gossip-geometry.h"

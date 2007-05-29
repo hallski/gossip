@@ -34,6 +34,7 @@
 #include <libgossip/gossip-stock.h>
 
 #include "gossip-app.h"
+#include "gossip-glade.h"
 #include "gossip-ui-utils.h"
 #include "gossip-preferences.h"
 #include "gossip-theme-manager.h"

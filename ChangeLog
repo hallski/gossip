@@ -1,4 +1,11 @@
 2007-05-29  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-ui-utils.[ch]:
+	* src/gossip-glade.[ch]: New files
+	(gossip_glade_*): Moved the functions to gossip-glade.[ch].
+
+2007-05-29  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-ui-utils.[ch]:
 	* src/gossip-hint.[ch]: New files
 	(gossip_hint_show, gossip_hint_dialog_show):

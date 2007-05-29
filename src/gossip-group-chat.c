@@ -16,10 +16,6 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * Authors: Mikael Hallendal <micke@imendio.com>
- *          Richard Hult <richard@imendio.com>
- *          Martyn Russell <martyn@imendio.com>
  */
 
 #include "config.h"
@@ -49,6 +45,7 @@
 #include "gossip-chat-invite.h"
 #include "gossip-chat-view.h"
 #include "gossip-contact-list-iface.h"
+#include "gossip-glade.h"
 #include "gossip-group-chat.h"
 #include "gossip-private-chat.h"
 #include "gossip-sound.h"
