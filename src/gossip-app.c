@@ -52,6 +52,7 @@
 #include "gossip-ft-window.h"
 #include "gossip-geometry.h"
 #include "gossip-group-chat.h"
+#include "gossip-hint.h"
 #include "gossip-idle.h"
 #include "gossip-log-window.h"
 #include "gossip-new-chatroom-dialog.h"

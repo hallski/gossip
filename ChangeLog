@@ -1,4 +1,10 @@
 2007-05-29  Mikael Hallendal  <micke@imendio.com>
+	* src/gossip-ui-utils.[ch]:
+	* src/gossip-hint.[ch]: New files
+	(gossip_hint_show, gossip_hint_dialog_show):
+	- Moved the functions to gossip-hint.[ch] 
+
+2007-05-29  Mikael Hallendal  <micke@imendio.com>
 
 	* libgossip/gossip-account.[ch]:
 	(gossip_account_type_create_pixbuf): 

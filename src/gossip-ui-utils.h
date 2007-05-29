@@ -61,19 +61,6 @@ void       gossip_glade_setup_size_group            (GladeXML            *gui,
 /* Dialogs */
 gchar *    gossip_password_dialog_run               (GossipAccount       *account,
 						     GtkWindow           *parent);
-gboolean   gossip_hint_dialog_show                  (const gchar         *conf_path,
-						     const gchar         *message1,
-						     const gchar         *message2,
-						     GtkWindow           *parent,
-						     GFunc                func,
-						     gpointer             user_data);
-gboolean   gossip_hint_show                         (const gchar         *conf_path,
-						     const gchar         *message1,
-						     const gchar         *message2,
-						     GtkWindow           *parent,
-						     GFunc                func,
-						     gpointer             user_data);
-
 /* Pixbufs */
 GdkPixbuf *gossip_pixbuf_from_smiley                (GossipSmiley         type,
 						     GtkIconSize          icon_size);

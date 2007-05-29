@@ -70,6 +70,7 @@ gossip_SOURCES = 				                        	\
 	gossip-geometry.c		   gossip-geometry.h		   \
 	gossip-group-chat.c	           gossip-group-chat.h		   \
 	gossip-heartbeat.c                 gossip-heartbeat.h              \
+	gossip-hint.c                      gossip-hint.h                   \
 	gossip-idle.c		           gossip-idle.h		   \
 	gossip-image-chooser.c             gossip-image-chooser.h	   \
 	gossip-log-window.c	           gossip-log-window.h		   \
