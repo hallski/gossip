@@ -1876,8 +1876,9 @@ group_chat_get_status_pixbuf (GossipChat *chat)
 	}
 
 	if (!pixbuf) {
-		pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_GROUP_MESSAGE,
-						   GTK_ICON_SIZE_MENU);
+		pixbuf = gossip_stock_create_pixbuf (gossip_app_get_window (),
+						     GOSSIP_STOCK_GROUP_MESSAGE,
+						     GTK_ICON_SIZE_MENU);
 	}
 
 	return pixbuf;

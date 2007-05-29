@@ -90,3 +90,13 @@ gossip_stock_finalize (void)
 
 	icon_factory = NULL;
 }
+
+GdkPixbuf *
+gossip_stock_create_pixbuf (GtkWidget   *widget,
+			    const gchar *stock,
+			    GtkIconSize  size)
+{
+	return gtk_widget_render_icon (widget, stock, size, NULL);
+}
+
+

@@ -75,8 +75,6 @@ gboolean   gossip_hint_show                         (const gchar         *conf_p
 						     gpointer             user_data);
 
 /* Pixbufs */
-GdkPixbuf *gossip_pixbuf_from_stock                 (const gchar         *stock,
-						     GtkIconSize          size);
 GdkPixbuf *gossip_pixbuf_from_account_type          (GossipAccountType    type,
 						     GtkIconSize          icon_size);
 GdkPixbuf *gossip_pixbuf_from_account               (GossipAccount       *account,

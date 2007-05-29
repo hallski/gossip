@@ -387,14 +387,6 @@ gossip_hint_show (const gchar         *conf_path,
 }
 
 GdkPixbuf *
-gossip_pixbuf_from_stock (const gchar *stock,
-			  GtkIconSize  size)
-{
-	return gtk_widget_render_icon (gossip_app_get_window (),
-				       stock, size, NULL);
-}
-
-GdkPixbuf *
 gossip_pixbuf_from_account_type (GossipAccountType type,
 				 GtkIconSize       icon_size)
 {
@@ -510,8 +502,9 @@ gossip_pixbuf_from_account_error (GossipAccount *account,
 		return NULL;
 	}
 
-	pixbuf_error = gossip_pixbuf_from_stock (GTK_STOCK_DIALOG_ERROR,
-						 GTK_ICON_SIZE_MENU);
+	pixbuf_error = gossip_stock_create_pixbuf (gossip_app_get_window (),
+						   GTK_STOCK_DIALOG_ERROR,
+						   GTK_ICON_SIZE_MENU);
 	if (!pixbuf_error) {
 		g_object_unref (pixbuf);
 		return NULL;
@@ -651,8 +644,9 @@ gossip_pixbuf_from_smiley (GossipSmiley type,
 GdkPixbuf *
 gossip_pixbuf_offline (void)
 {
-	return gossip_pixbuf_from_stock (GOSSIP_STOCK_OFFLINE,
-					 GTK_ICON_SIZE_MENU);
+	return gossip_stock_create_pixbuf (gossip_app_get_window (),
+					   GOSSIP_STOCK_OFFLINE,
+					   GTK_ICON_SIZE_MENU);
 }
 
 static gboolean
@@ -742,7 +736,8 @@ gossip_pixbuf_for_presence_state (GossipPresenceState state)
 		break;
 	}
 
-	return gossip_pixbuf_from_stock (stock, GTK_ICON_SIZE_MENU);
+	return gossip_stock_create_pixbuf (gossip_app_get_window (),
+					   stock, GTK_ICON_SIZE_MENU);
 }
 
 GdkPixbuf *
@@ -777,8 +772,9 @@ gossip_pixbuf_for_contact (GossipContact *contact)
 
 	if (subscription != GOSSIP_SUBSCRIPTION_BOTH &&
 	    subscription != GOSSIP_SUBSCRIPTION_TO) {
-		return gossip_pixbuf_from_stock (GOSSIP_STOCK_PENDING,
-						 GTK_ICON_SIZE_MENU);
+		return gossip_stock_create_pixbuf (gossip_app_get_window (),
+						   GOSSIP_STOCK_PENDING,
+						   GTK_ICON_SIZE_MENU);
 	}
 
 	return gossip_pixbuf_offline ();
@@ -814,7 +810,8 @@ gossip_pixbuf_for_chatroom_status (GossipChatroom *chatroom,
 		break;
 	}
 
-	pixbuf = gossip_pixbuf_from_stock (stock_id, icon_size);
+	pixbuf = gossip_stock_create_pixbuf (gossip_app_get_window (),
+					     stock_id, icon_size);
 
 	return pixbuf;
 }

@@ -329,8 +329,9 @@ notify_subscription_request_show (GossipContact *contact)
 		g_object_ref (pixbuf);
 	} else {
 		/* Fall back to presence state */
-		pixbuf = gossip_pixbuf_from_stock (GTK_STOCK_DIALOG_QUESTION,
-						   GTK_ICON_SIZE_MENU);
+		pixbuf = gossip_stock_create_pixbuf (gossip_app_get_window (),
+						     GTK_STOCK_DIALOG_QUESTION,
+						     GTK_ICON_SIZE_MENU);
 	}
 
 	notify = notify_notification_new (_("Subscription request"),
@@ -495,7 +496,9 @@ notify_new_message (GossipEventManager *event_manager,
 		g_object_ref (pixbuf);
 	} else {
 		/* Fall back to message icon */
-		pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE, GTK_ICON_SIZE_MENU);
+		pixbuf = gossip_stock_create_pixbuf (gossip_app_get_window (),
+						     GOSSIP_STOCK_MESSAGE, 
+						     GTK_ICON_SIZE_MENU);
 	}
 
 	title = g_strdup_printf (_("New message from %s"),

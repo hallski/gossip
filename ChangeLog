@@ -1,5 +1,11 @@
 2007-05-29  Mikael Hallendal  <micke@imendio.com>
 
+	* libgossip/gossip-stock.[ch] (gossip_stock_create_pixbuf): 
+	- Moved from gossip-ui-utils.
+	* src/*.c: Make adjustments for the moved code.
+
+2007-05-29  Mikael Hallendal  <micke@imendio.com>
+
 	* libgossip/gossip-avatar.[ch]: Moved code to create pixbufs here.
 	* libgossip/gossip-contact.[ch] (gossip_contact_get_avatar_pixbuf): 
 	- Added convenience function to get the avatar pixbuf.

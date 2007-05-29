@@ -77,8 +77,9 @@ gossip_status_icon_init (GossipStatusIcon *status_icon)
 {
 	GdkPixbuf *pixbuf;
 
-	pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_OFFLINE,
-					   GTK_ICON_SIZE_MENU);
+	pixbuf = gossip_stock_create_pixbuf (gossip_app_get_window (),
+					     GOSSIP_STOCK_OFFLINE,
+					     GTK_ICON_SIZE_MENU);
 
 	gtk_status_icon_set_from_pixbuf (GTK_STATUS_ICON (status_icon), pixbuf);
 	g_object_unref (pixbuf);
@@ -204,7 +205,9 @@ status_icon_get_event_pixbuf (GossipStatusIcon *status_icon)
 	stock_id = gossip_event_get_stock_id (status_icon_get_next_event (status_icon));
 
 	if (stock_id) {
-		return gossip_pixbuf_from_stock (stock_id, GTK_ICON_SIZE_MENU);
+		return gossip_stock_create_pixbuf (gossip_app_get_window (),
+						   stock_id, 
+						   GTK_ICON_SIZE_MENU);
 	} 
 	
 	return NULL;

@@ -402,8 +402,9 @@ gossip_self_presence_get_current_pixbuf (GossipSelfPresence *self_presence)
 	g_return_val_if_fail (GOSSIP_IS_SELF_PRESENCE (self_presence), NULL);
 
 	if (!gossip_session_is_connected (gossip_app_get_session (), NULL)) {
-		return gossip_pixbuf_from_stock (GOSSIP_STOCK_OFFLINE,
-						 GTK_ICON_SIZE_MENU);
+		return gossip_stock_create_pixbuf (gossip_app_get_window (),
+						   GOSSIP_STOCK_OFFLINE,
+						   GTK_ICON_SIZE_MENU);
 	}
 
 	return gossip_pixbuf_for_presence (gossip_self_presence_get_effective (self_presence));

@@ -872,8 +872,9 @@ contact_list_contact_update (GossipContactList *list,
 	}
 
 	pixbuf_presence = gossip_pixbuf_for_contact (contact);
-	pixbuf_composing = gossip_pixbuf_from_stock (GOSSIP_STOCK_TYPING,
-						     GTK_ICON_SIZE_MENU);
+	pixbuf_composing = gossip_stock_create_pixbuf (gossip_app_get_window (),
+						       GOSSIP_STOCK_TYPING,
+						       GTK_ICON_SIZE_MENU);
 	pixbuf_avatar = gossip_contact_get_avatar_pixbuf (contact);
 	if (pixbuf_avatar) {
 		g_object_ref (pixbuf_avatar);
@@ -1053,8 +1054,9 @@ contact_list_contact_composing_cb (GossipSession     *session,
 
 	if (! g_hash_table_lookup (priv->flash_table, contact)) {
 		if (composing) {
-			pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_TYPING,
-							   GTK_ICON_SIZE_MENU);
+			pixbuf = gossip_stock_create_pixbuf (gossip_app_get_window (),
+							     GOSSIP_STOCK_TYPING,
+							     GTK_ICON_SIZE_MENU);
 		} else {
 			pixbuf = gossip_pixbuf_for_contact (contact);
 		}
@@ -3049,8 +3051,9 @@ contact_list_foreach_contact_flash (GossipContact     *contact,
 	}
 
 	if (stock_id) {
-		pixbuf = gossip_pixbuf_from_stock (stock_id, 
-						   GTK_ICON_SIZE_MENU);
+		pixbuf = gossip_stock_create_pixbuf (gossip_app_get_window (),
+						     stock_id, 
+						     GTK_ICON_SIZE_MENU);
 	} else {
 		pixbuf = gossip_pixbuf_for_contact (contact);
 	}

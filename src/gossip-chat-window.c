@@ -525,12 +525,14 @@ chat_window_get_status_pixbuf (GossipChatWindow *window,
 	priv = GET_PRIV (window);
 
 	if (g_list_find (priv->chats_new_msg, chat)) {
-		pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE,
-						   GTK_ICON_SIZE_MENU);
+		pixbuf = gossip_stock_create_pixbuf (gossip_app_get_window (),
+						     GOSSIP_STOCK_MESSAGE,
+						     GTK_ICON_SIZE_MENU);
 	}
 	else if (g_list_find (priv->chats_composing, chat)) {
-		pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_TYPING,
-						   GTK_ICON_SIZE_MENU);
+		pixbuf = gossip_stock_create_pixbuf (gossip_app_get_window (),
+						     GOSSIP_STOCK_TYPING,
+						     GTK_ICON_SIZE_MENU);
 	}
 	else {
 		pixbuf = gossip_chat_get_status_pixbuf (chat);
@@ -771,8 +773,9 @@ chat_window_update_title (GossipChatWindow *window,
 	g_free (title);
 
 	if (priv->chats_new_msg) {
-		pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE,
-						   GTK_ICON_SIZE_MENU);
+		pixbuf = gossip_stock_create_pixbuf (gossip_app_get_window (),
+						     GOSSIP_STOCK_MESSAGE,
+						     GTK_ICON_SIZE_MENU);
 	} else {
 		pixbuf = NULL;
 	}

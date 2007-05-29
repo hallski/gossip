@@ -25,6 +25,9 @@
 #ifndef __GOSSIP_STOCK_H__
 #define __GOSSIP_STOCK_H__
 
+#include <gdk-pixbuf/gdk-pixbuf.h>
+#include <gtk/gtkwidget.h>
+
 G_BEGIN_DECLS
 
 #define GOSSIP_STOCK_OFFLINE             "gossip-offline"
@@ -47,8 +50,11 @@ G_BEGIN_DECLS
 
 #define GOSSIP_STOCK_GROUP_MESSAGE       "gossip-group-message"
 
-void gossip_stock_init     (void);
-void gossip_stock_finalize (void);
+void         gossip_stock_init          (void);
+void         gossip_stock_finalize      (void);
+GdkPixbuf *  gossip_stock_create_pixbuf (GtkWidget   *widget,
+					 const gchar *stock,
+					 GtkIconSize  size);
 
 G_END_DECLS
 
