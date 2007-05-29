@@ -38,6 +38,7 @@ src/gossip-edit-contact-dialog.c
 src/gossip-ft-window.c
 src/gossip-galago.c
 src/gossip-group-chat.c
+src/gossip-hint.c
 src/gossip-idle.c
 src/gossip-log-window.c
 src/gossip-main.c
@@ -49,6 +50,7 @@ src/gossip-presence-chooser.c
 src/gossip-private-chat.c
 src/gossip-spell.c
 src/gossip-spell-dialog.c
+src/gossip-status-icon.c
 src/gossip-subscription-dialog.c
 src/gossip-ui-utils.c
 src/gossip-theme-manager.c

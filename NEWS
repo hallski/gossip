@@ -1,3 +1,24 @@
+NEW in 0.25:
+==============
+- Fixed #433636, Sending to contacts not in the roster doesn't work (Richard Hult, Martyn Russell)
+- Fixed #395693, Gossip should support sent message recall with Ctrl+Up|Down (Martyn Russell, Diego Escalante Urrelo)
+- Fixed #412055, Subscription requests don't show which account they are for (Chris RIvas, Martyn Russell)
+- Fixed #423465, "Subscription pending" notification is not anchored to status icon (Chris RIvas)
+- Fixed #425906, Conversion history for chat rooms is displayed incorrectly (Mikael Hallendal)
+- Fixed #426495, Group headers are highlighted wrongly (Kristian Rietveld)
+- Fixed #431565, Run gtk-update-icon-cache in uninstall-hook (Brian Pepple)
+- Fixed #433637, Entering a groupchat twice results in empty contact list (Mikael Hallendal)
+- Fixed #434692, Allow for sorting the contact list by state (Kristian Rietveld)
+- Fixed #435113, Backlog in groupchats looks like new messages (Martyn Russell)
+- Fixed #436663, GNOME Goal #3: Remove "Application" category from .desktop files (Brian Pepple)
+- Fixed #441568, Rounded corners on non-transparent avatars in Contact List. (Mikael Hallendal)
+- Fixed #441625, Make the flashing icons be in sync (Mikael Hallendal)
+
+Translations:
+- Updated fr: Claude Paroz, Stéphane Raimbault
+- Updated sv: Daniel Nylander
+- Updated en_GB: David Lodge
+
 
 NEW in 0.24:
 ==============
