@@ -26,6 +26,10 @@
 
 #include <glib-object.h>
 
+#include <gdk-pixbuf/gdk-pixbuf.h>
+#include <gtk/gtkenums.h>
+#include <gtk/gtkwidget.h>
+
 G_BEGIN_DECLS
 
 #define GOSSIP_TYPE_ACCOUNT         (gossip_account_get_gtype ())
@@ -116,6 +120,13 @@ gboolean            gossip_account_equal                   (gconstpointer       
 							    gconstpointer            b);
 const gchar *       gossip_account_type_to_string          (GossipAccountType        type);
 GossipAccountType   gossip_account_string_to_type          (const gchar             *str);
+GdkPixbuf *         gossip_account_type_create_pixbuf      (GossipAccountType    type,
+							    GtkIconSize          icon_size);
+GdkPixbuf *         gossip_account_create_pixbuf           (GossipAccount       *account,
+							    GtkIconSize          icon_size);
+GdkPixbuf *         gossip_account_status_create_pixbuf    (GossipAccount       *account,
+							    GtkIconSize          icon_size,
+							    gboolean             online);
 
 G_END_DECLS
 

@@ -29,8 +29,12 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 #include <gobject/gvaluecollector.h>
+#include <gtk/gtkiconfactory.h>
+#include <gtk/gtkicontheme.h>
+#include <gtk/gtkstock.h>
 
 #include "gossip-account.h"
+#include "gossip-stock.h"
 #include "gossip-utils.h"
 
 #include "libgossip-marshal.h"
@@ -767,4 +771,106 @@ gossip_account_string_to_type (const gchar *str)
 	return GOSSIP_ACCOUNT_TYPE_UNKNOWN;
 }
 
+GdkPixbuf *
+gossip_account_type_create_pixbuf (GossipAccountType    type,
+				   GtkIconSize          icon_size)
+{
+	GtkIconTheme  *theme;
+	GdkPixbuf     *pixbuf = NULL;
+	GError        *error = NULL;
+	gint           w, h;
+	gint           size = 48;
+	const gchar   *icon_id = NULL;
+
+	theme = gtk_icon_theme_get_default ();
+
+	if (!gtk_icon_size_lookup (icon_size, &w, &h)) {
+		size = 48;
+	} else {
+		size = (w + h) / 2;
+	}
+
+	switch (type) {
+	case GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY:
+	case GOSSIP_ACCOUNT_TYPE_JABBER:
+		icon_id = "im-jabber";
+		break;
+	case GOSSIP_ACCOUNT_TYPE_AIM:
+		icon_id = "im-aim";
+		break;
+	case GOSSIP_ACCOUNT_TYPE_ICQ:
+		icon_id = "im-icq";
+		break;
+	case GOSSIP_ACCOUNT_TYPE_MSN:
+		icon_id = "im-msn";
+		break;
+	case GOSSIP_ACCOUNT_TYPE_YAHOO:
+		icon_id = "im-yahoo";
+		break;
+
+	/* FIXME: we should have an artwork for these protocols */
+	case GOSSIP_ACCOUNT_TYPE_IRC:
+	case GOSSIP_ACCOUNT_TYPE_SALUT:
+	case GOSSIP_ACCOUNT_TYPE_UNKNOWN:
+	default:
+		icon_id = "im";
+		break;
+	}
+
+	pixbuf = gtk_icon_theme_load_icon (theme,
+					   icon_id,     /* Icon name */
+					   size,        /* Size */
+					   0,           /* Flags */
+					   &error);
+
+	return pixbuf;
+}
+
+GdkPixbuf *
+gossip_account_create_pixbuf (GossipAccount       *account,
+			      GtkIconSize          icon_size)
+{
+	GossipAccountType  type;
+	GdkPixbuf         *pixbuf = NULL;
+
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
+
+	type = gossip_account_get_type (account);
+	pixbuf = gossip_account_type_create_pixbuf (type, icon_size);
+
+	return pixbuf;
+}
+
+GdkPixbuf *
+gossip_account_status_create_pixbuf (GossipAccount       *account,
+				     GtkIconSize          icon_size,
+				     gboolean             online)
+{
+	GdkPixbuf *pixbuf = NULL;
+
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
+
+	pixbuf = gossip_account_create_pixbuf (account, icon_size);
+	g_return_val_if_fail (pixbuf != NULL, NULL);
+
+	if (!online) {
+		GdkPixbuf *modded_pixbuf;
+
+		modded_pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB,
+						TRUE,
+						8,
+						gdk_pixbuf_get_width (pixbuf),
+						gdk_pixbuf_get_height (pixbuf));
+
+		gdk_pixbuf_saturate_and_pixelate (pixbuf,
+						  modded_pixbuf,
+						  1.0,
+						  TRUE);
+		g_object_unref (pixbuf);
+		pixbuf = modded_pixbuf;
+	}
+
+	return pixbuf;
+
+}
 

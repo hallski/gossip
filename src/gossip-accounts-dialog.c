@@ -447,7 +447,8 @@ accounts_dialog_update_account (GossipAccountsDialog *dialog,
 		const gchar       *account_type_str;
 		GdkPixbuf         *pixbuf;
 
-		pixbuf = gossip_pixbuf_from_account (account, GTK_ICON_SIZE_DIALOG);
+		pixbuf = gossip_account_create_pixbuf (account,
+						       GTK_ICON_SIZE_DIALOG);
 		gtk_image_set_from_pixbuf (GTK_IMAGE (dialog->image_type), pixbuf);
 		if (pixbuf) {
 			g_object_unref (pixbuf);
@@ -574,7 +575,7 @@ accounts_dialog_model_pixbuf_data_func (GtkTreeViewColumn    *tree_column,
 			    COL_ACCOUNT_POINTER, &account,
 			    -1);
 
-	pixbuf = gossip_pixbuf_from_account (account, GTK_ICON_SIZE_BUTTON);
+	pixbuf = gossip_account_create_pixbuf (account, GTK_ICON_SIZE_BUTTON);
 
 	if (pixbuf) {
 		if ((!is_connecting && !is_connected) ||

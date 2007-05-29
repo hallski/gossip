@@ -216,7 +216,9 @@ log_window_find_pixbuf_data_func (GtkCellLayout   *cell_layout,
 
 	session = gossip_app_get_session ();
 	online = gossip_session_is_connected (session, account);
-	pixbuf = gossip_pixbuf_from_account_status (account, GTK_ICON_SIZE_MENU, online);
+	pixbuf = gossip_account_status_create_pixbuf (account, 
+						      GTK_ICON_SIZE_MENU,
+						      online);
 
 	g_object_set (cell, "pixbuf", pixbuf, NULL);
 	g_object_set (cell, "visible", TRUE, NULL);

@@ -1,5 +1,16 @@
 2007-05-29  Mikael Hallendal  <micke@imendio.com>
 
+	* libgossip/gossip-account.[ch]:
+	(gossip_account_type_create_pixbuf): 
+	(gossip_account_create_pixbuf):
+	(gossip_account_status_create_pixbuf):
+	- Moved from gossip-ui-utils.
+	* src/*.c: Work with the moved functions.
+	* src/gossip-ui-utils.[ch] (gossip_pixbuf_from_account_error):
+	- Removed as it's unused.
+
+2007-05-29  Mikael Hallendal  <micke@imendio.com>
+
 	* libgossip/gossip-stock.[ch] (gossip_stock_create_pixbuf): 
 	- Moved from gossip-ui-utils.
 	* src/*.c: Make adjustments for the moved code.

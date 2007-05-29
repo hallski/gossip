@@ -333,9 +333,9 @@ account_chooser_account_add_foreach (GossipAccount        *account,
 	store = GTK_LIST_STORE (gtk_combo_box_get_model (combobox));
 
 	is_connected = gossip_session_is_connected (priv->session, account);
-	pixbuf = gossip_pixbuf_from_account_status (account,
-						    GTK_ICON_SIZE_MENU,
-						    is_connected);
+	pixbuf = gossip_account_status_create_pixbuf (account,
+						      GTK_ICON_SIZE_MENU,
+						      is_connected);
 
 	if (!priv->can_select_all && !is_connected) {
 		is_enabled = FALSE;
@@ -472,9 +472,9 @@ account_chooser_account_update_foreach (GtkTreeModel          *model,
 
 		is_connected = gossip_session_is_connected (priv->session,
 							    data->account);
-		pixbuf = gossip_pixbuf_from_account_status (data->account,
-							    GTK_ICON_SIZE_MENU,
-							    is_connected);
+		pixbuf = gossip_account_status_create_pixbuf (data->account,
+							      GTK_ICON_SIZE_MENU,
+							      is_connected);
 
 		if (!priv->can_select_all && !is_connected) {
 			is_enabled = FALSE;
