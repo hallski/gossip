@@ -221,6 +221,8 @@ avatar_create_pixbuf (GossipAvatar *avatar, gint size)
 GdkPixbuf *
 gossip_avatar_get_pixbuf (GossipAvatar *avatar)
 {
+	g_return_val_if_fail (avatar != NULL, NULL);
+
 	if (!avatar->pixbuf) {
 		avatar->pixbuf = avatar_create_pixbuf (avatar, AVATAR_SIZE);
 	}

@@ -217,7 +217,7 @@ notify_contact_online (GossipContact *contact)
 			       &show_avatars);
 
 	if (show_avatars) {
-		pixbuf = gossip_avatar_get_pixbuf (gossip_contact_get_avatar (contact));
+		pixbuf = gossip_contact_get_avatar_pixbuf (contact);
 	}
 
 	if (pixbuf) {
@@ -322,7 +322,7 @@ notify_subscription_request_show (GossipContact *contact)
 			      &show_avatars);
 
 	if (show_avatars) {
-		pixbuf = gossip_avatar_get_pixbuf (gossip_contact_get_avatar (contact));
+		pixbuf = gossip_contact_get_avatar_pixbuf (contact);
 	}
 
 	if (pixbuf) {
