@@ -1,5 +1,9 @@
 2007-05-29  Martyn Russell  <martyn@imendio.com>
 
+	* Release 0.25.
+
+2007-05-29  Martyn Russell  <martyn@imendio.com>
+
 	* configure.ac: Added GTK+ dep for Telepathy so it builds.
 
 2007-05-29  Mikael Hallendal  <micke@imendio.com>
