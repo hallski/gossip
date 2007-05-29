@@ -365,7 +365,45 @@ gossip_vcard_get_avatar (GossipVCard *vcard)
 	return priv->avatar;
 }
 
+GdkPixbuf *
+gossip_vcard_create_avatar_pixbuf (GossipVCard *vcard)
+{
+	GossipVCardPriv *priv;
+	GdkPixbuf       *pixbuf;
+	GdkPixbufLoader *loader;
+	GossipAvatar    *avatar;
+	GError          *error = NULL;
 
+	g_return_val_if_fail (GOSSIP_IS_VCARD (vcard), NULL);
+
+	priv = GOSSIP_VCARD_GET_PRIV (vcard);
+
+
+	avatar = priv->avatar;
+	if (!avatar) {
+		return NULL;
+	}
+
+	loader = gdk_pixbuf_loader_new ();
+
+	if (!gdk_pixbuf_loader_write (loader, avatar->data, avatar->len,
+				      &error)) {
+		g_warning ("Couldn't write avatar image:%p with "
+			   "length:%" G_GSIZE_FORMAT " to pixbuf loader: %s",
+			   avatar->data, avatar->len, error->message);
+		g_error_free (error);
+		return NULL;
+	}
+
+	gdk_pixbuf_loader_close (loader, NULL);
+
+	pixbuf = gdk_pixbuf_loader_get_pixbuf (loader);
+
+	g_object_ref (pixbuf);
+	g_object_unref (loader);
+
+	return pixbuf;
+}
 
 void
 gossip_vcard_set_name (GossipVCard *vcard,

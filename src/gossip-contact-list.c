@@ -874,7 +874,10 @@ contact_list_contact_update (GossipContactList *list,
 	pixbuf_presence = gossip_pixbuf_for_contact (contact);
 	pixbuf_composing = gossip_pixbuf_from_stock (GOSSIP_STOCK_TYPING,
 						     GTK_ICON_SIZE_MENU);
-	pixbuf_avatar = gossip_pixbuf_avatar_from_contact_scaled (contact, 32, 32);
+	pixbuf_avatar = gossip_contact_get_avatar_pixbuf (contact);
+	if (pixbuf_avatar) {
+		g_object_ref (pixbuf_avatar);
+	}
 
 	pixbuf = pixbuf_presence;
 
@@ -1361,7 +1364,10 @@ contact_list_add_contact (GossipContactList *list,
 		gboolean   show_avatar = FALSE;
 
 		pixbuf_status = gossip_pixbuf_for_contact (contact);
-		pixbuf_avatar = gossip_pixbuf_avatar_from_contact_scaled (contact, 32, 32);
+		pixbuf_avatar = gossip_contact_get_avatar_pixbuf (contact);
+		if (pixbuf_avatar) {
+			g_object_ref (pixbuf_avatar);
+		}
 
 		if (priv->show_avatars && !priv->is_compact) {
 			show_avatar = TRUE;
@@ -1421,7 +1427,10 @@ contact_list_add_contact (GossipContactList *list,
 		}
 
 		pixbuf_status = gossip_pixbuf_for_contact (contact);
-		pixbuf_avatar = gossip_pixbuf_avatar_from_contact_scaled (contact, 32, 32);
+		pixbuf_avatar = gossip_contact_get_avatar_pixbuf (contact);
+		if (pixbuf_avatar) {
+			g_object_ref (pixbuf_avatar);
+		}
 
 		contact_list_get_group (list, name, &iter_group, &iter_separator, &created);
 

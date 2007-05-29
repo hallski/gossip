@@ -439,6 +439,22 @@ gossip_contact_get_avatar (GossipContact *contact)
 	return priv->avatar;
 }
 
+GdkPixbuf *
+gossip_contact_get_avatar_pixbuf (GossipContact *contact)
+{
+	GossipContactPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
+
+	priv = GET_PRIV (contact);
+
+	if (!priv->avatar) {
+		return NULL;
+	}
+
+	return gossip_avatar_get_pixbuf (priv->avatar);
+}
+
 GossipAccount *
 gossip_contact_get_account (GossipContact *contact)
 {

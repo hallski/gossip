@@ -22,6 +22,7 @@
 #define __GOSSIP_CONTACT_H__
 
 #include <glib-object.h>
+#include <gdk-pixbuf/gdk-pixbuf.h>
 
 #include "gossip-account.h"
 #include "gossip-avatar.h"
@@ -76,6 +77,7 @@ GossipContactType  gossip_contact_get_type                  (GossipContact      
 const gchar *      gossip_contact_get_id                    (GossipContact      *contact);
 const gchar *      gossip_contact_get_name                  (GossipContact      *contact);
 GossipAvatar *     gossip_contact_get_avatar                (GossipContact      *contact);
+GdkPixbuf *        gossip_contact_get_avatar_pixbuf         (GossipContact      *contact);
 GossipAccount *    gossip_contact_get_account               (GossipContact      *contact);
 void               gossip_contact_add_presence              (GossipContact      *contact,
 							     GossipPresence     *presence);

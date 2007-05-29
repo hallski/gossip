@@ -826,10 +826,9 @@ private_chat_own_avatar_notify_cb (GossipContact     *contact,
 		g_object_unref (priv->own_avatar);
 	}
 
-	pixbuf = gossip_pixbuf_avatar_from_contact_scaled (priv->own_contact, 32, 32);
+	pixbuf = gossip_contact_get_avatar_pixbuf (priv->own_contact);
 	if (pixbuf) {
 		priv->own_avatar = private_chat_pad_to_size (pixbuf, 32, 32, 6);
-		g_object_unref (pixbuf);
 	} else {
 		priv->own_avatar = NULL;
 	}
@@ -849,10 +848,9 @@ private_chat_other_avatar_notify_cb (GossipContact     *contact,
 		g_object_unref (priv->other_avatar);
 	}
 
-	pixbuf = gossip_pixbuf_avatar_from_contact_scaled (priv->contact, 32, 32);
+	pixbuf = gossip_contact_get_avatar_pixbuf (priv->contact);
 	if (pixbuf) {
 		priv->other_avatar = private_chat_pad_to_size (pixbuf, 32, 32, 6);
-		g_object_unref (pixbuf);
 	} else {
 		priv->other_avatar = NULL;
 	}

@@ -217,10 +217,12 @@ notify_contact_online (GossipContact *contact)
 			       &show_avatars);
 
 	if (show_avatars) {
-		pixbuf = gossip_pixbuf_avatar_from_contact_scaled (contact, 32, 32);
+		pixbuf = gossip_avatar_get_pixbuf (gossip_contact_get_avatar (contact));
 	}
 
-	if (!pixbuf) {
+	if (pixbuf) {
+		g_object_ref (pixbuf);
+	} else {
 		/* Fall back to presence state */
 		pixbuf = gossip_pixbuf_for_presence (presence);
 	}
@@ -320,10 +322,12 @@ notify_subscription_request_show (GossipContact *contact)
 			      &show_avatars);
 
 	if (show_avatars) {
-		pixbuf = gossip_pixbuf_avatar_from_contact_scaled (contact, 32, 32);
+		pixbuf = gossip_avatar_get_pixbuf (gossip_contact_get_avatar (contact));
 	}
 
-	if (!pixbuf) {
+	if (pixbuf) {
+		g_object_ref (pixbuf);
+	} else {
 		/* Fall back to presence state */
 		pixbuf = gossip_pixbuf_from_stock (GTK_STOCK_DIALOG_QUESTION,
 						   GTK_ICON_SIZE_MENU);
@@ -484,10 +488,12 @@ notify_new_message (GossipEventManager *event_manager,
 			       &show_avatars);
 
 	if (show_avatars) {
-		pixbuf = gossip_pixbuf_avatar_from_contact_scaled (contact, 32, 32);
+		pixbuf = gossip_contact_get_avatar_pixbuf (contact);
 	}
 
-	if (!pixbuf) {
+	if (pixbuf) {
+		g_object_ref (pixbuf);
+	} else {
 		/* Fall back to message icon */
 		pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE, GTK_ICON_SIZE_MENU);
 	}

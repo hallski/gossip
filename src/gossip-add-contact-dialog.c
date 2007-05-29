@@ -157,7 +157,7 @@ add_contact_dialog_vcard_cb (GossipResult            result,
 		}
 		
 		/* Avatar */
-		pixbuf = gossip_pixbuf_avatar_from_vcard (vcard);
+		pixbuf = gossip_avatar_create_pixbuf_with_size (gossip_vcard_get_avatar (vcard), 48);
 		if (pixbuf != NULL) {
 			gossip_avatar_image_set_pixbuf (GOSSIP_AVATAR_IMAGE (dialog->avatar_image), 
 							pixbuf);
