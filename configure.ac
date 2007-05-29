@@ -147,6 +147,7 @@ if test "x$enable_telepathy" != "xno" -a "x$have_dbus" = "xyes"; then
    [
       glib-2.0 >= $GLIB_REQUIRED
       gobject-2.0
+      gtk+-2.0 >= $GTK_REQUIRED
       gconf-2.0 >= $GCONF_REQUIRED
       gnome-vfs-2.0 >= $LIBGNOMEVFS_REQUIRED
       libxml-2.0 >= $LIBXML_REQUIRED
