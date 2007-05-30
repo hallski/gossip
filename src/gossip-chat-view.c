@@ -16,10 +16,6 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- * 
- * Authors: Mikael Hallendal <micke@imendio.com>
- *          Richard Hult <richard@imendio.com>
- *          Martyn Russell <martyn@imendio.com>
  */
 
 #include "config.h"
@@ -48,10 +44,11 @@
 #include <libgossip/gossip-conf.h>
 
 #include "gossip-app.h"
-#include "gossip-chat-view.h"
 #include "gossip-preferences.h"
 #include "gossip-theme-manager.h"
+#include "gossip-text-iter.h"
 #include "gossip-ui-utils.h"
+#include "gossip-chat-view.h"
 
 #define DEBUG_DOMAIN "ChatView"
 

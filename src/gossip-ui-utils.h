@@ -49,18 +49,6 @@ GdkPixbuf *gossip_pixbuf_offline                    (void);
 GdkPixbuf *gossip_pixbuf_for_chatroom_status        (GossipChatroom      *chatroom,
 						     GtkIconSize          icon_size);
 
-/* Text view */
-gboolean   gossip_text_iter_forward_search          (const GtkTextIter   *iter,
-						     const gchar         *str,
-						     GtkTextIter         *match_start,
-						     GtkTextIter         *match_end,
-						     const GtkTextIter   *limit);
-gboolean   gossip_text_iter_backward_search         (const GtkTextIter   *iter,
-						     const gchar         *str,
-						     GtkTextIter         *match_start,
-						     GtkTextIter         *match_end,
-						     const GtkTextIter   *limit);
-
 /* Windows */
 gboolean   gossip_window_get_is_visible             (GtkWindow           *window);
 void       gossip_window_present                    (GtkWindow           *window,

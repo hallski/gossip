@@ -1,3 +1,10 @@
+2007-05-30  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-ui-utils.[ch]:
+	* src/gossip-text-iter.[ch]:
+	* src/gossip-chat-view.c:
+	- Moved gossip_text_iter_* to it's own file.
+
 2007-05-29  Mikael Hallendal  <micke@imendio.com>
 
 	* libgossip/gossip-avatar.c (gossip_avatar_get_pixbuf):
