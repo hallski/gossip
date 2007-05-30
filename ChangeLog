@@ -1,3 +1,8 @@
+2007-05-30  Mikael Hallendal  <micke@imendio.com>
+
+	* ui/pixmaps: Reapplied Richards commit to update to the new tangofied
+	icons.
+
 2007-05-30  Martyn Russell  <martyn@imendio.com>
 
 	* configure.ac:
@@ -25,7 +30,7 @@
 2007-05-30  Martyn Russell  <martyn@imendio.com>
 
 	* Release 0.26.
-	
+
 2007-05-30  Martyn Russell  <martyn@imendio.com>
 
 	* configure.ac: Bumped version to 0.26.
@@ -1432,6 +1437,12 @@
 	* ui/pixmaps/gossip-extended-away.png:
 	* ui/svg/gossip-extended-away.png: Updated to a version that is less
 	bright and easier on the eyes.
+
+2007-02-03  Richard Hult  <richard@imendio.com>
+
+	* ui/pixmaps: Remove some old unused images, and add new tangofied
+	icons by Andreas Nilsson. We might need a few more but this is a
+	good start.
 
 2007-02-03  Richard Hult  <richard@imendio.com>
 
