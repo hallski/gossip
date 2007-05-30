@@ -40,6 +40,7 @@
 #include "gossip-chat-invite.h"
 #include "gossip-chat-window.h"
 #include "gossip-contact-info-dialog.h"
+#include "gossip-email.h"
 #include "gossip-glade.h"
 #include "gossip-log-window.h"
 #include "gossip-new-chatroom-dialog.h"
@@ -78,6 +79,7 @@ struct _GossipChatWindowPriv {
 	GtkWidget   *menu_conv_separator;
 	GtkWidget   *menu_conv_add_contact;
 	GtkWidget   *menu_conv_info;
+	GtkWidget   *menu_conv_email;
 	GtkWidget   *menu_conv_close;
 
 	GtkWidget   *menu_room;
@@ -131,6 +133,8 @@ static void       chat_window_conv_activate_cb          (GtkWidget             *
 static void       chat_window_clear_activate_cb         (GtkWidget             *menuitem,
 							 GossipChatWindow      *window);
 static void       chat_window_info_activate_cb          (GtkWidget             *menuitem,
+							 GossipChatWindow      *window);
+static void       chat_window_email_activate_cb         (GtkWidget             *menuitem,
 							 GossipChatWindow      *window);
 static void       chat_window_add_contact_activate_cb   (GtkWidget             *menuitem,
 							 GossipChatWindow      *window);
@@ -290,6 +294,7 @@ gossip_chat_window_init (GossipChatWindow *window)
 				       "menu_conv_separator", &priv->menu_conv_separator,
 				       "menu_conv_add_contact", &priv->menu_conv_add_contact,
 				       "menu_conv_info", &priv->menu_conv_info,
+				       "menu_conv_email", &priv->menu_conv_email,
 				       "menu_conv_close", &priv->menu_conv_close,
 				       "menu_room", &priv->menu_room,
 				       "menu_room_set_topic", &priv->menu_room_set_topic,
@@ -315,6 +320,7 @@ gossip_chat_window_init (GossipChatWindow *window)
 			      "menu_conv_log", "activate", chat_window_log_activate_cb,
 			      "menu_conv_add_contact", "activate", chat_window_add_contact_activate_cb,
 			      "menu_conv_info", "activate", chat_window_info_activate_cb,
+			      "menu_conv_email", "activate", chat_window_email_activate_cb,
 			      "menu_conv_close", "activate", chat_window_close_activate_cb,
 			      "menu_room_set_topic", "activate", chat_window_room_set_topic_activate_cb,
 			      "menu_room_join_new", "activate", chat_window_room_join_new_activate_cb,
@@ -977,6 +983,19 @@ chat_window_info_activate_cb (GtkWidget        *menuitem,
 					 GTK_WINDOW (priv->dialog));
 }
 
+static void
+chat_window_email_activate_cb (GtkWidget *menuitem, GossipChatWindow *window)
+{
+	GossipChatWindowPriv *priv;
+	GossipContact        *contact;
+
+	priv = GET_PRIV (window);
+
+	contact = gossip_chat_get_contact (priv->current_chat);
+
+	gossip_email_open (contact);
+}
+
 static gboolean
 chat_window_save_geometry_timeout_cb (GossipChatWindow *window)
 {
@@ -1039,12 +1058,17 @@ chat_window_conv_activate_cb (GtkWidget        *menuitem,
 		if (chatroom) {
 			log_exists = gossip_log_exists_for_chatroom (chatroom);
 		}
+
+		gtk_widget_hide (priv->menu_conv_email);
 	} else {
 		GossipContact *contact;
 
 		contact = gossip_chat_get_contact (priv->current_chat);
 		if (contact) {
 			log_exists = gossip_log_exists_for_contact (contact);
+			gtk_widget_show (priv->menu_conv_email);
+			gtk_widget_set_sensitive (priv->menu_conv_email, 
+						  gossip_email_available (contact));
 		}
 	}
 

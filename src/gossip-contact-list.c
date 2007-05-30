@@ -43,6 +43,7 @@
 #include "gossip-contact-info-dialog.h"
 #include "gossip-contact-list.h"
 #include "gossip-edit-contact-dialog.h"
+#include "gossip-email.h"
 #include "gossip-ft-window.h"
 #include "gossip-log-window.h"
 #include "gossip-marshal.h"
@@ -234,7 +235,8 @@ static void     contact_list_expander_cell_data_func         (GtkTreeViewColumn 
 							      GossipContactList      *list);
 static GtkWidget *contact_list_get_contact_menu              (GossipContactList      *list,
 							      gboolean                can_send_file,
-							      gboolean                can_show_log);
+							      gboolean                can_show_log,
+							      gboolean                can_email);
 static gboolean contact_list_button_press_event_cb           (GossipContactList      *list,
 							      GdkEventButton         *event,
 							      gpointer                user_data);
@@ -357,6 +359,10 @@ static const GtkActionEntry entries[] = {
 	  N_("_Send File..."), NULL, N_("Send a file"),
 	  G_CALLBACK (contact_list_action_cb)
 	},
+	{ "Email", NULL,
+	  N_("E_mail..."), NULL, N_("Email contact"),
+	  G_CALLBACK (contact_list_action_cb)
+	},
 	{ "Log", GTK_STOCK_JUSTIFY_LEFT,
 	  N_("_View Previous Conversations"), NULL, N_("View previous conversations with this contact"),
 	  G_CALLBACK (contact_list_action_cb)
@@ -371,6 +377,7 @@ static const gchar *ui_info =
 	"    <menuitem action='Chat'/>"
 	"    <menuitem action='Log'/>"
 	"    <menuitem action='SendFile'/>"
+	"    <menuitem action='Email'/>"
 	"    <separator/>"
 	"    <menuitem action='Invite'/>"
 	"    <separator/>"
@@ -2264,7 +2271,8 @@ contact_list_expander_cell_data_func (GtkTreeViewColumn *column,
 static GtkWidget *
 contact_list_get_contact_menu (GossipContactList *list,
 			       gboolean           can_send_file,
-			       gboolean           can_show_log)
+			       gboolean           can_show_log,
+			       gboolean           can_email)
 {
 	GossipContactListPriv *priv;
 	GtkAction             *action;
@@ -2279,6 +2287,9 @@ contact_list_get_contact_menu (GossipContactList *list,
 	/* FIXME: disable file transfer until finished. */
 	action = gtk_ui_manager_get_action (priv->ui, "/Contact/SendFile");
 	gtk_action_set_visible (action, can_send_file);
+
+	action = gtk_ui_manager_get_action (priv->ui, "/Contact/Email");
+	gtk_action_set_sensitive (action, can_email);
 
 	widget = gtk_ui_manager_get_widget (priv->ui, "/Contact");
 
@@ -2304,19 +2315,22 @@ GtkWidget *
 gossip_contact_list_get_contact_menu (GossipContactList *list,
 				      GossipContact     *contact)
 {
-	GtkWidget *menu;
-	gboolean   can_show_log;
-	gboolean   can_send_file;
+	GtkWidget   *menu;
+	gboolean     can_show_log;
+	gboolean     can_send_file;
+	gboolean     can_email;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT_LIST (list), NULL);
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
 
 	can_show_log = gossip_log_exists_for_contact (contact);
 	can_send_file = FALSE;
+	can_email = gossip_email_available (contact);
 
 	menu = contact_list_get_contact_menu (list,
 					      can_send_file,
-					      can_show_log);
+					      can_show_log,
+					      can_email);
 	return menu;
 }
 
@@ -2832,6 +2846,18 @@ contact_list_action_cb (GtkAction         *action,
 		contact = gossip_contact_list_get_selected (list);
 		if (contact) {
 			gossip_log_window_show (contact, NULL);
+			g_object_unref (contact);
+		}
+
+		return;
+	}
+
+	if (strcmp (name, "Email") == 0) {
+		GossipContact *contact;
+
+		contact = gossip_contact_list_get_selected (list);
+		if (contact) {
+			gossip_email_open (contact);
 			g_object_unref (contact);
 		}
 

@@ -65,6 +65,7 @@ gossip_SOURCES = 				                        	\
 	gossip-dummy.c                     gossip-dummy.h                  \
 	gossip-edit-chatroom-dialog.c      gossip-edit-chatroom-dialog.h   \
 	gossip-edit-contact-dialog.c       gossip-edit-contact-dialog.h	   \
+	gossip-email.c                     gossip-email.h                  \
 	gossip-self-presence.c             gossip-self-presence.h          \
 	gossip-ft-window.c		   gossip-ft-window.h		   \
 	gossip-geometry.c		   gossip-geometry.h		   \

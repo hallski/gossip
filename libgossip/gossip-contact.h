@@ -27,6 +27,7 @@
 #include "gossip-account.h"
 #include "gossip-avatar.h"
 #include "gossip-presence.h"
+#include "gossip-vcard.h"
 
 G_BEGIN_DECLS
 
@@ -79,6 +80,7 @@ const gchar *      gossip_contact_get_name                  (GossipContact      
 GossipAvatar *     gossip_contact_get_avatar                (GossipContact      *contact);
 GdkPixbuf *        gossip_contact_get_avatar_pixbuf         (GossipContact      *contact);
 GossipAccount *    gossip_contact_get_account               (GossipContact      *contact);
+GossipVCard *      gossip_contact_get_vcard                 (GossipContact      *contact);
 void               gossip_contact_add_presence              (GossipContact      *contact,
 							     GossipPresence     *presence);
 void               gossip_contact_remove_presence           (GossipContact      *contact,
@@ -97,6 +99,8 @@ void               gossip_contact_set_avatar                (GossipContact      
 							     GossipAvatar       *avatar);
 void               gossip_contact_set_account               (GossipContact      *contact,
 							     GossipAccount      *account);
+void               gossip_contact_set_vcard                 (GossipContact      *contact,
+							     GossipVCard        *vcard);
 void               gossip_contact_set_groups                (GossipContact      *contact,
 							     GList              *categories);
 void               gossip_contact_set_subscription          (GossipContact      *contact,

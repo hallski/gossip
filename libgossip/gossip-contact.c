@@ -16,9 +16,6 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * Authors: Mikael Hallendal <micke@imendio.com>
- *          Martyn Russell <martyn@imendio.com>
  */
 
 #include "config.h"
@@ -49,6 +46,8 @@ struct _GossipContactPriv {
 	GossipSubscription  subscription;
 	GossipAvatar       *avatar;
 	GossipAccount      *account;
+
+	GossipVCard        *vcard;
 };
 
 static void contact_class_init    (GossipContactClass *class);
@@ -76,7 +75,8 @@ enum {
 	PROP_GROUPS,
 	PROP_SUBSCRIPTION,
 	PROP_AVATAR,
-	PROP_ACCOUNT
+	PROP_ACCOUNT,
+	PROP_VCARD
 };
 
 static gpointer parent_class = NULL;
@@ -184,6 +184,13 @@ contact_class_init (GossipContactClass *class)
 							      "The account associated with the contact",
 							      GOSSIP_TYPE_ACCOUNT,
 							      G_PARAM_READWRITE));
+	g_object_class_install_property (object_class,
+					 PROP_VCARD,
+					 g_param_spec_object ("vcard",
+							      "Contact VCard",
+							      "The vcard for contact",
+							      GOSSIP_TYPE_VCARD,
+							      G_PARAM_READWRITE));
 
 	g_type_class_add_private (object_class, sizeof (GossipContactPriv));
 }
@@ -196,12 +203,6 @@ contact_init (GossipContact *contact)
 	priv = GET_PRIV (contact);
 
 	priv->type        = GOSSIP_CONTACT_TYPE_TEMPORARY;
-	priv->name        = NULL;
-	priv->id          = NULL;
-	priv->presences   = NULL;
-	priv->account     = NULL;
-	priv->groups      = NULL;
-	priv->avatar      = NULL;
 }
 
 static void
@@ -230,6 +231,10 @@ contact_finalize (GObject *object)
 
 	if (priv->account) {
 		g_object_unref (priv->account);
+	}
+
+	if (priv->vcard) {
+		g_object_unref (priv->vcard);
 	}
 
 	(G_OBJECT_CLASS (parent_class)->finalize) (object);
@@ -271,6 +276,9 @@ contact_get_property (GObject    *object,
 		break;
 	case PROP_ACCOUNT:
 		g_value_set_object (value, priv->account);
+		break;
+	case PROP_VCARD:
+		g_value_set_object (value, priv->vcard);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
@@ -320,6 +328,10 @@ contact_set_property (GObject      *object,
 	case PROP_ACCOUNT:
 		gossip_contact_set_account (GOSSIP_CONTACT (object),
 					    GOSSIP_ACCOUNT (g_value_get_object (value)));
+		break;
+	case PROP_VCARD:
+		gossip_contact_set_vcard (GOSSIP_CONTACT (object),
+					  GOSSIP_VCARD (g_value_get_object (value)));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
@@ -465,6 +477,18 @@ gossip_contact_get_account (GossipContact *contact)
 	priv = GET_PRIV (contact);
 
 	return priv->account;
+}
+
+GossipVCard *
+gossip_contact_get_vcard (GossipContact *contact)
+{
+	GossipContactPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
+
+	priv = GET_PRIV (contact);
+
+	return priv->vcard;
 }
 
 GossipPresence *
@@ -655,6 +679,25 @@ gossip_contact_set_account (GossipContact *contact,
 	}
 
 	g_object_notify (G_OBJECT (contact), "account");
+}
+
+void 
+gossip_contact_set_vcard (GossipContact *contact, GossipVCard *vcard)
+{
+	GossipContactPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
+	g_return_if_fail (GOSSIP_IS_VCARD (vcard));
+
+	priv = GET_PRIV (contact);
+
+	if (priv->vcard) {
+		g_object_unref (priv->vcard);
+	}
+
+	priv->vcard = g_object_ref (vcard);
+
+	g_object_notify (G_OBJECT (contact), "vcard");
 }
 
 void

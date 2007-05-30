@@ -2234,6 +2234,7 @@ jabber_contact_is_avatar_latest_cb (GossipResult  result,
 
 		avatar = gossip_vcard_get_avatar (vcard);
 		gossip_contact_set_avatar (data->contact, avatar);
+		gossip_contact_set_vcard (data->contact, vcard);
 	}
 
 	jabber_data_free (data);
@@ -2293,6 +2294,7 @@ jabber_contact_vcard_cb (GossipResult  result,
 
 		avatar = gossip_vcard_get_avatar (vcard);
 		gossip_contact_set_avatar (data->contact, avatar);
+		gossip_contact_set_vcard (data->contact, vcard);
 
 		name = gossip_jabber_get_name_to_use
 			(gossip_contact_get_id (data->contact),

@@ -1,5 +1,21 @@
 2007-05-30  Mikael Hallendal  <micke@imendio.com>
 
+	* libgossip/gossip-contact.[ch] (gossip_contact_[get|set]_vcard):
+	- Added to store the vcard so that we don't need to fetch it every
+	time.
+	* src/gossip-email.[ch]: Added, checks for email capability of a
+	specific contact as well as makes it possible to open an email to it
+	if it does.
+	* src/gossip-chat-window.c: Added support for emailing a contact. 
+	* src/gossip-contact-list.c: Added support for emailing a contact. 
+	* ui/chat.glade: Added Email-menuitem to chat window.
+	* protocols/jabber/gossip-jabber.c
+	(jabber_contact_is_avatar_latest_cb, jabber_contact_vcard_cb): 
+	- Call gossip_contact_set_vcard to update the vcard.
+	- Fixes bug #442310.
+
+2007-05-30  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-galago.c (galago_get_account): Update call to get the
 	account parameter. Fixes #442190 (Aredridel).
 
