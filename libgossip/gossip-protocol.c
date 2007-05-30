@@ -213,11 +213,6 @@ gossip_protocol_new_from_account_type (GossipAccountType type)
 
 	if (type == GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY) {
 		protocol = g_object_new (GOSSIP_TYPE_JABBER, NULL);
-#ifdef HAVE_TELEPATHY
-	} else {
-
-		protocol = g_object_new (GOSSIP_TYPE_TELEPATHY, NULL);
-#endif
 	}
 
 	return protocol;

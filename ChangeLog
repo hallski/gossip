@@ -1,5 +1,10 @@
 2007-05-31  Mikael Hallendal  <micke@imendio.com>
 
+	* libgossip/gossip-protocol.c (gossip_protocol_new_from_account_type):
+	- Only support jabber.
+
+2007-05-31  Mikael Hallendal  <micke@imendio.com>
+
 	* libgossip/gossip-account-manager.c: Removed code included if built 
 	against telepathy.
 
