@@ -333,8 +333,6 @@ AC_OUTPUT([
   libgossip/Makefile
   src/Makefile
   src/sounds/Makefile
-  protocols/Makefile
-  protocols/jabber/Makefile
   po/Makefile.in
   help/Makefile
   peekaboo/Makefile

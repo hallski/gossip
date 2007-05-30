@@ -1,17 +1,14 @@
-jabber_cflags = -I$(top_srcdir)/protocols/jabber
-jabber_libs = $(top_builddir)/protocols/jabber/libgossip-jabber.la
-
 AM_CPPFLAGS =                                           \
 	-I.                                             \
 	-I$(top_srcdir)                                 \
 	-DDATADIR=\""$(datadir)"\"              	\
 	-DLOCALEDIR=\""$(datadir)/locale"\"		\
-	$(jabber_cflags)				\
 	$(LIBGOSSIP_CFLAGS) 				\
+	$(GOSSIP_JABBER_CFLAGS)                         \
 	$(WARN_CFLAGS) 					\
 	$(BACKEND_CFLAGS)
 
-noinst_LTLIBRARIES = libgossip.la
+noinst_LTLIBRARIES = libgossip-jabber.la libgossip.la
 
 if HAVE_GNOME
 backend_impl = 						\
@@ -80,9 +77,34 @@ libgossip_la_SOURCES =             			\
 
 libgossip_la_LIBADD =              			\
 	$(LIBGOSSIP_LIBS)          			\
-	$(jabber_libs)
+	libgossip-jabber.la
 
 libgossipincludedir = $(includedir)/gossip/
+
+libgossip_jabber_la_SOURCES =                   \
+	gossip-jabber.c                         \
+	gossip-jabber.h                         \
+	gossip-jabber-chatrooms.c               \
+	gossip-jabber-chatrooms.h               \
+	gossip-jabber-disco.c			\
+	gossip-jabber-disco.h			\
+	gossip-jabber-ft.c			\
+	gossip-jabber-ft.h			\
+	gossip-jabber-ft-utils.c		\
+	gossip-jabber-ft-utils.h		\
+	gossip-jabber-private.h                 \
+	gossip-jabber-vcard.c			\
+	gossip-jabber-vcard.h			\
+	gossip-jabber-services.c		\
+	gossip-jabber-services.h		\
+	gossip-jabber-utils.c			\
+	gossip-jabber-utils.h			\
+	gossip-jid.c                            \
+	gossip-jid.h				\
+	gossip-sha.c                            \
+	gossip-sha.h
+
+libgossip_jabber_la_LIBADD = $(GOSSIP_JABBER_LIBS)
 
 dtddir = $(datadir)/gossip
 dtd_DATA = 						\

@@ -1,5 +1,14 @@
 2007-05-30  Mikael Hallendal  <micke@imendio.com>
 
+	* configure.ac: Removed protocols/Makefile and
+	protocols/jabber/Makefile.
+	* Makefile.am: Removed subdir protocols
+	* protocols/jabber/*.[ch]: Moved to libgossip/
+	* libgossip/Makefile.am: Hooked in libgossip-jabber from
+	protocols/jabber.
+
+2007-05-30  Mikael Hallendal  <micke@imendio.com>
+
 	* ui/pixmaps: Reapplied Richards commit to update to the new tangofied
 	icons.
 

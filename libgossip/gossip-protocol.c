@@ -24,12 +24,7 @@
 
 #include <glib/gi18n.h>
 
-#ifdef HAVE_TELEPATHY
-#include <protocols/telepathy/gossip-telepathy.h>
-#endif
-
-#include <protocols/jabber/gossip-jabber.h>
-
+#include "gossip-jabber.h"
 #include "gossip-protocol.h"
 
 #include "libgossip-marshal.h"
