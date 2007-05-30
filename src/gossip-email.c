@@ -34,10 +34,6 @@ gossip_email_available (GossipContact *contact)
 
 	vcard = gossip_contact_get_vcard (contact);
 
-	if (!vcard) {
-		g_print ("No vcard\n");
-	}
-
 	if (vcard && gossip_vcard_get_email (vcard)) {
 		return TRUE;
 	}
