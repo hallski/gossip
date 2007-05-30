@@ -29,10 +29,6 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
-#ifdef HAVE_TELEPATHY
-#include <protocols/telepathy/gossip-telepathy-cmgr.h>
-#endif 
-
 #include "gossip-debug.h"
 #include "gossip-protocol.h"
 #include "gossip-account-manager.h"

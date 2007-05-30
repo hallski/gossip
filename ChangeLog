@@ -1,5 +1,15 @@
 2007-05-31  Mikael Hallendal  <micke@imendio.com>
 
+	* libgossip/gossip-account-manager.c: Removed code included if built 
+	against telepathy.
+
+2007-05-31  Mikael Hallendal  <micke@imendio.com>
+
+	* libgossip/gossip-account.c (account_param_name_convert):
+	- Removed this as it's not useful anymore.
+
+2007-05-31  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-email.c (gossip_email_available): Removed a printout that
 	got left in.
 
