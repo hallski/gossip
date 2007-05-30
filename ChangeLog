@@ -1,3 +1,9 @@
+2007-05-30  Martyn Russell  <martyn@imendio.com>
+
+	* configure.ac: Bumped version to 0.26.
+
+	* NEWS: Updated with NEWS for 0.26 release.
+
 2007-05-30  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-contact-list.c: Changed the mnemonic for email action to

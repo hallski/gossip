@@ -1,3 +1,13 @@
+NEW in 0.26:
+==============
+- Fixed #442134, crash in Gossip Instant Messenger: Nothing.  Gossip was ico... (Mikael Hallendal)
+- Fixed #442190, Galago support fails to compile (Aredridel)
+- Fixed #442310, Email integration (Mikael Hallendal)
+
+Translations:
+- Updated sv: Richard Hult
+
+
 NEW in 0.25:
 ==============
 - Fixed #433636, Sending to contacts not in the roster doesn't work (Richard Hult, Martyn Russell)
