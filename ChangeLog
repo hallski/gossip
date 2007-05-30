@@ -1,5 +1,10 @@
 2007-05-30  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-contact-list.c: Changed the mnemonic for email action to
+	l.
+
+2007-05-30  Mikael Hallendal  <micke@imendio.com>
+
 	* libgossip/gossip-contact.[ch] (gossip_contact_[get|set]_vcard):
 	- Added to store the vcard so that we don't need to fetch it every
 	time.

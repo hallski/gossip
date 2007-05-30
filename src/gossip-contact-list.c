@@ -360,7 +360,7 @@ static const GtkActionEntry entries[] = {
 	  G_CALLBACK (contact_list_action_cb)
 	},
 	{ "Email", NULL,
-	  N_("E_mail..."), NULL, N_("Email contact"),
+	  N_("Emai_l..."), NULL, N_("Email contact"),
 	  G_CALLBACK (contact_list_action_cb)
 	},
 	{ "Log", GTK_STOCK_JUSTIFY_LEFT,
