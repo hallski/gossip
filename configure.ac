@@ -134,53 +134,6 @@ AM_CONDITIONAL(HAVE_GALAGO, test x$have_galago = xyes)
 
 
 dnl -----------------------------------------------------------
-dnl Telepathy
-dnl -----------------------------------------------------------
-AC_ARG_ENABLE(telepathy,
-              AS_HELP_STRING([--enable-telepathy=@<:@no/yes@:>@],
-                             [compile with telepathy support]), ,
-              enable_telepathy=no)
-
-if test "x$enable_telepathy" != "xno" -a "x$have_dbus" = "xyes"; then
-   telepathy_pkgconfig_tmp="libtelepathy >= 0.0.51 "
-   PKG_CHECK_MODULES(GOSSIP_TELEPATHY,
-   [
-      glib-2.0 >= $GLIB_REQUIRED
-      gobject-2.0
-      gtk+-2.0 >= $GTK_REQUIRED
-      gconf-2.0 >= $GCONF_REQUIRED
-      gnome-vfs-2.0 >= $LIBGNOMEVFS_REQUIRED
-      libxml-2.0 >= $LIBXML_REQUIRED
-      $dbus_pkgconfig
-      $telepathy_pkgconfig_tmp
-   ], have_telepathy="yes", have_telepathy="no")
-   if test x$have_telepathy = xyes; then
-      AC_DEFINE(HAVE_TELEPATHY, 1, [Telepathy support])
-      telepathy_pkgconfig=$telepathy_pkgconfig_tmp
-   fi
-else
-   have_telepathy=no
-   telepathy_pkgconfig=
-fi
-
-if test "x$enable_telepathy" = "xyes"; then
-   if test "x$have_dbus" != "xyes"; then
-      AC_MSG_ERROR([Telepathy needs D-Bus.])
-   else
-      if test "x$have_telepathy" != "xyes"; then
-         AC_MSG_ERROR([Couldn't find Telepathy])
-      fi
-   fi
-   BUGZILLA_COMPONENT=Telepathy
-else
-   BUGZILLA_COMPONENT=General
-fi
-
-AM_CONDITIONAL(HAVE_TELEPATHY, test x$have_telepathy = xyes)
-AC_SUBST(BUGZILLA_COMPONENT)
-
-
-dnl -----------------------------------------------------------
 dnl Notify
 dnl -----------------------------------------------------------
 AC_ARG_ENABLE(libnotify,
@@ -242,7 +195,6 @@ PKG_CHECK_MODULES(LIBGOSSIP,
    gobject-2.0
    $gconf_pkgconfig
    $dbus_pkgconfig
-   $telepathy_pkgconfig
    $gnome_vfs_pkgconfig
 ])
 
@@ -256,7 +208,6 @@ PKG_CHECK_MODULES(GOSSIP,
    loudmouth-1.0 >= $LOUDMOUTH_REQUIRED
    $iso_codes_pkgconfig
    $dbus_pkgconfig
-   $telepathy_pkgconfig
    $galago_pkgconfig
    $libnotify_pkgconfig
    $libgnomeui_pkgconfig
@@ -384,7 +335,6 @@ AC_OUTPUT([
   src/sounds/Makefile
   protocols/Makefile
   protocols/jabber/Makefile
-  protocols/telepathy/Makefile
   po/Makefile.in
   help/Makefile
   peekaboo/Makefile
@@ -398,14 +348,9 @@ echo "Prefix:    $prefix"
 echo "Backend:   $ac_backend"
 echo "DBUS:      $have_dbus"
 echo "Galago:    $have_galago"
-echo "Telepathy: $have_telepathy"
 echo "ASpell:    $have_aspell"
 echo "Notify:    $have_libnotify"
 echo "XSS:       $have_xss (only with GNOME)"
 echo "Peekaboo:  $have_peekaboo (only with DBUS)"
 echo
-if test "x$have_telepathy" = "xyes"; then
-	echo "WARNING: You are building against Telepathy. "
-	echo "This is unsupported and the support for it was forked into Empathy."
-fi
 

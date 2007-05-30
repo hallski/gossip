@@ -1,9 +1,5 @@
 SUBDIRS = jabber 
 
-if HAVE_TELEPATHY
-SUBDIRS += telepathy
-endif
-
 protocolsdir = $(datadir)/gossip/protocols
 
 protocols_DATA =		\

@@ -1,5 +1,29 @@
 2007-05-30  Martyn Russell  <martyn@imendio.com>
 
+	* configure.ac:
+	* libgossip/Makefile.am:
+	* protocols/Makefile.am:
+	* protocols/telepathy/Makefile.am:
+	* protocols/telepathy/gossip-telepathy-chatrooms.c:
+	* protocols/telepathy/gossip-telepathy-chatrooms.h:
+	* protocols/telepathy/gossip-telepathy-cmgr.c:
+	* protocols/telepathy/gossip-telepathy-cmgr.h:
+	* protocols/telepathy/gossip-telepathy-contact-list.c:
+	* protocols/telepathy/gossip-telepathy-contact-list.h:
+	* protocols/telepathy/gossip-telepathy-contacts.c:
+	* protocols/telepathy/gossip-telepathy-contacts.h:
+	* protocols/telepathy/gossip-telepathy-group.c:
+	* protocols/telepathy/gossip-telepathy-group.h:
+	* protocols/telepathy/gossip-telepathy-marshal-main.c:
+	* protocols/telepathy/gossip-telepathy-message.c:
+	* protocols/telepathy/gossip-telepathy-message.h:
+	* protocols/telepathy/gossip-telepathy-private.h:
+	* protocols/telepathy/gossip-telepathy.c:
+	* protocols/telepathy/gossip-telepathy.h:
+	* src/Makefile.am: Removed Telepathy support.
+
+2007-05-30  Martyn Russell  <martyn@imendio.com>
+
 	* Release 0.26.
 	
 2007-05-30  Martyn Russell  <martyn@imendio.com>
