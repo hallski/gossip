@@ -1,5 +1,16 @@
 2007-05-30  Mikael Hallendal  <micke@imendio.com>
 
+	* libgossip/gossip-account-manager.c (account_manager_parse_account): 
+	- Return if the account type is unknown.
+	* libgossip/gossip-account.c:
+	(gossip_account_type_to_string):
+	(gossip_account_string_to_type): 
+	- Removed unsupported account types. 
+	- Write a warning if the user have unsupported account types in his
+	accounts.xml.
+
+2007-05-30  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-contact-list.c (gossip_contact_list_set_show_avatars):
 	- Use the original model rather than the filtered one when calling
 	foreach.

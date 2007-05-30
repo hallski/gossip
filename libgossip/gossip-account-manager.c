@@ -466,11 +466,10 @@ account_manager_get_all (GossipAccountManager *manager)
 }
 
 static void
-account_manager_parse_account (GossipAccountManager *manager,
-			       xmlNodePtr            node)
+account_manager_parse_account (GossipAccountManager *manager, xmlNodePtr node)
 {
-	GossipProtocol     *protocol;
-	GossipAccount      *account;
+	GossipProtocol    *protocol;
+	GossipAccount     *account;
 	GossipAccountType  account_type;
 	xmlNodePtr         child;
 	gchar             *str;
@@ -483,6 +482,10 @@ account_manager_parse_account (GossipAccountManager *manager,
 	} else {
 		account_type = GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY;
 		need_saving = TRUE;
+	}
+
+	if (account_type == GOSSIP_ACCOUNT_TYPE_UNKNOWN) {
+		return;
 	}
 
 	xmlFree (str);
