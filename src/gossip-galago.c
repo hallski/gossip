@@ -104,7 +104,7 @@ galago_get_account (GossipAccount *account)
 		const gchar         *account_param;
 
 		if (gossip_account_has_param (account, "account")) {
-			gossip_account_param_get (account, 
+			gossip_account_get_param (account, 
 						  "account", &account_param, 
 						  NULL);
 		} else {

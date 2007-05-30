@@ -1,5 +1,10 @@
 2007-05-30  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-galago.c (galago_get_account): Update call to get the
+	account parameter. Fixes #442190 (Aredridel).
+
+2007-05-30  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-ui-utils.[ch]:
 	* src/gossip-text-iter.[ch]:
 	* src/gossip-chat-view.c:
