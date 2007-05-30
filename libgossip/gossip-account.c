@@ -83,8 +83,6 @@ static void           account_param_get_all_foreach (gchar                  *par
 						     GossipAccountParam     *param,
 						     GetParamsData          *data);
 static void           account_param_free            (GossipAccountParam     *param);
-const gchar *         account_param_name_convert    (GossipAccountType       type,
-						     const gchar            *param_name);
 static void           account_set_type              (GossipAccount          *account,
 						     GossipAccountType       type);
 
@@ -289,7 +287,6 @@ account_param_new_valist (GossipAccount *account,
 		GType               g_type;
 		gchar              *error = NULL;
 
-		param_name = account_param_name_convert (account_type, param_name);
 		param = g_hash_table_lookup (priv->parameters, param_name);
 		if (param) {
 			g_warning ("GossipAccount already has a parameter named `%s'", param_name);
@@ -336,7 +333,6 @@ account_param_set_valist (GossipAccount *account,
 		gchar              *error = NULL;
 		GValue              g_value = {0, };
 
-		param_name = account_param_name_convert (account_type, param_name);
 		param = g_hash_table_lookup (priv->parameters, param_name);
 		if (!param) {
 			g_warning ("GossipAccount has no parameter named `%s'", param_name);
@@ -376,7 +372,6 @@ account_param_get_valist (GossipAccount *account,
 		GossipAccountParam *param;
 		gchar              *error = NULL;
 
-		name = account_param_name_convert (account_type, name);
 		param = g_hash_table_lookup (priv->parameters, name);
 		if (!param) {
 			g_warning ("GossipAccount has no parameter named `%s'", name);
@@ -415,17 +410,15 @@ gossip_account_new_param_g_value (GossipAccount           *account,
 	GossipAccountParam *param;
 	GossipAccountPriv  *priv;
 	GossipAccountType   account_type;
-	const gchar        *param_name_converted;
 
 	priv = GET_PRIV (account);
 
 	account_type = gossip_account_get_type (account);
 
-	param_name_converted = account_param_name_convert (account_type, param_name);
-	param = g_hash_table_lookup (priv->parameters, param_name_converted);
+	param = g_hash_table_lookup (priv->parameters, param_name);
 	if (param) {
 		g_warning ("GossipAccount already has a parameter named `%s'", 
-			   param_name_converted);
+			   param_name);
 		return;
 	}
 
@@ -435,7 +428,7 @@ gossip_account_new_param_g_value (GossipAccount           *account,
 	param->flags = flags;
 
 	g_hash_table_insert (priv->parameters,
-			     g_strdup (param_name_converted),
+			     g_strdup (param_name),
 			     param);
 }
 
@@ -468,7 +461,6 @@ gossip_account_set_param_g_value (GossipAccount *account,
 
 	account_type = gossip_account_get_type (account);
 
-	param_name = account_param_name_convert (account_type, param_name);
 	param = g_hash_table_lookup (priv->parameters, param_name);
 	if (!param) {
 		g_warning ("GossipAccount has no parameter named `%s'", param_name);
@@ -509,7 +501,6 @@ gossip_account_get_param_g_value (GossipAccount *account,
 
 	account_type = gossip_account_get_type (account);
 	
-	param_name = account_param_name_convert (account_type, param_name);
 	param = g_hash_table_lookup (priv->parameters, param_name);
 	if (!param) {
 		g_warning ("GossipAccount has no parameter named `%s'", param_name);
@@ -531,7 +522,6 @@ gossip_account_has_param (GossipAccount *account,
 	priv = GET_PRIV (account);
 
 	account_type = gossip_account_get_type (account);
-	param_name = account_param_name_convert (account_type, param_name);
 
 	return g_hash_table_lookup (priv->parameters, param_name) != NULL;
 }
@@ -541,10 +531,7 @@ account_param_get_all_foreach (gchar              *param_name,
 			       GossipAccountParam *param,
 			       GetParamsData      *data)
 {
-	const gchar *final_param_name;
-
-	final_param_name = account_param_name_convert (data->account_type, param_name);
-	data->params = g_list_prepend (data->params, g_strdup (final_param_name));
+	data->params = g_list_prepend (data->params, g_strdup (param_name));
 }
 
 GList *
@@ -588,23 +575,6 @@ account_param_free (GossipAccountParam *param)
 {
 	g_value_unset (&param->g_value);
 	g_slice_free (GossipAccountParam, param);
-}
-
-const gchar *
-account_param_name_convert (GossipAccountType  type,
-			    const gchar       *param_name)
-{
-	if (type == GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY) {
-		return param_name;
-	} 
-
-#ifdef HAVE_TELEPATHY
-	if (strcmp (param_name, "use_ssl") == 0) {
-		return "old-ssl";
-	}
-#endif
-
-	return param_name;
 }
 
 GossipAccountType
