@@ -1183,8 +1183,6 @@ chat_view_append_irc_action (GossipChatView *view,
 {
 	GossipChatViewPriv *priv;
 	const gchar        *name;
-	GtkTextIter         iter;
-	const gchar        *body;
 	gchar              *tmp;
 	const gchar        *tag;
 
@@ -1211,20 +1209,9 @@ chat_view_append_irc_action (GossipChatView *view,
 		chat_view_append_spacing (view);
 	}
 
-	gtk_text_buffer_get_end_iter (priv->buffer, &iter);
-
-	tmp = g_strdup_printf (" * %s ", name);
-	gtk_text_buffer_insert_with_tags_by_name (priv->buffer,
-						  &iter,
-						  tmp,
-						  -1,
-						  "cut",
-						  tag,
-						  NULL);
+	tmp = gossip_message_get_action_string (msg);
+	chat_view_append_text (view, tmp, tag);
 	g_free (tmp);
-
-	body = gossip_message_get_body (msg) + 4;
-	chat_view_append_text (view, body, tag);
 }
 
 static void
@@ -1236,8 +1223,6 @@ chat_view_append_fancy_action (GossipChatView *view,
 	GossipChatViewPriv *priv;
 	GossipContact      *contact;
 	const gchar        *name;
-	const gchar        *body;
-	GtkTextIter         iter;
 	gchar              *tmp;
 	const gchar        *tag;
 	const gchar        *line_tag;
@@ -1263,18 +1248,9 @@ chat_view_append_fancy_action (GossipChatView *view,
 		line_tag = "fancy-line-other";
 	}
 
-	tmp = g_strdup_printf (" * %s ", name);
-	gtk_text_buffer_get_end_iter (priv->buffer, &iter);
-	gtk_text_buffer_insert_with_tags_by_name (priv->buffer,
-						  &iter,
-						  tmp,
-						  -1,
-						  tag,
-						  NULL);
+	tmp = gossip_message_get_action_string (msg);
+	chat_view_append_text (view, tmp, tag);
 	g_free (tmp);
-
-	body = gossip_message_get_body (msg) + 4;
-	chat_view_append_text (view, body, tag);
 }
 
 static void
@@ -1573,7 +1549,7 @@ gossip_chat_view_append_message_from_other (GossipChatView *view,
 	/* Handle action messages (/me) and normal messages, in combination with
 	 * irc style and fancy style.
 	 */
-	if (g_str_has_prefix (body, "/me ")) {
+	if (gossip_message_is_action (msg)) {
 		if (priv->irc_style) {
 			chat_view_append_irc_action (view, msg, contact, FALSE);
 		} else {

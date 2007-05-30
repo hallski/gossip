@@ -469,7 +469,12 @@ notify_new_message (GossipEventManager *event_manager,
 
 	contact = gossip_message_get_sender (message);
 
-	body_copy = g_strdup (gossip_message_get_body (message));
+	if (gossip_message_is_action (message)) {
+		body_copy = gossip_message_get_action_string (message);
+	} else {
+		body_copy = g_strdup (gossip_message_get_body (message));
+	}
+
 	body_stripped = g_strstrip (body_copy);
 
 	len = g_utf8_strlen (body_stripped, -1);

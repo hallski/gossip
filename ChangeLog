@@ -1,3 +1,18 @@
+2007-05-31  Mikael Hallendal  <micke@imendio.com>
+
+	* libgossip/gossip-message.[ch]:
+	(gossip_message_is_action, gossip_message_get_action_string):
+	- Added two functions to check if a message is action (/me) and also
+	to return the string to be put in the chat view (* nick ...).
+	* src/gossip-chat-view.c:
+	(chat_view_append_irc_action):
+	(chat_view_append_fancy_action): Use gossip_message_get_action_string.
+	(gossip_chat_view_append_message_from_other): Use
+	gossip_message_is_action.
+	* src/gossip-notify.c (notify_new_message): Use the new functions in
+	GossipMessage to insert the action string instead of the body in
+	notification popups. Fixes #416912.
+
 2007-05-31  Kristian Rietveld  <kris@gtk.org>
 
 	* src/gossip-account-widget-jabber.c (account_widget_jabber_setup):

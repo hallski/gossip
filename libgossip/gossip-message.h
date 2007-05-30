@@ -87,6 +87,8 @@ void              gossip_message_set_invite              (GossipMessage        *
 							  GossipChatroomInvite *invite);
 void              gossip_message_request_composing       (GossipMessage        *message);
 gboolean          gossip_message_is_requesting_composing (GossipMessage        *message);
+gboolean          gossip_message_is_action               (GossipMessage        *message);
+gchar *           gossip_message_get_action_string       (GossipMessage        *message);
 
 G_END_DECLS
 

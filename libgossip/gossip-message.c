@@ -657,3 +657,36 @@ gossip_message_is_requesting_composing (GossipMessage *message)
 	return priv->request_composing;
 }
 
+/* FIXME: This is possibly not the best place to keep these but it will suffice 
+ *        until we have refactored the src/gossip-chat* code.
+ */
+gboolean
+gossip_message_is_action (GossipMessage *message)
+{
+	GossipMessagePriv *priv;
+	
+	g_return_val_if_fail (GOSSIP_IS_MESSAGE (message), FALSE);
+
+	priv = GET_PRIV (message);
+
+	if (g_str_has_prefix (priv->body, "/me")) {
+		return TRUE;
+	}
+	
+	return FALSE;
+}
+
+gchar *
+gossip_message_get_action_string (GossipMessage *message)
+{
+	GossipMessagePriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_MESSAGE (message), NULL);
+
+	priv = GET_PRIV (message);
+
+	return g_strdup_printf (" * %s %s", 
+				gossip_contact_get_name (priv->sender),
+				priv->body + 4);
+}
+
