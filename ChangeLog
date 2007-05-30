@@ -1,5 +1,12 @@
 2007-05-30  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-contact-list.c (gossip_contact_list_set_show_avatars):
+	- Use the original model rather than the filtered one when calling
+	foreach.
+	- Fixes bug #442423.
+
+2007-05-30  Mikael Hallendal  <micke@imendio.com>
+
 	* configure.ac: Removed protocols/Makefile and
 	protocols/jabber/Makefile.
 	* Makefile.am: Removed subdir protocols

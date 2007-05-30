@@ -3507,7 +3507,7 @@ gossip_contact_list_set_show_avatars (GossipContactList *list,
 
 	priv->show_avatars = show_avatars;
 
-	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
+	model = GTK_TREE_MODEL (priv->store);
 
 	gtk_tree_model_foreach (model,
 				(GtkTreeModelForeachFunc)
