@@ -707,7 +707,7 @@ account_widget_jabber_setup (GossipAccountWidgetJabber *settings)
 	GossipSession      *session;
 	GossipProtocol     *protocol;
 	GossipAccountParam *param;
-	guint16             port;
+	guint               port;
 	gchar              *port_str; 
 	const gchar        *id;
 	const gchar        *resource;

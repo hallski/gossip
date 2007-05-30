@@ -1,3 +1,9 @@
+2007-05-31  Kristian Rietveld  <kris@gtk.org>
+
+	* src/gossip-account-widget-jabber.c (account_widget_jabber_setup):
+	use guint for port instead of guint16; fixes memory overrun and nasty
+	crash.
+
 2007-05-31  Mikael Hallendal  <micke@imendio.com>
 
 	* libgossip/gossip-protocol.c (gossip_protocol_new_from_account_type):
