@@ -1,3 +1,14 @@
+2007-05-31  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-accounts-dialog.c: (accounts_dialog_update_account):
+	* src/gossip-chatrooms-window.c:
+	(chatrooms_window_model_refresh_data):
+	* src/gossip-edit-chatroom-dialog.c:
+	(gossip_edit_chatroom_dialog_show):
+	* src/gossip-new-chatroom-dialog.c:
+	(new_chatroom_dialog_update_widgets): Removed more unused code to
+	deal with multiprotocol handling.
+
 2007-05-31  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-contact-list.c:

@@ -252,33 +252,6 @@ new_chatroom_dialog_update_widgets (GossipNewChatroomDialog *dialog)
 	account = gossip_account_chooser_get_account (account_chooser);
 	account_type = gossip_account_get_type (account);
 
-	switch (account_type) {
-	case GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY:
-	case GOSSIP_ACCOUNT_TYPE_JABBER: 
-		gtk_widget_show (dialog->hbox_server);
-		gtk_widget_show (dialog->hbox_nick);
-
-		gtk_widget_show (dialog->vbox_browse);
-		break;
-
-	case GOSSIP_ACCOUNT_TYPE_MSN:
-		gtk_widget_hide (dialog->hbox_server);
-		gtk_widget_hide (dialog->hbox_nick);
-
-		gtk_widget_hide (dialog->vbox_browse);
-		break;
-
-	case GOSSIP_ACCOUNT_TYPE_IRC:
-		gtk_widget_hide (dialog->hbox_server);
-		gtk_widget_hide (dialog->hbox_nick);
-
-		gtk_widget_hide (dialog->vbox_browse);
-		break;
-
-	default:
-		g_assert_not_reached();
-	}
-
 	new_chatroom_dialog_set_defaults (dialog);
 	new_chatroom_dialog_update_buttons (dialog);
 

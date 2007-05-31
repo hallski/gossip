@@ -374,35 +374,11 @@ chatrooms_window_model_refresh_data (GossipChatroomsWindow *window,
 	manager = gossip_app_get_chatroom_manager ();
 	chatrooms = gossip_chatroom_manager_get_chatrooms (manager, account);
 
-	/* Sort out columns, we only show the server column for
-	 * selected protocol types, such as Jabber. 
-	 */
-	if (account) {
-		GossipAccountType type;
-		
-		type = gossip_account_get_type (account);
-
-		if (type == GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY ||
-		    type == GOSSIP_ACCOUNT_TYPE_JABBER) {
-			column = gtk_tree_view_get_column (view, window->room_column);
-			gtk_tree_view_column_set_visible (column, TRUE);
-
-			column = gtk_tree_view_get_column (view, window->server_column);
-			gtk_tree_view_column_set_visible (column, TRUE);
-		} else {
-			column = gtk_tree_view_get_column (view, window->room_column);
-			gtk_tree_view_column_set_visible (column, FALSE);
-
-			column = gtk_tree_view_get_column (view, window->server_column);
-			gtk_tree_view_column_set_visible (column, FALSE);
-		}
-	} else {
-		column = gtk_tree_view_get_column (view, window->room_column);
-		gtk_tree_view_column_set_visible (column, FALSE);
-
-		column = gtk_tree_view_get_column (view, window->server_column);
-		gtk_tree_view_column_set_visible (column, FALSE);
-	}
+	column = gtk_tree_view_get_column (view, window->room_column);
+	gtk_tree_view_column_set_visible (column, TRUE);
+	
+	column = gtk_tree_view_get_column (view, window->server_column);
+	gtk_tree_view_column_set_visible (column, TRUE);
 
 	/* Clean out the store */
 	gtk_list_store_clear (store);

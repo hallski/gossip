@@ -166,26 +166,6 @@ gossip_edit_chatroom_dialog_show (GtkWindow      *parent,
 	g_object_unref (glade);
 
 	account = gossip_chatroom_get_account (chatroom);
-	switch (gossip_account_get_type (account)) {
-	case GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY:
-	case GOSSIP_ACCOUNT_TYPE_JABBER:
-		gtk_widget_show (label_server);
-		gtk_widget_show (dialog->entry_server);
-		break;
-
-	case GOSSIP_ACCOUNT_TYPE_AIM:
-	case GOSSIP_ACCOUNT_TYPE_ICQ:
-	case GOSSIP_ACCOUNT_TYPE_MSN:
-	case GOSSIP_ACCOUNT_TYPE_YAHOO:
-	case GOSSIP_ACCOUNT_TYPE_IRC:
-	case GOSSIP_ACCOUNT_TYPE_SALUT:
-		gtk_widget_hide (label_server);
-		gtk_widget_hide (dialog->entry_server);
-		break;
-
-	default:
-		break;
-	}
 
 	gtk_entry_set_text (GTK_ENTRY (dialog->entry_name),
 			    gossip_chatroom_get_name (chatroom));
