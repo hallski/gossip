@@ -1,5 +1,17 @@
 2007-05-31  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-chat-view.c (chat_view_maybe_append_fancy_header):
+	- Moved to theme_maybe_append_fancy_header.
+	(gossip_chat_view_append_message_from_self):
+	(gossip_chat_view_append_message_from_other):
+	- Don't call chat_view_maybe_append_fancy_header.
+	(gossip_chat_view_get_last_contact): Added as it's required by the
+	theme.
+	* src/gossip-theme.c (theme_append_fancy_message):
+	- Call theme_maybe_append_fancy_header from here.
+
+2007-05-31  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-chat-view.c:
 	(chat_view_append_irc_message, chat_view_append_fancy_message,
 	chat_view_append_message):
