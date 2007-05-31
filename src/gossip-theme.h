@@ -48,12 +48,12 @@ struct _GossipThemeClass {
 
 GType        gossip_theme_get_type             (void) G_GNUC_CONST;
 
-void         gossip_theme_append_action        (GossipTheme   *theme,
-						GtkTextBuffer *buffer);
-void         gossip_theme_append_text          (GossipTheme   *theme,
-						GtkTextBuffer *buffer,
-						const gchar   *body,
-						const gchar   *tag);
+void         gossip_theme_append_action        (GossipTheme    *theme,
+						GossipChatView *view);
+void         gossip_theme_append_text          (GossipTheme    *theme,
+						GossipChatView *view,
+						const gchar    *body,
+						const gchar    *tag);
 
 /* Refactor-temp functions */
 gboolean     gossip_theme_is_irc_style         (GossipTheme   *theme);

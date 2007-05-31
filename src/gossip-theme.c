@@ -136,7 +136,7 @@ theme_set_property (GObject      *object,
 }
 
 void
-gossip_theme_append_action (GossipTheme *theme, GtkTextBuffer *buffer)
+gossip_theme_append_action (GossipTheme *theme, GossipChatView *view)
 {
 	/* Do something fancy */
 }
@@ -236,12 +236,13 @@ theme_insert_text_with_emoticons (GtkTextBuffer *buf,
 
 
 void
-gossip_theme_append_text (GossipTheme   *theme,
-			  GtkTextBuffer *buffer,
-			  const gchar   *body,
-			  const gchar   *tag)
+gossip_theme_append_text (GossipTheme    *theme,
+			  GossipChatView *view,
+			  const gchar    *body,
+			  const gchar    *tag)
 {
 	GossipThemePriv *priv;
+	GtkTextBuffer   *buffer;
 	GtkTextIter      start_iter, end_iter;
 	GtkTextMark     *mark;
 	GtkTextIter      iter;
@@ -250,6 +251,7 @@ gossip_theme_append_text (GossipTheme   *theme,
 	const gchar     *link_tag;
 
 	priv = GET_PRIV (theme);
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
 
 	if (gossip_theme_is_irc_style (theme)) {
 		link_tag = "irc-link";

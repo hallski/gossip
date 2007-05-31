@@ -1,5 +1,10 @@
 2007-05-31  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-theme.[ch] (gossip_theme_append_*): Take the
+	GossipChatView as an argument instead of GtkTextBuffer.
+
+2007-05-31  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-chat-view.c:
 	(chat_view_append_action): Factored out function that figures out 
 	whether it's an irc action or fancy.
