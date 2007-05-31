@@ -1153,6 +1153,24 @@ gossip_chat_view_new (void)
 	return g_object_new (GOSSIP_TYPE_CHAT_VIEW, NULL);
 }
 
+static void
+chat_view_append_action (GossipChatView *view,
+			 GossipMessage  *msg,
+			 GossipContact  *contact,
+			 gboolean        from_self)
+{
+	GossipChatViewPriv *priv;
+
+	priv = GET_PRIV (view);
+
+	if (gossip_theme_is_irc_style (priv->theme)) {
+		chat_view_append_irc_action (view, msg, contact, from_self);
+	} else {
+		chat_view_append_fancy_action (view, msg, contact, from_self);
+	}
+}
+
+
 /* The name is optional, if NULL, the sender for msg is used. */
 void
 gossip_chat_view_append_message_from_self (GossipChatView *view,
@@ -1188,11 +1206,7 @@ gossip_chat_view_append_message_from_self (GossipChatView *view,
 	 * irc style and fancy style.
 	 */
 	if (gossip_message_is_action (msg)) {
-		if (gossip_theme_is_irc_style (priv->theme)) {
-			chat_view_append_irc_action (view, msg, my_contact, TRUE);
-		} else {
-			chat_view_append_fancy_action (view, msg, my_contact, TRUE);
-		}
+		chat_view_append_action (view, msg, my_contact, TRUE);
 	} else {
 		if (gossip_theme_is_irc_style (priv->theme)) {
 			chat_view_append_irc_message (view, msg, my_contact, TRUE);
@@ -1222,7 +1236,6 @@ gossip_chat_view_append_message_from_other (GossipChatView *view,
 					    GdkPixbuf      *avatar)
 {
 	GossipChatViewPriv *priv;
-	const gchar        *body;
 	gboolean            scroll_down;
 
 	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
@@ -1231,8 +1244,7 @@ gossip_chat_view_append_message_from_other (GossipChatView *view,
 
 	priv = GET_PRIV (view);
 
-	body = gossip_message_get_body (msg);
-	if (!body) {
+	if (!gossip_message_get_body (msg)) {
 		return;
 	}
 
@@ -1251,11 +1263,7 @@ gossip_chat_view_append_message_from_other (GossipChatView *view,
 	 * irc style and fancy style.
 	 */
 	if (gossip_message_is_action (msg)) {
-		if (gossip_theme_is_irc_style (priv->theme)) {
-			chat_view_append_irc_action (view, msg, contact, FALSE);
-		} else {
-			chat_view_append_fancy_action (view, msg, contact, FALSE);
-		}
+		chat_view_append_action (view, msg, contact, FALSE);
 	} else {
 		if (gossip_theme_is_irc_style (priv->theme)) {
 			chat_view_append_irc_message (view, msg, contact, FALSE);
