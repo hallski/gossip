@@ -132,6 +132,11 @@ static void     chat_view_theme_changed_cb           (GossipThemeManager       *
 						      GossipChatView           *view);
 static void     chat_view_maybe_append_date_and_time (GossipChatView           *view,
 						      GossipMessage            *msg);
+static void     chat_view_maybe_append_fancy_header  (GossipChatView           *view,
+						      GossipMessage            *msg,
+						      GossipContact            *my_contact,
+						      gboolean                  from_self,
+						      GdkPixbuf                *avatar);
 
 G_DEFINE_TYPE (GossipChatView, gossip_chat_view, GTK_TYPE_TEXT_VIEW);
 
@@ -710,6 +715,128 @@ chat_view_maybe_append_date_and_time (GossipChatView *view,
 }
 
 static void
+chat_view_maybe_append_fancy_header (GossipChatView *view,
+				     GossipMessage  *msg,
+				     GossipContact  *my_contact,
+				     gboolean        from_self,
+				     GdkPixbuf      *avatar)
+{
+	GossipChatViewPriv *priv;
+	GossipContact      *contact;
+	const gchar        *name;
+	gboolean            header;
+	GtkTextIter         iter;
+	gchar              *tmp;
+	const gchar        *tag;
+	const gchar        *avatar_tag;
+	const gchar        *line_top_tag;
+	const gchar        *line_bottom_tag;
+
+	priv = GET_PRIV (view);
+
+	contact = gossip_message_get_sender (msg);
+
+	gossip_debug (DEBUG_DOMAIN, "Maybe add fancy header");
+
+	if (from_self) {
+		name = gossip_contact_get_name (my_contact);
+
+		tag = "fancy-header-self";
+		line_top_tag = "fancy-line-top-self";
+		line_bottom_tag = "fancy-line-bottom-self";
+	} else {
+		name = gossip_contact_get_name (contact);
+
+		tag = "fancy-header-other";
+		line_top_tag = "fancy-line-top-other";
+		line_bottom_tag = "fancy-line-bottom-other";
+	}
+
+	header = FALSE;
+
+	/* Only insert a header if the previously inserted block is not the same
+	 * as this one. This catches all the different cases:
+	 */
+	if (gossip_chat_view_get_last_block_type (view) != BLOCK_TYPE_SELF &&
+	    gossip_chat_view_get_last_block_type (view) != BLOCK_TYPE_OTHER) {
+		header = TRUE;
+	}
+	else if (from_self &&
+		 gossip_chat_view_get_last_block_type (view) == BLOCK_TYPE_OTHER) {
+		header = TRUE;
+	}
+	else if (!from_self && 
+		 gossip_chat_view_get_last_block_type (view) == BLOCK_TYPE_SELF) {
+		header = TRUE;
+	}
+	else if (!from_self &&
+		 (!priv->last_contact ||
+		  !gossip_contact_equal (contact, priv->last_contact))) {
+		header = TRUE;
+	}
+
+	if (!header) {
+		return;
+	}
+
+	gossip_theme_append_spacing (priv->theme, view);
+
+	gtk_text_buffer_get_end_iter (priv->buffer, &iter);
+	gtk_text_buffer_insert_with_tags_by_name (priv->buffer,
+						  &iter,
+						  "\n",
+						  -1,
+						  line_top_tag,
+						  NULL);
+
+	if (avatar) {
+		GtkTextIter start;
+
+		gtk_text_buffer_get_end_iter (priv->buffer, &iter);
+		gtk_text_buffer_insert_pixbuf (priv->buffer, &iter, avatar);
+
+		gtk_text_buffer_get_end_iter (priv->buffer, &iter);
+		start = iter;
+		gtk_text_iter_backward_char (&start);
+
+		if (from_self) {
+			gtk_text_buffer_apply_tag_by_name (priv->buffer,
+							   "fancy-avatar-self",
+							   &start, &iter);
+			avatar_tag = "fancy-header-self-avatar";
+		} else {
+			gtk_text_buffer_apply_tag_by_name (priv->buffer,
+							   "fancy-avatar-other",
+							   &start, &iter);
+			avatar_tag = "fancy-header-other-avatar";
+		}
+
+	} else {
+		avatar_tag = NULL;
+	}
+
+	tmp = g_strdup_printf ("%s\n", name);
+
+	gtk_text_buffer_get_end_iter (priv->buffer, &iter);
+	gtk_text_buffer_insert_with_tags_by_name (priv->buffer,
+						  &iter,
+						  tmp,
+						  -1,
+						  tag,
+						  avatar_tag,
+						  NULL);
+	g_free (tmp);
+
+	gtk_text_buffer_get_end_iter (priv->buffer, &iter);
+	gtk_text_buffer_insert_with_tags_by_name (priv->buffer,
+						  &iter,
+						  "\n",
+						  -1,
+						  line_bottom_tag,
+						  NULL);
+}
+
+static void
 chat_view_invite_accept_cb (GtkWidget *button,
 			    gpointer   user_data)
 {
@@ -845,6 +972,12 @@ gossip_chat_view_append_message_from_self (GossipChatView *view,
 	chat_view_maybe_trim_buffer (view);
 	chat_view_maybe_append_date_and_time (view, msg);
 
+	if (!gossip_theme_is_irc_style (priv->theme)) {
+		chat_view_maybe_append_fancy_header (view, msg,
+						     my_contact,
+						     TRUE, avatar);
+	}
+
 	/* Handle action messages (/me) and normal messages, in combination with
 	 * irc style and fancy style.
 	 */
@@ -893,6 +1026,12 @@ gossip_chat_view_append_message_from_other (GossipChatView *view,
 
 	chat_view_maybe_trim_buffer (view);
 	chat_view_maybe_append_date_and_time (view, msg);
+
+	if (!gossip_theme_is_irc_style (priv->theme)) {
+		chat_view_maybe_append_fancy_header (view, msg,
+						     contact, FALSE,
+						     avatar);
+	}
 
 	/* Handle action messages (/me) and normal messages, in combination with
 	 * irc style and fancy style.
@@ -1684,18 +1823,6 @@ gossip_chat_view_set_is_group_chat (GossipChatView *view,
 		gossip_theme_manager_apply_saved (gossip_theme_manager_get (),
 						  view);
 	}
-}
-
-GossipContact *
-gossip_chat_view_get_last_contact (GossipChatView *view)
-{
-	GossipChatViewPriv *priv;
-
-	g_return_val_if_fail (GOSSIP_IS_CHAT_VIEW (view), NULL);
-
-	priv = GET_PRIV (view);
-
-	return priv->last_contact;
 }
 
 BlockType

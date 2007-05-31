@@ -106,7 +106,6 @@ void            gossip_chat_view_set_margin                (GossipChatView *view
 							    gint            margin);
 void            gossip_chat_view_set_is_group_chat         (GossipChatView *view,
 							    gboolean        is_group_chat);
-GossipContact * gossip_chat_view_get_last_contact          (GossipChatView *view);
 BlockType       gossip_chat_view_get_last_block_type       (GossipChatView *view);
 void            gossip_chat_view_set_last_block_type       (GossipChatView *view,
 							    BlockType       block_type);
