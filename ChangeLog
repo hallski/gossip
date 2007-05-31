@@ -1,5 +1,14 @@
 2007-05-31  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-chat-view.c:
+	(chat_view_append_irc_action, chat_view_append_fancy_action,
+	chat_view_append_spacing, chat_view_append_action):
+	- Extracted to GossipTheme.
+	* src/gossip-theme.c (gossip_theme_append_action,
+	gossip_theme_append_spacing): Added from GossipChatView.
+
+2007-05-31  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-theme.[ch] (gossip_theme_append_*): Take the
 	GossipChatView as an argument instead of GtkTextBuffer.
 

@@ -132,20 +132,11 @@ static void     chat_view_theme_changed_cb           (GossipThemeManager       *
 						      GossipChatView           *view);
 static void     chat_view_maybe_append_date_and_time (GossipChatView           *view,
 						      GossipMessage            *msg);
-static void     chat_view_append_spacing             (GossipChatView           *view);
 static void     chat_view_maybe_append_fancy_header  (GossipChatView           *view,
 						      GossipMessage            *msg,
 						      GossipContact            *my_contact,
 						      gboolean                  from_self,
 						      GdkPixbuf                *avatar);
-static void     chat_view_append_irc_action          (GossipChatView           *view,
-						      GossipMessage            *msg,
-						      GossipContact            *my_contact,
-						      gboolean                  from_self);
-static void     chat_view_append_fancy_action        (GossipChatView           *view,
-						      GossipMessage            *msg,
-						      GossipContact            *my_contact,
-						      gboolean                  from_self);
 static void     chat_view_append_irc_message         (GossipChatView           *view,
 						      GossipMessage            *msg,
 						      GossipContact            *contact,
@@ -687,7 +678,7 @@ chat_view_maybe_append_date_and_time (GossipChatView *view,
 	}
 
 	if (append_time || append_date) {
-		chat_view_append_spacing (view);
+		gossip_theme_append_spacing (priv->theme, view);
 
 		g_string_append (str, "- ");
 	}
@@ -729,31 +720,6 @@ chat_view_maybe_append_date_and_time (GossipChatView *view,
 	}
 
 	g_string_free (str, TRUE);
-}
-
-static void
-chat_view_append_spacing (GossipChatView *view)
-{
-	GossipChatViewPriv *priv;
-	const gchar        *tag;
-	GtkTextIter         iter;
-
-	priv = GET_PRIV (view);
-
-	if (gossip_theme_is_irc_style (priv->theme)) {
-		tag = "irc-spacing";
-	} else {
-		tag = "fancy-spacing";
-	}
-
-	gtk_text_buffer_get_end_iter (priv->buffer, &iter);
-	gtk_text_buffer_insert_with_tags_by_name (priv->buffer,
-						  &iter,
-						  "\n",
-						  -1,
-						  "cut",
-						  tag,
-						  NULL);
 }
 
 static void
@@ -821,7 +787,7 @@ chat_view_maybe_append_fancy_header (GossipChatView *view,
 		return;
 	}
 
-	chat_view_append_spacing (view);
+	gossip_theme_append_spacing (priv->theme, view);
 
 	gtk_text_buffer_get_end_iter (priv->buffer, &iter);
 	gtk_text_buffer_insert_with_tags_by_name (priv->buffer,
@@ -879,84 +845,6 @@ chat_view_maybe_append_fancy_header (GossipChatView *view,
 }
 
 static void
-chat_view_append_irc_action (GossipChatView *view,
-			     GossipMessage  *msg,
-			     GossipContact  *my_contact,
-			     gboolean        from_self)
-{
-	GossipChatViewPriv *priv;
-	const gchar        *name;
-	gchar              *tmp;
-	const gchar        *tag;
-
-	priv = GET_PRIV (view);
-
-	gossip_debug (DEBUG_DOMAIN, "Add IRC action");
-
-	/* Skip the "/me ". */
-	if (from_self) {
-		name = gossip_contact_get_name (my_contact);
-
-		tag = "irc-action-self";
-	} else {
-		GossipContact *contact;
-
-		contact = gossip_message_get_sender (msg);
-		name = gossip_contact_get_name (contact);
-
-		tag = "irc-action-other";
-	}
-
-	if (gossip_chat_view_get_last_block_type (view) != BLOCK_TYPE_SELF &&
-	    gossip_chat_view_get_last_block_type (view) != BLOCK_TYPE_OTHER) {
-		chat_view_append_spacing (view);
-	}
-
-	tmp = gossip_message_get_action_string (msg);
-	gossip_theme_append_text (priv->theme, view, tmp, tag);
-	g_free (tmp);
-}
-
-static void
-chat_view_append_fancy_action (GossipChatView *view,
-			       GossipMessage  *msg,
-			       GossipContact  *my_contact,
-			       gboolean        from_self)
-{
-	GossipChatViewPriv *priv;
-	GossipContact      *contact;
-	const gchar        *name;
-	gchar              *tmp;
-	const gchar        *tag;
-	const gchar        *line_tag;
-
-	priv = GET_PRIV (view);
-
-	gossip_debug (DEBUG_DOMAIN, "Add fancy action");
-
-	contact = gossip_message_get_sender (msg);
-
-	if (from_self) {
-		name = gossip_contact_get_name (my_contact);
-
-		tag = "fancy-action-self";
-		line_tag = "fancy-line-self";
-	} else {
-		GossipContact *contact;
-
-		contact = gossip_message_get_sender (msg);
-		name = gossip_contact_get_name (contact);
-
-		tag = "fancy-action-other";
-		line_tag = "fancy-line-other";
-	}
-
-	tmp = gossip_message_get_action_string (msg);
-	gossip_theme_append_text (priv->theme, view, tmp, tag);
-	g_free (tmp);
-}
-
-static void
 chat_view_append_irc_message (GossipChatView *view,
 			      GossipMessage  *msg,
 			      GossipContact  *my_contact,
@@ -998,7 +886,7 @@ chat_view_append_irc_message (GossipChatView *view,
 
 	if (gossip_chat_view_get_last_block_type (view) != BLOCK_TYPE_SELF &&
 	    gossip_chat_view_get_last_block_type (view) != BLOCK_TYPE_OTHER) {
-		chat_view_append_spacing (view);
+		gossip_theme_append_spacing (priv->theme, view);
 	}
 
 	gtk_text_buffer_get_end_iter (priv->buffer, &iter);
@@ -1153,24 +1041,6 @@ gossip_chat_view_new (void)
 	return g_object_new (GOSSIP_TYPE_CHAT_VIEW, NULL);
 }
 
-static void
-chat_view_append_action (GossipChatView *view,
-			 GossipMessage  *msg,
-			 GossipContact  *contact,
-			 gboolean        from_self)
-{
-	GossipChatViewPriv *priv;
-
-	priv = GET_PRIV (view);
-
-	if (gossip_theme_is_irc_style (priv->theme)) {
-		chat_view_append_irc_action (view, msg, contact, from_self);
-	} else {
-		chat_view_append_fancy_action (view, msg, contact, from_self);
-	}
-}
-
-
 /* The name is optional, if NULL, the sender for msg is used. */
 void
 gossip_chat_view_append_message_from_self (GossipChatView *view,
@@ -1206,7 +1076,8 @@ gossip_chat_view_append_message_from_self (GossipChatView *view,
 	 * irc style and fancy style.
 	 */
 	if (gossip_message_is_action (msg)) {
-		chat_view_append_action (view, msg, my_contact, TRUE);
+		gossip_theme_append_action (priv->theme, view, 
+					    msg, my_contact, TRUE);
 	} else {
 		if (gossip_theme_is_irc_style (priv->theme)) {
 			chat_view_append_irc_message (view, msg, my_contact, TRUE);
@@ -1263,7 +1134,8 @@ gossip_chat_view_append_message_from_other (GossipChatView *view,
 	 * irc style and fancy style.
 	 */
 	if (gossip_message_is_action (msg)) {
-		chat_view_append_action (view, msg, contact, FALSE);
+		gossip_theme_append_action (priv->theme, view, 
+					    msg, contact, FALSE);
 	} else {
 		if (gossip_theme_is_irc_style (priv->theme)) {
 			chat_view_append_irc_message (view, msg, contact, FALSE);
@@ -1314,7 +1186,7 @@ gossip_chat_view_append_event (GossipChatView *view,
 
 	if (gossip_chat_view_get_last_block_type (view) != BLOCK_TYPE_EVENT) {
 		/* Comment out for now. */
-		/*chat_view_append_spacing (view);*/
+		/* gossip_theme_append_spacing (priv->theme, view);*/
 	}
 
 	chat_view_maybe_append_date_and_time (view, NULL);

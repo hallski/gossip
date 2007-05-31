@@ -49,11 +49,16 @@ struct _GossipThemeClass {
 GType        gossip_theme_get_type             (void) G_GNUC_CONST;
 
 void         gossip_theme_append_action        (GossipTheme    *theme,
-						GossipChatView *view);
+						GossipChatView *view,
+						GossipMessage  *msg,
+						GossipContact  *contact,
+						gboolean        from_self);
 void         gossip_theme_append_text          (GossipTheme    *theme,
 						GossipChatView *view,
 						const gchar    *body,
 						const gchar    *tag);
+void         gossip_theme_append_spacing       (GossipTheme    *theme,
+						GossipChatView *view);
 
 /* Refactor-temp functions */
 gboolean     gossip_theme_is_irc_style         (GossipTheme   *theme);
