@@ -1987,6 +1987,9 @@ contact_list_drag_begin (GtkWidget      *widget,
 
 	priv = GET_PRIV (widget);
 
+	GTK_WIDGET_CLASS (gossip_contact_list_parent_class)->drag_begin (widget,
+									 context);
+
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
 		return;
@@ -2057,6 +2060,9 @@ contact_list_drag_end (GtkWidget      *widget,
 
 	priv = GET_PRIV (widget);
 
+	GTK_WIDGET_CLASS (gossip_contact_list_parent_class)->drag_end (widget,
+								       context);
+	
 	if (priv->drag_row) {
 		gtk_tree_row_reference_free (priv->drag_row);
 		priv->drag_row = NULL;

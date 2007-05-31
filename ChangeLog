@@ -1,3 +1,8 @@
+2007-05-31  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-contact-list.c:
+	(contact_list_drag_begin, contact_list_drag_end): Chain up.
+
 2007-05-31  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-accounts-dialog.c:
