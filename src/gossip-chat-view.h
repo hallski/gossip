@@ -27,8 +27,6 @@
 #include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-message.h>
 
-#include "gossip-theme.h"
-
 G_BEGIN_DECLS
 
 #define GOSSIP_TYPE_CHAT_VIEW         (gossip_chat_view_get_type ())
@@ -42,6 +40,8 @@ typedef struct _GossipChatView      GossipChatView;
 typedef struct _GossipChatViewClass GossipChatViewClass;
 typedef struct _GossipChatViewPriv  GossipChatViewPriv;
 
+#include "gossip-theme.h"
+
 struct _GossipChatView {
 	GtkTextView parent;
 };
@@ -49,6 +49,15 @@ struct _GossipChatView {
 struct _GossipChatViewClass {
 	GtkTextViewClass parent_class;
 };
+
+typedef enum {
+	BLOCK_TYPE_NONE,
+	BLOCK_TYPE_SELF,
+	BLOCK_TYPE_OTHER,
+	BLOCK_TYPE_EVENT,
+	BLOCK_TYPE_TIME,
+	BLOCK_TYPE_INVITE
+} BlockType;
 
 GType           gossip_chat_view_get_type                  (void) G_GNUC_CONST;
 GossipChatView *gossip_chat_view_new                       (void);
@@ -97,6 +106,9 @@ void            gossip_chat_view_set_margin                (GossipChatView *view
 							    gint            margin);
 void            gossip_chat_view_set_is_group_chat         (GossipChatView *view,
 							    gboolean        is_group_chat);
+BlockType       gossip_chat_view_get_last_block_type       (GossipChatView *view);
+void            gossip_chat_view_set_last_block_type       (GossipChatView *view,
+							    BlockType       block_type);
 
 G_END_DECLS
 

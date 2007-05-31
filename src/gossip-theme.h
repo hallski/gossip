@@ -36,6 +36,8 @@ G_BEGIN_DECLS
 typedef struct _GossipTheme      GossipTheme;
 typedef struct _GossipThemeClass GossipThemeClass;
 
+#include "gossip-chat-view.h"
+
 struct _GossipTheme {
 	GObject parent;
 };

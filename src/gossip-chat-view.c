@@ -60,15 +60,6 @@
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHAT_VIEW, GossipChatViewPriv))
 
-typedef enum {
-	BLOCK_TYPE_NONE,
-	BLOCK_TYPE_SELF,
-	BLOCK_TYPE_OTHER,
-	BLOCK_TYPE_EVENT,
-	BLOCK_TYPE_TIME,
-	BLOCK_TYPE_INVITE
-} BlockType;
-
 struct _GossipChatViewPriv {
 	GtkTextBuffer *buffer;
 
@@ -189,7 +180,7 @@ gossip_chat_view_init (GossipChatView *view)
 
 	priv->buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
 
-	priv->last_block_type = BLOCK_TYPE_NONE;
+	gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_NONE);
 	priv->last_timestamp = 0;
 
 	priv->allow_scrolling = TRUE;
@@ -662,7 +653,7 @@ chat_view_maybe_append_date_and_time (GossipChatView *view,
 		tag = "fancy-time";
 	}
 
-	if (priv->last_block_type == BLOCK_TYPE_TIME) {
+	if (gossip_chat_view_get_last_block_type (view) == BLOCK_TYPE_TIME) {
 		return;
 	}
 
@@ -733,7 +724,7 @@ chat_view_maybe_append_date_and_time (GossipChatView *view,
 							  tag,
 							  NULL);
 
-		priv->last_block_type = BLOCK_TYPE_TIME;
+		gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_TIME);
 		priv->last_timestamp = timestamp;
 	}
 
@@ -808,14 +799,16 @@ chat_view_maybe_append_fancy_header (GossipChatView *view,
 	/* Only insert a header if the previously inserted block is not the same
 	 * as this one. This catches all the different cases:
 	 */
-	if (priv->last_block_type != BLOCK_TYPE_SELF &&
-	    priv->last_block_type != BLOCK_TYPE_OTHER) {
+	if (gossip_chat_view_get_last_block_type (view) != BLOCK_TYPE_SELF &&
+	    gossip_chat_view_get_last_block_type (view) != BLOCK_TYPE_OTHER) {
 		header = TRUE;
 	}
-	else if (from_self && priv->last_block_type == BLOCK_TYPE_OTHER) {
+	else if (from_self &&
+		 gossip_chat_view_get_last_block_type (view) == BLOCK_TYPE_OTHER) {
 		header = TRUE;
 	}
-	else if (!from_self && priv->last_block_type == BLOCK_TYPE_SELF) {
+	else if (!from_self && 
+		 gossip_chat_view_get_last_block_type (view) == BLOCK_TYPE_SELF) {
 		header = TRUE;
 	}
 	else if (!from_self &&
@@ -914,8 +907,8 @@ chat_view_append_irc_action (GossipChatView *view,
 		tag = "irc-action-other";
 	}
 
-	if (priv->last_block_type != BLOCK_TYPE_SELF &&
-	    priv->last_block_type != BLOCK_TYPE_OTHER) {
+	if (gossip_chat_view_get_last_block_type (view) != BLOCK_TYPE_SELF &&
+	    gossip_chat_view_get_last_block_type (view) != BLOCK_TYPE_OTHER) {
 		chat_view_append_spacing (view);
 	}
 
@@ -1003,8 +996,8 @@ chat_view_append_irc_message (GossipChatView *view,
 		body_tag = "irc-body-other";
 	}
 
-	if (priv->last_block_type != BLOCK_TYPE_SELF &&
-	    priv->last_block_type != BLOCK_TYPE_OTHER) {
+	if (gossip_chat_view_get_last_block_type (view) != BLOCK_TYPE_SELF &&
+	    gossip_chat_view_get_last_block_type (view) != BLOCK_TYPE_OTHER) {
 		chat_view_append_spacing (view);
 	}
 
@@ -1134,7 +1127,7 @@ chat_view_theme_changed_cb (GossipThemeManager *manager,
 
 	priv = GET_PRIV (view);
 
-	priv->last_block_type = BLOCK_TYPE_NONE;
+	gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_NONE);
 
 	gossip_conf_get_bool (gossip_conf_get (),
 			      GOSSIP_PREFS_CHAT_THEME_CHAT_ROOM,
@@ -1208,7 +1201,7 @@ gossip_chat_view_append_message_from_self (GossipChatView *view,
 		}
 	}
 
-	priv->last_block_type = BLOCK_TYPE_SELF;
+	gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_SELF);
 
 	/* Reset the last inserted contact, since it was from self. */
 	if (priv->last_contact) {
@@ -1271,7 +1264,7 @@ gossip_chat_view_append_message_from_other (GossipChatView *view,
 		}
 	}
 
-	priv->last_block_type = BLOCK_TYPE_OTHER;
+	gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_OTHER);
 
 	/* Update the last contact that sent something. */
 	if (priv->last_contact) {
@@ -1311,7 +1304,7 @@ gossip_chat_view_append_event (GossipChatView *view,
 		msg = g_strdup_printf (" - %s\n", str);
 	}
 
-	if (priv->last_block_type != BLOCK_TYPE_EVENT) {
+	if (gossip_chat_view_get_last_block_type (view) != BLOCK_TYPE_EVENT) {
 		/* Comment out for now. */
 		/*chat_view_append_spacing (view);*/
 	}
@@ -1330,7 +1323,7 @@ gossip_chat_view_append_event (GossipChatView *view,
 		gossip_chat_view_scroll_down (view);
 	}
 
-	priv->last_block_type = BLOCK_TYPE_EVENT;
+	gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_EVENT);
 }
 
 void
@@ -1467,7 +1460,7 @@ gossip_chat_view_append_invite (GossipChatView *view,
 		gossip_chat_view_scroll_down (view);
 	}
 
-	priv->last_block_type = BLOCK_TYPE_INVITE;
+	gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_INVITE);
 }
 
 void
@@ -1541,7 +1534,7 @@ gossip_chat_view_append_button (GossipChatView *view,
 		gossip_chat_view_scroll_down (view);
 	}
 
-	priv->last_block_type = BLOCK_TYPE_INVITE;
+	gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_INVITE);
 }
 
 void
@@ -1627,7 +1620,7 @@ gossip_chat_view_clear (GossipChatView *view)
 	 */
 	priv = GET_PRIV (view);
 
-	priv->last_block_type = BLOCK_TYPE_NONE;
+	gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_NONE);
 	priv->last_timestamp = 0;
 }
 
@@ -2051,3 +2044,30 @@ gossip_chat_view_set_is_group_chat (GossipChatView *view,
 						  view);
 	}
 }
+
+BlockType
+gossip_chat_view_get_last_block_type (GossipChatView *view)
+{
+	GossipChatViewPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_CHAT_VIEW (view), 0);
+
+	priv = GET_PRIV (view);
+
+	return priv->last_block_type;
+}
+
+void
+gossip_chat_view_set_last_block_type (GossipChatView *view, 
+				      BlockType       block_type)
+{
+	GossipChatViewPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
+
+	priv = GET_PRIV (view);
+
+	priv->last_block_type = block_type;
+}
+
+

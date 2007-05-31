@@ -1,5 +1,10 @@
 2007-05-31  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-chat-view.c (gossip_chat_view_[get|set]_last_block_type):
+	- Added to access the block type which is needed by the theme.
+
+2007-05-31  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-chat-view.c (gossip_chat_view_append_message_from_self):
 	Use gossip_message_is_action to determine whether it's a /me message.
 
