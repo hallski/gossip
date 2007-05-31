@@ -72,7 +72,6 @@ struct _GossipChatViewPriv {
 	GtkTextBuffer *buffer;
 
 	GossipTheme   *theme;
-	gboolean       irc_style;
 	time_t         last_timestamp;
 	BlockType      last_block_type;
 
@@ -851,7 +850,7 @@ chat_view_maybe_append_date_and_time (GossipChatView *view,
 
 	priv = GET_PRIV (view);
 
-	if (priv->irc_style) {
+	if (gossip_theme_is_irc_style (priv->theme)) {
 		tag = "irc-time";
 	} else {
 		tag = "fancy-time";
@@ -944,7 +943,7 @@ chat_view_append_spacing (GossipChatView *view)
 
 	priv = GET_PRIV (view);
 
-	if (priv->irc_style) {
+	if (gossip_theme_is_irc_style (priv->theme)) {
 		tag = "irc-spacing";
 	} else {
 		tag = "fancy-spacing";
@@ -975,7 +974,7 @@ chat_view_append_text (GossipChatView *view,
 
 	priv = GET_PRIV (view);
 
-	if (priv->irc_style) {
+	if (gossip_theme_is_irc_style (priv->theme)) {
 		link_tag = "irc-link";
 	} else {
 		link_tag = "fancy-link";
@@ -1478,7 +1477,7 @@ gossip_chat_view_append_message_from_self (GossipChatView *view,
 	chat_view_maybe_trim_buffer (view);
 	chat_view_maybe_append_date_and_time (view, msg);
 
-	if (!priv->irc_style) {
+	if (!gossip_theme_is_irc_style (priv->theme)) {
 		chat_view_maybe_append_fancy_header (view, msg,
 						     my_contact,
 						     TRUE, avatar);
@@ -1488,13 +1487,13 @@ gossip_chat_view_append_message_from_self (GossipChatView *view,
 	 * irc style and fancy style.
 	 */
 	if (g_str_has_prefix (body, "/me ")) {
-		if (priv->irc_style) {
+		if (gossip_theme_is_irc_style (priv->theme)) {
 			chat_view_append_irc_action (view, msg, my_contact, TRUE);
 		} else {
 			chat_view_append_fancy_action (view, msg, my_contact, TRUE);
 		}
 	} else {
-		if (priv->irc_style) {
+		if (gossip_theme_is_irc_style (priv->theme)) {
 			chat_view_append_irc_message (view, msg, my_contact, TRUE);
 		} else {
 			chat_view_append_fancy_message (view, msg, my_contact, TRUE);
@@ -1541,7 +1540,7 @@ gossip_chat_view_append_message_from_other (GossipChatView *view,
 	chat_view_maybe_trim_buffer (view);
 	chat_view_maybe_append_date_and_time (view, msg);
 
-	if (!priv->irc_style) {
+	if (!gossip_theme_is_irc_style (priv->theme)) {
 		chat_view_maybe_append_fancy_header (view, msg,
 						     contact, FALSE,
 						     avatar);
@@ -1551,13 +1550,13 @@ gossip_chat_view_append_message_from_other (GossipChatView *view,
 	 * irc style and fancy style.
 	 */
 	if (gossip_message_is_action (msg)) {
-		if (priv->irc_style) {
+		if (gossip_theme_is_irc_style (priv->theme)) {
 			chat_view_append_irc_action (view, msg, contact, FALSE);
 		} else {
 			chat_view_append_fancy_action (view, msg, contact, FALSE);
 		}
 	} else {
-		if (priv->irc_style) {
+		if (gossip_theme_is_irc_style (priv->theme)) {
 			chat_view_append_irc_message (view, msg, contact, FALSE);
 		} else {
 			chat_view_append_fancy_message (view, msg, contact, FALSE);
@@ -1596,7 +1595,7 @@ gossip_chat_view_append_event (GossipChatView *view,
 
 	chat_view_maybe_trim_buffer (view);
 
-	if (priv->irc_style) {
+	if (gossip_theme_is_irc_style (priv->theme)) {
 		tag = "irc-event";
 		msg = g_strdup_printf (" - %s\n", str);
 	} else {
@@ -1648,7 +1647,7 @@ gossip_chat_view_append_invite (GossipChatView *view,
 
 	priv = GET_PRIV (view);
 
-	if (priv->irc_style) {
+	if (gossip_theme_is_irc_style (priv->theme)) {
 		tag = "irc-invite";
 	} else {
 		tag = "fancy-invite";
@@ -1780,7 +1779,7 @@ gossip_chat_view_append_button (GossipChatView *view,
 
 	priv = GET_PRIV (view);
 
-	if (priv->irc_style) {
+	if (gossip_theme_is_irc_style (priv->theme)) {
 		tag = "irc-invite";
 	} else {
 		tag = "fancy-invite";
@@ -2297,31 +2296,6 @@ gossip_chat_view_set_theme (GossipChatView *view, GossipTheme *theme)
 
 	priv->theme = g_object_ref (theme);
 	/* FIXME: Possibly redraw the function and make it a property */
-}
-
-gboolean
-gossip_chat_view_get_irc_style (GossipChatView *view)
-{
-	GossipChatViewPriv *priv;
-
-	g_return_val_if_fail (GOSSIP_IS_CHAT_VIEW (view), FALSE);
-
-	priv = GET_PRIV (view);
-
-	return priv->irc_style;
-}
-
-void
-gossip_chat_view_set_irc_style (GossipChatView *view,
-				gboolean        irc_style)
-{
-	GossipChatViewPriv *priv;
-
-	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
-
-	priv = GET_PRIV (view);
-
-	priv->irc_style = irc_style;
 }
 
 void

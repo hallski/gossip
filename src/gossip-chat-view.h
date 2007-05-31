@@ -129,9 +129,6 @@ void            gossip_chat_view_copy_clipboard            (GossipChatView *view
 GossipTheme *   gossip_chat_view_get_theme                 (GossipChatView *view);
 void            gossip_chat_view_set_theme                 (GossipChatView *view,
 							    GossipTheme    *theme);
-gboolean        gossip_chat_view_get_irc_style             (GossipChatView *view);
-void            gossip_chat_view_set_irc_style             (GossipChatView *view,
-							    gboolean        irc_style);
 void            gossip_chat_view_set_margin                (GossipChatView *view,
 							    gint            margin);
 GdkPixbuf *     gossip_chat_view_get_smiley_image          (GossipSmiley    smiley);

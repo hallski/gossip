@@ -33,6 +33,7 @@
 #include "gossip-app.h"
 #include "gossip-chat-view.h"
 #include "gossip-preferences.h"
+#include "gossip-theme.h"
 #include "gossip-theme-manager.h"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_THEME_MANAGER, GossipThemeManagerPriv))
@@ -45,6 +46,7 @@ typedef struct {
 	gboolean  show_avatars;
 	guint     show_avatars_notify_id;
 
+	GossipTheme *theme;
 	gboolean  irc_style;
 } GossipThemeManagerPriv;
 
@@ -147,6 +149,8 @@ gossip_theme_manager_init (GossipThemeManager *manager)
 	gossip_conf_get_bool (gossip_conf_get (),
 			      GOSSIP_PREFS_UI_SHOW_AVATARS,
 			      &priv->show_avatars);
+
+	priv->theme = g_object_new (GOSSIP_TYPE_THEME, NULL);
 }
 
 static void
@@ -161,6 +165,8 @@ theme_manager_finalize (GObject *object)
 	gossip_conf_notify_remove (gossip_conf_get (), priv->show_avatars_notify_id);
 
 	g_free (priv->name);
+
+	g_object_unref (priv->theme);
 
 	G_OBJECT_CLASS (gossip_theme_manager_parent_class)->finalize (object);
 }
@@ -935,8 +941,9 @@ theme_manager_apply_theme (GossipThemeManager *manager,
 		margin = 3;
 	}
 
+	gossip_theme_set_is_irc_style (priv->theme, priv->irc_style);
+	gossip_chat_view_set_theme (view, priv->theme);
 	gossip_chat_view_set_margin (view, margin);
-	gossip_chat_view_set_irc_style (view, priv->irc_style);
 }
 
 GossipThemeManager *
