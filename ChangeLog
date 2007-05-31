@@ -1,5 +1,13 @@
 2007-05-31  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-chat-view.c (chat_view_append_message): Factored out
+	function that figures out whether irc theme is used or not.
+	(gossip_chat_view_append_message_from_other):
+	(gossip_chat_view_append_message_from_self):
+	- Use chat_view_append_message.
+
+2007-05-31  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-chat-view.c:
 	(chat_view_append_irc_action, chat_view_append_fancy_action,
 	chat_view_append_spacing, chat_view_append_action):

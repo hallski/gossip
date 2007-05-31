@@ -1041,6 +1041,26 @@ gossip_chat_view_new (void)
 	return g_object_new (GOSSIP_TYPE_CHAT_VIEW, NULL);
 }
 
+static void
+chat_view_append_message (GossipChatView *view,
+			  GossipMessage  *message,
+			  GossipContact  *contact,
+			  gboolean        from_self)
+{
+	GossipChatViewPriv *priv;
+
+	priv = GET_PRIV (view);
+
+	if (gossip_theme_is_irc_style (priv->theme)) {
+		chat_view_append_irc_message (view, message,
+					      contact, from_self);
+	} else {
+		chat_view_append_fancy_message (view, message, 
+						contact, from_self);
+	}
+}
+
+
 /* The name is optional, if NULL, the sender for msg is used. */
 void
 gossip_chat_view_append_message_from_self (GossipChatView *view,
@@ -1079,11 +1099,7 @@ gossip_chat_view_append_message_from_self (GossipChatView *view,
 		gossip_theme_append_action (priv->theme, view, 
 					    msg, my_contact, TRUE);
 	} else {
-		if (gossip_theme_is_irc_style (priv->theme)) {
-			chat_view_append_irc_message (view, msg, my_contact, TRUE);
-		} else {
-			chat_view_append_fancy_message (view, msg, my_contact, TRUE);
-		}
+		chat_view_append_message (view, msg, my_contact, TRUE);
 	}
 
 	gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_SELF);
@@ -1137,11 +1153,7 @@ gossip_chat_view_append_message_from_other (GossipChatView *view,
 		gossip_theme_append_action (priv->theme, view, 
 					    msg, contact, FALSE);
 	} else {
-		if (gossip_theme_is_irc_style (priv->theme)) {
-			chat_view_append_irc_message (view, msg, contact, FALSE);
-		} else {
-			chat_view_append_fancy_message (view, msg, contact, FALSE);
-		}
+		chat_view_append_message (view, msg, contact, FALSE);
 	}
 
 	gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_OTHER);
