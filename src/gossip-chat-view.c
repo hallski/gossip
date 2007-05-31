@@ -1168,7 +1168,6 @@ gossip_chat_view_append_message_from_self (GossipChatView *view,
 					   GdkPixbuf      *avatar)
 {
 	GossipChatViewPriv *priv;
-	const gchar        *body;
 	gboolean            scroll_down;
 
 	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
@@ -1177,8 +1176,7 @@ gossip_chat_view_append_message_from_self (GossipChatView *view,
 
 	priv = GET_PRIV (view);
 
-	body = gossip_message_get_body (msg);
-	if (!body) {
+	if (!gossip_message_get_body (msg)) {
 		return;
 	}
 
@@ -1196,7 +1194,7 @@ gossip_chat_view_append_message_from_self (GossipChatView *view,
 	/* Handle action messages (/me) and normal messages, in combination with
 	 * irc style and fancy style.
 	 */
-	if (g_str_has_prefix (body, "/me ")) {
+	if (gossip_message_is_action (msg)) {
 		if (gossip_theme_is_irc_style (priv->theme)) {
 			chat_view_append_irc_action (view, msg, my_contact, TRUE);
 		} else {

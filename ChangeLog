@@ -1,5 +1,10 @@
 2007-05-31  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-chat-view.c (gossip_chat_view_append_message_from_self):
+	Use gossip_message_is_action to determine whether it's a /me message.
+
+2007-05-31  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-chat-view.c:
 	* src/gossip-theme.[ch] (gossip_theme_insert_text):
 	Renamed to gossip_theme_append_text.
