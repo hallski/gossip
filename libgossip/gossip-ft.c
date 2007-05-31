@@ -38,6 +38,8 @@ struct _GossipFTPriv {
 	gchar         *file_name;
 	guint          file_size;
 	gchar         *file_mime_type;
+	gchar         *sid;
+	gchar         *location;
 };
 
 static void ft_class_init   (GossipFTClass *class);
@@ -60,6 +62,8 @@ enum {
 	PROP_FILE_NAME,
 	PROP_FILE_SIZE,
 	PROP_FILE_MIME_TYPE,
+	PROP_SID,
+	PROP_LOCATION
 };
 
 static gpointer parent_class = NULL;
@@ -157,6 +161,20 @@ ft_class_init (GossipFTClass *class)
 							      "The mime type (for example text/plain)",
 							      NULL,
 							      G_PARAM_READWRITE));
+	g_object_class_install_property (object_class,
+					 PROP_SID,
+					 g_param_spec_string ("sid",
+							      "Session ID",
+							      "ID to match stanzas assosiated to this file",
+							      NULL,
+							      G_PARAM_READWRITE));
+	g_object_class_install_property (object_class,
+					 PROP_SID,
+					 g_param_spec_string ("location",
+							      "Location",
+							      "Where to store the file on the file system (URI)",
+							      NULL,
+							      G_PARAM_READWRITE));
 
 	g_type_class_add_private (object_class, sizeof (GossipFTPriv));
 }
@@ -178,6 +196,8 @@ ft_init (GossipFT *ft)
 	priv->file_name      = NULL;
 	priv->file_size      = 0;
 	priv->file_mime_type = NULL;
+	priv->sid            = NULL;
+	priv->location       = NULL;
 }
 
 static void
@@ -193,6 +213,8 @@ ft_finalize (GObject *object)
 
 	g_free (priv->file_name);
 	g_free (priv->file_mime_type);
+	g_free (priv->sid);
+	g_free (priv->location);
 
 	(G_OBJECT_CLASS (parent_class)->finalize) (object);
 }
@@ -225,6 +247,12 @@ ft_get_property (GObject    *object,
 		break;
 	case PROP_FILE_MIME_TYPE:
 		g_value_set_string (value, priv->file_mime_type);
+		break;
+	case PROP_SID:
+		g_value_set_string (value, priv->sid);
+		break;
+	case PROP_LOCATION:
+		g_value_set_string (value, priv->location);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
@@ -262,6 +290,14 @@ ft_set_property (GObject      *object,
 	case PROP_FILE_MIME_TYPE:
 		gossip_ft_set_file_mime_type (GOSSIP_FT (object),
 					      g_value_get_string (value));
+		break;
+	case PROP_SID:
+		gossip_ft_set_sid (GOSSIP_FT (object),
+				   g_value_get_string (value));
+		break;
+	case PROP_LOCATION:
+		gossip_ft_set_location (GOSSIP_FT (object),
+					g_value_get_string (value));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
@@ -419,6 +455,58 @@ gossip_ft_set_file_mime_type (GossipFT    *ft,
 
 	g_free (priv->file_mime_type);
 	priv->file_mime_type = g_strdup (file_mime_type);
+}
+
+const gchar *
+gossip_ft_get_sid (GossipFT *ft)
+{
+	GossipFTPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_FT (ft), NULL);
+
+	priv = GET_PRIV (ft);
+
+	return priv->sid;
+}
+
+void
+gossip_ft_set_sid (GossipFT    *ft,
+		   const gchar *sid)
+{
+	GossipFTPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_FT (ft));
+
+	priv = GET_PRIV (ft);
+
+	g_free (priv->sid);
+	priv->sid = g_strdup (sid);
+}
+
+const gchar *
+gossip_ft_get_location (GossipFT *ft)
+{
+	GossipFTPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_FT (ft), NULL);
+
+	priv = GET_PRIV (ft);
+
+	return priv->location;
+}
+
+void
+gossip_ft_set_location (GossipFT    *ft,
+			const gchar *location)
+{
+	GossipFTPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_FT (ft));
+
+	priv = GET_PRIV (ft);
+
+	g_free (priv->location);
+	priv->location = g_strdup (location);
 }
 
 gboolean

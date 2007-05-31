@@ -50,6 +50,7 @@
 #include "gossip-jabber-chatrooms.h"
 #include "gossip-jabber-ft.h"
 #include "gossip-jabber-vcard.h"
+#include "gossip-jabber-disco.h"
 #include "gossip-jabber-services.h"
 #include "gossip-jabber-utils.h"
 
@@ -637,6 +638,7 @@ jabber_setup (GossipProtocol *protocol,
 	/* initiate extended modules */
 	priv->chatrooms = gossip_jabber_chatrooms_init (jabber);
 	priv->fts = gossip_jabber_ft_init (jabber);
+	gossip_jabber_disco_init (jabber);
 
 #ifdef USE_TRANSPORTS
 	/* initialise the jabber accounts module which is necessary to
@@ -3888,3 +3890,4 @@ gossip_jabber_get_fts (GossipJabber *jabber)
 
 	return priv->fts;
 }
+

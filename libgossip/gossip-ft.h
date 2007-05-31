@@ -77,6 +77,12 @@ void           gossip_ft_set_file_size      (GossipFT      *ft,
 const gchar *  gossip_ft_get_file_mime_type (GossipFT      *ft);
 void           gossip_ft_set_file_mime_type (GossipFT      *ft,
 					     const gchar   *file_mime_type);
+const gchar *  gossip_ft_get_sid            (GossipFT      *ft);
+void           gossip_ft_set_sid            (GossipFT      *ft,
+					     const gchar   *sid);
+const gchar *  gossip_ft_get_location       (GossipFT      *ft);
+void           gossip_ft_set_location       (GossipFT      *ft,
+					     const gchar   *location);
 
 gboolean       gossip_ft_equal              (gconstpointer  a,
 					     gconstpointer  b);

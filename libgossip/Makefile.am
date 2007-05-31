@@ -3,12 +3,16 @@ AM_CPPFLAGS =                                           \
 	-I$(top_srcdir)                                 \
 	-DDATADIR=\""$(datadir)"\"              	\
 	-DLOCALEDIR=\""$(datadir)/locale"\"		\
+	-DLM_COMPILATION				\
 	$(LIBGOSSIP_CFLAGS) 				\
 	$(GOSSIP_JABBER_CFLAGS)                         \
+	$(LIBLOUDERMOUTH_CFLAGS)			\
 	$(WARN_CFLAGS) 					\
 	$(BACKEND_CFLAGS)
 
-noinst_LTLIBRARIES = libgossip-jabber.la libgossip.la
+noinst_LTLIBRARIES = 					\
+	libgossip-jabber.la 				\
+	libgossip.la
 
 if HAVE_GNOME
 backend_impl = 						\
@@ -81,30 +85,32 @@ libgossip_la_LIBADD =              			\
 
 libgossipincludedir = $(includedir)/gossip/
 
-libgossip_jabber_la_SOURCES =                   \
-	gossip-jabber.c                         \
-	gossip-jabber.h                         \
-	gossip-jabber-chatrooms.c               \
-	gossip-jabber-chatrooms.h               \
-	gossip-jabber-disco.c			\
-	gossip-jabber-disco.h			\
-	gossip-jabber-ft.c			\
-	gossip-jabber-ft.h			\
-	gossip-jabber-ft-utils.c		\
-	gossip-jabber-ft-utils.h		\
-	gossip-jabber-private.h                 \
-	gossip-jabber-vcard.c			\
-	gossip-jabber-vcard.h			\
-	gossip-jabber-services.c		\
-	gossip-jabber-services.h		\
-	gossip-jabber-utils.c			\
-	gossip-jabber-utils.h			\
-	gossip-jid.c                            \
-	gossip-jid.h				\
-	gossip-sha.c                            \
+libgossip_jabber_la_SOURCES =                  		\
+	gossip-jabber.c                         	\
+	gossip-jabber.h                         	\
+	gossip-jabber-chatrooms.c               	\
+	gossip-jabber-chatrooms.h               	\
+	gossip-jabber-disco.c				\
+	gossip-jabber-disco.h				\
+	gossip-jabber-ft.c				\
+	gossip-jabber-ft.h				\
+	gossip-jabber-ft-utils.c			\
+	gossip-jabber-ft-utils.h			\
+	gossip-jabber-private.h                 	\
+	gossip-jabber-vcard.c				\
+	gossip-jabber-vcard.h				\
+	gossip-jabber-services.c			\
+	gossip-jabber-services.h			\
+	gossip-jabber-utils.c				\
+	gossip-jabber-utils.h				\
+	gossip-jid.c                            	\
+	gossip-jid.h					\
+	gossip-sha.c                            	\
 	gossip-sha.h
 
-libgossip_jabber_la_LIBADD = $(GOSSIP_JABBER_LIBS)
+libgossip_jabber_la_LIBADD = 				\
+	$(GOSSIP_JABBER_LIBS) 				\
+	$(top_srcdir)/libloudermouth/libloudermouth.la
 
 dtddir = $(datadir)/gossip
 dtd_DATA = 						\

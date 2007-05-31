@@ -38,8 +38,13 @@
 #define DEBUG_DOMAIN "JabberDisco"
 
 /* Common XMPP XML namespaces we use. */
-#define XMPP_DISCO_ITEMS_XMLNS "http://jabber.org/protocol/disco#items"
-#define XMPP_DISCO_INFO_XMLNS  "http://jabber.org/protocol/disco#info"
+#define XMPP_DISCO_ITEMS_XMLNS          "http://jabber.org/protocol/disco#items"
+#define XMPP_DISCO_INFO_XMLNS           "http://jabber.org/protocol/disco#info"
+
+#define XMPP_SI_FEATURE                 "http://jabber.org/protocol/si"
+#define XMPP_FILE_TRANSFER_FEATURE      "http://jabber.org/protocol/si/profile/file-transfer"
+#define XMPP_BYTESTREAMS_FEATURE        "http://jabber.org/protocol/bytestreams"
+#define XMPP_MUC_FEATURE                "http://jabber.org/protocol/muc"
 
 /* In seconds */
 #define DISCO_TIMEOUT      20
@@ -126,6 +131,11 @@ static void               jabber_disco_request_info             (GossipJabberDis
 static void               jabber_disco_handle_info              (GossipJabberDisco     *disco,
 								 LmMessage             *m,
 								 gpointer               user_data);
+static LmHandlerResult    jabber_disco_info_handler             (LmMessageHandler      *handler,
+								 LmConnection          *conn,
+								 LmMessage             *m,
+								 GossipJabber          *jabber);
+
 
 static GHashTable *discos = NULL;
 
@@ -705,6 +715,60 @@ jabber_disco_handle_info (GossipJabberDisco *disco,
 	}
 }
 
+static LmHandlerResult
+jabber_disco_info_handler (LmMessageHandler *handler,
+			   LmConnection     *connection,
+			   LmMessage        *request_message,
+			   GossipJabber     *jabber)
+{
+	LmMessageSubType  subtype;
+	LmMessage        *m;
+	LmMessageNode    *node;
+	LmMessageNode    *q_node;
+	const gchar      *xmlns;
+	const gchar      *to_str;
+	const gchar      *id_str;
+
+	subtype = lm_message_get_sub_type (request_message);
+	if (subtype != LM_MESSAGE_SUB_TYPE_GET) {
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+	}
+	node = lm_message_node_get_child (request_message->node, "query");
+	if(!node) {
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+	}
+	xmlns = lm_message_node_get_attribute (node, "xmlns");
+	if(!xmlns || strcmp (xmlns, XMPP_DISCO_INFO_XMLNS) != 0) {
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+	}
+	to_str = lm_message_node_get_attribute (request_message->node, "from");
+	id_str = lm_message_node_get_attribute (request_message->node, "id");
+	m = lm_message_new_with_sub_type (to_str,
+					  LM_MESSAGE_TYPE_IQ,
+					  LM_MESSAGE_SUB_TYPE_RESULT);
+	lm_message_node_set_attribute (m->node, "id", id_str);
+	q_node = lm_message_node_add_child (m->node, "query", NULL);
+	lm_message_node_set_attribute (q_node, "xmlns", XMPP_DISCO_INFO_XMLNS);
+	node = lm_message_node_add_child (q_node, "identity", NULL);
+	lm_message_node_set_attribute (node, "category", "client");
+	lm_message_node_set_attribute (node, "type", "pc");
+	lm_message_node_set_attribute (node, "name", PACKAGE_STRING);
+	node = lm_message_node_add_child (q_node, "feature", NULL);
+	lm_message_node_set_attribute (node, "var", XMPP_DISCO_INFO_XMLNS);
+	node = lm_message_node_add_child (q_node, "feature", NULL);
+	lm_message_node_set_attribute (node, "var", XMPP_SI_FEATURE);
+	node = lm_message_node_add_child (q_node, "feature", NULL);
+	lm_message_node_set_attribute (node, "var", XMPP_FILE_TRANSFER_FEATURE);
+	node = lm_message_node_add_child (q_node, "feature", NULL);
+	lm_message_node_set_attribute (node, "var", XMPP_BYTESTREAMS_FEATURE);
+	node = lm_message_node_add_child (q_node, "feature", NULL);
+	lm_message_node_set_attribute (node, "var", XMPP_MUC_FEATURE);
+	lm_connection_send (connection, m, NULL);
+	lm_message_unref (m);
+
+	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
+}
+
 GossipJabberDisco *
 gossip_jabber_disco_request (GossipJabber              *jabber,
 			     const char                *to,
@@ -1152,3 +1216,26 @@ gossip_jabber_disco_item_has_feature (GossipJabberDiscoItem *item,
 	return FALSE;
 }
 
+/*
+ * Register an iq handler, to reply on disco#info request. 
+ * The reply will provide infrmation about the features in gossip.
+ * This handler should remain active during the time a LmConnection is
+ * active, because one may require this info at any time.
+ */
+void
+gossip_jabber_disco_init (GossipJabber *jabber) 
+{
+	LmConnection     *connection;
+	LmMessageHandler *handler;
+
+	g_return_if_fail (GOSSIP_IS_JABBER (jabber));
+
+	connection = gossip_jabber_get_connection (jabber);
+	handler = lm_message_handler_new ((LmHandleMessageFunction) jabber_disco_info_handler,
+					  jabber, NULL);
+	lm_connection_register_message_handler (connection,
+						handler,
+						LM_MESSAGE_TYPE_IQ,
+						LM_HANDLER_PRIORITY_NORMAL);
+	lm_message_handler_unref (handler);
+}

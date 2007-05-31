@@ -82,6 +82,12 @@ static void ft_window_filechooser_create       (GossipContact      *contact);
 static void ft_window_filechooser_response_cb  (GtkDialog          *dialog,
 						gint                response_id,
 						GossipContact      *contact);
+static void ft_window_save_filechooser_create  (FTData             *data);
+
+static void 
+ft_window_save_filechooser_response_cb 	       (GtkDialog          *dialog,
+						gint                response_id,
+						FTData             *data);
 
 void
 gossip_ft_window_init (GossipSession *session)
@@ -347,6 +353,75 @@ ft_window_vcard_cb (GossipResult  result,
 	gtk_widget_show (dialog);
 }
 
+
+
+static void
+ft_window_save_filechooser_response_cb (GtkDialog  *dialog,
+				        gint        response_id,
+				        FTData     *data)
+{
+	const gchar *file_location;
+	
+	if (response_id == GTK_RESPONSE_OK) {
+		file_location = gtk_file_chooser_get_uri (GTK_FILE_CHOOSER (dialog));
+		/* TODO: some checks for existing files */
+		gossip_ft_set_location (data->ft, file_location);
+		
+		gossip_ft_provider_accept (GOSSIP_FT_PROVIDER (data->protocol),
+					   gossip_ft_get_id (data->ft));
+	} else {
+		gossip_ft_provider_decline (GOSSIP_FT_PROVIDER (data->protocol),
+					    gossip_ft_get_id (data->ft));
+	}
+	gtk_widget_destroy (GTK_WIDGET(dialog));
+	g_object_unref (data->protocol);
+	g_object_unref (data->ft);
+	if (data->vcard) {
+		g_object_unref (data->vcard);
+	}
+	g_free (data);
+}
+
+static void
+ft_window_save_filechooser_create (FTData *data)
+{
+	GtkWidget     *dialog;
+	GtkFileFilter *filter;
+	const gchar   *file_name;
+
+	gossip_debug (DEBUG_DOMAIN, "Creating filechooser...");
+
+	dialog = g_object_new (GTK_TYPE_FILE_CHOOSER_DIALOG,
+			       "action", GTK_FILE_CHOOSER_ACTION_SAVE,
+			       "select-multiple", FALSE,
+			       NULL);
+
+	gtk_window_set_title (GTK_WINDOW (dialog), _("Save file as..."));
+	file_name = gossip_ft_get_file_name (data->ft);
+	gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER(dialog),
+					   file_name);
+	gtk_dialog_add_buttons (GTK_DIALOG (dialog),
+				GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+				GTK_STOCK_SAVE, GTK_RESPONSE_OK,
+				NULL);
+
+	gtk_dialog_set_default_response (GTK_DIALOG (dialog),
+					 GTK_RESPONSE_OK);
+
+	g_signal_connect (dialog, "response",
+			  G_CALLBACK (ft_window_save_filechooser_response_cb),
+			  data);
+
+	/* filters */
+	filter = gtk_file_filter_new ();
+	gtk_file_filter_set_name (filter, "All Files");
+	gtk_file_filter_add_pattern (filter, "*");
+	gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dialog), filter);
+
+	gtk_widget_show (dialog);
+}
+
+
 static void
 ft_window_request_dialog_cb (GtkWidget *dialog,
 			     gint       response,
@@ -363,8 +438,8 @@ ft_window_request_dialog_cb (GtkWidget *dialog,
 /* 	g_return_if_fail (!G_STR_EMPTY (file)); */
 
 	if (response == GTK_RESPONSE_YES) {
-		gossip_ft_provider_accept (GOSSIP_FT_PROVIDER (data->protocol),
-					   gossip_ft_get_id (data->ft));
+		ft_window_save_filechooser_create (data);
+		return;
 	} else {
 		gossip_ft_provider_decline (GOSSIP_FT_PROVIDER (data->protocol),
 					    gossip_ft_get_id (data->ft));

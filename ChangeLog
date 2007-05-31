@@ -1,3 +1,51 @@
+2007-05-31  Martyn Russell  <martyn@imendio.com>
+
+	Added basic support for file transfer
+	
+	* libgossip/gossip-ft.[ch]: Added class properties like mime type,
+	file size, etc.
+	
+	* libgossip/gossip-jabber-disco.[ch]: Now we can reply to capability
+	requests stating we are file transfer capable along with MUC and
+	some others.
+	
+	* libgossip/gossip-jabber-ft.c:
+	* libgossip/gossip-jabber.c: Add a lot of glue between the current
+	FT code which simply notifies the user of a request but can't
+	accept it and actually being able to initate and carry out the
+	file transfer.
+
+	* configure.ac:
+	* Makefile.am:
+	* libgossip/Makefile.am:
+	* libloudermouth/Makefile.am:
+	* libloudermouth/lm-bs-client.c:
+	* libloudermouth/lm-bs-client.h:
+	* libloudermouth/lm-bs-listener.c:
+	* libloudermouth/lm-bs-listener.h:
+	* libloudermouth/lm-bs-receiver.c:
+	* libloudermouth/lm-bs-receiver.h:
+	* libloudermouth/lm-bs-sender.c:
+	* libloudermouth/lm-bs-sender.h:
+	* libloudermouth/lm-bs-session.c:
+	* libloudermouth/lm-bs-session.h:
+	* libloudermouth/lm-bs-transfer.c:
+	* libloudermouth/lm-bs-transfer.h:
+	* libloudermouth/lm-debug.h:
+	* libloudermouth/lm-internals.h:
+	* libloudermouth/lm-parser.h:
+	* libloudermouth/lm-sha.h:
+	* libloudermouth/lm-sock.h:
+	* libloudermouth/loudermouth.h: Added libloudermouth as a test bed
+	for newer loudmouth features to be tested in Gossip first, most of
+	this will only be seen in Loudmouth >= 2.
+	
+	* src/gossip-contact-list.c: Make file transfer menu item visible. 
+	
+	* src/gossip-ft-window.c: 
+	* ui/file-transfer.glade: Added the UI needed to do the file
+	chooser stuff and basic invitation.
+
 2007-05-31  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-chat-view.c:

@@ -70,6 +70,7 @@ gboolean               gossip_jabber_disco_item_has_feature      (GossipJabberDi
 gboolean               gossip_jabber_disco_item_has_type         (GossipJabberDiscoItem     *item,
 								  const gchar               *type);
 gboolean               gossip_jabber_disco_servers               (void);
+void                   gossip_jabber_disco_init                  (GossipJabber              *jabber);
 
 G_END_DECLS
 

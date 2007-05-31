@@ -198,6 +198,14 @@ PKG_CHECK_MODULES(LIBGOSSIP,
    $gnome_vfs_pkgconfig
 ])
 
+PKG_CHECK_MODULES(LIBLOUDERMOUTH, 
+[
+   loudmouth-1.0 >= $LOUDMOUTH_REQUIRED
+   libxml-2.0 >= $LIBXML_REQUIRED
+   glib-2.0 >= $GLIB_REQUIRED
+   gobject-2.0
+])
+
 PKG_CHECK_MODULES(GOSSIP,
 [
    libxml-2.0 >= $LIBXML_REQUIRED
@@ -331,6 +339,7 @@ AC_OUTPUT([
   ui/Makefile
   ui/pixmaps/Makefile
   libgossip/Makefile
+  libloudermouth/Makefile
   src/Makefile
   src/sounds/Makefile
   po/Makefile.in
