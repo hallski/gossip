@@ -64,6 +64,8 @@ struct _GossipChatViewPriv {
 	GtkTextBuffer *buffer;
 
 	GossipTheme   *theme;
+	gpointer       theme_context;
+
 	time_t         last_timestamp;
 	BlockType      last_block_type;
 
@@ -164,7 +166,7 @@ gossip_chat_view_init (GossipChatView *view)
 	priv->buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
 
 	gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_NONE);
-	priv->last_timestamp = 0;
+	gossip_chat_view_set_last_timestamp (view, 0);
 
 	priv->allow_scrolling = TRUE;
 
@@ -655,7 +657,7 @@ chat_view_maybe_append_date_and_time (GossipChatView *view,
 	g_date_set_time (date, timestamp);
 
 	last_date = g_date_new ();
-	g_date_set_time (last_date, priv->last_timestamp);
+	g_date_set_time (last_date, gossip_chat_view_get_last_timestamp (view));
 
 	append_date = FALSE;
 	append_time = FALSE;
@@ -665,7 +667,7 @@ chat_view_maybe_append_date_and_time (GossipChatView *view,
 		append_time = TRUE;
 	}
 
-	if (priv->last_timestamp + TIMESTAMP_INTERVAL < timestamp) {
+	if (gossip_chat_view_get_last_timestamp (view) + TIMESTAMP_INTERVAL < timestamp) {
 		append_time = TRUE;
 	}
 
@@ -708,7 +710,7 @@ chat_view_maybe_append_date_and_time (GossipChatView *view,
 							  NULL);
 
 		gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_TIME);
-		priv->last_timestamp = timestamp;
+		gossip_chat_view_set_last_timestamp (view, timestamp);
 	}
 
 	g_string_free (str, TRUE);
@@ -1401,7 +1403,7 @@ gossip_chat_view_clear (GossipChatView *view)
 	priv = GET_PRIV (view);
 
 	gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_NONE);
-	priv->last_timestamp = 0;
+	gossip_chat_view_set_last_timestamp (view, 0);
 }
 
 gboolean
@@ -1850,4 +1852,28 @@ gossip_chat_view_set_last_block_type (GossipChatView *view,
 	priv->last_block_type = block_type;
 }
 
+time_t
+gossip_chat_view_get_last_timestamp (GossipChatView *view)
+{
+	GossipChatViewPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_CHAT_VIEW (view), 0);
+
+	priv = GET_PRIV (view);
+
+	return priv->last_timestamp;
+}
+
+void
+gossip_chat_view_set_last_timestamp (GossipChatView *view,
+				     time_t          timestamp)
+{
+	GossipChatViewPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
+
+	priv = GET_PRIV (view);
+
+	priv->last_timestamp = timestamp;
+}
 

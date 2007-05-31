@@ -1,3 +1,9 @@
+2007-06-01  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-chat-view.[ch] (gossip_chat_view_set_last_timestamp,
+	gossip_chat_view_set_last_timestamp): Added access functions for
+	last_timestamp.
+
 2007-05-31  Martyn Russell  <martyn@imendio.com>
 
 	Added basic support for file transfer

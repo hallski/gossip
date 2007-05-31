@@ -109,6 +109,9 @@ void            gossip_chat_view_set_is_group_chat         (GossipChatView *view
 BlockType       gossip_chat_view_get_last_block_type       (GossipChatView *view);
 void            gossip_chat_view_set_last_block_type       (GossipChatView *view,
 							    BlockType       block_type);
+time_t          gossip_chat_view_get_last_timestamp        (GossipChatView *view);
+void            gossip_chat_view_set_last_timestamp        (GossipChatView *view,
+							    time_t          timestamp);
 
 G_END_DECLS
 
