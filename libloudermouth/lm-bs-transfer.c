@@ -245,14 +245,23 @@ transfer_get_initiator (LmBsTransfer *transfer)
 	if (transfer->type == TRANSFER_TYPE_RECEIVER) {
 		return g_strdup (transfer->peer_jid);
 	}
+
+#ifdef HAVE_LM_WITH_FT
 	return lm_connection_get_full_jid (transfer->connection);
+#else
+	return NULL;
+#endif
 }
 
 static gchar *
 transfer_get_target (LmBsTransfer *transfer)
 {
 	if (transfer->type == TRANSFER_TYPE_RECEIVER) {
+#ifdef HAVE_LM_WITH_FT
 		return lm_connection_get_full_jid (transfer->connection);
+#else
+		return NULL;
+#endif
 	}
 	return g_strdup (transfer->peer_jid);
 }

@@ -1,3 +1,13 @@
+2007-06-01  Martyn Russell  <martyn@imendio.com>
+
+	Only enable file transfer if supported in Loudmouth
+	
+	* configure.ac:
+	* libgossip/gossip-jabber-ft.c:
+	* libloudermouth/lm-bs-transfer.c:
+	* src/gossip-contact-list.c: Use the new HAVE_LM_WITH_FT
+	definition for new functions.
+
 2007-06-01  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-chat-view.c (chat_view_append_message):

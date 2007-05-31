@@ -2321,7 +2321,13 @@ gossip_contact_list_get_contact_menu (GossipContactList *list,
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
 
 	can_show_log = gossip_log_exists_for_contact (contact);
+
+#ifdef HAVE_LM_WITH_FT
 	can_send_file = TRUE;
+#else
+	can_send_file = FALSE;
+#endif
+
 	can_email = gossip_email_available (contact);
 
 	menu = contact_list_get_contact_menu (list,
