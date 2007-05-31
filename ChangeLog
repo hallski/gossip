@@ -1,5 +1,11 @@
 2007-06-01  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-theme.[ch] (gossip_theme_context_new,
+	gossip_theme_context_free): Added functions for getting and setting a
+	context for view-persistent data in the theme.
+
+2007-06-01  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-chat-view.[ch] (gossip_chat_view_set_last_timestamp,
 	gossip_chat_view_set_last_timestamp): Added access functions for
 	last_timestamp.

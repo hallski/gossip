@@ -551,6 +551,37 @@ gossip_theme_append_spacing (GossipTheme *theme, GossipChatView *view)
 						  NULL);
 }
 
+typedef struct {
+	BlockType last_block_type;
+	time_t    last_timestamp;
+} FancyContext;
+
+gpointer
+gossip_theme_context_new (GossipTheme *theme)
+{
+	g_return_val_if_fail (GOSSIP_IS_THEME (theme), NULL);
+
+	if (gossip_theme_is_irc_style (theme)) {
+		return NULL;
+	} else {
+		FancyContext *context;
+
+		context = g_slice_new (FancyContext);
+
+		return context;
+	}
+}
+
+void
+gossip_theme_context_free (GossipTheme *theme, gpointer context)
+{
+	g_return_if_fail (GOSSIP_IS_THEME (theme));
+
+	if (!gossip_theme_is_irc_style (theme)) {
+		g_slice_free (FancyContext, context);
+	}
+}
+
 gboolean
 gossip_theme_is_irc_style (GossipTheme *theme)
 {
