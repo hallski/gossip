@@ -86,9 +86,10 @@ gossip_SOURCES = 				                        	\
 	gossip-status-presets.c		   gossip-status-presets.h	   	\
 	gossip-subscription-dialog.c       gossip-subscription-dialog.h	   	\
 	gossip-text-iter.c                 gossip-text-iter.h              	\
+	gossip-theme.c                     gossip-theme.h                       \
+	gossip-theme-manager.c	    	   gossip-theme-manager.h               \
 	gossip-ui-utils.c	           gossip-ui-utils.h		   	\
-	gossip-vcard-dialog.c	    	   gossip-vcard-dialog.h	   	\
-	gossip-theme-manager.c	    	   gossip-theme-manager.h
+	gossip-vcard-dialog.c	    	   gossip-vcard-dialog.h
 
 gossip_LDADD = \
 	$(top_builddir)/libgossip/libgossip.la				   	\

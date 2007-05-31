@@ -11,6 +11,12 @@
 
 2007-05-31  Mikael Hallendal  <micke@imendio.com>
 
+	* src/Makefile.am: Added gossip-theme.[ch]
+	* src/gossip-chat-view.[ch] (gossip_chat_view_[get|set]_theme): Added.
+	* src/gossip-theme.[ch]: Added some skeleton code.
+
+2007-05-31  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-contact-list.c:
 	(contact_list_drag_begin, contact_list_drag_end): Chain up.
 

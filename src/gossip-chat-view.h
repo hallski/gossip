@@ -31,6 +31,8 @@
 #include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-message.h>
 
+#include "gossip-theme.h"
+
 G_BEGIN_DECLS
 
 #define GOSSIP_TYPE_CHAT_VIEW         (gossip_chat_view_get_type ())
@@ -124,6 +126,9 @@ void            gossip_chat_view_find_abilities            (GossipChatView *view
 void            gossip_chat_view_highlight                 (GossipChatView *view,
 							    const gchar    *text);
 void            gossip_chat_view_copy_clipboard            (GossipChatView *view);
+GossipTheme *   gossip_chat_view_get_theme                 (GossipChatView *view);
+void            gossip_chat_view_set_theme                 (GossipChatView *view,
+							    GossipTheme    *theme);
 gboolean        gossip_chat_view_get_irc_style             (GossipChatView *view);
 void            gossip_chat_view_set_irc_style             (GossipChatView *view,
 							    gboolean        irc_style);

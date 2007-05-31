@@ -71,6 +71,7 @@ typedef enum {
 struct _GossipChatViewPriv {
 	GtkTextBuffer *buffer;
 
+	GossipTheme   *theme;
 	gboolean       irc_style;
 	time_t         last_timestamp;
 	BlockType      last_block_type;
@@ -2266,6 +2267,36 @@ gossip_chat_view_copy_clipboard (GossipChatView *view)
 	clipboard = gtk_clipboard_get (GDK_SELECTION_CLIPBOARD);
 
 	gtk_text_buffer_copy_clipboard (buffer, clipboard);
+}
+
+GossipTheme *
+gossip_chat_view_get_theme (GossipChatView *view)
+{
+	GossipChatViewPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_CHAT_VIEW (view), NULL);
+
+	priv = GET_PRIV (view);
+
+	return priv->theme;
+}
+
+void
+gossip_chat_view_set_theme (GossipChatView *view, GossipTheme *theme)
+{
+	GossipChatViewPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
+	g_return_if_fail (GOSSIP_IS_THEME (theme));
+
+	priv = GET_PRIV (view);
+
+	if (priv->theme) {
+		g_object_unref (priv->theme);
+	}
+
+	priv->theme = g_object_ref (theme);
+	/* FIXME: Possibly redraw the function and make it a property */
 }
 
 gboolean
