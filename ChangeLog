@@ -1,5 +1,13 @@
 2007-05-31  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-contact-list.c:
+	- Override the functions instead of connecting to the signals since
+	GossipContactList is a subclass of GtkTreeView.
+	(contact_list_drag_drop):
+	- Override drag_drop to get rid of a warning about it. Fixes #434423.
+
+2007-05-31  Mikael Hallendal  <micke@imendio.com>
+
 	* libgossip/gossip-message.[ch]:
 	(gossip_message_is_action, gossip_message_get_action_string):
 	- Added two functions to check if a message is action (/me) and also
