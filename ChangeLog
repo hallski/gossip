@@ -1,3 +1,11 @@
+2007-05-31  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-chat-view.[ch]:
+	* src/gossip-smiley.[ch]: Added
+	Factored out GossipSmiley from GossipChatView.
+	* src/gossip-ui-utils.[ch] (gossip_pixbuf_from_smiley):
+	Moved to GossipSmiley.
+
 2007-05-31  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-accounts-dialog.c: (accounts_dialog_update_account):

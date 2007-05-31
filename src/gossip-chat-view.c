@@ -45,6 +45,7 @@
 
 #include "gossip-app.h"
 #include "gossip-preferences.h"
+#include "gossip-smiley.h"
 #include "gossip-theme-manager.h"
 #include "gossip-text-iter.h"
 #include "gossip-ui-utils.h"
@@ -90,102 +91,6 @@ struct _GossipChatViewPriv {
 
 	guint          notify_system_fonts_id;
 	guint          notify_show_avatars_id;
-};
-
-typedef struct {
-	GossipSmiley  smiley;
-	const gchar  *pattern;
-} GossipSmileyPattern;
-
-static const GossipSmileyPattern smileys[] = {
-	/* Forward smileys. */
-	{ GOSSIP_SMILEY_NORMAL,       ":)"  },
-	{ GOSSIP_SMILEY_WINK,         ";)"  },
-	{ GOSSIP_SMILEY_WINK,         ";-)" },
-	{ GOSSIP_SMILEY_BIGEYE,       "=)"  },
-	{ GOSSIP_SMILEY_NOSE,         ":-)" },
-	{ GOSSIP_SMILEY_CRY,          ":'(" },
-	{ GOSSIP_SMILEY_SAD,          ":("  },
-	{ GOSSIP_SMILEY_SAD,          ":-(" },
-	{ GOSSIP_SMILEY_SCEPTICAL,    ":/"  },
-	{ GOSSIP_SMILEY_SCEPTICAL,    ":\\" },
-	{ GOSSIP_SMILEY_BIGSMILE,     ":D"  },
-	{ GOSSIP_SMILEY_BIGSMILE,     ":-D" },
-	{ GOSSIP_SMILEY_INDIFFERENT,  ":|"  },
-	{ GOSSIP_SMILEY_TOUNGE,       ":p"  },
-	{ GOSSIP_SMILEY_TOUNGE,       ":-p" },
-	{ GOSSIP_SMILEY_TOUNGE,       ":P"  },
-	{ GOSSIP_SMILEY_TOUNGE,       ":-P" },
-	{ GOSSIP_SMILEY_TOUNGE,       ";p"  },
-	{ GOSSIP_SMILEY_TOUNGE,       ";-p" },
-	{ GOSSIP_SMILEY_TOUNGE,       ";P"  },
-	{ GOSSIP_SMILEY_TOUNGE,       ";-P" },
-	{ GOSSIP_SMILEY_SHOCKED,      ":o"  },
-	{ GOSSIP_SMILEY_SHOCKED,      ":-o" },
-	{ GOSSIP_SMILEY_SHOCKED,      ":O"  },
-	{ GOSSIP_SMILEY_SHOCKED,      ":-O" },
-	{ GOSSIP_SMILEY_COOL,         "8)"  },
-	{ GOSSIP_SMILEY_COOL,         "B)"  },
-	{ GOSSIP_SMILEY_SORRY,        "*|"  },
-	{ GOSSIP_SMILEY_KISS,         ":*"  },
-	{ GOSSIP_SMILEY_SHUTUP,       ":#"  },
-	{ GOSSIP_SMILEY_SHUTUP,       ":-#" },
-	{ GOSSIP_SMILEY_YAWN,         "|O"  },
-	{ GOSSIP_SMILEY_CONFUSED,     ":S"  },
-	{ GOSSIP_SMILEY_CONFUSED,     ":s"  },
-	{ GOSSIP_SMILEY_ANGEL,        "<)"  },
-	{ GOSSIP_SMILEY_OOOH,         ":x"  },
-	{ GOSSIP_SMILEY_LOOKAWAY,     "*)"  },
-	{ GOSSIP_SMILEY_LOOKAWAY,     "*-)" },
-	{ GOSSIP_SMILEY_BLUSH,        "*S"  },
-	{ GOSSIP_SMILEY_BLUSH,        "*s"  },
-	{ GOSSIP_SMILEY_BLUSH,        "*$"  },
-	{ GOSSIP_SMILEY_COOLBIGSMILE, "8D"  },
-	{ GOSSIP_SMILEY_ANGRY,        ":@"  },
-	{ GOSSIP_SMILEY_BOSS,         "@)"  },
-	{ GOSSIP_SMILEY_MONKEY,       "#)"  },
-	{ GOSSIP_SMILEY_SILLY,        "O)"  },
-	{ GOSSIP_SMILEY_SICK,         "+o(" },
-
-	/* Backward smileys. */
-	{ GOSSIP_SMILEY_NORMAL,       "(:"  },
-	{ GOSSIP_SMILEY_WINK,         "(;"  },
-	{ GOSSIP_SMILEY_WINK,         "(-;" },
-	{ GOSSIP_SMILEY_BIGEYE,       "(="  },
-	{ GOSSIP_SMILEY_NOSE,         "(-:" },
-	{ GOSSIP_SMILEY_CRY,          ")':" },
-	{ GOSSIP_SMILEY_SAD,          "):"  },
-	{ GOSSIP_SMILEY_SAD,          ")-:" },
-	{ GOSSIP_SMILEY_SCEPTICAL,    "/:"  },
-	{ GOSSIP_SMILEY_SCEPTICAL,    "//:" },
-	{ GOSSIP_SMILEY_INDIFFERENT,  "|:"  },
-	{ GOSSIP_SMILEY_TOUNGE,       "d:"  },
-	{ GOSSIP_SMILEY_TOUNGE,       "d-:" },
-	{ GOSSIP_SMILEY_TOUNGE,       "d;"  },
-	{ GOSSIP_SMILEY_TOUNGE,       "d-;" },
-	{ GOSSIP_SMILEY_SHOCKED,      "o:"  },
-	{ GOSSIP_SMILEY_SHOCKED,      "O:"  },
-	{ GOSSIP_SMILEY_COOL,         "(8"  },
-	{ GOSSIP_SMILEY_COOL,         "(B"  },
-	{ GOSSIP_SMILEY_SORRY,        "|*"  },
-	{ GOSSIP_SMILEY_KISS,         "*:"  },
-	{ GOSSIP_SMILEY_SHUTUP,       "#:"  },
-	{ GOSSIP_SMILEY_SHUTUP,       "#-:" },
-	{ GOSSIP_SMILEY_YAWN,         "O|"  },
-	{ GOSSIP_SMILEY_CONFUSED,     "S:"  },
-	{ GOSSIP_SMILEY_CONFUSED,     "s:"  },
-	{ GOSSIP_SMILEY_ANGEL,        "(>"  },
-	{ GOSSIP_SMILEY_OOOH,         "x:"  },
-	{ GOSSIP_SMILEY_LOOKAWAY,     "(*"  },
-	{ GOSSIP_SMILEY_LOOKAWAY,     "(-*" },
-	{ GOSSIP_SMILEY_BLUSH,        "S*"  },
-	{ GOSSIP_SMILEY_BLUSH,        "s*"  },
-	{ GOSSIP_SMILEY_BLUSH,        "$*"  },
-	{ GOSSIP_SMILEY_ANGRY,        "@:"  },
-	{ GOSSIP_SMILEY_BOSS,         "(@"  },
-	{ GOSSIP_SMILEY_MONKEY,       "#)"  },
-	{ GOSSIP_SMILEY_SILLY,        "(O"  },
-	{ GOSSIP_SMILEY_SICK,         ")o+" }
 };
 
 static void     gossip_chat_view_class_init          (GossipChatViewClass      *klass);
@@ -2312,97 +2217,6 @@ gossip_chat_view_set_margin (GossipChatView *view,
 		      "left-margin", margin,
 		      "right-margin", margin,
 		      NULL);
-}
-
-GdkPixbuf *
-gossip_chat_view_get_smiley_image (GossipSmiley smiley)
-{
-	static GdkPixbuf *pixbufs[GOSSIP_SMILEY_COUNT];
-	static gboolean   inited = FALSE;
-
-	if (!inited) {
-		gint i;
-
-		for (i = 0; i < GOSSIP_SMILEY_COUNT; i++) {
-			pixbufs[i] = gossip_pixbuf_from_smiley (i, GTK_ICON_SIZE_MENU);
-		}
-
-		inited = TRUE;
-	}
-
-	return pixbufs[smiley];
-}
-
-const gchar *
-gossip_chat_view_get_smiley_text (GossipSmiley smiley)
-{
-	gint i;
-
-	for (i = 0; i < G_N_ELEMENTS (smileys); i++) {
-		if (smileys[i].smiley != smiley) {
-			continue;
-		}
-
-		return smileys[i].pattern;
-	}
-
-	return NULL;
-}
-
-GtkWidget *
-gossip_chat_view_get_smiley_menu (GCallback    callback,
-				  gpointer     user_data,
-				  GtkTooltips *tooltips)
-{
-	GtkWidget *menu;
-	gint       x;
-	gint       y;
-	gint       i;
-
-	g_return_val_if_fail (callback != NULL, NULL);
-
-	menu = gtk_menu_new ();
-
-	for (i = 0, x = 0, y = 0; i < GOSSIP_SMILEY_COUNT; i++) {
-		GtkWidget   *item;
-		GtkWidget   *image;
-		GdkPixbuf   *pixbuf;
-		const gchar *smiley_text;
-
-		pixbuf = gossip_chat_view_get_smiley_image (i);
-		if (!pixbuf) {
-			continue;
-		}
-
-		image = gtk_image_new_from_pixbuf (pixbuf);
-
-		item = gtk_image_menu_item_new_with_label ("");
-		gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
-
-		gtk_menu_attach (GTK_MENU (menu), item,
-				 x, x + 1, y, y + 1);
-
-		smiley_text = gossip_chat_view_get_smiley_text (i);
-
-		gtk_tooltips_set_tip (tooltips,
-				      item,
-				      smiley_text,
-				      NULL);
-
-		g_object_set_data  (G_OBJECT (item), "smiley_text", (gpointer) smiley_text);
-		g_signal_connect (item, "activate", callback, user_data);
-
-		if (x > 3) {
-			y++;
-			x = 0;
-		} else {
-			x++;
-		}
-	}
-
-	gtk_widget_show_all (menu);
-
-	return menu;
 }
 
 /* FIXME: Do we really need this? Better to do it internally only at setup time,

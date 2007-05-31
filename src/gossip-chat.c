@@ -42,6 +42,7 @@
 #include "gossip-geometry.h"
 #include "gossip-marshal.h"
 #include "gossip-preferences.h"
+#include "gossip-smiley.h"
 #include "gossip-spell.h"
 #include "gossip-spell-dialog.h"
 #include "gossip-ui-utils.h"

@@ -46,6 +46,7 @@
 #include "gossip-new-chatroom-dialog.h"
 #include "gossip-preferences.h"
 #include "gossip-private-chat.h"
+#include "gossip-smiley.h"
 #include "gossip-sound.h"
 #include "gossip-ui-utils.h"
 

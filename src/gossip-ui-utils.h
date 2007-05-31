@@ -25,6 +25,8 @@
 #ifndef __GOSSIP_UI_UTILS_H__
 #define __GOSSIP_UI_UTILS_H__
 
+#include <gtk/gtkwindow.h>
+
 #include <libgossip/gossip-account.h>
 #include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-vcard.h>
@@ -32,16 +34,12 @@
 #include <libgossip/gossip-chatroom.h>
 #include <libgossip/gossip-avatar.h>
 
-#include "gossip-chat-view.h"
-
 G_BEGIN_DECLS
 
 /* Dialogs */
 gchar *    gossip_password_dialog_run               (GossipAccount       *account,
 						     GtkWindow           *parent);
 /* Pixbufs */
-GdkPixbuf *gossip_pixbuf_from_smiley                (GossipSmiley         type,
-						     GtkIconSize          icon_size);
 GdkPixbuf *gossip_pixbuf_for_presence_state         (GossipPresenceState  state);
 GdkPixbuf *gossip_pixbuf_for_presence               (GossipPresence      *presence);
 GdkPixbuf *gossip_pixbuf_for_contact                (GossipContact       *contact);

@@ -79,6 +79,7 @@ gossip_SOURCES = 				                        	\
 	gossip-presence-chooser.c          gossip-presence-chooser.h       	\
 	gossip-preferences.c               gossip-preferences.h	           	\
 	gossip-private-chat.c              gossip-private-chat.h           	\
+	gossip-smiley.c                    gossip-smiley.h                      \
 	gossip-sound.c		           gossip-sound.h		   	\
 	gossip-spell.c                     gossip-spell.h                  	\
 	gossip-spell-dialog.c 		   gossip-spell-dialog.h           	\

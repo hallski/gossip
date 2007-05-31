@@ -54,38 +54,6 @@ struct _GossipChatViewClass {
 	GtkTextViewClass parent_class;
 };
 
-typedef enum {
-	GOSSIP_SMILEY_NORMAL,       /*  :)   */
-	GOSSIP_SMILEY_WINK,         /*  ;)   */
-	GOSSIP_SMILEY_BIGEYE,       /*  =)   */
-	GOSSIP_SMILEY_NOSE,         /*  :-)  */
-	GOSSIP_SMILEY_CRY,          /*  :'(  */
-	GOSSIP_SMILEY_SAD,          /*  :(   */
-	GOSSIP_SMILEY_SCEPTICAL,    /*  :/   */
-	GOSSIP_SMILEY_BIGSMILE,     /*  :D   */
-	GOSSIP_SMILEY_INDIFFERENT,  /*  :|   */
-	GOSSIP_SMILEY_TOUNGE,       /*  :p   */
-	GOSSIP_SMILEY_SHOCKED,      /*  :o   */
-	GOSSIP_SMILEY_COOL,         /*  8)   */
-	GOSSIP_SMILEY_SORRY,        /*  *|   */
-	GOSSIP_SMILEY_KISS,         /*  :*   */
-	GOSSIP_SMILEY_SHUTUP,       /*  :#   */
-	GOSSIP_SMILEY_YAWN,         /*  |O   */
-	GOSSIP_SMILEY_CONFUSED,     /*  :$   */
-	GOSSIP_SMILEY_ANGEL,        /*  <)   */
-	GOSSIP_SMILEY_OOOH,         /*  :x   */
-	GOSSIP_SMILEY_LOOKAWAY,     /*  *)   */
-	GOSSIP_SMILEY_BLUSH,        /*  *S   */
-	GOSSIP_SMILEY_COOLBIGSMILE, /*  8D   */
-	GOSSIP_SMILEY_ANGRY,        /*  :@   */
-	GOSSIP_SMILEY_BOSS,         /*  @)   */
-	GOSSIP_SMILEY_MONKEY,       /*  #)   */
-	GOSSIP_SMILEY_SILLY,        /*  O)   */
-	GOSSIP_SMILEY_SICK,         /*  +o(  */
-
-	GOSSIP_SMILEY_COUNT
-} GossipSmiley;
-
 GType           gossip_chat_view_get_type                  (void) G_GNUC_CONST;
 GossipChatView *gossip_chat_view_new                       (void);
 void            gossip_chat_view_append_message_from_self  (GossipChatView *view,
@@ -131,11 +99,6 @@ void            gossip_chat_view_set_theme                 (GossipChatView *view
 							    GossipTheme    *theme);
 void            gossip_chat_view_set_margin                (GossipChatView *view,
 							    gint            margin);
-GdkPixbuf *     gossip_chat_view_get_smiley_image          (GossipSmiley    smiley);
-const gchar *   gossip_chat_view_get_smiley_text           (GossipSmiley    smiley);
-GtkWidget *     gossip_chat_view_get_smiley_menu           (GCallback       callback,
-							    gpointer        user_data,
-							    GtkTooltips    *tooltips);
 void            gossip_chat_view_set_is_group_chat         (GossipChatView *view,
 							    gboolean        is_group_chat);
 
