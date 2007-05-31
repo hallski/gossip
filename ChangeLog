@@ -1,5 +1,12 @@
 2007-05-31  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-accounts-dialog.c:
+	(accounts_dialog_button_create_clicked_cb),
+	(gossip_accounts_dialog_show): Removed TELEPATHY additions for
+	account type selection when adding a new account.
+
+2007-05-31  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-accounts-dialog.c: Removed reference to Telepathy for
 	including specific files here and the protocol chooser.
 	

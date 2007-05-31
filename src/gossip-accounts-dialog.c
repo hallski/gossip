@@ -1121,28 +1121,6 @@ accounts_dialog_button_create_clicked_cb (GtkWidget             *button,
 		account_type = GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY;
 	} 
 
-#ifdef HAVE_TELEPATHY
- 	str = gossip_account_type_to_string (GOSSIP_ACCOUNT_TYPE_JABBER);
-	if (strcmp (account_type_str, str) == 0) {
-		account_type = GOSSIP_ACCOUNT_TYPE_JABBER;
-	} 
-
- 	str = gossip_account_type_to_string (GOSSIP_ACCOUNT_TYPE_MSN);
-	if (strcmp (account_type_str, str) == 0) {
-		account_type = GOSSIP_ACCOUNT_TYPE_MSN;
-	}
-
- 	str = gossip_account_type_to_string (GOSSIP_ACCOUNT_TYPE_IRC);
-	if (strcmp (account_type_str, str) == 0) {
-		account_type = GOSSIP_ACCOUNT_TYPE_IRC;
-	}
-
- 	str = gossip_account_type_to_string (GOSSIP_ACCOUNT_TYPE_SALUT);
-	if (strcmp (account_type_str, str) == 0) {
-		account_type = GOSSIP_ACCOUNT_TYPE_SALUT;
-	}
-#endif
-	
 	if (account_type == GOSSIP_ACCOUNT_TYPE_UNKNOWN) {
 		g_warning ("We have an unknown account type selected in the GtkComboBox");
 		return;
@@ -1497,20 +1475,6 @@ gossip_accounts_dialog_show (GossipAccount *account)
 	/* Set up combo */
 	str = gossip_account_type_to_string (GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY);
 	gtk_combo_box_append_text (GTK_COMBO_BOX (dialog->combobox_type), str);
-
-#ifdef HAVE_TELEPATHY
- 	str = gossip_account_type_to_string (GOSSIP_ACCOUNT_TYPE_JABBER);
-	gtk_combo_box_append_text (GTK_COMBO_BOX (dialog->combobox_type), str);
-
- 	str = gossip_account_type_to_string (GOSSIP_ACCOUNT_TYPE_MSN);
-	gtk_combo_box_append_text (GTK_COMBO_BOX (dialog->combobox_type), str);
-
- 	str = gossip_account_type_to_string (GOSSIP_ACCOUNT_TYPE_IRC);
-	gtk_combo_box_append_text (GTK_COMBO_BOX (dialog->combobox_type), str);
-
- 	str = gossip_account_type_to_string (GOSSIP_ACCOUNT_TYPE_SALUT);
-	gtk_combo_box_append_text (GTK_COMBO_BOX (dialog->combobox_type), str);
-#endif
 
 	/* Set up signalling */
 	session = gossip_app_get_session ();
