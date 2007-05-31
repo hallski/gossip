@@ -48,6 +48,11 @@ struct _GossipThemeClass {
 
 GType        gossip_theme_get_type             (void) G_GNUC_CONST;
 
+void         gossip_theme_append_message       (GossipTheme    *theme,
+						GossipChatView *view,
+						GossipMessage  *msg,
+						GossipContact  *contact,
+						gboolean        from_self);
 void         gossip_theme_append_action        (GossipTheme    *theme,
 						GossipChatView *view,
 						GossipMessage  *msg,

@@ -137,14 +137,6 @@ static void     chat_view_maybe_append_fancy_header  (GossipChatView           *
 						      GossipContact            *my_contact,
 						      gboolean                  from_self,
 						      GdkPixbuf                *avatar);
-static void     chat_view_append_irc_message         (GossipChatView           *view,
-						      GossipMessage            *msg,
-						      GossipContact            *contact,
-						      gboolean                  from_self);
-static void     chat_view_append_fancy_message       (GossipChatView           *view,
-						      GossipMessage            *msg,
-						      GossipContact            *my_contact,
-						      gboolean                  from_self);
 
 G_DEFINE_TYPE (GossipChatView, gossip_chat_view, GTK_TYPE_TEXT_VIEW);
 
@@ -845,92 +837,6 @@ chat_view_maybe_append_fancy_header (GossipChatView *view,
 }
 
 static void
-chat_view_append_irc_message (GossipChatView *view,
-			      GossipMessage  *msg,
-			      GossipContact  *my_contact,
-			      gboolean        from_self)
-{
-	GossipChatViewPriv *priv;
-	const gchar        *name;
-	const gchar        *body;
-	const gchar        *nick_tag;
-	const gchar        *body_tag;
-	GtkTextIter         iter;
-	gchar              *tmp;
-
-	priv = GET_PRIV (view);
-
-	gossip_debug (DEBUG_DOMAIN, "Add IRC message");
-
-	body = gossip_message_get_body (msg);
-
-	if (from_self) {
-		name = gossip_contact_get_name (my_contact);
-
-		nick_tag = "irc-nick-self";
-		body_tag = "irc-body-self";
-	} else {
-		GossipContact *contact;
-
-		contact = gossip_message_get_sender (msg);
-		name = gossip_contact_get_name (contact);
-
-		if (gossip_chat_should_highlight_nick (msg, my_contact)) {
-			nick_tag = "irc-nick-highlight";
-		} else {
-			nick_tag = "irc-nick-other";
-		}
-
-		body_tag = "irc-body-other";
-	}
-
-	if (gossip_chat_view_get_last_block_type (view) != BLOCK_TYPE_SELF &&
-	    gossip_chat_view_get_last_block_type (view) != BLOCK_TYPE_OTHER) {
-		gossip_theme_append_spacing (priv->theme, view);
-	}
-
-	gtk_text_buffer_get_end_iter (priv->buffer, &iter);
-
-	/* The nickname. */
-	tmp = g_strdup_printf ("%s: ", name);
-	gtk_text_buffer_insert_with_tags_by_name (priv->buffer,
-						  &iter,
-						  tmp,
-						  -1,
-						  "cut",
-						  nick_tag,
-						  NULL);
-	g_free (tmp);
-
-	/* The text body. */
-	gossip_theme_append_text (priv->theme, view, body, body_tag);
-}
-
-static void
-chat_view_append_fancy_message (GossipChatView *view,
-				GossipMessage  *msg,
-				GossipContact  *my_contact,
-				gboolean        from_self)
-{
-	GossipChatViewPriv *priv;
-	const gchar        *body;
-	const gchar        *tag;
-
-	priv = GET_PRIV (view);
-
-	if (from_self) {
-		tag = "fancy-body-self";
-	} else {
-		tag = "fancy-body-other";
-
-		/* FIXME: Might want to support nick highlighting here... */
-	}
-
-	body = gossip_message_get_body (msg);
-	gossip_theme_append_text (priv->theme, view, body, tag);
-}
-
-static void
 chat_view_invite_accept_cb (GtkWidget *button,
 			    gpointer   user_data)
 {
@@ -1041,26 +947,6 @@ gossip_chat_view_new (void)
 	return g_object_new (GOSSIP_TYPE_CHAT_VIEW, NULL);
 }
 
-static void
-chat_view_append_message (GossipChatView *view,
-			  GossipMessage  *message,
-			  GossipContact  *contact,
-			  gboolean        from_self)
-{
-	GossipChatViewPriv *priv;
-
-	priv = GET_PRIV (view);
-
-	if (gossip_theme_is_irc_style (priv->theme)) {
-		chat_view_append_irc_message (view, message,
-					      contact, from_self);
-	} else {
-		chat_view_append_fancy_message (view, message, 
-						contact, from_self);
-	}
-}
-
-
 /* The name is optional, if NULL, the sender for msg is used. */
 void
 gossip_chat_view_append_message_from_self (GossipChatView *view,
@@ -1099,7 +985,8 @@ gossip_chat_view_append_message_from_self (GossipChatView *view,
 		gossip_theme_append_action (priv->theme, view, 
 					    msg, my_contact, TRUE);
 	} else {
-		chat_view_append_message (view, msg, my_contact, TRUE);
+		gossip_theme_append_message (priv->theme, view,
+					     msg, my_contact, TRUE);
 	}
 
 	gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_SELF);
@@ -1153,7 +1040,8 @@ gossip_chat_view_append_message_from_other (GossipChatView *view,
 		gossip_theme_append_action (priv->theme, view, 
 					    msg, contact, FALSE);
 	} else {
-		chat_view_append_message (view, msg, contact, FALSE);
+		gossip_theme_append_message (priv->theme, view,
+					     msg, contact, FALSE);
 	}
 
 	gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_OTHER);

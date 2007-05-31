@@ -26,6 +26,7 @@
 #include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-utils.h>
 
+#include "gossip-chat.h"
 #include "gossip-preferences.h"
 #include "gossip-smiley.h"
 #include "gossip-theme.h"
@@ -135,6 +136,106 @@ theme_set_property (GObject      *object,
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
 		break;
+	}
+}
+
+static void
+theme_append_irc_message (GossipTheme    *theme,
+			  GossipChatView *view,
+			  GossipMessage  *msg,
+			  GossipContact  *my_contact,
+			  gboolean        from_self)
+{
+	GtkTextBuffer *buffer;
+	const gchar   *name;
+	const gchar   *nick_tag;
+	const gchar   *body_tag;
+	GtkTextIter    iter;
+	gchar         *tmp;
+
+	gossip_debug (DEBUG_DOMAIN, "Add IRC message");
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+
+	if (from_self) {
+		name = gossip_contact_get_name (my_contact);
+
+		nick_tag = "irc-nick-self";
+		body_tag = "irc-body-self";
+	} else {
+		GossipContact *contact;
+
+		contact = gossip_message_get_sender (msg);
+		name = gossip_contact_get_name (contact);
+
+		if (gossip_chat_should_highlight_nick (msg, my_contact)) {
+			nick_tag = "irc-nick-highlight";
+		} else {
+			nick_tag = "irc-nick-other";
+		}
+
+		body_tag = "irc-body-other";
+	}
+
+	if (gossip_chat_view_get_last_block_type (view) != BLOCK_TYPE_SELF &&
+	    gossip_chat_view_get_last_block_type (view) != BLOCK_TYPE_OTHER) {
+		gossip_theme_append_spacing (theme, view);
+	}
+
+	gtk_text_buffer_get_end_iter (buffer, &iter);
+
+	/* The nickname. */
+	tmp = g_strdup_printf ("%s: ", name);
+	gtk_text_buffer_insert_with_tags_by_name (buffer,
+						  &iter,
+						  tmp,
+						  -1,
+						  "cut",
+						  nick_tag,
+						  NULL);
+	g_free (tmp);
+
+	/* The text body. */
+	gossip_theme_append_text (theme, view, 
+				  gossip_message_get_body (msg),
+				  body_tag);
+}
+
+static void
+theme_append_fancy_message (GossipTheme    *theme,
+			    GossipChatView *view,
+			    GossipMessage  *msg,
+			    GossipContact  *my_contact,
+			    gboolean        from_self)
+{
+	const gchar *tag;
+
+	if (from_self) {
+		tag = "fancy-body-self";
+	} else {
+		tag = "fancy-body-other";
+
+		/* FIXME: Might want to support nick highlighting here... */
+	}
+
+	gossip_theme_append_text (theme, view, 
+				  gossip_message_get_body (msg),
+				  tag);
+}
+
+void
+gossip_theme_append_message (GossipTheme    *theme,
+			     GossipChatView *view,
+			     GossipMessage  *message,
+			     GossipContact  *contact,
+			     gboolean        from_self)
+{
+	if (gossip_theme_is_irc_style (theme)) {
+		theme_append_irc_message (theme, view, message,
+					  contact, from_self);
+	} else {
+		theme_append_fancy_message (theme, view, message, 
+					    contact, from_self);
 	}
 }
 
