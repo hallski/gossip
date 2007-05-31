@@ -84,10 +84,7 @@ about_dialog_activate_link_cb (GtkAboutDialog *about,
 void
 gossip_about_dialog_new (GtkWindow *parent)
 {
-	gchar       *license_trans;
-	gchar       *comments;
-	gchar       *technology;
-	const gchar *backend;
+	gchar *license_trans;
 
 	gtk_about_dialog_set_url_hook (about_dialog_activate_link_cb, NULL, NULL);
 
@@ -96,22 +93,10 @@ gossip_about_dialog_new (GtkWindow *parent)
 				     _(license[2]), "\n\n",
 				     NULL);
 
-#ifdef HAVE_TELEPATHY
-	backend = "Telepathy";
-#else
-	backend = "Jabber";
-#endif
-	
-	technology = g_strdup_printf (_("Using the %s backend"), backend);
-	comments = g_strdup_printf ("%s\n%s",
-				    _("An Instant Messaging client for GNOME"),
-	                            technology);
-	g_free (technology);
-
 	gtk_show_about_dialog (parent,
 			       "artists", artists,
 			       "authors", authors,
-			       "comments", comments,
+			       "comments", _("An Instant Messaging client for GNOME"),
 			       "license", license_trans,
 			       "wrap-license", TRUE,
 			       "copyright", "Imendio AB 2002-2007",
@@ -123,7 +108,6 @@ gossip_about_dialog_new (GtkWindow *parent)
 			       NULL);
 
 	g_free (license_trans);
-	g_free (comments);
 }
 
 

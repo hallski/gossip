@@ -1,3 +1,9 @@
+2007-05-31  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-about-dialog.c: (gossip_about_dialog_new): Remove
+	Telepathy "backend" code we added here to identify the backend we
+	were using.
+
 2007-05-31  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-contact-list.c:
