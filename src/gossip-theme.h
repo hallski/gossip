@@ -46,9 +46,9 @@ struct _GossipThemeClass {
 
 GType        gossip_theme_get_type             (void) G_GNUC_CONST;
 
-void         gossip_theme_insert_action        (GossipTheme   *theme,
+void         gossip_theme_append_action        (GossipTheme   *theme,
 						GtkTextBuffer *buffer);
-void         gossip_theme_insert_text          (GossipTheme   *theme,
+void         gossip_theme_append_text          (GossipTheme   *theme,
 						GtkTextBuffer *buffer,
 						const gchar   *body,
 						const gchar   *tag);

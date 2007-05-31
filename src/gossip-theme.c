@@ -136,7 +136,7 @@ theme_set_property (GObject      *object,
 }
 
 void
-gossip_theme_insert_action (GossipTheme *theme, GtkTextBuffer *buffer)
+gossip_theme_append_action (GossipTheme *theme, GtkTextBuffer *buffer)
 {
 	/* Do something fancy */
 }
@@ -236,7 +236,7 @@ theme_insert_text_with_emoticons (GtkTextBuffer *buf,
 
 
 void
-gossip_theme_insert_text (GossipTheme   *theme,
+gossip_theme_append_text (GossipTheme   *theme,
 			  GtkTextBuffer *buffer,
 			  const gchar   *body,
 			  const gchar   *tag)

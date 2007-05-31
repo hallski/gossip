@@ -920,7 +920,7 @@ chat_view_append_irc_action (GossipChatView *view,
 	}
 
 	tmp = gossip_message_get_action_string (msg);
-	gossip_theme_insert_text (priv->theme, priv->buffer, tmp, tag);
+	gossip_theme_append_text (priv->theme, priv->buffer, tmp, tag);
 	g_free (tmp);
 }
 
@@ -959,7 +959,7 @@ chat_view_append_fancy_action (GossipChatView *view,
 	}
 
 	tmp = gossip_message_get_action_string (msg);
-	gossip_theme_insert_text (priv->theme, priv->buffer, tmp, tag);
+	gossip_theme_append_text (priv->theme, priv->buffer, tmp, tag);
 	g_free (tmp);
 }
 
@@ -1022,7 +1022,7 @@ chat_view_append_irc_message (GossipChatView *view,
 	g_free (tmp);
 
 	/* The text body. */
-	gossip_theme_insert_text (priv->theme, priv->buffer, body, body_tag);
+	gossip_theme_append_text (priv->theme, priv->buffer, body, body_tag);
 }
 
 static void
@@ -1046,7 +1046,7 @@ chat_view_append_fancy_message (GossipChatView *view,
 	}
 
 	body = gossip_message_get_body (msg);
-	gossip_theme_insert_text (priv->theme, priv->buffer, body, tag);
+	gossip_theme_append_text (priv->theme, priv->buffer, body, tag);
 }
 
 static void
@@ -1404,7 +1404,7 @@ gossip_chat_view_append_invite (GossipChatView *view,
 
 	s = g_string_prepend_c (s, '\n');
 
-	gossip_theme_insert_text (priv->theme, priv->buffer, s->str, tag);
+	gossip_theme_append_text (priv->theme, priv->buffer, s->str, tag);
 	g_string_free (s, TRUE);
 
 	gtk_text_buffer_get_end_iter (priv->buffer, &iter);
@@ -1500,7 +1500,7 @@ gossip_chat_view_append_button (GossipChatView *view,
 	chat_view_maybe_append_date_and_time (view, NULL);
 
 	if (message) {
-		gossip_theme_insert_text (priv->theme, priv->buffer, message, tag);
+		gossip_theme_append_text (priv->theme, priv->buffer, message, tag);
 	}
 
 	gtk_text_buffer_get_end_iter (priv->buffer, &iter);

@@ -1,5 +1,13 @@
 2007-05-31  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-chat-view.c:
+	* src/gossip-theme.[ch] (gossip_theme_insert_text):
+	Renamed to gossip_theme_append_text.
+	* src/gossip-theme.[ch] (gossip_theme_insert_action):
+	Renamed to gossip_theme_append_action.
+
+2007-05-31  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-chat-view.[ch]:
 	(chat_view_append_text, chat_view_insert_text_with_emoticons):
 	Moved to GossipTheme.
