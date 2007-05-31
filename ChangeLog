@@ -1,5 +1,13 @@
 2007-06-01  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-chat-view.c (chat_view_append_message):
+	- Extracted from gossip_chat_view_append_message_from_self.
+	(gossip_chat_view_append_message_from_self):
+	(gossip_chat_view_append_message_from_other): Use
+	chat_view_append_message.
+
+2007-06-01  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-theme.[ch] (gossip_theme_context_new,
 	gossip_theme_context_free): Added functions for getting and setting a
 	context for view-persistent data in the theme.

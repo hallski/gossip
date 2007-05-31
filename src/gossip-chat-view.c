@@ -949,19 +949,15 @@ gossip_chat_view_new (void)
 	return g_object_new (GOSSIP_TYPE_CHAT_VIEW, NULL);
 }
 
-/* The name is optional, if NULL, the sender for msg is used. */
-void
-gossip_chat_view_append_message_from_self (GossipChatView *view,
-					   GossipMessage  *msg,
-					   GossipContact  *my_contact,
-					   GdkPixbuf      *avatar)
+static void
+chat_view_append_message (GossipChatView *view,
+			  GossipMessage  *msg,
+			  GossipContact  *contact,
+			  GdkPixbuf      *avatar,
+			  gboolean        from_self)
 {
 	GossipChatViewPriv *priv;
 	gboolean            scroll_down;
-
-	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
-	g_return_if_fail (GOSSIP_IS_MESSAGE (msg));
-	g_return_if_fail (GOSSIP_IS_CONTACT (my_contact));
 
 	priv = GET_PRIV (view);
 
@@ -973,30 +969,31 @@ gossip_chat_view_append_message_from_self (GossipChatView *view,
 
 	chat_view_maybe_trim_buffer (view);
 	chat_view_maybe_append_date_and_time (view, msg);
-
+	
 	if (!gossip_theme_is_irc_style (priv->theme)) {
 		chat_view_maybe_append_fancy_header (view, msg,
-						     my_contact,
-						     TRUE, avatar);
+						     contact, from_self,
+						     avatar);
 	}
-
-	/* Handle action messages (/me) and normal messages, in combination with
-	 * irc style and fancy style.
-	 */
+	
 	if (gossip_message_is_action (msg)) {
 		gossip_theme_append_action (priv->theme, view, 
-					    msg, my_contact, TRUE);
+					    msg, contact, from_self);
 	} else {
 		gossip_theme_append_message (priv->theme, view,
-					     msg, my_contact, TRUE);
+					     msg, contact, from_self);
 	}
 
-	gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_SELF);
-
-	/* Reset the last inserted contact, since it was from self. */
 	if (priv->last_contact) {
 		g_object_unref (priv->last_contact);
+	}
+	
+	if (from_self) {
+		gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_SELF);
 		priv->last_contact = NULL;
+	} else {
+		gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_OTHER);
+		priv->last_contact = g_object_ref (gossip_message_get_sender (msg));
 	}
 
 	if (scroll_down) {
@@ -1004,59 +1001,30 @@ gossip_chat_view_append_message_from_self (GossipChatView *view,
 	}
 }
 
-/* The name is optional, if NULL, the sender for msg is used. */
+void
+gossip_chat_view_append_message_from_self (GossipChatView *view,
+					   GossipMessage  *msg,
+					   GossipContact  *my_contact,
+					   GdkPixbuf      *avatar)
+{
+	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
+	g_return_if_fail (GOSSIP_IS_MESSAGE (msg));
+	g_return_if_fail (GOSSIP_IS_CONTACT (my_contact));
+	
+	chat_view_append_message (view, msg, my_contact, avatar, TRUE);
+}
+
 void
 gossip_chat_view_append_message_from_other (GossipChatView *view,
 					    GossipMessage  *msg,
 					    GossipContact  *contact,
 					    GdkPixbuf      *avatar)
 {
-	GossipChatViewPriv *priv;
-	gboolean            scroll_down;
-
 	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
 	g_return_if_fail (GOSSIP_IS_MESSAGE (msg));
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 
-	priv = GET_PRIV (view);
-
-	if (!gossip_message_get_body (msg)) {
-		return;
-	}
-
-	scroll_down = chat_view_is_scrolled_down (view);
-
-	chat_view_maybe_trim_buffer (view);
-	chat_view_maybe_append_date_and_time (view, msg);
-
-	if (!gossip_theme_is_irc_style (priv->theme)) {
-		chat_view_maybe_append_fancy_header (view, msg,
-						     contact, FALSE,
-						     avatar);
-	}
-
-	/* Handle action messages (/me) and normal messages, in combination with
-	 * irc style and fancy style.
-	 */
-	if (gossip_message_is_action (msg)) {
-		gossip_theme_append_action (priv->theme, view, 
-					    msg, contact, FALSE);
-	} else {
-		gossip_theme_append_message (priv->theme, view,
-					     msg, contact, FALSE);
-	}
-
-	gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_OTHER);
-
-	/* Update the last contact that sent something. */
-	if (priv->last_contact) {
-		g_object_unref (priv->last_contact);
-	}
-	priv->last_contact = g_object_ref (gossip_message_get_sender (msg));
-
-	if (scroll_down) {
-		gossip_chat_view_scroll_down (view);
-	}
+	chat_view_append_message (view, msg, contact, avatar, FALSE);
 }
 
 void
