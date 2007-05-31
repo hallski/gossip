@@ -34,11 +34,6 @@
 #include <libgossip/gossip-utils.h>
 #include <libgossip/gossip-account-manager.h>
 
-#ifdef HAVE_TELEPATHY
-#include <protocols/telepathy/gossip-telepathy-cmgr.h>
-#include "gossip-protocol-chooser.h"
-#endif
-
 #include "gossip-app.h"
 #include "gossip-account-widget-irc.h"
 #include "gossip-account-widget-jabber.h"

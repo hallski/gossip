@@ -1,5 +1,12 @@
 2007-05-31  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-accounts-dialog.c: Removed reference to Telepathy for
+	including specific files here and the protocol chooser.
+	
+	* src/gossip-protocol-chooser.[ch]: Removed, weren't being used.
+
+2007-05-31  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-about-dialog.c: (gossip_about_dialog_new): Remove
 	Telepathy "backend" code we added here to identify the backend we
 	were using.
