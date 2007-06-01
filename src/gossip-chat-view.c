@@ -132,8 +132,6 @@ static void     chat_view_invite_join_cb             (GossipChatroomProvider   *
 						      gpointer                  user_data);
 static void     chat_view_theme_changed_cb           (GossipThemeManager       *manager,
 						      GossipChatView           *view);
-static void     chat_view_maybe_append_date_and_time (GossipChatView           *view,
-						      GossipMessage            *msg);
 
 G_DEFINE_TYPE (GossipChatView, gossip_chat_view, GTK_TYPE_TEXT_VIEW);
 
@@ -613,9 +611,9 @@ chat_view_maybe_trim_buffer (GossipChatView *view)
 	}
 }
 
-static void
-chat_view_maybe_append_date_and_time (GossipChatView *view,
-				      GossipMessage  *msg)
+void
+gossip_chat_view_maybe_append_date_and_time (GossipChatView *view,
+					     GossipMessage  *msg)
 {
 	GossipChatViewPriv *priv;
 	const gchar        *tag;
@@ -843,7 +841,7 @@ chat_view_append_message (GossipChatView *view,
 	scroll_down = chat_view_is_scrolled_down (view);
 
 	chat_view_maybe_trim_buffer (view);
-	chat_view_maybe_append_date_and_time (view, msg);
+	gossip_chat_view_maybe_append_date_and_time (view, msg);
 
 	/* Handle action messages (/me) and normal messages, in combination with
 	 * irc style and fancy style.
@@ -928,7 +926,7 @@ gossip_chat_view_append_event (GossipChatView *view,
 		/* gossip_theme_append_spacing (priv->theme, view);*/
 	}
 
-	chat_view_maybe_append_date_and_time (view, NULL);
+	gossip_chat_view_maybe_append_date_and_time (view, NULL);
 
 	gtk_text_buffer_get_end_iter (priv->buffer, &iter);
 
@@ -979,7 +977,7 @@ gossip_chat_view_append_invite (GossipChatView *view,
 	invite = gossip_message_get_invite (message);
 	body = gossip_message_get_body (message);
 
-	chat_view_maybe_append_date_and_time (view, message);
+	gossip_chat_view_maybe_append_date_and_time (view, message);
 
 	reason = gossip_chatroom_invite_get_reason (invite);
 
@@ -1108,7 +1106,7 @@ gossip_chat_view_append_button (GossipChatView *view,
 
 	bottom = chat_view_is_scrolled_down (view);
 
-	chat_view_maybe_append_date_and_time (view, NULL);
+	gossip_chat_view_maybe_append_date_and_time (view, NULL);
 
 	if (message) {
 		gossip_theme_append_text (priv->theme, priv->theme_context,

@@ -1,5 +1,11 @@
 2007-06-01  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-chat-view.[ch]:
+	(gossip_chat_view_maybe_append_date_and_time): Export so that it can
+	be used from the themes for now.
+
+2007-06-01  Mikael Hallendal  <micke@imendio.com>
+
 	* libgossip/gossip-jabber-ft.c (jabber_ft_iq_si_handler):
 	- Return if IQ doesn't have any children. Fixes a node != NULL
 	warning.
