@@ -572,6 +572,7 @@ chat_view_is_scrolled_down (GossipChatView *view)
 static void
 chat_view_maybe_trim_buffer (GossipChatView *view)
 {
+#if 0
 	GossipChatViewPriv *priv;
 	GtkTextIter         top, bottom;
 	gint                line;
@@ -611,6 +612,7 @@ chat_view_maybe_trim_buffer (GossipChatView *view)
 	if (!gtk_text_iter_equal (&top, &bottom)) {
 		gtk_text_buffer_delete (priv->buffer, &top, &bottom);
 	}
+#endif
 }
 
 static void
