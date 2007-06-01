@@ -21,6 +21,7 @@
 #include <config.h>
 
 #include <string.h>
+#include <glib/gi18n.h>
 
 #include <libgossip/gossip-conf.h>
 #include <libgossip/gossip-debug.h>
@@ -685,6 +686,101 @@ gossip_theme_append_event (GossipTheme        *theme,
 						  tag,
 						  NULL);
 	g_free (msg);
+}
+
+static GDate *
+theme_get_date_and_time_from_message (GossipMessage *message,
+				      time_t        *timestamp)
+{
+	GDate *date;
+
+	*timestamp = 0;
+	if (message) {
+		*timestamp = gossip_message_get_timestamp (message);
+	}
+
+	if (timestamp <= 0) {
+		*timestamp = gossip_time_get_current ();
+	}
+
+	date = g_date_new ();
+	g_date_set_time (date, *timestamp);
+
+	return date;
+}
+
+
+void 
+gossip_theme_append_timestamp (GossipTheme        *theme,
+			       GossipThemeContext *context,
+			       GossipChatView     *view,
+			       GossipMessage      *message,
+			       gboolean            show_date,
+			       gboolean            show_time)
+{
+	GtkTextBuffer *buffer;
+	const gchar   *tag;
+	time_t         timestamp;
+	GDate         *date;
+	GtkTextIter    iter;
+	GString       *str;
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+
+	if (gossip_chat_view_is_irc_style (view)) {
+		tag = "irc-time";
+	} else {
+		tag = "fancy-time";
+	}
+
+	date = theme_get_date_and_time_from_message (message, &timestamp);
+
+	str = g_string_new (NULL);
+
+	if (show_time || show_date) {
+		gossip_theme_append_spacing (theme, 
+					     context,
+					     view);
+
+		g_string_append (str, "- ");
+	}
+
+	if (show_date) {
+		gchar buf[256];
+
+		g_date_strftime (buf, 256, _("%A %d %B %Y"), date);
+		g_string_append (str, buf);
+
+		if (show_time) {
+			g_string_append (str, ", ");
+		}
+	}
+
+	g_date_free (date);
+
+	if (show_time) {
+		gchar *tmp;
+
+		tmp = gossip_time_to_string_local (timestamp, GOSSIP_TIME_FORMAT_DISPLAY_SHORT);
+		g_string_append (str, tmp);
+		g_free (tmp);
+	}
+
+	if (show_time || show_date) {
+		g_string_append (str, " -\n");
+
+		gtk_text_buffer_get_end_iter (buffer, &iter);
+		gtk_text_buffer_insert_with_tags_by_name (buffer,
+							  &iter,
+							  str->str, -1,
+							  tag,
+							  NULL);
+
+		gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_TIME);
+		gossip_chat_view_set_last_timestamp (view, timestamp);
+	}
+
+	g_string_free (str, TRUE);
 }
 
 typedef struct {

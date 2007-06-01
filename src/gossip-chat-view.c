@@ -633,78 +633,6 @@ chat_view_get_date_and_time_from_message (GossipMessage *message,
 	return date;
 }
 
-static void
-chat_view_append_date_and_time (GossipChatView *view,
-				GossipMessage  *message,
-				gboolean        append_date,
-				gboolean        append_time)
-{
-	GossipChatViewPriv *priv;
-	const gchar        *tag;
-	time_t              timestamp;
-	GDate              *date;
-	GtkTextIter         iter;
-	GString            *str;
-
-	priv = GET_PRIV (view);
-
-	if (gossip_chat_view_is_irc_style (view)) {
-		tag = "irc-time";
-	} else {
-		tag = "fancy-time";
-	}
-
-	date = chat_view_get_date_and_time_from_message (message, &timestamp);
-
-	str = g_string_new (NULL);
-
-	if (append_time || append_date) {
-		gossip_theme_append_spacing (priv->theme, 
-					     priv->theme_context,
-					     view);
-
-		g_string_append (str, "- ");
-	}
-
-	if (append_date) {
-		gchar buf[256];
-
-		g_date_strftime (buf, 256, _("%A %d %B %Y"), date);
-		g_string_append (str, buf);
-
-		if (append_time) {
-			g_string_append (str, ", ");
-		}
-	}
-
-	g_date_free (date);
-
-	if (append_time) {
-		gchar *tmp;
-
-		tmp = gossip_time_to_string_local (timestamp, GOSSIP_TIME_FORMAT_DISPLAY_SHORT);
-		g_string_append (str, tmp);
-		g_free (tmp);
-	}
-
-	if (append_time || append_date) {
-		g_string_append (str, " -\n");
-
-		gtk_text_buffer_get_end_iter (priv->buffer, &iter);
-		gtk_text_buffer_insert_with_tags_by_name (priv->buffer,
-							  &iter,
-							  str->str, -1,
-							  tag,
-							  NULL);
-
-		gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_TIME);
-		gossip_chat_view_set_last_timestamp (view, timestamp);
-	}
-
-	g_string_free (str, TRUE);
-
-}
-
 void
 gossip_chat_view_maybe_append_date_and_time (GossipChatView *view,
 					     GossipMessage  *message)
@@ -741,8 +669,9 @@ gossip_chat_view_maybe_append_date_and_time (GossipChatView *view,
 	}
 
 	if (append_time || append_date) {
-		chat_view_append_date_and_time (view, message,
-						append_date, append_time);
+		gossip_theme_append_timestamp (priv->theme, priv->theme_context,
+					       view, message,
+					       append_date, append_time);
 	}
 }
 
@@ -979,7 +908,8 @@ gossip_chat_view_append_invite (GossipChatView *view,
 	invite = gossip_message_get_invite (message);
 	body = gossip_message_get_body (message);
 
-	gossip_chat_view_maybe_append_date_and_time (view, message);
+	gossip_theme_append_timestamp (priv->theme, priv->theme_context,
+				       view, message, TRUE, TRUE);
 
 	reason = gossip_chatroom_invite_get_reason (invite);
 
@@ -1108,7 +1038,9 @@ gossip_chat_view_append_button (GossipChatView *view,
 
 	bottom = chat_view_is_scrolled_down (view);
 
-	gossip_chat_view_maybe_append_date_and_time (view, NULL);
+	gossip_theme_append_timestamp (priv->theme, priv->theme_context,
+				       view, NULL,
+				       TRUE, TRUE);
 
 	if (message) {
 		gossip_theme_append_text (priv->theme, priv->theme_context,

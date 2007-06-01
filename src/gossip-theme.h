@@ -77,6 +77,12 @@ void         gossip_theme_append_event         (GossipTheme        *theme,
 						GossipThemeContext *context,
 						GossipChatView     *view,
 						const gchar        *str);
+void         gossip_theme_append_timestamp     (GossipTheme        *theme,
+						GossipThemeContext *context,
+						GossipChatView     *view,
+						GossipMessage      *message,
+						gboolean            show_date,
+						gboolean            show_time);
 
 GossipThemeContext *
 gossip_theme_context_new                       (GossipTheme        *theme);
