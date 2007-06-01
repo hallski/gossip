@@ -1,5 +1,13 @@
 2007-06-01  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-chat-view.[ch] (gossip_chat_view_[get|set]_is_irc_style):
+	* src/gossip-theme.[ch] (gossip_theme_[get|set]_is_irc_stlye):
+	- Moved back to GossipChatView since it's view specific right now.
+	- Fixed an issue where the theme would change after going between
+	group chat and priv chat and vice verse.
+
+2007-06-01  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-chat-view.c (gossip_chat_view_append_event):
 	- Factored out the display code to gossip_theme_append_event.
 	* src/gossip-theme.[ch] (gossip_theme_append_event):

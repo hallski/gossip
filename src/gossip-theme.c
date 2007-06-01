@@ -38,24 +38,10 @@
 typedef struct _GossipThemePriv GossipThemePriv;
 
 struct _GossipThemePriv {
-	gint my_prop;
-	gboolean is_irc_style;
+	gint myprop;
 };
 
 static void         theme_finalize           (GObject             *object);
-static void         theme_get_property       (GObject             *object,
-					      guint                param_id,
-					      GValue              *value,
-					      GParamSpec          *pspec);
-static void         theme_set_property       (GObject             *object,
-					      guint                param_id,
-					      const GValue        *value,
-					      GParamSpec          *pspec);
-
-enum {
-	PROP_0,
-	PROP_MY_PROP
-};
 
 G_DEFINE_TYPE (GossipTheme, gossip_theme, G_TYPE_OBJECT);
 
@@ -67,17 +53,6 @@ gossip_theme_class_init (GossipThemeClass *class)
 	object_class = G_OBJECT_CLASS (class);
 
 	object_class->finalize     = theme_finalize;
-	object_class->get_property = theme_get_property;
-	object_class->set_property = theme_set_property;
-
-	g_object_class_install_property (object_class,
-					 PROP_MY_PROP,
-					 g_param_spec_int ("my-prop",
-							   "",
-							   "",
-							   0, 1,
-							   1,
-							   G_PARAM_READWRITE));
 
 	g_type_class_add_private (object_class, sizeof (GossipThemePriv));
 }
@@ -98,45 +73,6 @@ theme_finalize (GObject *object)
 	priv = GET_PRIV (object);
 
 	(G_OBJECT_CLASS (gossip_theme_parent_class)->finalize) (object);
-}
-
-static void
-theme_get_property (GObject    *object,
-		    guint       param_id,
-		    GValue     *value,
-		    GParamSpec *pspec)
-{
-	GossipThemePriv *priv;
-
-	priv = GET_PRIV (object);
-
-	switch (param_id) {
-	case PROP_MY_PROP:
-		g_value_set_int (value, priv->my_prop);
-		break;
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
-		break;
-	}
-}
-static void
-theme_set_property (GObject      *object,
-		    guint         param_id,
-		    const GValue *value,
-		    GParamSpec   *pspec)
-{
-	GossipThemePriv *priv;
-
-	priv = GET_PRIV (object);
-
-	switch (param_id) {
-	case PROP_MY_PROP:
-		priv->my_prop = g_value_get_int (value);
-		break;
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
-		break;
-	}
 }
 
 static void
@@ -366,7 +302,7 @@ gossip_theme_append_message (GossipTheme        *theme,
 			     GossipContact      *contact,
 			     gboolean            from_self)
 {
-	if (gossip_theme_is_irc_style (theme)) {
+	if (gossip_chat_view_is_irc_style (view)) {
 		theme_append_irc_message (theme, context, view, message,
 					  contact, from_self);
 	} else {
@@ -464,7 +400,7 @@ gossip_theme_append_action (GossipTheme        *theme,
 			    GossipContact      *contact,
 			    gboolean            from_self)
 {
-	if (gossip_theme_is_irc_style (theme)) {
+	if (gossip_chat_view_is_irc_style (view)) {
 		theme_append_irc_action (theme, context, view, msg, 
 					 contact, from_self);
 	} else {
@@ -586,7 +522,7 @@ gossip_theme_append_text (GossipTheme        *theme,
 	priv = GET_PRIV (theme);
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
 
-	if (gossip_theme_is_irc_style (theme)) {
+	if (gossip_chat_view_is_irc_style (view)) {
 		link_tag = "irc-link";
 	} else {
 		link_tag = "fancy-link";
@@ -681,7 +617,7 @@ gossip_theme_append_spacing (GossipTheme        *theme,
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
 
-	if (gossip_theme_is_irc_style (theme)) {
+	if (gossip_chat_view_is_irc_style (view)) {
 		tag = "irc-spacing";
 	} else {
 		tag = "fancy-spacing";
@@ -710,17 +646,12 @@ gossip_theme_append_event (GossipTheme        *theme,
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
 
-	if (gossip_theme_is_irc_style (theme)) {
+	if (gossip_chat_view_is_irc_style (view)) {
 		tag = "irc-event";
 		msg = g_strdup_printf (" - %s\n", str);
 	} else {
 		tag = "fancy-event";
 		msg = g_strdup_printf (" - %s\n", str);
-	}
-
-	if (gossip_chat_view_get_last_block_type (view) != BLOCK_TYPE_EVENT) {
-		/* Comment out for now. */
-		/* gossip_theme_append_spacing (priv->theme, view);*/
 	}
 
 	gossip_chat_view_maybe_append_date_and_time (view, NULL);
@@ -744,49 +675,27 @@ gossip_theme_context_new (GossipTheme *theme)
 {
 	g_return_val_if_fail (GOSSIP_IS_THEME (theme), NULL);
 
-	if (gossip_theme_is_irc_style (theme)) {
 		return NULL;
-	} else {
+#if 0
+} else {
 		FancyContext *context;
 
 		context = g_slice_new (FancyContext);
 
 		return context;
 	}
+#endif
 }
 
 void
 gossip_theme_context_free (GossipTheme *theme, gpointer context)
 {
 	g_return_if_fail (GOSSIP_IS_THEME (theme));
-
-	if (!gossip_theme_is_irc_style (theme)) {
+#if 0
+	if (!gossip_chat_view_is_irc_style (view)) {
 		g_slice_free (FancyContext, context);
 	}
-}
-
-gboolean
-gossip_theme_is_irc_style (GossipTheme *theme)
-{
-	GossipThemePriv *priv;
-
-	g_return_val_if_fail (GOSSIP_IS_THEME (theme), TRUE);
-
-	priv = GET_PRIV (theme);
-
-	return priv->is_irc_style;
-}
-
-void
-gossip_theme_set_is_irc_style (GossipTheme *theme, gboolean is_irc_style)
-{
-	GossipThemePriv *priv;
-
-	g_return_if_fail (GOSSIP_IS_THEME (theme));
-
-	priv = GET_PRIV (theme);
-
-	priv->is_irc_style = is_irc_style;
+#endif
 }
 
 

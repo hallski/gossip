@@ -115,6 +115,10 @@ void            gossip_chat_view_set_last_block_type       (GossipChatView *view
 time_t          gossip_chat_view_get_last_timestamp        (GossipChatView *view);
 void            gossip_chat_view_set_last_timestamp        (GossipChatView *view,
 							    time_t          timestamp);
+gboolean        gossip_chat_view_is_irc_style              (GossipChatView *view);
+void            gossip_chat_view_set_is_irc_style          (GossipChatView *view,
+							    gboolean        is_irc_style);
+
 void           gossip_chat_view_maybe_append_date_and_time (GossipChatView           *view,
 							    GossipMessage            *msg);
 

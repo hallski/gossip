@@ -84,9 +84,6 @@ void         gossip_theme_context_free         (GossipTheme        *theme,
 						gpointer            context);
 
 /* Refactor-temp functions */
-gboolean     gossip_theme_is_irc_style         (GossipTheme        *theme);
-void         gossip_theme_set_is_irc_style     (GossipTheme        *theme,
-						gboolean            is_irc_style);
 
 
 G_END_DECLS

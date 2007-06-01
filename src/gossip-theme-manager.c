@@ -941,7 +941,7 @@ theme_manager_apply_theme (GossipThemeManager *manager,
 		margin = 3;
 	}
 
-	gossip_theme_set_is_irc_style (priv->theme, priv->irc_style);
+	gossip_chat_view_set_is_irc_style (view, priv->irc_style);
 	gossip_chat_view_set_theme (view, priv->theme);
 	gossip_chat_view_set_margin (view, margin);
 }
