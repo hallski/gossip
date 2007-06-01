@@ -804,8 +804,6 @@ gossip_chat_view_append_event (GossipChatView *view,
 	if (bottom) {
 		gossip_chat_view_scroll_down (view);
 	}
-
-	gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_EVENT);
 }
 
 void

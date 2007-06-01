@@ -1,5 +1,11 @@
 2007-06-01  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-chat-view.c (gossip_chat_view_append_event):
+	* src/gossip-theme.c (gossip_theme_append_event):
+	- Set the last block type in the theme instead.
+
+2007-06-01  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-chat-view.[ch]:
 	(gossip_chat_view_maybe_append_date_and_time): Moved to an internal
 	function in GossipTheme.

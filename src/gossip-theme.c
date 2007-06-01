@@ -753,6 +753,8 @@ gossip_theme_append_event (GossipTheme        *theme,
 						  tag,
 						  NULL);
 	g_free (msg);
+
+	gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_EVENT);
 }
 
 void 
