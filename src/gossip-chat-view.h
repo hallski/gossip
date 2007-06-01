@@ -119,10 +119,6 @@ gboolean        gossip_chat_view_is_irc_style              (GossipChatView *view
 void            gossip_chat_view_set_is_irc_style          (GossipChatView *view,
 							    gboolean        is_irc_style);
 
-void           gossip_chat_view_maybe_append_date_and_time (GossipChatView           *view,
-							    GossipMessage            *msg);
-
-
 G_END_DECLS
 
 #endif /* __GOSSIP_CHAT_VIEW_H__ */

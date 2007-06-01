@@ -53,9 +53,6 @@
 
 #define DEBUG_DOMAIN "ChatView"
 
-/* Number of seconds between timestamps when using normal mode, 5 minutes. */
-#define TIMESTAMP_INTERVAL 300
-
 #define MAX_LINES 800
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHAT_VIEW, GossipChatViewPriv))
@@ -609,69 +606,6 @@ chat_view_maybe_trim_buffer (GossipChatView *view)
 
 	if (!gtk_text_iter_equal (&top, &bottom)) {
 		gtk_text_buffer_delete (priv->buffer, &top, &bottom);
-	}
-}
-
-static GDate *
-chat_view_get_date_and_time_from_message (GossipMessage *message,
-					  time_t        *timestamp)
-{
-	GDate *date;
-
-	*timestamp = 0;
-	if (message) {
-		*timestamp = gossip_message_get_timestamp (message);
-	}
-
-	if (timestamp <= 0) {
-		*timestamp = gossip_time_get_current ();
-	}
-
-	date = g_date_new ();
-	g_date_set_time (date, *timestamp);
-
-	return date;
-}
-
-void
-gossip_chat_view_maybe_append_date_and_time (GossipChatView *view,
-					     GossipMessage  *message)
-{
-	GossipChatViewPriv *priv;
-	time_t              timestamp;
-	GDate              *date, *last_date;
-	gboolean            append_date, append_time;
-
-	priv = GET_PRIV (view);
-
-	if (gossip_chat_view_get_last_block_type (view) == BLOCK_TYPE_TIME) {
-		return;
-	}
-
-	date = chat_view_get_date_and_time_from_message (message, &timestamp);
-
-	last_date = g_date_new ();
-	g_date_set_time (last_date, gossip_chat_view_get_last_timestamp (view));
-
-	append_date = FALSE;
-	append_time = FALSE;
-
-	if (g_date_compare (date, last_date) > 0) {
-		append_date = TRUE;
-		append_time = TRUE;
-	}
-	
-	g_date_free (last_date);
-	g_date_free (date);
-
-	if (gossip_chat_view_get_last_timestamp (view) + TIMESTAMP_INTERVAL < timestamp) {
-		append_time = TRUE;
-	}
-
-	if (append_time || append_date) {
-		gossip_theme_append_timestamp (priv->theme, priv->theme_context,
-					       view, message,
-					       append_date, append_time);
 	}
 }
 

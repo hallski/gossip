@@ -34,6 +34,9 @@
 
 #define DEBUG_DOMAIN "Theme"
 
+/* Number of seconds between timestamps when using normal mode, 5 minutes. */
+#define TIMESTAMP_INTERVAL 300
+
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_THEME, GossipThemePriv))
 
 typedef struct _GossipThemePriv GossipThemePriv;
@@ -75,6 +78,70 @@ theme_finalize (GObject *object)
 
 	(G_OBJECT_CLASS (gossip_theme_parent_class)->finalize) (object);
 }
+
+static GDate *
+theme_get_date_and_time_from_message (GossipMessage *message,
+				      time_t        *timestamp)
+{
+	GDate *date;
+
+	*timestamp = 0;
+	if (message) {
+		*timestamp = gossip_message_get_timestamp (message);
+	}
+
+	if (timestamp <= 0) {
+		*timestamp = gossip_time_get_current ();
+	}
+
+	date = g_date_new ();
+	g_date_set_time (date, *timestamp);
+
+	return date;
+}
+
+
+static void
+theme_maybe_append_date_and_time (GossipTheme        *theme,
+				  GossipThemeContext *context,
+				  GossipChatView     *view,
+				  GossipMessage      *message)
+{
+	time_t    timestamp;
+	GDate    *date, *last_date;
+	gboolean  append_date, append_time;
+
+	if (gossip_chat_view_get_last_block_type (view) == BLOCK_TYPE_TIME) {
+		return;
+	}
+
+	date = theme_get_date_and_time_from_message (message, &timestamp);
+
+	last_date = g_date_new ();
+	g_date_set_time (last_date, gossip_chat_view_get_last_timestamp (view));
+
+	append_date = FALSE;
+	append_time = FALSE;
+
+	if (g_date_compare (date, last_date) > 0) {
+		append_date = TRUE;
+		append_time = TRUE;
+	}
+	
+	g_date_free (last_date);
+	g_date_free (date);
+
+	if (gossip_chat_view_get_last_timestamp (view) + TIMESTAMP_INTERVAL < timestamp) {
+		append_time = TRUE;
+	}
+
+	if (append_time || append_date) {
+		gossip_theme_append_timestamp (theme, context,
+					       view, message,
+					       append_date, append_time);
+	}
+}
+
 
 static void
 theme_append_irc_message (GossipTheme        *theme,
@@ -303,7 +370,7 @@ gossip_theme_append_message (GossipTheme        *theme,
 			     GossipContact      *contact,
 			     gboolean            from_self)
 {
-	gossip_chat_view_maybe_append_date_and_time (view, message);
+	theme_maybe_append_date_and_time (theme, context, view, message);
 
 	if (gossip_chat_view_is_irc_style (view)) {
 		theme_append_irc_message (theme, context, view, message,
@@ -412,7 +479,7 @@ gossip_theme_append_action (GossipTheme        *theme,
 			    GossipContact      *contact,
 			    gboolean            from_self)
 {
-	gossip_chat_view_maybe_append_date_and_time (view, message);
+	theme_maybe_append_date_and_time (theme, context, view, message);
 
 	if (gossip_chat_view_is_irc_style (view)) {
 		theme_append_irc_action (theme, context, view, message, 
@@ -677,7 +744,7 @@ gossip_theme_append_event (GossipTheme        *theme,
 		msg = g_strdup_printf (" - %s\n", str);
 	}
 
-	gossip_chat_view_maybe_append_date_and_time (view, NULL);
+	theme_maybe_append_date_and_time (theme, context, view, NULL);
 
 	gtk_text_buffer_get_end_iter (buffer, &iter);
 
@@ -687,28 +754,6 @@ gossip_theme_append_event (GossipTheme        *theme,
 						  NULL);
 	g_free (msg);
 }
-
-static GDate *
-theme_get_date_and_time_from_message (GossipMessage *message,
-				      time_t        *timestamp)
-{
-	GDate *date;
-
-	*timestamp = 0;
-	if (message) {
-		*timestamp = gossip_message_get_timestamp (message);
-	}
-
-	if (timestamp <= 0) {
-		*timestamp = gossip_time_get_current ();
-	}
-
-	date = g_date_new ();
-	g_date_set_time (date, *timestamp);
-
-	return date;
-}
-
 
 void 
 gossip_theme_append_timestamp (GossipTheme        *theme,
