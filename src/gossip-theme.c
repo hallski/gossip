@@ -202,6 +202,129 @@ theme_append_irc_message (GossipTheme    *theme,
 }
 
 static void
+theme_maybe_append_fancy_header (GossipTheme    *theme,
+				 GossipChatView *view,
+				 GossipMessage  *msg,
+				 GossipContact  *my_contact,
+				 gboolean        from_self)
+{
+	GossipContact      *contact;
+	GdkPixbuf          *avatar;
+	GtkTextBuffer      *buffer;
+	const gchar        *name;
+	gboolean            header;
+	GtkTextIter         iter;
+	gchar              *tmp;
+	const gchar        *tag;
+	const gchar        *avatar_tag;
+	const gchar        *line_top_tag;
+	const gchar        *line_bottom_tag;
+
+	contact = gossip_message_get_sender (msg);
+	avatar = gossip_contact_get_avatar_pixbuf (contact);
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+
+	gossip_debug (DEBUG_DOMAIN, "Maybe add fancy header");
+
+	if (from_self) {
+		name = gossip_contact_get_name (my_contact);
+
+		tag = "fancy-header-self";
+		line_top_tag = "fancy-line-top-self";
+		line_bottom_tag = "fancy-line-bottom-self";
+	} else {
+		name = gossip_contact_get_name (contact);
+
+		tag = "fancy-header-other";
+		line_top_tag = "fancy-line-top-other";
+		line_bottom_tag = "fancy-line-bottom-other";
+	}
+
+	header = FALSE;
+
+	/* Only insert a header if the previously inserted block is not the same
+	 * as this one. This catches all the different cases:
+	 */
+	if (gossip_chat_view_get_last_block_type (view) != BLOCK_TYPE_SELF &&
+	    gossip_chat_view_get_last_block_type (view) != BLOCK_TYPE_OTHER) {
+		header = TRUE;
+	}
+	else if (from_self &&
+		 gossip_chat_view_get_last_block_type (view) == BLOCK_TYPE_OTHER) {
+		header = TRUE;
+	}
+	else if (!from_self && 
+		 gossip_chat_view_get_last_block_type (view) == BLOCK_TYPE_SELF) {
+		header = TRUE;
+	}
+	else if (!from_self &&
+		 (!gossip_chat_view_get_last_contact (view) ||
+		  !gossip_contact_equal (contact, gossip_chat_view_get_last_contact (view)))) {
+		header = TRUE;
+	}
+
+	if (!header) {
+		return;
+	}
+
+	gossip_theme_append_spacing (theme, view);
+
+	gtk_text_buffer_get_end_iter (buffer, &iter);
+	gtk_text_buffer_insert_with_tags_by_name (buffer,
+						  &iter,
+						  "\n",
+						  -1,
+						  line_top_tag,
+						  NULL);
+
+	if (avatar) {
+		GtkTextIter start;
+
+		gtk_text_buffer_get_end_iter (buffer, &iter);
+		gtk_text_buffer_insert_pixbuf (buffer, &iter, avatar);
+
+		gtk_text_buffer_get_end_iter (buffer, &iter);
+		start = iter;
+		gtk_text_iter_backward_char (&start);
+
+		if (from_self) {
+			gtk_text_buffer_apply_tag_by_name (buffer,
+							   "fancy-avatar-self",
+							   &start, &iter);
+			avatar_tag = "fancy-header-self-avatar";
+		} else {
+			gtk_text_buffer_apply_tag_by_name (buffer,
+							   "fancy-avatar-other",
+							   &start, &iter);
+			avatar_tag = "fancy-header-other-avatar";
+		}
+
+	} else {
+		avatar_tag = NULL;
+	}
+
+	tmp = g_strdup_printf ("%s\n", name);
+
+	gtk_text_buffer_get_end_iter (buffer, &iter);
+	gtk_text_buffer_insert_with_tags_by_name (buffer,
+						  &iter,
+						  tmp,
+						  -1,
+						  tag,
+						  avatar_tag,
+						  NULL);
+	g_free (tmp);
+
+	gtk_text_buffer_get_end_iter (buffer, &iter);
+	gtk_text_buffer_insert_with_tags_by_name (buffer,
+						  &iter,
+						  "\n",
+						  -1,
+						  line_bottom_tag,
+						  NULL);
+}
+
+static void
 theme_append_fancy_message (GossipTheme    *theme,
 			    GossipChatView *view,
 			    GossipMessage  *msg,
@@ -209,6 +332,9 @@ theme_append_fancy_message (GossipTheme    *theme,
 			    gboolean        from_self)
 {
 	const gchar *tag;
+
+	theme_maybe_append_fancy_header (theme, view, msg,
+					 my_contact, from_self);
 
 	if (from_self) {
 		tag = "fancy-body-self";
@@ -292,6 +418,9 @@ theme_append_fancy_action (GossipTheme    *theme,
 	gossip_debug (DEBUG_DOMAIN, "Add fancy action");
 
 	contact = gossip_message_get_sender (msg);
+	
+	theme_maybe_append_fancy_header (theme, view, msg,
+					 my_contact, from_self);
 
 	if (from_self) {
 		name = gossip_contact_get_name (my_contact);
