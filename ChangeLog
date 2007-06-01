@@ -1,5 +1,12 @@
 2007-06-01  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-chat-view.c (gossip_chat_view_append_event):
+	- Factored out the display code to gossip_theme_append_event.
+	* src/gossip-theme.[ch] (gossip_theme_append_event):
+	- Added from the content of gossip_chat_view_append_event.
+
+2007-06-01  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-chat-view.[ch]:
 	(gossip_chat_view_maybe_append_date_and_time): Export so that it can
 	be used from the themes for now.

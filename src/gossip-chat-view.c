@@ -900,9 +900,6 @@ gossip_chat_view_append_event (GossipChatView *view,
 {
 	GossipChatViewPriv *priv;
 	gboolean            bottom;
-	GtkTextIter         iter;
-	gchar              *msg;
-	const gchar        *tag;
 
 	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
 	g_return_if_fail (!G_STR_EMPTY (str));
@@ -913,28 +910,8 @@ gossip_chat_view_append_event (GossipChatView *view,
 
 	chat_view_maybe_trim_buffer (view);
 
-	if (gossip_theme_is_irc_style (priv->theme)) {
-		tag = "irc-event";
-		msg = g_strdup_printf (" - %s\n", str);
-	} else {
-		tag = "fancy-event";
-		msg = g_strdup_printf (" - %s\n", str);
-	}
-
-	if (gossip_chat_view_get_last_block_type (view) != BLOCK_TYPE_EVENT) {
-		/* Comment out for now. */
-		/* gossip_theme_append_spacing (priv->theme, view);*/
-	}
-
-	gossip_chat_view_maybe_append_date_and_time (view, NULL);
-
-	gtk_text_buffer_get_end_iter (priv->buffer, &iter);
-
-	gtk_text_buffer_insert_with_tags_by_name (priv->buffer, &iter,
-						  msg, -1,
-						  tag,
-						  NULL);
-	g_free (msg);
+	gossip_theme_append_event (priv->theme, priv->theme_context,
+				   view, str);
 
 	if (bottom) {
 		gossip_chat_view_scroll_down (view);

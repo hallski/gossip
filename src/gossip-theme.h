@@ -73,6 +73,10 @@ void         gossip_theme_append_text          (GossipTheme        *theme,
 void         gossip_theme_append_spacing       (GossipTheme        *theme,
 						GossipThemeContext *context,
 						GossipChatView     *view);
+void         gossip_theme_append_event         (GossipTheme        *theme,
+						GossipThemeContext *context,
+						GossipChatView     *view,
+						const gchar        *str);
 
 GossipThemeContext *
 gossip_theme_context_new                       (GossipTheme        *theme);

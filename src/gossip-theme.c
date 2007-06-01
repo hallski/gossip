@@ -697,6 +697,43 @@ gossip_theme_append_spacing (GossipTheme        *theme,
 						  NULL);
 }
 
+void 
+gossip_theme_append_event (GossipTheme        *theme,
+			   GossipThemeContext *context,
+			   GossipChatView     *view,
+			   const gchar        *str)
+{
+	GtkTextBuffer *buffer;
+	GtkTextIter    iter;
+	gchar         *msg;
+	const gchar   *tag;
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+
+	if (gossip_theme_is_irc_style (theme)) {
+		tag = "irc-event";
+		msg = g_strdup_printf (" - %s\n", str);
+	} else {
+		tag = "fancy-event";
+		msg = g_strdup_printf (" - %s\n", str);
+	}
+
+	if (gossip_chat_view_get_last_block_type (view) != BLOCK_TYPE_EVENT) {
+		/* Comment out for now. */
+		/* gossip_theme_append_spacing (priv->theme, view);*/
+	}
+
+	gossip_chat_view_maybe_append_date_and_time (view, NULL);
+
+	gtk_text_buffer_get_end_iter (buffer, &iter);
+
+	gtk_text_buffer_insert_with_tags_by_name (buffer, &iter,
+						  msg, -1,
+						  tag,
+						  NULL);
+	g_free (msg);
+}
+
 typedef struct {
 	BlockType last_block_type;
 	time_t    last_timestamp;
