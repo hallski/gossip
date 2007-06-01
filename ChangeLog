@@ -1,11 +1,5 @@
 2007-06-01  Mikael Hallendal  <micke@imendio.com>
 
-	* libgossip/gossip-jabber-ft.c (jabber_ft_iq_si_handler):
-	- Return if IQ doesn't have any children. Fixes a node != NULL
-	warning.
-
-2007-06-01  Mikael Hallendal  <micke@imendio.com>
-
 	* src/gossip-theme.[ch]: Pass along the GossipThemeContext to all the
 	theme functions.
 
