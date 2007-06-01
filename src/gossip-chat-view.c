@@ -266,6 +266,10 @@ chat_view_setup_tags (GossipChatView *view)
 				    "cut",
 				    NULL);
 
+	gtk_text_buffer_create_tag (priv->buffer,
+				    "invite",
+				    NULL);
+
 	/* FIXME: Move to the theme and come up with something that looks a bit
 	 * nicer.
 	 */
@@ -828,11 +832,7 @@ gossip_chat_view_append_invite (GossipChatView *view,
 
 	priv = GET_PRIV (view);
 
-	if (gossip_chat_view_is_irc_style (view)) {
-		tag = "irc-invite";
-	} else {
-		tag = "fancy-invite";
-	}
+	tag = "invite";
 
 	bottom = chat_view_is_scrolled_down (view);
 
@@ -962,11 +962,7 @@ gossip_chat_view_append_button (GossipChatView *view,
 
 	priv = GET_PRIV (view);
 
-	if (gossip_chat_view_is_irc_style (view)) {
-		tag = "irc-invite";
-	} else {
-		tag = "fancy-invite";
-	}
+	tag = "invite";
 
 	bottom = chat_view_is_scrolled_down (view);
 

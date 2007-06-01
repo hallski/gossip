@@ -339,7 +339,6 @@ theme_manager_fixup_tag_table (GossipThemeManager *theme_manager,
 	theme_manager_ensure_tag_by_name (buffer, "fancy-spacing");
 	theme_manager_ensure_tag_by_name (buffer, "fancy-time");
 	theme_manager_ensure_tag_by_name (buffer, "fancy-event");
-	theme_manager_ensure_tag_by_name (buffer, "fancy-invite");
 	theme_manager_ensure_tag_by_name (buffer, "fancy-link");
 
 	/* IRC style tags. */
@@ -355,7 +354,6 @@ theme_manager_fixup_tag_table (GossipThemeManager *theme_manager,
 	theme_manager_ensure_tag_by_name (buffer, "irc-spacing");
 	theme_manager_ensure_tag_by_name (buffer, "irc-time");
 	theme_manager_ensure_tag_by_name (buffer, "irc-event");
-	theme_manager_ensure_tag_by_name (buffer, "irc-invite");
 	theme_manager_ensure_tag_by_name (buffer, "irc-link");
 }
 
@@ -442,7 +440,7 @@ theme_manager_apply_theme_classic (GossipThemeManager *manager,
 		      NULL);
 	theme_manager_add_tag (table, tag);
 
-	tag = theme_manager_init_tag_by_name (table, "irc-invite");
+	tag = theme_manager_init_tag_by_name (table, "invite");
 	g_object_set (tag,
 		      "foreground", "sienna",
 		      NULL);
@@ -594,7 +592,7 @@ theme_manager_apply_theme_simple (GossipThemeManager *manager,
 		      NULL);
 	theme_manager_add_tag (table, tag);
 
-	tag = theme_manager_init_tag_by_name (table, "fancy-invite");
+	tag = theme_manager_init_tag_by_name (table, "invite");
 	g_object_set (tag,
 		      "foreground", "darkgrey",
 		      NULL);
@@ -717,7 +715,7 @@ theme_manager_apply_theme_clean (GossipThemeManager *manager,
 		      "justification", GTK_JUSTIFY_LEFT,
 		      NULL);
 
-	tag = theme_manager_init_tag_by_name (table, "fancy-invite");
+	tag = theme_manager_init_tag_by_name (table, "invite");
 	g_object_set (tag,
 		      "foreground", "sienna",
 		      NULL);
@@ -891,7 +889,7 @@ theme_manager_apply_theme_blue (GossipThemeManager *manager,
 		      NULL);
 	theme_manager_add_tag (table, tag);
 
-	tag = theme_manager_init_tag_by_name (table, "fancy-invite");
+	tag = theme_manager_init_tag_by_name (table, "invite");
 	g_object_set (tag,
 		      "foreground", "sienna",
 		      NULL);

@@ -1,3 +1,12 @@
+2007-06-02  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-chat-view.c (chat_view_setup_tags): Create "invite" tag.
+	(gossip_chat_view_append_invite, gossip_chat_view_append_button): Always
+	use "invite" tag.
+	* src/gossip-theme-manager.c (theme_manager_fixup_tag_table): Don't 
+	create fancy-invite and irc-invite.
+	- Set colors on "invite" tag rather than fancy-invite and irc-invite.
+
 2007-06-01  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-chat-view.c (gossip_chat_view_append_event):
