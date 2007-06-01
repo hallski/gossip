@@ -46,33 +46,43 @@ struct _GossipThemeClass {
 	GObjectClass parent_class;
 };
 
+typedef void GossipThemeContext;
+
 GType        gossip_theme_get_type             (void) G_GNUC_CONST;
 
-void         gossip_theme_append_message       (GossipTheme    *theme,
-						GossipChatView *view,
-						GossipMessage  *msg,
-						GossipContact  *contact,
-						gboolean        from_self);
-void         gossip_theme_append_action        (GossipTheme    *theme,
-						GossipChatView *view,
-						GossipMessage  *msg,
-						GossipContact  *contact,
-						gboolean        from_self);
-void         gossip_theme_append_text          (GossipTheme    *theme,
-						GossipChatView *view,
-						const gchar    *body,
-						const gchar    *tag);
-void         gossip_theme_append_spacing       (GossipTheme    *theme,
-						GossipChatView *view);
+void         gossip_theme_view_cleared         (GossipTheme        *theme,
+						GossipThemeContext *context);
 
-gpointer     gossip_theme_context_new          (GossipTheme    *theme);
-void         gossip_theme_context_free         (GossipTheme    *theme,
-						gpointer        context);
+void         gossip_theme_append_message       (GossipTheme        *theme,
+						GossipThemeContext *context,
+						GossipChatView     *view,
+						GossipMessage      *msg,
+						GossipContact      *contact,
+						gboolean            from_self);
+void         gossip_theme_append_action        (GossipTheme        *theme,
+						GossipThemeContext *context,
+						GossipChatView     *view,
+						GossipMessage      *msg,
+						GossipContact      *contact,
+						gboolean            from_self);
+void         gossip_theme_append_text          (GossipTheme        *theme,
+						GossipThemeContext *context,
+						GossipChatView     *view,
+						const gchar        *body,
+						const gchar        *tag);
+void         gossip_theme_append_spacing       (GossipTheme        *theme,
+						GossipThemeContext *context,
+						GossipChatView     *view);
+
+GossipThemeContext *
+gossip_theme_context_new                       (GossipTheme        *theme);
+void         gossip_theme_context_free         (GossipTheme        *theme,
+						gpointer            context);
 
 /* Refactor-temp functions */
-gboolean     gossip_theme_is_irc_style         (GossipTheme    *theme);
-void         gossip_theme_set_is_irc_style     (GossipTheme    *theme,
-						gboolean        is_irc_style);
+gboolean     gossip_theme_is_irc_style         (GossipTheme        *theme);
+void         gossip_theme_set_is_irc_style     (GossipTheme        *theme,
+						gboolean            is_irc_style);
 
 
 G_END_DECLS

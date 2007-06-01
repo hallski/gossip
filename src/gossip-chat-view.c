@@ -667,7 +667,9 @@ chat_view_maybe_append_date_and_time (GossipChatView *view,
 	}
 
 	if (append_time || append_date) {
-		gossip_theme_append_spacing (priv->theme, view);
+		gossip_theme_append_spacing (priv->theme, 
+					     priv->theme_context,
+					     view);
 
 		g_string_append (str, "- ");
 	}
@@ -847,11 +849,11 @@ chat_view_append_message (GossipChatView *view,
 	 * irc style and fancy style.
 	 */
 	if (gossip_message_is_action (msg)) {
-		gossip_theme_append_action (priv->theme, view, 
-					    msg, contact, from_self);
+		gossip_theme_append_action (priv->theme, priv->theme_context,
+					    view, msg, contact, from_self);
 	} else {
-		gossip_theme_append_message (priv->theme, view,
-					     msg, contact, from_self);
+		gossip_theme_append_message (priv->theme, priv->theme_context,
+					     view, msg, contact, from_self);
 	}
 
 	if (from_self) {
@@ -1012,7 +1014,8 @@ gossip_chat_view_append_invite (GossipChatView *view,
 
 	s = g_string_prepend_c (s, '\n');
 
-	gossip_theme_append_text (priv->theme, view, s->str, tag);
+	gossip_theme_append_text (priv->theme, priv->theme_context, 
+				  view, s->str, tag);
 	g_string_free (s, TRUE);
 
 	gtk_text_buffer_get_end_iter (priv->buffer, &iter);
@@ -1108,7 +1111,8 @@ gossip_chat_view_append_button (GossipChatView *view,
 	chat_view_maybe_append_date_and_time (view, NULL);
 
 	if (message) {
-		gossip_theme_append_text (priv->theme, view, message, tag);
+		gossip_theme_append_text (priv->theme, priv->theme_context,
+					  view, message, tag);
 	}
 
 	gtk_text_buffer_get_end_iter (priv->buffer, &iter);

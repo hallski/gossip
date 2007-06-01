@@ -1,3 +1,8 @@
+2007-06-01  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-theme.[ch]: Pass along the GossipThemeContext to all the
+	theme functions.
+
 2007-06-01  Martyn Russell  <martyn@imendio.com>
 
 	Cater for missing LM_DISCONNECT_REASON_ states.
