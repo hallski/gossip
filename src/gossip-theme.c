@@ -302,12 +302,23 @@ gossip_theme_append_message (GossipTheme        *theme,
 			     GossipContact      *contact,
 			     gboolean            from_self)
 {
+	gossip_chat_view_maybe_append_date_and_time (view, message);
+
 	if (gossip_chat_view_is_irc_style (view)) {
 		theme_append_irc_message (theme, context, view, message,
 					  contact, from_self);
 	} else {
 		theme_append_fancy_message (theme, context, view, message, 
 					    contact, from_self);
+	}
+
+	if (from_self) {
+		gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_SELF);
+		gossip_chat_view_set_last_contact (view, NULL);
+	} else {
+		gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_OTHER);
+		gossip_chat_view_set_last_contact (view, 
+						   gossip_message_get_sender (message));
 	}
 }
 
@@ -396,16 +407,27 @@ void
 gossip_theme_append_action (GossipTheme        *theme,
 			    GossipThemeContext *context,
 			    GossipChatView     *view,
-			    GossipMessage      *msg,
+			    GossipMessage      *message,
 			    GossipContact      *contact,
 			    gboolean            from_self)
 {
+	gossip_chat_view_maybe_append_date_and_time (view, message);
+
 	if (gossip_chat_view_is_irc_style (view)) {
-		theme_append_irc_action (theme, context, view, msg, 
+		theme_append_irc_action (theme, context, view, message, 
 					 contact, from_self);
 	} else {
-		theme_append_fancy_action (theme, context, view, msg, 
+		theme_append_fancy_action (theme, context, view, message, 
 					   contact, from_self);
+	}
+
+	if (from_self) {
+		gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_SELF);
+		gossip_chat_view_set_last_contact (view, NULL);
+	} else {
+		gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_OTHER);
+		gossip_chat_view_set_last_contact (view, 
+						   gossip_message_get_sender (message));
 	}
 }
 

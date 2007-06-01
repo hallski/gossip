@@ -842,7 +842,6 @@ chat_view_append_message (GossipChatView *view,
 	scroll_down = chat_view_is_scrolled_down (view);
 
 	chat_view_maybe_trim_buffer (view);
-	gossip_chat_view_maybe_append_date_and_time (view, msg);
 
 	/* Handle action messages (/me) and normal messages, in combination with
 	 * irc style and fancy style.
@@ -853,15 +852,6 @@ chat_view_append_message (GossipChatView *view,
 	} else {
 		gossip_theme_append_message (priv->theme, priv->theme_context,
 					     view, msg, contact, from_self);
-	}
-
-	if (from_self) {
-		gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_SELF);
-		gossip_chat_view_set_last_contact (view, NULL);
-	} else {
-		gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_OTHER);
-		gossip_chat_view_set_last_contact (view, 
-						   gossip_message_get_sender (msg));
 	}
 
 	if (scroll_down) {

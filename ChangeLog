@@ -1,5 +1,14 @@
 2007-06-01  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-chat-view.[ch] (chat_view_append_message):
+	- Moved code to append date/time and set last block/contact to
+	GossipTheme.
+	* src/gossip-theme.c:
+	(gossip_theme_append_message, gossip_theme_append_action): append
+	date/time and set the last block/contact.
+
+2007-06-01  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-chat-view.[ch] (gossip_chat_view_[get|set]_is_irc_style):
 	* src/gossip-theme.[ch] (gossip_theme_[get|set]_is_irc_stlye):
 	- Moved back to GossipChatView since it's view specific right now.
