@@ -497,8 +497,11 @@ jabber_ft_iq_si_handler (LmMessageHandler *handler,
 	if (!node) {
 		if (subtype == LM_MESSAGE_SUB_TYPE_SET) {
 			return jabber_ft_iq_query (conn, m, jabber);
-		} else if (subtype == LM_MESSAGE_SUB_TYPE_RESULT) {
+		} 
+		else if (subtype == LM_MESSAGE_SUB_TYPE_RESULT) {
 			return jabber_ft_iq_streamhost (conn, m, jabber);
+		} else {
+			return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 		}
 	}
 
