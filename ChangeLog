@@ -1,5 +1,14 @@
 2007-06-01  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-chat-view.c:
+	(chat_view_get_date_and_time_from_message,
+	chat_view_append_date_and_time):
+	- Split up gossip_chat_view_maybe_append_date_and_time to separate the
+	code that checks whether a timestamp should be inserted and the code
+	that actually inserts it.
+
+2007-06-01  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-chat-view.[ch] (chat_view_append_message):
 	- Moved code to append date/time and set last block/contact to
 	GossipTheme.

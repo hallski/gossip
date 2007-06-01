@@ -612,16 +612,38 @@ chat_view_maybe_trim_buffer (GossipChatView *view)
 	}
 }
 
-void
-gossip_chat_view_maybe_append_date_and_time (GossipChatView *view,
-					     GossipMessage  *msg)
+static GDate *
+chat_view_get_date_and_time_from_message (GossipMessage *message,
+					  time_t        *timestamp)
+{
+	GDate *date;
+
+	*timestamp = 0;
+	if (message) {
+		*timestamp = gossip_message_get_timestamp (message);
+	}
+
+	if (timestamp <= 0) {
+		*timestamp = gossip_time_get_current ();
+	}
+
+	date = g_date_new ();
+	g_date_set_time (date, *timestamp);
+
+	return date;
+}
+
+static void
+chat_view_append_date_and_time (GossipChatView *view,
+				GossipMessage  *message,
+				gboolean        append_date,
+				gboolean        append_time)
 {
 	GossipChatViewPriv *priv;
 	const gchar        *tag;
 	time_t              timestamp;
-	GDate              *date, *last_date;
+	GDate              *date;
 	GtkTextIter         iter;
-	gboolean            append_date, append_time;
 	GString            *str;
 
 	priv = GET_PRIV (view);
@@ -632,38 +654,9 @@ gossip_chat_view_maybe_append_date_and_time (GossipChatView *view,
 		tag = "fancy-time";
 	}
 
-	if (gossip_chat_view_get_last_block_type (view) == BLOCK_TYPE_TIME) {
-		return;
-	}
+	date = chat_view_get_date_and_time_from_message (message, &timestamp);
 
 	str = g_string_new (NULL);
-
-	timestamp = 0;
-	if (msg) {
-		timestamp = gossip_message_get_timestamp (msg);
-	}
-
-	if (timestamp <= 0) {
-		timestamp = gossip_time_get_current ();
-	}
-
-	date = g_date_new ();
-	g_date_set_time (date, timestamp);
-
-	last_date = g_date_new ();
-	g_date_set_time (last_date, gossip_chat_view_get_last_timestamp (view));
-
-	append_date = FALSE;
-	append_time = FALSE;
-
-	if (g_date_compare (date, last_date) > 0) {
-		append_date = TRUE;
-		append_time = TRUE;
-	}
-
-	if (gossip_chat_view_get_last_timestamp (view) + TIMESTAMP_INTERVAL < timestamp) {
-		append_time = TRUE;
-	}
 
 	if (append_time || append_date) {
 		gossip_theme_append_spacing (priv->theme, 
@@ -685,7 +678,6 @@ gossip_chat_view_maybe_append_date_and_time (GossipChatView *view,
 	}
 
 	g_date_free (date);
-	g_date_free (last_date);
 
 	if (append_time) {
 		gchar *tmp;
@@ -710,6 +702,48 @@ gossip_chat_view_maybe_append_date_and_time (GossipChatView *view,
 	}
 
 	g_string_free (str, TRUE);
+
+}
+
+void
+gossip_chat_view_maybe_append_date_and_time (GossipChatView *view,
+					     GossipMessage  *message)
+{
+	GossipChatViewPriv *priv;
+	time_t              timestamp;
+	GDate              *date, *last_date;
+	gboolean            append_date, append_time;
+
+	priv = GET_PRIV (view);
+
+	if (gossip_chat_view_get_last_block_type (view) == BLOCK_TYPE_TIME) {
+		return;
+	}
+
+	date = chat_view_get_date_and_time_from_message (message, &timestamp);
+
+	last_date = g_date_new ();
+	g_date_set_time (last_date, gossip_chat_view_get_last_timestamp (view));
+
+	append_date = FALSE;
+	append_time = FALSE;
+
+	if (g_date_compare (date, last_date) > 0) {
+		append_date = TRUE;
+		append_time = TRUE;
+	}
+	
+	g_date_free (last_date);
+	g_date_free (date);
+
+	if (gossip_chat_view_get_last_timestamp (view) + TIMESTAMP_INTERVAL < timestamp) {
+		append_time = TRUE;
+	}
+
+	if (append_time || append_date) {
+		chat_view_append_date_and_time (view, message,
+						append_date, append_time);
+	}
 }
 
 static void
