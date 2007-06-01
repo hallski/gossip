@@ -854,16 +854,13 @@ chat_view_append_message (GossipChatView *view,
 					     msg, contact, from_self);
 	}
 
-	if (priv->last_contact) {
-		g_object_unref (priv->last_contact);
-	}
-	
 	if (from_self) {
 		gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_SELF);
-		priv->last_contact = NULL;
+		gossip_chat_view_set_last_contact (view, NULL);
 	} else {
 		gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_OTHER);
-		priv->last_contact = g_object_ref (gossip_message_get_sender (msg));
+		gossip_chat_view_set_last_contact (view, 
+						   gossip_message_get_sender (msg));
 	}
 
 	if (scroll_down) {
@@ -1676,6 +1673,26 @@ gossip_chat_view_get_last_contact (GossipChatView *view)
 
 	return priv->last_contact;
 }
+
+void
+gossip_chat_view_set_last_contact (GossipChatView *view, GossipContact *contact)
+{
+	GossipChatViewPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
+
+	priv = GET_PRIV (view);
+
+	if (priv->last_contact) {
+		g_object_unref (priv->last_contact);
+		priv->last_contact = NULL;
+	}
+
+	if (contact) {
+		priv->last_contact = g_object_ref (contact);
+	}
+}
+
 
 BlockType
 gossip_chat_view_get_last_block_type (GossipChatView *view)
