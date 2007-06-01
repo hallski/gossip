@@ -1,5 +1,12 @@
 2007-06-01  Martyn Russell  <martyn@imendio.com>
 
+	Cater for missing LM_DISCONNECT_REASON_ states.
+	
+	* libgossip/gossip-jabber.c: (jabber_disconnect_cb): Don't
+	assert_not_reached() if enumerations are not covered here.
+
+2007-06-01  Martyn Russell  <martyn@imendio.com>
+
 	Only enable file transfer if supported in Loudmouth
 	
 	* configure.ac:

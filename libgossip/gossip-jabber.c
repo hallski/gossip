@@ -1071,16 +1071,17 @@ jabber_disconnect_cb (LmConnection       *connection,
 
 	switch (reason) {
 	case LM_DISCONNECT_REASON_OK:
+	case LM_DISCONNECT_REASON_RESOURCE_CONFLICT:
 		gossip_reason = GOSSIP_PROTOCOL_DISCONNECT_ASKED;
 		break;
+
+	case LM_DISCONNECT_REASON_INVALID_XML:
 	case LM_DISCONNECT_REASON_PING_TIME_OUT:
 	case LM_DISCONNECT_REASON_HUP:
 	case LM_DISCONNECT_REASON_ERROR:
 	case LM_DISCONNECT_REASON_UNKNOWN:
 		gossip_reason = GOSSIP_PROTOCOL_DISCONNECT_ERROR;
 		break;
-	default:
-		g_assert_not_reached();
 	}
 
 	g_signal_emit_by_name (jabber, "disconnected", priv->account, gossip_reason);
