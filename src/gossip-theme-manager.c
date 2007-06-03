@@ -39,15 +39,19 @@
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_THEME_MANAGER, GossipThemeManagerPriv))
 
 typedef struct {
-	gchar    *name;
-	guint     name_notify_id;
-	guint     room_notify_id;
+	gchar       *name;
+	guint        name_notify_id;
+	guint        room_notify_id;
 
-	gboolean  show_avatars;
-	guint     show_avatars_notify_id;
+	gboolean     show_avatars;
+	guint        show_avatars_notify_id;
 
-	GossipTheme *theme;
-	gboolean  irc_style;
+	GossipTheme *clean_theme;
+	GossipTheme *simple_theme;
+	GossipTheme *blue_theme;
+	GossipTheme *classic_theme;
+
+	gboolean     irc_style;
 } GossipThemeManagerPriv;
 
 static void        theme_manager_finalize                 (GObject            *object);
@@ -150,7 +154,10 @@ gossip_theme_manager_init (GossipThemeManager *manager)
 			      GOSSIP_PREFS_UI_SHOW_AVATARS,
 			      &priv->show_avatars);
 
-	priv->theme = g_object_new (GOSSIP_TYPE_THEME, NULL);
+	priv->clean_theme   = gossip_theme_new (THEME_CLEAN);
+	priv->simple_theme  = gossip_theme_new (THEME_SIMPLE);
+	priv->blue_theme    = gossip_theme_new (THEME_BLUE);
+	priv->classic_theme = gossip_theme_new (THEME_CLASSIC);
 }
 
 static void
@@ -166,7 +173,10 @@ theme_manager_finalize (GObject *object)
 
 	g_free (priv->name);
 
-	g_object_unref (priv->theme);
+	g_object_unref (priv->clean_theme);
+	g_object_unref (priv->simple_theme);
+	g_object_unref (priv->blue_theme);
+	g_object_unref (priv->classic_theme);
 
 	G_OBJECT_CLASS (gossip_theme_manager_parent_class)->finalize (object);
 }
@@ -910,6 +920,7 @@ theme_manager_apply_theme (GossipThemeManager *manager,
 {
 	GossipThemeManagerPriv *priv;
 	gint                    margin;
+	GossipTheme            *theme;
 
 	priv = GET_PRIV (manager);
 
@@ -922,25 +933,30 @@ theme_manager_apply_theme (GossipThemeManager *manager,
 		if (strcmp (name, "clean") == 0) {
 			theme_manager_apply_theme_clean (manager, view);
 			margin = 3;
+			theme = priv->clean_theme;
 		}
 		else if (strcmp (name, "simple") == 0) {
 			theme_manager_apply_theme_simple (manager, view);
 			margin = 3;
+			theme = priv->simple_theme;
 		}
 		else if (strcmp (name, "blue") == 0) {
 			theme_manager_apply_theme_blue (manager, view);
 			margin = 0;
+			theme = priv->blue_theme;
 		} else {
 			theme_manager_apply_theme_classic (manager, view);
 			margin = 3;
+			theme = priv->classic_theme;
 		}
 	} else {
 		theme_manager_apply_theme_classic (manager, view);
 		margin = 3;
+		theme = priv->classic_theme;
 	}
 
 	gossip_chat_view_set_is_irc_style (view, priv->irc_style);
-	gossip_chat_view_set_theme (view, priv->theme);
+	gossip_chat_view_set_theme (view, theme);
 	gossip_chat_view_set_margin (view, margin);
 }
 

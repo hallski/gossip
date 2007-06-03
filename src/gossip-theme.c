@@ -42,7 +42,7 @@
 typedef struct _GossipThemePriv GossipThemePriv;
 
 struct _GossipThemePriv {
-	gint myprop;
+	ThemeStyle style;
 };
 
 static void         theme_finalize           (GObject             *object);
@@ -354,6 +354,20 @@ theme_append_fancy_message (GossipTheme        *theme,
 	gossip_theme_append_text (theme, context, view, 
 				  gossip_message_get_body (msg),
 				  tag);
+}
+
+GossipTheme *
+gossip_theme_new (ThemeStyle style)
+{
+	GossipTheme     *theme;
+	GossipThemePriv *priv;
+
+	theme = g_object_new (GOSSIP_TYPE_THEME, NULL);
+	priv  = GET_PRIV (theme);
+
+	priv->style = style;
+
+	return theme;
 }
 
 GossipThemeContext *

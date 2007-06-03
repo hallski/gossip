@@ -1,5 +1,11 @@
 2007-06-02  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-theme.[ch] (gossip_theme_new): Added function to create a
+	new theme of a specific type.
+	* src/gossip-theme-manager.c: Create four different themes.
+
+2007-06-02  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-chat-view.c (gossip_chat_view_clear): Call
 	gossip_theme_view_cleared.
 	* src/gossip-theme.[ch] (gossip_theme_setup_with_view):

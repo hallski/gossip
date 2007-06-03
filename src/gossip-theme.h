@@ -38,6 +38,13 @@ typedef struct _GossipThemeClass GossipThemeClass;
 
 #include "gossip-chat-view.h"
 
+typedef enum {
+	THEME_CLEAN,
+	THEME_SIMPLE,
+	THEME_BLUE,
+	THEME_CLASSIC
+} ThemeStyle;
+
 struct _GossipTheme {
 	GObject parent;
 };
@@ -56,51 +63,50 @@ struct _GossipThemeClass {
 
 typedef void GossipThemeContext;
 
-GType        gossip_theme_get_type             (void) G_GNUC_CONST;
+GType         gossip_theme_get_type             (void) G_GNUC_CONST;
+
+GossipTheme * gossip_theme_new                  (ThemeStyle style);
 
 GossipThemeContext *
-gossip_theme_setup_with_view                   (GossipTheme        *theme,
-						GossipChatView     *view);
-void         gossip_theme_view_cleared         (GossipTheme        *theme,
-						GossipThemeContext *context,
-						GossipChatView     *view);
+gossip_theme_setup_with_view                    (GossipTheme        *theme,
+						 GossipChatView     *view);
+void         gossip_theme_view_cleared          (GossipTheme        *theme,
+						 GossipThemeContext *context,
+						 GossipChatView     *view);
 
-void         gossip_theme_append_message       (GossipTheme        *theme,
-						GossipThemeContext *context,
-						GossipChatView     *view,
-						GossipMessage      *msg,
-						GossipContact      *contact,
-						gboolean            from_self);
-void         gossip_theme_append_action        (GossipTheme        *theme,
-						GossipThemeContext *context,
-						GossipChatView     *view,
-						GossipMessage      *msg,
-						GossipContact      *contact,
-						gboolean            from_self);
-void         gossip_theme_append_text          (GossipTheme        *theme,
-						GossipThemeContext *context,
-						GossipChatView     *view,
-						const gchar        *body,
-						const gchar        *tag);
-void         gossip_theme_append_spacing       (GossipTheme        *theme,
-						GossipThemeContext *context,
-						GossipChatView     *view);
-void         gossip_theme_append_event         (GossipTheme        *theme,
-						GossipThemeContext *context,
-						GossipChatView     *view,
-						const gchar        *str);
-void         gossip_theme_append_timestamp     (GossipTheme        *theme,
-						GossipThemeContext *context,
-						GossipChatView     *view,
-						GossipMessage      *message,
-						gboolean            show_date,
-						gboolean            show_time);
+void         gossip_theme_append_message        (GossipTheme        *theme,
+						 GossipThemeContext *context,
+						 GossipChatView     *view,
+						 GossipMessage      *msg,
+						 GossipContact      *contact,
+						 gboolean            from_self);
+void         gossip_theme_append_action         (GossipTheme        *theme,
+						 GossipThemeContext *context,
+						 GossipChatView     *view,
+						 GossipMessage      *msg,
+						 GossipContact      *contact,
+						 gboolean            from_self);
+void         gossip_theme_append_text           (GossipTheme        *theme,
+						 GossipThemeContext *context,
+						 GossipChatView     *view,
+						 const gchar        *body,
+						 const gchar        *tag);
+void         gossip_theme_append_spacing        (GossipTheme        *theme,
+						 GossipThemeContext *context,
+						 GossipChatView     *view);
+void         gossip_theme_append_event          (GossipTheme        *theme,
+						 GossipThemeContext *context,
+						 GossipChatView     *view,
+						 const gchar        *str);
+void         gossip_theme_append_timestamp      (GossipTheme        *theme,
+						 GossipThemeContext *context,
+						 GossipChatView     *view,
+						 GossipMessage      *message,
+						 gboolean            show_date,
+						 gboolean            show_time);
 
-void         gossip_theme_context_free         (GossipTheme        *theme,
-						gpointer            context);
-
-/* Refactor-temp functions */
-
+void         gossip_theme_context_free          (GossipTheme        *theme,
+						 gpointer            context);
 
 G_END_DECLS
 
