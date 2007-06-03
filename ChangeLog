@@ -1,3 +1,13 @@
+2007-06-03  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-theme.[ch]:
+	* src/gossip-theme-manager.[ch]:
+	- Moved the apply_theme_* functions to gossip-theme.c
+	- Moved theme_add_tag to gossip-theme.c
+	- Moved theme_init_tag_by_name to gossip-theme.c
+	(gossip_theme_setup_with_view): Call the apply_theme_* functions
+	depending on the project theme.
+
 2007-06-02  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-theme.[ch] (gossip_theme_new): Made the function take a

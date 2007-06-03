@@ -222,6 +222,11 @@ chat_view_finalize (GObject *object)
 		g_object_unref (priv->last_contact);
 	}
 
+	if (priv->theme) {
+		gossip_theme_context_free (priv->theme, priv->theme_context);
+		g_object_unref (priv->theme);
+	}
+
 	G_OBJECT_CLASS (gossip_chat_view_parent_class)->finalize (object);
 }
 
@@ -1475,10 +1480,15 @@ gossip_chat_view_set_theme (GossipChatView *view, GossipTheme *theme)
 	priv = GET_PRIV (view);
 
 	if (priv->theme) {
+		gossip_theme_context_free (priv->theme, priv->theme_context);
+
 		g_object_unref (priv->theme);
 	}
 
 	priv->theme = g_object_ref (theme);
+
+	priv->theme_context = gossip_theme_setup_with_view (theme, view);
+
 	/* FIXME: Possibly redraw the function and make it a property */
 }
 

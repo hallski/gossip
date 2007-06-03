@@ -22,6 +22,7 @@
 
 #include <string.h>
 #include <glib/gi18n.h>
+#include <gtk/gtk.h>
 
 #include <libgossip/gossip-conf.h>
 #include <libgossip/gossip-debug.h>
@@ -52,7 +53,15 @@ struct _GossipThemePriv {
 	ThemeStyle style;
 };
 
-static void         theme_finalize           (GObject             *object);
+static void         theme_finalize              (GObject         *object);
+static void         theme_apply_theme_classic   (GossipTheme     *theme,
+						 GossipChatView  *view);
+static void         theme_apply_theme_clean     (GossipTheme     *theme,
+						 GossipChatView  *view);
+static void         theme_apply_theme_blue      (GossipTheme     *theme,
+						 GossipChatView  *view);
+static void         theme_apply_theme_simple    (GossipTheme     *theme,
+						 GossipChatView  *view);
 
 G_DEFINE_TYPE (GossipTheme, gossip_theme, G_TYPE_OBJECT);
 
@@ -85,6 +94,593 @@ theme_finalize (GObject *object)
 
 	(G_OBJECT_CLASS (gossip_theme_parent_class)->finalize) (object);
 }
+
+static GtkTextTag *
+theme_init_tag_by_name (GtkTextTagTable *table, const gchar *name)
+{
+	GtkTextTag *tag;
+
+	tag = gtk_text_tag_table_lookup (table, name);
+
+	if (!tag) {
+		return gtk_text_tag_new (name);
+	}
+
+	/* Clear the old values so that we don't affect the new theme. */
+	g_object_set (tag,
+		      "background-set", FALSE,
+		      "foreground-set", FALSE,
+		      "invisible-set", FALSE,
+		      "justification-set", FALSE,
+		      "paragraph-background-set", FALSE,
+		      "pixels-above-lines-set", FALSE,
+		      "pixels-below-lines-set", FALSE,
+		      "rise-set", FALSE,
+		      "scale-set", FALSE,
+		      "size-set", FALSE,
+		      "style-set", FALSE,
+		      "weight-set", FALSE,
+		      NULL);
+
+	return tag;
+}
+
+static void
+theme_add_tag (GtkTextTagTable *table, GtkTextTag *tag)
+{
+	gchar      *name;
+	GtkTextTag *check_tag;
+
+	g_object_get (tag, "name", &name, NULL);
+	check_tag = gtk_text_tag_table_lookup (table, name);
+	g_free (name);
+	if (check_tag) {
+		return;
+	}
+
+	gtk_text_tag_table_add (table, tag);
+
+	g_object_unref (tag);
+}
+
+
+static void
+theme_apply_theme_simple (GossipTheme *theme, GossipChatView *view)
+{
+	GossipThemePriv *priv;
+	GtkTextBuffer   *buffer;
+	GtkTextTagTable *table;
+	GtkTextTag      *tag;
+	GtkWidget       *widget;
+	GtkStyle        *style;
+
+	priv = GET_PRIV (theme);
+
+	widget = gtk_entry_new ();
+	style = gtk_widget_get_style (widget);
+	gtk_widget_destroy (widget);
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+	table = gtk_text_buffer_get_tag_table (buffer);
+
+	tag = theme_init_tag_by_name (table, "fancy-spacing");
+	g_object_set (tag,
+		      "size", 3000,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-header-self");
+	g_object_set (tag,
+		      "weight", PANGO_WEIGHT_BOLD,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-header-self-avatar");
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-avatar-self");
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-line-top-self");
+	g_object_set (tag,
+		      "size", 6 * PANGO_SCALE,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-line-bottom-self");
+	g_object_set (tag,
+		      "size", 1,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-body-self");
+	g_object_set (tag,
+		      "pixels-above-lines", 2,
+		      "pixels-below-lines", 2,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-action-self");
+	g_object_set (tag,
+		      "foreground-gdk", &style->base[GTK_STATE_SELECTED],
+		      "style", PANGO_STYLE_ITALIC,
+		      "pixels-above-lines", 2,
+		      "pixels-below-lines", 2,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-highlight-self");
+	g_object_set (tag,
+		      "weight", PANGO_WEIGHT_BOLD,
+		      "pixels-above-lines", 2,
+		      "pixels-below-lines", 2,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-header-other");
+	g_object_set (tag,
+		      "weight", PANGO_WEIGHT_BOLD,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-header-other-avatar");
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-avatar-other");
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-line-top-other");
+	g_object_set (tag,
+		      "size", 6 * PANGO_SCALE,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-line-bottom-other");
+	g_object_set (tag,
+		      "size", 1,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-body-other");
+	g_object_set (tag,
+		      "pixels-above-lines", 2,
+		      "pixels-below-lines", 2,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-action-other");
+	g_object_set (tag,
+		      "foreground-gdk", &style->base[GTK_STATE_SELECTED],
+		      "style", PANGO_STYLE_ITALIC,
+		      "pixels-above-lines", 2,
+		      "pixels-below-lines", 2,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-highlight-other");
+	g_object_set (tag,
+		      "weight", PANGO_WEIGHT_BOLD,
+		      "pixels-above-lines", 2,
+		      "pixels-below-lines", 2,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-time");
+	g_object_set (tag,
+		      "foreground", "darkgrey",
+		      "justification", GTK_JUSTIFY_CENTER,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-event");
+	g_object_set (tag,
+		      "foreground", "darkgrey",
+		      "justification", GTK_JUSTIFY_LEFT,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "invite");
+	g_object_set (tag,
+		      "foreground", "darkgrey",
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-link");
+	g_object_set (tag,
+		      "foreground-gdk", &style->base[GTK_STATE_SELECTED],
+		      "underline", PANGO_UNDERLINE_SINGLE,
+		      NULL);
+	theme_add_tag (table, tag);
+}
+
+static void
+theme_apply_theme_classic (GossipTheme *theme, GossipChatView *view)
+{
+	GossipThemePriv *priv;
+	GtkTextBuffer   *buffer;
+	GtkTextTagTable *table;
+	GtkTextTag      *tag;
+
+	priv = GET_PRIV (theme);
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+	table = gtk_text_buffer_get_tag_table (buffer);
+
+	tag = theme_init_tag_by_name (table, "irc-spacing");
+	g_object_set (tag,
+		      "size", 2000,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "irc-nick-self");
+	g_object_set (tag,
+		      "foreground", "sea green",
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "irc-body-self");
+	g_object_set (tag,
+		      /* To get the default theme color: */
+		      "foreground-set", FALSE,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "irc-action-self");
+	g_object_set (tag,
+		      "foreground", "brown4",
+		      "style", PANGO_STYLE_ITALIC,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "irc-nick-highlight");
+	g_object_set (tag,
+		      "foreground", "indian red",
+		      "weight", PANGO_WEIGHT_BOLD,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "irc-nick-other");
+	g_object_set (tag,
+		      "foreground", "skyblue4",
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "irc-body-other");
+	g_object_set (tag,
+		      /* To get the default theme color: */
+		      "foreground-set", FALSE,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "irc-action-other");
+	g_object_set (tag,
+		      "foreground", "brown4",
+		      "style", PANGO_STYLE_ITALIC,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "irc-time");
+	g_object_set (tag,
+		      "foreground", "darkgrey",
+		      "justification", GTK_JUSTIFY_CENTER,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "irc-event");
+	g_object_set (tag,
+		      "foreground", "PeachPuff4",
+		      "justification", GTK_JUSTIFY_LEFT,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "invite");
+	g_object_set (tag,
+		      "foreground", "sienna",
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "irc-link");
+	g_object_set (tag,
+		      "foreground", "steelblue",
+		      "underline", PANGO_UNDERLINE_SINGLE,
+		      NULL);
+	theme_add_tag (table, tag);
+}
+
+
+static void
+theme_apply_theme_clean (GossipTheme *theme, GossipChatView *view)
+{
+	GossipThemePriv *priv;
+	GtkTextBuffer   *buffer;
+	GtkTextTagTable *table;
+	GtkTextTag      *tag;
+
+	priv = GET_PRIV (theme);
+
+	/* Inherit the simple theme. */
+	theme_apply_theme_simple (theme, view);
+
+#define ELEGANT_HEAD "#efefdf"
+#define ELEGANT_LINE "#e3e3d3"
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+	table = gtk_text_buffer_get_tag_table (buffer);
+
+	tag = theme_init_tag_by_name (table, "fancy-spacing");
+	g_object_set (tag,
+		      "size", PANGO_SCALE * 10,
+		      NULL);
+
+	tag = theme_init_tag_by_name (table, "fancy-header-self");
+	g_object_set (tag,
+		      "foreground", "black",
+		      "weight", PANGO_WEIGHT_BOLD,
+		      "paragraph-background", ELEGANT_HEAD,
+		      "pixels-above-lines", 2,
+		      "pixels-below-lines", 2,
+		      NULL);
+
+	tag = theme_init_tag_by_name (table, "fancy-avatar-self");
+	g_object_set (tag,
+		      "paragraph-background", ELEGANT_HEAD,
+		      "pixels-above-lines", 2,
+		      "pixels-below-lines", 2,
+		      NULL);
+
+	tag = theme_init_tag_by_name (table, "fancy-line-top-self");
+	g_object_set (tag,
+		      "size", 1 * PANGO_SCALE,
+		      "paragraph-background", ELEGANT_LINE,
+		      NULL);
+
+	tag = theme_init_tag_by_name (table, "fancy-line-bottom-self");
+	g_object_set (tag,
+		      "size", 1 * PANGO_SCALE,
+		      NULL);
+
+	tag = theme_init_tag_by_name (table, "fancy-action-self");
+	g_object_set (tag,
+		      "foreground", "brown4",
+		      "style", PANGO_STYLE_ITALIC,
+		      NULL);
+
+	tag = theme_init_tag_by_name (table, "fancy-highlight-self");
+	g_object_set (tag,
+		      "foreground", "black",
+		      "weight", PANGO_WEIGHT_BOLD,
+		      NULL);
+
+	tag = theme_init_tag_by_name (table, "fancy-header-other");
+	g_object_set (tag,
+		      "foreground", "black",
+		      "weight", PANGO_WEIGHT_BOLD,
+		      "paragraph-background", ELEGANT_HEAD,
+		      "pixels-above-lines", 2,
+		      "pixels-below-lines", 2,
+		      NULL);
+
+	tag = theme_init_tag_by_name (table, "fancy-avatar-other");
+	g_object_set (tag,
+		      "paragraph-background", ELEGANT_HEAD,
+		      "pixels-above-lines", 2,
+		      "pixels-below-lines", 2,
+		      NULL);
+
+	tag = theme_init_tag_by_name (table, "fancy-line-top-other");
+	g_object_set (tag,
+		      "size", 1 * PANGO_SCALE,
+		      "paragraph-background", ELEGANT_LINE,
+		      NULL);
+
+	tag = theme_init_tag_by_name (table, "fancy-line-bottom-other");
+	g_object_set (tag,
+		      "size", 1 * PANGO_SCALE,
+		      NULL);
+
+	tag = theme_init_tag_by_name (table, "fancy-action-other");
+	g_object_set (tag,
+		      "foreground", "brown4",
+		      "style", PANGO_STYLE_ITALIC,
+		      NULL);
+
+	tag = theme_init_tag_by_name (table, "fancy-time");
+	g_object_set (tag,
+		      "foreground", "darkgrey",
+		      "justification", GTK_JUSTIFY_CENTER,
+		      NULL);
+
+	tag = theme_init_tag_by_name (table, "fancy-event");
+	g_object_set (tag,
+		      "foreground", "darkgrey",
+		      "justification", GTK_JUSTIFY_LEFT,
+		      NULL);
+
+	tag = theme_init_tag_by_name (table, "invite");
+	g_object_set (tag,
+		      "foreground", "sienna",
+		      NULL);
+
+	tag = theme_init_tag_by_name (table, "fancy-link");
+	g_object_set (tag,
+		      "foreground", "#49789e",
+		      "underline", PANGO_UNDERLINE_SINGLE,
+		      NULL);
+}
+
+static void
+theme_apply_theme_blue (GossipTheme *theme, GossipChatView *view)
+{
+	GossipThemePriv *priv;
+	GtkTextBuffer   *buffer;
+	GtkTextTagTable *table;
+	GtkTextTag      *tag;
+
+	priv = GET_PRIV (theme);
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+	table = gtk_text_buffer_get_tag_table (buffer);
+
+#define BLUE_BODY_SELF "#dcdcdc"
+#define BLUE_HEAD_SELF "#b9b9b9"
+#define BLUE_LINE_SELF "#aeaeae"
+
+#define BLUE_BODY_OTHER "#adbdc8"
+#define BLUE_HEAD_OTHER "#88a2b4"
+#define BLUE_LINE_OTHER "#7f96a4"
+
+	tag = theme_init_tag_by_name (table, "fancy-spacing");
+	g_object_set (tag,
+		      "size", 3000,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-header-self");
+	g_object_set (tag,
+		      "foreground", "black",
+		      "paragraph-background", BLUE_HEAD_SELF,
+		      "weight", PANGO_WEIGHT_BOLD,
+		      "pixels-above-lines", 2,
+		      "pixels-below-lines", 2,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-header-self-avatar");
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-avatar-self");
+	g_object_set (tag,
+		      "paragraph-background", BLUE_HEAD_SELF,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-line-top-self");
+	g_object_set (tag,
+		      "size", 1,
+		      "paragraph-background", BLUE_LINE_SELF,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-line-bottom-self");
+	g_object_set (tag,
+		      "size", 1,
+		      "paragraph-background", BLUE_LINE_SELF,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-body-self");
+	g_object_set (tag,
+		      "foreground", "black",
+		      "paragraph-background", BLUE_BODY_SELF,
+		      "pixels-above-lines", 4,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-action-self");
+	g_object_set (tag,
+		      "foreground", "brown4",
+		      "style", PANGO_STYLE_ITALIC,
+		      "paragraph-background", BLUE_BODY_SELF,
+		      "pixels-above-lines", 4,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-highlight-self");
+	g_object_set (tag,
+		      "foreground", "black",
+		      "weight", PANGO_WEIGHT_BOLD,
+		      "paragraph-background", BLUE_BODY_SELF,
+		      "pixels-above-lines", 4,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-header-other");
+	g_object_set (tag,
+		      "foreground", "black",
+		      "paragraph-background", BLUE_HEAD_OTHER,
+		      "weight", PANGO_WEIGHT_BOLD,
+		      "pixels-above-lines", 2,
+		      "pixels-below-lines", 2,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-header-other-avatar");
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-avatar-other");
+	g_object_set (tag,
+		      "paragraph-background", BLUE_HEAD_OTHER,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-line-top-other");
+	g_object_set (tag,
+		      "size", 1,
+		      "paragraph-background", BLUE_LINE_OTHER,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-line-bottom-other");
+	g_object_set (tag,
+		      "size", 1,
+		      "paragraph-background", BLUE_LINE_OTHER,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-body-other");
+	g_object_set (tag,
+		      "foreground", "black",
+		      "paragraph-background", BLUE_BODY_OTHER,
+		      "pixels-above-lines", 4,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-action-other");
+	g_object_set (tag,
+		      "foreground", "brown4",
+		      "style", PANGO_STYLE_ITALIC,
+		      "paragraph-background", BLUE_BODY_OTHER,
+		      "pixels-above-lines", 4,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-highlight-other");
+	g_object_set (tag,
+		      "foreground", "black",
+		      "weight", PANGO_WEIGHT_BOLD,
+		      "paragraph-background", BLUE_BODY_OTHER,
+		      "pixels-above-lines", 4,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-time");
+	g_object_set (tag,
+		      "foreground", "darkgrey",
+		      "justification", GTK_JUSTIFY_CENTER,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-event");
+	g_object_set (tag,
+		      "foreground", BLUE_LINE_OTHER,
+		      "justification", GTK_JUSTIFY_LEFT,
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "invite");
+	g_object_set (tag,
+		      "foreground", "sienna",
+		      NULL);
+	theme_add_tag (table, tag);
+
+	tag = theme_init_tag_by_name (table, "fancy-link");
+	g_object_set (tag,
+		      "foreground", "#49789e",
+		      "underline", PANGO_UNDERLINE_SINGLE,
+		      NULL);
+	theme_add_tag (table, tag);
+}
+
 
 static GDate *
 theme_get_date_and_time_from_message (GossipMessage *message,
@@ -391,7 +987,39 @@ GossipThemeContext *
 gossip_theme_setup_with_view (GossipTheme    *theme,
 			      GossipChatView *view)
 {
+	GossipThemePriv *priv;
+	gint             margin;
+
 	g_return_val_if_fail (GOSSIP_IS_THEME (theme), NULL);
+
+	priv = GET_PRIV (theme);
+
+	g_print ("%s called\n", G_STRFUNC);
+
+	switch (priv->style) {
+	case THEME_CLEAN:
+		theme_apply_theme_clean (theme, view);
+		gossip_chat_view_set_is_irc_style (view, FALSE);
+		margin = 3;
+		break;
+	case THEME_SIMPLE:
+		theme_apply_theme_simple (theme, view);
+		gossip_chat_view_set_is_irc_style (view, FALSE);
+		margin = 3;
+		break;
+	case THEME_BLUE:
+		theme_apply_theme_blue (theme, view);
+		gossip_chat_view_set_is_irc_style (view, FALSE);
+		margin = 0;
+		break;
+	case THEME_CLASSIC:
+		theme_apply_theme_classic (theme, view);
+		gossip_chat_view_set_is_irc_style (view, TRUE);
+		margin = 3;
+		break;
+	};
+	
+	gossip_chat_view_set_margin (view, margin);
 
 	return NULL;
 #if 0
