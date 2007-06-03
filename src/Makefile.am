@@ -91,6 +91,7 @@ gossip_SOURCES = 				                        	\
 	gossip-theme-fancy.c               gossip-theme-fancy.h                 \
 	gossip-theme-irc.c                 gossip-theme-irc.h                   \
 	gossip-theme-manager.c	    	   gossip-theme-manager.h               \
+	gossip-theme-utils.c               gossip-theme-utils.h                 \
 	gossip-ui-utils.c	           gossip-ui-utils.h		   	\
 	gossip-vcard-dialog.c	    	   gossip-vcard-dialog.h
 

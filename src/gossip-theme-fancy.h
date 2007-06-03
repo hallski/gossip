@@ -23,27 +23,31 @@
 
 #include <glib-object.h>
 
+#include "gossip-theme.h"
+
 G_BEGIN_DECLS
 
 #define GOSSIP_TYPE_THEME_FANCY            (gossip_theme_fancy_get_type ())
 #define GOSSIP_THEME_FANCY(o)              (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_THEME_FANCY, GossipThemeFancy))
 #define GOSSIP_THEME_FANCY_CLASS(k)        (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_THEME_FANCY, GossipThemeFancyClass))
-#define GOSSIP_IS_THEME_FANCY(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), GOSSIP_TYPE_THEME_FANCY))
-#define GOSSIP_IS_THEME_FANCY_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_THEME_FANCY))
+#define GOSSIP_IS_THEME_FANCY(o)           (G_TYPE_CHECK_INSTANCE_TYPE ((o), GOSSIP_TYPE_THEME_FANCY))
+#define GOSSIP_IS_THEME_FANCY_CLASS(k)     (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_THEME_FANCY))
 #define GOSSIP_THEME_FANCY_GET_CLASS(o)    (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_THEME_FANCY, GossipThemeFancyClass))
 
 typedef struct _GossipThemeFancy      GossipThemeFancy;
 typedef struct _GossipThemeFancyClass GossipThemeFancyClass;
 
 struct _GossipThemeFancy {
-	GObject parent;
+	GossipTheme parent;
 };
 
 struct _GossipThemeFancyClass {
-	GObjectClass parent_class;
+	GossipThemeClass parent_class;
 };
 
-GType               gossip_theme_fancy_get_type                 (void) G_GNUC_CONST;
+GType         gossip_theme_fancy_get_type      (void) G_GNUC_CONST;
+
+GossipTheme * gossip_theme_fancy_new           (const gchar *name);
 
 G_END_DECLS
 

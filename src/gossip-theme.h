@@ -77,7 +77,7 @@ struct _GossipThemeClass {
 
 GType         gossip_theme_get_type             (void) G_GNUC_CONST;
 
-GossipTheme * gossip_theme_new                  (const gchar        *name);
+GossipTheme * gossip_theme_new                  (void);
 
 GossipThemeContext *
 gossip_theme_setup_with_view                    (GossipTheme        *theme,
