@@ -1,5 +1,13 @@
 2007-06-03  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-theme.c:
+	* src/gossip-theme-irc.[ch]:
+	* src/gossip-theme-manager.c:
+	- Made GossipThemeIrc a subclass of GossipTheme and moved the code to
+	setup the view for it to gossip-theme-irc.c
+
+2007-06-03  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-theme.[ch]:
 	* src/gossip-theme-fancy.[ch]:
 	- Made GossipThemeFancy a subclass of GossipTheme and moved the

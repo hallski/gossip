@@ -23,6 +23,8 @@
 
 #include <glib-object.h>
 
+#include "gossip-theme.h"
+
 G_BEGIN_DECLS
 
 #define GOSSIP_TYPE_THEME_IRC            (gossip_theme_irc_get_type ())
@@ -36,11 +38,11 @@ typedef struct _GossipThemeIrc      GossipThemeIrc;
 typedef struct _GossipThemeIrcClass GossipThemeIrcClass;
 
 struct _GossipThemeIrc {
-	GObject parent;
+	GossipTheme parent;
 };
 
 struct _GossipThemeIrcClass {
-	GObjectClass parent_class;
+	GossipThemeClass parent_class;
 };
 
 GType               gossip_theme_irc_get_type                 (void) G_GNUC_CONST;

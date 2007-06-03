@@ -35,6 +35,7 @@
 #include "gossip-preferences.h"
 #include "gossip-theme.h"
 #include "gossip-theme-fancy.h"
+#include "gossip-theme-irc.h"
 #include "gossip-theme-manager.h"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_THEME_MANAGER, GossipThemeManagerPriv))
@@ -143,7 +144,7 @@ gossip_theme_manager_init (GossipThemeManager *manager)
 	priv->clean_theme   = gossip_theme_fancy_new ("clean");
 	priv->simple_theme  = gossip_theme_fancy_new ("simple");
 	priv->blue_theme    = gossip_theme_fancy_new ("blue");
-	priv->classic_theme = gossip_theme_new ();
+	priv->classic_theme = g_object_new (GOSSIP_TYPE_THEME_IRC, NULL);
 }
 
 static void

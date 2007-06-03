@@ -48,10 +48,6 @@ struct _GossipThemePriv {
 };
 
 static void         theme_finalize            (GObject            *object);
-static void         theme_apply_theme_classic (GossipTheme        *theme,
-					       GossipChatView     *view);
-static void         theme_fixup_tag_table     (GossipTheme        *theme,
-					       GossipChatView     *view);
 static GossipThemeContext *
 theme_setup_with_view                         (GossipTheme        *theme,
 					       GossipChatView     *view);
@@ -118,124 +114,6 @@ theme_finalize (GObject *object)
 	(G_OBJECT_CLASS (gossip_theme_parent_class)->finalize) (object);
 }
 
-static void
-theme_apply_theme_classic (GossipTheme *theme, GossipChatView *view)
-{
-	GossipThemePriv *priv;
-	GtkTextBuffer   *buffer;
-	GtkTextTagTable *table;
-	GtkTextTag      *tag;
-
-	priv = GET_PRIV (theme);
-
-	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
-	table = gtk_text_buffer_get_tag_table (buffer);
-
-	tag = gossip_theme_utils_init_tag_by_name (table, "irc-spacing");
-	g_object_set (tag,
-		      "size", 2000,
-		      NULL);
-	gossip_theme_utils_add_tag (table, tag);
-
-	tag = gossip_theme_utils_init_tag_by_name (table, "irc-nick-self");
-	g_object_set (tag,
-		      "foreground", "sea green",
-		      NULL);
-	gossip_theme_utils_add_tag (table, tag);
-
-	tag = gossip_theme_utils_init_tag_by_name (table, "irc-body-self");
-	g_object_set (tag,
-		      /* To get the default theme color: */
-		      "foreground-set", FALSE,
-		      NULL);
-	gossip_theme_utils_add_tag (table, tag);
-
-	tag = gossip_theme_utils_init_tag_by_name (table, "irc-action-self");
-	g_object_set (tag,
-		      "foreground", "brown4",
-		      "style", PANGO_STYLE_ITALIC,
-		      NULL);
-	gossip_theme_utils_add_tag (table, tag);
-
-	tag = gossip_theme_utils_init_tag_by_name (table, "irc-nick-highlight");
-	g_object_set (tag,
-		      "foreground", "indian red",
-		      "weight", PANGO_WEIGHT_BOLD,
-		      NULL);
-	gossip_theme_utils_add_tag (table, tag);
-
-	tag = gossip_theme_utils_init_tag_by_name (table, "irc-nick-other");
-	g_object_set (tag,
-		      "foreground", "skyblue4",
-		      NULL);
-	gossip_theme_utils_add_tag (table, tag);
-
-	tag = gossip_theme_utils_init_tag_by_name (table, "irc-body-other");
-	g_object_set (tag,
-		      /* To get the default theme color: */
-		      "foreground-set", FALSE,
-		      NULL);
-	gossip_theme_utils_add_tag (table, tag);
-
-	tag = gossip_theme_utils_init_tag_by_name (table, "irc-action-other");
-	g_object_set (tag,
-		      "foreground", "brown4",
-		      "style", PANGO_STYLE_ITALIC,
-		      NULL);
-	gossip_theme_utils_add_tag (table, tag);
-
-	tag = gossip_theme_utils_init_tag_by_name (table, "irc-time");
-	g_object_set (tag,
-		      "foreground", "darkgrey",
-		      "justification", GTK_JUSTIFY_CENTER,
-		      NULL);
-	gossip_theme_utils_add_tag (table, tag);
-
-	tag = gossip_theme_utils_init_tag_by_name (table, "irc-event");
-	g_object_set (tag,
-		      "foreground", "PeachPuff4",
-		      "justification", GTK_JUSTIFY_LEFT,
-		      NULL);
-	gossip_theme_utils_add_tag (table, tag);
-
-	tag = gossip_theme_utils_init_tag_by_name (table, "invite");
-	g_object_set (tag,
-		      "foreground", "sienna",
-		      NULL);
-	gossip_theme_utils_add_tag (table, tag);
-
-	tag = gossip_theme_utils_init_tag_by_name (table, "irc-link");
-	g_object_set (tag,
-		      "foreground", "steelblue",
-		      "underline", PANGO_UNDERLINE_SINGLE,
-		      NULL);
-	gossip_theme_utils_add_tag (table, tag);
-}
-
-static void
-theme_fixup_tag_table (GossipTheme *theme, GossipChatView *view)
-{
-	GtkTextBuffer *buffer;
-
-	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
-
-	/* IRC style tags. */
-	gossip_theme_utils_ensure_tag_by_name (buffer, "irc-nick-self");
-	gossip_theme_utils_ensure_tag_by_name (buffer, "irc-body-self");
-	gossip_theme_utils_ensure_tag_by_name (buffer, "irc-action-self");
-
-	gossip_theme_utils_ensure_tag_by_name (buffer, "irc-nick-other");
-	gossip_theme_utils_ensure_tag_by_name (buffer, "irc-body-other");
-	gossip_theme_utils_ensure_tag_by_name (buffer, "irc-action-other");
-
-	gossip_theme_utils_ensure_tag_by_name (buffer, "irc-nick-highlight");
-	gossip_theme_utils_ensure_tag_by_name (buffer, "irc-spacing");
-	gossip_theme_utils_ensure_tag_by_name (buffer, "irc-time");
-	gossip_theme_utils_ensure_tag_by_name (buffer, "irc-event");
-	gossip_theme_utils_ensure_tag_by_name (buffer, "irc-link");
-}
-
-
 static GossipThemeContext *
 theme_setup_with_view (GossipTheme *theme, GossipChatView *view)
 {
@@ -244,13 +122,6 @@ theme_setup_with_view (GossipTheme *theme, GossipChatView *view)
 	g_return_val_if_fail (GOSSIP_IS_THEME (theme), NULL);
 
 	priv = GET_PRIV (theme);
-
-	theme_fixup_tag_table (theme, view);
-
-	theme_apply_theme_classic (theme, view);
-	gossip_chat_view_set_is_irc_style (view, TRUE);
-	
-	gossip_chat_view_set_margin (view, 3);
 
 	return NULL;
 #if 0

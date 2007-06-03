@@ -53,11 +53,11 @@ static void     theme_fancy_set_property    (GObject             *object,
 					     const GValue        *value,
 					     GParamSpec          *pspec);
 static void     theme_fancy_apply_theme_clean     (GossipTheme        *theme,
-					     GossipChatView     *view);
+						   GossipChatView     *view);
 static void     theme_fancy_apply_theme_blue      (GossipTheme        *theme,
-					     GossipChatView     *view);
+						   GossipChatView     *view);
 static void     theme_fancy_apply_theme_simple    (GossipTheme        *theme,
-					     GossipChatView     *view);
+						   GossipChatView     *view);
 static GossipThemeContext *
 theme_fancy_setup_with_view                 (GossipTheme         *theme,
 					     GossipChatView      *view);
