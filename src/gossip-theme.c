@@ -356,8 +356,28 @@ theme_append_fancy_message (GossipTheme        *theme,
 				  tag);
 }
 
+GossipThemeContext *
+gossip_theme_setup_with_view (GossipTheme    *theme,
+			      GossipChatView *view)
+{
+	g_return_val_if_fail (GOSSIP_IS_THEME (theme), NULL);
+
+	return NULL;
+#if 0
+} else {
+		FancyContext *context;
+
+		context = g_slice_new (FancyContext);
+
+		return context;
+	}
+#endif
+}
+
 void
-gossip_theme_view_cleared (GossipTheme *theme, GossipThemeContext *context)
+gossip_theme_view_cleared (GossipTheme        *theme,
+			   GossipThemeContext *context,
+			   GossipChatView     *view)
 {
 	/* Do nothing for now but clear out the context data */
 }
@@ -834,23 +854,6 @@ typedef struct {
 	BlockType last_block_type;
 	time_t    last_timestamp;
 } FancyContext;
-
-GossipThemeContext *
-gossip_theme_context_new (GossipTheme *theme)
-{
-	g_return_val_if_fail (GOSSIP_IS_THEME (theme), NULL);
-
-		return NULL;
-#if 0
-} else {
-		FancyContext *context;
-
-		context = g_slice_new (FancyContext);
-
-		return context;
-	}
-#endif
-}
 
 void
 gossip_theme_context_free (GossipTheme *theme, gpointer context)

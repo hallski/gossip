@@ -1,5 +1,12 @@
 2007-06-02  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-chat-view.c (gossip_chat_view_clear): Call
+	gossip_theme_view_cleared.
+	* src/gossip-theme.[ch] (gossip_theme_setup_with_view):
+	- Replace gossip_theme_context_new.
+
+2007-06-02  Mikael Hallendal  <micke@imendio.com>
+
 	* src/Makefile.am: Added gossip-theme-[fancy|irc].[ch].
 	* src/gossip-theme-[fancy|irc].[ch]: Added boilerplate.
 

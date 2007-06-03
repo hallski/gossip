@@ -1101,6 +1101,8 @@ gossip_chat_view_clear (GossipChatView *view)
 	 */
 	priv = GET_PRIV (view);
 
+	gossip_theme_view_cleared (priv->theme, priv->theme_context, view);
+
 	gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_NONE);
 	gossip_chat_view_set_last_timestamp (view, 0);
 }
