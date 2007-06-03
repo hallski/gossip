@@ -39,34 +39,34 @@
 #include "lm-bs-sender.h"
 #include "lm-bs-session.h"
 
-#define PROFILE_FILE_TRANSFER   "http://jabber.org/protocol/si/profile/file-transfer"
-#define XMLNS_SI                "http://jabber.org/protocol/si"
-#define XMLNS_FEATURE_NEG       "http://jabber.org/protocol/feature-neg"
-#define XMLNS_X_DATA            "jabber:x:data"
-
+#define PROFILE_FILE_TRANSFER "http://jabber.org/protocol/si/profile/file-transfer"
+#define XMLNS_SI              "http://jabber.org/protocol/si"
+#define XMLNS_FEATURE_NEG     "http://jabber.org/protocol/feature-neg"
+#define XMLNS_X_DATA          "jabber:x:data"
 
 struct _LmBsSession {
+	gint         ref_count;
+
 	GMainContext *context;
+
 	GHashTable   *float_clients;
 	GHashTable   *float_shas;
 	GHashTable   *iq_ids;
 	GHashTable   *transfers;
+
 	LmBsListener *listener;
 
 	LmCallback   *complete_cb;
 	LmCallback   *progress_cb;
 	LmCallback   *failure_cb;
-	
-	gint         ref_count;
 };
 
-static void session_free         (LmBsSession *session);
-static void new_client_connected (guint        fd,
-				  LmBsSession *session);
-
+static void bs_session_free                    (LmBsSession *session);
+static void bs_session_new_client_connected_cb (guint        fd,
+						LmBsSession *session);
 
 static void
-session_free (LmBsSession *session)
+bs_session_free (LmBsSession *session)
 {
 	_lm_utils_free_callback (session->complete_cb);
 	_lm_utils_free_callback (session->progress_cb);
@@ -81,11 +81,13 @@ session_free (LmBsSession *session)
 		lm_bs_listener_unref (session->listener);
 		session->listener = NULL;
 	}
+
 	g_free (session);
 }
 
 static void 
-new_client_connected (guint fd, LmBsSession *session)
+bs_session_new_client_connected_cb (guint        fd, 
+				    LmBsSession *session)
 {
 	LmBsClient *client;
 	LmBsSender *sender;
@@ -99,13 +101,16 @@ new_client_connected (guint fd, LmBsSession *session)
 }
 
 void 
-_lm_bs_session_remove_sender (LmBsSession *session, guint fd)
+_lm_bs_session_remove_sender (LmBsSession *session,
+			      guint        fd)
 {
 	g_hash_table_remove (session->float_clients, GUINT_TO_POINTER (fd));
 }
 
 void
-_lm_bs_session_match_sha (LmBsSession *session, const gchar *sha, guint fd)
+_lm_bs_session_match_sha (LmBsSession *session, 
+			  const gchar *sha, 
+			  guint        fd)
 {
 	gpointer      id_ptr;
 	LmBsSender   *sender;
@@ -120,6 +125,7 @@ _lm_bs_session_match_sha (LmBsSession *session, const gchar *sha, guint fd)
 
 	id_ptr = g_hash_table_lookup (session->float_shas, sha);
 	g_hash_table_remove (session->float_shas, sha);
+
 	if (!id_ptr) {
 		_lm_bs_session_remove_sender (session, fd);
 		return;
@@ -127,6 +133,7 @@ _lm_bs_session_match_sha (LmBsSession *session, const gchar *sha, guint fd)
 
 	transfer = g_hash_table_lookup (session->transfers, id_ptr);
 	g_return_if_fail (transfer != NULL);
+
 	lm_bs_sender_set_transfer (lm_bs_sender_ref (sender), transfer);
 	_lm_bs_session_remove_sender (session, fd);
 }
@@ -146,11 +153,14 @@ lm_bs_session_start_listener (LmBsSession *session)
 	if (session->listener) {
 		return lm_bs_listener_get_port (session->listener);
 	}
+
 	session->listener = lm_bs_listener_new_with_context (session->context);
+
 	lm_bs_listener_set_new_client_function (session->listener,
-						(LmBsNewClientFunction) new_client_connected,
+						(LmBsNewClientFunction) bs_session_new_client_connected_cb,
 						session,
 						NULL);
+
 	return lm_bs_listener_start (session->listener);
 }
 
@@ -164,14 +174,17 @@ lm_bs_session_start_listener (LmBsSession *session)
  **/
 LmBsSession *
 lm_bs_session_new (GMainContext *context) {
-	LmBsSession *session = NULL;
-
-	GDestroyNotify destroy_transfer;
-	GDestroyNotify destroy_sender;
+	LmBsSession    *session = NULL;
+	GDestroyNotify  destroy_transfer;
+	GDestroyNotify  destroy_sender;
 	
 	session = g_new0 (LmBsSession, 1);
+
+	session->ref_count = 1;
+
 	destroy_transfer = (GDestroyNotify) lm_bs_transfer_unref;
 	destroy_sender = (GDestroyNotify) lm_bs_sender_unref;
+
 	session->float_clients = g_hash_table_new_full (g_direct_hash,
 						        g_direct_equal,
 						        NULL,
@@ -190,12 +203,12 @@ lm_bs_session_new (GMainContext *context) {
 						 NULL);
 
 	session->context = context;
+
 	if (context) {
 		g_main_context_ref (context);
 	}
 
 	session->listener = NULL;
-	session->ref_count = 1;
 
 	return session;
 }
@@ -246,12 +259,15 @@ lm_bs_session_set_failure_function (LmBsSession         *session,
 	LmCallback *failure_cb;
 
 	g_return_if_fail (session != NULL);
+
 	failure_cb = _lm_utils_new_callback (function, 
 					     user_data,
 					     notify);
+
 	if (session->failure_cb != NULL) {
 		_lm_utils_free_callback (session->failure_cb);
 	}
+
 	session->failure_cb = failure_cb;
 }
 
@@ -277,12 +293,15 @@ lm_bs_session_set_complete_function (LmBsSession          *session,
 	LmCallback *complete_cb;
 
 	g_return_if_fail (session != NULL);
+
 	complete_cb = _lm_utils_new_callback (function, 
 					      user_data,
 					      notify);
+
 	if (session->complete_cb != NULL) {
 		_lm_utils_free_callback (session->complete_cb);
 	}
+
 	session->complete_cb = complete_cb;
 }
 
@@ -321,7 +340,7 @@ lm_bs_session_receive_file (LmBsSession  *session,
 
 	transfer = lm_bs_transfer_new (session,
 				       connection,
-				       TRANSFER_TYPE_RECEIVER,
+				       LM_BS_TRANSFER_TYPE_RECEIVER,
 				       id,
 				       sid,
 				       sender,
@@ -332,7 +351,6 @@ lm_bs_session_receive_file (LmBsSession  *session,
 			     GUINT_TO_POINTER (id),
 			     transfer);
 }
-
 
 /**
  * lm_bs_session_send_file:
@@ -369,13 +387,15 @@ lm_bs_session_send_file (LmBsSession  *session,
 
 	transfer = lm_bs_transfer_new (session,
 				       connection,
-				       TRANSFER_TYPE_SENDER,
+				       LM_BS_TRANSFER_TYPE_SENDER,
 				       id,
 				       sid,
 				       receiver,
 				       location,
 				       file_size);
+
 	auth_sha = lm_bs_transfer_get_auth_sha (transfer);
+
 	g_hash_table_insert (session->transfers,
 			     GUINT_TO_POINTER (id),
 			     transfer);
@@ -417,6 +437,7 @@ lm_bs_session_add_streamhost (LmBsSession *session,
 		/* some clients send more than one streamhost with same jids */
 		return;
 	}
+
 	u_port = g_ascii_strtoull (port, NULL, 10);
 	lm_bs_transfer_add_streamhost (transfer, host, u_port, jid);
 }
@@ -431,7 +452,9 @@ lm_bs_session_add_streamhost (LmBsSession *session,
  *
  **/
 void
-lm_bs_session_set_iq_id (LmBsSession *session, guint id, const gchar *iq_id)
+lm_bs_session_set_iq_id (LmBsSession *session, 
+			 guint        id,
+			 const gchar *iq_id)
 {
 	LmBsTransfer *transfer;
 
@@ -441,8 +464,10 @@ lm_bs_session_set_iq_id (LmBsSession *session, guint id, const gchar *iq_id)
 	transfer = g_hash_table_lookup (session->transfers,
 					GUINT_TO_POINTER (id));
 	g_return_if_fail (transfer != NULL);
+
 	lm_bs_transfer_set_iq_id (transfer, iq_id);
-	if (lm_bs_transfer_get_type (transfer) == TRANSFER_TYPE_SENDER) {
+
+	if (lm_bs_transfer_get_type (transfer) == LM_BS_TRANSFER_TYPE_SENDER) {
 		g_hash_table_insert (session->iq_ids, 
 				     g_strdup (iq_id),
 				     GUINT_TO_POINTER (id));
@@ -476,11 +501,13 @@ lm_bs_session_activate_streamhost (LmBsSession *session,
 	if (!id_ptr) {
 		return;
 	}
+
 	transfer = g_hash_table_lookup (session->transfers, id_ptr);
 	if (!transfer) {
 		g_hash_table_remove (session->iq_ids, iq_id);
 		return;
 	}
+
 	lm_bs_transfer_activate (transfer, jid);
 }
 
@@ -498,6 +525,7 @@ lm_bs_session_ref (LmBsSession *session)
 	g_return_val_if_fail (session != NULL, NULL);
 
 	session->ref_count++;
+
 	return session;
 }
 
@@ -514,8 +542,9 @@ lm_bs_session_unref (LmBsSession *session)
 	g_return_if_fail (session != NULL);
 
 	session->ref_count--;
+
 	if (session->ref_count == 0) {
-		session_free (session);
+		bs_session_free (session);
 	}
 }
 
@@ -528,31 +557,39 @@ lm_bs_session_unref (LmBsSession *session)
  *
  **/
 void
-lm_bs_session_remove_transfer (LmBsSession *session, guint id)
+lm_bs_session_remove_transfer (LmBsSession *session, 
+			       guint        id)
 {
-	const gchar  *iq_id;
 	LmBsTransfer *transfer;
+	const gchar  *iq_id;
 
 	g_return_if_fail (session != NULL);
+
 	transfer = g_hash_table_lookup (session->transfers,
 					GUINT_TO_POINTER (id));
 	g_return_if_fail (transfer != NULL);
+
 	iq_id = lm_bs_transfer_get_iq_id (transfer);
 	if (iq_id) {
 		g_hash_table_remove (session->iq_ids, iq_id);
 	}
+
 	lm_bs_session_ref (session);
 	g_hash_table_remove (session->transfers, GUINT_TO_POINTER (id));
+
 	if (g_hash_table_size (session->transfers) == 0 &&
 	    session->listener != NULL) {
 		lm_bs_listener_unref (session->listener);
 		session->listener = NULL;
 	}
+
 	lm_bs_session_unref (session);
 }
 
 void
-_lm_bs_session_transfer_error (LmBsSession *session, guint id, const gchar *msg)
+_lm_bs_session_transfer_error (LmBsSession *session, 
+			       guint        id,
+			       const gchar *msg)
 {
 	LmCallback *cb;
 
@@ -564,11 +601,13 @@ _lm_bs_session_transfer_error (LmBsSession *session, guint id, const gchar *msg)
 						      id,
 						      msg);
 	}
+
 	lm_bs_session_remove_transfer (session, id);
 }
 
 void
-_lm_bs_session_transfer_completed (LmBsSession *session, guint id)
+_lm_bs_session_transfer_completed (LmBsSession *session, 
+				   guint        id)
 {
 	LmCallback *cb;
 
@@ -579,6 +618,7 @@ _lm_bs_session_transfer_completed (LmBsSession *session, guint id)
 		(* ((LmBsCompleteFunction) cb->func)) (cb->user_data,
 						       id);
 	}
+
 	lm_bs_session_remove_transfer (session, id);
 }
 

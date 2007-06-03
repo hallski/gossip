@@ -37,36 +37,37 @@
 #include "lm-bs-client.h"
 #include "lm-bs-listener.h"
 
-#define IO_READ_FLAGS G_IO_IN|G_IO_PRI|G_IO_HUP
+#define IO_READ_FLAGS G_IO_IN | G_IO_PRI | G_IO_HUP
 
 struct _LmBsListener {
+	gint          ref_count;
+
 	GMainContext *context;
 	guint         port;
 
 	LmCallback   *new_client_cb;
 	LmCallback   *disconnected_cb;
 	LmSocket      fd;
+
 	GIOChannel   *io_channel;
 	guint         io_watch;
-	gint          ref_count;
 };
 
-static void     listener_free                 (LmBsListener  *listener);
-static guint    listener_add_watch            (LmBsListener  *listener,
-					       GIOChannel    *channel,
-					       GIOCondition   condition,
-					       GIOFunc        func);
-static gboolean listener_accept_connection_cb (GIOChannel    *source, 
-                                               GIOCondition   condition,
-                                               gpointer       user_data);
-static gboolean listener_start_listen         (LmBsListener  *listener);
-static void     listener_bind                 (LmBsListener  *listener,
-					       GError       **error);
-static void     listener_create               (LmBsListener  *listener);
-
+static void     bs_listener_free                 (LmBsListener  *listener);
+static guint    bs_listener_add_watch            (LmBsListener  *listener,
+						  GIOChannel    *channel,
+						  GIOCondition   condition,
+						  GIOFunc        func);
+static gboolean bs_listener_accept_connection_cb (GIOChannel    *source,
+						  GIOCondition   condition,
+						  gpointer       user_data);
+static gboolean bs_listener_start                (LmBsListener  *listener);
+static void     bs_listener_bind                 (LmBsListener  *listener,
+						  GError       **error);
+static void     bs_listener_create               (LmBsListener  *listener);
 
 static void
-listener_free (LmBsListener *listener)
+bs_listener_free (LmBsListener *listener)
 {
 	_lm_utils_free_callback (listener->disconnected_cb);
 	lm_bs_listener_stop (listener);
@@ -79,10 +80,10 @@ listener_free (LmBsListener *listener)
 }
 
 static guint
-listener_add_watch (LmBsListener *listener,
-		    GIOChannel   *channel,
-		    GIOCondition  condition,
-		    GIOFunc       func)
+bs_listener_add_watch (LmBsListener *listener,
+		       GIOChannel   *channel,
+		       GIOCondition  condition,
+		       GIOFunc       func)
 {
 	GSource *source;
 	guint    id;
@@ -100,9 +101,9 @@ listener_add_watch (LmBsListener *listener,
 	return id;
 }
 
-static gboolean listener_accept_connection_cb (GIOChannel   *source, 
-					       GIOCondition  condition,
-					       gpointer      user_data)
+static gboolean bs_listener_accept_connection_cb (GIOChannel   *source, 
+						  GIOCondition  condition,
+						  gpointer      user_data)
 {
 	LmBsListener *listener;
 	gint          new_fd;
@@ -123,7 +124,7 @@ static gboolean listener_accept_connection_cb (GIOChannel   *source,
 
 
 static gboolean
-listener_start_listen (LmBsListener *listener)
+bs_listener_start (LmBsListener *listener)
 {
 	int result;
 
@@ -132,17 +133,19 @@ listener_start_listen (LmBsListener *listener)
 	g_io_channel_set_buffered (listener->io_channel, FALSE);
 
 	_lm_sock_set_blocking (listener->fd, FALSE);
-	listener->io_watch = listener_add_watch (listener,
-						 listener->io_channel,
-						 IO_READ_FLAGS,
-						 (GIOFunc) listener_accept_connection_cb);
+
+	listener->io_watch = bs_listener_add_watch (listener,
+						    listener->io_channel,
+						    IO_READ_FLAGS,
+						    (GIOFunc) bs_listener_accept_connection_cb);
+
 	result = listen (listener->fd, SOMAXCONN);
 
 	return (result != -1);
 }
 
 static void 
-listener_bind (LmBsListener *listener, GError **error)
+bs_listener_bind (LmBsListener *listener, GError **error)
 {
 
 	struct sockaddr_in  serveraddr;
@@ -153,6 +156,7 @@ listener_bind (LmBsListener *listener, GError **error)
 
 	serveraddr_len = sizeof (serveraddr);
 	memset (&serveraddr, 0, serveraddr_len);
+
 	serveraddr.sin_family = PF_INET;
 	serveraddr.sin_addr.s_addr =  htonl (INADDR_ANY);
 
@@ -160,17 +164,19 @@ listener_bind (LmBsListener *listener, GError **error)
 		       (struct sockaddr *) &serveraddr,
 		       serveraddr_len);
 	memset (&serveraddr, 0, serveraddr_len);
-	/* get info on the bound port */
+
+	/* Get info on the bound port */
 	if (getsockname (listener->fd,
 			 (struct sockaddr *) &serveraddr, 
 			 (socklen_t *) &serveraddr_len)) {
 		return;
 	}
+
 	listener->port = ntohs (serveraddr.sin_port);
 }
 
 static void 
-listener_create (LmBsListener *listener)
+bs_listener_create (LmBsListener *listener)
 {
 	int flag;
 
@@ -183,7 +189,7 @@ listener_create (LmBsListener *listener)
 		    &flag,
 		    sizeof (int));
 
-	/* remove the Nagle algorhytm */
+	/* Remove the Nagle algorhytm */
 	setsockopt (listener->fd,
 		    IPPROTO_TCP,
 		    TCP_NODELAY,
@@ -192,7 +198,7 @@ listener_create (LmBsListener *listener)
 }
 
 LmBsListener *
-lm_bs_listener_new ()
+lm_bs_listener_new (void)
 {
 	LmBsListener *listener;
 	
@@ -217,6 +223,7 @@ lm_bs_listener_new_with_context (GMainContext *context)
 	
 	listener = lm_bs_listener_new ();
 	listener->context = context;
+
 	if (context != NULL) {
 		g_main_context_ref (context);
 	}
@@ -248,11 +255,10 @@ lm_bs_listener_set_new_client_function (LmBsListener          *listener,
 guint
 lm_bs_listener_start (LmBsListener *listener)
 {
-	listener_create (listener);
+	bs_listener_create (listener);
+	bs_listener_bind (listener, NULL);
 
-	listener_bind (listener, NULL);
-
-	if (listener_start_listen (listener)) {
+	if (bs_listener_start (listener)) {
 		return listener->port;
 	}
 
@@ -265,7 +271,6 @@ lm_bs_listener_get_port (LmBsListener *listener)
 	return listener->port;
 }
 
-
 void
 lm_bs_listener_stop (LmBsListener *listener)
 {
@@ -274,6 +279,7 @@ lm_bs_listener_stop (LmBsListener *listener)
 
 	cb = listener->disconnected_cb;
 	_lm_utils_free_callback (listener->new_client_cb);
+
 	if (listener->io_watch != 0) {
 		source = g_main_context_find_source_by_id (listener->context,
 							   listener->io_watch);
@@ -282,11 +288,13 @@ lm_bs_listener_stop (LmBsListener *listener)
 		}
 		listener->io_watch = 0;
 	}
+
 	if (listener->fd != -1) {
 		_lm_sock_shutdown (listener->fd);
 		_lm_sock_close (listener->fd);
 		listener->fd = -1;
 	}
+
 	if (cb && cb->func) {
 		(* ((LmBsClientFunction) cb->func)) (NULL,
 						     cb->user_data);
@@ -311,6 +319,6 @@ lm_bs_listener_unref (LmBsListener *listener)
 	listener->ref_count--;
 
 	if (listener->ref_count == 0) {
-		listener_free (listener);
+		bs_listener_free (listener);
 	}
 }

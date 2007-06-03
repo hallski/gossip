@@ -42,18 +42,18 @@
 
 #define DEBUG_DOMAIN "JabberFT"
 
-#define XMPP_FILE_TRANSFER_XMLNS        "http://jabber.org/protocol/si"
-#define XMPP_FILE_TRANSFER_PROFILE      "http://jabber.org/protocol/si/profile/file-transfer"
+#define XMPP_FILE_TRANSFER_XMLNS   "http://jabber.org/protocol/si"
+#define XMPP_FILE_TRANSFER_PROFILE "http://jabber.org/protocol/si/profile/file-transfer"
 
-#define XMPP_FILE_XMLNS                 "http://jabber.org/protocol/si/profile/file-transfer"
-#define XMPP_FEATURE_XMLNS              "http://jabber.org/protocol/feature-neg"
+#define XMPP_FILE_XMLNS            "http://jabber.org/protocol/si/profile/file-transfer"
+#define XMPP_FEATURE_XMLNS         "http://jabber.org/protocol/feature-neg"
 
-#define XMPP_BYTESTREAMS_PROTOCOL       "http://jabber.org/protocol/bytestreams"
-#define XMPP_IBB_PROTOCOL               "http://jabber.org/protocol/ibb"
+#define XMPP_BYTESTREAMS_PROTOCOL  "http://jabber.org/protocol/bytestreams"
+#define XMPP_IBB_PROTOCOL          "http://jabber.org/protocol/ibb"
 
-#define XMPP_AMP_XMLNS                  "http://jabber.org/protocol/amp"
+#define XMPP_AMP_XMLNS             "http://jabber.org/protocol/amp"
 
-#define IMPP_ERROR_XMLNS                "urn:ietf:params:xml:ns:xmpp-stanzas"
+#define XMPP_ERROR_XMLNS           "urn:ietf:params:xml:ns:xmpp-stanzas"
 
 struct _GossipJabberFTs {
 	GossipJabber   *jabber;
@@ -69,7 +69,7 @@ static void            jabber_ft_transfer_complete    (GossipJabber      *jabber
 						       guint              id);
 static void            jabber_ft_transfer_failure     (GossipJabber      *jabber,
 						       guint              id,
-						       gchar             *reason);
+						       const gchar       *reason);
 static LmHandlerResult jabber_ft_iq_si_handler        (LmMessageHandler  *handler,
 						       LmConnection      *conn,
 						       LmMessage         *message,
@@ -103,9 +103,11 @@ gossip_jabber_ft_init (GossipJabber *jabber)
 	connection = gossip_jabber_get_connection (jabber);
 
 	fts = g_new0 (GossipJabberFTs, 1);
+
 	fts->jabber     = g_object_ref (jabber);
 	fts->connection = lm_connection_ref (connection);
 	fts->bs_session = lm_bs_session_new (NULL);
+
 	lm_bs_session_set_failure_function (fts->bs_session, 
 					    (LmBsFailureFunction) jabber_ft_transfer_failure,
 					    jabber,
@@ -138,6 +140,7 @@ gossip_jabber_ft_init (GossipJabber *jabber)
 
 	handler = lm_message_handler_new ((LmHandleMessageFunction) jabber_ft_iq_si_handler,
 					  jabber, NULL);
+
 	lm_connection_register_message_handler (connection,
 						handler,
 						LM_MESSAGE_TYPE_IQ,
@@ -153,8 +156,9 @@ gossip_jabber_ft_finalize (GossipJabberFTs *fts)
 {
 	if (!fts) {
 		/* We don't error here, because if no connection is
-		made, then we can clean up a GossipJabber object
-		without any fts ever existing */
+		 * made, then we can clean up a GossipJabber object
+		 * without any fts ever existing.
+		 */
 		return;
 	}
 
@@ -180,27 +184,63 @@ guess_id_by_sid_and_sender (GossipJabber *jabber,
 	
 	fts = gossip_jabber_get_fts (jabber);
 	g_return_val_if_fail (fts, 0);
+
 	jids = g_hash_table_lookup (fts->jid_sids, jid);
 	if (!jids) {
 		return 0;
 	}
+
 	id_ptr = g_hash_table_lookup (jids, sid);
 	if (!id_ptr) {
 		return 0;
 	}
-	return GPOINTER_TO_UINT(id_ptr);
+
+	return GPOINTER_TO_UINT (id_ptr);
 }
 
 static void
-jabber_ft_transfer_complete (GossipJabber *jabber, guint id)
+jabber_ft_transfer_complete (GossipJabber *jabber, 
+			     guint         id)
 {
-	gossip_debug (DEBUG_DOMAIN, "transfer is complete");
+	GossipJabberFTs *fts;
+	GossipFT        *ft;
+	gchar           *id_str;
+
+	gossip_debug (DEBUG_DOMAIN, "ID[%d] Transfer is complete", id);
+
+	gossip_debug (DEBUG_DOMAIN, "ID[%d], ft_ids hash table size is %d", 
+		      id, g_hash_table_size (fts->ft_ids));
+
+	fts = gossip_jabber_get_fts (jabber);
+	id_str = g_strdup_printf ("%d", id);
+	ft = g_hash_table_lookup (fts->ft_ids, id_str);
+	g_free (id_str);
+
+	g_signal_emit_by_name (fts->jabber, "file-transfer-complete", ft);
 }
 
 static void
-jabber_ft_transfer_failure (GossipJabber *jabber, guint id, gchar *reason)
+jabber_ft_transfer_failure (GossipJabber *jabber, 
+			    guint         id, 
+			    const gchar  *reason)
 {
-	gossip_debug (DEBUG_DOMAIN, "transfer failed");
+	GossipJabberFTs *fts;
+	GossipFT        *ft;
+	gchar           *id_str;
+	GQuark           quark;
+	GError          *error;
+
+	gossip_debug (DEBUG_DOMAIN, "ID[%d] Transfer failed, reason:'%s'", id, reason);
+
+	fts = gossip_jabber_get_fts (jabber);
+	id_str = g_strdup_printf ("%d", id);
+	ft = g_hash_table_lookup (fts->ft_ids, id_str);
+	g_free (id_str);
+
+	quark = g_quark_from_string ("gossip-jabber-ft");
+	error = g_error_new (quark, 0, reason);
+	g_signal_emit_by_name (fts->jabber, "file-transfer-error", ft, error);
+	g_clear_error (&error);
 }
 
 static void
@@ -221,6 +261,7 @@ add_jid_sid_to_table (GossipJabberFTs *fts,
 				     g_strdup (jid),
 				     jid_sids_table);
 	} 
+
 	g_hash_table_insert (jid_sids_table,
 			     g_strdup (sid),
 			     GUINT_TO_POINTER (id));
@@ -242,28 +283,33 @@ jabber_ft_iq_streamhost (LmConnection *conn,
 		/* child node is not a query */
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
+
 	attr = lm_message_node_get_attribute (node, "xmlns");
 	if(!attr || strcmp (attr, XMPP_BYTESTREAMS_PROTOCOL) != 0) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
+
 	node = lm_message_node_get_child (node, "streamhost-used");
 	if(!node) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
+
 	attr = lm_message_node_get_attribute (node, "jid");
 	if(!attr) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
+
 	iq_id = lm_message_node_get_attribute (m->node, "id");
 	fts = gossip_jabber_get_fts (jabber);
 	lm_bs_session_activate_streamhost (fts->bs_session, iq_id, attr);
+
 	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
 
 static LmHandlerResult
-jabber_ft_iq_query (LmConnection   *conn,
-		    LmMessage      *m,
-		    GossipJabber   *jabber)
+jabber_ft_iq_query (LmConnection *conn,
+		    LmMessage    *m,
+		    GossipJabber *jabber)
 {
 	LmMessageNode   *child;
 	LmMessageNode   *node;
@@ -281,48 +327,55 @@ jabber_ft_iq_query (LmConnection   *conn,
 		/* child node is not a query */
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
+
 	xmlns = lm_message_node_get_attribute (node, "xmlns");
 	if(!xmlns || strcmp (xmlns, XMPP_BYTESTREAMS_PROTOCOL) != 0) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
+
 	sid = lm_message_node_get_attribute (node, "sid");
 	if(!sid) {
 		/* cannot identify transfer */
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
+
 	jid = lm_message_node_get_attribute (m->node, "from");
 	if (!jid) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
+
 	id = guess_id_by_sid_and_sender (jabber, sid, jid);
 	if (id == 0) {
 		/* previos records for transfer doesn't exist */
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
+	
 	iq_id = lm_message_node_get_attribute (m->node, "id");
 	fts = gossip_jabber_get_fts (jabber);
 	lm_bs_session_set_iq_id (fts->bs_session, id, iq_id);
 
 	/* get all children named "streamhost" */
 	for (child = node->children; child; child = child->next) {
-		if (strcmp (child->name, "streamhost") == 0) {
-		/* this id is needed for the reply stanza 'streamhost-used' */
-			host = lm_message_node_get_attribute (child, 
-							      "host");
-			port = lm_message_node_get_attribute (child, 
-							      "port");
-			jid = lm_message_node_get_attribute (child,
-							     "jid");
-			if(!host || !port || !jid) {
-				continue;
-			}
-			lm_bs_session_add_streamhost (fts->bs_session,
-						      id,
-						      host,
-						      port,
-						      jid);
+		if (strcmp (child->name, "streamhost") != 0) {
+			continue;
 		}
+
+		/* this id is needed for the reply stanza 'streamhost-used' */
+		host = lm_message_node_get_attribute (child, "host");
+		port = lm_message_node_get_attribute (child, "port");
+		jid = lm_message_node_get_attribute (child, "jid");
+		
+		if (!host || !port || !jid) {
+			continue;
+		}
+		
+		lm_bs_session_add_streamhost (fts->bs_session,
+					      id,
+					      host,
+					      port,
+					      jid);
 	}
+
 	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
 
@@ -346,6 +399,7 @@ jabber_ft_send_streamhosts (LmConnection *conn,
 	
 	fts = gossip_jabber_get_fts (jabber);
 	g_return_if_fail (fts != NULL);
+
 	file_id = gossip_ft_get_id (ft);
 	sid = gossip_ft_get_sid (ft);
 	to_str = g_hash_table_lookup (fts->remote_ids,
@@ -353,6 +407,7 @@ jabber_ft_send_streamhosts (LmConnection *conn,
 	m = lm_message_new_with_sub_type (to_str,
 					  LM_MESSAGE_TYPE_IQ,
 					  LM_MESSAGE_SUB_TYPE_SET);
+
 	id = guess_id_by_sid_and_sender (jabber, sid, to_str);
 	if (id == 0) {
 		/* previos records for transfer doesn't exist */
@@ -367,6 +422,7 @@ jabber_ft_send_streamhosts (LmConnection *conn,
 
 	port = lm_bs_session_start_listener (fts->bs_session);
 	port_str = g_strdup_printf ("%d", port);
+
 	node = lm_message_node_add_child (m->node, "query", NULL);
 	lm_message_node_set_attributes (node,
 					"xmlns",
@@ -409,9 +465,9 @@ jabber_ft_send_streamhosts (LmConnection *conn,
 
 
 static LmHandlerResult
-jabber_ft_feature_result (LmConnection   *conn,
-			  LmMessage      *m,
-			  GossipJabber   *jabber)
+jabber_ft_feature_result (LmConnection *conn,
+			  LmMessage    *m,
+			  GossipJabber *jabber)
 {
 	GossipJabberFTs *fts;
 	GossipFT        *ft;
@@ -420,51 +476,61 @@ jabber_ft_feature_result (LmConnection   *conn,
 	const gchar     *attr;
 
 	fts = gossip_jabber_get_fts (jabber);
-	g_return_val_if_fail (fts != NULL,
-			      LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS);
+	g_return_val_if_fail (fts != NULL, LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS);
 
 	node = lm_message_node_get_child (m->node, "si");
+
 	/* already tested in jabber_ft_iq_si_handler */
-	g_return_val_if_fail (node != NULL, 
-			      LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS);
+	g_return_val_if_fail (node != NULL, LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS);
+
 	node = lm_message_node_get_child (node, "feature");
 	if (!node) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
+
 	attr = lm_message_node_get_attribute (node, "xmlns");
 	if (!attr || strcmp (attr, XMPP_FEATURE_XMLNS) != 0) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
+
 	node = lm_message_node_get_child (node, "x");
 	if (!node) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
+
 	attr = lm_message_node_get_attribute (node, "type");
 	if (!attr || strcmp (attr, "submit") != 0) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
+
 	node = lm_message_node_get_child (node, "field");
 	if (!node) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
+
 	attr = lm_message_node_get_attribute (node, "var");
 	if (!attr || strcmp (attr, "stream-method") != 0) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
+
 	node = lm_message_node_get_child (node, "value");
 	if (!node) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
+
 	attr = lm_message_node_get_value (node);
 	if (!attr || strcmp (attr, XMPP_BYTESTREAMS_PROTOCOL) != 0) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
+
 	id_str = lm_message_node_get_attribute (m->node, "id");
 	ft = g_hash_table_lookup (fts->ft_ids, id_str);
 	if (!ft) {
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 	}
+
 	jabber_ft_send_streamhosts (conn, jabber, ft);
+
 	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
 
@@ -586,12 +652,11 @@ jabber_ft_handle_request (GossipJabber *jabber,
 	g_hash_table_insert (fts->str_ids, GUINT_TO_POINTER (id), g_strdup (id_str));
 	g_hash_table_insert (fts->ft_ids, g_strdup (id_str), ft);
 	g_hash_table_insert (fts->remote_ids, GUINT_TO_POINTER (id), g_strdup (from_str));
+
 	add_jid_sid_to_table (fts, from_str, sid, id);
 
 	/* signal */
-	g_signal_emit_by_name (fts->jabber,
-			       "file-transfer-request",
-			       ft);
+	g_signal_emit_by_name (fts->jabber, "file-transfer-request", ft);
 }
 
 static void
@@ -747,10 +812,14 @@ jabber_ft_get_contact_last_jid (GossipContact *contact)
 	return to;
 }
 
-static gchar *         jabber_ft_get_unique_sid       () {
+static gchar *
+jabber_ft_get_unique_sid (void) 
+{
 	static guint id = 0;
+
 	id++;
-	return g_strdup_printf("GOSSIPSID%d", id);
+
+	return g_strdup_printf ("GOSSIPSID%d", id);
 }
 
 
@@ -1141,7 +1210,7 @@ gossip_jabber_ft_iib_error (GossipJabber *jabber,
 
 	node = lm_message_node_add_child (node, "feature-not-implemented", NULL);
 	lm_message_node_set_attributes (node,
-					"xmlns", IMPP_ERROR_XMLNS,
+					"xmlns", XMPP_ERROR_XMLNS,
 					NULL);
 
 	/* send */

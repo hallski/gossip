@@ -33,15 +33,6 @@ G_BEGIN_DECLS
 
 typedef struct _LmBsSender LmBsSender;
 
-typedef enum {
-	SS_INITIAL,
-	SS_AUTH_READ,
-	SS_AUTH_REPLIED,
-	SS_CONNECT_REQUEST_READ,
-	SS_CONNECT_REQUEST_REPLIED,
-	SS_TRANSFER_STARTED
-} SenderState;
-
 LmBsSender * lm_bs_sender_new          (LmBsClient *client,
 					LmBsSession *session);
 LmBsSender * lm_bs_sender_ref          (LmBsSender *sender);

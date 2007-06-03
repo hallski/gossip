@@ -32,20 +32,20 @@ G_BEGIN_DECLS
 
 typedef struct  _LmBsListener LmBsListener;
 
-typedef void    (* LmBsNewClientFunction)              (guint           fd,
-						        gpointer        user_data);
+typedef void    (* LmBsNewClientFunction)            (guint                  fd,
+						      gpointer               user_data);
 
-LmBsListener *  lm_bs_listener_new                     (void);
-LmBsListener *  lm_bs_listener_new_with_context        (GMainContext   *context);
-void            lm_bs_listener_set_new_client_function (LmBsListener   *listener,
-							LmBsNewClientFunction func,
-							gpointer        user_data,
-							GDestroyNotify  notify);
-guint           lm_bs_listener_start                   (LmBsListener   *listener);
-void            lm_bs_listener_stop                    (LmBsListener   *listener);
-guint           lm_bs_listener_get_port                (LmBsListener   *listener);
-LmBsListener *  lm_bs_listener_ref                     (LmBsListener   *listener);
-void            lm_bs_listener_unref                   (LmBsListener   *listener);
+LmBsListener *lm_bs_listener_new                     (void);
+LmBsListener *lm_bs_listener_new_with_context        (GMainContext          *context);
+void          lm_bs_listener_set_new_client_function (LmBsListener          *listener,
+						      LmBsNewClientFunction  func,
+						      gpointer               user_data,
+						      GDestroyNotify         notify);
+guint         lm_bs_listener_start                   (LmBsListener          *listener);
+void          lm_bs_listener_stop                    (LmBsListener          *listener);
+guint         lm_bs_listener_get_port                (LmBsListener          *listener);
+LmBsListener *lm_bs_listener_ref                     (LmBsListener          *listener);
+void          lm_bs_listener_unref                   (LmBsListener          *listener);
 
 G_END_DECLS
 

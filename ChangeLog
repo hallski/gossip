@@ -1,3 +1,17 @@
+2007-06-03  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-ft-provider.c:
+	* libgossip/gossip-jabber-ft.c:
+	* libloudermouth/lm-bs-client.[ch]:
+	* libloudermouth/lm-bs-listener.[ch]:
+	* libloudermouth/lm-bs-receiver.[ch]:
+	* libloudermouth/lm-bs-sender.[ch]:
+	* libloudermouth/lm-bs-session.c: 
+	* libloudermouth/lm-bs-transfer.[ch]:
+	* src/gossip-ft-window.c: Cleaned up the initial File Transfer
+	patches a little and included a success dialog so we know when the
+	transfer has completed (for the time being).
+
 2007-06-03  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-theme.[ch]:
@@ -131,14 +145,14 @@
 
 2007-06-01  Martyn Russell  <martyn@imendio.com>
 
-	Cater for missing LM_DISCONNECT_REASON_ states.
+	* Cater for missing LM_DISCONNECT_REASON_ states.
 	
 	* libgossip/gossip-jabber.c: (jabber_disconnect_cb): Don't
 	assert_not_reached() if enumerations are not covered here.
 
 2007-06-01  Martyn Russell  <martyn@imendio.com>
 
-	Only enable file transfer if supported in Loudmouth
+	* Only enable file transfer if supported in Loudmouth
 	
 	* configure.ac:
 	* libgossip/gossip-jabber-ft.c:

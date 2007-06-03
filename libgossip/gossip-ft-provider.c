@@ -26,12 +26,13 @@
 
 #include "libgossip-marshal.h"
 
-static void  ft_provider_base_init (gpointer g_class);
+static void ft_provider_base_init (gpointer g_class);
 
 enum {
 	FT_REQUEST,
 	FT_CANCELLED,
 	FT_ERROR,
+	FT_COMPLETE,
 	LAST_SIGNAL
 };
 
@@ -101,6 +102,16 @@ ft_provider_base_init (gpointer g_class)
 				      libgossip_marshal_VOID__OBJECT_POINTER,
 				      G_TYPE_NONE,
 				      2, GOSSIP_TYPE_FT, G_TYPE_POINTER);
+
+		signals[FT_COMPLETE] =
+			g_signal_new ("file-transfer-complete",
+				      G_TYPE_FROM_CLASS (g_class),
+				      G_SIGNAL_RUN_LAST,
+				      0,
+				      NULL, NULL,
+				      libgossip_marshal_VOID__OBJECT,
+				      G_TYPE_NONE,
+				      1, GOSSIP_TYPE_FT);
 
 		initialized = TRUE;
 	}
