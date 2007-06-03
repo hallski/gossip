@@ -40,7 +40,6 @@ G_BEGIN_DECLS
 #define GOSSIP_STOCK_MESSAGE             "gossip-message"
 #define GOSSIP_STOCK_TYPING              "gossip-typing"
 
-
 #define GOSSIP_STOCK_CONTACT_INFORMATION "vcard_16"
 
 #define GOSSIP_STOCK_AIM                 "gossip-aim"
@@ -49,6 +48,8 @@ G_BEGIN_DECLS
 #define GOSSIP_STOCK_YAHOO               "gossip-yahoo"
 
 #define GOSSIP_STOCK_GROUP_MESSAGE       "gossip-group-message"
+
+#define GOSSIP_STOCK_FILE_TRANSFER       "gossip-file-transfer"
 
 void         gossip_stock_init          (void);
 void         gossip_stock_finalize      (void);

@@ -26,6 +26,7 @@
 #include <glib/gi18n.h>
 
 #include <loudmouth/lm-connection.h>
+#include <loudmouth/lm-error.h>
 
 #include "lm-sha.h"
 #include "lm-bs-session.h"
@@ -112,10 +113,15 @@ bs_transfer_client_disconnected_cb (LmBsClient     *client,
 	g_hash_table_remove (transfer->streamhosts, sreamhost_data->jid);
 
 	if (!g_hash_table_size (transfer->streamhosts)) {
-		/* unable to connect to any of the supplied streamhosts */
-		_lm_bs_session_transfer_error (transfer->session,
-					       transfer->id,
-					       _("Unable to connect to any host"));
+		GError *error;
+
+		error = g_error_new (lm_error_quark (),
+				     LM_BS_TRANSFER_ERROR_UNABLE_TO_CONNECT,
+				     _("Unable to connect to the other party"));
+		_lm_bs_session_transfer_error (transfer->session, 
+					       transfer->id, 
+					       error);
+		g_error_free (error);
 	}
 }
 
@@ -175,7 +181,7 @@ bs_transfer_io_error_to_string (GError *error)
 		case G_FILE_ERROR_PERM:
 			return _("Permission denied");
 		case G_FILE_ERROR_NAMETOOLONG:
-			return _("File name too long");
+			return _("File name is too long");
 		case G_FILE_ERROR_NOENT:
 			return _("File doesn't exist");
 		case G_FILE_ERROR_ISDIR:
@@ -183,13 +189,13 @@ bs_transfer_io_error_to_string (GError *error)
 		case G_FILE_ERROR_ROFS:
 			return _("Read only file system");
 		case G_FILE_ERROR_TXTBSY:
-			return _("File busy");
+			return _("File is busy");
 		case G_FILE_ERROR_FAULT:
 			return _("Bad memory");
 		case G_FILE_ERROR_LOOP:
 			return _("Too many levels of symbolic links");
 		case G_FILE_ERROR_NOSPC:
-			return _("No space left on device");
+			return _("No space is available");
 		case G_FILE_ERROR_NOMEM:
 			return _("Virtual memory exhausted");
 		case G_FILE_ERROR_MFILE:
@@ -203,17 +209,16 @@ bs_transfer_io_error_to_string (GError *error)
 		default:
 			break; /* unknown error */
 		}
-		
 	} else if (error->domain == G_IO_CHANNEL_ERROR) {
 		switch(error->code) {
 		case G_IO_CHANNEL_ERROR_FBIG:
-			return _("File too large");
+			return _("File is too large");
 		case G_IO_CHANNEL_ERROR_IO:
 			return _("Input/output error");
 		case G_IO_CHANNEL_ERROR_ISDIR:
 			return _("File is a directory");
 		case G_IO_CHANNEL_ERROR_NOSPC:
-			return _("No space left on device");
+			return _("No space is available");
 		case G_IO_CHANNEL_ERROR_NXIO:
 			return _("No such device");
 		default:
@@ -331,19 +336,31 @@ lm_bs_transfer_new (LmBsSession      *session,
 	return transfer;
 }
 
+static void
+bs_transfer_error (LmBsTransfer *transfer,
+		   const gchar  *error_msg)
+{
+	GError *error;
+
+	error = g_error_new (lm_error_quark (),
+			     LM_BS_TRANSFER_ERROR_UNABLE_TO_CONNECT,
+			     error_msg);
+	lm_bs_transfer_error (transfer, error);
+	g_error_free (error);
+}
+
 void
-lm_bs_transfer_error(LmBsTransfer *transfer,
-		     const gchar  *error_msg)
+lm_bs_transfer_error (LmBsTransfer *transfer,
+		      GError       *error)
 {
 	LmBsSession *session;
 
 	transfer->status = LM_BS_TRANSFER_STATUS_INTERRUPTED;
 	session = transfer->session;
 
-	lm_bs_transfer_close_file(transfer);
-	_lm_bs_session_transfer_error(session, transfer->id, error_msg);
+	lm_bs_transfer_close_file (transfer);
+	_lm_bs_session_transfer_error (session, transfer->id, error);
 }
-
 
 gboolean
 lm_bs_transfer_append_to_file (LmBsTransfer *transfer, 
@@ -360,9 +377,7 @@ lm_bs_transfer_append_to_file (LmBsTransfer *transfer,
 	if (!bs_transfer_channel_open_for_write (transfer, &error)) {
 		error_msg = bs_transfer_io_error_to_string (error);
 		g_error_free (error);
-
-		lm_bs_transfer_error (transfer, error_msg);
-
+		bs_transfer_error (transfer, error_msg);
 		return FALSE;
 	}
 
@@ -375,9 +390,7 @@ lm_bs_transfer_append_to_file (LmBsTransfer *transfer,
 	if (io_status != G_IO_STATUS_NORMAL) {
 		error_msg = bs_transfer_io_error_to_string (error);
 		g_error_free (error);
-
-		lm_bs_transfer_error (transfer, error_msg);
-
+		bs_transfer_error (transfer, error_msg);
 		return FALSE;
 	}
 
@@ -412,9 +425,7 @@ lm_bs_transfer_get_file_content (LmBsTransfer  *transfer,
 	if (!bs_transfer_channel_open_for_read (transfer, &error)) {
 		error_msg = bs_transfer_io_error_to_string (error);
 		g_error_free (error);
-
-		lm_bs_transfer_error (transfer, error_msg);
-
+		bs_transfer_error (transfer, error_msg);
 		return FALSE;
 	}
 
@@ -428,9 +439,7 @@ lm_bs_transfer_get_file_content (LmBsTransfer  *transfer,
 	if (io_status != G_IO_STATUS_NORMAL) {
 		error_msg = bs_transfer_io_error_to_string (error);
 		g_error_free (error);
-
-		lm_bs_transfer_error (transfer, error_msg);
-
+		bs_transfer_error (transfer, error_msg);
 		return FALSE;
 	}
 

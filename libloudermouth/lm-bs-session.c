@@ -589,7 +589,7 @@ lm_bs_session_remove_transfer (LmBsSession *session,
 void
 _lm_bs_session_transfer_error (LmBsSession *session, 
 			       guint        id,
-			       const gchar *msg)
+			       GError      *error)
 {
 	LmCallback *cb;
 
@@ -599,7 +599,7 @@ _lm_bs_session_transfer_error (LmBsSession *session,
 	if (cb && cb->func) {
 		(* ((LmBsFailureFunction) cb->func)) (cb->user_data,
 						      id,
-						      msg);
+						      error);
 	}
 
 	lm_bs_session_remove_transfer (session, id);

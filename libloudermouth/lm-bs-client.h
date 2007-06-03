@@ -83,7 +83,6 @@ void             lm_bs_client_write_data          (LmBsClient   *client,
 void             lm_bs_client_do_read             (LmBsClient   *client);
 void             lm_bs_client_remove_watch        (LmBsClient   *client);
 
-
 G_END_DECLS
 
 #endif /* __LM_BS_CLIENT_H__ */

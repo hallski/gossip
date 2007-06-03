@@ -1,5 +1,22 @@
 2007-06-03  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-event.c:
+	* libgossip/gossip-stock.[ch]: 
+	* src/gossip-contact-list.c:
+	* ui/pixmaps/Makefile.am: Added STOCK image for file transfer.
+
+	* libloudermouth/lm-bs-receiver.c:
+	* libloudermouth/lm-bs-sender.c:
+	* libloudermouth/lm-bs-session.[ch]:
+	* libloudermouth/lm-bs-transfer.[ch]: 
+	* libgossip/gossip-ft.c: 
+	* libgossip/gossip-ft.h:
+	* libgossip/gossip-jabber-ft.c:
+	* src/gossip-ft-window.c: Improved the error and success reporting
+	so now we have a dialog indicating either situations.
+
+2007-06-03  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-ft-provider.c:
 	* libgossip/gossip-jabber-ft.c:
 	* libloudermouth/lm-bs-client.[ch]:

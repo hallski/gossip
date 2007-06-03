@@ -35,6 +35,11 @@ G_BEGIN_DECLS
 typedef struct _LmBsTransfer LmBsTransfer;
 
 typedef enum {
+	LM_BS_TRANSFER_TYPE_SENDER,
+	LM_BS_TRANSFER_TYPE_RECEIVER
+} LmBsTransferType;
+
+typedef enum {
 	LM_BS_TRANSFER_STATUS_INITIAL,
 	LM_BS_TRANSFER_STATUS_CONNECTED,
 	LM_BS_TRANSFER_STATUS_TRANSFERING,
@@ -43,9 +48,10 @@ typedef enum {
 } LmBsTransferStatus;
 
 typedef enum {
-	LM_BS_TRANSFER_TYPE_SENDER,
-	LM_BS_TRANSFER_TYPE_RECEIVER
-} LmBsTransferType;
+	LM_BS_TRANSFER_ERROR_CLIENT_DISCONNECTED,
+	LM_BS_TRANSFER_ERROR_PROTOCOL_SPECIFIC,
+	LM_BS_TRANSFER_ERROR_UNABLE_TO_CONNECT
+} LmBsTransferError;
 
 LmBsTransfer *     lm_bs_transfer_new                (LmBsSession       *session,
 						      LmConnection      *connection,
@@ -70,7 +76,7 @@ gchar *            lm_bs_transfer_get_auth_sha       (LmBsTransfer      *transfe
 LmBsTransferType   lm_bs_transfer_get_type           (LmBsTransfer      *transfer);
 LmBsTransferStatus lm_bs_transfer_get_status         (LmBsTransfer      *transfer);
 void               lm_bs_transfer_error              (LmBsTransfer      *transfer,
-						      const gchar       *error_msg);
+						      GError            *error);
 const gchar *      lm_bs_transfer_get_iq_id          (LmBsTransfer      *transfer);
 void               lm_bs_transfer_set_activate_cb    (LmBsTransfer      *transfer,
 						      LmCallback        *activate_cb);

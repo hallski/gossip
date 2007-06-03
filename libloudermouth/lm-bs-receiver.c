@@ -25,6 +25,7 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 
+#include <loudmouth/lm-error.h>
 #include "lm-sock.h"
 #include "lm-debug.h"
 #include "lm-bs-transfer.h"
@@ -65,6 +66,7 @@ static void bs_receiver_read_cb             (LmBsClient    *client,
 					     GString       *data);
 static void bs_receiver_write_cb            (LmBsClient    *client,
 					     LmBsReceiver  *receiver);
+static void bs_receiver_transfer_error      (LmBsReceiver  *receiver);
 
 static void
 bs_receiver_client_disconnected (LmBsClient   *client, 
@@ -81,8 +83,13 @@ bs_receiver_client_disconnected (LmBsClient   *client,
 	status = lm_bs_transfer_get_status (receiver->transfer);
 
 	if (status != LM_BS_TRANSFER_STATUS_COMPLETED) {
-		lm_bs_transfer_error (receiver->transfer,
-				      _("Transfer stopped"));
+		GError *error;
+
+		error = g_error_new (lm_error_quark (),
+				     LM_BS_TRANSFER_ERROR_CLIENT_DISCONNECTED,
+				     _("The other party disconnected"));
+		lm_bs_transfer_error (receiver->transfer, error);
+		g_error_free (error);
 	}
 
 	lm_bs_transfer_close_file (receiver->transfer);
@@ -97,6 +104,18 @@ bs_receiver_fill_request_buf (LmBsClient   *client,
 
 	g_string_append_printf (*buf, "%c%s", strlen (msg), msg);
 	g_string_append_len (*buf, "\x00\x00", 2);
+}
+
+static void
+bs_receiver_transfer_error (LmBsReceiver *receiver)
+{
+	GError *error;
+
+	error = g_error_new (lm_error_quark (),
+			     LM_BS_TRANSFER_ERROR_PROTOCOL_SPECIFIC,
+			     _("A protocol error occurred during the transfer"));
+	lm_bs_transfer_error (receiver->transfer, error);
+	g_error_free (error);
 }
 
 static void 
@@ -120,8 +139,7 @@ bs_receiver_read_cb (LmBsClient   *client,
 	case STATE_AUTH_SENT:
 		if (data->len < 2) {
 			lm_bs_receiver_unref (receiver);
-			lm_bs_transfer_error (transfer,
-					      _("Protocol error"));
+			bs_receiver_transfer_error (receiver);
 			return;
 		}
 		
@@ -129,8 +147,7 @@ bs_receiver_read_cb (LmBsClient   *client,
 		
 		if (bytes[0] != '\x05' || bytes[1] == '\xff') {
 			lm_bs_receiver_unref (receiver);
-			lm_bs_transfer_error (transfer,
-					      _("Protocol error"));
+			bs_receiver_transfer_error (receiver);
 			return;
 		}
 		
@@ -142,8 +159,7 @@ bs_receiver_read_cb (LmBsClient   *client,
 	case STATE_CONNECT_REQUEST_SENT:
 		if (data->len <= 4 ) {
 			lm_bs_receiver_unref (receiver);
-			lm_bs_transfer_error (transfer,
-					      _("Protocol error"));
+			bs_receiver_transfer_error (receiver);
 			return;
 		}
 		
@@ -158,8 +174,7 @@ bs_receiver_read_cb (LmBsClient   *client,
 			
 			if (data->len - addrlen - 6 < 0) {
 				lm_bs_receiver_unref (receiver);
-				lm_bs_transfer_error (transfer,
-						      _("Protocol error"));
+				bs_receiver_transfer_error (receiver);
 				return;
 			}
 		}

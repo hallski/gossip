@@ -23,6 +23,9 @@
 #include "config.h"
 
 #include "gossip-ft.h"
+#include "gossip-debug.h"
+
+#define DEBUG_DOMAIN "GossipFT"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_FT, GossipFTPriv))
 
@@ -196,8 +199,11 @@ ft_init (GossipFT *ft)
 	priv->file_name      = NULL;
 	priv->file_size      = 0;
 	priv->file_mime_type = NULL;
+
 	priv->sid            = NULL;
 	priv->location       = NULL;
+
+	gossip_debug (DEBUG_DOMAIN, "Initializing GossipFT with id:%d", id);
 }
 
 static void
@@ -206,6 +212,8 @@ ft_finalize (GObject *object)
 	GossipFTPriv *priv;
 
 	priv = GET_PRIV (object);
+
+	gossip_debug (DEBUG_DOMAIN, "Finalizing GossipFT with id:%d", priv->id);
 
 	if (priv->contact) {
 		g_object_unref (priv->contact);

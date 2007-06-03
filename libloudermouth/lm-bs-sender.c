@@ -26,6 +26,7 @@
 #include <glib/gi18n.h>
 #include <string.h>
 
+#include <loudmouth/lm-error.h>
 #include "lm-sock.h"
 #include "lm-debug.h"
 #include "lm-bs-session.h"
@@ -238,9 +239,15 @@ bs_sender_client_disconnected_cb (LmBsClient *client,
 		status = lm_bs_transfer_get_status (sender->transfer);
 
 		if (status != LM_BS_TRANSFER_STATUS_COMPLETED) {
+			GError *error;
+
 			bs_sender_destroy (sender);
-			lm_bs_transfer_error (sender->transfer,
-					      _("Transfer stopped"));
+
+			error = g_error_new (lm_error_quark (),
+					     LM_BS_TRANSFER_ERROR_CLIENT_DISCONNECTED,
+					     _("The other party disconnected"));
+			lm_bs_transfer_error (sender->transfer, error);
+			g_error_free (error);
 			return;
 		}
 	}

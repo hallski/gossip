@@ -36,7 +36,7 @@ typedef struct _LmBsSession LmBsSession;
 
 typedef void    (* LmBsFailureFunction)             (gpointer       user_data,
 						     guint          id,
-						     const gchar   *failure_message);
+						     GError        *error);
 typedef void    (* LmBsCompleteFunction)            (gpointer       user_data,
 						     guint          id);
 
@@ -83,7 +83,7 @@ guint           lm_bs_session_start_listener        (LmBsSession   *session);
 GMainContext * _lm_bs_session_get_context           (LmBsSession   *session);
 void           _lm_bs_session_transfer_error        (LmBsSession   *session,
 						     guint          id,
-						     const gchar   *msg);
+						     GError        *error);
 void           _lm_bs_session_transfer_completed    (LmBsSession   *session,
 						     guint          id);
 void           _lm_bs_session_remove_sender         (LmBsSession   *session,

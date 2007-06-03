@@ -356,7 +356,7 @@ static const GtkActionEntry entries[] = {
 	  N_("_Invite to Chat Room"), NULL, N_("Invite to a currently open chat room"),
 	  G_CALLBACK (contact_list_action_cb)
 	},
-	{ "SendFile", NULL,
+	{ "SendFile", GOSSIP_STOCK_FILE_TRANSFER,
 	  N_("_Send File..."), NULL, N_("Send a file"),
 	  G_CALLBACK (contact_list_action_cb)
 	},
@@ -2281,7 +2281,6 @@ contact_list_get_contact_menu (GossipContactList *list,
 	action = gtk_ui_manager_get_action (priv->ui, "/Contact/Log");
 	gtk_action_set_sensitive (action, can_show_log);
 
-	/* FIXME: disable file transfer until finished. */
 	action = gtk_ui_manager_get_action (priv->ui, "/Contact/SendFile");
 	gtk_action_set_visible (action, can_send_file);
 

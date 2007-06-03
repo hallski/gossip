@@ -407,17 +407,16 @@ gossip_event_get_stock_id (GossipEvent *event)
 	case GOSSIP_EVENT_NEW_MESSAGE:
 	case GOSSIP_EVENT_SERVER_MESSAGE:
 		return GOSSIP_STOCK_MESSAGE;
-		break;
+
+	case GOSSIP_EVENT_FILE_TRANSFER_REQUEST:
+		return GOSSIP_STOCK_FILE_TRANSFER;
 
 	case GOSSIP_EVENT_SUBSCRIPTION_REQUEST:
-	case GOSSIP_EVENT_FILE_TRANSFER_REQUEST:
 		return GTK_STOCK_DIALOG_QUESTION;
-		break;
 
 	default:
 		/* Shouldn't happen */
 		return GTK_STOCK_DIALOG_WARNING;
-		break;
 	}
 
 	return NULL;

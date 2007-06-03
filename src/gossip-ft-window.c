@@ -204,19 +204,29 @@ ft_window_error_cb (GossipProtocol *protocol,
 	str2 = error->message;
 
 	switch (error->code) {
-	case GOSSIP_FT_ERROR_UNSUPPORTED:
-		type = GTK_MESSAGE_INFO;
-		str1 = _("File transfer is not supported by both parties.");
-		break;
 	case GOSSIP_FT_ERROR_DECLINED:
 		type = GTK_MESSAGE_INFO;
 		str1 = _("Your file transfer offer declined.");
 		str2 = _("The other user decided not to continue.");
 		break;
 
+	case GOSSIP_FT_ERROR_CLIENT_DISCONNECTED:
+		type = GTK_MESSAGE_ERROR;
+		str1 = _("Unable to complete the file transfer.");
+		break;
+
+	case GOSSIP_FT_ERROR_UNABLE_TO_CONNECT:
+		type = GTK_MESSAGE_ERROR;
+		str1 = _("Unable to start the file transfer.");
+		break;
+
+	case GOSSIP_FT_ERROR_UNSUPPORTED:
+		type = GTK_MESSAGE_INFO;
+		str1 = _("File transfer is not supported by both parties.");
+		break;
+
 	case GOSSIP_FT_ERROR_UNKNOWN:
-	default:
-		str1 = _("Unknown error occurred during file transfer.");
+		str1 = _("An unknown error occurred during file transfer.");
 		break;
 	}
 

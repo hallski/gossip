@@ -11,6 +11,7 @@ image_DATA =				\
 	gossip-message.png		\
 	gossip-typing.png		\
 	gossip-group-message.png 	\
+	gossip-file-transfer.png        \
 	vcard_16.png			\
 	vcard_48.png
 

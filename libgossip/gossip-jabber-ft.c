@@ -65,31 +65,38 @@ struct _GossipJabberFTs {
 	GHashTable     *remote_ids;
 	GHashTable     *jid_sids;
 };
-static void            jabber_ft_transfer_complete    (GossipJabber      *jabber,
-						       guint              id);
-static void            jabber_ft_transfer_failure     (GossipJabber      *jabber,
-						       guint              id,
-						       const gchar       *reason);
-static LmHandlerResult jabber_ft_iq_si_handler        (LmMessageHandler  *handler,
-						       LmConnection      *conn,
-						       LmMessage         *message,
-						       GossipJabber      *jabber);
-static void            jabber_ft_handle_request       (GossipJabber      *jabber,
-						       LmMessage         *m);
-static void            jabber_ft_handle_error         (GossipJabber      *jabber,
-						       LmMessage         *m);
-static void            jabber_ft_error                (GossipJabber      *jabber,
-						       const gchar       *signal,
-						       GossipFT          *ft,
-						       GossipFTError      code,
-						       const gchar       *reason);
-static gboolean        jabber_ft_get_file_details     (const gchar       *uri,
-						       gchar            **file_name,
-						       gchar            **file_size,
-						       gchar            **mime_type);
-static gchar *         jabber_ft_get_contact_last_jid (GossipContact     *contact);
 
-static gchar *         jabber_ft_get_unique_sid       (void);
+static guint           jabber_ft_guess_id_by_sid_and_sender (GossipJabber      *jabber,
+							     const gchar       *sid,
+							     const gchar       *jid);
+static void            jabber_ft_transfer_complete_cb       (GossipJabber      *jabber,
+							     guint              id);
+static void            jabber_ft_transfer_failure_cb        (GossipJabber      *jabber,
+							     guint              id,
+							     GError            *error);
+static void            jabber_ft_add_jid_sid_to_table       (GossipJabberFTs   *fts,
+							     const gchar       *jid,
+							     const gchar       *sid,
+							     guint              id);
+static LmHandlerResult jabber_ft_iq_si_handler              (LmMessageHandler  *handler,
+							     LmConnection      *conn,
+							     LmMessage         *message,
+							     GossipJabber      *jabber);
+static void            jabber_ft_handle_request             (GossipJabber      *jabber,
+							     LmMessage         *m);
+static void            jabber_ft_handle_error               (GossipJabber      *jabber,
+							     LmMessage         *m);
+static void            jabber_ft_error                      (GossipJabber      *jabber,
+							     const gchar       *signal,
+							     GossipFT          *ft,
+							     GossipFTError      code,
+							     const gchar       *reason);
+static gboolean        jabber_ft_get_file_details           (const gchar       *uri,
+							     gchar            **file_name,
+							     gchar            **file_size,
+							     gchar            **mime_type);
+static gchar *         jabber_ft_get_contact_last_jid       (GossipContact     *contact);
+static gchar *         jabber_ft_get_unique_sid             (void);
 
 GossipJabberFTs *
 gossip_jabber_ft_init (GossipJabber *jabber)
@@ -100,6 +107,8 @@ gossip_jabber_ft_init (GossipJabber *jabber)
 
 	g_return_val_if_fail (GOSSIP_IS_JABBER (jabber), NULL);
 
+	gossip_debug (DEBUG_DOMAIN, "Initializing GossipJabberFT");
+
 	connection = gossip_jabber_get_connection (jabber);
 
 	fts = g_new0 (GossipJabberFTs, 1);
@@ -109,12 +118,12 @@ gossip_jabber_ft_init (GossipJabber *jabber)
 	fts->bs_session = lm_bs_session_new (NULL);
 
 	lm_bs_session_set_failure_function (fts->bs_session, 
-					    (LmBsFailureFunction) jabber_ft_transfer_failure,
+					    (LmBsFailureFunction) jabber_ft_transfer_failure_cb,
 					    jabber,
 					    NULL);
 
 	lm_bs_session_set_complete_function (fts->bs_session, 
-					    (LmBsCompleteFunction) jabber_ft_transfer_complete,
+					    (LmBsCompleteFunction) jabber_ft_transfer_complete_cb,
 					    jabber,
 					    NULL);
 
@@ -147,13 +156,16 @@ gossip_jabber_ft_init (GossipJabber *jabber)
 						LM_HANDLER_PRIORITY_NORMAL);
 	lm_message_handler_unref (handler);
 
-
 	return fts;
 }
 
 void
 gossip_jabber_ft_finalize (GossipJabberFTs *fts)
 {
+	g_return_if_fail (fts != NULL);
+
+	gossip_debug (DEBUG_DOMAIN, "Finalizing GossipJabberFT");
+
 	if (!fts) {
 		/* We don't error here, because if no connection is
 		 * made, then we can clean up a GossipJabber object
@@ -174,9 +186,9 @@ gossip_jabber_ft_finalize (GossipJabberFTs *fts)
 }
 
 static guint
-guess_id_by_sid_and_sender (GossipJabber *jabber,
-			    const gchar  *sid,
-			    const gchar  *jid)
+jabber_ft_guess_id_by_sid_and_sender (GossipJabber *jabber,
+				      const gchar  *sid,
+				      const gchar  *jid)
 {
 	GossipJabberFTs *fts;
 	GHashTable      *jids;
@@ -187,11 +199,13 @@ guess_id_by_sid_and_sender (GossipJabber *jabber,
 
 	jids = g_hash_table_lookup (fts->jid_sids, jid);
 	if (!jids) {
+		gossip_debug (DEBUG_DOMAIN, "Couldn't get ID from JID:'%s'", jid);
 		return 0;
 	}
 
 	id_ptr = g_hash_table_lookup (jids, sid);
 	if (!id_ptr) {
+		gossip_debug (DEBUG_DOMAIN, "Couldn't get ID from SID:'%s'", sid);
 		return 0;
 	}
 
@@ -199,8 +213,8 @@ guess_id_by_sid_and_sender (GossipJabber *jabber,
 }
 
 static void
-jabber_ft_transfer_complete (GossipJabber *jabber, 
-			     guint         id)
+jabber_ft_transfer_complete_cb (GossipJabber *jabber, 
+				guint         id)
 {
 	GossipJabberFTs *fts;
 	GossipFT        *ft;
@@ -220,38 +234,53 @@ jabber_ft_transfer_complete (GossipJabber *jabber,
 }
 
 static void
-jabber_ft_transfer_failure (GossipJabber *jabber, 
-			    guint         id, 
-			    const gchar  *reason)
+jabber_ft_transfer_failure_cb (GossipJabber *jabber, 
+			       guint         id, 
+			       GError       *error)
 {
 	GossipJabberFTs *fts;
 	GossipFT        *ft;
+	GossipFTError    error_code;
 	gchar           *id_str;
-	GQuark           quark;
-	GError          *error;
 
-	gossip_debug (DEBUG_DOMAIN, "ID[%d] Transfer failed, reason:'%s'", id, reason);
+	gossip_debug (DEBUG_DOMAIN, "ID[%d] Transfer failed, %s", id, error->message);
 
 	fts = gossip_jabber_get_fts (jabber);
 	id_str = g_strdup_printf ("%d", id);
 	ft = g_hash_table_lookup (fts->ft_ids, id_str);
 	g_free (id_str);
 
-	quark = g_quark_from_string ("gossip-jabber-ft");
-	error = g_error_new (quark, 0, reason);
-	g_signal_emit_by_name (fts->jabber, "file-transfer-error", ft, error);
-	g_clear_error (&error);
+	switch (error->code) {
+	case LM_BS_TRANSFER_ERROR_CLIENT_DISCONNECTED:
+		error_code = GOSSIP_FT_ERROR_CLIENT_DISCONNECTED;
+		break;
+
+	case LM_BS_TRANSFER_ERROR_PROTOCOL_SPECIFIC:
+		error_code = GOSSIP_FT_ERROR_UNKNOWN;
+		break;
+
+	case LM_BS_TRANSFER_ERROR_UNABLE_TO_CONNECT:
+		error_code = GOSSIP_FT_ERROR_UNABLE_TO_CONNECT;
+		break;
+	}
+
+	jabber_ft_error (fts->jabber,
+			 "file-transfer-error",
+			 ft,
+			 error_code,
+			 error->message ? error->message : "");
 }
 
 static void
-add_jid_sid_to_table (GossipJabberFTs *fts,
-		      const gchar     *jid,
-		      const gchar     *sid,
-		      guint            id)
+jabber_ft_add_jid_sid_to_table (GossipJabberFTs *fts,
+				const gchar     *jid,
+				const gchar     *sid,
+				guint            id)
 {
 	GHashTable *jid_sids_table;
 
-	jid_sids_table = g_hash_table_lookup(fts->jid_sids, jid);
+	jid_sids_table = g_hash_table_lookup (fts->jid_sids, jid);
+
 	if (!jid_sids_table) {
 		jid_sids_table = g_hash_table_new_full (g_str_hash,
 							g_str_equal,
@@ -274,9 +303,8 @@ jabber_ft_iq_streamhost (LmConnection *conn,
 {
 	GossipJabberFTs *fts;
 	LmMessageNode   *node;
-
-	const gchar   *attr;
-	const gchar   *iq_id;
+	const gchar     *attr;
+	const gchar     *iq_id;
 
 	node = lm_message_node_get_child (m->node, "query");
 	if(!node) {
@@ -344,7 +372,7 @@ jabber_ft_iq_query (LmConnection *conn,
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 
-	id = guess_id_by_sid_and_sender (jabber, sid, jid);
+	id = jabber_ft_guess_id_by_sid_and_sender (jabber, sid, jid);
 	if (id == 0) {
 		/* previos records for transfer doesn't exist */
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
@@ -408,7 +436,7 @@ jabber_ft_send_streamhosts (LmConnection *conn,
 					  LM_MESSAGE_TYPE_IQ,
 					  LM_MESSAGE_SUB_TYPE_SET);
 
-	id = guess_id_by_sid_and_sender (jabber, sid, to_str);
+	id = jabber_ft_guess_id_by_sid_and_sender (jabber, sid, to_str);
 	if (id == 0) {
 		/* previos records for transfer doesn't exist */
 		return;
@@ -653,7 +681,7 @@ jabber_ft_handle_request (GossipJabber *jabber,
 	g_hash_table_insert (fts->ft_ids, g_strdup (id_str), ft);
 	g_hash_table_insert (fts->remote_ids, GUINT_TO_POINTER (id), g_strdup (from_str));
 
-	add_jid_sid_to_table (fts, from_str, sid, id);
+	jabber_ft_add_jid_sid_to_table (fts, from_str, sid, id);
 
 	/* signal */
 	g_signal_emit_by_name (fts->jabber, "file-transfer-request", ft);
@@ -694,7 +722,8 @@ jabber_ft_handle_error (GossipJabber *jabber,
 	error_code_str = lm_message_node_get_attribute (node, "code");
 
 	gossip_debug (DEBUG_DOMAIN,
-		      "File transfer error from:'%s' with code:'%s', reason:'%s'",
+		      "ID[%s] File transfer error from:'%s' with code:'%s', reason:'%s'",
+		      id_str,
 		      from_str,
 		      error_code_str,
 		      error_reason);
@@ -729,7 +758,7 @@ jabber_ft_error (GossipJabber  *jabber,
 	GError *error;
 
 	g_return_if_fail (GOSSIP_IS_JABBER (jabber));
-	g_return_if_fail (GOSSIP_IS_FT (ft));
+/* 	g_return_if_fail (GOSSIP_IS_FT (ft)); */
 	g_return_if_fail (signal != NULL);
 	g_return_if_fail (reason != NULL);
 
@@ -760,7 +789,7 @@ jabber_ft_get_file_details (const gchar  *uri,
 					  GNOME_VFS_FILE_INFO_DEFAULT);
 
 	if (result != GNOME_VFS_OK) {
-		g_warning ("ProtocolFT: Could not get file info for URI:'%s'", uri);
+		g_warning ("Could not get file info for URI:'%s'", uri);
 		return FALSE;
 	}
 
@@ -934,7 +963,8 @@ gossip_jabber_ft_send (GossipJabberFTs *fts,
 	g_hash_table_insert (fts->str_ids, GUINT_TO_POINTER (id), g_strdup (id_str));
 	g_hash_table_insert (fts->ft_ids, g_strdup (id_str), ft);
 	g_hash_table_insert (fts->remote_ids, GUINT_TO_POINTER (id), to);
-	add_jid_sid_to_table (fts, to, sid, id);
+
+	jabber_ft_add_jid_sid_to_table (fts, to, sid, id);
 
 	file_path = g_filename_from_uri (file, NULL, NULL);
 
@@ -1064,12 +1094,12 @@ gossip_jabber_ft_decline (GossipJabberFTs *fts,
 	id_str = g_hash_table_lookup (fts->str_ids, GUINT_TO_POINTER (id));
 
 	if (!to_str) {
-		g_warning ("ProtocolFT: ID[%d] Could not get remote JID", id);
+		g_warning ("ID[%d] Could not get remote JID", id);
 		return;
 	}
 
 	if (!id_str) {
-		g_warning ("ProtocolFT: ID[%d] Could not get original message id", id);
+		g_warning ("ID[%d] Could not get original message id", id);
 		return;
 	}
 
@@ -1106,6 +1136,9 @@ gossip_jabber_ft_cancel (GossipJabberFTs *fts,
 			 GossipFTId       id)
 {
 	g_return_if_fail (fts != NULL);
+
+	gossip_debug (DEBUG_DOMAIN, "ID[%d] Cancelling file transfer", id);
+
 	lm_bs_session_remove_transfer (fts->bs_session, id);
 /* 	room = (JabberChatroom*) g_hash_table_lookup (chatrooms->room_id_hash,  */
 /* 						       GINT_TO_POINTER (id)); */
@@ -1328,6 +1361,3 @@ gossip_jabber_ft_iib_finish_response (GossipJabber *jabber,
 	lm_connection_send (connection, m, NULL);
 	lm_message_unref (m);
 }
-
-
-
