@@ -53,11 +53,26 @@ struct _GossipThemeClass {
 	void                 (*view_cleared)     (GossipTheme        *theme,
 						  GossipThemeContext *context,
 						  GossipChatView     *view);
-	void                 (*append_message)   (void);
-	void                 (*append_action)    (void);
-	void                 (*append_text)      (void);
-	void                 (*append_event)     (void);
-	void                 (*append_timestamp) (void);
+	void                 (*append_message)   (GossipTheme        *theme,
+						  GossipThemeContext *context,
+						  GossipChatView     *view,
+						  GossipMessage      *message,
+						  gboolean            from_self);
+	void                 (*append_action)    (GossipTheme        *theme,
+						  GossipThemeContext *context,
+						  GossipChatView     *view,
+						  GossipMessage      *message,
+						  gboolean            from_self);
+	void                 (*append_event)     (GossipTheme        *theme,
+						  GossipThemeContext *context,
+						  GossipChatView     *view,
+						  const gchar        *str);
+	void                 (*append_timestamp) (GossipTheme        *theme,
+						  GossipThemeContext *context,
+						  GossipChatView     *view,
+						  GossipMessage      *message,
+						  gboolean            show_date,
+						  gboolean            show_time);
 };
 
 GType         gossip_theme_get_type             (void) G_GNUC_CONST;

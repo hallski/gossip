@@ -1,3 +1,8 @@
+2007-06-03  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-theme.[ch]:
+	- Made the theme functions overridable by subclass.
+
 2007-06-03  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-event.c:
