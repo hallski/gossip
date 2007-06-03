@@ -1,6 +1,12 @@
 2007-06-03  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-theme.[ch]:
+	(gossip_theme_append_action, gossip_theme_append_message):
+	- Removed the contact argument and get it from the message instead.
+
+2007-06-03  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-theme.[ch]:
 	* src/gossip-theme-manager.[ch]:
 	(theme_manager_fixup_tag_table, theme_manager_ensure_tag_by_name):
 	- Moved to GossipTheme.

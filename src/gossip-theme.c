@@ -751,7 +751,6 @@ theme_append_irc_message (GossipTheme        *theme,
 			  GossipThemeContext *context,
 			  GossipChatView     *view,
 			  GossipMessage      *msg,
-			  GossipContact      *my_contact,
 			  gboolean            from_self)
 {
 	GtkTextBuffer *buffer;
@@ -760,23 +759,21 @@ theme_append_irc_message (GossipTheme        *theme,
 	const gchar   *body_tag;
 	GtkTextIter    iter;
 	gchar         *tmp;
+	GossipContact *contact;
 
 	gossip_debug (DEBUG_DOMAIN, "Add IRC message");
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
 
-	if (from_self) {
-		name = gossip_contact_get_name (my_contact);
+	contact = gossip_message_get_sender (msg);
+	name = gossip_contact_get_name (contact);
 
+	if (from_self) {
 		nick_tag = "irc-nick-self";
 		body_tag = "irc-body-self";
 	} else {
-		GossipContact *contact;
-
-		contact = gossip_message_get_sender (msg);
-		name = gossip_contact_get_name (contact);
-
-		if (gossip_chat_should_highlight_nick (msg, my_contact)) {
+		if (gossip_chat_should_highlight_nick (msg, 
+						       gossip_message_get_recipient (msg))) {
 			nick_tag = "irc-nick-highlight";
 		} else {
 			nick_tag = "irc-nick-other";
@@ -784,7 +781,7 @@ theme_append_irc_message (GossipTheme        *theme,
 
 		body_tag = "irc-body-other";
 	}
-
+		
 	if (gossip_chat_view_get_last_block_type (view) != BLOCK_TYPE_SELF &&
 	    gossip_chat_view_get_last_block_type (view) != BLOCK_TYPE_OTHER) {
 		gossip_theme_append_spacing (theme, context, view);
@@ -814,7 +811,6 @@ theme_maybe_append_fancy_header (GossipTheme        *theme,
 				 GossipThemeContext *context,
 				 GossipChatView     *view,
 				 GossipMessage      *msg,
-				 GossipContact      *my_contact,
 				 gboolean            from_self)
 {
 	GossipContact      *contact;
@@ -835,15 +831,13 @@ theme_maybe_append_fancy_header (GossipTheme        *theme,
 
 	gossip_debug (DEBUG_DOMAIN, "Maybe add fancy header");
 
-	if (from_self) {
-		name = gossip_contact_get_name (my_contact);
+	name = gossip_contact_get_name (contact);
 
+	if (from_self) {
 		tag = "fancy-header-self";
 		line_top_tag = "fancy-line-top-self";
 		line_bottom_tag = "fancy-line-bottom-self";
 	} else {
-		name = gossip_contact_get_name (contact);
-
 		tag = "fancy-header-other";
 		line_top_tag = "fancy-line-top-other";
 		line_bottom_tag = "fancy-line-bottom-other";
@@ -938,13 +932,12 @@ theme_append_fancy_message (GossipTheme        *theme,
 			    GossipThemeContext *context,
 			    GossipChatView     *view,
 			    GossipMessage      *msg,
-			    GossipContact      *my_contact,
 			    gboolean            from_self)
 {
 	const gchar *tag;
 
 	theme_maybe_append_fancy_header (theme, context, view, msg,
-					 my_contact, from_self);
+					 from_self);
 
 	if (from_self) {
 		tag = "fancy-body-self";
@@ -1109,17 +1102,16 @@ gossip_theme_append_message (GossipTheme        *theme,
 			     GossipThemeContext *context,
 			     GossipChatView     *view,
 			     GossipMessage      *message,
-			     GossipContact      *contact,
 			     gboolean            from_self)
 {
 	theme_maybe_append_date_and_time (theme, context, view, message);
 
 	if (gossip_chat_view_is_irc_style (view)) {
 		theme_append_irc_message (theme, context, view, message,
-					  contact, from_self);
+					  from_self);
 	} else {
 		theme_append_fancy_message (theme, context, view, message, 
-					    contact, from_self);
+					    from_self);
 	}
 
 	if (from_self) {
@@ -1137,26 +1129,22 @@ theme_append_irc_action (GossipTheme        *theme,
 			 GossipThemeContext *context,
 			 GossipChatView     *view,
 			 GossipMessage      *msg,
-			 GossipContact      *my_contact,
 			 gboolean            from_self)
 {
 	const gchar *name;
 	gchar       *tmp;
 	const gchar *tag;
+	GossipContact *contact;
+
+	contact = gossip_message_get_sender (msg);
+	name = gossip_contact_get_name (contact);
 
 	gossip_debug (DEBUG_DOMAIN, "Add IRC action");
 
 	/* Skip the "/me ". */
 	if (from_self) {
-		name = gossip_contact_get_name (my_contact);
-
 		tag = "irc-action-self";
 	} else {
-		GossipContact *contact;
-
-		contact = gossip_message_get_sender (msg);
-		name = gossip_contact_get_name (contact);
-
 		tag = "irc-action-other";
 	}
 
@@ -1175,7 +1163,6 @@ theme_append_fancy_action (GossipTheme        *theme,
 			   GossipThemeContext *context,
 			   GossipChatView     *view,
 			   GossipMessage      *msg,
-			   GossipContact      *my_contact,
 			   gboolean            from_self)
 {
 	GossipContact *contact;
@@ -1189,19 +1176,15 @@ theme_append_fancy_action (GossipTheme        *theme,
 	contact = gossip_message_get_sender (msg);
 	
 	theme_maybe_append_fancy_header (theme, context, view, msg,
-					 my_contact, from_self);
+					 from_self);
+
+	contact = gossip_message_get_sender (msg);
+	name = gossip_contact_get_name (contact);
 
 	if (from_self) {
-		name = gossip_contact_get_name (my_contact);
-
 		tag = "fancy-action-self";
 		line_tag = "fancy-line-self";
 	} else {
-		GossipContact *contact;
-
-		contact = gossip_message_get_sender (msg);
-		name = gossip_contact_get_name (contact);
-
 		tag = "fancy-action-other";
 		line_tag = "fancy-line-other";
 	}
@@ -1211,24 +1194,21 @@ theme_append_fancy_action (GossipTheme        *theme,
 	g_free (tmp);
 }
 
-
-
 void
 gossip_theme_append_action (GossipTheme        *theme,
 			    GossipThemeContext *context,
 			    GossipChatView     *view,
 			    GossipMessage      *message,
-			    GossipContact      *contact,
 			    gboolean            from_self)
 {
 	theme_maybe_append_date_and_time (theme, context, view, message);
 
 	if (gossip_chat_view_is_irc_style (view)) {
 		theme_append_irc_action (theme, context, view, message, 
-					 contact, from_self);
+					 from_self);
 	} else {
 		theme_append_fancy_action (theme, context, view, message, 
-					   contact, from_self);
+					   from_self);
 	}
 
 	if (from_self) {

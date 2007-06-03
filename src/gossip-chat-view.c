@@ -754,10 +754,10 @@ chat_view_append_message (GossipChatView *view,
 	 */
 	if (gossip_message_is_action (msg)) {
 		gossip_theme_append_action (priv->theme, priv->theme_context,
-					    view, msg, contact, from_self);
+					    view, msg, from_self);
 	} else {
 		gossip_theme_append_message (priv->theme, priv->theme_context,
-					     view, msg, contact, from_self);
+					     view, msg, from_self);
 	}
 
 	if (scroll_down) {

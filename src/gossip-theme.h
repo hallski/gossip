@@ -42,19 +42,23 @@ struct _GossipTheme {
 	GObject parent;
 };
 
+typedef void GossipThemeContext;
+
 struct _GossipThemeClass {
 	GObjectClass parent_class;
 
 	/* <vtable> */
-	void (*view_cleared)     (void);
-	void (*append_message)   (void);
-	void (*append_action)    (void);
-	void (*append_text)      (void);
-	void (*append_event)     (void);
-	void (*append_timestamp) (void);
+	GossipThemeContext * (*setup_with_view)  (GossipTheme        *theme,
+						  GossipChatView     *view);
+	void                 (*view_cleared)     (GossipTheme        *theme,
+						  GossipThemeContext *context,
+						  GossipChatView     *view);
+	void                 (*append_message)   (void);
+	void                 (*append_action)    (void);
+	void                 (*append_text)      (void);
+	void                 (*append_event)     (void);
+	void                 (*append_timestamp) (void);
 };
-
-typedef void GossipThemeContext;
 
 GType         gossip_theme_get_type             (void) G_GNUC_CONST;
 
@@ -71,13 +75,11 @@ void         gossip_theme_append_message        (GossipTheme        *theme,
 						 GossipThemeContext *context,
 						 GossipChatView     *view,
 						 GossipMessage      *msg,
-						 GossipContact      *contact,
 						 gboolean            from_self);
 void         gossip_theme_append_action         (GossipTheme        *theme,
 						 GossipThemeContext *context,
 						 GossipChatView     *view,
 						 GossipMessage      *msg,
-						 GossipContact      *contact,
 						 gboolean            from_self);
 void         gossip_theme_append_text           (GossipTheme        *theme,
 						 GossipThemeContext *context,
