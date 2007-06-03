@@ -983,6 +983,69 @@ gossip_theme_new (const gchar *name)
 	return theme;
 }
 
+static void
+theme_ensure_tag_by_name (GtkTextBuffer *buffer, const gchar *name)
+{
+	GtkTextTagTable *table;
+	GtkTextTag      *tag;
+
+	table = gtk_text_buffer_get_tag_table (buffer);
+	tag = gtk_text_tag_table_lookup (table, name);
+
+	if (!tag) {
+		gtk_text_buffer_create_tag (buffer,
+					    name,
+					    NULL);
+	}
+}
+
+static void
+theme_fixup_tag_table (GossipTheme *theme, GossipChatView *view)
+{
+	GtkTextBuffer *buffer;
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+
+	/* "Fancy" style tags. */
+	theme_ensure_tag_by_name (buffer, "fancy-header-self");
+	theme_ensure_tag_by_name (buffer, "fancy-header-self-avatar");
+	theme_ensure_tag_by_name (buffer, "fancy-avatar-self");
+	theme_ensure_tag_by_name (buffer, "fancy-line-top-self");
+	theme_ensure_tag_by_name (buffer, "fancy-line-bottom-self");
+	theme_ensure_tag_by_name (buffer, "fancy-body-self");
+	theme_ensure_tag_by_name (buffer, "fancy-action-self");
+	theme_ensure_tag_by_name (buffer, "fancy-highlight-self");
+
+	theme_ensure_tag_by_name (buffer, "fancy-header-other");
+	theme_ensure_tag_by_name (buffer, "fancy-header-other-avatar");
+	theme_ensure_tag_by_name (buffer, "fancy-avatar-other");
+	theme_ensure_tag_by_name (buffer, "fancy-line-top-other");
+	theme_ensure_tag_by_name (buffer, "fancy-line-bottom-other");
+	theme_ensure_tag_by_name (buffer, "fancy-body-other");
+	theme_ensure_tag_by_name (buffer, "fancy-action-other");
+	theme_ensure_tag_by_name (buffer, "fancy-highlight-other");
+
+	theme_ensure_tag_by_name (buffer, "fancy-spacing");
+	theme_ensure_tag_by_name (buffer, "fancy-time");
+	theme_ensure_tag_by_name (buffer, "fancy-event");
+	theme_ensure_tag_by_name (buffer, "fancy-link");
+
+	/* IRC style tags. */
+	theme_ensure_tag_by_name (buffer, "irc-nick-self");
+	theme_ensure_tag_by_name (buffer, "irc-body-self");
+	theme_ensure_tag_by_name (buffer, "irc-action-self");
+
+	theme_ensure_tag_by_name (buffer, "irc-nick-other");
+	theme_ensure_tag_by_name (buffer, "irc-body-other");
+	theme_ensure_tag_by_name (buffer, "irc-action-other");
+
+	theme_ensure_tag_by_name (buffer, "irc-nick-highlight");
+	theme_ensure_tag_by_name (buffer, "irc-spacing");
+	theme_ensure_tag_by_name (buffer, "irc-time");
+	theme_ensure_tag_by_name (buffer, "irc-event");
+	theme_ensure_tag_by_name (buffer, "irc-link");
+}
+
 GossipThemeContext *
 gossip_theme_setup_with_view (GossipTheme    *theme,
 			      GossipChatView *view)
@@ -994,7 +1057,7 @@ gossip_theme_setup_with_view (GossipTheme    *theme,
 
 	priv = GET_PRIV (theme);
 
-	g_print ("%s called\n", G_STRFUNC);
+	theme_fixup_tag_table (theme, view);
 
 	switch (priv->style) {
 	case THEME_CLEAN:

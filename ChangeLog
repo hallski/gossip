@@ -2,6 +2,13 @@
 
 	* src/gossip-theme.[ch]:
 	* src/gossip-theme-manager.[ch]:
+	(theme_manager_fixup_tag_table, theme_manager_ensure_tag_by_name):
+	- Moved to GossipTheme.
+
+2007-06-03  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-theme.[ch]:
+	* src/gossip-theme-manager.[ch]:
 	- Moved the apply_theme_* functions to gossip-theme.c
 	- Moved theme_add_tag to gossip-theme.c
 	- Moved theme_init_tag_by_name to gossip-theme.c

@@ -64,10 +64,6 @@ static void        theme_manager_notify_room_cb           (GossipConf         *c
 static void        theme_manager_notify_show_avatars_cb   (GossipConf         *conf,
 							   const gchar        *key,
 							   gpointer            user_data);
-static void        theme_manager_ensure_tag_by_name       (GtkTextBuffer      *buffer,
-							   const gchar        *name);
-static void        theme_manager_fixup_tag_table          (GossipThemeManager *theme_manager,
-							   GossipChatView     *view);
 static void        theme_manager_apply_theme              (GossipThemeManager *manager,
 							   GossipChatView     *view,
 							   const gchar        *name);
@@ -223,23 +219,6 @@ theme_manager_notify_show_avatars_cb (GossipConf  *conf,
 	}
 }
 
-static void
-theme_manager_ensure_tag_by_name (GtkTextBuffer *buffer,
-				  const gchar   *name)
-{
-	GtkTextTagTable *table;
-	GtkTextTag      *tag;
-
-	table = gtk_text_buffer_get_tag_table (buffer);
-	tag = gtk_text_tag_table_lookup (table, name);
-
-	if (!tag) {
-		gtk_text_buffer_create_tag (buffer,
-					    name,
-					    NULL);
-	}
-}
-
 static gboolean
 theme_manager_ensure_theme_exists (const gchar *name)
 {
@@ -259,54 +238,6 @@ theme_manager_ensure_theme_exists (const gchar *name)
 }
 
 static void
-theme_manager_fixup_tag_table (GossipThemeManager *theme_manager,
-			       GossipChatView     *view)
-{
-	GtkTextBuffer *buffer;
-
-	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
-
-	/* "Fancy" style tags. */
-	theme_manager_ensure_tag_by_name (buffer, "fancy-header-self");
-	theme_manager_ensure_tag_by_name (buffer, "fancy-header-self-avatar");
-	theme_manager_ensure_tag_by_name (buffer, "fancy-avatar-self");
-	theme_manager_ensure_tag_by_name (buffer, "fancy-line-top-self");
-	theme_manager_ensure_tag_by_name (buffer, "fancy-line-bottom-self");
-	theme_manager_ensure_tag_by_name (buffer, "fancy-body-self");
-	theme_manager_ensure_tag_by_name (buffer, "fancy-action-self");
-	theme_manager_ensure_tag_by_name (buffer, "fancy-highlight-self");
-
-	theme_manager_ensure_tag_by_name (buffer, "fancy-header-other");
-	theme_manager_ensure_tag_by_name (buffer, "fancy-header-other-avatar");
-	theme_manager_ensure_tag_by_name (buffer, "fancy-avatar-other");
-	theme_manager_ensure_tag_by_name (buffer, "fancy-line-top-other");
-	theme_manager_ensure_tag_by_name (buffer, "fancy-line-bottom-other");
-	theme_manager_ensure_tag_by_name (buffer, "fancy-body-other");
-	theme_manager_ensure_tag_by_name (buffer, "fancy-action-other");
-	theme_manager_ensure_tag_by_name (buffer, "fancy-highlight-other");
-
-	theme_manager_ensure_tag_by_name (buffer, "fancy-spacing");
-	theme_manager_ensure_tag_by_name (buffer, "fancy-time");
-	theme_manager_ensure_tag_by_name (buffer, "fancy-event");
-	theme_manager_ensure_tag_by_name (buffer, "fancy-link");
-
-	/* IRC style tags. */
-	theme_manager_ensure_tag_by_name (buffer, "irc-nick-self");
-	theme_manager_ensure_tag_by_name (buffer, "irc-body-self");
-	theme_manager_ensure_tag_by_name (buffer, "irc-action-self");
-
-	theme_manager_ensure_tag_by_name (buffer, "irc-nick-other");
-	theme_manager_ensure_tag_by_name (buffer, "irc-body-other");
-	theme_manager_ensure_tag_by_name (buffer, "irc-action-other");
-
-	theme_manager_ensure_tag_by_name (buffer, "irc-nick-highlight");
-	theme_manager_ensure_tag_by_name (buffer, "irc-spacing");
-	theme_manager_ensure_tag_by_name (buffer, "irc-time");
-	theme_manager_ensure_tag_by_name (buffer, "irc-event");
-	theme_manager_ensure_tag_by_name (buffer, "irc-link");
-}
-
-static void
 theme_manager_apply_theme (GossipThemeManager *manager,
 			   GossipChatView     *view,
 			   const gchar        *name)
@@ -319,7 +250,6 @@ theme_manager_apply_theme (GossipThemeManager *manager,
 	/* Make sure all tags are present. Note: not useful now but when we have
 	 * user defined theme it will be.
 	 */
-	theme_manager_fixup_tag_table (manager, view);
 	if (theme_manager_ensure_theme_exists (name)) {
 		if (strcmp (name, "clean") == 0) {
 			theme = priv->clean_theme;
@@ -399,11 +329,15 @@ gossip_theme_manager_update_show_avatars (GossipThemeManager *manager,
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
 	table = gtk_text_buffer_get_tag_table (buffer);
 
-	tag_text_self = gtk_text_tag_table_lookup (table, "fancy-header-self-avatar");
-	tag_text_other = gtk_text_tag_table_lookup (table, "fancy-header-other-avatar");
+	tag_text_self = gtk_text_tag_table_lookup (table,
+						   "fancy-header-self-avatar");
+	tag_text_other = gtk_text_tag_table_lookup (table,
+						    "fancy-header-other-avatar");
 
-	tag_image_self = gtk_text_tag_table_lookup (table, "fancy-avatar-self");
-	tag_image_other = gtk_text_tag_table_lookup (table, "fancy-avatar-other");
+	tag_image_self = gtk_text_tag_table_lookup (table,
+						    "fancy-avatar-self");
+	tag_image_other = gtk_text_tag_table_lookup (table, 
+						     "fancy-avatar-other");
 
 	if (!show) {
 		g_object_set (tag_text_self,
