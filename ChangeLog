@@ -1,3 +1,8 @@
+2007-06-03  Kristian Rietveld  <kris@gtk.org>
+
+	* ui/main.glade: set use_stock for button_connect to False, to avoid a
+	crasher when opening the accounts window with GTK+ trunk.  (#442456).
+
 2007-06-03  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-theme.c:
