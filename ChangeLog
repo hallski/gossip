@@ -1,5 +1,10 @@
 2007-06-02  Mikael Hallendal  <micke@imendio.com>
 
+	* src/Makefile.am: Added gossip-theme-[fancy|irc].[ch].
+	* src/gossip-theme-[fancy|irc].[ch]: Added boilerplate.
+
+2007-06-02  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-chat-view.c (chat_view_setup_tags): Create "invite" tag.
 	(gossip_chat_view_append_invite, gossip_chat_view_append_button): Always
 	use "invite" tag.

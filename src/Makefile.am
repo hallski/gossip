@@ -88,6 +88,8 @@ gossip_SOURCES = 				                        	\
 	gossip-subscription-dialog.c       gossip-subscription-dialog.h	   	\
 	gossip-text-iter.c                 gossip-text-iter.h              	\
 	gossip-theme.c                     gossip-theme.h                       \
+	gossip-theme-fancy.c               gossip-theme-fancy.h                 \
+	gossip-theme-irc.c                 gossip-theme-irc.h                   \
 	gossip-theme-manager.c	    	   gossip-theme-manager.h               \
 	gossip-ui-utils.c	           gossip-ui-utils.h		   	\
 	gossip-vcard-dialog.c	    	   gossip-vcard-dialog.h

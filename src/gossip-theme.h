@@ -44,6 +44,13 @@ struct _GossipTheme {
 
 struct _GossipThemeClass {
 	GObjectClass parent_class;
+
+	/* <vtable> */
+	void (*append_message)   (void);
+	void (*append_action)    (void);
+	void (*append_text)      (void);
+	void (*append_event)     (void);
+	void (*append_timestamp) (void);
 };
 
 typedef void GossipThemeContext;
