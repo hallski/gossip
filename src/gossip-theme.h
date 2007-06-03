@@ -38,13 +38,6 @@ typedef struct _GossipThemeClass GossipThemeClass;
 
 #include "gossip-chat-view.h"
 
-typedef enum {
-	THEME_CLEAN,
-	THEME_SIMPLE,
-	THEME_BLUE,
-	THEME_CLASSIC
-} ThemeStyle;
-
 struct _GossipTheme {
 	GObject parent;
 };
@@ -65,7 +58,7 @@ typedef void GossipThemeContext;
 
 GType         gossip_theme_get_type             (void) G_GNUC_CONST;
 
-GossipTheme * gossip_theme_new                  (ThemeStyle style);
+GossipTheme * gossip_theme_new                  (const gchar        *name);
 
 GossipThemeContext *
 gossip_theme_setup_with_view                    (GossipTheme        *theme,

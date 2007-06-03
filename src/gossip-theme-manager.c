@@ -154,10 +154,10 @@ gossip_theme_manager_init (GossipThemeManager *manager)
 			      GOSSIP_PREFS_UI_SHOW_AVATARS,
 			      &priv->show_avatars);
 
-	priv->clean_theme   = gossip_theme_new (THEME_CLEAN);
-	priv->simple_theme  = gossip_theme_new (THEME_SIMPLE);
-	priv->blue_theme    = gossip_theme_new (THEME_BLUE);
-	priv->classic_theme = gossip_theme_new (THEME_CLASSIC);
+	priv->clean_theme   = gossip_theme_new ("clean");
+	priv->simple_theme  = gossip_theme_new ("simple");
+	priv->blue_theme    = gossip_theme_new ("blue");
+	priv->classic_theme = gossip_theme_new ("classic");
 }
 
 static void
@@ -954,6 +954,7 @@ theme_manager_apply_theme (GossipThemeManager *manager,
 		margin = 3;
 		theme = priv->classic_theme;
 	}
+
 
 	gossip_chat_view_set_is_irc_style (view, priv->irc_style);
 	gossip_chat_view_set_theme (view, theme);

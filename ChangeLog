@@ -1,5 +1,10 @@
 2007-06-02  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-theme.[ch] (gossip_theme_new): Made the function take a
+	string for the name of the theme.
+
+2007-06-02  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-theme.[ch] (gossip_theme_new): Added function to create a
 	new theme of a specific type.
 	* src/gossip-theme-manager.c: Create four different themes.

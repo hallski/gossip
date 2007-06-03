@@ -37,6 +37,13 @@
 /* Number of seconds between timestamps when using normal mode, 5 minutes. */
 #define TIMESTAMP_INTERVAL 300
 
+typedef enum {
+	THEME_CLEAN,
+	THEME_SIMPLE,
+	THEME_BLUE,
+	THEME_CLASSIC
+} ThemeStyle;
+
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_THEME, GossipThemePriv))
 
 typedef struct _GossipThemePriv GossipThemePriv;
@@ -357,7 +364,7 @@ theme_append_fancy_message (GossipTheme        *theme,
 }
 
 GossipTheme *
-gossip_theme_new (ThemeStyle style)
+gossip_theme_new (const gchar *name)
 {
 	GossipTheme     *theme;
 	GossipThemePriv *priv;
@@ -365,7 +372,17 @@ gossip_theme_new (ThemeStyle style)
 	theme = g_object_new (GOSSIP_TYPE_THEME, NULL);
 	priv  = GET_PRIV (theme);
 
-	priv->style = style;
+	if (strcmp (name, "clean") == 0) {
+		priv->style = THEME_CLEAN;
+	}
+	else if (strcmp (name, "simple") == 0) {
+		priv->style = THEME_SIMPLE;
+	}
+	else if (strcmp (name, "blue") == 0) {
+		priv->style = THEME_BLUE;
+	} else {
+		priv->style = THEME_CLASSIC;
+	}
 
 	return theme;
 }
