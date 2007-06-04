@@ -222,7 +222,9 @@ chat_view_finalize (GObject *object)
 	}
 
 	if (priv->theme) {
-		gossip_theme_context_free (priv->theme, priv->theme_context);
+		gossip_theme_detach_from_view (priv->theme, priv->theme_context,
+					       view);
+
 		g_object_unref (priv->theme);
 	}
 
@@ -1479,7 +1481,8 @@ gossip_chat_view_set_theme (GossipChatView *view, GossipTheme *theme)
 	priv = GET_PRIV (view);
 
 	if (priv->theme) {
-		gossip_theme_context_free (priv->theme, priv->theme_context);
+		gossip_theme_detach_from_view (priv->theme, priv->theme_context,
+					       view);
 
 		g_object_unref (priv->theme);
 	}

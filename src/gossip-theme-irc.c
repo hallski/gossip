@@ -49,6 +49,9 @@ static void         theme_irc_set_property  (GObject             *object,
 static GossipThemeContext *
 theme_irc_setup_with_view                      (GossipTheme         *theme,
 						GossipChatView      *view);
+static void         theme_irc_detach_from_view (GossipTheme        *theme,
+						GossipThemeContext *context,
+						GossipChatView     *view);
 static void         theme_irc_append_message   (GossipTheme        *theme,
 						GossipThemeContext *context,
 						GossipChatView     *view,
@@ -95,6 +98,7 @@ gossip_theme_irc_class_init (GossipThemeIrcClass *class)
 	object_class->set_property = theme_irc_set_property;
 
 	theme_class->setup_with_view  = theme_irc_setup_with_view;
+	theme_class->detach_from_view = theme_irc_detach_from_view;
 	theme_class->append_message   = theme_irc_append_message;
 	theme_class->append_action    = theme_irc_append_action;
 	theme_class->append_event     = theme_irc_append_event;
@@ -296,6 +300,14 @@ theme_irc_setup_with_view (GossipTheme *theme, GossipChatView *view)
 	gossip_chat_view_set_margin (view, 3);
 
 	return NULL;
+}
+
+static void
+theme_irc_detach_from_view (GossipTheme        *theme,
+			    GossipThemeContext *context,
+			    GossipChatView     *view)
+{
+	/* Free the context */
 }
 
 static void

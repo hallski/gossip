@@ -50,6 +50,9 @@ struct _GossipThemeClass {
 	/* <vtable> */
 	GossipThemeContext * (*setup_with_view)  (GossipTheme        *theme,
 						  GossipChatView     *view);
+	void                 (*detach_from_view) (GossipTheme        *theme,
+						  GossipThemeContext *context,
+						  GossipChatView     *view);
 	void                 (*view_cleared)     (GossipTheme        *theme,
 						  GossipThemeContext *context,
 						  GossipChatView     *view);
@@ -85,6 +88,9 @@ GossipTheme * gossip_theme_new                  (void);
 GossipThemeContext *
 gossip_theme_setup_with_view                    (GossipTheme        *theme,
 						 GossipChatView     *view);
+void         gossip_theme_detach_from_view      (GossipTheme        *theme,
+						 GossipThemeContext *context,
+						 GossipChatView     *view);
 void         gossip_theme_view_cleared          (GossipTheme        *theme,
 						 GossipThemeContext *context,
 						 GossipChatView     *view);
@@ -119,8 +125,6 @@ void         gossip_theme_append_timestamp      (GossipTheme        *theme,
 						 gboolean            show_date,
 						 gboolean            show_time);
 
-void         gossip_theme_context_free          (GossipTheme        *theme,
-						 gpointer            context);
 void         gossip_theme_maybe_append_date_and_time (GossipTheme        *theme,
 						      GossipThemeContext *context,
 						      GossipChatView     *view,

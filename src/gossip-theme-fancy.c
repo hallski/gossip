@@ -66,6 +66,9 @@ static void     theme_fancy_apply_theme_simple    (GossipTheme        *theme,
 static GossipThemeContext *
 theme_fancy_setup_with_view                       (GossipTheme         *theme,
 						   GossipChatView      *view);
+static void     theme_fancy_detach_from_view      (GossipTheme        *theme,
+						   GossipThemeContext *context,
+						   GossipChatView     *view);
 static void     theme_fancy_view_cleared          (GossipTheme        *theme,
 						   GossipThemeContext *context,
 						   GossipChatView     *view);
@@ -115,6 +118,7 @@ gossip_theme_fancy_class_init (GossipThemeFancyClass *class)
 	object_class->set_property   = theme_fancy_set_property;
 
 	theme_class->setup_with_view  = theme_fancy_setup_with_view;
+	theme_class->detach_from_view = theme_fancy_detach_from_view;
 	theme_class->view_cleared     = theme_fancy_view_cleared;
 	theme_class->append_message   = theme_fancy_append_message;
 	theme_class->append_action    = theme_fancy_append_action;
@@ -667,6 +671,11 @@ theme_fancy_fixup_tag_table (GossipTheme *theme, GossipChatView *view)
 	gossip_theme_utils_ensure_tag_by_name (buffer, "fancy-link");
 }
 
+typedef struct {
+	BlockType last_block_type;
+	time_t    last_timestamp;
+} FancyContext;
+
 static GossipThemeContext *
 theme_fancy_setup_with_view (GossipTheme *theme, GossipChatView *view)
 {
@@ -693,6 +702,14 @@ theme_fancy_setup_with_view (GossipTheme *theme, GossipChatView *view)
 	gossip_chat_view_set_margin (view, priv->margin);
 
 	return NULL;
+}
+
+static void
+theme_fancy_detach_from_view (GossipTheme        *theme,
+			      GossipThemeContext *context,
+			      GossipChatView     *view)
+{
+	/* FIXME: Free the context */
 }
 
 static void 

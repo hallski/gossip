@@ -148,6 +148,19 @@ gossip_theme_setup_with_view (GossipTheme    *theme,
 }
 
 void
+gossip_theme_detach_from_view (GossipTheme        *theme,
+			       GossipThemeContext *context,
+			       GossipChatView     *view)
+{
+	if (!GOSSIP_THEME_GET_CLASS(theme)->detach_from_view) {
+		g_error ("Theme must override detach_from_view");
+	}
+
+	return GOSSIP_THEME_GET_CLASS(theme)->detach_from_view (theme, context,
+								view);
+}
+
+void
 gossip_theme_view_cleared (GossipTheme        *theme,
 			   GossipThemeContext *context,
 			   GossipChatView     *view)
@@ -420,17 +433,6 @@ gossip_theme_append_timestamp (GossipTheme        *theme,
 	GOSSIP_THEME_GET_CLASS(theme)->append_timestamp (theme, context, view,
 							 message, show_date,
 							 show_time);
-}
-
-typedef struct {
-	BlockType last_block_type;
-	time_t    last_timestamp;
-} FancyContext;
-
-void
-gossip_theme_context_free (GossipTheme *theme, gpointer context)
-{
-	g_return_if_fail (GOSSIP_IS_THEME (theme));
 }
 
 
