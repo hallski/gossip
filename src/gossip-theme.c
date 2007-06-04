@@ -66,6 +66,7 @@ gossip_theme_class_init (GossipThemeClass *class)
 	class->append_action    = NULL;
 	class->append_event     = NULL;
 	class->append_timestamp = NULL;
+	class->append_spacing   = NULL;
 
 	g_type_class_add_private (object_class, sizeof (GossipThemePriv));
 }
@@ -382,36 +383,6 @@ gossip_theme_append_text (GossipTheme        *theme,
 	gtk_text_buffer_delete_mark (buffer, mark);
 }
 
-void
-gossip_theme_append_spacing (GossipTheme        *theme, 
-			     GossipThemeContext *context,
-			     GossipChatView     *view)
-{
-	GtkTextBuffer *buffer;
-	const gchar   *tag;
-	GtkTextIter    iter;
-
-	g_return_if_fail (GOSSIP_IS_THEME (theme));
-	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
-
-	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
-
-	if (gossip_chat_view_is_irc_style (view)) {
-		tag = "irc-spacing";
-	} else {
-		tag = "fancy-spacing";
-	}
-
-	gtk_text_buffer_get_end_iter (buffer, &iter);
-	gtk_text_buffer_insert_with_tags_by_name (buffer,
-						  &iter,
-						  "\n",
-						  -1,
-						  "cut",
-						  tag,
-						  NULL);
-}
-
 void 
 gossip_theme_append_event (GossipTheme        *theme,
 			   GossipThemeContext *context,
@@ -421,6 +392,19 @@ gossip_theme_append_event (GossipTheme        *theme,
 	GOSSIP_THEME_GET_CLASS(theme)->append_event (theme, context, view, str);
 }
 
+void
+gossip_theme_append_spacing (GossipTheme        *theme, 
+			     GossipThemeContext *context,
+			     GossipChatView     *view)
+{
+	if (!GOSSIP_THEME_GET_CLASS(theme)->append_action) {
+		return;
+	}
+
+	GOSSIP_THEME_GET_CLASS(theme)->append_spacing (theme, context, view);
+}
+
+
 void 
 gossip_theme_append_timestamp (GossipTheme        *theme,
 			       GossipThemeContext *context,
@@ -429,6 +413,10 @@ gossip_theme_append_timestamp (GossipTheme        *theme,
 			       gboolean            show_date,
 			       gboolean            show_time)
 {
+	if (!GOSSIP_THEME_GET_CLASS(theme)->append_action) {
+		return;
+	}
+
 	GOSSIP_THEME_GET_CLASS(theme)->append_timestamp (theme, context, view,
 							 message, show_date,
 							 show_time);

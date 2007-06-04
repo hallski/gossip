@@ -73,6 +73,9 @@ struct _GossipThemeClass {
 						  GossipMessage      *message,
 						  gboolean            show_date,
 						  gboolean            show_time);
+	void                 (*append_spacing)   (GossipTheme        *theme,
+						  GossipThemeContext *context,
+						  GossipChatView     *view);
 };
 
 GType         gossip_theme_get_type             (void) G_GNUC_CONST;

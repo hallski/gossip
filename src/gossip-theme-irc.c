@@ -69,6 +69,9 @@ static void         theme_irc_append_timestamp (GossipTheme        *theme,
 						GossipMessage      *message,
 						gboolean            show_date,
 						gboolean            show_time);
+static void         theme_irc_append_spacing   (GossipTheme        *theme,
+						GossipThemeContext *context,
+						GossipChatView     *view);
 
 
 enum {
@@ -96,6 +99,7 @@ gossip_theme_irc_class_init (GossipThemeIrcClass *class)
 	theme_class->append_action    = theme_irc_append_action;
 	theme_class->append_event     = theme_irc_append_event;
 	theme_class->append_timestamp = theme_irc_append_timestamp;
+	theme_class->append_spacing   = theme_irc_append_spacing;
 
 	g_object_class_install_property (object_class,
 					 PROP_MY_PROP,
@@ -470,5 +474,28 @@ theme_irc_append_timestamp (GossipTheme        *theme,
 	}
 
 	g_string_free (str, TRUE);
+}
+
+static void
+theme_irc_append_spacing (GossipTheme        *theme,
+			  GossipThemeContext *context,
+			  GossipChatView     *view)
+{
+	GtkTextBuffer *buffer;
+	GtkTextIter    iter;
+
+	g_return_if_fail (GOSSIP_IS_THEME (theme));
+	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+
+	gtk_text_buffer_get_end_iter (buffer, &iter);
+	gtk_text_buffer_insert_with_tags_by_name (buffer,
+						  &iter,
+						  "\n",
+						  -1,
+						  "cut",
+						  "irc-spacing",
+						  NULL);
 }
 
