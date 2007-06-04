@@ -11,17 +11,17 @@ libgossip/gossip-contact.c
 libgossip/gossip-log.c
 libgossip/gossip-presence.c
 libgossip/gossip-protocol.c
+libgossip/gossip-jabber-disco.c
+libgossip/gossip-jabber.c
 
-protocols/jabber/gossip-jabber.c
-protocols/jabber/gossip-jabber-disco.c
-protocols/telepathy/gossip-telepathy-cmgr.c
+libloudermouth/lm-bs-receiver.c
+libloudermouth/lm-bs-sender.c
+libloudermouth/lm-bs-transfer.c
 
 src/gossip-about-dialog.c
 src/gossip-accounts-dialog.c
 src/gossip-account-chooser.c
-src/gossip-account-widget-irc.c
 src/gossip-account-widget-jabber.c
-src/gossip-account-widget-generic.c
 src/gossip-add-contact-dialog.c
 src/gossip-app.c
 src/gossip-avatar-image.c
@@ -53,6 +53,8 @@ src/gossip-spell-dialog.c
 src/gossip-status-icon.c
 src/gossip-subscription-dialog.c
 src/gossip-ui-utils.c
+src/gossip-theme-fancy.c
+src/gossip-theme-irc.c
 src/gossip-theme-manager.c
 src/gossip-vcard-dialog.c
 src/sounds/gossip.soundlist.in
