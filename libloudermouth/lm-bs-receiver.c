@@ -102,7 +102,7 @@ bs_receiver_fill_request_buf (LmBsClient   *client,
 {
 	*buf = g_string_new_len ("\x05\x01\x00\x03", 4);
 
-	g_string_append_printf (*buf, "%c%s", strlen (msg), msg);
+	g_string_append_printf (*buf, "%c%s", (int)strlen (msg), msg);
 	g_string_append_len (*buf, "\x00\x00", 2);
 }
 
