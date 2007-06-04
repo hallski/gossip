@@ -54,20 +54,6 @@ theme_setup_with_view                         (GossipTheme        *theme,
 static void         theme_view_cleared        (GossipTheme        *theme,
 					       GossipThemeContext *context,
 					       GossipChatView     *view);
-static void         theme_append_message      (GossipTheme        *theme,
-					       GossipThemeContext *context,
-					       GossipChatView     *view,
-					       GossipMessage      *message,
-					       gboolean            from_self);
-static void         theme_append_action       (GossipTheme        *theme,
-					       GossipThemeContext *context,
-					       GossipChatView     *view,
-					       GossipMessage      *message,
-					       gboolean            from_self);
-static void         theme_append_event        (GossipTheme        *theme,
-					       GossipThemeContext *context,
-					       GossipChatView     *view,
-					       const gchar        *str);
 static void         theme_append_timestamp    (GossipTheme        *theme,
 					       GossipThemeContext *context,
 					       GossipChatView     *view,
@@ -88,9 +74,9 @@ gossip_theme_class_init (GossipThemeClass *class)
 
 	class->setup_with_view  = theme_setup_with_view;
 	class->view_cleared     = theme_view_cleared;
-	class->append_message   = theme_append_message;
-	class->append_action    = theme_append_action;
-	class->append_event     = theme_append_event;
+	class->append_message   = NULL;
+	class->append_action    = NULL;
+	class->append_event     = NULL;
 	class->append_timestamp = theme_append_timestamp;
 
 	g_type_class_add_private (object_class, sizeof (GossipThemePriv));
@@ -204,167 +190,6 @@ gossip_theme_maybe_append_date_and_time (GossipTheme        *theme,
 					       view, message,
 					       append_date, append_time);
 	}
-}
-
-
-
-static void
-theme_append_irc_message (GossipTheme        *theme,
-			  GossipThemeContext *context,
-			  GossipChatView     *view,
-			  GossipMessage      *msg,
-			  gboolean            from_self)
-{
-	GtkTextBuffer *buffer;
-	const gchar   *name;
-	const gchar   *nick_tag;
-	const gchar   *body_tag;
-	GtkTextIter    iter;
-	gchar         *tmp;
-	GossipContact *contact;
-
-	gossip_debug (DEBUG_DOMAIN, "Add IRC message");
-
-	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
-
-	contact = gossip_message_get_sender (msg);
-	name = gossip_contact_get_name (contact);
-
-	if (from_self) {
-		nick_tag = "irc-nick-self";
-		body_tag = "irc-body-self";
-	} else {
-		if (gossip_chat_should_highlight_nick (msg, 
-						       gossip_message_get_recipient (msg))) {
-			nick_tag = "irc-nick-highlight";
-		} else {
-			nick_tag = "irc-nick-other";
-		}
-
-		body_tag = "irc-body-other";
-	}
-		
-	if (gossip_chat_view_get_last_block_type (view) != BLOCK_TYPE_SELF &&
-	    gossip_chat_view_get_last_block_type (view) != BLOCK_TYPE_OTHER) {
-		gossip_theme_append_spacing (theme, context, view);
-	}
-
-	gtk_text_buffer_get_end_iter (buffer, &iter);
-
-	/* The nickname. */
-	tmp = g_strdup_printf ("%s: ", name);
-	gtk_text_buffer_insert_with_tags_by_name (buffer,
-						  &iter,
-						  tmp,
-						  -1,
-						  "cut",
-						  nick_tag,
-						  NULL);
-	g_free (tmp);
-
-	/* The text body. */
-	gossip_theme_append_text (theme, context, view, 
-				  gossip_message_get_body (msg),
-				  body_tag);
-}
-
-static void
-theme_append_message (GossipTheme        *theme,
-		      GossipThemeContext *context,
-		      GossipChatView     *view,
-		      GossipMessage      *message,
-		      gboolean            from_self)
-{
-	gossip_theme_maybe_append_date_and_time (theme, context, view, message);
-
-	if (gossip_chat_view_is_irc_style (view)) {
-		theme_append_irc_message (theme, context, view, message,
-					  from_self);
-	}
-}
-
-static void
-theme_append_irc_action (GossipTheme        *theme,
-			 GossipThemeContext *context,
-			 GossipChatView     *view,
-			 GossipMessage      *msg,
-			 gboolean            from_self)
-{
-	const gchar *name;
-	gchar       *tmp;
-	const gchar *tag;
-	GossipContact *contact;
-
-	contact = gossip_message_get_sender (msg);
-	name = gossip_contact_get_name (contact);
-
-	gossip_debug (DEBUG_DOMAIN, "Add IRC action");
-
-	/* Skip the "/me ". */
-	if (from_self) {
-		tag = "irc-action-self";
-	} else {
-		tag = "irc-action-other";
-	}
-
-	if (gossip_chat_view_get_last_block_type (view) != BLOCK_TYPE_SELF &&
-	    gossip_chat_view_get_last_block_type (view) != BLOCK_TYPE_OTHER) {
-		gossip_theme_append_spacing (theme, context, view);
-	}
-
-	tmp = gossip_message_get_action_string (msg);
-	gossip_theme_append_text (theme, context, view, tmp, tag);
-	g_free (tmp);
-}
-
-static void
-theme_append_action (GossipTheme        *theme,
-		     GossipThemeContext *context,
-		     GossipChatView     *view,
-		     GossipMessage      *message,
-		     gboolean            from_self)
-{
-	gossip_theme_maybe_append_date_and_time (theme, context, view, message);
-
-	if (gossip_chat_view_is_irc_style (view)) {
-		theme_append_irc_action (theme, context, view, message, 
-					 from_self);
-	}
-
-}
-
-static void
-theme_append_event (GossipTheme        *theme,
-		    GossipThemeContext *context,
-		    GossipChatView     *view,
-		    const gchar        *str)
-{
-	GtkTextBuffer *buffer;
-	GtkTextIter    iter;
-	gchar         *msg;
-	const gchar   *tag;
-
-	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
-
-	if (gossip_chat_view_is_irc_style (view)) {
-		tag = "irc-event";
-		msg = g_strdup_printf (" - %s\n", str);
-	} else {
-		tag = "fancy-event";
-		msg = g_strdup_printf (" - %s\n", str);
-	}
-
-	gossip_theme_maybe_append_date_and_time (theme, context, view, NULL);
-
-	gtk_text_buffer_get_end_iter (buffer, &iter);
-
-	gtk_text_buffer_insert_with_tags_by_name (buffer, &iter,
-						  msg, -1,
-						  tag,
-						  NULL);
-	g_free (msg);
-
-	gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_EVENT);
 }
 
 static void

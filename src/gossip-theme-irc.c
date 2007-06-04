@@ -20,8 +20,13 @@
 
 #include "config.h"
 
+#include <libgossip/gossip-debug.h>
+
+#include "gossip-chat.h"
 #include "gossip-theme-utils.h"
 #include "gossip-theme-irc.h"
+
+#define DEBUG_DOMAIN "Theme"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_THEME_IRC, GossipThemeIrcPriv))
 
@@ -43,6 +48,20 @@ static void         theme_irc_set_property  (GObject             *object,
 static GossipThemeContext *
 theme_irc_setup_with_view                   (GossipTheme         *theme,
 					     GossipChatView      *view);
+static void         theme_irc_append_message (GossipTheme        *theme,
+					      GossipThemeContext *context,
+					      GossipChatView     *view,
+					      GossipMessage      *message,
+					      gboolean            from_self);
+static void         theme_irc_append_action (GossipTheme        *theme,
+					     GossipThemeContext *context,
+					     GossipChatView     *view,
+					     GossipMessage      *message,
+					     gboolean            from_self);
+static void         theme_irc_append_event (GossipTheme        *theme,
+					    GossipThemeContext *context,
+					    GossipChatView     *view,
+					    const gchar        *str);
 
 
 enum {
@@ -66,6 +85,9 @@ gossip_theme_irc_class_init (GossipThemeIrcClass *class)
 	object_class->set_property = theme_irc_set_property;
 
 	theme_class->setup_with_view = theme_irc_setup_with_view;
+	theme_class->append_message  = theme_irc_append_message;
+	theme_class->append_action   = theme_irc_append_action;
+	theme_class->append_event    = theme_irc_append_event;
 
 	g_object_class_install_property (object_class,
 					 PROP_MY_PROP,
@@ -264,4 +286,117 @@ theme_irc_setup_with_view (GossipTheme *theme, GossipChatView *view)
 
 	return NULL;
 }
+
+static void
+theme_irc_append_message (GossipTheme        *theme,
+			  GossipThemeContext *context,
+			  GossipChatView     *view,
+			  GossipMessage      *message,
+			  gboolean            from_self)
+{
+	GtkTextBuffer *buffer;
+	const gchar   *name;
+	const gchar   *nick_tag;
+	const gchar   *body_tag;
+	GtkTextIter    iter;
+	gchar         *tmp;
+	GossipContact *contact;
+
+	gossip_debug (DEBUG_DOMAIN, "Add IRC message");
+
+	gossip_theme_maybe_append_date_and_time (theme, context, view, message);
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+
+	contact = gossip_message_get_sender (message);
+	name = gossip_contact_get_name (contact);
+
+	if (from_self) {
+		nick_tag = "irc-nick-self";
+		body_tag = "irc-body-self";
+	} else {
+		if (gossip_chat_should_highlight_nick (message, 
+						       gossip_message_get_recipient (message))) {
+			nick_tag = "irc-nick-highlight";
+		} else {
+			nick_tag = "irc-nick-other";
+		}
+
+		body_tag = "irc-body-other";
+	}
+		
+	gtk_text_buffer_get_end_iter (buffer, &iter);
+
+	/* The nickname. */
+	tmp = g_strdup_printf ("%s: ", name);
+	gtk_text_buffer_insert_with_tags_by_name (buffer,
+						  &iter,
+						  tmp,
+						  -1,
+						  "cut",
+						  nick_tag,
+						  NULL);
+	g_free (tmp);
+
+	/* The text body. */
+	gossip_theme_append_text (theme, context, view, 
+				  gossip_message_get_body (message),
+				  body_tag);
+}
+
+static void 
+theme_irc_append_action (GossipTheme        *theme,
+			 GossipThemeContext *context,
+			 GossipChatView     *view,
+			 GossipMessage      *message,
+			 gboolean            from_self)
+{
+	const gchar   *name;
+	gchar         *tmp;
+	const gchar   *tag;
+	GossipContact *contact;
+
+	gossip_theme_maybe_append_date_and_time (theme, context, view, message);
+
+	contact = gossip_message_get_sender (message);
+	name = gossip_contact_get_name (contact);
+
+	gossip_debug (DEBUG_DOMAIN, "Add IRC action");
+
+	/* Skip the "/me ". */
+	if (from_self) {
+		tag = "irc-action-self";
+	} else {
+		tag = "irc-action-other";
+	}
+
+	tmp = gossip_message_get_action_string (message);
+	gossip_theme_append_text (theme, context, view, tmp, tag);
+	g_free (tmp);
+}
+
+static void
+theme_irc_append_event (GossipTheme        *theme,
+			GossipThemeContext *context,
+		    GossipChatView     *view,
+		    const gchar        *str)
+{
+	GtkTextBuffer *buffer;
+	GtkTextIter    iter;
+	gchar         *msg;
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+	
+	gossip_theme_maybe_append_date_and_time (theme, context, view, NULL);
+
+	gtk_text_buffer_get_end_iter (buffer, &iter);
+
+	msg = g_strdup_printf (" - %s\n", str);
+	gtk_text_buffer_insert_with_tags_by_name (buffer, &iter,
+						  msg, -1,
+						  "irc-event",
+						  NULL);
+	g_free (msg);
+}
+
 
