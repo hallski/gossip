@@ -20,6 +20,7 @@
 
 #include "config.h"
 
+#include <glib/gi18n.h>
 #include <libgossip/gossip-debug.h>
 
 #include "gossip-chat.h"
@@ -46,22 +47,28 @@ static void         theme_irc_set_property  (GObject             *object,
 					     const GValue        *value,
 					     GParamSpec          *pspec);
 static GossipThemeContext *
-theme_irc_setup_with_view                   (GossipTheme         *theme,
-					     GossipChatView      *view);
-static void         theme_irc_append_message (GossipTheme        *theme,
-					      GossipThemeContext *context,
-					      GossipChatView     *view,
-					      GossipMessage      *message,
-					      gboolean            from_self);
-static void         theme_irc_append_action (GossipTheme        *theme,
-					     GossipThemeContext *context,
-					     GossipChatView     *view,
-					     GossipMessage      *message,
-					     gboolean            from_self);
-static void         theme_irc_append_event (GossipTheme        *theme,
-					    GossipThemeContext *context,
-					    GossipChatView     *view,
-					    const gchar        *str);
+theme_irc_setup_with_view                      (GossipTheme         *theme,
+						GossipChatView      *view);
+static void         theme_irc_append_message   (GossipTheme        *theme,
+						GossipThemeContext *context,
+						GossipChatView     *view,
+						GossipMessage      *message,
+						gboolean            from_self);
+static void         theme_irc_append_action    (GossipTheme        *theme,
+						GossipThemeContext *context,
+						GossipChatView     *view,
+						GossipMessage      *message,
+						gboolean            from_self);
+static void         theme_irc_append_event     (GossipTheme        *theme,
+						GossipThemeContext *context,
+						GossipChatView     *view,
+						const gchar        *str);
+static void         theme_irc_append_timestamp (GossipTheme        *theme,
+						GossipThemeContext *context,
+						GossipChatView     *view,
+						GossipMessage      *message,
+						gboolean            show_date,
+						gboolean            show_time);
 
 
 enum {
@@ -84,10 +91,11 @@ gossip_theme_irc_class_init (GossipThemeIrcClass *class)
 	object_class->get_property = theme_irc_get_property;
 	object_class->set_property = theme_irc_set_property;
 
-	theme_class->setup_with_view = theme_irc_setup_with_view;
-	theme_class->append_message  = theme_irc_append_message;
-	theme_class->append_action   = theme_irc_append_action;
-	theme_class->append_event    = theme_irc_append_event;
+	theme_class->setup_with_view  = theme_irc_setup_with_view;
+	theme_class->append_message   = theme_irc_append_message;
+	theme_class->append_action    = theme_irc_append_action;
+	theme_class->append_event     = theme_irc_append_event;
+	theme_class->append_timestamp = theme_irc_append_timestamp;
 
 	g_object_class_install_property (object_class,
 					 PROP_MY_PROP,
@@ -399,4 +407,68 @@ theme_irc_append_event (GossipTheme        *theme,
 	g_free (msg);
 }
 
+static void
+theme_irc_append_timestamp (GossipTheme        *theme,
+			    GossipThemeContext *context,
+			    GossipChatView     *view,
+			    GossipMessage      *message,
+			    gboolean            show_date,
+			    gboolean            show_time)
+{
+	GtkTextBuffer *buffer;
+	time_t         timestamp;
+	GDate         *date;
+	GtkTextIter    iter;
+	GString       *str;
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+
+	date = gossip_message_get_date_and_time (message, &timestamp);
+
+	str = g_string_new (NULL);
+
+	if (show_time || show_date) {
+		gossip_theme_append_spacing (theme, 
+					     context,
+					     view);
+
+		g_string_append (str, "- ");
+	}
+
+	if (show_date) {
+		gchar buf[256];
+
+		g_date_strftime (buf, 256, _("%A %d %B %Y"), date);
+		g_string_append (str, buf);
+
+		if (show_time) {
+			g_string_append (str, ", ");
+		}
+	}
+
+	g_date_free (date);
+
+	if (show_time) {
+		gchar *tmp;
+
+		tmp = gossip_time_to_string_local (timestamp, GOSSIP_TIME_FORMAT_DISPLAY_SHORT);
+		g_string_append (str, tmp);
+		g_free (tmp);
+	}
+
+	if (show_time || show_date) {
+		g_string_append (str, " -\n");
+
+		gtk_text_buffer_get_end_iter (buffer, &iter);
+		gtk_text_buffer_insert_with_tags_by_name (buffer,
+							  &iter,
+							  str->str, -1,
+							  "irc-time",
+							  NULL);
+
+		gossip_chat_view_set_last_timestamp (view, timestamp);
+	}
+
+	g_string_free (str, TRUE);
+}
 

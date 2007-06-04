@@ -22,6 +22,7 @@
 
 #include <string.h>
 
+#include <glib/gi18n.h>
 #include <gtk/gtkentry.h>
 
 #include <libgossip/gossip-debug.h>
@@ -80,6 +81,12 @@ static void     theme_fancy_append_event (GossipTheme        *theme,
 					  GossipThemeContext *context,
 					  GossipChatView     *view,
 					  const gchar        *str);
+static void     theme_fancy_append_timestamp (GossipTheme        *theme,
+					      GossipThemeContext *context,
+					      GossipChatView     *view,
+					      GossipMessage      *message,
+					      gboolean            show_date,
+					      gboolean            show_time);
 
 enum {
 	PROP_0,
@@ -101,10 +108,11 @@ gossip_theme_fancy_class_init (GossipThemeFancyClass *class)
 	object_class->get_property   = theme_fancy_get_property;
 	object_class->set_property   = theme_fancy_set_property;
 
-	theme_class->setup_with_view = theme_fancy_setup_with_view;
-	theme_class->append_message  = theme_fancy_append_message;
-	theme_class->append_action   = theme_fancy_append_action;
-	theme_class->append_event    = theme_fancy_append_event;
+	theme_class->setup_with_view  = theme_fancy_setup_with_view;
+	theme_class->append_message   = theme_fancy_append_message;
+	theme_class->append_action    = theme_fancy_append_action;
+	theme_class->append_event     = theme_fancy_append_event;
+	theme_class->append_timestamp = theme_fancy_append_timestamp;
 
 	g_object_class_install_property (object_class,
 					 PROP_MY_PROP,
@@ -934,6 +942,73 @@ theme_fancy_append_event (GossipTheme        *theme,
 	g_free (msg);
 
 	gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_EVENT);
+}
+
+static void
+theme_fancy_append_timestamp (GossipTheme        *theme,
+			      GossipThemeContext *context,
+			      GossipChatView     *view,
+			      GossipMessage      *message,
+			      gboolean            show_date,
+			      gboolean            show_time)
+{
+	GtkTextBuffer *buffer;
+	time_t         timestamp;
+	GDate         *date;
+	GtkTextIter    iter;
+	GString       *str;
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+
+	date = gossip_message_get_date_and_time (message, &timestamp);
+
+	str = g_string_new (NULL);
+
+	if (show_time || show_date) {
+		gossip_theme_append_spacing (theme, 
+					     context,
+					     view);
+
+		g_string_append (str, "- ");
+	}
+
+	if (show_date) {
+		gchar buf[256];
+
+		g_date_strftime (buf, 256, _("%A %d %B %Y"), date);
+		g_string_append (str, buf);
+
+		if (show_time) {
+			g_string_append (str, ", ");
+		}
+	}
+
+	g_date_free (date);
+
+	if (show_time) {
+		gchar *tmp;
+
+		tmp = gossip_time_to_string_local (timestamp, GOSSIP_TIME_FORMAT_DISPLAY_SHORT);
+		g_string_append (str, tmp);
+		g_free (tmp);
+	}
+
+	if (show_time || show_date) {
+		g_string_append (str, " -\n");
+
+		gtk_text_buffer_get_end_iter (buffer, &iter);
+		gtk_text_buffer_insert_with_tags_by_name (buffer,
+							  &iter,
+							  str->str, -1,
+							  "fancy-time",
+							  NULL);
+
+		gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_TIME);
+		gossip_chat_view_set_last_timestamp (view, timestamp);
+	}
+
+	g_string_free (str, TRUE);
+	
 }
 
 
