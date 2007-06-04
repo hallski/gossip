@@ -294,7 +294,6 @@ theme_irc_setup_with_view (GossipTheme *theme, GossipChatView *view)
 	theme_irc_fixup_tag_table (theme, view);
 	theme_irc_apply_theme_classic (theme, view);
 	gossip_chat_view_set_margin (view, 3);
-	gossip_chat_view_set_is_irc_style (view, TRUE);
 
 	return NULL;
 }

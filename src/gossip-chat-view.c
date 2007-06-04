@@ -65,7 +65,6 @@ struct _GossipChatViewPriv {
 
 	time_t         last_timestamp;
 	BlockType      last_block_type;
-	gboolean       is_irc_style;
 
 	gboolean       allow_scrolling;
 	gboolean       is_group_chat;
@@ -1619,29 +1618,4 @@ gossip_chat_view_set_last_timestamp (GossipChatView *view,
 
 	priv->last_timestamp = timestamp;
 }
-
-gboolean
-gossip_chat_view_is_irc_style (GossipChatView *view)
-{
-	GossipChatViewPriv *priv;
-
-	g_return_val_if_fail (GOSSIP_IS_CHAT_VIEW (view), TRUE);
-
-	priv = GET_PRIV (view);
-
-	return priv->is_irc_style;
-}
-
-void
-gossip_chat_view_set_is_irc_style (GossipChatView *view, gboolean is_irc_style)
-{
-	GossipChatViewPriv *priv;
-
-	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
-
-	priv = GET_PRIV (view);
-
-	priv->is_irc_style = is_irc_style;
-}
-
 

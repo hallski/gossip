@@ -431,11 +431,6 @@ void
 gossip_theme_context_free (GossipTheme *theme, gpointer context)
 {
 	g_return_if_fail (GOSSIP_IS_THEME (theme));
-#if 0
-	if (!gossip_chat_view_is_irc_style (view)) {
-		g_slice_free (FancyContext, context);
-	}
-#endif
 }
 
 
