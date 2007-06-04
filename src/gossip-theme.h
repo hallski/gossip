@@ -117,6 +117,10 @@ void         gossip_theme_append_timestamp      (GossipTheme        *theme,
 
 void         gossip_theme_context_free          (GossipTheme        *theme,
 						 gpointer            context);
+void         gossip_theme_maybe_append_date_and_time (GossipTheme        *theme,
+						      GossipThemeContext *context,
+						      GossipChatView     *view,
+						      GossipMessage      *message);
 
 G_END_DECLS
 

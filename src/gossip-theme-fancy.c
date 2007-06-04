@@ -24,8 +24,12 @@
 
 #include <gtk/gtkentry.h>
 
+#include <libgossip/gossip-debug.h>
+
 #include "gossip-theme-utils.h"
 #include "gossip-theme-fancy.h"
+
+#define DEBUG_DOMAIN "FancyTheme"
 
 typedef enum {
 	THEME_CLEAN,
@@ -59,9 +63,19 @@ static void     theme_fancy_apply_theme_blue      (GossipTheme        *theme,
 static void     theme_fancy_apply_theme_simple    (GossipTheme        *theme,
 						   GossipChatView     *view);
 static GossipThemeContext *
-theme_fancy_setup_with_view                 (GossipTheme         *theme,
-					     GossipChatView      *view);
+theme_fancy_setup_with_view                       (GossipTheme         *theme,
+						   GossipChatView      *view);
 
+static void     theme_fancy_append_message        (GossipTheme        *theme,
+						   GossipThemeContext *context,
+						   GossipChatView     *view,
+						   GossipMessage      *message,
+						   gboolean            from_self);
+static void     theme_fancy_append_action         (GossipTheme        *theme,
+						   GossipThemeContext *context,
+						   GossipChatView     *view,
+						   GossipMessage      *message,
+						   gboolean            from_self);
 
 enum {
 	PROP_0,
@@ -84,6 +98,8 @@ gossip_theme_fancy_class_init (GossipThemeFancyClass *class)
 	object_class->set_property   = theme_fancy_set_property;
 
 	theme_class->setup_with_view = theme_fancy_setup_with_view;
+	theme_class->append_message  = theme_fancy_append_message;
+	theme_class->append_action   = theme_fancy_append_action;
 
 	g_object_class_install_property (object_class,
 					 PROP_MY_PROP,
@@ -656,6 +672,211 @@ theme_fancy_setup_with_view (GossipTheme *theme, GossipChatView *view)
 	gossip_chat_view_set_margin (view, priv->margin);
 
 	return NULL;
+}
+
+static void
+theme_fancy_maybe_append_header (GossipTheme        *theme,
+				 GossipThemeContext *context,
+				 GossipChatView     *view,
+				 GossipMessage      *msg,
+				 gboolean            from_self)
+{
+	GossipContact      *contact;
+	GdkPixbuf          *avatar;
+	GtkTextBuffer      *buffer;
+	const gchar        *name;
+	gboolean            header;
+	GtkTextIter         iter;
+	gchar              *tmp;
+	const gchar        *tag;
+	const gchar        *avatar_tag;
+	const gchar        *line_top_tag;
+	const gchar        *line_bottom_tag;
+
+	contact = gossip_message_get_sender (msg);
+	avatar = gossip_contact_get_avatar_pixbuf (contact);
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+
+	gossip_debug (DEBUG_DOMAIN, "Maybe add fancy header");
+
+	name = gossip_contact_get_name (contact);
+
+	if (from_self) {
+		tag = "fancy-header-self";
+		line_top_tag = "fancy-line-top-self";
+		line_bottom_tag = "fancy-line-bottom-self";
+	} else {
+		tag = "fancy-header-other";
+		line_top_tag = "fancy-line-top-other";
+		line_bottom_tag = "fancy-line-bottom-other";
+	}
+
+	header = FALSE;
+
+	/* Only insert a header if the previously inserted block is not the same
+	 * as this one. This catches all the different cases:
+	 */
+	if (gossip_chat_view_get_last_block_type (view) != BLOCK_TYPE_SELF &&
+	    gossip_chat_view_get_last_block_type (view) != BLOCK_TYPE_OTHER) {
+		header = TRUE;
+	}
+	else if (from_self &&
+		 gossip_chat_view_get_last_block_type (view) == BLOCK_TYPE_OTHER) {
+		header = TRUE;
+	}
+	else if (!from_self && 
+		 gossip_chat_view_get_last_block_type (view) == BLOCK_TYPE_SELF) {
+		header = TRUE;
+	}
+	else if (!from_self &&
+		 (!gossip_chat_view_get_last_contact (view) ||
+		  !gossip_contact_equal (contact, gossip_chat_view_get_last_contact (view)))) {
+		header = TRUE;
+	}
+
+	if (!header) {
+		return;
+	}
+
+	gossip_theme_append_spacing (theme, context, view);
+
+	gtk_text_buffer_get_end_iter (buffer, &iter);
+	gtk_text_buffer_insert_with_tags_by_name (buffer,
+						  &iter,
+						  "\n",
+						  -1,
+						  line_top_tag,
+						  NULL);
+
+	if (avatar) {
+		GtkTextIter start;
+
+		gtk_text_buffer_get_end_iter (buffer, &iter);
+		gtk_text_buffer_insert_pixbuf (buffer, &iter, avatar);
+
+		gtk_text_buffer_get_end_iter (buffer, &iter);
+		start = iter;
+		gtk_text_iter_backward_char (&start);
+
+		if (from_self) {
+			gtk_text_buffer_apply_tag_by_name (buffer,
+							   "fancy-avatar-self",
+							   &start, &iter);
+			avatar_tag = "fancy-header-self-avatar";
+		} else {
+			gtk_text_buffer_apply_tag_by_name (buffer,
+							   "fancy-avatar-other",
+							   &start, &iter);
+			avatar_tag = "fancy-header-other-avatar";
+		}
+
+	} else {
+		avatar_tag = NULL;
+	}
+
+	tmp = g_strdup_printf ("%s\n", name);
+
+	gtk_text_buffer_get_end_iter (buffer, &iter);
+	gtk_text_buffer_insert_with_tags_by_name (buffer,
+						  &iter,
+						  tmp,
+						  -1,
+						  tag,
+						  avatar_tag,
+						  NULL);
+	g_free (tmp);
+
+	gtk_text_buffer_get_end_iter (buffer, &iter);
+	gtk_text_buffer_insert_with_tags_by_name (buffer,
+						  &iter,
+						  "\n",
+						  -1,
+						  line_bottom_tag,
+						  NULL);
+}
+
+
+static void
+theme_fancy_append_message (GossipTheme        *theme,
+			    GossipThemeContext *context,
+			    GossipChatView     *view,
+			    GossipMessage      *message,
+			    gboolean            from_self)
+{
+	const gchar *tag;
+
+	gossip_theme_maybe_append_date_and_time (theme, context, view, message);
+
+	theme_fancy_maybe_append_header (theme, context, view, message,
+					 from_self);
+
+	if (from_self) {
+		tag = "fancy-body-self";
+	} else {
+		tag = "fancy-body-other";
+
+		/* FIXME: Might want to support nick highlighting here... */
+	}
+
+	gossip_theme_append_text (theme, context, view, 
+				  gossip_message_get_body (message),
+				  tag);
+
+	if (from_self) {
+		gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_SELF);
+		gossip_chat_view_set_last_contact (view, NULL);
+	} else {
+		gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_OTHER);
+		gossip_chat_view_set_last_contact (view, 
+						   gossip_message_get_sender (message));
+	}
+}
+
+static void
+theme_fancy_append_action (GossipTheme        *theme,
+			   GossipThemeContext *context,
+			   GossipChatView     *view,
+			   GossipMessage      *message,
+			   gboolean            from_self)
+{
+	GossipContact *contact;
+	const gchar   *name;
+	gchar         *tmp;
+	const gchar   *tag;
+	const gchar   *line_tag;
+
+	gossip_debug (DEBUG_DOMAIN, "Add fancy action");
+
+	gossip_theme_maybe_append_date_and_time (theme, context, view, message);
+
+	contact = gossip_message_get_sender (message);
+	
+	theme_fancy_maybe_append_header (theme, context, view, message,
+					 from_self);
+
+	contact = gossip_message_get_sender (message);
+	name = gossip_contact_get_name (contact);
+
+	if (from_self) {
+		tag = "fancy-action-self";
+		line_tag = "fancy-line-self";
+	} else {
+		tag = "fancy-action-other";
+		line_tag = "fancy-line-other";
+	}
+
+	tmp = gossip_message_get_action_string (message);
+	gossip_theme_append_text (theme, context, view, tmp, tag);
+	g_free (tmp);
+
+	if (from_self) {
+		gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_SELF);
+		gossip_chat_view_set_last_contact (view, NULL);
+	} else {
+		gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_OTHER);
+		gossip_chat_view_set_last_contact (view, 
+						   gossip_message_get_sender (message));
+	}
 }
 
 GossipTheme *

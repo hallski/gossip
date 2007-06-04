@@ -1,5 +1,14 @@
 2007-06-04  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-theme.[ch] (gossip_theme_maybe_append_date_and_time):
+	- Made public so that it can be used by themes.
+	(theme_append_action, theme_append_message): Moved code for fancy
+	theme to gossip-theme-fancy.
+	* src/gossip-theme-fancy.c:
+	- Override appending message and appending action.
+
+2007-06-04  Mikael Hallendal  <micke@imendio.com>
+
 	* libloudermouth/lm-bs-receiver.c (bs_receiver_fill_request_buf):
 	* libloudermouth/lm-bs-sender.c (bs_sender_fill_request_buf):
 	- Cast return value from strlen to int to build on mac.
