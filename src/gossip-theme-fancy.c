@@ -66,6 +66,9 @@ static void     theme_fancy_apply_theme_simple    (GossipTheme        *theme,
 static GossipThemeContext *
 theme_fancy_setup_with_view                       (GossipTheme         *theme,
 						   GossipChatView      *view);
+static void     theme_fancy_view_cleared          (GossipTheme        *theme,
+						   GossipThemeContext *context,
+						   GossipChatView     *view);
 
 static void     theme_fancy_append_message        (GossipTheme        *theme,
 						   GossipThemeContext *context,
@@ -109,6 +112,7 @@ gossip_theme_fancy_class_init (GossipThemeFancyClass *class)
 	object_class->set_property   = theme_fancy_set_property;
 
 	theme_class->setup_with_view  = theme_fancy_setup_with_view;
+	theme_class->view_cleared     = theme_fancy_view_cleared;
 	theme_class->append_message   = theme_fancy_append_message;
 	theme_class->append_action    = theme_fancy_append_action;
 	theme_class->append_event     = theme_fancy_append_event;
@@ -687,6 +691,14 @@ theme_fancy_setup_with_view (GossipTheme *theme, GossipChatView *view)
 	return NULL;
 }
 
+static void 
+theme_fancy_view_cleared (GossipTheme        *theme,
+			  GossipThemeContext *context,
+			  GossipChatView     *view)
+{
+	/* FIXME: clear the context data */
+}
+
 static void
 theme_fancy_maybe_append_header (GossipTheme        *theme,
 				 GossipThemeContext *context,
@@ -833,7 +845,7 @@ theme_fancy_append_message (GossipTheme        *theme,
 
 	gossip_theme_append_text (theme, context, view, 
 				  gossip_message_get_body (message),
-				  tag);
+				  tag, "fancy-link");
 
 	if (from_self) {
 		gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_SELF);
@@ -879,7 +891,7 @@ theme_fancy_append_action (GossipTheme        *theme,
 	}
 
 	tmp = gossip_message_get_action_string (message);
-	gossip_theme_append_text (theme, context, view, tmp, tag);
+	gossip_theme_append_text (theme, context, view, tmp, tag, "fancy-link");
 	g_free (tmp);
 
 	if (from_self) {

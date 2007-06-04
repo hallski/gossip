@@ -48,12 +48,6 @@ struct _GossipThemePriv {
 };
 
 static void         theme_finalize            (GObject            *object);
-static GossipThemeContext *
-theme_setup_with_view                         (GossipTheme        *theme,
-					       GossipChatView     *view);
-static void         theme_view_cleared        (GossipTheme        *theme,
-					       GossipThemeContext *context,
-					       GossipChatView     *view);
 
 G_DEFINE_TYPE (GossipTheme, gossip_theme, G_TYPE_OBJECT);
 
@@ -66,8 +60,8 @@ gossip_theme_class_init (GossipThemeClass *class)
 
 	object_class->finalize     = theme_finalize;
 
-	class->setup_with_view  = theme_setup_with_view;
-	class->view_cleared     = theme_view_cleared;
+	class->setup_with_view  = NULL;
+	class->view_cleared     = NULL;
 	class->append_message   = NULL;
 	class->append_action    = NULL;
 	class->append_event     = NULL;
@@ -94,36 +88,6 @@ theme_finalize (GObject *object)
 	(G_OBJECT_CLASS (gossip_theme_parent_class)->finalize) (object);
 }
 
-static GossipThemeContext *
-theme_setup_with_view (GossipTheme *theme, GossipChatView *view)
-{
-	GossipThemePriv *priv;
-
-	g_return_val_if_fail (GOSSIP_IS_THEME (theme), NULL);
-
-	priv = GET_PRIV (theme);
-
-	return NULL;
-#if 0
-} else {
-		FancyContext *context;
-
-		context = g_slice_new (FancyContext);
-
-		return context;
-	}
-#endif
-
-}
-
-static void
-theme_view_cleared (GossipTheme        *theme,
-		    GossipThemeContext *context,
-		    GossipChatView     *view)
-{
-	/* Clear the context data */
-}
-
 void
 gossip_theme_maybe_append_date_and_time (GossipTheme        *theme,
 					 GossipThemeContext *context,
@@ -133,10 +97,6 @@ gossip_theme_maybe_append_date_and_time (GossipTheme        *theme,
 	time_t    timestamp;
 	GDate    *date, *last_date;
 	gboolean  append_date, append_time;
-
-	if (gossip_chat_view_get_last_block_type (view) == BLOCK_TYPE_TIME) {
-		return;
-	}
 
 	date = gossip_message_get_date_and_time (message, &timestamp);
 
@@ -179,6 +139,10 @@ GossipThemeContext *
 gossip_theme_setup_with_view (GossipTheme    *theme,
 			      GossipChatView *view)
 {
+	if (!GOSSIP_THEME_GET_CLASS(theme)->setup_with_view) {
+		g_error ("Theme must override setup_with_view");
+	}
+
 	return GOSSIP_THEME_GET_CLASS(theme)->setup_with_view (theme, view);
 }
 
@@ -187,6 +151,10 @@ gossip_theme_view_cleared (GossipTheme        *theme,
 			   GossipThemeContext *context,
 			   GossipChatView     *view)
 {
+	if (!GOSSIP_THEME_GET_CLASS(theme)->view_cleared) {
+		return;
+	}
+
 	GOSSIP_THEME_GET_CLASS(theme)->view_cleared (theme, context, view);
 }
 
@@ -197,6 +165,11 @@ gossip_theme_append_message (GossipTheme        *theme,
 			     GossipMessage      *message,
 			     gboolean            from_self)
 {
+	if (!GOSSIP_THEME_GET_CLASS(theme)->append_message) {
+		g_warning ("Theme should override append_message");
+		return;
+	}
+
 	GOSSIP_THEME_GET_CLASS(theme)->append_message (theme, context, view,
 						       message, from_self);
 }
@@ -208,6 +181,11 @@ gossip_theme_append_action (GossipTheme        *theme,
 			    GossipMessage      *message,
 			    gboolean            from_self)
 {
+	if (!GOSSIP_THEME_GET_CLASS(theme)->append_action) {
+		g_warning ("Theme should override append_message");
+		return;
+	}
+
 	GOSSIP_THEME_GET_CLASS(theme)->append_action (theme, context, view,
 						      message, from_self);
 }
@@ -310,7 +288,8 @@ gossip_theme_append_text (GossipTheme        *theme,
 			  GossipThemeContext *context,
 			  GossipChatView     *view,
 			  const gchar        *body,
-			  const gchar        *tag)
+			  const gchar        *tag,
+			  const gchar        *link_tag)
 {
 	GossipThemePriv *priv;
 	GtkTextBuffer   *buffer;
@@ -319,16 +298,9 @@ gossip_theme_append_text (GossipTheme        *theme,
 	GtkTextIter      iter;
 	gint             num_matches, i;
 	GArray          *start, *end;
-	const gchar     *link_tag;
 
 	priv = GET_PRIV (theme);
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
-
-	if (gossip_chat_view_is_irc_style (view)) {
-		link_tag = "irc-link";
-	} else {
-		link_tag = "fancy-link";
-	}
 
 	gtk_text_buffer_get_end_iter (buffer, &start_iter);
 	mark = gtk_text_buffer_create_mark (buffer, NULL, &start_iter, TRUE);
@@ -363,13 +335,18 @@ gossip_theme_append_text (GossipTheme        *theme,
 			tmp = gossip_substring (body, s, e);
 
 			gtk_text_buffer_get_end_iter (buffer, &iter);
-			gtk_text_buffer_insert_with_tags_by_name (buffer,
-								  &iter,
-								  tmp,
-								  -1,
-								  link_tag,
-								  "link",
-								  NULL);
+			if (!link_tag) {
+				gtk_text_buffer_insert (buffer, &iter,
+							tmp, -1);
+			} {
+				gtk_text_buffer_insert_with_tags_by_name (buffer,
+									  &iter,
+									  tmp,
+									  -1,
+									  link_tag,
+									  "link",
+									  NULL);
+			}
 
 			g_free (tmp);
 

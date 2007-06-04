@@ -100,7 +100,8 @@ void         gossip_theme_append_text           (GossipTheme        *theme,
 						 GossipThemeContext *context,
 						 GossipChatView     *view,
 						 const gchar        *body,
-						 const gchar        *tag);
+						 const gchar        *tag, 
+						 const gchar        *link_tag);
 void         gossip_theme_append_spacing        (GossipTheme        *theme,
 						 GossipThemeContext *context,
 						 GossipChatView     *view);

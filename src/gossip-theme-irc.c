@@ -349,7 +349,7 @@ theme_irc_append_message (GossipTheme        *theme,
 	/* The text body. */
 	gossip_theme_append_text (theme, context, view, 
 				  gossip_message_get_body (message),
-				  body_tag);
+				  body_tag, "irc-link");
 }
 
 static void 
@@ -379,7 +379,7 @@ theme_irc_append_action (GossipTheme        *theme,
 	}
 
 	tmp = gossip_message_get_action_string (message);
-	gossip_theme_append_text (theme, context, view, tmp, tag);
+	gossip_theme_append_text (theme, context, view, tmp, tag, "irc-link");
 	g_free (tmp);
 }
 

@@ -882,7 +882,7 @@ gossip_chat_view_append_invite (GossipChatView *view,
 	s = g_string_prepend_c (s, '\n');
 
 	gossip_theme_append_text (priv->theme, priv->theme_context, 
-				  view, s->str, tag);
+				  view, s->str, tag, NULL);
 	g_string_free (s, TRUE);
 
 	gtk_text_buffer_get_end_iter (priv->buffer, &iter);
@@ -977,7 +977,7 @@ gossip_chat_view_append_button (GossipChatView *view,
 
 	if (message) {
 		gossip_theme_append_text (priv->theme, priv->theme_context,
-					  view, message, tag);
+					  view, message, tag, NULL);
 	}
 
 	gtk_text_buffer_get_end_iter (priv->buffer, &iter);

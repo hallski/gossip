@@ -1,5 +1,12 @@
 2007-06-04  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-theme.[ch] (gossip_theme_append_text): Added link tag to
+	append_text to avoid checking irc-style in GossipTheme.
+	* src/gossip-theme-fancy.c (theme_fancy_view_cleared): Override
+	view_cleared in GossipThemeFancy.
+
+2007-06-04  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-theme.c:
 	* src/gossip-theme-irc.c:
 	* src/gossip-theme-fancy.c:
