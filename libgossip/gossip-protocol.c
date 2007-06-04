@@ -207,20 +207,13 @@ gossip_protocol_init (GossipProtocol *protocol)
 }
 
 GossipProtocol *
-gossip_protocol_new_from_account_type (GossipAccountType type)
+gossip_protocol_new (void)
 {
-	GossipProtocol *protocol = NULL;
-
-	if (type == GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY) {
-		protocol = g_object_new (GOSSIP_TYPE_JABBER, NULL);
-	}
-
-	return protocol;
+	return g_object_new (GOSSIP_TYPE_JABBER, NULL);
 }
 
 GossipAccount *
-gossip_protocol_new_account (GossipProtocol    *protocol,
-			     GossipAccountType  type)
+gossip_protocol_new_account (GossipProtocol *protocol)
 {
 	GossipProtocolClass *klass;
 
@@ -228,7 +221,7 @@ gossip_protocol_new_account (GossipProtocol    *protocol,
 
 	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
 	if (klass->new_account) {
-		return klass->new_account (protocol, type);
+		return klass->new_account (protocol);
 	}
 
 	return NULL;

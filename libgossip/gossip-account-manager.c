@@ -39,11 +39,6 @@
 
 #define DEBUG_DOMAIN "AccountManager"
 
-/* For splitting an id of user@server/resource to just user@server with resource
- * in it's own xml tags (for Gossip release 0.10.2).
- */
-#define RESOURCE_HACK
-
 #define ACCOUNTS_XML_FILENAME "accounts.xml"
 #define ACCOUNTS_DTD_FILENAME "gossip-account.dtd"
 
@@ -74,10 +69,6 @@ static gboolean account_manager_file_parse             (GossipAccountManager *ma
 static gboolean account_manager_file_save              (GossipAccountManager *manager);
 
 static guint signals[LAST_SIGNAL] = {0};
-
-#ifdef RESOURCE_HACK
-static gboolean need_saving = FALSE;
-#endif
 
 G_DEFINE_TYPE (GossipAccountManager, gossip_account_manager, G_TYPE_OBJECT);
 
@@ -171,7 +162,6 @@ gossip_account_manager_add (GossipAccountManager *manager,
 	GossipAccountManagerPriv *priv;
 	GList                    *l;
 	const gchar              *name;
-	GossipAccountType         type;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager), FALSE);
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), FALSE);
@@ -188,12 +178,8 @@ gossip_account_manager_add (GossipAccountManager *manager,
 	priv->accounts = g_list_append (priv->accounts, g_object_ref (account));
 	gossip_account_manager_set_unique_name (manager, account);
 
-	type = gossip_account_get_type (account);
 	name = gossip_account_get_name (account);
-	gossip_debug (DEBUG_DOMAIN, "Adding %s account with name:'%s'",
-		      gossip_account_type_to_string (type),
-		      name);
-
+	gossip_debug (DEBUG_DOMAIN, "Adding account with name:'%s'", name);
 
 	g_signal_emit (manager, signals[ACCOUNT_ADDED], 0, account);
 
@@ -280,42 +266,25 @@ gossip_account_manager_find (GossipAccountManager *manager,
 
 GossipAccount *
 gossip_account_manager_find_by_id (GossipAccountManager *manager,
-				   const gchar          *id,
-				   const gchar          *type_str)
+				   const gchar          *id)
 {
 	GossipAccountManagerPriv *priv;
 	GList                    *l;
-	GossipAccountType         type = GOSSIP_ACCOUNT_TYPE_COUNT;
-
-	/* WARNING: This function is used for compatibility with old log format,
-	 *          it shouldn't be used for new code.
-	 */
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager), NULL);
-	g_return_val_if_fail (id != NULL || type_str != NULL, NULL);
+	g_return_val_if_fail (!G_STR_EMPTY (id), NULL);
 
 	priv = GET_PRIV (manager);
 
-	if (type_str) {
-		type = gossip_account_string_to_type (type_str);
-	}
 	for (l = priv->accounts; l; l = l->next) {
-		GossipAccount     *account;
-		GossipAccountType  account_type;
-		const gchar       *account_param = NULL;
+		GossipAccount *account;
+		const gchar   *this_id = NULL;
 
 		account = l->data;
 
-		account_type = gossip_account_get_type (account);
-		if (gossip_account_has_param (account, "account")) {
-			gossip_account_get_param (account, "account", &account_param, NULL);
-		}
+		this_id = gossip_account_get_id (account);
 
-		if (type != GOSSIP_ACCOUNT_TYPE_COUNT && type != account_type) {
-			continue;
-		}
-
-		if (id && account_param && strcmp (id, account_param) == 0) {
+		if (this_id && strcmp (id, this_id) == 0) {
 			return account;
 		}
 	}
@@ -470,23 +439,10 @@ account_manager_parse_account (GossipAccountManager *manager, xmlNodePtr node)
 	xmlNodePtr         child;
 	gchar             *str;
 
-	str = xmlGetProp (node, "type");
-
 	/* Old config file, need saving in new format */
-	if (str) {
-		account_type = gossip_account_string_to_type (str);
-	} else {
-		account_type = GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY;
-		need_saving = TRUE;
-	}
+	account_type = GOSSIP_ACCOUNT_TYPE_JABBER;
 
-	if (account_type == GOSSIP_ACCOUNT_TYPE_UNKNOWN) {
-		return;
-	}
-
-	xmlFree (str);
-
-	protocol = gossip_protocol_new_from_account_type (account_type);
+	protocol = gossip_protocol_new ();
 	if (!protocol) {
 		/* Maybe this Gossip setup doesn't support this account type */
 		gossip_debug (DEBUG_DOMAIN, 
@@ -495,7 +451,7 @@ account_manager_parse_account (GossipAccountManager *manager, xmlNodePtr node)
 		return;
 	}
 
-	account = gossip_protocol_new_account (protocol, account_type);
+	account = gossip_protocol_new_account (protocol);
 	g_object_unref (protocol);
 
 	child = node->children;
@@ -511,116 +467,33 @@ account_manager_parse_account (GossipAccountManager *manager, xmlNodePtr node)
 
 		if (strcmp (tag, "name") == 0) {
 			gossip_account_set_name (account, str);
-		}
-		else if (strcmp (tag, "auto_connect") == 0) {
+		} else if (strcmp (tag, "id") == 0) {
+			gossip_account_set_id (account, str);
+		} else if (strcmp (tag, "resource") == 0) {
+			gossip_account_set_resource (account, str);
+		} else if (strcmp (tag, "password") == 0) {
+			gossip_account_set_password (account, str);
+		} else if (strcmp (tag, "server") == 0) {
+			gossip_account_set_server (account, str);
+		} else if (strcmp (tag, "port") == 0) {
+			guint port;
+
+			port = atoi (str);
+			if (port != 0) {
+				gossip_account_set_port (account, port);
+			}
+		} else if (strcmp (tag, "auto_connect") == 0) {
 			gossip_account_set_auto_connect (account, strcmp (str, "yes") == 0);
-		}
-		else if (strcmp (tag, "use_proxy") == 0) {
+		} else if (strcmp (tag, "use_ssl") == 0) {
+			gossip_account_set_use_ssl (account, strcmp (str, "yes") == 0);
+		} else if (strcmp (tag, "use_proxy") == 0) {
 			gossip_account_set_use_proxy (account, strcmp (str, "yes") == 0);
-		}
-		else if (strcmp (tag, "parameter") == 0) {
-			gchar  *param_name;
-			gchar  *type_str;
-			GType   type;
-			GValue *g_value;
-
-			param_name = xmlGetProp (child, "name");
-			type_str = xmlGetProp (child, "type");
-
-			type = gossip_dbus_type_to_g_type (type_str);
-			g_value = gossip_string_to_g_value (str, type);
-
-			/* Compatibility: "id" param is now renamed
-			 * to "account". */
-			if (strcmp (param_name, "id") != 0) {
-				gossip_account_set_param_g_value (account,
-								  param_name,
-								  g_value);			
-			} else {
-				gossip_account_set_param_g_value (account,
-								  "account",
-								  g_value);			
-				need_saving = TRUE;
-			}
-
-			g_value_unset (g_value);
-			g_free (g_value);
-			xmlFree (param_name);
-			xmlFree (type_str);
-		}
-		/* Those are deprecated and kept for compatibility only */
-		else if (strcmp (tag, "resource") == 0) {
-			gossip_account_set_param (account, "resource", str, NULL);
-			need_saving = TRUE;
-		}
-		else if (strcmp (tag, "password") == 0) {
-			gossip_account_set_param (account, "password", str, NULL);
-			need_saving = TRUE;
-		}
-		else if (strcmp (tag, "server") == 0) {
-			gossip_account_set_param (account, "server", str, NULL);
-			need_saving = TRUE;
-		}
-		else if (strcmp (tag, "port") == 0) {
-			guint tmp_port;
-
-			tmp_port = atoi (str);
-			if (tmp_port != 0) {
-				gossip_account_set_param (account, "port",
-							  tmp_port, NULL);
-			}
-			need_saving = TRUE;
-		}
-		else if (strcmp (tag, "use_ssl") == 0) {
-			gossip_account_set_param (account, "use_ssl",
-						  strcmp (str, "yes") == 0,
-						  NULL);
-			need_saving = TRUE;
-		}
-		else if (strcmp (tag, "id") == 0) {
-			gossip_account_set_param (account, "account", str, NULL);
-			need_saving = TRUE;
 		}
 
 		xmlFree (str);
 
 		child = child->next;
 	}
-#ifdef RESOURCE_HACK
-	const gchar *resource_found = NULL;
-	const gchar *account_param = NULL;
-
-	if (gossip_account_has_param (account, "account")) {
-		gossip_account_get_param (account, "account", &account_param, NULL);
-	}
-	str = g_strdup (account_param);
-	if (str) {
-		/* FIXME: This hack is so we don't get bug
-		 * reports and basically gets the resource
-		 * from the id.
-		 */
-		const gchar *ch;
-
-		ch = strchr (str, '/');
-		if (ch) {
-			resource_found = (ch + 1);
-			str[ch - str] = '\0';
-
-			g_printerr ("Converting ID... (id:'%s', resource:'%s')\n",
-				    str, resource_found);
-		}
-	}
-
-	if (resource_found) {
-		gossip_account_set_param (account,
-					  "resource", resource_found,
-					  "account", str,
-					  NULL);
-		need_saving = TRUE;
-	}
-
-	g_free (str);
-#endif /* RESOURCE_HACK */
 
 	gossip_account_manager_add (manager, account);
 
@@ -693,13 +566,6 @@ account_manager_file_parse (GossipAccountManager *manager,
 	xmlFreeDoc(doc);
 	xmlFreeParserCtxt (ctxt);
 
-#ifdef RESOURCE_HACK
-	if (need_saving) {
-		g_printerr ("Saving accounts... \n");
-		account_manager_file_save (manager);
-	}
-#endif
-
 	return TRUE;
 }
 
@@ -711,8 +577,8 @@ account_manager_file_save (GossipAccountManager *manager)
 	xmlDocPtr                 old_doc;
 	xmlNodePtr                root;
 	xmlParserCtxtPtr          ctxt;
-	GList                    *accounts, *params;
-	GList                    *l1, *l2;
+	GList                    *accounts;
+	GList                    *l;
 	gchar                    *xml_dir;
 	gchar                    *xml_file;
 	mode_t                    old_mask;
@@ -737,9 +603,7 @@ account_manager_file_save (GossipAccountManager *manager)
 		priv->default_name = g_strdup ("Default");
 	}
 
-	xmlNewChild (root, NULL,
-		    "default",
-		    priv->default_name);
+	xmlNewChild (root, NULL, "default", priv->default_name);
 
 	/* Copy not used accounts in the new document */
 	ctxt = xmlNewParserCtxt ();
@@ -761,50 +625,29 @@ account_manager_file_save (GossipAccountManager *manager)
 	xmlFreeParserCtxt (ctxt);
 
 	accounts = gossip_account_manager_get_accounts (manager);
-	for (l1 = accounts; l1; l1 = l1->next) {
+	for (l = accounts; l; l = l->next) {
 		GossipAccount *account;
-		const gchar   *type;
+		gchar         *port;
 		xmlNodePtr     node;
+	
+		account = l->data;
 
-		account = l1->data;
-
-		type = gossip_account_type_to_string (gossip_account_get_type (account));
+		port = g_strdup_printf ("%d", gossip_account_get_port (account));
 
 		node = xmlNewChild (root, NULL, "account", NULL);
-
-		xmlNewProp (node, "type", type);
-
 		xmlNewTextChild (node, NULL, "name", gossip_account_get_name (account));
-		xmlNewTextChild (node, NULL, "auto_connect", gossip_account_get_auto_connect (account) ? "yes" : "no");
-		xmlNewTextChild (node, NULL, "use_proxy", gossip_account_get_use_proxy (account) ? "yes" : "no");
+		xmlNewTextChild (node, NULL, "id", gossip_account_get_id (account));
 
-		params = gossip_account_get_param_all (account);
-		for (l2 = params; l2; l2 = l2->next) {
-			GossipAccountParam *param;
-			gchar              *param_name;
+		xmlNewTextChild (node, NULL, "resource", gossip_account_get_resource (account));
+		xmlNewTextChild (node, NULL, "password", gossip_account_get_password (account));
+		xmlNewTextChild (node, NULL, "server", gossip_account_get_server (account));
+		xmlNewChild (node, NULL, "port", port);
 
-			param_name = l2->data;
-			param = gossip_account_get_param_param (account, param_name);
-			
-			if (param->modified) {
-				gchar       *value_str;
-				const gchar *type_str;
-				xmlNodePtr   child;
+		xmlNewChild (node, NULL, "auto_connect", gossip_account_get_auto_connect (account) ? "yes" : "no");
+		xmlNewChild (node, NULL, "use_ssl", gossip_account_get_use_ssl (account) ? "yes" : "no");
+		xmlNewChild (node, NULL, "use_proxy", gossip_account_get_use_proxy (account) ? "yes" : "no");
 
-				value_str = gossip_g_value_to_string (&param->g_value);
-				type_str = gossip_g_type_to_dbus_type (G_VALUE_TYPE (&param->g_value));
-				
-				child = xmlNewTextChild (node, NULL, "parameter", value_str);
-				xmlNewProp (child, "name", param_name);
-				xmlNewProp (child, "type", type_str);
-				
-				g_free (value_str);
-			}
-			
-			g_free (param_name);
-		}
-
-		g_list_free (params);
+		g_free (port);
 	}
 
 	gossip_debug (DEBUG_DOMAIN, "Saving file:'%s'", xml_file);

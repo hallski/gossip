@@ -402,9 +402,8 @@ log_move_contact_dirs (GossipLogManager *manager,
 		GossipAccountManager *account_manager;
 
 		account_manager = gossip_session_get_account_manager (priv->session);
-		account = gossip_account_manager_find_by_id (account_manager,
-							     basename,
-							     type_str);
+		account = gossip_account_manager_find_by_id (account_manager, basename);
+
 		if (!account) {
 			/* We must have other directories in
 			 * here which are not account

@@ -153,7 +153,6 @@ new_chatroom_dialog_update_buttons (GossipNewChatroomDialog *dialog)
 {
 	GossipAccount        *account;
 	GossipAccountChooser *account_chooser;
-	GossipAccountType     account_type;
 	GtkButton            *button;
 	GtkWidget            *image;
 	GList                *chatrooms;
@@ -170,7 +169,6 @@ new_chatroom_dialog_update_buttons (GossipNewChatroomDialog *dialog)
 	/* Get account information */
 	account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
 	account = gossip_account_chooser_get_account (account_chooser);
-	account_type = gossip_account_get_type (account);
 
 	/* Sort out Join button. */
 	button = GTK_BUTTON (dialog->button_join);
@@ -183,62 +181,48 @@ new_chatroom_dialog_update_buttons (GossipNewChatroomDialog *dialog)
 
 	room = gtk_entry_get_text (GTK_ENTRY (dialog->entry_room));
 
-	/* Handle sensitivity of button per account type */
-	if (account_type == GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY ||
-	    account_type == GOSSIP_ACCOUNT_TYPE_JABBER) {
-		/* Collect necessary information first. */
-		view = GTK_TREE_VIEW (dialog->treeview);
-		model = gtk_tree_view_get_model (view);
-		items = gtk_tree_model_iter_n_children (model, NULL);
-		
-		chatrooms = new_chatroom_dialog_model_get_selected (dialog);
-		chatroom = g_list_nth_data (chatrooms, 0);
-		if (chatroom) {
-			status = gossip_chatroom_get_status (chatroom);
-			gtk_button_set_use_stock (button, FALSE);
-			gtk_button_set_label (button, _("Join"));
-			gtk_image_set_from_stock (GTK_IMAGE (image),
-						  GTK_STOCK_EXECUTE,
-						  GTK_ICON_SIZE_BUTTON);
-		} else {
-			if (items < 1 && !G_STR_EMPTY (room)) {
-				gtk_button_set_use_stock (button, FALSE);
-				gtk_button_set_label (button, _("Create"));
-				gtk_image_set_from_stock (GTK_IMAGE (image),
-							  GTK_STOCK_NEW,
-							  GTK_ICON_SIZE_BUTTON);
-			} else {
-				gtk_button_set_use_stock (button, FALSE);
-				gtk_button_set_label (button, _("Join"));
-				gtk_image_set_from_stock (GTK_IMAGE (image),
-							  GTK_STOCK_EXECUTE,
-							  GTK_ICON_SIZE_BUTTON);
-			}
-		}
-
-		/* 1. If we are not ALREADY in the room 
-		 * 2. If we are Creating the room
-		 * 3. If we have items in the list and one or more is selected
-		 */
-		sensitive &= status != GOSSIP_CHATROOM_STATUS_ACTIVE;
-		sensitive &= ((items < 1 && !G_STR_EMPTY (room)) || 
-			      (items > 0 && chatroom));
-
-		g_list_foreach (chatrooms, (GFunc) g_object_unref, NULL);
-		g_list_free (chatrooms);
-	}
-	else if (account_type == GOSSIP_ACCOUNT_TYPE_MSN || 
-		 account_type == GOSSIP_ACCOUNT_TYPE_IRC) {
+	/* Collect necessary information first. */
+	view = GTK_TREE_VIEW (dialog->treeview);
+	model = gtk_tree_view_get_model (view);
+	items = gtk_tree_model_iter_n_children (model, NULL);
+	
+	chatrooms = new_chatroom_dialog_model_get_selected (dialog);
+	chatroom = g_list_nth_data (chatrooms, 0);
+	if (chatroom) {
+		status = gossip_chatroom_get_status (chatroom);
 		gtk_button_set_use_stock (button, FALSE);
 		gtk_button_set_label (button, _("Join"));
 		gtk_image_set_from_stock (GTK_IMAGE (image),
 					  GTK_STOCK_EXECUTE,
 					  GTK_ICON_SIZE_BUTTON);
-
-		sensitive &= !G_STR_EMPTY (room);
+	} else {
+		if (items < 1 && !G_STR_EMPTY (room)) {
+			gtk_button_set_use_stock (button, FALSE);
+			gtk_button_set_label (button, _("Create"));
+			gtk_image_set_from_stock (GTK_IMAGE (image),
+						  GTK_STOCK_NEW,
+						  GTK_ICON_SIZE_BUTTON);
+		} else {
+			gtk_button_set_use_stock (button, FALSE);
+			gtk_button_set_label (button, _("Join"));
+			gtk_image_set_from_stock (GTK_IMAGE (image),
+						  GTK_STOCK_EXECUTE,
+						  GTK_ICON_SIZE_BUTTON);
+		}
 	}
 	
+	/* 1. If we are not ALREADY in the room 
+	 * 2. If we are Creating the room
+	 * 3. If we have items in the list and one or more is selected
+	 */
+	sensitive &= status != GOSSIP_CHATROOM_STATUS_ACTIVE;
+	sensitive &= ((items < 1 && !G_STR_EMPTY (room)) || 
+		      (items > 0 && chatroom));
+	
 	gtk_widget_set_sensitive (dialog->button_join, sensitive);
+
+	g_list_foreach (chatrooms, (GFunc) g_object_unref, NULL);
+	g_list_free (chatrooms);
 }
 
 static void
@@ -246,11 +230,9 @@ new_chatroom_dialog_update_widgets (GossipNewChatroomDialog *dialog)
 {
 	GossipAccount        *account;
 	GossipAccountChooser *account_chooser;
-	GossipAccountType     account_type;
 	
 	account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
 	account = gossip_account_chooser_get_account (account_chooser);
-	account_type = gossip_account_get_type (account);
 
 	new_chatroom_dialog_set_defaults (dialog);
 	new_chatroom_dialog_update_buttons (dialog);
@@ -653,7 +635,7 @@ new_chatroom_dialog_set_defaults (GossipNewChatroomDialog *dialog)
 	GossipProtocol       *protocol;
 	gchar                *server;
 	const gchar          *nick;
-	const gchar          *account_param = NULL;
+	const gchar          *id;
 
 	session = gossip_app_get_session ();
 
@@ -667,21 +649,16 @@ new_chatroom_dialog_set_defaults (GossipNewChatroomDialog *dialog)
 		gtk_entry_set_text (GTK_ENTRY (dialog->entry_nick), nick);
 	}
 
-	if (gossip_account_has_param (account, "account")) {
-		gossip_account_get_param (account, "account", &account_param, NULL);
-	}
-	if (account_param != NULL) {
-		server = gossip_protocol_get_default_server (protocol, account_param);
-		if (server) {
-			gchar *conference_server;
-
-			conference_server = g_strconcat ("conference.",
-							 server, NULL);
-			gtk_entry_set_text (GTK_ENTRY (dialog->entry_server),
-						       conference_server);
-			g_free (conference_server);
-			g_free (server);
-		}
+	id = gossip_account_get_id (account);
+	server = gossip_protocol_get_default_server (protocol, id);
+	if (server) {
+		gchar *conference_server;
+		
+		conference_server = g_strconcat ("conference.", server, NULL);
+		gtk_entry_set_text (GTK_ENTRY (dialog->entry_server),
+				    conference_server);
+		g_free (conference_server);
+		g_free (server);
 	}
 }
 

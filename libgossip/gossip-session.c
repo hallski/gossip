@@ -910,8 +910,7 @@ gossip_session_count_accounts (GossipSession *session,
 }
 
 GossipAccount *
-gossip_session_new_account (GossipSession     *session,
-			    GossipAccountType  type)
+gossip_session_new_account (GossipSession *session)
 {
 	GossipSessionPriv *priv;
 	GossipProtocol    *protocol;
@@ -921,10 +920,10 @@ gossip_session_new_account (GossipSession     *session,
 
 	priv = GET_PRIV (session);
 
-	protocol = gossip_protocol_new_from_account_type (type);
+	protocol = gossip_protocol_new ();
 	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), NULL);
 
-	account = gossip_protocol_new_account (protocol, type);
+	account = gossip_protocol_new_account (protocol);
 	priv->protocols = g_list_append (priv->protocols,
 					 g_object_ref (protocol));
 
@@ -947,7 +946,6 @@ gossip_session_add_account (GossipSession *session,
 {
 	GossipSessionPriv *priv;
 	GossipProtocol    *protocol;
-	GossipAccountType  type;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), FALSE);
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), FALSE);
@@ -960,8 +958,7 @@ gossip_session_add_account (GossipSession *session,
 		return TRUE;
 	}
 
-	type = gossip_account_get_type (account);
-	protocol = gossip_protocol_new_from_account_type (type);
+	protocol = gossip_protocol_new ();
 	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), FALSE);
 
 	priv->protocols = g_list_append (priv->protocols,

@@ -48,7 +48,7 @@ typedef enum {
 	GOSSIP_PROTOCOL_INVALID_USER,
 	GOSSIP_PROTOCOL_UNAVAILABLE,
 	GOSSIP_PROTOCOL_UNAUTHORIZED,
-	GOSSIP_PROTOCOL_SPECIFIC_ERROR,
+	GOSSIP_PROTOCOL_SPECIFIC_ERROR
 } GossipProtocolError;
 
 typedef enum {
@@ -67,8 +67,7 @@ struct _GossipProtocolClass {
 	GObjectClass parent_class;
 
 	/* virtual functions */
-	GossipAccount * (*new_account)             (GossipProtocol         *protocol,
-						    GossipAccountType       type);
+	GossipAccount * (*new_account)             (GossipProtocol         *protocol);
 	GossipContact * (*new_contact)             (GossipProtocol         *protocol,
 						    const gchar            *id,
 						    const gchar            *name);
@@ -155,9 +154,8 @@ struct _GossipProtocolClass {
 
 GType           gossip_protocol_get_type                (void) G_GNUC_CONST;
 
-GossipProtocol *gossip_protocol_new_from_account_type   (GossipAccountType       type);
-GossipAccount * gossip_protocol_new_account             (GossipProtocol         *protocol,
-							 GossipAccountType       type);
+GossipProtocol *gossip_protocol_new                     (void);
+GossipAccount * gossip_protocol_new_account             (GossipProtocol         *protocol);
 GossipContact  *gossip_protocol_new_contact             (GossipProtocol         *protocol,
 							 const gchar            *id,
 							 const gchar            *name);

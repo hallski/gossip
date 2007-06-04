@@ -148,8 +148,7 @@ typedef struct {
 static void             gossip_jabber_class_init            (GossipJabberClass          *klass);
 static void             gossip_jabber_init                  (GossipJabber               *jabber);
 static void             jabber_finalize                     (GObject                    *object);
-static GossipAccount *  jabber_new_account                  (GossipProtocol             *protocol,
-							     GossipAccountType           type);
+static GossipAccount *  jabber_new_account                  (GossipProtocol             *protocol);
 static GossipContact *  jabber_new_contact                  (GossipProtocol             *protocol,
 							     const gchar                *id,
 							     const gchar                *name);
@@ -503,39 +502,31 @@ jabber_finalize (GObject *object)
 }
 
 static GossipAccount *
-jabber_new_account (GossipProtocol    *protocol,
-		    GossipAccountType  type)
+jabber_new_account (GossipProtocol *protocol)
 {
 	GossipAccount *account;
-	const gchar   *id;
+	const gchar   *example_id;
 	gchar         *server;
-	gboolean       ssl;
+	gboolean       have_ssl;
 	guint          port;
 
 	g_return_val_if_fail (GOSSIP_IS_JABBER (protocol), NULL);
 
-	id = jabber_get_example_username (protocol);
-	server = jabber_get_default_server (protocol, id);
-	ssl = jabber_is_ssl_supported (protocol);
-	port = jabber_get_default_port (protocol, ssl);
+	example_id = jabber_get_example_username (protocol);
+	server = jabber_get_default_server (protocol, example_id);
+	have_ssl = jabber_is_ssl_supported (protocol);
+	port = jabber_get_default_port (protocol, have_ssl);
 	
 	/* Set a default value for each account parameter */
 	account = g_object_new (GOSSIP_TYPE_ACCOUNT,
-				"type", GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY,
 				"name", _("new account"),
+				"resource", _("Home"),
+				"server", server,
+				"port", port, 
+				"use_ssl", have_ssl,
 				"auto_connect", TRUE,
 				"use_proxy", FALSE,
 				NULL);
- 
-	gossip_account_new_param (account,
-				  "password", G_TYPE_STRING, "", 0,
-				  "resource", G_TYPE_STRING, _("Home"), 0,
-				  "server", G_TYPE_STRING, server, 0,
-				  "port", G_TYPE_UINT, port, 0,
-				  "use_ssl", G_TYPE_BOOLEAN, ssl, 0,
-				  "account", G_TYPE_STRING, id, 0,
-				  NULL);
-
 	g_free (server);
 
 	return account;
@@ -573,7 +564,7 @@ jabber_setup (GossipProtocol *protocol,
 	GossipJabberPriv *priv;
 	LmMessageHandler *handler;
 	GossipJID        *jid;
-	const gchar      *account_param;
+	const gchar      *id;
 	const gchar      *server;
 	guint             port;
 
@@ -588,13 +579,13 @@ jabber_setup (GossipProtocol *protocol,
 	priv->contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_USER,
 					    priv->account);
 
-	gossip_account_get_param (account,
-				  "server", &server,
-				  "port", &port,
-				  "account", &account_param,
-				  NULL);
+	g_object_get (account,
+		      "id", &id,
+		      "server", &server,
+		      "port", &port,
+		      NULL);
 
-	g_object_set (priv->contact, "id", account_param, NULL);
+	g_object_set (priv->contact, "id", id, NULL);
 
 	priv->connection = lm_connection_new (server);
 
@@ -607,7 +598,7 @@ jabber_setup (GossipProtocol *protocol,
 
 	lm_connection_set_port (priv->connection, port);
 
-	jid = gossip_jid_new (account_param);
+	jid = gossip_jid_new (id);
 	lm_connection_set_jid (priv->connection, gossip_jid_get_without_resource (jid));
 	gossip_jid_unref (jid);
 
@@ -658,10 +649,10 @@ jabber_setup_connection (GossipJabber *jabber)
 
 	priv->disconnect_request = FALSE;
 
-	gossip_account_get_param (priv->account,
-				  "use_ssl", &use_ssl,
-				  "port", &port,
-				  NULL);
+	g_object_get (priv->account,
+		      "use_ssl", &use_ssl,
+		      "port", &port,
+		      NULL);
 
 	if (use_ssl) {
 		LmSSL *ssl;
@@ -874,11 +865,11 @@ jabber_connection_open_cb (LmConnection *connection,
 	GossipJabberPriv *priv;
 	GossipAccount    *account;
 	const gchar      *account_password;
-	const gchar      *account_param;
+	const gchar      *id;
 	const gchar      *account_resource;
 	const gchar      *jid_str;
-	gchar            *id;
 	gchar            *password = NULL;
+	gchar            *id_name;
 #ifdef USE_RAND_RESOURCE
 	gchar            *resource_rand;
 	gchar             rand_str[N_RAND_CHAR + 1];
@@ -909,22 +900,22 @@ jabber_connection_open_cb (LmConnection *connection,
 	}
 
 	account = priv->account;
-	gossip_account_get_param (account,
-				  "password", &account_password,
-				  "resource", &account_resource,
-				  "account", &account_param,
-				  NULL);
+	g_object_get (account,
+		      "id", &id,
+		      "password", &account_password,
+		      "resource", &account_resource,
+		      NULL);
 
 	if (!account_password || g_utf8_strlen (account_password, -1) < 1) {
 		gossip_debug (DEBUG_DOMAIN, "Requesting password for:'%s'",
-			      account_param);
+			      id);
 
 		g_signal_emit_by_name (jabber, "get-password",
 				       account, &password);
 
 		if (!password) {
 			gossip_debug (DEBUG_DOMAIN, "Cancelled password request for:'%s'",
-				      account_param);
+				      id);
 
 			jabber_logout (GOSSIP_PROTOCOL (jabber));
 			return;
@@ -934,10 +925,10 @@ jabber_connection_open_cb (LmConnection *connection,
 	}
 
 	/* FIXME: Decide on Resource */
-	jid_str = account_param;
+	jid_str = id;
 	gossip_debug (DEBUG_DOMAIN, "Attempting to use JabberID:'%s'", jid_str);
 
-	id = gossip_jid_string_get_part_name (jid_str);
+	id_name = gossip_jid_string_get_part_name (jid_str);
 
 	if (!account_resource) {
 		gossip_debug (DEBUG_DOMAIN, "JabberID:'%s' is invalid, there is no resource.", jid_str);
@@ -960,7 +951,7 @@ jabber_connection_open_cb (LmConnection *connection,
 	resource_rand = g_strdup_printf ("%s.%s", account_resource, rand_str);
 
 	lm_connection_authenticate (priv->connection,
-				    id,
+				    id_name,
 				    password,
 				    resource_rand,
 				    (LmResultFunction) jabber_connection_auth_cb,
@@ -969,14 +960,14 @@ jabber_connection_open_cb (LmConnection *connection,
 	g_free (resource_rand);
 #else
 	lm_connection_authenticate (priv->connection,
-				    id,
+				    id_name,
 				    password,
 				    account_resource,
 				    (LmResultFunction) jabber_connection_auth_cb,
 				    jabber, NULL, NULL);
 #endif
 
-	g_free (id);
+	g_free (id_name);
 	g_free (password);
 }
 
@@ -1336,7 +1327,7 @@ jabber_change_password (GossipProtocol      *protocol,
 	GossipJabber        *jabber;
 	GossipJabberPriv    *priv;
 	GossipJID           *jid;
-	const gchar         *account_param;
+	const gchar         *id;
 	const gchar         *server;
 	const gchar         *error_message;
 	gboolean             ok;
@@ -1356,11 +1347,12 @@ jabber_change_password (GossipProtocol      *protocol,
 	priv->change_password_cancel = FALSE;
 
 	/* Get credentials */
-	gossip_account_get_param (priv->account,
-				  "account", &account_param,
-				  "server", &server,
-				  NULL);
-	jid = gossip_jid_new (account_param);
+	g_object_get (priv->account,
+		      "id", &id,
+		      "server", &server,
+		      NULL);
+
+	jid = gossip_jid_new (id);
 
 	/* Create & send message */
         m = lm_message_new_with_sub_type (server, 
@@ -1460,7 +1452,7 @@ jabber_register_connection_open_cb (LmConnection *connection,
 	LmMessage        *m;
 	LmMessageNode    *node;
 	const gchar      *error_message = NULL;
-	const gchar      *account_param;
+	const gchar      *id;
 	const gchar      *server;
 	const gchar      *password;
 	gchar            *username;
@@ -1500,11 +1492,11 @@ jabber_register_connection_open_cb (LmConnection *connection,
 						      ad,
 						      NULL);
 
-	gossip_account_get_param (priv->account,
-				  "server", &server,
-				  "password", &password,
-				  "account", &account_param,
-				  NULL);
+	g_object_get (priv->account,
+		      "id", &id,
+		      "server", &server,
+		      "password", &password,
+		      NULL);
 
 	m = lm_message_new_with_sub_type (server,
 					  LM_MESSAGE_TYPE_IQ,
@@ -1515,7 +1507,7 @@ jabber_register_connection_open_cb (LmConnection *connection,
 
 	lm_message_node_set_attribute (node, "xmlns", XMPP_REGISTER_XMLNS);
 
-	username = gossip_jid_string_get_part_name (account_param);
+	username = gossip_jid_string_get_part_name (id);
 	lm_message_node_add_child (node, "username", username);
 	g_free (username);
 
@@ -3701,10 +3693,8 @@ gossip_jabber_get_contact_from_jid (GossipJabber *jabber,
 			      gossip_jid_get_full (jid));
 		contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_TEMPORARY,
 					      priv->account);
-		gossip_contact_set_id (contact,
-				       gossip_jid_get_full (jid));
-		gossip_contact_set_name (contact,
-					 gossip_jid_get_without_resource (jid));
+		gossip_contact_set_id (contact, gossip_jid_get_full (jid));
+		gossip_contact_set_name (contact, gossip_jid_get_without_resource (jid));
 
 		tmp_new_item = TRUE;
 

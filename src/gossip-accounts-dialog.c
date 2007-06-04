@@ -35,10 +35,7 @@
 #include <libgossip/gossip-account-manager.h>
 
 #include "gossip-app.h"
-#include "gossip-account-widget-irc.h"
 #include "gossip-account-widget-jabber.h"
-#include "gossip-account-widget-msn.h"
-#include "gossip-account-widget-generic.h"
 #include "gossip-accounts-dialog.h"
 #include "gossip-glade.h"
 #include "gossip-ui-utils.h"
@@ -69,9 +66,7 @@ typedef struct {
 	GtkWidget *button_create;
 	GtkWidget *button_back;
 
-	GtkWidget *image_type;
 	GtkWidget *label_name;
-	GtkWidget *label_type;
 	GtkWidget *checkbutton_connect;
 	GtkWidget *checkbutton_proxy;
 	GtkWidget *settings_widget;
@@ -420,20 +415,9 @@ accounts_dialog_update_account (GossipAccountsDialog *dialog,
 	}
 
 	if (account) {
-		GossipAccountType  account_type;
-		const gchar       *account_type_str;
-		GdkPixbuf         *pixbuf;
+		const gchar *account_type_str;
 
-		pixbuf = gossip_account_create_pixbuf (account,
-						       GTK_ICON_SIZE_DIALOG);
-		gtk_image_set_from_pixbuf (GTK_IMAGE (dialog->image_type), pixbuf);
-		if (pixbuf) {
-			g_object_unref (pixbuf);
-		}
-
-		account_type = gossip_account_get_type (account);
-		account_type_str = gossip_account_type_to_string (account_type);
-		gtk_label_set_text (GTK_LABEL (dialog->label_type), account_type_str);
+		account_type_str = gossip_account_type_to_string (GOSSIP_ACCOUNT_TYPE_JABBER);
 		gtk_label_set_text (GTK_LABEL (dialog->label_name), 
 				    gossip_account_get_name (account));
 
@@ -1097,9 +1081,9 @@ accounts_dialog_button_create_clicked_cb (GtkWidget             *button,
 
 	account_type = GOSSIP_ACCOUNT_TYPE_UNKNOWN;
 
-	str = gossip_account_type_to_string (GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY);
+	str = gossip_account_type_to_string (GOSSIP_ACCOUNT_TYPE_JABBER);
 	if (strcmp (account_type_str, str) == 0) {
-		account_type = GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY;
+		account_type = GOSSIP_ACCOUNT_TYPE_JABBER;
 	} 
 
 	if (account_type == GOSSIP_ACCOUNT_TYPE_UNKNOWN) {
@@ -1110,7 +1094,7 @@ accounts_dialog_button_create_clicked_cb (GtkWidget             *button,
 	/* Create account */
 	session = gossip_app_get_session ();
 	manager = gossip_session_get_account_manager (session);
-	account = gossip_session_new_account (session, account_type);
+	account = gossip_session_new_account (session);
 
 	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_name));
 	gossip_account_set_name (account, str);
@@ -1424,8 +1408,6 @@ gossip_accounts_dialog_show (GossipAccount *account)
 				       "entry_name", &dialog->entry_name,
 				       "button_create", &dialog->button_create,
 				       "button_back", &dialog->button_back,
-				       "image_type", &dialog->image_type,
-				       "label_type", &dialog->label_type,
 				       "label_name", &dialog->label_name,
 				       "checkbutton_connect", &dialog->checkbutton_connect,
 				       "checkbutton_proxy", &dialog->checkbutton_proxy,
@@ -1454,7 +1436,7 @@ gossip_accounts_dialog_show (GossipAccount *account)
 	g_object_unref (glade);
 
 	/* Set up combo */
-	str = gossip_account_type_to_string (GOSSIP_ACCOUNT_TYPE_JABBER_LEGACY);
+	str = gossip_account_type_to_string (GOSSIP_ACCOUNT_TYPE_JABBER);
 	gtk_combo_box_append_text (GTK_COMBO_BOX (dialog->combobox_type), str);
 
 	/* Set up signalling */

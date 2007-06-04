@@ -92,8 +92,7 @@ void            gossip_session_count_accounts          (GossipSession          *
 							guint                  *connected,
 							guint                  *connecting,
 							guint                  *disconnected);
-GossipAccount * gossip_session_new_account             (GossipSession          *session,
-							GossipAccountType       type);
+GossipAccount * gossip_session_new_account             (GossipSession          *session);
 gboolean        gossip_session_add_account             (GossipSession          *session,
 							GossipAccount          *account);
 gboolean        gossip_session_remove_account          (GossipSession          *session,
