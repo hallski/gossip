@@ -1,5 +1,12 @@
 2007-06-04  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-theme.c:
+	* libgossip/gossip-message.[ch] (gossip_message_get_date_and_time):
+	- Moved convenience function to get GDate and time_t from a message to
+	GossipMessage.
+
+2007-06-04  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-theme.[ch]:
 	- Removed code to append message, action and event.
 	* src/gossip-theme-irc.c:

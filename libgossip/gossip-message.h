@@ -80,6 +80,8 @@ void              gossip_message_set_thread              (GossipMessage        *
 GossipTime        gossip_message_get_timestamp           (GossipMessage        *message);
 void              gossip_message_set_timestamp           (GossipMessage        *message,
 							  GossipTime            timestamp);
+GDate *           gossip_message_get_date_and_time       (GossipMessage        *message,
+							  time_t               *timestamp);
 
 GossipChatroomInvite *
 		  gossip_message_get_invite              (GossipMessage        *message);

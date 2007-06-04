@@ -596,6 +596,27 @@ gossip_message_set_timestamp (GossipMessage *message,
 	g_object_notify (G_OBJECT (message), "timestamp");
 }
 
+GDate *
+gossip_message_get_date_and_time (GossipMessage *message, time_t *timestamp)
+{
+	GDate *date;
+
+	*timestamp = 0;
+	if (message) {
+		*timestamp = gossip_message_get_timestamp (message);
+	}
+
+	if (timestamp <= 0) {
+		*timestamp = gossip_time_get_current ();
+	}
+
+	date = g_date_new ();
+	g_date_set_time (date, *timestamp);
+
+	return date;
+}
+
+
 GossipChatroomInvite *
 gossip_message_get_invite (GossipMessage *message)
 {
@@ -689,4 +710,5 @@ gossip_message_get_action_string (GossipMessage *message)
 				gossip_contact_get_name (priv->sender),
 				priv->body + 4);
 }
+
 

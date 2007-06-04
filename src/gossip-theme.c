@@ -130,27 +130,6 @@ theme_view_cleared (GossipTheme        *theme,
 	/* Clear the context data */
 }
 
-static GDate *
-theme_get_date_and_time_from_message (GossipMessage *message,
-				      time_t        *timestamp)
-{
-	GDate *date;
-
-	*timestamp = 0;
-	if (message) {
-		*timestamp = gossip_message_get_timestamp (message);
-	}
-
-	if (timestamp <= 0) {
-		*timestamp = gossip_time_get_current ();
-	}
-
-	date = g_date_new ();
-	g_date_set_time (date, *timestamp);
-
-	return date;
-}
-
 void
 gossip_theme_maybe_append_date_and_time (GossipTheme        *theme,
 					 GossipThemeContext *context,
@@ -165,7 +144,7 @@ gossip_theme_maybe_append_date_and_time (GossipTheme        *theme,
 		return;
 	}
 
-	date = theme_get_date_and_time_from_message (message, &timestamp);
+	date = gossip_message_get_date_and_time (message, &timestamp);
 
 	last_date = g_date_new ();
 	g_date_set_time (last_date, gossip_chat_view_get_last_timestamp (view));
@@ -215,7 +194,7 @@ theme_append_timestamp (GossipTheme        *theme,
 		tag = "fancy-time";
 	}
 
-	date = theme_get_date_and_time_from_message (message, &timestamp);
+	date = gossip_message_get_date_and_time (message, &timestamp);
 
 	str = g_string_new (NULL);
 
