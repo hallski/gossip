@@ -1031,31 +1031,99 @@ static void
 group_chat_create_ui (GossipGroupChat *chat)
 {
 	GossipGroupChatPriv *priv;
-	GladeXML            *glade;
  	GList               *list = NULL; 
+	GtkWidget           *temp_widget;
 
 	priv = GET_PRIV (chat);
 
-	glade = gossip_glade_get_file ("group-chat.glade",
-				       "group_chat_widget",
-				       NULL,
-				       "group_chat_widget", &priv->widget,
-				       "hpaned", &priv->hpaned,
-				       "vbox_left", &priv->vbox_left,
-				       "scrolled_window_chat", &priv->scrolled_window_chat,
-				       "scrolled_window_input", &priv->scrolled_window_input,
-				       "hbox_topic", &priv->hbox_topic,
-				       "label_topic", &priv->label_topic,
-				       "scrolled_window_contacts", &priv->scrolled_window_contacts,
-				       "treeview", &priv->treeview,
-				       NULL);
+	priv->widget = g_object_new (GTK_TYPE_VBOX,
+				     "homogeneous", FALSE,
+				     "spacing", 6,
+				     "border-width", 4,
+				     NULL);
 
-	gossip_glade_connect (glade,
-			      chat,
-			      "group_chat_widget", "destroy", group_chat_widget_destroy_cb,
+	priv->hbox_topic = gtk_hbox_new (FALSE, 6);
+
+	gtk_box_pack_start (GTK_BOX (priv->widget), priv->hbox_topic,
+			    FALSE, FALSE, 2);
+
+	temp_widget = g_object_new (GTK_TYPE_LABEL,
+				    "label", _("<b>Topic:</b>"),
+				    "use-markup", TRUE,
+				    NULL);
+
+	gtk_box_pack_start (GTK_BOX (priv->hbox_topic), temp_widget,
+			    FALSE, FALSE, 0);
+
+	priv->label_topic = g_object_new (GTK_TYPE_LABEL,
+					  "use-markup", TRUE,
+					  "single-line-mode", TRUE,
+					  "ellipsize", PANGO_ELLIPSIZE_END,
+					  "selectable", TRUE,
+					  "xalign", 0.0,
+					  NULL);
+
+	gtk_box_pack_start (GTK_BOX (priv->hbox_topic), priv->label_topic,
+			    TRUE, TRUE, 0);
+
+	priv->hpaned = gtk_hpaned_new ();
+
+	gtk_box_pack_start (GTK_BOX (priv->widget), priv->hpaned,
+			    TRUE, TRUE, 0);
+
+	
+	priv->vbox_left = gtk_vbox_new (FALSE, 6);
+
+	gtk_paned_pack1 (GTK_PANED (priv->hpaned), priv->vbox_left,
+			 TRUE, TRUE);
+	
+	priv->scrolled_window_contacts = 
+		g_object_new (GTK_TYPE_SCROLLED_WINDOW,
+			      "hscrollbar-policy", GTK_POLICY_NEVER,
+			      "vscrollbar-policy", GTK_POLICY_AUTOMATIC,
+			      "shadow-type", GTK_SHADOW_IN,
 			      NULL);
 
-	g_object_unref (glade);
+	gtk_paned_pack2 (GTK_PANED (priv->hpaned), 
+			 priv->scrolled_window_contacts,
+			 FALSE, FALSE);
+
+	priv->scrolled_window_chat =
+		g_object_new (GTK_TYPE_SCROLLED_WINDOW,
+			      "hscrollbar-policy", GTK_POLICY_AUTOMATIC,
+			      "vscrollbar-policy", GTK_POLICY_ALWAYS,
+			      "shadow-type", GTK_SHADOW_IN,
+			      NULL);
+
+	gtk_box_pack_start (GTK_BOX (priv->vbox_left), 
+			    priv->scrolled_window_chat,
+			    TRUE, TRUE, 0);
+
+	priv->scrolled_window_input =
+		g_object_new (GTK_TYPE_SCROLLED_WINDOW,
+			      "hscrollbar-policy", GTK_POLICY_NEVER,
+			      "vscrollbar-policy", GTK_POLICY_NEVER,
+			      "shadow-type", GTK_SHADOW_IN,
+			      NULL);
+
+	gtk_box_pack_start (GTK_BOX (priv->vbox_left),
+			    priv->scrolled_window_input,
+			    FALSE, TRUE, 0);
+
+	priv->treeview = g_object_new (GTK_TYPE_TREE_VIEW,
+				       "headers-visible", FALSE,
+				       "enable-search", TRUE,
+				       "width-request", 115,
+				       NULL);
+
+	gtk_container_add (GTK_CONTAINER (priv->scrolled_window_contacts),
+			   priv->treeview);
+
+	gtk_widget_show_all (priv->widget);
+
+	g_signal_connect (priv->widget, "destroy", 
+			  G_CALLBACK (group_chat_widget_destroy_cb),
+			  chat);
 
 	g_object_set_data (G_OBJECT (priv->widget), "chat", chat);
 
