@@ -77,8 +77,6 @@ struct _GossipProtocolClass {
 	void            (*logout)                  (GossipProtocol         *protocol);
 	gboolean        (*is_connected)            (GossipProtocol         *protocol);
 	gboolean        (*is_connecting)           (GossipProtocol         *protocol);
-	gboolean        (*is_valid_username)       (GossipProtocol         *protocol,
-						    const gchar            *username);
 	gboolean        (*is_ssl_supported)        (GossipProtocol         *protocol);
 	const gchar *   (*get_example_username)    (GossipProtocol         *protocol);
 	gchar *         (*get_default_server)      (GossipProtocol         *protocol,
@@ -165,8 +163,6 @@ void            gossip_protocol_login                   (GossipProtocol         
 void            gossip_protocol_logout                  (GossipProtocol         *protocol);
 gboolean        gossip_protocol_is_connected            (GossipProtocol         *protocol);
 gboolean        gossip_protocol_is_connecting           (GossipProtocol         *protocol);
-gboolean        gossip_protocol_is_valid_username       (GossipProtocol         *protocol,
-							 const gchar            *username);
 gboolean        gossip_protocol_is_ssl_supported        (GossipProtocol         *protocol);
 const gchar   * gossip_protocol_get_example_username    (GossipProtocol         *protocol);
 gchar         * gossip_protocol_get_default_server      (GossipProtocol         *protocol,

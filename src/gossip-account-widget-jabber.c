@@ -28,6 +28,7 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 
+#include <libgossip/gossip-jid.h>
 #include <libgossip/gossip-protocol.h>
 #include <libgossip/gossip-session.h>
 #include <libgossip/gossip-utils.h>
@@ -196,7 +197,7 @@ account_widget_jabber_entry_focus_cb (GtkWidget                 *widget,
 
 			str = gtk_entry_get_text (GTK_ENTRY (widget));
 
-			if (!gossip_protocol_is_valid_username (protocol, str)) {
+			if (!gossip_jid_string_is_valid (str, FALSE)) {
 				g_object_get (settings->account, "id", &str, NULL);
 				settings->account_changed = FALSE;
 			} else {

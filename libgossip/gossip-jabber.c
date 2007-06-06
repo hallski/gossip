@@ -209,8 +209,6 @@ static LmHandlerResult  jabber_register_message_handler     (LmMessageHandler   
 							     AsyncData                  *ad);
 static gboolean         jabber_is_connected                 (GossipProtocol             *protocol);
 static gboolean         jabber_is_connecting                (GossipProtocol             *protocol);
-static gboolean         jabber_is_valid_username            (GossipProtocol             *protocol,
-							     const gchar                *username);
 static gboolean         jabber_is_ssl_supported             (GossipProtocol             *protocol);
 static const gchar *    jabber_get_example_username         (GossipProtocol             *protocol);
 static gchar *          jabber_get_default_server           (GossipProtocol             *protocol,
@@ -392,7 +390,6 @@ gossip_jabber_class_init (GossipJabberClass *klass)
 	protocol_class->logout                  = jabber_logout;
 	protocol_class->is_connected            = jabber_is_connected;
 	protocol_class->is_connecting           = jabber_is_connecting;
-	protocol_class->is_valid_username       = jabber_is_valid_username;
 	protocol_class->is_ssl_supported        = jabber_is_ssl_supported;
 	protocol_class->get_example_username    = jabber_get_example_username;
 	protocol_class->get_default_server      = jabber_get_default_server;
@@ -1669,22 +1666,6 @@ jabber_is_connecting (GossipProtocol *protocol)
 	}
 
 	return FALSE;
-}
-
-static gboolean
-jabber_is_valid_username (GossipProtocol *protocol,
-			  const gchar    *username)
-{
-	GossipJabber     *jabber;
-	GossipJabberPriv *priv;
-
-	g_return_val_if_fail (GOSSIP_IS_JABBER (protocol), TRUE);
-	g_return_val_if_fail (username != NULL, FALSE);
-
-	jabber = GOSSIP_JABBER (protocol);
-	priv = GET_PRIV (jabber);
-
-	return gossip_jid_string_is_valid (username, FALSE);
 }
 
 static gboolean
