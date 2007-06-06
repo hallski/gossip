@@ -1,4 +1,9 @@
-2007-06-05  Mikael Hallendal  <micke@imendio.com>
+2007-06-07  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-theme-fancy: Reworked so that all variations of the 
+	theme use the code paths.
+
+2007-06-06  Mikael Hallendal  <micke@imendio.com>
 
 	* libgossip/gossip-jabber.c:
 	* libgossip/gossip-protocol.[ch]:
