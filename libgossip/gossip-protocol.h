@@ -163,10 +163,6 @@ void            gossip_protocol_logout                  (GossipProtocol         
 gboolean        gossip_protocol_is_connected            (GossipProtocol         *protocol);
 gboolean        gossip_protocol_is_connecting           (GossipProtocol         *protocol);
 gboolean        gossip_protocol_is_ssl_supported        (GossipProtocol         *protocol);
-gchar         * gossip_protocol_get_default_server      (GossipProtocol         *protocol,
-							 const gchar            *username);
-guint           gossip_protocol_get_default_port        (GossipProtocol         *protocol,
-							 gboolean                use_ssl);
 void            gossip_protocol_send_message            (GossipProtocol         *protocol,
 							 GossipMessage          *message);
 void            gossip_protocol_send_composing          (GossipProtocol         *protocol,

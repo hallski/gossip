@@ -210,10 +210,6 @@ static LmHandlerResult  jabber_register_message_handler     (LmMessageHandler   
 static gboolean         jabber_is_connected                 (GossipProtocol             *protocol);
 static gboolean         jabber_is_connecting                (GossipProtocol             *protocol);
 static gboolean         jabber_is_ssl_supported             (GossipProtocol             *protocol);
-static gchar *          jabber_get_default_server           (GossipProtocol             *protocol,
-							     const gchar                *username);
-static guint            jabber_get_default_port             (GossipProtocol             *protocol,
-							     gboolean                    use_ssl);
 static void             jabber_send_message                 (GossipProtocol             *protocol,
 							     GossipMessage              *message);
 static void             jabber_send_composing               (GossipProtocol             *protocol,
@@ -390,8 +386,6 @@ gossip_jabber_class_init (GossipJabberClass *klass)
 	protocol_class->is_connected            = jabber_is_connected;
 	protocol_class->is_connecting           = jabber_is_connecting;
 	protocol_class->is_ssl_supported        = jabber_is_ssl_supported;
-	protocol_class->get_default_server      = jabber_get_default_server;
-	protocol_class->get_default_port        = jabber_get_default_port;
 	protocol_class->set_presence            = jabber_set_presence;
 	protocol_class->set_subscription        = jabber_set_subscription;
 	protocol_class->set_vcard               = jabber_set_vcard;
@@ -503,28 +497,26 @@ jabber_new_account (GossipProtocol *protocol)
 {
 	GossipAccount *account;
 	const gchar   *example_id;
-	gchar         *server;
-	gboolean       have_ssl;
 	guint          port;
+	GossipJID     *jid;
 
 	g_return_val_if_fail (GOSSIP_IS_JABBER (protocol), NULL);
 
 	example_id = gossip_jid_get_example_string ();
-	server = jabber_get_default_server (protocol, example_id);
-	have_ssl = jabber_is_ssl_supported (protocol);
-	port = jabber_get_default_port (protocol, have_ssl);
+	jid = gossip_jid_new (example_id);
+	port = gossip_jabber_get_default_port (lm_ssl_is_supported ());
 	
 	/* Set a default value for each account parameter */
 	account = g_object_new (GOSSIP_TYPE_ACCOUNT,
 				"name", _("new account"),
 				"resource", _("Home"),
-				"server", server,
+				"server", gossip_jid_get_part_host (jid),
 				"port", port, 
-				"use_ssl", have_ssl,
+				"use_ssl", lm_ssl_is_supported (),
 				"auto_connect", TRUE,
 				"use_proxy", FALSE,
 				NULL);
-	g_free (server);
+	gossip_jid_unref (jid);
 
 	return account;
 }
@@ -1674,21 +1666,15 @@ jabber_is_ssl_supported (GossipProtocol *protocol)
 	return lm_ssl_is_supported ();
 }
 
-static gchar *
-jabber_get_default_server (GossipProtocol *protocol,
-			   const gchar    *username)
+gchar *
+gossip_jabber_get_default_server (const gchar *username)
 {
-	GossipJabber     *jabber;
-	GossipJabberPriv *priv;
 	GossipJID        *jid;
 	const gchar      *str;
 	gchar            *server;
 	gint              i = 0;
 
 	g_return_val_if_fail (username != NULL, NULL);
-
-	jabber = GOSSIP_JABBER (protocol);
-	priv = GET_PRIV (jabber);
 
 	jid = gossip_jid_new (username);
 	str = gossip_jid_get_part_host (jid);
@@ -1708,9 +1694,8 @@ jabber_get_default_server (GossipProtocol *protocol,
 	return server;
 }
 
-static guint
-jabber_get_default_port (GossipProtocol *protocol,
-			 gboolean        use_ssl)
+guint
+gossip_jabber_get_default_port (gboolean use_ssl)
 {
 	if (use_ssl) {
 		return LM_CONNECTION_DEFAULT_PORT_SSL;

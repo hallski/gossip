@@ -64,8 +64,6 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 	klass->logout               = NULL;
 	klass->is_connected         = NULL;
 	klass->is_connecting        = NULL;
-	klass->get_default_server   = NULL;
-	klass->get_default_port     = NULL;
 	klass->set_presence         = NULL;
 	klass->set_subscription     = NULL;
 	klass->set_vcard            = NULL;
@@ -326,39 +324,6 @@ gossip_protocol_is_ssl_supported (GossipProtocol *protocol)
 	}
 
 	return FALSE;
-}
-
-gchar *
-gossip_protocol_get_default_server (GossipProtocol *protocol,
-				    const gchar    *username)
-{
-	GossipProtocolClass *klass;
-
-	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), NULL);
-	g_return_val_if_fail (username != NULL, NULL);
-
-	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
-	if (klass->get_default_server) {
-		return klass->get_default_server (protocol, username);
-	}
-
-	return NULL;
-}
-
-guint
-gossip_protocol_get_default_port (GossipProtocol *protocol,
-				  gboolean        use_ssl)
-{
-	GossipProtocolClass *klass;
-
-	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), 0);
-
-	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
-	if (klass->get_default_port) {
-		return klass->get_default_port (protocol, use_ssl);
-	}
-
-	return 0;
 }
 
 void

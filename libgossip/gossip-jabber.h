@@ -71,6 +71,8 @@ void           gossip_jabber_send_unsubscribed         (GossipJabber        *jab
 							GossipContact       *contact);
 void           gossip_jabber_subscription_allow_all    (GossipJabber        *jabber);
 void           gossip_jabber_subscription_disallow_all (GossipJabber        *jabber);
+gchar *        gossip_jabber_get_default_server        (const gchar    *username);
+guint          gossip_jabber_get_default_port          (gboolean        use_ssl);
 
 G_END_DECLS
 

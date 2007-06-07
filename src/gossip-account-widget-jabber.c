@@ -28,6 +28,7 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 
+#include <libgossip/gossip-jabber.h>
 #include <libgossip/gossip-jid.h>
 #include <libgossip/gossip-protocol.h>
 #include <libgossip/gossip-session.h>
@@ -203,7 +204,7 @@ account_widget_jabber_entry_focus_cb (GtkWidget                 *widget,
 			} else {
 				gchar *server;
 
-				server = gossip_protocol_get_default_server (protocol, str);
+				server = gossip_jabber_get_default_server (str);
 				gtk_entry_set_text (GTK_ENTRY (settings->entry_server), server);
 				g_free (server);
 			}
@@ -311,8 +312,8 @@ account_widget_jabber_checkbutton_toggled_cb (GtkWidget                 *widget,
 		session = gossip_app_get_session ();
 		protocol = gossip_session_get_protocol (session, settings->account);
 
-		port_with_ssl = gossip_protocol_get_default_port (protocol, TRUE);
-		port_without_ssl = gossip_protocol_get_default_port (protocol, FALSE);
+		port_with_ssl = gossip_jabber_get_default_port (TRUE);
+		port_without_ssl = gossip_jabber_get_default_port (FALSE);
 
 		port = gossip_account_get_port (settings->account);
 

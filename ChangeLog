@@ -1,5 +1,22 @@
 2007-06-07  Mikael Hallendal  <micke@imendio.com>
 
+	* libgossip/gossip-protocol.[ch]:
+	- Removed gossip_protocol_get_default_server.
+	- Removed gossip_protocol_get_default_port.
+	* libgossip/gossip-jabber.c:
+	- Made the jabber specific functions for default server and port
+	exported.
+	* src/gossip-account-widget-jabber.c:
+	(account_widget_jabber_entry_focus_cb): Use the new function for
+	default server.
+	(account_widget_jabber_checkbutton_toggled_cb): Use the new function
+	for default port.
+	* src/gossip-new-chatroom-dialog.c:
+	(new_chatroom_dialog_set_defaults): Use the new function for default
+	server.
+	
+2007-06-07  Mikael Hallendal  <micke@imendio.com>
+
 	* libgossip/gossip-jabber.c:
 	* libgossip/gossip-protocol.[ch]:
 	- Removed gossip_protocol_get_example_username.

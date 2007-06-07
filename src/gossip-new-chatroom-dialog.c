@@ -30,6 +30,7 @@
 
 #include <libgossip/gossip-account.h>
 #include <libgossip/gossip-chatroom.h>
+#include <libgossip/gossip-jabber.h>
 #include <libgossip/gossip-session.h>
 #include <libgossip/gossip-chatroom-provider.h>
 #include <libgossip/gossip-protocol.h>
@@ -632,7 +633,6 @@ new_chatroom_dialog_set_defaults (GossipNewChatroomDialog *dialog)
 	GossipSession        *session;
 	GossipAccount        *account;
 	GossipAccountChooser *account_chooser;
-	GossipProtocol       *protocol;
 	gchar                *server;
 	const gchar          *nick;
 	const gchar          *id;
@@ -642,15 +642,13 @@ new_chatroom_dialog_set_defaults (GossipNewChatroomDialog *dialog)
 	account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
 	account = gossip_account_chooser_get_account (account_chooser);
 
-	protocol = gossip_session_get_protocol (session, account);
-
 	nick = gossip_session_get_nickname (session, account);
 	if (nick) {
 		gtk_entry_set_text (GTK_ENTRY (dialog->entry_nick), nick);
 	}
 
 	id = gossip_account_get_id (account);
-	server = gossip_protocol_get_default_server (protocol, id);
+	server = gossip_jabber_get_default_server (id);
 	if (server) {
 		gchar *conference_server;
 		
