@@ -459,9 +459,8 @@ contact_manager_file_parse (GossipContactManager *manager,
 		}
 
 		account = gossip_account_manager_find (account_manager, account_name);
-		
 		if (!account) {			
-			g_warning ("No GossipAccount found by name:'%s'", account_name);
+			gossip_debug (DEBUG_DOMAIN, "No GossipAccount found by name:'%s'", account_name);
 			continue;
 		}
 		

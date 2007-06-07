@@ -1,5 +1,11 @@
 2007-06-08  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-contact-manager.c:
+	(contact_manager_file_parse): Don't warn if we can't find accounts
+	which may have been deleted, instead, just note it with debugging.
+
+2007-06-08  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-jabber.c: (gossip_jabber_setup),
 	(gossip_jabber_login): Make sure we refresh the LmConnection
 	settings before connecting, like server, port, etc from the
