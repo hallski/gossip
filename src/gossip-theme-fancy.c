@@ -37,30 +37,24 @@
 typedef struct _GossipThemeFancyPriv GossipThemeFancyPriv;
 
 struct _GossipThemeFancyPriv {
-	gint my_prop;
-	gint margin;
-
-	const gchar *header_foreground;
-	const gchar *header_background;
-	const gchar *header_other_foreground;
-	const gchar *header_other_background;
-	const gchar *text_foreground;
-	const gchar *text_background;
-	const gchar *text_other_foreground;
-	const gchar *text_other_background;
-	const gchar *action_foreground;
-	GdkColor    *action_foreground_gdk;
-	const gchar *action_other_foreground;
-	GdkColor    *action_other_foreground_gdk;
-	const gchar *highlight_foreground;
-	const gchar *highlight_other_foreground;
-	const gchar *line_background;
-	const gchar *line_other_background;
-	const gchar *time_foreground;
-	const gchar *event_foreground;
-	const gchar *invite_foreground;
-	const gchar *link_foreground;
-	GdkColor    *link_foreground_gdk;
+	gchar *header_foreground;
+	gchar *header_background;
+	gchar *header_other_foreground;
+	gchar *header_other_background;
+	gchar *text_foreground;
+	gchar *text_background;
+	gchar *text_other_foreground;
+	gchar *text_other_background;
+	gchar *action_foreground;
+	gchar *action_other_foreground;
+	gchar *highlight_foreground;
+	gchar *highlight_other_foreground;
+	gchar *line_background;
+	gchar *line_other_background;
+	gchar *time_foreground;
+	gchar *event_foreground;
+	gchar *invite_foreground;
+	gchar *link_foreground;
 };
 
 static void     theme_fancy_finalize          (GObject            *object);
@@ -110,6 +104,28 @@ static void     theme_fancy_append_spacing    (GossipTheme        *theme,
 
 enum {
 	PROP_0,
+	PROP_HEADER_FOREGROUND,
+	PROP_HEADER_BACKGROUND,
+	PROP_HEADER_OTHER_FOREGROUND,
+	PROP_HEADER_OTHER_BACKGROUND,
+	PROP_TEXT_FOREGROUND,
+	PROP_TEXT_BACKGROUND,
+	PROP_TEXT_OTHER_FOREGROUND,
+	PROP_TEXT_OTHER_BACKGROUND,
+	PROP_ACTION_FOREGROUND,
+	PROP_ACTION_OTHER_FOREGROUND,
+	PROP_HIGHLIGHT_FOREGROUND,
+	PROP_HIGHLIGHT_OTHER_FOREGROUND,
+	PROP_LINE_BACKGROUND,
+	PROP_LINE_OTHER_BACKGROUND,
+	PROP_TIME_FOREGROUND,
+	PROP_EVENT_FOREGROUND,
+	PROP_INVITE_FOREGROUND,
+	PROP_LINK_FOREGROUND
+};
+
+enum {
+	PROP_FLOP,
 	PROP_MY_PROP
 };
 
@@ -138,13 +154,148 @@ gossip_theme_fancy_class_init (GossipThemeFancyClass *class)
 	theme_class->append_spacing   = theme_fancy_append_spacing;
 
 	g_object_class_install_property (object_class,
-					 PROP_MY_PROP,
-					 g_param_spec_int ("my-prop",
-							   "",
-							   "",
-							   0, 1,
-							   1,
-							   G_PARAM_READWRITE));
+					 PROP_HEADER_FOREGROUND,
+					 g_param_spec_string ("header-foreground",
+							      "",
+							      "",
+							      NULL,
+							      G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
+					 PROP_HEADER_BACKGROUND,
+					 g_param_spec_string ("header-background",
+							      "",
+							      "",
+							      NULL,
+							      G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
+					 PROP_HEADER_OTHER_FOREGROUND,
+					 g_param_spec_string ("header-other-foreground",
+							      "",
+							      "",
+							      NULL,
+							      G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
+					 PROP_HEADER_OTHER_BACKGROUND,
+					 g_param_spec_string ("header-other-background",
+							      "",
+							      "",
+							      NULL,
+							      G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
+					 PROP_TEXT_FOREGROUND,
+					 g_param_spec_string ("text-foreground",
+							      "",
+							      "",
+							      NULL,
+							      G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
+					 PROP_TEXT_BACKGROUND,
+					 g_param_spec_string ("text-background",
+							      "",
+							      "",
+							      NULL,
+							      G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
+					 PROP_TEXT_OTHER_FOREGROUND,
+					 g_param_spec_string ("text-other-foreground",
+							      "",
+							      "",
+							      NULL,
+							      G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
+					 PROP_TEXT_OTHER_BACKGROUND,
+					 g_param_spec_string ("text-other-background",
+							      "",
+							      "",
+							      NULL,
+							      G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
+					 PROP_ACTION_FOREGROUND,
+					 g_param_spec_string ("action-foreground",
+							      "",
+							      "",
+							      NULL,
+							      G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
+					 PROP_ACTION_OTHER_FOREGROUND,
+					 g_param_spec_string ("action-other-foreground",
+							      "",
+							      "",
+							      NULL,
+							      G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
+					 PROP_HIGHLIGHT_FOREGROUND,
+					 g_param_spec_string ("highlight-foreground",
+							      "",
+							      "",
+							      NULL,
+							      G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
+					 PROP_HIGHLIGHT_OTHER_FOREGROUND,
+					 g_param_spec_string ("highlight-other-foreground",
+							      "",
+							      "",
+							      NULL,
+							      G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
+					 PROP_LINE_BACKGROUND,
+					 g_param_spec_string ("line-background",
+							      "",
+							      "",
+							      NULL,
+							      G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
+					 PROP_LINE_OTHER_BACKGROUND,
+					 g_param_spec_string ("line-other-background",
+							      "",
+							      "",
+							      NULL,
+							      G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
+					 PROP_TIME_FOREGROUND,
+					 g_param_spec_string ("time-foreground",
+							      "",
+							      "",
+							      NULL,
+							      G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
+					 PROP_EVENT_FOREGROUND,
+					 g_param_spec_string ("event-foreground",
+							      "",
+							      "",
+							      NULL,
+							      G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
+					 PROP_INVITE_FOREGROUND,
+					 g_param_spec_string ("invite-foreground",
+							      "",
+							      "",
+							      NULL,
+							      G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
+					 PROP_LINK_FOREGROUND,
+					 g_param_spec_string ("link-foreground",
+							      "",
+							      "",
+							      NULL,
+							      G_PARAM_READWRITE));
 
 	g_type_class_add_private (object_class, sizeof (GossipThemeFancyPriv));
 }
@@ -155,9 +306,6 @@ gossip_theme_fancy_init (GossipThemeFancy *theme)
 	GossipThemeFancyPriv *priv;
 
 	priv = GET_PRIV (theme);
-
-	/* FIXME: should be a property */
-	priv->margin = 3;
 }
 
 static void
@@ -167,34 +315,92 @@ theme_fancy_finalize (GObject *object)
 
 	priv = GET_PRIV (object);
 
-	if (priv->action_foreground_gdk) {
-		gdk_color_free (priv->action_foreground_gdk);
-	}
-
-	if (priv->action_other_foreground_gdk) {
-		gdk_color_free (priv->action_other_foreground_gdk);
-	}
-
-	if (priv->link_foreground_gdk) {
-		gdk_color_free (priv->link_foreground_gdk);
-	}
-
+	g_free (priv->header_foreground);
+	g_free (priv->header_background);
+	g_free (priv->header_other_foreground);
+	g_free (priv->header_other_background);
+	g_free (priv->text_foreground);
+	g_free (priv->text_background);
+	g_free (priv->text_other_foreground);
+	g_free (priv->text_other_background);
+	g_free (priv->action_foreground);
+	g_free (priv->action_other_foreground);
+	g_free (priv->highlight_foreground);
+	g_free (priv->highlight_other_foreground);
+	g_free (priv->line_background);
+	g_free (priv->line_other_background);
+	g_free (priv->time_foreground);
+	g_free (priv->event_foreground);
+	g_free (priv->invite_foreground);
+	g_free (priv->link_foreground);
+	
 	(G_OBJECT_CLASS (gossip_theme_fancy_parent_class)->finalize) (object);
 }
 
 static void
 theme_fancy_get_property (GObject    *object,
-		    guint       param_id,
-		    GValue     *value,
-		    GParamSpec *pspec)
+			  guint       param_id,
+			  GValue     *value,
+			  GParamSpec *pspec)
 {
 	GossipThemeFancyPriv *priv;
 
 	priv = GET_PRIV (object);
 
 	switch (param_id) {
-	case PROP_MY_PROP:
-		g_value_set_int (value, priv->my_prop);
+	case PROP_HEADER_FOREGROUND:
+		g_value_set_string (value, priv->header_foreground);
+		break;
+	case PROP_HEADER_BACKGROUND:
+		g_value_set_string (value, priv->header_background);
+		break;
+	case PROP_HEADER_OTHER_FOREGROUND:
+		g_value_set_string (value, priv->header_other_foreground);
+		break;
+	case PROP_HEADER_OTHER_BACKGROUND:
+		g_value_set_string (value, priv->header_other_background);
+		break;
+	case PROP_TEXT_FOREGROUND:
+		g_value_set_string (value, priv->text_foreground);
+		break;
+	case PROP_TEXT_BACKGROUND:
+		g_value_set_string (value, priv->text_background);
+		break;
+	case PROP_TEXT_OTHER_FOREGROUND:
+		g_value_set_string (value, priv->text_other_foreground);
+		break;
+	case PROP_TEXT_OTHER_BACKGROUND:
+		g_value_set_string (value, priv->text_other_background);
+		break;
+	case PROP_ACTION_FOREGROUND:
+		g_value_set_string (value, priv->action_foreground);
+		break;
+	case PROP_ACTION_OTHER_FOREGROUND:
+		g_value_set_string (value, priv->action_other_foreground);
+		break;
+	case PROP_HIGHLIGHT_FOREGROUND:
+		g_value_set_string (value, priv->highlight_foreground);
+		break;
+	case PROP_HIGHLIGHT_OTHER_FOREGROUND:
+		g_value_set_string (value, priv->highlight_other_foreground);
+		break;
+	case PROP_LINE_BACKGROUND:
+		g_value_set_string (value, priv->line_background);
+		break;
+	case PROP_LINE_OTHER_BACKGROUND:
+		g_value_set_string (value, priv->line_other_background);
+		break;
+	case PROP_TIME_FOREGROUND:
+		g_value_set_string (value, priv->time_foreground);
+		break;
+	case PROP_EVENT_FOREGROUND:
+		g_value_set_string (value, priv->event_foreground);
+		break;
+	case PROP_INVITE_FOREGROUND:
+		g_value_set_string (value, priv->invite_foreground);
+		break;
+	case PROP_LINK_FOREGROUND:
+		g_value_set_string (value, priv->link_foreground);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
@@ -212,8 +418,77 @@ theme_fancy_set_property (GObject      *object,
 	priv = GET_PRIV (object);
 
 	switch (param_id) {
-	case PROP_MY_PROP:
-		priv->my_prop = g_value_get_int (value);
+	case PROP_HEADER_FOREGROUND:
+		g_free (priv->header_foreground);
+		priv->header_foreground = g_value_dup_string (value);
+		break;
+	case PROP_HEADER_BACKGROUND:
+		g_free (priv->header_background);
+		priv->header_background = g_value_dup_string (value);
+		break;
+	case PROP_HEADER_OTHER_FOREGROUND:
+		g_free (priv->header_other_foreground);
+		priv->header_other_foreground = g_value_dup_string (value);
+		break;
+	case PROP_HEADER_OTHER_BACKGROUND:
+		g_free (priv->header_other_background);
+		priv->header_other_background = g_value_dup_string (value);
+		break;
+	case PROP_TEXT_FOREGROUND:
+		g_free (priv->text_foreground);
+		priv->text_foreground = g_value_dup_string (value);
+		break;
+	case PROP_TEXT_BACKGROUND:
+		g_free (priv->text_background);
+		priv->text_background = g_value_dup_string (value);
+		break;
+	case PROP_TEXT_OTHER_FOREGROUND:
+		g_free (priv->text_other_foreground);
+		priv->text_other_foreground = g_value_dup_string (value);
+		break;
+	case PROP_TEXT_OTHER_BACKGROUND:
+		g_free (priv->text_other_background);
+		priv->text_other_background = g_value_dup_string (value);
+		break;
+	case PROP_ACTION_FOREGROUND:
+		g_free (priv->action_foreground);
+		priv->action_foreground = g_value_dup_string (value);
+		break;
+	case PROP_ACTION_OTHER_FOREGROUND:
+		g_free (priv->action_other_foreground);
+		priv->action_other_foreground = g_value_dup_string (value);
+		break;
+	case PROP_HIGHLIGHT_FOREGROUND:
+		g_free (priv->highlight_foreground);
+		priv->highlight_foreground = g_value_dup_string (value);
+		break;
+	case PROP_HIGHLIGHT_OTHER_FOREGROUND:
+		g_free (priv->highlight_other_foreground);
+		priv->highlight_other_foreground = g_value_dup_string (value);
+		break;
+	case PROP_LINE_BACKGROUND:
+		g_free (priv->line_background);
+		priv->line_background = g_value_dup_string (value);
+		break;
+	case PROP_LINE_OTHER_BACKGROUND:
+		g_free (priv->line_other_background);
+		priv->line_other_background = g_value_dup_string (value);
+		break;
+	case PROP_TIME_FOREGROUND:
+		g_free (priv->time_foreground);
+		priv->time_foreground = g_value_dup_string (value);
+		break;
+	case PROP_EVENT_FOREGROUND:
+		g_free (priv->event_foreground);
+		priv->event_foreground = g_value_dup_string (value);
+		break;
+	case PROP_INVITE_FOREGROUND:
+		g_free (priv->invite_foreground);
+		priv->invite_foreground = g_value_dup_string (value);
+		break;
+	case PROP_LINK_FOREGROUND:
+		g_free (priv->link_foreground);
+		priv->link_foreground = g_value_dup_string (value);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
@@ -351,11 +626,6 @@ theme_fancy_define_theme_tags (GossipTheme *theme, GossipChatView *view)
 			      "foreground", priv->action_foreground,
 			      NULL);
 	} 
-	else if (priv->action_foreground_gdk) {
-		g_object_set (tag,
-			      "foreground-gdk", priv->action_foreground_gdk,
-			      NULL);
-	}
 
 	gossip_theme_utils_add_tag (table, tag);
 
@@ -459,11 +729,6 @@ theme_fancy_define_theme_tags (GossipTheme *theme, GossipChatView *view)
 			      "foreground", priv->action_other_foreground,
 			      NULL);
 	}
-	else if (priv->action_other_foreground_gdk) {
-		g_object_set (tag,
-			      "foreground-gdk", priv->action_other_foreground_gdk,
-			      NULL);
-	}
 	gossip_theme_utils_add_tag (table, tag);
 
 	tag = gossip_theme_utils_init_tag_by_name (table,
@@ -520,11 +785,6 @@ theme_fancy_define_theme_tags (GossipTheme *theme, GossipChatView *view)
 			      "foreground", priv->link_foreground,
 			      NULL);
 	} 
-	else if (priv->link_foreground_gdk) {
-		g_object_set (tag,
-			      "foreground-gdk", priv->link_foreground_gdk,
-			      NULL);
-	}
 	gossip_theme_utils_add_tag (table, tag);
 }
 
@@ -578,7 +838,7 @@ theme_fancy_setup_with_view (GossipTheme *theme, GossipChatView *view)
 
 	theme_fancy_define_theme_tags (theme, view);
 	
-	gossip_chat_view_set_margin (view, priv->margin);
+	gossip_chat_view_set_margin (view, 0);
 
 	return NULL;
 }
@@ -934,22 +1194,20 @@ theme_fancy_append_spacing (GossipTheme        *theme,
 static void
 theme_fancy_setup_clean (GossipTheme *theme)
 {
-	GossipThemeFancyPriv *priv;
-
-	priv = GET_PRIV (theme);
-
-	priv->header_foreground = "black";
-	priv->header_background = "#efefdf";
-	priv->header_other_foreground = "black";
-	priv->header_other_background = priv->header_background;
-	priv->action_foreground = "brown4";
-	priv->action_other_foreground = priv->action_foreground;
-	priv->line_background = "#e3e3d3";
-	priv->line_other_background = priv->line_background;
-	priv->time_foreground = "darkgrey";
-	priv->event_foreground = "darkgrey";
-	priv->invite_foreground = "sienna";
-	priv->link_foreground = "#49789e";
+	g_object_set (theme,
+		      "header-foreground", "black",
+		      "header-background", "#efefdf",
+		      "header_other_foreground", "black",
+		      "header_other_background", "#efefdf",
+		      "action_foreground", "brown4",
+		      "action_other_foreground", "brown4",
+		      "line_background", "#e3e3d3",
+		      "line_other_background", "#e3e3d3",
+		      "time_foreground", "darkgrey",
+		      "event_foreground", "darkgrey",
+		      "invite_foreground", "sienna",
+		      "link_foreground","#49789e",
+		      NULL);
 }
 
 static void
@@ -958,6 +1216,8 @@ theme_fancy_setup_simple (GossipTheme *theme)
 	GossipThemeFancyPriv *priv;
 	GtkWidget            *widget;
 	GtkStyle             *style;
+	GdkColor             *gdk_color;
+	gchar                str_color[10];
 
 	priv = GET_PRIV (theme);
 
@@ -965,36 +1225,43 @@ theme_fancy_setup_simple (GossipTheme *theme)
 	style = gtk_widget_get_style (widget);
 	gtk_widget_destroy (widget);
 
-	priv->action_foreground_gdk = gdk_color_copy (&style->base[GTK_STATE_SELECTED]);
-	priv->action_other_foreground_gdk = gdk_color_copy (&style->base[GTK_STATE_SELECTED]);
-	priv->link_foreground_gdk = gdk_color_copy (&style->base[GTK_STATE_SELECTED]);
+	gdk_color = &style->base[GTK_STATE_SELECTED];
+	g_snprintf (str_color, 10, 
+		    "#%02x%02x%02x", 
+		    gdk_color->red >> 8, 
+		    gdk_color->green >> 8, 
+		    gdk_color->blue >> 8);
+
+	g_object_set (theme,
+		      "action_foreground", str_color,
+		      "action_other_foreground", str_color,
+		      "link_foreground", str_color,
+		      NULL);
 }
 
 static void
 theme_fancy_setup_blue (GossipTheme *theme)
 {
-	GossipThemeFancyPriv *priv;
-
-	priv = GET_PRIV (theme);
-
-	priv->header_foreground = "black";
-	priv->header_background = "#b9b9b9";
-	priv->header_other_foreground = "black";
-	priv->header_other_background = "#88a2b4";
-	priv->text_foreground = "black";
-	priv->text_background ="#dcdcdc";
-	priv->text_other_foreground = "black";
-	priv->text_other_background ="#adbdc8";
-	priv->highlight_foreground = "black";
-	priv->highlight_other_foreground = "black",
-	priv->action_foreground = "brown4";
-	priv->action_other_foreground = priv->action_foreground;
-	priv->line_background = "#aeaeae";
-	priv->line_other_background = "#7f96a4";
-	priv->time_foreground = "darkgrey";
-	priv->event_foreground = "#7f96a4";
-	priv->invite_foreground = "sienna";
-	priv->link_foreground = "#49789e";
+	g_object_set (theme,
+		      "header_foreground", "black",
+		      "header_background", "#b9b9b9",
+		      "header_other_foreground", "black",
+		      "header_other_background", "#88a2b4",
+		      "text_foreground", "black",
+		      "text_background", "#dcdcdc",
+		      "text_other_foreground", "black",
+		      "text_other_background", "#adbdc8",
+		      "highlight_foreground", "black",
+		      "highlight_other_foreground", "black",
+		      "action_foreground", "brown4",
+		      "action_other_foreground", "brown4",
+		      "line_background", "#aeaeae",
+		      "line_other_background", "#7f96a4",
+		      "time_foreground", "darkgrey",
+		      "event_foreground", "#7f96a4",
+		      "invite_foreground", "sienna",
+		      "link_foreground", "#49789e",
+		      NULL);
 }
 
 GossipTheme *
@@ -1008,15 +1275,12 @@ gossip_theme_fancy_new (const gchar *name)
 
 	if (strcmp (name, "clean") == 0) {
 		theme_fancy_setup_clean (theme);
-		priv->margin = 0;
 	}
 	else if (strcmp (name, "simple") == 0) {
 		theme_fancy_setup_simple (theme);
-		priv->margin = 0;
 	}
 	else if (strcmp (name, "blue") == 0) {
 		theme_fancy_setup_blue (theme);
-		priv->margin = 0;
 	}
 
 	return theme;

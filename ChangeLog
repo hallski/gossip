@@ -1,5 +1,9 @@
 2007-06-07  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-theme-fancy.c: Made the colors GObject properties.
+
+2007-06-07  Mikael Hallendal  <micke@imendio.com>
+
 	* libgossip/gossip-account-manager.c:
 	(account_manager_parse_account): Create GossipJabber account 
 	directly and don't go through GossipProtocol.
