@@ -29,6 +29,7 @@
 #include <libgossip/gossip-utils.h>
 
 #include "gossip-chat.h"
+#include "gossip-marshal.h"
 #include "gossip-preferences.h"
 #include "gossip-smiley.h"
 #include "gossip-theme-utils.h"
@@ -51,6 +52,13 @@ static void         theme_finalize            (GObject            *object);
 
 G_DEFINE_TYPE (GossipTheme, gossip_theme, G_TYPE_OBJECT);
 
+enum {
+	UPDATED,
+	LAST_SIGNAL
+};
+
+static guint signals[LAST_SIGNAL] = { 0 };
+
 static void
 gossip_theme_class_init (GossipThemeClass *class)
 {
@@ -67,6 +75,16 @@ gossip_theme_class_init (GossipThemeClass *class)
 	class->append_event     = NULL;
 	class->append_timestamp = NULL;
 	class->append_spacing   = NULL;
+
+	signals[UPDATED] =
+		g_signal_new ("updated",
+			      G_TYPE_FROM_CLASS (class),
+			      G_SIGNAL_RUN_LAST,
+			      0,
+			      NULL, NULL,
+			      gossip_marshal_VOID__VOID,
+			      G_TYPE_NONE, 
+			      0);
 
 	g_type_class_add_private (object_class, sizeof (GossipThemePriv));
 }

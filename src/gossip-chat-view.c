@@ -129,6 +129,8 @@ static void     chat_view_invite_join_cb             (GossipChatroomProvider   *
 						      gpointer                  user_data);
 static void     chat_view_theme_changed_cb           (GossipThemeManager       *manager,
 						      GossipChatView           *view);
+static void     chat_view_theme_updated_cb           (GossipTheme              *theme, 
+						      GossipChatView           *view);
 
 G_DEFINE_TYPE (GossipChatView, gossip_chat_view, GTK_TYPE_TEXT_VIEW);
 
@@ -222,6 +224,10 @@ chat_view_finalize (GObject *object)
 	}
 
 	if (priv->theme) {
+		g_signal_handlers_disconnect_by_func (priv->theme,
+						      chat_view_theme_updated_cb,
+						      view);
+
 		gossip_theme_detach_from_view (priv->theme, priv->theme_context,
 					       view);
 
@@ -1470,6 +1476,19 @@ gossip_chat_view_get_theme (GossipChatView *view)
 	return priv->theme;
 }
 
+static void
+chat_view_theme_updated_cb (GossipTheme *theme, GossipChatView *view)
+{
+	GossipChatViewPriv *priv;
+
+	priv = GET_PRIV (view);
+	
+	gossip_theme_detach_from_view (priv->theme, priv->theme_context,
+				       view);
+
+	priv->theme_context = gossip_theme_setup_with_view (theme, view);
+}
+
 void
 gossip_chat_view_set_theme (GossipChatView *view, GossipTheme *theme)
 {
@@ -1481,6 +1500,9 @@ gossip_chat_view_set_theme (GossipChatView *view, GossipTheme *theme)
 	priv = GET_PRIV (view);
 
 	if (priv->theme) {
+		g_signal_handlers_disconnect_by_func (priv->theme,
+						      chat_view_theme_updated_cb,
+						      view);
 		gossip_theme_detach_from_view (priv->theme, priv->theme_context,
 					       view);
 
@@ -1488,6 +1510,11 @@ gossip_chat_view_set_theme (GossipChatView *view, GossipTheme *theme)
 	}
 
 	priv->theme = g_object_ref (theme);
+
+	g_signal_connect (priv->theme,
+			  "updated",
+			  G_CALLBACK (chat_view_theme_updated_cb),
+			  view);
 
 	priv->theme_context = gossip_theme_setup_with_view (theme, view);
 

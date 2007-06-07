@@ -1,3 +1,10 @@
+2007-06-08  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-theme-fancy.[ch]:
+	* src/gossip-theme-boxes.[ch]: Not very fancy but more .. boxy ;)
+	Made the simple boxes variant use the theme colors and update on 
+	theme changes. Try it out, it's slick.
+
 2007-06-07  Mikael Hallendal  <micke@imendio.com>
 
 	* libgossip/gossip-protocol.[ch]:

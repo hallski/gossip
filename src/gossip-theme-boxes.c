@@ -27,16 +27,17 @@
 
 #include <libgossip/gossip-debug.h>
 
+#include "gossip-app.h"
 #include "gossip-theme-utils.h"
-#include "gossip-theme-fancy.h"
+#include "gossip-theme-boxes.h"
 
 #define DEBUG_DOMAIN "FancyTheme"
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_THEME_FANCY, GossipThemeFancyPriv))
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_THEME_BOXES, GossipThemeBoxesPriv))
 
-typedef struct _GossipThemeFancyPriv GossipThemeFancyPriv;
+typedef struct _GossipThemeBoxesPriv GossipThemeBoxesPriv;
 
-struct _GossipThemeFancyPriv {
+struct _GossipThemeBoxesPriv {
 	gchar *header_foreground;
 	gchar *header_background;
 	gchar *header_other_foreground;
@@ -57,48 +58,48 @@ struct _GossipThemeFancyPriv {
 	gchar *link_foreground;
 };
 
-static void     theme_fancy_finalize          (GObject            *object);
-static void     theme_fancy_get_property      (GObject            *object,
+static void     theme_boxes_finalize          (GObject            *object);
+static void     theme_boxes_get_property      (GObject            *object,
 					       guint               param_id,
 					       GValue             *value,
 					       GParamSpec         *pspec);
-static void     theme_fancy_set_property      (GObject            *object,
+static void     theme_boxes_set_property      (GObject            *object,
 					       guint               param_id,
 					       const GValue       *value,
 					       GParamSpec         *pspec);
-static void     theme_fancy_define_theme_tags (GossipTheme        *theme,
+static void     theme_boxes_define_theme_tags (GossipTheme        *theme,
 					       GossipChatView     *view);
 static GossipThemeContext *
-theme_fancy_setup_with_view                   (GossipTheme        *theme,
+theme_boxes_setup_with_view                   (GossipTheme        *theme,
 					       GossipChatView     *view);
-static void     theme_fancy_detach_from_view  (GossipTheme        *theme,
+static void     theme_boxes_detach_from_view  (GossipTheme        *theme,
 					       GossipThemeContext *context,
 					       GossipChatView     *view);
-static void     theme_fancy_view_cleared      (GossipTheme        *theme,
+static void     theme_boxes_view_cleared      (GossipTheme        *theme,
 					       GossipThemeContext *context,
 					       GossipChatView     *view);
 
-static void     theme_fancy_append_message    (GossipTheme        *theme,
+static void     theme_boxes_append_message    (GossipTheme        *theme,
 					       GossipThemeContext *context,
 					       GossipChatView     *view,
 					       GossipMessage      *message,
 					       gboolean            from_self);
-static void     theme_fancy_append_action     (GossipTheme        *theme,
+static void     theme_boxes_append_action     (GossipTheme        *theme,
 					       GossipThemeContext *context,
 					       GossipChatView     *view,
 					       GossipMessage      *message,
 					       gboolean            from_self);
-static void     theme_fancy_append_event      (GossipTheme        *theme,
+static void     theme_boxes_append_event      (GossipTheme        *theme,
 					       GossipThemeContext *context,
 					       GossipChatView     *view,
 					       const gchar        *str);
-static void     theme_fancy_append_timestamp  (GossipTheme        *theme,
+static void     theme_boxes_append_timestamp  (GossipTheme        *theme,
 					       GossipThemeContext *context,
 					       GossipChatView     *view,
 					       GossipMessage      *message,
 					       gboolean            show_date,
 					       gboolean            show_time);
-static void     theme_fancy_append_spacing    (GossipTheme        *theme,
+static void     theme_boxes_append_spacing    (GossipTheme        *theme,
 					       GossipThemeContext *context,
 					       GossipChatView     *view);
 
@@ -129,10 +130,10 @@ enum {
 	PROP_MY_PROP
 };
 
-G_DEFINE_TYPE (GossipThemeFancy, gossip_theme_fancy, GOSSIP_TYPE_THEME);
+G_DEFINE_TYPE (GossipThemeBoxes, gossip_theme_boxes, GOSSIP_TYPE_THEME);
 
 static void
-gossip_theme_fancy_class_init (GossipThemeFancyClass *class)
+gossip_theme_boxes_class_init (GossipThemeBoxesClass *class)
 {
 	GObjectClass     *object_class;
 	GossipThemeClass *theme_class;
@@ -140,18 +141,18 @@ gossip_theme_fancy_class_init (GossipThemeFancyClass *class)
 	object_class = G_OBJECT_CLASS (class);
 	theme_class  = GOSSIP_THEME_CLASS (class);
 
-	object_class->finalize       = theme_fancy_finalize;
-	object_class->get_property   = theme_fancy_get_property;
-	object_class->set_property   = theme_fancy_set_property;
+	object_class->finalize       = theme_boxes_finalize;
+	object_class->get_property   = theme_boxes_get_property;
+	object_class->set_property   = theme_boxes_set_property;
 
-	theme_class->setup_with_view  = theme_fancy_setup_with_view;
-	theme_class->detach_from_view = theme_fancy_detach_from_view;
-	theme_class->view_cleared     = theme_fancy_view_cleared;
-	theme_class->append_message   = theme_fancy_append_message;
-	theme_class->append_action    = theme_fancy_append_action;
-	theme_class->append_event     = theme_fancy_append_event;
-	theme_class->append_timestamp = theme_fancy_append_timestamp;
-	theme_class->append_spacing   = theme_fancy_append_spacing;
+	theme_class->setup_with_view  = theme_boxes_setup_with_view;
+	theme_class->detach_from_view = theme_boxes_detach_from_view;
+	theme_class->view_cleared     = theme_boxes_view_cleared;
+	theme_class->append_message   = theme_boxes_append_message;
+	theme_class->append_action    = theme_boxes_append_action;
+	theme_class->append_event     = theme_boxes_append_event;
+	theme_class->append_timestamp = theme_boxes_append_timestamp;
+	theme_class->append_spacing   = theme_boxes_append_spacing;
 
 	g_object_class_install_property (object_class,
 					 PROP_HEADER_FOREGROUND,
@@ -297,21 +298,21 @@ gossip_theme_fancy_class_init (GossipThemeFancyClass *class)
 							      NULL,
 							      G_PARAM_READWRITE));
 
-	g_type_class_add_private (object_class, sizeof (GossipThemeFancyPriv));
+	g_type_class_add_private (object_class, sizeof (GossipThemeBoxesPriv));
 }
 
 static void
-gossip_theme_fancy_init (GossipThemeFancy *theme)
+gossip_theme_boxes_init (GossipThemeBoxes *theme)
 {
-	GossipThemeFancyPriv *priv;
+	GossipThemeBoxesPriv *priv;
 
 	priv = GET_PRIV (theme);
 }
 
 static void
-theme_fancy_finalize (GObject *object)
+theme_boxes_finalize (GObject *object)
 {
-	GossipThemeFancyPriv *priv;
+	GossipThemeBoxesPriv *priv;
 
 	priv = GET_PRIV (object);
 
@@ -334,16 +335,16 @@ theme_fancy_finalize (GObject *object)
 	g_free (priv->invite_foreground);
 	g_free (priv->link_foreground);
 	
-	(G_OBJECT_CLASS (gossip_theme_fancy_parent_class)->finalize) (object);
+	(G_OBJECT_CLASS (gossip_theme_boxes_parent_class)->finalize) (object);
 }
 
 static void
-theme_fancy_get_property (GObject    *object,
+theme_boxes_get_property (GObject    *object,
 			  guint       param_id,
 			  GValue     *value,
 			  GParamSpec *pspec)
 {
-	GossipThemeFancyPriv *priv;
+	GossipThemeBoxesPriv *priv;
 
 	priv = GET_PRIV (object);
 
@@ -408,12 +409,12 @@ theme_fancy_get_property (GObject    *object,
 	}
 }
 static void
-theme_fancy_set_property (GObject      *object,
+theme_boxes_set_property (GObject      *object,
 		    guint         param_id,
 		    const GValue *value,
 		    GParamSpec   *pspec)
 {
-	GossipThemeFancyPriv *priv;
+	GossipThemeBoxesPriv *priv;
 
 	priv = GET_PRIV (object);
 
@@ -497,11 +498,11 @@ theme_fancy_set_property (GObject      *object,
 }
 
 static void
-theme_fancy_set_body_background (GossipTheme *theme, 
+theme_boxes_set_body_background (GossipTheme *theme, 
 				 GtkTextTag  *tag,
 				 gboolean     from_self)
 {
-	GossipThemeFancyPriv *priv;
+	GossipThemeBoxesPriv *priv;
 
 	priv = GET_PRIV (theme);
 
@@ -518,9 +519,9 @@ theme_fancy_set_body_background (GossipTheme *theme,
 }
 
 static void
-theme_fancy_define_theme_tags (GossipTheme *theme, GossipChatView *view)
+theme_boxes_define_theme_tags (GossipTheme *theme, GossipChatView *view)
 {
-	GossipThemeFancyPriv *priv;
+	GossipThemeBoxesPriv *priv;
 	GtkTextBuffer   *buffer;
 	GtkTextTagTable *table;
 	GtkTextTag      *tag;
@@ -602,7 +603,7 @@ theme_fancy_define_theme_tags (GossipTheme *theme, GossipChatView *view)
 		      "left-margin", 4,
 		      "right-margin", 4,
 		      NULL);
-	theme_fancy_set_body_background (theme, tag, TRUE);
+	theme_boxes_set_body_background (theme, tag, TRUE);
 
 	if (priv->text_foreground) {
 		g_object_set (tag,
@@ -619,7 +620,7 @@ theme_fancy_define_theme_tags (GossipTheme *theme, GossipChatView *view)
 		      "right-margin", 4,
 		      NULL);
 
-	theme_fancy_set_body_background (theme, tag, TRUE);
+	theme_boxes_set_body_background (theme, tag, TRUE);
 
 	if (priv->action_foreground) {
 		g_object_set (tag,
@@ -634,7 +635,7 @@ theme_fancy_define_theme_tags (GossipTheme *theme, GossipChatView *view)
 		      "weight", PANGO_WEIGHT_BOLD,
 		      "pixels-above-lines", 4,
 		      NULL);
-	theme_fancy_set_body_background (theme, tag, TRUE);
+	theme_boxes_set_body_background (theme, tag, TRUE);
 
 	if (priv->highlight_foreground) {
 		g_object_set (tag,
@@ -706,7 +707,7 @@ theme_fancy_define_theme_tags (GossipTheme *theme, GossipChatView *view)
 		      "left-margin", 4,
 		      "right-margin", 4,
 		      NULL);
-	theme_fancy_set_body_background (theme, tag, FALSE);
+	theme_boxes_set_body_background (theme, tag, FALSE);
 
 	if (priv->text_other_foreground) {
 		g_object_set (tag,
@@ -723,7 +724,7 @@ theme_fancy_define_theme_tags (GossipTheme *theme, GossipChatView *view)
 		      "left-margin", 4,
 		      "right-margin", 4,
 		      NULL);
-	theme_fancy_set_body_background (theme, tag, FALSE);
+	theme_boxes_set_body_background (theme, tag, FALSE);
 	if (priv->action_other_foreground) {
 		g_object_set (tag,
 			      "foreground", priv->action_other_foreground,
@@ -737,7 +738,7 @@ theme_fancy_define_theme_tags (GossipTheme *theme, GossipChatView *view)
 		      "weight", PANGO_WEIGHT_BOLD,
 		      "pixels-above-lines", 4,
 		      NULL);
-	theme_fancy_set_body_background (theme, tag, FALSE);
+	theme_boxes_set_body_background (theme, tag, FALSE);
 
 	if (priv->highlight_other_foreground) {
 		g_object_set (tag,
@@ -789,7 +790,7 @@ theme_fancy_define_theme_tags (GossipTheme *theme, GossipChatView *view)
 }
 
 static void
-theme_fancy_fixup_tag_table (GossipTheme *theme, GossipChatView *view)
+theme_boxes_fixup_tag_table (GossipTheme *theme, GossipChatView *view)
 {
 	GtkTextBuffer *buffer;
 
@@ -826,17 +827,17 @@ typedef struct {
 } FancyContext;
 
 static GossipThemeContext *
-theme_fancy_setup_with_view (GossipTheme *theme, GossipChatView *view)
+theme_boxes_setup_with_view (GossipTheme *theme, GossipChatView *view)
 {
-	GossipThemeFancyPriv *priv;
+	GossipThemeBoxesPriv *priv;
 
-	g_return_val_if_fail (GOSSIP_IS_THEME_FANCY (theme), NULL);
+	g_return_val_if_fail (GOSSIP_IS_THEME_BOXES (theme), NULL);
 
 	priv = GET_PRIV (theme);
 
-	theme_fancy_fixup_tag_table (theme, view);
+	theme_boxes_fixup_tag_table (theme, view);
 
-	theme_fancy_define_theme_tags (theme, view);
+	theme_boxes_define_theme_tags (theme, view);
 	
 	gossip_chat_view_set_margin (view, 0);
 
@@ -844,7 +845,7 @@ theme_fancy_setup_with_view (GossipTheme *theme, GossipChatView *view)
 }
 
 static void
-theme_fancy_detach_from_view (GossipTheme        *theme,
+theme_boxes_detach_from_view (GossipTheme        *theme,
 			      GossipThemeContext *context,
 			      GossipChatView     *view)
 {
@@ -852,7 +853,7 @@ theme_fancy_detach_from_view (GossipTheme        *theme,
 }
 
 static void 
-theme_fancy_view_cleared (GossipTheme        *theme,
+theme_boxes_view_cleared (GossipTheme        *theme,
 			  GossipThemeContext *context,
 			  GossipChatView     *view)
 {
@@ -860,7 +861,7 @@ theme_fancy_view_cleared (GossipTheme        *theme,
 }
 
 static void
-theme_fancy_maybe_append_header (GossipTheme        *theme,
+theme_boxes_maybe_append_header (GossipTheme        *theme,
 				 GossipThemeContext *context,
 				 GossipChatView     *view,
 				 GossipMessage      *msg,
@@ -992,7 +993,7 @@ theme_fancy_maybe_append_header (GossipTheme        *theme,
 
 
 static void
-theme_fancy_append_message (GossipTheme        *theme,
+theme_boxes_append_message (GossipTheme        *theme,
 			    GossipThemeContext *context,
 			    GossipChatView     *view,
 			    GossipMessage      *message,
@@ -1002,7 +1003,7 @@ theme_fancy_append_message (GossipTheme        *theme,
 
 	gossip_theme_maybe_append_date_and_time (theme, context, view, message);
 
-	theme_fancy_maybe_append_header (theme, context, view, message,
+	theme_boxes_maybe_append_header (theme, context, view, message,
 					 from_self);
 
 	if (from_self) {
@@ -1028,7 +1029,7 @@ theme_fancy_append_message (GossipTheme        *theme,
 }
 
 static void
-theme_fancy_append_action (GossipTheme        *theme,
+theme_boxes_append_action (GossipTheme        *theme,
 			   GossipThemeContext *context,
 			   GossipChatView     *view,
 			   GossipMessage      *message,
@@ -1046,7 +1047,7 @@ theme_fancy_append_action (GossipTheme        *theme,
 
 	contact = gossip_message_get_sender (message);
 	
-	theme_fancy_maybe_append_header (theme, context, view, message,
+	theme_boxes_maybe_append_header (theme, context, view, message,
 					 from_self);
 
 	contact = gossip_message_get_sender (message);
@@ -1075,7 +1076,7 @@ theme_fancy_append_action (GossipTheme        *theme,
 }
 
 static void
-theme_fancy_append_event (GossipTheme        *theme,
+theme_boxes_append_event (GossipTheme        *theme,
 			  GossipThemeContext *context,
 			  GossipChatView     *view,
 			  const gchar        *str)
@@ -1102,7 +1103,7 @@ theme_fancy_append_event (GossipTheme        *theme,
 }
 
 static void
-theme_fancy_append_timestamp (GossipTheme        *theme,
+theme_boxes_append_timestamp (GossipTheme        *theme,
 			      GossipThemeContext *context,
 			      GossipChatView     *view,
 			      GossipMessage      *message,
@@ -1169,7 +1170,7 @@ theme_fancy_append_timestamp (GossipTheme        *theme,
 }
 
 static void
-theme_fancy_append_spacing (GossipTheme        *theme,
+theme_boxes_append_spacing (GossipTheme        *theme,
 			    GossipThemeContext *context,
 			    GossipChatView     *view)
 {
@@ -1192,7 +1193,7 @@ theme_fancy_append_spacing (GossipTheme        *theme,
 }
 
 static void
-theme_fancy_setup_clean (GossipTheme *theme)
+theme_boxes_setup_clean (GossipTheme *theme)
 {
 	g_object_set (theme,
 		      "header-foreground", "black",
@@ -1211,36 +1212,68 @@ theme_fancy_setup_clean (GossipTheme *theme)
 }
 
 static void
-theme_fancy_setup_simple (GossipTheme *theme)
+theme_boxes_gdk_color_to_hex (GdkColor *gdk_color, gchar *str_color)
 {
-	GossipThemeFancyPriv *priv;
-	GtkWidget            *widget;
-	GtkStyle             *style;
-	GdkColor             *gdk_color;
-	gchar                str_color[10];
-
-	priv = GET_PRIV (theme);
-
-	widget = gtk_entry_new ();
-	style = gtk_widget_get_style (widget);
-	gtk_widget_destroy (widget);
-
-	gdk_color = &style->base[GTK_STATE_SELECTED];
 	g_snprintf (str_color, 10, 
 		    "#%02x%02x%02x", 
 		    gdk_color->red >> 8, 
 		    gdk_color->green >> 8, 
 		    gdk_color->blue >> 8);
+}
+
+static void
+theme_boxes_setup_themed (GossipTheme *theme)
+{
+	GossipThemeBoxesPriv *priv;
+	GtkStyle             *style;
+	gchar                 color[10];
+
+	priv = GET_PRIV (theme);
+
+	style = gtk_widget_get_style (gossip_app_get_window ());
+
+	theme_boxes_gdk_color_to_hex (&style->base[GTK_STATE_SELECTED], color);
 
 	g_object_set (theme,
-		      "action_foreground", str_color,
-		      "action_other_foreground", str_color,
-		      "link_foreground", str_color,
+		      "action-foreground", color,
+		      "action-other-foreground", color,
+		      "link-foreground", color,
+		      NULL);
+
+	theme_boxes_gdk_color_to_hex (&style->bg[GTK_STATE_SELECTED], color);
+
+	g_object_set (theme,
+		      "header-background", color,
+		      "header-other-background", color,
+		      NULL);
+
+	theme_boxes_gdk_color_to_hex (&style->dark[GTK_STATE_SELECTED], color);
+
+	g_object_set (theme,
+		      "line-background", color,
+		      "line-other-background", color,
+		      NULL);
+
+	theme_boxes_gdk_color_to_hex (&style->fg[GTK_STATE_SELECTED], color);
+
+	g_object_set (theme,
+		      "header-foreground", color,
+		      "header-other-foreground", color,
 		      NULL);
 }
 
 static void
-theme_fancy_setup_blue (GossipTheme *theme)
+theme_boxes_theme_changed_cb (GtkWidget *widget,
+			      GtkStyle  *previous_style,
+			      gpointer   user_data)
+{
+	theme_boxes_setup_themed (GOSSIP_THEME (user_data));
+
+	g_signal_emit_by_name (G_OBJECT (user_data), "updated");
+}
+
+static void
+theme_boxes_setup_blue (GossipTheme *theme)
 {
 	g_object_set (theme,
 		      "header_foreground", "black",
@@ -1265,22 +1298,27 @@ theme_fancy_setup_blue (GossipTheme *theme)
 }
 
 GossipTheme *
-gossip_theme_fancy_new (const gchar *name)
+gossip_theme_boxes_new (const gchar *name)
 {
 	GossipTheme          *theme;
-	GossipThemeFancyPriv *priv;
+	GossipThemeBoxesPriv *priv;
 
-	theme = g_object_new (GOSSIP_TYPE_THEME_FANCY, NULL);
+	theme = g_object_new (GOSSIP_TYPE_THEME_BOXES, NULL);
 	priv  = GET_PRIV (theme);
 
 	if (strcmp (name, "clean") == 0) {
-		theme_fancy_setup_clean (theme);
+		theme_boxes_setup_clean (theme);
 	}
 	else if (strcmp (name, "simple") == 0) {
-		theme_fancy_setup_simple (theme);
+		g_signal_connect (gossip_app_get_window (),
+				  "style-set",
+				  G_CALLBACK (theme_boxes_theme_changed_cb),
+				  theme);
+
+		theme_boxes_setup_themed (theme);
 	}
 	else if (strcmp (name, "blue") == 0) {
-		theme_fancy_setup_blue (theme);
+		theme_boxes_setup_blue (theme);
 	}
 
 	return theme;
