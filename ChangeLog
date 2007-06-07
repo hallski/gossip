@@ -1,5 +1,10 @@
 2007-06-07  Mikael Hallendal  <micke@imendio.com>
 
+	* libgossip/gossip-event.h: Added a comment about why we don't use
+	G_DEFINE_TYPE.
+
+2007-06-07  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-theme-fancy.c: Made the colors GObject properties.
 
 2007-06-07  Mikael Hallendal  <micke@imendio.com>

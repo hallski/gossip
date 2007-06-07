@@ -65,8 +65,10 @@ enum {
 	PROP_DATA
 };
 
-static gpointer parent_class = NULL;
+static gpointer gossip_event_parent_class = NULL;
 
+/* Define ourselves instead of using G_DEFINE_TYPE so that we can name it  * 
+ * _get_gtype as get_type is used for returning the type of event          */
 GType
 gossip_event_get_gtype (void)
 {
@@ -99,7 +101,7 @@ gossip_event_class_init (GossipEventClass *klass)
 	GObjectClass *object_class;
 
 	object_class = G_OBJECT_CLASS (klass);
-	parent_class = g_type_class_peek_parent (klass);
+	gossip_event_parent_class = g_type_class_peek_parent (klass);
 
 	object_class->finalize     = gossip_event_finalize;
 	object_class->get_property = event_get_property;
@@ -171,7 +173,7 @@ gossip_event_finalize (GObject *object)
 		g_object_unref (priv->data);
 	}
 
-	(G_OBJECT_CLASS (parent_class)->finalize) (object);
+	(G_OBJECT_CLASS (gossip_event_parent_class)->finalize) (object);
 }
 
 static void
