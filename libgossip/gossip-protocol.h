@@ -162,7 +162,6 @@ void            gossip_protocol_login                   (GossipProtocol         
 void            gossip_protocol_logout                  (GossipProtocol         *protocol);
 gboolean        gossip_protocol_is_connected            (GossipProtocol         *protocol);
 gboolean        gossip_protocol_is_connecting           (GossipProtocol         *protocol);
-gboolean        gossip_protocol_is_ssl_supported        (GossipProtocol         *protocol);
 void            gossip_protocol_send_message            (GossipProtocol         *protocol,
 							 GossipMessage          *message);
 void            gossip_protocol_send_composing          (GossipProtocol         *protocol,

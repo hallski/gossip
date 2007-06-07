@@ -691,7 +691,6 @@ static void
 account_widget_jabber_setup (GossipAccountWidgetJabber *settings)
 {
 	GossipSession  *session;
-	GossipProtocol *protocol;
 	guint           port;
 	gchar          *port_str; 
 	const gchar    *id;
@@ -702,7 +701,6 @@ account_widget_jabber_setup (GossipAccountWidgetJabber *settings)
 	gboolean        is_connected;
 
 	session = gossip_app_get_session ();
-	protocol = gossip_session_get_protocol (session, settings->account);
 
 	g_object_get (settings->account,
 		      "id", &id,
@@ -713,7 +711,7 @@ account_widget_jabber_setup (GossipAccountWidgetJabber *settings)
 		      "use_ssl", &use_ssl,
 		      NULL);
 
-	if (gossip_protocol_is_ssl_supported (protocol)) {
+	if (gossip_jabber_is_ssl_supported ()) {
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (settings->checkbutton_ssl), use_ssl);
 	} else {
 		gtk_widget_set_sensitive (settings->checkbutton_ssl, FALSE);

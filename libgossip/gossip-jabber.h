@@ -16,10 +16,6 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * Authors: Mikael Hallendal <micke@imendio.com>
- *          Richard Hult <richard@imendio.com>
- *          Martyn Russell <martyn@imendio.com>
  */
 
 #ifndef __GOSSIP_JABBER_H__
@@ -73,6 +69,7 @@ void           gossip_jabber_subscription_allow_all    (GossipJabber        *jab
 void           gossip_jabber_subscription_disallow_all (GossipJabber        *jabber);
 gchar *        gossip_jabber_get_default_server        (const gchar    *username);
 guint          gossip_jabber_get_default_port          (gboolean        use_ssl);
+gboolean       gossip_jabber_is_ssl_supported          (void);
 
 G_END_DECLS
 

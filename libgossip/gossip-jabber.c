@@ -209,7 +209,6 @@ static LmHandlerResult  jabber_register_message_handler     (LmMessageHandler   
 							     AsyncData                  *ad);
 static gboolean         jabber_is_connected                 (GossipProtocol             *protocol);
 static gboolean         jabber_is_connecting                (GossipProtocol             *protocol);
-static gboolean         jabber_is_ssl_supported             (GossipProtocol             *protocol);
 static void             jabber_send_message                 (GossipProtocol             *protocol,
 							     GossipMessage              *message);
 static void             jabber_send_composing               (GossipProtocol             *protocol,
@@ -385,7 +384,6 @@ gossip_jabber_class_init (GossipJabberClass *klass)
 	protocol_class->logout                  = jabber_logout;
 	protocol_class->is_connected            = jabber_is_connected;
 	protocol_class->is_connecting           = jabber_is_connecting;
-	protocol_class->is_ssl_supported        = jabber_is_ssl_supported;
 	protocol_class->set_presence            = jabber_set_presence;
 	protocol_class->set_subscription        = jabber_set_subscription;
 	protocol_class->set_vcard               = jabber_set_vcard;
@@ -504,7 +502,7 @@ jabber_new_account (GossipProtocol *protocol)
 
 	example_id = gossip_jid_get_example_string ();
 	jid = gossip_jid_new (example_id);
-	port = gossip_jabber_get_default_port (lm_ssl_is_supported ());
+	port = gossip_jabber_get_default_port (gossip_jabber_is_ssl_supported ());
 	
 	/* Set a default value for each account parameter */
 	account = g_object_new (GOSSIP_TYPE_ACCOUNT,
@@ -512,7 +510,7 @@ jabber_new_account (GossipProtocol *protocol)
 				"resource", _("Home"),
 				"server", gossip_jid_get_part_host (jid),
 				"port", port, 
-				"use_ssl", lm_ssl_is_supported (),
+				"use_ssl", gossip_jabber_is_ssl_supported (),
 				"auto_connect", TRUE,
 				"use_proxy", FALSE,
 				NULL);
@@ -1660,8 +1658,8 @@ jabber_is_connecting (GossipProtocol *protocol)
 	return FALSE;
 }
 
-static gboolean
-jabber_is_ssl_supported (GossipProtocol *protocol)
+gboolean
+gossip_jabber_is_ssl_supported (void)
 {
 	return lm_ssl_is_supported ();
 }

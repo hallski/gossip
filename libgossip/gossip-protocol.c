@@ -16,8 +16,6 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * Authors: Mikael Hallendal <micke@imendio.com>
  */
 
 #include "config.h"
@@ -306,21 +304,6 @@ gossip_protocol_is_connecting (GossipProtocol *protocol)
 	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
 	if (klass->is_connecting) {
 		return klass->is_connecting (protocol);
-	}
-
-	return FALSE;
-}
-
-gboolean
-gossip_protocol_is_ssl_supported (GossipProtocol *protocol)
-{
-	GossipProtocolClass *klass;
-
-	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), FALSE);
-
-	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
-	if (klass->is_ssl_supported) {
-		return klass->is_ssl_supported (protocol);
 	}
 
 	return FALSE;
