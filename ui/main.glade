@@ -4522,7 +4522,7 @@ You can also use the name of a group to show only contacts in a specific group.<
 		    <widget class="GtkButton" id="button_connect">
 		      <property name="visible">True</property>
 		      <property name="can_focus">True</property>
-		      <property name="label">gtk-connect</property>
+		      <property name="label">Connect</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
 		      <property name="focus_on_click">True</property>
