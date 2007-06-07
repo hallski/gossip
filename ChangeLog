@@ -1,5 +1,18 @@
 2007-06-07  Mikael Hallendal  <micke@imendio.com>
 
+	* libgossip/gossip-account-manager.c:
+	(account_manager_parse_account): Create GossipJabber account 
+	directly and don't go through GossipProtocol.
+	* libgossip/gossip-protocol.[ch]: Removed gossip_protocol_new and
+	gossip_protocol_new_account.
+	* libgossip/gossip-jabber.[ch]: Made gossip_jabber_new_account 
+	public and removed the need to send an object to it.
+	* libgossip/gossip-session.c:
+	(gossip_session_new_account, gossip_session_add_account):
+	Don't use gossip_protocol_new and gossip_protocol_new_account.
+
+2007-06-07  Mikael Hallendal  <micke@imendio.com>
+
 	* libgossip/gossip-protocol.[ch]:
 	- Removed gossip_protocol_is_ssl_supported.
 	* libgossip/gossip-jabber.[ch] (gossip_jabber_is_ssl_supported):

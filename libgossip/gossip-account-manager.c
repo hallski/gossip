@@ -30,6 +30,7 @@
 #include <libxml/tree.h>
 
 #include "gossip-debug.h"
+#include "gossip-jabber.h"
 #include "gossip-protocol.h"
 #include "gossip-account-manager.h"
 #include "gossip-private.h"
@@ -433,26 +434,11 @@ account_manager_get_all (GossipAccountManager *manager)
 static void
 account_manager_parse_account (GossipAccountManager *manager, xmlNodePtr node)
 {
-	GossipProtocol    *protocol;
-	GossipAccount     *account;
-	GossipAccountType  account_type;
-	xmlNodePtr         child;
-	gchar             *str;
+	GossipAccount *account;
+	xmlNodePtr     child;
+	gchar         *str;
 
-	/* Old config file, need saving in new format */
-	account_type = GOSSIP_ACCOUNT_TYPE_JABBER;
-
-	protocol = gossip_protocol_new ();
-	if (!protocol) {
-		/* Maybe this Gossip setup doesn't support this account type */
-		gossip_debug (DEBUG_DOMAIN, 
-	                      "Protocol couldn't be created from account type:%d->'%s'",
-		              account_type, gossip_account_type_to_string (account_type));
-		return;
-	}
-
-	account = gossip_protocol_new_account (protocol);
-	g_object_unref (protocol);
+	account = gossip_jabber_new_account ();
 
 	child = node->children;
 	while (child) {

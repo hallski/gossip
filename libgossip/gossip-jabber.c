@@ -148,7 +148,6 @@ typedef struct {
 static void             gossip_jabber_class_init            (GossipJabberClass          *klass);
 static void             gossip_jabber_init                  (GossipJabber               *jabber);
 static void             jabber_finalize                     (GObject                    *object);
-static GossipAccount *  jabber_new_account                  (GossipProtocol             *protocol);
 static GossipContact *  jabber_new_contact                  (GossipProtocol             *protocol,
 							     const gchar                *id,
 							     const gchar                *name);
@@ -377,7 +376,6 @@ gossip_jabber_class_init (GossipJabberClass *klass)
 
 	object_class->finalize = jabber_finalize;
 
-	protocol_class->new_account             = jabber_new_account;
 	protocol_class->new_contact             = jabber_new_contact;
 	protocol_class->setup                   = jabber_setup;
 	protocol_class->login                   = jabber_login;
@@ -490,15 +488,13 @@ jabber_finalize (GObject *object)
 	(G_OBJECT_CLASS (gossip_jabber_parent_class)->finalize) (object);
 }
 
-static GossipAccount *
-jabber_new_account (GossipProtocol *protocol)
+GossipAccount *
+gossip_jabber_new_account (void)
 {
 	GossipAccount *account;
 	const gchar   *example_id;
 	guint          port;
 	GossipJID     *jid;
-
-	g_return_val_if_fail (GOSSIP_IS_JABBER (protocol), NULL);
 
 	example_id = gossip_jid_get_example_string ();
 	jid = gossip_jid_new (example_id);

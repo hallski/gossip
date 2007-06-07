@@ -80,7 +80,6 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 	klass->get_vcard            = NULL;
 	klass->get_version          = NULL;
 	klass->register_account     = NULL;
-	klass->new_account          = NULL;
 
 	signals[CONNECTING] =
 		g_signal_new ("connecting",
@@ -198,27 +197,6 @@ static void
 gossip_protocol_init (GossipProtocol *protocol)
 {
 	/* FIXME: Implement */
-}
-
-GossipProtocol *
-gossip_protocol_new (void)
-{
-	return g_object_new (GOSSIP_TYPE_JABBER, NULL);
-}
-
-GossipAccount *
-gossip_protocol_new_account (GossipProtocol *protocol)
-{
-	GossipProtocolClass *klass;
-
-	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), NULL);
-
-	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
-	if (klass->new_account) {
-		return klass->new_account (protocol);
-	}
-
-	return NULL;
 }
 
 GossipContact *

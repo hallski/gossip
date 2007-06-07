@@ -16,8 +16,6 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * Authors: Mikael Hallendal <micke@imendio.com>
  */
 
 #include "config.h"
@@ -25,9 +23,10 @@
 #include <string.h>
 
 #include "gossip-chatroom.h"
-#include "gossip-session.h"
+#include "gossip-jabber.h"
 #include "gossip-debug.h"
 #include "gossip-private.h"
+#include "gossip-session.h"
 
 #include "libgossip-marshal.h"
 
@@ -920,10 +919,10 @@ gossip_session_new_account (GossipSession *session)
 
 	priv = GET_PRIV (session);
 
-	protocol = gossip_protocol_new ();
+	protocol = g_object_new (GOSSIP_TYPE_JABBER, NULL);
 	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), NULL);
 
-	account = gossip_protocol_new_account (protocol);
+	account = gossip_jabber_new_account ();
 	priv->protocols = g_list_append (priv->protocols,
 					 g_object_ref (protocol));
 
@@ -958,7 +957,7 @@ gossip_session_add_account (GossipSession *session,
 		return TRUE;
 	}
 
-	protocol = gossip_protocol_new ();
+	protocol = g_object_new (GOSSIP_TYPE_JABBER, NULL);
 	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), FALSE);
 
 	priv->protocols = g_list_append (priv->protocols,
