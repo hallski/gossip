@@ -481,7 +481,9 @@ jabber_finalize (GObject *object)
 
 	/* finalize extended modules */
 	gossip_jabber_chatrooms_finalize (priv->chatrooms);
-	gossip_jabber_ft_finalize (priv->fts);
+	if (priv->fts) {
+		gossip_jabber_ft_finalize (priv->fts);
+	}
 
 	g_hash_table_destroy (priv->composing_ids);
 	g_hash_table_destroy (priv->composing_timeouts);

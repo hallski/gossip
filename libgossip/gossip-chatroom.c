@@ -314,23 +314,14 @@ chatroom_init (GossipChatroom *chatroom)
 	priv = GET_PRIV (chatroom);
 
 	priv->id           = id++;
-	priv->id_str       = NULL;
 
 	priv->type         = 0;
-
-	priv->name         = NULL;
-	priv->nick         = NULL;
-	priv->server       = NULL;
-	priv->room         = NULL;
-	priv->password     = NULL;
 
 	priv->auto_connect = FALSE;
 	priv->favourite    = FALSE;
 
 	priv->status       = GOSSIP_CHATROOM_STATUS_INACTIVE;
-	priv->last_error   = NULL;
 
-	priv->account      = NULL;
 	priv->contacts     = g_hash_table_new_full (gossip_contact_hash,
 						    gossip_contact_equal,
 						    (GDestroyNotify) g_object_unref,
