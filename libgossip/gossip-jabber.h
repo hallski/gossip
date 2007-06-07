@@ -46,9 +46,14 @@ struct _GossipJabberClass {
 	GossipProtocolClass parent_class;
 };
 
+void
+gossip_jabber_setup (GossipProtocol *protocol, GossipAccount *account);
+
 GQuark         gossip_jabber_error_quark               (void) G_GNUC_CONST;
 
 GType          gossip_jabber_get_type                  (void) G_GNUC_CONST;
+void           gossip_jabber_login                     (GossipProtocol *protocol);
+void           gossip_jabber_logout                    (GossipProtocol *protocol);
 gboolean       gossip_jabber_get_vcard                 (GossipJabber        *jabber,
 							GossipContact       *contact,
 							GossipVCardCallback  callback);

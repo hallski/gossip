@@ -932,7 +932,7 @@ gossip_session_new_account (GossipSession *session)
 
 	session_protocol_signals_setup (session, protocol);
 
-	gossip_protocol_setup (protocol, account);
+	gossip_jabber_setup (protocol, account);
 
 	g_object_unref (protocol);
 	
@@ -969,7 +969,7 @@ gossip_session_add_account (GossipSession *session,
 
 	session_protocol_signals_setup (session, protocol);
 
-	gossip_protocol_setup (protocol, account);
+	gossip_jabber_setup (protocol, account);
 
 	g_object_unref (protocol);
 
@@ -1111,7 +1111,7 @@ session_connect (GossipSession *session,
 	}
 
 	/* Setup the network connection */
-	gossip_protocol_login (protocol);
+	gossip_jabber_login (protocol);
 }
 
 static void
@@ -1224,7 +1224,7 @@ session_disconnect (GossipSession *session,
 	gossip_debug (DEBUG_DOMAIN, "about to disconnect account:%p, name:'%s'",
 		      account, gossip_account_get_name (account));
 
-	gossip_protocol_logout (protocol);
+	gossip_jabber_logout (protocol);
 }
 
 static void
@@ -1749,7 +1749,7 @@ gossip_session_register_account (GossipSession       *session,
 	gossip_session_add_account (session, account);
 
 	protocol = g_hash_table_lookup (priv->accounts, account);
-	gossip_protocol_setup (protocol, account);
+	gossip_jabber_setup (protocol, account);
 
 	gossip_protocol_register_account (protocol, account, vcard,
 					  callback, user_data);

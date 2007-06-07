@@ -151,12 +151,8 @@ static void             jabber_finalize                     (GObject            
 static GossipContact *  jabber_new_contact                  (GossipProtocol             *protocol,
 							     const gchar                *id,
 							     const gchar                *name);
-static void             jabber_setup                        (GossipProtocol             *protocol,
-							     GossipAccount              *account);
 static void             jabber_setup_connection             (GossipJabber               *jabber);
-static void             jabber_login                        (GossipProtocol             *protocol);
 static gboolean         jabber_login_timeout_cb             (GossipJabber               *jabber);
-static void             jabber_logout                       (GossipProtocol             *protocol);
 static gboolean         jabber_logout_contact_foreach       (gpointer                    key,
 							     GossipContact              *contact,
 							     GossipJabber               *jabber);
@@ -377,9 +373,6 @@ gossip_jabber_class_init (GossipJabberClass *klass)
 	object_class->finalize = jabber_finalize;
 
 	protocol_class->new_contact             = jabber_new_contact;
-	protocol_class->setup                   = jabber_setup;
-	protocol_class->login                   = jabber_login;
-	protocol_class->logout                  = jabber_logout;
 	protocol_class->is_connected            = jabber_is_connected;
 	protocol_class->is_connecting           = jabber_is_connecting;
 	protocol_class->set_presence            = jabber_set_presence;
@@ -539,9 +532,8 @@ jabber_new_contact (GossipProtocol *protocol,
 	return contact;
 }
 
-static void
-jabber_setup (GossipProtocol *protocol,
-	      GossipAccount  *account)
+void
+gossip_jabber_setup (GossipProtocol *protocol, GossipAccount *account)
 {
 	GossipJabber     *jabber;
 	GossipJabberPriv *priv;
@@ -660,8 +652,8 @@ jabber_setup_connection (GossipJabber *jabber)
 	}
 }
 
-static void
-jabber_login (GossipProtocol *protocol)
+void
+gossip_jabber_login (GossipProtocol *protocol)
 {
 	GossipJabber     *jabber;
 	GossipJabberPriv *priv;
@@ -719,7 +711,7 @@ jabber_login (GossipProtocol *protocol)
 
 	if (error->code == 1 &&
 	    strcmp (error->message, "getaddrinfo() failed") == 0) {
-		jabber_logout (GOSSIP_PROTOCOL (jabber));
+		gossip_jabber_logout (GOSSIP_PROTOCOL (jabber));
 		jabber_error (GOSSIP_PROTOCOL (jabber), GOSSIP_PROTOCOL_NO_SUCH_HOST);
 	}
 
@@ -740,8 +732,8 @@ jabber_login_timeout_cb (GossipJabber *jabber)
 	return FALSE;
 }
 
-static void
-jabber_logout (GossipProtocol *protocol)
+void
+gossip_jabber_logout (GossipProtocol *protocol)
 {
 	GossipJabber     *jabber;
 	GossipJabberPriv *priv;
@@ -865,12 +857,12 @@ jabber_connection_open_cb (LmConnection *connection,
 		/* This is so we go no further that way we don't issue
 		 * warnings for connections we stopped ourselves.
 		 */
-		jabber_logout (GOSSIP_PROTOCOL (jabber));
+		gossip_jabber_logout (GOSSIP_PROTOCOL (jabber));
 		return;
 	}
 
 	if (result == FALSE) {
-		jabber_logout (GOSSIP_PROTOCOL (jabber));
+		gossip_jabber_logout (GOSSIP_PROTOCOL (jabber));
 		jabber_error (GOSSIP_PROTOCOL (jabber), GOSSIP_PROTOCOL_NO_CONNECTION);
 		return;
 	}
@@ -900,7 +892,7 @@ jabber_connection_open_cb (LmConnection *connection,
 			gossip_debug (DEBUG_DOMAIN, "Cancelled password request for:'%s'",
 				      id);
 
-			jabber_logout (GOSSIP_PROTOCOL (jabber));
+			gossip_jabber_logout (GOSSIP_PROTOCOL (jabber));
 			return;
 		}
 	} else {
@@ -916,7 +908,7 @@ jabber_connection_open_cb (LmConnection *connection,
 	if (!account_resource) {
 		gossip_debug (DEBUG_DOMAIN, "JabberID:'%s' is invalid, there is no resource.", jid_str);
 
-		jabber_logout (GOSSIP_PROTOCOL (jabber));
+		gossip_jabber_logout (GOSSIP_PROTOCOL (jabber));
 		jabber_error (GOSSIP_PROTOCOL (jabber), GOSSIP_PROTOCOL_INVALID_USER);
 		return;
 	}
@@ -966,7 +958,7 @@ jabber_connection_auth_cb (LmConnection *connection,
 	priv = GET_PRIV (jabber);
 
 	if (result == FALSE) {
-		jabber_logout (GOSSIP_PROTOCOL (jabber));
+		gossip_jabber_logout (GOSSIP_PROTOCOL (jabber));
 		jabber_error (GOSSIP_PROTOCOL (jabber), GOSSIP_PROTOCOL_AUTH_FAILED);
 		return;
 	}
@@ -1210,7 +1202,7 @@ jabber_register_cancel (GossipProtocol *protocol)
 
 	priv->register_cancel = TRUE;
 
-	jabber_logout (protocol);
+	gossip_jabber_logout (protocol);
 }
 
 static LmHandlerResult

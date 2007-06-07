@@ -57,9 +57,6 @@ G_DEFINE_TYPE (GossipProtocol, gossip_protocol, G_TYPE_OBJECT);
 static void
 gossip_protocol_class_init (GossipProtocolClass *klass)
 {
-	klass->setup                = NULL;
-	klass->login                = NULL;
-	klass->logout               = NULL;
 	klass->is_connected         = NULL;
 	klass->is_connecting        = NULL;
 	klass->set_presence         = NULL;
@@ -214,47 +211,6 @@ gossip_protocol_new_contact (GossipProtocol *protocol,
 	}
 
 	return NULL;
-}
-
-void
-gossip_protocol_setup (GossipProtocol *protocol,
-		       GossipAccount  *account)
-{
-	GossipProtocolClass *klass;
-
-	g_return_if_fail (GOSSIP_IS_PROTOCOL (protocol));
-	g_return_if_fail (account != NULL);
-
-	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
-	if (klass->setup) {
-		klass->setup (protocol, account);
-	}
-}
-
-void
-gossip_protocol_login (GossipProtocol *protocol)
-{
-	GossipProtocolClass *klass;
-
-	g_return_if_fail (GOSSIP_IS_PROTOCOL (protocol));
-
-	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
-	if (klass->login) {
-		klass->login (protocol);
-	}
-}
-
-void
-gossip_protocol_logout (GossipProtocol *protocol)
-{
-	GossipProtocolClass *klass;
-
-	g_return_if_fail (GOSSIP_IS_PROTOCOL (protocol));
-
-	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
-	if (klass->logout) {
-		klass->logout (protocol);
-	}
 }
 
 gboolean

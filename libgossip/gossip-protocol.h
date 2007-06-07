@@ -70,10 +70,6 @@ struct _GossipProtocolClass {
 	GossipContact * (*new_contact)             (GossipProtocol         *protocol,
 						    const gchar            *id,
 						    const gchar            *name);
-	void            (*setup)                   (GossipProtocol         *protocol,
-						    GossipAccount          *account);
-	void            (*login)                   (GossipProtocol         *protocol);
-	void            (*logout)                  (GossipProtocol         *protocol);
 	gboolean        (*is_connected)            (GossipProtocol         *protocol);
 	gboolean        (*is_connecting)           (GossipProtocol         *protocol);
 	gboolean        (*is_ssl_supported)        (GossipProtocol         *protocol);
@@ -153,10 +149,6 @@ GType           gossip_protocol_get_type                (void) G_GNUC_CONST;
 GossipContact  *gossip_protocol_new_contact             (GossipProtocol         *protocol,
 							 const gchar            *id,
 							 const gchar            *name);
-void            gossip_protocol_setup                   (GossipProtocol         *protocol,
-							 GossipAccount          *account);
-void            gossip_protocol_login                   (GossipProtocol         *protocol);
-void            gossip_protocol_logout                  (GossipProtocol         *protocol);
 gboolean        gossip_protocol_is_connected            (GossipProtocol         *protocol);
 gboolean        gossip_protocol_is_connecting           (GossipProtocol         *protocol);
 void            gossip_protocol_send_message            (GossipProtocol         *protocol,
