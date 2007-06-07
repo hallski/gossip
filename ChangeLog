@@ -1,3 +1,10 @@
+2007-06-08  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-jabber.c: (gossip_jabber_setup),
+	(gossip_jabber_login): Make sure we refresh the LmConnection
+	settings before connecting, like server, port, etc from the
+	GossipAccount, this fixes bug #444127.
+
 2007-06-08  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-theme-fancy.[ch]:

@@ -538,30 +538,19 @@ gossip_jabber_setup (GossipProtocol *protocol, GossipAccount *account)
 	GossipJabber     *jabber;
 	GossipJabberPriv *priv;
 	LmMessageHandler *handler;
-	GossipJID        *jid;
-	const gchar      *id;
 	const gchar      *server;
-	guint             port;
 
 	g_return_if_fail (GOSSIP_IS_JABBER (protocol));
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 
 	jabber = GOSSIP_JABBER (protocol);
 	priv = GET_PRIV (jabber);
-
+	
 	priv->account = g_object_ref (account);
-
 	priv->contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_USER,
 					    priv->account);
 
-	g_object_get (account,
-		      "id", &id,
-		      "server", &server,
-		      "port", &port,
-		      NULL);
-
-	g_object_set (priv->contact, "id", id, NULL);
-
+	server = gossip_account_get_server (priv->account);
 	priv->connection = lm_connection_new (server);
 
 	/* setup the connection to send keep alive messages every 30 seconds */
@@ -570,12 +559,6 @@ gossip_jabber_setup (GossipProtocol *protocol, GossipAccount *account)
 	lm_connection_set_disconnect_function (priv->connection,
 					       (LmDisconnectFunction) jabber_disconnect_cb,
 					       jabber, NULL);
-
-	lm_connection_set_port (priv->connection, port);
-
-	jid = gossip_jid_new (id);
-	lm_connection_set_jid (priv->connection, gossip_jid_get_without_resource (jid));
-	gossip_jid_unref (jid);
 
 	handler = lm_message_handler_new ((LmHandleMessageFunction) jabber_message_handler,
 					  jabber, NULL);
@@ -657,6 +640,10 @@ gossip_jabber_login (GossipProtocol *protocol)
 {
 	GossipJabber     *jabber;
 	GossipJabberPriv *priv;
+	GossipJID        *jid;
+	const gchar      *id;
+	const gchar      *server;
+	guint16           port;
 	GError           *error = NULL;
 	gboolean          result;
 
@@ -665,6 +652,23 @@ gossip_jabber_login (GossipProtocol *protocol)
 	jabber = GOSSIP_JABBER (protocol);
 	priv = GET_PRIV (jabber);
 
+	gossip_debug (DEBUG_DOMAIN, "Refreshing connection details");
+
+	id = gossip_account_get_id (priv->account);
+	server = gossip_account_get_server (priv->account);
+	port = gossip_account_get_port (priv->account);
+
+	jid = gossip_jid_new (id);
+
+	/* Update connection details and own contact information */
+	gossip_contact_set_id (priv->contact, id);
+
+	lm_connection_set_server (priv->connection, server);
+	lm_connection_set_port (priv->connection, port);
+	lm_connection_set_jid (priv->connection, gossip_jid_get_without_resource (jid));
+	
+	gossip_jid_unref (jid);
+	
 	gossip_debug (DEBUG_DOMAIN, "Connecting...");
 	g_signal_emit_by_name (jabber, "connecting", priv->account);
 
