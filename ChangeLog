@@ -1,5 +1,17 @@
 2007-06-07  Mikael Hallendal  <micke@imendio.com>
 
+	* libgossip/gossip-jabber.c:
+	* libgossip/gossip-protocol.[ch]:
+	- Removed gossip_protocol_get_example_username.
+	* libgossip/gossip-jid.[ch] (gossip_jid_get_example_string):
+	- Added.
+	* src/gossip-add-contact-dialog.c:
+	(add_contact_dialog_id_entry_focus_cb,
+	add_contact_dialog_account_chooser_changed_cb):
+	- Use gossip_jid_get_example_string instead of the removed function.
+
+2007-06-07  Mikael Hallendal  <micke@imendio.com>
+
 	* libgossip/gossip-jabber.c (jabber_finalize): Only finalize the
 	filetransfer object if it exists. Removes a warning when creating an
 	account.

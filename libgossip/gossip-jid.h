@@ -63,6 +63,8 @@ gboolean     gossip_jid_equal                    (gconstpointer  v1,
 						  gconstpointer  v2);
 guint        gossip_jid_hash                     (gconstpointer  key);
 
+const gchar *gossip_jid_get_example_string       (void);
+
 G_END_DECLS
 
 #endif /* __GOSSIP_JID_H__ */

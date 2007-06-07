@@ -440,3 +440,10 @@ gossip_jid_hash (gconstpointer key)
 
 	return ret_val;
 }
+
+const gchar *
+gossip_jid_get_example_string (void)
+{
+	return "user@jabber.org";
+}
+

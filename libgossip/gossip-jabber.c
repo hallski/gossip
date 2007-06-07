@@ -210,7 +210,6 @@ static LmHandlerResult  jabber_register_message_handler     (LmMessageHandler   
 static gboolean         jabber_is_connected                 (GossipProtocol             *protocol);
 static gboolean         jabber_is_connecting                (GossipProtocol             *protocol);
 static gboolean         jabber_is_ssl_supported             (GossipProtocol             *protocol);
-static const gchar *    jabber_get_example_username         (GossipProtocol             *protocol);
 static gchar *          jabber_get_default_server           (GossipProtocol             *protocol,
 							     const gchar                *username);
 static guint            jabber_get_default_port             (GossipProtocol             *protocol,
@@ -391,7 +390,6 @@ gossip_jabber_class_init (GossipJabberClass *klass)
 	protocol_class->is_connected            = jabber_is_connected;
 	protocol_class->is_connecting           = jabber_is_connecting;
 	protocol_class->is_ssl_supported        = jabber_is_ssl_supported;
-	protocol_class->get_example_username    = jabber_get_example_username;
 	protocol_class->get_default_server      = jabber_get_default_server;
 	protocol_class->get_default_port        = jabber_get_default_port;
 	protocol_class->set_presence            = jabber_set_presence;
@@ -511,7 +509,7 @@ jabber_new_account (GossipProtocol *protocol)
 
 	g_return_val_if_fail (GOSSIP_IS_JABBER (protocol), NULL);
 
-	example_id = jabber_get_example_username (protocol);
+	example_id = gossip_jid_get_example_string ();
 	server = jabber_get_default_server (protocol, example_id);
 	have_ssl = jabber_is_ssl_supported (protocol);
 	port = jabber_get_default_port (protocol, have_ssl);
@@ -1674,12 +1672,6 @@ static gboolean
 jabber_is_ssl_supported (GossipProtocol *protocol)
 {
 	return lm_ssl_is_supported ();
-}
-
-static const gchar *
-jabber_get_example_username (GossipProtocol *protocol)
-{
-	return "user@jabber.org";
 }
 
 static gchar *

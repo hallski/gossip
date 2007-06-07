@@ -27,6 +27,7 @@
 #include <glade/glade.h>
 
 #include <libgossip/gossip-account.h>
+#include <libgossip/gossip-jid.h>
 #include <libgossip/gossip-session.h>
 #include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-protocol.h>
@@ -195,7 +196,7 @@ add_contact_dialog_id_entry_focus_cb (GtkWidget              *widget,
 
 	/* Make sure we aren't looking up the same ID or the example */
 	id = gtk_entry_get_text (GTK_ENTRY (dialog->entry_id));
-	example = gossip_protocol_get_example_username (protocol);
+	example = gossip_jid_get_example_string ();
 
 	lookup &= !G_STR_EMPTY (id);
 
@@ -250,7 +251,7 @@ add_contact_dialog_account_chooser_changed_cb (GtkWidget              *account_c
 	account = gossip_account_chooser_get_account (GOSSIP_ACCOUNT_CHOOSER (account_chooser));
 	protocol = gossip_session_get_protocol (gossip_app_get_session (), account);
 
-	example = gossip_protocol_get_example_username (protocol);
+	example = gossip_jid_get_example_string ();
 	gtk_entry_set_text (GTK_ENTRY (dialog->entry_id), example);
 	
 	g_object_unref (account);
