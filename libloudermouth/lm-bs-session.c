@@ -105,9 +105,30 @@ static void
 lm_bs_session_init (LmBsSession *session)
 {
 	LmBsSessionPriv *priv;
+	GDestroyNotify   destroy_transfer;
+	GDestroyNotify   destroy_sender;
 
 	priv = GET_PRIV (session);
 
+	destroy_transfer = (GDestroyNotify) lm_bs_transfer_unref;
+	destroy_sender = (GDestroyNotify) lm_bs_sender_unref;
+
+	priv->float_clients = g_hash_table_new_full (g_direct_hash,
+						     g_direct_equal,
+						     NULL,
+						     destroy_sender);
+	priv->transfers = g_hash_table_new_full (g_direct_hash, 
+						 g_direct_equal, 
+						 NULL, 
+						 destroy_transfer);
+	priv->float_shas = g_hash_table_new_full (g_str_hash, 
+						  g_str_equal,
+						  g_free,
+						  NULL);
+	priv->iq_ids = g_hash_table_new_full (g_str_hash, 
+					      g_str_equal,
+					      g_free,
+					      NULL);
 }
 
 static void
@@ -280,40 +301,14 @@ lm_bs_session_new (GMainContext *context)
 {
 	LmBsSession     *session;
 	LmBsSessionPriv *priv;
-	GDestroyNotify   destroy_transfer;
-	GDestroyNotify   destroy_sender;
 
 	session = g_object_new (LM_TYPE_BS_SESSION, NULL);
 
 	priv = GET_PRIV (session);
 
-	destroy_transfer = (GDestroyNotify) lm_bs_transfer_unref;
-	destroy_sender = (GDestroyNotify) lm_bs_sender_unref;
-
-	priv->float_clients = g_hash_table_new_full (g_direct_hash,
-						        g_direct_equal,
-						        NULL,
-						        destroy_sender);
-	priv->transfers = g_hash_table_new_full (g_direct_hash, 
-						    g_direct_equal, 
-						    NULL, 
-						    destroy_transfer);
-	priv->float_shas = g_hash_table_new_full (g_str_hash, 
-						     g_str_equal,
-						     g_free,
-						     NULL);
-	priv->iq_ids = g_hash_table_new_full (g_str_hash, 
-						 g_str_equal,
-						 g_free,
-						 NULL);
-
-	priv->context = context;
-
 	if (context) {
-		g_main_context_ref (context);
+		priv->context = g_main_context_ref (context);
 	}
-
-	priv->listener = NULL;
 
 	return session;
 }

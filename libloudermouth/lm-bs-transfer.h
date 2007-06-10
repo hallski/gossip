@@ -75,6 +75,8 @@ const gchar *      lm_bs_transfer_get_sid            (LmBsTransfer      *transfe
 gchar *            lm_bs_transfer_get_auth_sha       (LmBsTransfer      *transfer);
 LmBsTransferType   lm_bs_transfer_get_type           (LmBsTransfer      *transfer);
 LmBsTransferStatus lm_bs_transfer_get_status         (LmBsTransfer      *transfer);
+guint64            lm_bs_transfer_get_bytes_complete (LmBsTransfer      *transfer);
+guint64            lm_bs_transfer_get_bytes_total    (LmBsTransfer      *transfer);
 void               lm_bs_transfer_error              (LmBsTransfer      *transfer,
 						      GError            *error);
 const gchar *      lm_bs_transfer_get_iq_id          (LmBsTransfer      *transfer);

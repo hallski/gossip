@@ -46,7 +46,7 @@ struct _LmBsTransfer{
 
 	gchar              *peer_jid;
 	gchar              *location;
-	guint64             file_size;
+	guint64             bytes_total;
 	guint64             bytes_transfered;
 
 	guint               id;
@@ -296,7 +296,7 @@ lm_bs_transfer_new (LmBsSession      *session,
 		    const gchar      *sid,
 		    const gchar      *peer_jid,
 		    const gchar      *location,
-		    gint64            file_size)
+		    gint64            bytes_total)
 {
 	LmBsTransfer *transfer;
 
@@ -310,7 +310,7 @@ lm_bs_transfer_new (LmBsSession      *session,
 	lm_connection_ref (connection);
 
 	transfer->type = type;
-	transfer->file_size = file_size;
+	transfer->bytes_total = bytes_total;
 	transfer->location = g_strdup (location);
 	transfer->sid = g_strdup (sid);
 	transfer->id = id;
@@ -388,7 +388,7 @@ lm_bs_transfer_append_to_file (LmBsTransfer *transfer,
 	}
 
 	transfer->bytes_transfered += bytes_written;
-	if (transfer->bytes_transfered >= transfer->file_size) {
+	if (transfer->bytes_transfered >= transfer->bytes_total) {
 		bs_transfer_completed (transfer);
 		return FALSE;
 	}
@@ -410,7 +410,7 @@ lm_bs_transfer_get_file_content (LmBsTransfer  *transfer,
 
 	error = NULL;
 
-	if (transfer->bytes_transfered >= transfer->file_size) {
+	if (transfer->bytes_transfered >= transfer->bytes_total) {
 		bs_transfer_completed (transfer);
 		return FALSE;
 	}
@@ -448,6 +448,18 @@ LmBsTransferStatus
 lm_bs_transfer_get_status (LmBsTransfer *transfer)
 {
 	return transfer->status;
+}
+
+guint64
+lm_bs_transfer_get_bytes_complete (LmBsTransfer *transfer)
+{
+	return transfer->bytes_transfered;
+}
+
+guint64
+lm_bs_transfer_get_bytes_total (LmBsTransfer *transfer)
+{
+	return transfer->bytes_total;
 }
 
 void
