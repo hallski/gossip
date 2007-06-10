@@ -199,8 +199,6 @@ static LmHandlerResult  jabber_register_message_handler     (LmMessageHandler   
 							     LmConnection               *conn,
 							     LmMessage                  *m,
 							     AsyncData                  *ad);
-static gboolean         jabber_is_connected                 (GossipProtocol             *protocol);
-static gboolean         jabber_is_connecting                (GossipProtocol             *protocol);
 static void             jabber_send_message                 (GossipProtocol             *protocol,
 							     GossipMessage              *message);
 static void             jabber_send_composing               (GossipProtocol             *protocol,
@@ -369,8 +367,6 @@ gossip_jabber_class_init (GossipJabberClass *klass)
 
 	object_class->finalize = jabber_finalize;
 
-	protocol_class->is_connected            = jabber_is_connected;
-	protocol_class->is_connecting           = jabber_is_connecting;
 	protocol_class->set_presence            = jabber_set_presence;
 	protocol_class->set_subscription        = jabber_set_subscription;
 	protocol_class->set_vcard               = jabber_set_vcard;
@@ -1601,15 +1597,13 @@ jabber_register_message_handler (LmMessageHandler *handler,
 	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
 
-static gboolean
-jabber_is_connected (GossipProtocol *protocol)
+gboolean
+gossip_jabber_is_connected (GossipJabber *jabber)
 {
-	GossipJabber     *jabber;
 	GossipJabberPriv *priv;
 
-	g_return_val_if_fail (GOSSIP_IS_JABBER (protocol), FALSE);
+	g_return_val_if_fail (GOSSIP_IS_JABBER (jabber), FALSE);
 
-	jabber = GOSSIP_JABBER (protocol);
 	priv = GET_PRIV (jabber);
 
 	if (priv->connection == NULL) {
@@ -1619,16 +1613,14 @@ jabber_is_connected (GossipProtocol *protocol)
 	return lm_connection_is_authenticated (priv->connection);
 }
 
-static gboolean
-jabber_is_connecting (GossipProtocol *protocol)
+gboolean
+gossip_jabber_is_connecting (GossipJabber *jabber)
 {
-	GossipJabber      *jabber;
 	GossipJabberPriv  *priv;
 	LmConnectionState  state;
 
-	g_return_val_if_fail (GOSSIP_IS_JABBER (protocol), FALSE);
+	g_return_val_if_fail (GOSSIP_IS_JABBER (jabber), FALSE);
 
-	jabber = GOSSIP_JABBER (protocol);
 	priv = GET_PRIV (jabber);
 
 	if (priv->connection == NULL) {

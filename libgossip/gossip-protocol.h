@@ -146,8 +146,6 @@ struct _GossipProtocolClass {
 
 GType           gossip_protocol_get_type                (void) G_GNUC_CONST;
 
-gboolean        gossip_protocol_is_connected            (GossipProtocol         *protocol);
-gboolean        gossip_protocol_is_connecting           (GossipProtocol         *protocol);
 void            gossip_protocol_send_message            (GossipProtocol         *protocol,
 							 GossipMessage          *message);
 void            gossip_protocol_send_composing          (GossipProtocol         *protocol,

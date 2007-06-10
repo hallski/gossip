@@ -79,6 +79,8 @@ gboolean       gossip_jabber_is_ssl_supported          (void);
 GossipContact *gossip_jabber_new_contact               (GossipJabber        *jabber,
 							const gchar         *id,
 							const gchar         *name);
+gboolean       gossip_jabber_is_connected              (GossipJabber        *jabber);
+gboolean       gossip_jabber_is_connecting             (GossipJabber        *jabber);
 
 G_END_DECLS
 

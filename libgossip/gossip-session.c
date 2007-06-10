@@ -855,12 +855,12 @@ session_count_accounts_foreach_cb (GossipAccount  *account,
 
 	priv = GET_PRIV (ca->session);
 
-	if (gossip_protocol_is_connected (protocol)) {
+	if (gossip_jabber_is_connected (GOSSIP_JABBER (protocol))) {
 		ca->connected++;
 	} else {
 		ca->disconnected++;
 
-		if (gossip_protocol_is_connecting (protocol)) {
+		if (gossip_jabber_is_connecting (GOSSIP_JABBER (protocol))) {
 			ca->connecting++;
 		}
 	}
@@ -1096,8 +1096,7 @@ session_account_removed_cb (GossipAccountManager *manager,
 }
 
 static void
-session_connect (GossipSession *session,
-		 GossipAccount *account)
+session_connect (GossipSession *session, GossipAccount *account)
 {
 	GossipSessionPriv *priv;
 	GossipProtocol    *protocol;
@@ -1106,7 +1105,7 @@ session_connect (GossipSession *session,
 
 	protocol = g_hash_table_lookup (priv->accounts, account);
 
-	if (gossip_protocol_is_connected (protocol)) {
+	if (gossip_jabber_is_connected (GOSSIP_JABBER (protocol))) {
 		return;
 	}
 
@@ -1312,7 +1311,7 @@ gossip_session_send_composing (GossipSession  *session,
 		return;
 	}
 
-	if (!gossip_protocol_is_connected (protocol)) {
+	if (!gossip_jabber_is_connected (GOSSIP_JABBER (protocol))) {
 		return;
 	}
 
@@ -1355,7 +1354,7 @@ gossip_session_set_presence (GossipSession  *session,
 
 		protocol = GOSSIP_PROTOCOL (l->data);
 
-		if (!gossip_protocol_is_connected (protocol)) {
+		if (!gossip_jabber_is_connected (GOSSIP_JABBER (protocol))) {
 			continue;
 		}
 
@@ -1377,7 +1376,7 @@ gossip_session_is_connected (GossipSession *session,
 	if (account) {
 		protocol = g_hash_table_lookup (priv->accounts, account);
 
-		return gossip_protocol_is_connected (protocol);
+		return gossip_jabber_is_connected (GOSSIP_JABBER (protocol));
 	}
 
 	/* Fall back to counter if no account is provided */
@@ -1400,7 +1399,7 @@ gossip_session_is_connecting (GossipSession *session,
 	if (account) {
 		protocol = g_hash_table_lookup (priv->accounts, account);
 
-		return gossip_protocol_is_connecting (protocol);
+		return gossip_jabber_is_connecting (GOSSIP_JABBER (protocol));
 	}
 
 	/* Fall back to counter if no account is provided */

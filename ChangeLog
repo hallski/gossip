@@ -1,5 +1,13 @@
 2007-06-11  Mikael Hallendal  <micke@imendio.com>
 
+	* libgossip/gossip-jabber.[ch]:
+	* libgossip/gossip-protocol.[ch]:
+	* libgossip/gossip-session.c:
+	(gossip_protocol_is_connected, gossip_protocol_is_connecting):
+	- Directly use GossipJabber instead of going through GossipProtocol.
+
+2007-06-11  Mikael Hallendal  <micke@imendio.com>
+
 	* libgossip/gossip-contact-manager.c:
 	* libgossip/gossip-jabber.[ch]:
 	* libgossip/gossip-protocol.[ch]:

@@ -196,36 +196,6 @@ gossip_protocol_init (GossipProtocol *protocol)
 	/* FIXME: Implement */
 }
 
-gboolean
-gossip_protocol_is_connected (GossipProtocol *protocol)
-{
-	GossipProtocolClass *klass;
-
-	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), FALSE);
-
-	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
-	if (klass->is_connected) {
-		return klass->is_connected (protocol);
-	}
-
-	return FALSE;
-}
-
-gboolean
-gossip_protocol_is_connecting (GossipProtocol *protocol)
-{
-	GossipProtocolClass *klass;
-
-	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), FALSE);
-
-	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
-	if (klass->is_connecting) {
-		return klass->is_connecting (protocol);
-	}
-
-	return FALSE;
-}
-
 void
 gossip_protocol_send_message (GossipProtocol *protocol,
 			      GossipMessage  *message)
