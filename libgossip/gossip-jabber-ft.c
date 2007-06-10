@@ -222,13 +222,14 @@ jabber_ft_transfer_complete_cb (GossipJabber *jabber,
 
 	gossip_debug (DEBUG_DOMAIN, "ID[%d] Transfer is complete", id);
 
-	gossip_debug (DEBUG_DOMAIN, "ID[%d], ft_ids hash table size is %d", 
-		      id, g_hash_table_size (fts->ft_ids));
-
 	fts = gossip_jabber_get_fts (jabber);
 	id_str = g_strdup_printf ("%d", id);
 	ft = g_hash_table_lookup (fts->ft_ids, id_str);
 	g_free (id_str);
+
+	gossip_debug (DEBUG_DOMAIN, 
+		      "ID[%d], ft_ids hash table size is %d (AFTER REMOVING COMPLETE ENTRY)", 
+		      id, g_hash_table_size (fts->ft_ids));
 
 	g_signal_emit_by_name (fts->jabber, "file-transfer-complete", ft);
 }
@@ -329,7 +330,7 @@ jabber_ft_iq_streamhost (LmConnection *conn,
 
 	iq_id = lm_message_node_get_attribute (m->node, "id");
 	fts = gossip_jabber_get_fts (jabber);
-	lm_bs_session_activate_streamhost (fts->bs_session, iq_id, attr);
+	lm_bs_session_streamhost_activate (fts->bs_session, iq_id, attr);
 
 	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
@@ -397,7 +398,7 @@ jabber_ft_iq_query (LmConnection *conn,
 			continue;
 		}
 		
-		lm_bs_session_add_streamhost (fts->bs_session,
+		lm_bs_session_streamhost_add (fts->bs_session,
 					      id,
 					      host,
 					      port,
@@ -474,7 +475,7 @@ jabber_ft_send_streamhosts (LmConnection *conn,
 					"port",
 					port_str);
 	
-	lm_bs_session_add_streamhost (fts->bs_session,
+	lm_bs_session_streamhost_add (fts->bs_session,
 				      id,
 				      local_host,
 				      port_str,

@@ -26,13 +26,29 @@
 #error "Only <loudmouth/loudmouth.h> can be included directly, this file may disappear or change contents."
 #endif
 
+#include <glib-object.h>
+
 #include <loudmouth/lm-connection.h>
 
 G_BEGIN_DECLS
 
-#define LM_BS_SESSION(obj) (LmBsSession *) obj;
+#define LM_TYPE_BS_SESSION         (lm_bs_session_get_type ())
+#define LM_BS_SESSION(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), LM_TYPE_BS_SESSION, LmBsSession))
+#define LM_BS_SESSION_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST ((k), LM_TYPE_BS_SESSION, LmBsSessionClass))
+#define LM_IS_BS_SESSION(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), LM_TYPE_BS_SESSION))
+#define LM_IS_BS_SESSION_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), LM_TYPE_BS_SESSION))
+#define LM_BS_SESSION_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), LM_TYPE_BS_SESSION, LmBsSessionClass))
 
-typedef struct _LmBsSession LmBsSession;
+typedef struct _LmBsSession      LmBsSession;
+typedef struct _LmBsSessionClass LmBsSessionClass;
+
+struct _LmBsSession {
+	GObject parent;
+};
+
+struct _LmBsSessionClass {
+	GObjectClass parent_class;
+};
 
 typedef void    (* LmBsFailureFunction)             (gpointer       user_data,
 						     guint          id,
@@ -40,10 +56,10 @@ typedef void    (* LmBsFailureFunction)             (gpointer       user_data,
 typedef void    (* LmBsCompleteFunction)            (gpointer       user_data,
 						     guint          id);
 
+GType           lm_bs_session_get_type              (void) G_GNUC_CONST;
+
 LmBsSession *   lm_bs_session_new                   (GMainContext  *context);
 LmBsSession *   lm_bs_session_get_default           (GMainContext  *context);
-LmBsSession *   lm_bs_session_ref                   (LmBsSession   *session);
-void            lm_bs_session_unref                 (LmBsSession   *session);
 void            lm_bs_session_set_failure_function  (LmBsSession   *session,
 						     LmBsFailureFunction  function,
 						     gpointer       user_data,
@@ -52,11 +68,6 @@ void            lm_bs_session_set_complete_function (LmBsSession   *session,
 						     LmBsCompleteFunction function,
 						     gpointer       user_data,
 						     GDestroyNotify notify);
-void            lm_bs_session_add_streamhost        (LmBsSession   *session,
-						     guint          id,
-						     const gchar   *host,
-						     const gchar   *port,
-						     const gchar   *jid);
 void            lm_bs_session_receive_file          (LmBsSession   *session, 
 						     LmConnection  *connection,
 						     guint          id,
@@ -71,26 +82,20 @@ void            lm_bs_session_send_file             (LmBsSession   *session,
 						     const gchar   *receiver,
 						     const gchar   *location,
 						     guint64        file_size);
-void            lm_bs_session_remove_transfer       (LmBsSession   *session,
-						     guint          fd);
-void            lm_bs_session_activate_streamhost   (LmBsSession   *session,
-						     const gchar   *iq_id,
-						     const gchar   *jid);
 void            lm_bs_session_set_iq_id             (LmBsSession   *session,
 						     guint          id,
 						     const gchar   *iq_id);
-guint           lm_bs_session_start_listener        (LmBsSession   *session);
-GMainContext * _lm_bs_session_get_context           (LmBsSession   *session);
-void           _lm_bs_session_transfer_error        (LmBsSession   *session,
+void            lm_bs_session_streamhost_add        (LmBsSession   *session,
 						     guint          id,
-						     GError        *error);
-void           _lm_bs_session_transfer_completed    (LmBsSession   *session,
-						     guint          id);
-void           _lm_bs_session_remove_sender         (LmBsSession   *session,
+						     const gchar   *host,
+						     const gchar   *port,
+						     const gchar   *jid);
+void            lm_bs_session_streamhost_activate   (LmBsSession   *session,
+						     const gchar   *iq_id,
+						     const gchar   *jid);
+void            lm_bs_session_remove_transfer       (LmBsSession   *session,
 						     guint          fd);
-void           _lm_bs_session_match_sha             (LmBsSession   *session,
-						     const gchar   *sha,
-						     guint          fd);
+guint           lm_bs_session_start_listener        (LmBsSession   *session);
 
 G_END_DECLS
 

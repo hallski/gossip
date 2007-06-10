@@ -1,3 +1,17 @@
+2007-06-10  Martyn Russell  <martyn@imendio.com>
+
+	* libloudermouth/Makefile.am:
+	* libloudermouth/libloudermouth-marshal-main.c: Added.
+	
+	* libgossip/gossip-jabber-ft.c:
+	* libloudermouth/lm-bs-client.h:
+	* libloudermouth/lm-bs-listener.c:
+	* libloudermouth/lm-bs-private.h:
+	* libloudermouth/lm-bs-sender.c:
+	* libloudermouth/lm-bs-session.[ch]:
+	* libloudermouth/lm-bs-transfer.c: Cleaned up API and
+	GObject-ified the LmBsSession code.
+
 2007-06-08  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-contact-manager.c:

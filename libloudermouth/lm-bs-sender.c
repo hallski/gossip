@@ -33,6 +33,7 @@
 #include "lm-bs-transfer.h"
 #include "lm-bs-client.h"
 #include "lm-bs-sender.h"
+#include "lm-bs-private.h"
 
 #define IO_READ_FLAGS  G_IO_IN | G_IO_PRI | G_IO_HUP
 #define IO_WRITE_FLAGS G_IO_OUT | G_IO_ERR

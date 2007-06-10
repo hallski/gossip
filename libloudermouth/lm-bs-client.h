@@ -28,7 +28,6 @@
 #error "Only <loudmouth/loudmouth.h> can be included directly, this file may disappear or change contents."
 #endif
 
-
 G_BEGIN_DECLS
 
 #define LM_BS_CLIENT(obj) (LmBsClient *) obj;
@@ -45,7 +44,7 @@ typedef enum {
 } LmBsClientStatus;
 
 typedef void (* LmBsClientFunction)               (LmBsClient   *client,
-						   gpointer       user_data);
+						   gpointer      user_data);
 typedef void (* LmBsClientReadFunction)           (LmBsClient   *client,
 						   gpointer      user_data,
 						   gpointer      user_data2);
@@ -65,10 +64,12 @@ LmBsClient *     lm_bs_client_new_with_context    (guint64       port,
 						   LmCallback   *data_read_cb,
 						   LmCallback   *data_written_cb,
 						   GMainContext *context);
-guint            lm_bs_client_connect             (LmBsClient   *client);
-guint            lm_bs_client_stop                (LmBsClient   *client);
 LmBsClient *     lm_bs_client_ref                 (LmBsClient   *client);
 void             lm_bs_client_unref               (LmBsClient   *client);
+
+guint            lm_bs_client_connect             (LmBsClient   *client);
+guint            lm_bs_client_stop                (LmBsClient   *client);
+
 gchar *          lm_bs_client_get_host            (LmBsClient   *client);
 LmSocket         lm_bs_client_get_fd              (LmBsClient   *client);
 LmBsClientStatus lm_bs_client_get_status          (LmBsClient   *client);

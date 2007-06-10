@@ -33,6 +33,7 @@
 #include "lm-bs-client.h"
 #include "lm-bs-transfer.h"
 #include "lm-bs-receiver.h"
+#include "lm-bs-private.h"
 
 #define XMLNS_BYTESTREAMS "http://jabber.org/protocol/bytestreams"
 
@@ -264,7 +265,7 @@ bs_transfer_free (LmBsTransfer *transfer)
 	g_free (transfer->iq_id);
 	g_free (transfer);
 
-	lm_bs_session_unref (session);
+	g_object_unref (session);
 	lm_connection_unref (connection);
 }
 
@@ -328,7 +329,7 @@ lm_bs_transfer_new (LmBsSession      *session,
 						       g_free, 
 						       (GDestroyNotify) lm_bs_client_unref);
 
-	transfer->session = lm_bs_session_ref (session);
+	transfer->session = g_object_ref (session);
 	transfer->activate_cb = NULL;
 	transfer->file_channel = NULL;
 	transfer->bytes_transfered = 0;

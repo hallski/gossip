@@ -286,6 +286,7 @@ lm_bs_listener_stop (LmBsListener *listener)
 		if (source) {
 			g_source_destroy (source);
 		}
+
 		listener->io_watch = 0;
 	}
 
@@ -296,8 +297,7 @@ lm_bs_listener_stop (LmBsListener *listener)
 	}
 
 	if (cb && cb->func) {
-		(* ((LmBsClientFunction) cb->func)) (NULL,
-						     cb->user_data);
+		(* ((LmBsClientFunction) cb->func)) (NULL, cb->user_data);
 	}
 }
 
