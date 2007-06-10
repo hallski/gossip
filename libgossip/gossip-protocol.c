@@ -196,23 +196,6 @@ gossip_protocol_init (GossipProtocol *protocol)
 	/* FIXME: Implement */
 }
 
-GossipContact *
-gossip_protocol_new_contact (GossipProtocol *protocol,
-			     const gchar    *id,
-			     const gchar    *name)
-{
-	GossipProtocolClass *klass;
-
-	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), NULL);
-
-	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
-	if (klass->new_contact) {
-		return klass->new_contact (protocol, id, name);
-	}
-
-	return NULL;
-}
-
 gboolean
 gossip_protocol_is_connected (GossipProtocol *protocol)
 {

@@ -31,6 +31,7 @@
 
 #include "gossip-session.h"
 #include "gossip-debug.h"
+#include "gossip-jabber.h"
 #include "gossip-protocol.h"
 #include "gossip-contact-manager.h"
 #include "gossip-account-manager.h"
@@ -348,7 +349,8 @@ contact_manager_parse_contact (GossipContactManager *manager,
 		priv = GET_PRIV (manager);
 
 		protocol = gossip_session_get_protocol (priv->session, account); 
-		contact = gossip_protocol_new_contact (protocol, id, name);
+		contact = gossip_jabber_new_contact (GOSSIP_JABBER (protocol), 
+						     id, name);
 
 		gossip_contact_manager_add (manager, contact);
 	}

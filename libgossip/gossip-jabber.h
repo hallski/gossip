@@ -76,6 +76,9 @@ GossipAccount *gossip_jabber_new_account               (void);
 gchar *        gossip_jabber_get_default_server        (const gchar    *username);
 guint          gossip_jabber_get_default_port          (gboolean        use_ssl);
 gboolean       gossip_jabber_is_ssl_supported          (void);
+GossipContact *gossip_jabber_new_contact               (GossipJabber        *jabber,
+							const gchar         *id,
+							const gchar         *name);
 
 G_END_DECLS
 

@@ -288,6 +288,11 @@ ft_window_event_activated_cb (GossipEventManager *event_manager,
 	data->protocol = g_object_ref (protocol);
 	data->ft = g_object_ref (ft);
 
+	/* Check if the contact is in the contact list and if it is, used the 
+	 * local name.
+	 *
+	 * If the contact is not in the contact list, ask for the VCard.
+	 */
 	gossip_session_get_vcard (gossip_app_get_session (),
 				  NULL,
 				  gossip_ft_get_contact (ft),

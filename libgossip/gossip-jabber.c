@@ -148,9 +148,6 @@ typedef struct {
 static void             gossip_jabber_class_init            (GossipJabberClass          *klass);
 static void             gossip_jabber_init                  (GossipJabber               *jabber);
 static void             jabber_finalize                     (GObject                    *object);
-static GossipContact *  jabber_new_contact                  (GossipProtocol             *protocol,
-							     const gchar                *id,
-							     const gchar                *name);
 static void             jabber_setup_connection             (GossipJabber               *jabber);
 static gboolean         jabber_login_timeout_cb             (GossipJabber               *jabber);
 static gboolean         jabber_logout_contact_foreach       (gpointer                    key,
@@ -372,7 +369,6 @@ gossip_jabber_class_init (GossipJabberClass *klass)
 
 	object_class->finalize = jabber_finalize;
 
-	protocol_class->new_contact             = jabber_new_contact;
 	protocol_class->is_connected            = jabber_is_connected;
 	protocol_class->is_connecting           = jabber_is_connecting;
 	protocol_class->set_presence            = jabber_set_presence;
@@ -508,18 +504,15 @@ gossip_jabber_new_account (void)
 	return account;
 }
 
-static GossipContact *
-jabber_new_contact (GossipProtocol *protocol,
-		    const gchar    *id,
-		    const gchar    *name)
+GossipContact *
+gossip_jabber_new_contact (GossipJabber *jabber,
+			   const gchar  *id,
+			   const gchar  *name)
 {
-	GossipJabber  *jabber;
 	GossipContact *contact;
 	gboolean       new_contact;
 
-	g_return_val_if_fail (GOSSIP_IS_JABBER (protocol), NULL);
-
-	jabber = GOSSIP_JABBER (protocol);
+	g_return_val_if_fail (GOSSIP_IS_JABBER (jabber), NULL);
 
 	contact = gossip_jabber_get_contact_from_jid (jabber,
 						      id,

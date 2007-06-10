@@ -1,3 +1,11 @@
+2007-06-11  Mikael Hallendal  <micke@imendio.com>
+
+	* libgossip/gossip-contact-manager.c:
+	* libgossip/gossip-jabber.[ch]:
+	* libgossip/gossip-protocol.[ch]:
+	(gossip_protocol_new_contact, gossip_jabber_new_contact):
+	- Directly use GossipJabber instead of going through GossipProtocol.
+
 2007-06-10  Mikael Hallendal  <micke@imendio.com>
 
 	* libgossip/gossip-utils.[ch] (gossip_g_value_to_string):
