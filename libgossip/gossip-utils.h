@@ -67,13 +67,6 @@ xmlNodePtr   gossip_xml_node_find_child_prop_value (xmlNodePtr       node,
 						    const gchar     *prop_value);
 
 
-/* GValue/GType */
-gchar *      gossip_g_value_to_string              (const GValue    *value);
-GValue *     gossip_string_to_g_value              (const gchar     *str,
-						    GType            type);
-gboolean     gossip_g_value_equal                  (const GValue    *value1,
-						    const GValue    *value2);
-
 G_END_DECLS
 
 #endif /*  __GOSSIP_UTILS_H__ */

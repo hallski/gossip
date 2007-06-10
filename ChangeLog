@@ -1,5 +1,10 @@
 2007-06-10  Mikael Hallendal  <micke@imendio.com>
 
+	* libgossip/gossip-utils.[ch] (gossip_g_value_to_string):
+	(gossip_string_to_g_value, gossip_g_value_equal): Removed.
+
+2007-06-10  Mikael Hallendal  <micke@imendio.com>
+
 	* libgossip/gossip-utils.[ch]: 
 	(gossip_dbus_type_to_g_type, gossip_g_type_to_dbus_type): Removed.
 
