@@ -1,3 +1,8 @@
+2007-06-10  Mikael Hallendal  <micke@imendio.com>
+
+	* libgossip/gossip-utils.[ch]: 
+	(gossip_dbus_type_to_g_type, gossip_g_type_to_dbus_type): Removed.
+
 2007-06-10  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-jabber-ft.c: Use new loudmouth API to get local

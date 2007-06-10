@@ -68,8 +68,6 @@ xmlNodePtr   gossip_xml_node_find_child_prop_value (xmlNodePtr       node,
 
 
 /* GValue/GType */
-GType        gossip_dbus_type_to_g_type            (const gchar     *dbus_type_string);
-const gchar *gossip_g_type_to_dbus_type            (GType            g_type);
 gchar *      gossip_g_value_to_string              (const GValue    *value);
 GValue *     gossip_string_to_g_value              (const gchar     *str,
 						    GType            type);

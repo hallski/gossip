@@ -286,49 +286,6 @@ gossip_xml_node_find_child_prop_value (xmlNodePtr   node,
 	return found;
 }
 
-GType
-gossip_dbus_type_to_g_type (const gchar *dbus_type_string)
-{
-	if (dbus_type_string == NULL)
-		return G_TYPE_NONE;
-
-	if (dbus_type_string[0] == 's') {
-		return G_TYPE_STRING;
-	}
-	else if (dbus_type_string[0] == 'b') {
-		return G_TYPE_BOOLEAN;
-	}
-	else if (dbus_type_string[0] == 'q') {
-		return G_TYPE_UINT;
-	}
-	else if (dbus_type_string[0] == 'n') {
-		return G_TYPE_INT;
-	}
-
-	g_assert_not_reached ();
-	return G_TYPE_NONE;
-}
-
-const gchar *
-gossip_g_type_to_dbus_type (GType g_type)
-{
-	switch (g_type)
-	{
-	case G_TYPE_STRING:
-		return "s";
-	case G_TYPE_BOOLEAN:
-		return "b";
-	case G_TYPE_UINT:
-		return "q";
-	case G_TYPE_INT:
-		return "n";
-	default:
-		g_assert_not_reached ();
-	}
-
-	return NULL;
-}
-
 gchar *
 gossip_g_value_to_string (const GValue *value)
 {
