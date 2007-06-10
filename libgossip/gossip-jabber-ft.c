@@ -454,7 +454,7 @@ jabber_ft_send_streamhosts (LmConnection *conn,
 					"mode", "tcp",
 					"sid", sid,
 					NULL);
-	local_host = lm_connection_get_client_host (conn);
+	local_host = lm_connection_get_local_host (conn);
 	
 	node = lm_message_node_add_child (node, "streamhost", NULL);
 	lm_message_node_set_attributes (node,
