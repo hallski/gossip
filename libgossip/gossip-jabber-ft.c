@@ -443,11 +443,7 @@ jabber_ft_send_streamhosts (LmConnection *conn,
 		return;
 	}
 
-#ifdef HAVE_LM_WITH_FT
 	jid_str = lm_connection_get_full_jid (conn);
-#else
-	return;
-#endif
 
 	port = lm_bs_session_start_listener (fts->bs_session);
 	port_str = g_strdup_printf ("%d", port);
@@ -458,11 +454,8 @@ jabber_ft_send_streamhosts (LmConnection *conn,
 					"mode", "tcp",
 					"sid", sid,
 					NULL);
-#ifdef HAVE_LM_WITH_FT
 	local_host = lm_connection_get_client_host (conn);
-#else 
-	return;
-#endif
+	
 	node = lm_message_node_add_child (node, "streamhost", NULL);
 	lm_message_node_set_attributes (node,
 					"host", local_host,

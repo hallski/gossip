@@ -30,7 +30,7 @@ LIBXML_REQUIRED=2.6.16
 GLIB_REQUIRED=2.12.0
 GTK_REQUIRED=2.10.0
 LIBGLADE_REQUIRED=2.0.0
-LOUDMOUTH_REQUIRED=1.2.2
+LOUDMOUTH_REQUIRED=1.2.3
 GCONF_REQUIRED=1.2.0
 LIBGNOME_REQUIRED=2.0.0
 LIBGNOMEVFS_REQUIRED=2.0.0
@@ -338,15 +338,6 @@ dnl Bleeding Edge Loudmouth?
 dnl -----------------------------------------------------------
 CFLAGS=`pkg-config --cflags loudmouth-1.0`
 LDFLAGS=`pkg-config --libs loudmouth-1.0`
-
-AC_TRY_LINK([#include <loudmouth/loudmouth.h>],
-            [lm_connection_get_client_host(NULL);],
-            [have_lm_with_ft=yes],
-            [have_lm_with_ft=no])
-
-if test "x$have_lm_with_ft" = "xyes"; then
-   AC_DEFINE(HAVE_LM_WITH_FT, 1, [Define if we have Loudmouth WITH file transfer])
-fi
 
 dnl -----------------------------------------------------------
 
