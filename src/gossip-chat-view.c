@@ -192,8 +192,7 @@ gossip_chat_view_init (GossipChatView *view)
 			       GOSSIP_PREFS_UI_SHOW_AVATARS,
 			       &show_avatars);
 
-	gossip_theme_manager_update_show_avatars (gossip_theme_manager_get (),
-						  view, show_avatars);
+	gossip_theme_set_show_avatars (priv->theme, show_avatars);
 
 	g_signal_connect (view,
 			  "populate-popup",
@@ -332,10 +331,12 @@ chat_view_notify_system_font_cb (GossipConf  *conf,
 				 const gchar *key,
 				 gpointer     user_data)
 {
-	GossipChatView *view;
-	gboolean        show_avatars = FALSE;
+	GossipChatView     *view;
+	GossipChatViewPriv *priv;
+	gboolean            show_avatars = FALSE;
 
 	view = user_data;
+	priv = GET_PRIV (view);
 
 	chat_view_system_font_update (view);
 
@@ -347,8 +348,7 @@ chat_view_notify_system_font_cb (GossipConf  *conf,
 			       GOSSIP_PREFS_UI_SHOW_AVATARS,
 			       &show_avatars);
 
-	gossip_theme_manager_update_show_avatars (gossip_theme_manager_get (),
-						  view, show_avatars);
+	gossip_theme_set_show_avatars (priv->theme, show_avatars);
 }
 
 static void
@@ -365,8 +365,7 @@ chat_view_notify_show_avatars_cb (GossipConf  *conf,
 
 	gossip_conf_get_bool (conf, key, &show_avatars);
 
-	gossip_theme_manager_update_show_avatars (gossip_theme_manager_get (),
-						  view, show_avatars);
+	gossip_theme_set_show_avatars (priv->theme, show_avatars);
 }
 
 static void
@@ -727,7 +726,8 @@ chat_view_theme_changed_cb (GossipThemeManager *manager,
 	gossip_conf_get_bool (gossip_conf_get (),
 			       GOSSIP_PREFS_UI_SHOW_AVATARS,
 			       &show_avatars);
-	gossip_theme_manager_update_show_avatars (manager, view, show_avatars);
+
+	gossip_theme_set_show_avatars (priv->theme, show_avatars);
 }
 
 GossipChatView *

@@ -16,8 +16,6 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- * 
- * Authors: Richard Hult <richard@imendio.com>
  */
 
 #ifndef __GOSSIP_THEME_MANAGER_H__
@@ -53,9 +51,6 @@ void                gossip_theme_manager_apply               (GossipThemeManager
 							      const gchar        *theme);
 void                gossip_theme_manager_apply_saved         (GossipThemeManager *manager,
 							      GossipChatView     *view);
-void                gossip_theme_manager_update_show_avatars (GossipThemeManager *manager,
-							      GossipChatView     *view,
-							      gboolean            show);
 
 G_END_DECLS
 

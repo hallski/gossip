@@ -1,3 +1,13 @@
+2007-06-10  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-chat-view.c:
+	* src/gossip-theme-manager.[ch]:
+	* src/gossip-theme.[ch]: Moved the code to show avatars to GossipTheme
+	instead of the theme manager.
+	* src/gossip-theme-boxes.c:
+	- Cleaned up and simplified.
+	- Moved the timestamps to the headers.
+
 2007-06-10  Martyn Russell  <martyn@imendio.com>
 
 	* libloudermouth/Makefile.am:

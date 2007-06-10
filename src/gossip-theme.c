@@ -45,12 +45,26 @@
 typedef struct _GossipThemePriv GossipThemePriv;
 
 struct _GossipThemePriv {
-	gint my_prop;
+	gboolean show_avatars;
 };
 
 static void         theme_finalize            (GObject            *object);
+static void         theme_get_property        (GObject            *object,
+					       guint               param_id,
+					       GValue             *value,
+					       GParamSpec         *pspec);
+static void         theme_set_property        (GObject            *object,
+					       guint               param_id,
+					       const GValue       *value,
+					       GParamSpec         *pspec);
+
 
 G_DEFINE_TYPE (GossipTheme, gossip_theme, G_TYPE_OBJECT);
+
+enum {
+	PROP_0,
+	PROP_SHOW_AVATARS
+};
 
 enum {
 	UPDATED,
@@ -67,6 +81,8 @@ gossip_theme_class_init (GossipThemeClass *class)
 	object_class = G_OBJECT_CLASS (class);
 
 	object_class->finalize     = theme_finalize;
+	object_class->get_property = theme_get_property;
+	object_class->set_property = theme_set_property;
 
 	class->setup_with_view  = NULL;
 	class->view_cleared     = NULL;
@@ -75,6 +91,13 @@ gossip_theme_class_init (GossipThemeClass *class)
 	class->append_event     = NULL;
 	class->append_timestamp = NULL;
 	class->append_spacing   = NULL;
+
+	g_object_class_install_property (object_class,
+					 PROP_SHOW_AVATARS,
+					 g_param_spec_boolean ("show-avatars",
+							       "", "",
+							       TRUE,
+							       G_PARAM_READWRITE));
 
 	signals[UPDATED] =
 		g_signal_new ("updated",
@@ -105,6 +128,46 @@ theme_finalize (GObject *object)
 	priv = GET_PRIV (object);
 
 	(G_OBJECT_CLASS (gossip_theme_parent_class)->finalize) (object);
+}
+
+static void
+theme_get_property (GObject    *object,
+		    guint       param_id,
+		    GValue     *value,
+		    GParamSpec *pspec)
+{
+	GossipThemePriv *priv;
+
+	priv = GET_PRIV (object);
+
+	switch (param_id) {
+	case PROP_SHOW_AVATARS:
+		g_value_set_boolean (value, priv->show_avatars);
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
+		break;
+	}
+}
+
+static void
+theme_set_property (GObject      *object,
+                    guint         param_id,
+                    const GValue *value,
+                    GParamSpec   *pspec)
+{
+	GossipThemePriv *priv;
+
+	priv = GET_PRIV (object);
+
+	switch (param_id) {
+	case PROP_SHOW_AVATARS:
+		priv->show_avatars = g_value_get_boolean (value);
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
+		break;
+	}
 }
 
 void
@@ -453,4 +516,29 @@ gossip_theme_append_timestamp (GossipTheme        *theme,
 							 show_time);
 }
 
+gboolean
+gossip_theme_get_show_avatars (GossipTheme *theme)
+{
+	GossipThemePriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_THEME (theme), FALSE);
+
+	priv = GET_PRIV (theme);
+
+	return priv->show_avatars;
+}
+
+void
+gossip_theme_set_show_avatars (GossipTheme *theme, gboolean show)
+{
+	GossipThemePriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_THEME (theme));
+
+	priv = GET_PRIV (theme);
+
+	priv->show_avatars = show;
+
+	g_object_notify (G_OBJECT (theme), "show-avatars");
+}
 

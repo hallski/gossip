@@ -79,6 +79,10 @@ struct _GossipThemeClass {
 	void                 (*append_spacing)   (GossipTheme        *theme,
 						  GossipThemeContext *context,
 						  GossipChatView     *view);
+	void                 (*update_show_avatars) (GossipTheme     *theme,
+						     GossipThemeContext *context,
+						     GossipChatView  *view,
+						     gboolean         show);
 };
 
 GType         gossip_theme_get_type             (void) G_GNUC_CONST;
@@ -125,10 +129,14 @@ void         gossip_theme_append_timestamp      (GossipTheme        *theme,
 						 gboolean            show_date,
 						 gboolean            show_time);
 
-void         gossip_theme_maybe_append_date_and_time (GossipTheme        *theme,
-						      GossipThemeContext *context,
-						      GossipChatView     *view,
-						      GossipMessage      *message);
+void      
+gossip_theme_maybe_append_date_and_time         (GossipTheme        *theme,
+						 GossipThemeContext *context,
+						 GossipChatView     *view,
+						 GossipMessage      *message);
+gboolean     gossip_theme_get_show_avatars      (GossipTheme        *theme);
+void         gossip_theme_set_show_avatars      (GossipTheme        *theme,
+						 gboolean            show);
 
 G_END_DECLS
 

@@ -16,8 +16,6 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- * 
- * Authors: Richard Hult <richard@imendio.com>
  */
 
 #include "config.h"
@@ -310,73 +308,5 @@ gossip_theme_manager_apply_saved (GossipThemeManager *manager,
 	priv = GET_PRIV (manager);
 
 	theme_manager_apply_theme (manager, view, priv->name);
-}
-
-/* FIXME: A bit ugly. We should probably change the scheme so that instead of
- * the manager signalling, views are registered and applied to automatically.
- */
-void
-gossip_theme_manager_update_show_avatars (GossipThemeManager *manager,
-					  GossipChatView     *view,
-					  gboolean            show)
-{
-	GossipThemeManagerPriv *priv;
-	GtkTextBuffer          *buffer;
-	GtkTextTagTable        *table;
-	GtkTextTag             *tag_text_self, *tag_text_other;
-	GtkTextTag             *tag_image_self, *tag_image_other;
-
-	priv = GET_PRIV (manager);
-
-	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
-	table = gtk_text_buffer_get_tag_table (buffer);
-
-	tag_text_self = gtk_text_tag_table_lookup (table,
-						   "fancy-header-self-avatar");
-	tag_text_other = gtk_text_tag_table_lookup (table,
-						    "fancy-header-other-avatar");
-
-	tag_image_self = gtk_text_tag_table_lookup (table,
-						    "fancy-avatar-self");
-	tag_image_other = gtk_text_tag_table_lookup (table, 
-						     "fancy-avatar-other");
-
-	if (!show) {
-		g_object_set (tag_text_self,
-			      "rise", 0,
-			      NULL);
-		g_object_set (tag_text_other,
-			      "rise", 0,
-			      NULL);
-		g_object_set (tag_image_self,
-			      "invisible", TRUE,
-			      NULL);
-		g_object_set (tag_image_other,
-			      "invisible", TRUE,
-			      NULL);
-	} else {
-		GtkTextAttributes *attrs;
-		gint               size;
-		gint               rise;
-
-		attrs = gtk_text_view_get_default_attributes (GTK_TEXT_VIEW (view));
-		size = pango_font_description_get_size (attrs->font);
-		rise = MAX (0, (32 * PANGO_SCALE - size) / 2.0);
-
-		g_object_set (tag_text_self,
-			      "rise", rise,
-			      NULL);
-		g_object_set (tag_text_other,
-			      "rise", rise,
-			      NULL);
-		g_object_set (tag_image_self,
-			      "invisible", FALSE,
-			      NULL);
-		g_object_set (tag_image_other,
-			      "invisible", FALSE,
-			      NULL);
-
-		gtk_text_attributes_unref (attrs);
-	}
 }
 
