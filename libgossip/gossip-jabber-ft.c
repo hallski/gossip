@@ -454,12 +454,9 @@ jabber_ft_send_streamhosts (LmConnection *conn,
 
 	node = lm_message_node_add_child (m->node, "query", NULL);
 	lm_message_node_set_attributes (node,
-					"xmlns",
-					XMPP_BYTESTREAMS_PROTOCOL,
-					"mode",
-					"tcp",
-					"sid",
-					sid,
+					"xmlns", XMPP_BYTESTREAMS_PROTOCOL,
+					"mode", "tcp",
+					"sid", sid,
 					NULL);
 #ifdef HAVE_LM_WITH_FT
 	local_host = lm_connection_get_client_host (conn);
@@ -468,12 +465,10 @@ jabber_ft_send_streamhosts (LmConnection *conn,
 #endif
 	node = lm_message_node_add_child (node, "streamhost", NULL);
 	lm_message_node_set_attributes (node,
-					"host",
-					local_host,
-					"jid",
-					jid_str,
-					"port",
-					port_str);
+					"host", local_host,
+					"jid", jid_str,
+					"port", port_str,
+					NULL);
 	
 	lm_bs_session_streamhost_add (fts->bs_session,
 				      id,

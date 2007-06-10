@@ -1,3 +1,8 @@
+2007-06-10  Richard Hult  <richard@imendio.com>
+
+	* libgossip/gossip-jabber-ft.c (jabber_ft_send_streamhosts): NULL
+	terminate the list of attributes, fixes crash.
+
 2007-06-10  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-chat-view.c:
