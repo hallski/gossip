@@ -53,7 +53,7 @@ src/gossip-spell-dialog.c
 src/gossip-status-icon.c
 src/gossip-subscription-dialog.c
 src/gossip-ui-utils.c
-src/gossip-theme-fancy.c
+src/gossip-theme-boxes.c
 src/gossip-theme-irc.c
 src/gossip-theme-manager.c
 src/gossip-vcard-dialog.c
