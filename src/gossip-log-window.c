@@ -845,7 +845,7 @@ log_window_contacts_new_message_cb (GossipContact   *own_contact,
 	}
 
 	/* Scroll to the most recent messages */
-	gossip_chat_view_scroll_down (window->chatview_contacts);
+	gossip_chat_view_scroll_down_smoothly (window->chatview_contacts);
 }
 
 static gboolean
@@ -1048,7 +1048,7 @@ log_window_contacts_get_messages (GossipLogWindow *window,
 	gossip_chat_view_scroll (window->chatview_find, TRUE);
 
 	/* Scroll to the most recent messages */
-	gossip_chat_view_scroll_down (window->chatview_contacts);
+	gossip_chat_view_scroll_down_smoothly (window->chatview_contacts);
 
 	/* Give the search entry main focus */
 	gtk_widget_grab_focus (window->entry_contacts);
@@ -1434,7 +1434,7 @@ log_window_chatrooms_new_message_cb (GossipContact   *own_contact,
 	}
 
 	/* Scroll to the most recent messages */
-	gossip_chat_view_scroll_down (window->chatview_chatrooms);
+	gossip_chat_view_scroll_down_smoothly (window->chatview_chatrooms);
 }
 
 static gboolean
@@ -1631,7 +1631,7 @@ log_window_chatrooms_get_messages (GossipLogWindow *window,
 	gossip_chat_view_scroll (window->chatview_find, TRUE);
 
 	/* Scroll to the most recent messages */
-	gossip_chat_view_scroll_down (window->chatview_chatrooms);
+	gossip_chat_view_scroll_down_smoothly (window->chatview_chatrooms);
 
 	/* Give the search entry main focus */
 	gtk_widget_grab_focus (window->entry_chatrooms);

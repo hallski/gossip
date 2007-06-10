@@ -82,6 +82,7 @@ void            gossip_chat_view_set_margin                (GossipChatView *view
 void            gossip_chat_view_scroll                    (GossipChatView *view,
 							    gboolean        allow_scrolling);
 void            gossip_chat_view_scroll_down               (GossipChatView *view);
+void            gossip_chat_view_scroll_down_smoothly      (GossipChatView *view);
 gboolean        gossip_chat_view_get_selection_bounds      (GossipChatView *view,
 							    GtkTextIter    *start,
 							    GtkTextIter    *end);

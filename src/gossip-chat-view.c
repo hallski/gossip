@@ -53,7 +53,9 @@
 
 #define DEBUG_DOMAIN "ChatView"
 
-#define MAX_LINES 800
+#define MAX_LINES       800
+#define MAX_SCROLL_TIME 0.4 /* Seconds */
+#define SCROLL_DELAY    33  /* Milliseconds */
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHAT_VIEW, GossipChatViewPriv))
 
@@ -67,6 +69,8 @@ struct _GossipChatViewPriv {
 	BlockType      last_block_type;
 
 	gboolean       allow_scrolling;
+	guint          scroll_timeout;
+	GTimer        *scroll_timer;
 	gboolean       is_group_chat;
 
 	GtkTextMark   *find_mark_previous;
@@ -259,6 +263,10 @@ chat_view_size_allocate (GtkWidget     *widget,
 	down = chat_view_is_scrolled_down (GOSSIP_CHAT_VIEW (widget));
 
 	GTK_WIDGET_CLASS (gossip_chat_view_parent_class)->size_allocate (widget, alloc);
+
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Size changed of view, %s",
+		      down ? "scrolling down" : "NOT scrolling down");
 
 	if (down) {
 		gossip_chat_view_scroll_down (GOSSIP_CHAT_VIEW (widget));
@@ -768,7 +776,7 @@ chat_view_append_message (GossipChatView *view,
 	}
 
 	if (scroll_down) {
-		gossip_chat_view_scroll_down (view);
+		gossip_chat_view_scroll_down_smoothly (view);
 	}
 }
 
@@ -814,11 +822,12 @@ gossip_chat_view_append_event (GossipChatView *view,
 
 	chat_view_maybe_trim_buffer (view);
 
-	gossip_theme_append_event (priv->theme, priv->theme_context,
+	gossip_theme_append_event (priv->theme, 
+				   priv->theme_context,
 				   view, str);
 
 	if (bottom) {
-		gossip_chat_view_scroll_down (view);
+		gossip_chat_view_scroll_down_smoothly (view);
 	}
 }
 
@@ -951,7 +960,7 @@ gossip_chat_view_append_invite (GossipChatView *view,
 						  NULL);
 
 	if (bottom) {
-		gossip_chat_view_scroll_down (view);
+		gossip_chat_view_scroll_down_smoothly (view);
 	}
 
 	gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_INVITE);
@@ -1024,7 +1033,7 @@ gossip_chat_view_append_button (GossipChatView *view,
 						  NULL);
 
 	if (bottom) {
-		gossip_chat_view_scroll_down (view);
+		gossip_chat_view_scroll_down_smoothly (view);
 	}
 
 	gossip_chat_view_set_last_block_type (view, BLOCK_TYPE_INVITE);
@@ -1046,6 +1055,46 @@ gossip_chat_view_scroll (GossipChatView *view,
 		      allow_scrolling ? "enabled" : "disabled");
 }
 
+static gboolean
+chat_view_scroll_cb (GossipChatView *view)
+{
+	GossipChatViewPriv *priv;
+	GtkAdjustment      *adj;
+	gdouble             max_val;
+	gdouble             left_val;
+	gdouble             move_val;
+
+	priv = GET_PRIV (view);
+
+	adj = GTK_TEXT_VIEW(view)->vadjustment;
+	max_val = adj->upper - adj->page_size;
+	left_val = max_val - adj->value;
+
+	g_return_val_if_fail (priv->scroll_timer != NULL, FALSE);
+
+	if (g_timer_elapsed (priv->scroll_timer, NULL) > MAX_SCROLL_TIME) {
+		/* Time's up, jump to the end and kill the timer */
+		gtk_adjustment_set_value (adj, max_val);
+
+		g_timer_destroy (priv->scroll_timer);
+		priv->scroll_timer = NULL;
+		priv->scroll_timeout = 0;
+
+		return FALSE;
+	}
+
+	/* Scroll by 1/3rd of the remaining distance */
+	move_val = left_val;
+
+	if (left_val > 1.5) {
+		move_val /= 3;
+	}
+
+	gtk_adjustment_set_value (adj, adj->value + move_val);
+
+	return TRUE;
+}
+
 void
 gossip_chat_view_scroll_down (GossipChatView *view)
 {
@@ -1059,6 +1108,14 @@ gossip_chat_view_scroll_down (GossipChatView *view)
 	priv = GET_PRIV (view);
 
 	if (!priv->allow_scrolling) {
+		return;
+	}
+
+	/* If already scrolling, don't do it again */
+	if (priv->scroll_timeout) {
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Already scrolling smoothly, "
+			      "not scrolling instantly");
 		return;
 	}
 
@@ -1080,6 +1137,34 @@ gossip_chat_view_scroll_down (GossipChatView *view)
 				      0);
 
 	gtk_text_buffer_delete_mark (buffer, mark);
+}
+
+void
+gossip_chat_view_scroll_down_smoothly (GossipChatView *view)
+{
+	GossipChatViewPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
+
+	priv = GET_PRIV (view);
+
+	if (!priv->allow_scrolling) {
+		return;
+	}
+
+	gossip_debug (DEBUG_DOMAIN, "Scrolling down smoothly");
+
+	if (!priv->scroll_timer) {
+		priv->scroll_timer = g_timer_new ();
+	} else {
+		g_timer_reset (priv->scroll_timer);
+	}
+
+	if (!priv->scroll_timeout) {
+		priv->scroll_timeout = g_timeout_add (SCROLL_DELAY,
+						      (GSourceFunc) chat_view_scroll_cb,
+						      view);
+	}
 }
 
 gboolean
