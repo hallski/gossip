@@ -50,25 +50,10 @@ struct _LmBsSessionClass {
 	GObjectClass parent_class;
 };
 
-typedef void    (* LmBsFailureFunction)             (gpointer       user_data,
-						     guint          id,
-						     GError        *error);
-typedef void    (* LmBsProgressFunction)            (gpointer       user_data,
-						     guint          id,
-						     gdouble        progress);
-
 GType           lm_bs_session_get_type              (void) G_GNUC_CONST;
 
 LmBsSession *   lm_bs_session_new                   (GMainContext  *context);
 LmBsSession *   lm_bs_session_get_default           (GMainContext  *context);
-void            lm_bs_session_set_failure_function  (LmBsSession   *session,
-						     LmBsFailureFunction  function,
-						     gpointer       user_data,
-						     GDestroyNotify notify);
-void            lm_bs_session_set_progress_function (LmBsSession   *session,
-						     LmBsProgressFunction function,
-						     gpointer       user_data,
-						     GDestroyNotify notify);
 void            lm_bs_session_receive_file          (LmBsSession   *session, 
 						     LmConnection  *connection,
 						     guint          id,

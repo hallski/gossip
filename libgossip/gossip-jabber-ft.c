@@ -69,12 +69,14 @@ struct _GossipJabberFTs {
 static guint           jabber_ft_guess_id_by_sid_and_sender (GossipJabber      *jabber,
 							     const gchar       *sid,
 							     const gchar       *jid);
-static void            jabber_ft_transfer_failure_cb        (GossipJabber      *jabber,
+static void            jabber_ft_transfer_error_cb          (LmBsSession       *session,
 							     guint              id,
-							     GError            *error);
-static void            jabber_ft_transfer_progress_cb       (GossipJabber      *jabber,
+							     GError            *error,
+							     GossipJabber      *jabber);
+static void            jabber_ft_transfer_progress_cb       (LmBsSession       *session,
 							     guint              id,
-							     gdouble            progress);
+							     gdouble            progress,
+							     GossipJabber      *jabber);
 static void            jabber_ft_add_jid_sid_to_table       (GossipJabberFTs   *fts,
 							     const gchar       *jid,
 							     const gchar       *sid,
@@ -118,15 +120,13 @@ gossip_jabber_ft_init (GossipJabber *jabber)
 	fts->connection = lm_connection_ref (connection);
 	fts->bs_session = lm_bs_session_new (NULL);
 
-	lm_bs_session_set_failure_function (fts->bs_session, 
-					    (LmBsFailureFunction) jabber_ft_transfer_failure_cb,
-					    jabber,
-					    NULL);
+	g_signal_connect (fts->bs_session, "transfer-error", 
+			  G_CALLBACK (jabber_ft_transfer_error_cb),
+			  jabber);
 
-	lm_bs_session_set_progress_function (fts->bs_session, 
-					    (LmBsProgressFunction) jabber_ft_transfer_progress_cb,
-					    jabber,
-					    NULL);
+	g_signal_connect (fts->bs_session, "transfer-progress", 
+			  G_CALLBACK (jabber_ft_transfer_progress_cb),
+			  jabber);
 
 	fts->str_ids = g_hash_table_new_full (g_direct_hash,
 					      g_direct_equal,
@@ -213,10 +213,11 @@ jabber_ft_guess_id_by_sid_and_sender (GossipJabber *jabber,
 	return GPOINTER_TO_UINT (id_ptr);
 }
 
-static void
-jabber_ft_transfer_failure_cb (GossipJabber *jabber, 
-			       guint         id, 
-			       GError       *error)
+static void            
+jabber_ft_transfer_error_cb (LmBsSession  *session,
+			     guint         id,
+			     GError       *error,
+			     GossipJabber *jabber)
 {
 	GossipJabberFTs *fts;
 	GossipFT        *ft;
@@ -252,9 +253,10 @@ jabber_ft_transfer_failure_cb (GossipJabber *jabber,
 }
 
 static void
-jabber_ft_transfer_progress_cb (GossipJabber *jabber, 
-				guint         id, 
-				gdouble       progress)
+jabber_ft_transfer_progress_cb (LmBsSession  *session,
+				guint         id,
+				gdouble       progress,
+				GossipJabber *jabber)
 {
 	GossipJabberFTs *fts;
 	GossipFT        *ft;
@@ -271,7 +273,7 @@ jabber_ft_transfer_progress_cb (GossipJabber *jabber,
 	
 	if (progress >= 1.0) {
 		gossip_debug (DEBUG_DOMAIN, "ID[%d] Transfer complete", id);
-/* 		g_signal_emit_by_name (fts->jabber, "file-transfer-complete", ft); */
+ 		g_signal_emit_by_name (fts->jabber, "file-transfer-complete", ft); 
 	}
 }
 

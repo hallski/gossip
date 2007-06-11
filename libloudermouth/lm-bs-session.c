@@ -35,7 +35,6 @@
 #include "lm-bs-listener.h"
 #include "lm-bs-client.h"
 #include "lm-bs-transfer.h"
-
 #include "lm-bs-receiver.h"
 #include "lm-bs-sender.h"
 #include "lm-bs-session.h"
@@ -67,7 +66,9 @@ struct _LmBsSessionPriv {
 };
 
 enum {
-	PROGRESS_UPDATE,
+	TRANSFER_COMPLETE,
+	TRANSFER_PROGRESS,
+	TRANSFER_ERROR,
 	LAST_SIGNAL
 };
 
@@ -95,17 +96,35 @@ lm_bs_session_class_init (LmBsSessionClass *klass)
 	object_class = G_OBJECT_CLASS (klass);
 
 	object_class->finalize = bs_session_finalize;
-	
-	signals[PROGRESS_UPDATE] =
-		g_signal_new ("progress-update",
+
+	signals[TRANSFER_COMPLETE] =
+		g_signal_new ("transfer-complete",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      libloudermouth_marshal_VOID__OBJECT_FLOAT,
+			      g_cclosure_marshal_VOID__UINT,
 			      G_TYPE_NONE,
-			      2, LM_TYPE_BS_SESSION, G_TYPE_FLOAT);
-
+			      1, G_TYPE_UINT);
+	signals[TRANSFER_PROGRESS] =
+		g_signal_new ("transfer-progress",
+			      G_TYPE_FROM_CLASS (klass),
+			      G_SIGNAL_RUN_LAST,
+			      0,
+			      NULL, NULL,
+			      libloudermouth_marshal_VOID__UINT_DOUBLE,
+			      G_TYPE_NONE,
+			      2, G_TYPE_UINT, G_TYPE_DOUBLE);
+	signals[TRANSFER_ERROR] =
+		g_signal_new ("transfer-error",
+			      G_TYPE_FROM_CLASS (klass),
+			      G_SIGNAL_RUN_LAST,
+			      0,
+			      NULL, NULL,
+			      libloudermouth_marshal_VOID__UINT_POINTER,
+			      G_TYPE_NONE,
+			      2, G_TYPE_UINT, G_TYPE_POINTER);
+	
 	g_type_class_add_private (object_class, sizeof (LmBsSessionPriv));
 }
 
@@ -184,7 +203,10 @@ bs_session_transfer_complete_cb (LmBsTransfer *transfer,
 	g_return_if_fail (LM_IS_BS_SESSION (session));
 
 	id = lm_bs_transfer_get_id (transfer);
-	lm_verbose ("[%d] Transfer complete\n", id);
+	lm_verbose ("[%d] File transfer complete\n", id);
+
+	g_signal_emit (session, signals[TRANSFER_COMPLETE], 0, id);
+
 	lm_bs_session_remove_transfer (session, id);
 }
 
@@ -193,22 +215,14 @@ bs_session_transfer_progress_cb (LmBsTransfer *transfer,
 				 gdouble       progress,
 				 LmBsSession  *session)
 {
-	LmBsSessionPriv *priv;
-	LmCallback      *cb;
-	guint            id;
+	guint id;
 
 	g_return_if_fail (LM_IS_BS_SESSION (session));
 
-	priv = GET_PRIV (session);
-
 	id = lm_bs_transfer_get_id (transfer);
+	lm_verbose ("[%d] File transfer progress: %f %%\n", id, progress * 100);
 
-	lm_verbose ("[%d] Transfer progress: %f %%\n", id, progress * 100);
-
-	cb = priv->progress_cb;
-	if (cb && cb->func) {
-		(* ((LmBsProgressFunction) cb->func)) (cb->user_data, id, progress);
-	}
+	g_signal_emit (session, signals[TRANSFER_PROGRESS], 0, id, progress);
 }
 
 static void
@@ -216,26 +230,16 @@ bs_session_transfer_error_cb (LmBsTransfer *transfer,
 			      GError       *error,
 			      LmBsSession  *session)
 {
-	LmBsSessionPriv *priv;
-	LmCallback      *cb;
-	guint            id;
+	guint id;
 
 	g_return_if_fail (LM_IS_BS_SESSION (session));
 
-	priv = GET_PRIV (session);
-
 	id = lm_bs_transfer_get_id (transfer);
-
-	lm_verbose ("[%d] Transfer error, %s\n", 
+	lm_verbose ("[%d] File transfer error, %s\n", 
 		    id, 
 		    error ? error->message : "no error given");
 
-	cb = priv->failure_cb;
-	if (cb && cb->func) {
-		(* ((LmBsFailureFunction) cb->func)) (cb->user_data,
-						      id,
-						      error);
-	}
+	g_signal_emit (session, signals[TRANSFER_ERROR], 0, id, error);
 
 	lm_bs_session_remove_transfer (session, id);
 }
@@ -354,79 +358,6 @@ lm_bs_session_get_default (GMainContext *context)
 	session = lm_bs_session_new (context);
 
 	return g_object_ref (session);
-}
-
-/**
- * lm_bs_session_set_failure_function:
- * @session: the bitestream session
- * @function: the function that will be called on transfer failure
- * @user_data: user supplied pointer. It will be passed to function
- * @notify: function that will be executed on callback destroy, 
- * could be NULL
- * 
- * Registers a function to be called when certain file transfer
- * has failed within a bitestream session.
- *
- **/
-void
-lm_bs_session_set_failure_function (LmBsSession         *session,
-				    LmBsFailureFunction  function,
-				    gpointer             user_data,
-				    GDestroyNotify       notify)
-{
-	LmBsSessionPriv *priv;
-	LmCallback      *failure_cb;
-
-	g_return_if_fail (LM_IS_BS_SESSION (session));
-
-	priv = GET_PRIV (session);
-
-	failure_cb = _lm_utils_new_callback (function, 
-					     user_data,
-					     notify);
-
-	if (priv->failure_cb != NULL) {
-		_lm_utils_free_callback (priv->failure_cb);
-	}
-
-	priv->failure_cb = failure_cb;
-}
-
-/**
- * lm_bs_session_set_progress_function:
- * @session: the bitestream session
- * @function: the function that will be called when transfer is 
- * progress
- * @user_data: user supplied pointer. It will be passed to function
- * @notify: function that will be executed on callback destroy, 
- * could be NULL
- *
- * Registers a function to be called when certain file transfer
- * progresss within a bitestream session.
- *
- **/
-void
-lm_bs_session_set_progress_function (LmBsSession          *session,
-				     LmBsProgressFunction  function,
-				     gpointer              user_data,
-				     GDestroyNotify        notify)
-{
-	LmBsSessionPriv *priv;
-	LmCallback      *progress_cb;
-
-	g_return_if_fail (LM_IS_BS_SESSION (session));
-
-	priv = GET_PRIV (session);
-
-	progress_cb = _lm_utils_new_callback (function, 
-					      user_data,
-					      notify);
-
-	if (priv->progress_cb != NULL) {
-		_lm_utils_free_callback (priv->progress_cb);
-	}
-
-	priv->progress_cb = progress_cb;
 }
 
 /**
@@ -640,7 +571,7 @@ lm_bs_session_streamhost_add (LmBsSession *session,
 	g_return_if_fail (port != NULL);
 	g_return_if_fail (jid != NULL);
 
- 	lm_verbose ("[%d] Adding stream host:'%s', port:'%s', JID:'%s'\n",
+ 	lm_verbose ("[%d] Adding file transfer stream host:'%s', port:'%s', JID:'%s'\n",
 		    id,
 		    host,
 		    port,
@@ -693,7 +624,7 @@ lm_bs_session_streamhost_activate (LmBsSession *session,
 	g_return_if_fail (iq_id != NULL);
 	g_return_if_fail (jid != NULL);
 
- 	lm_verbose ("[%s] Activating stream host with JID:'%s'\n",
+ 	lm_verbose ("[%s] Activating file transfer stream host with JID:'%s'\n",
 		    iq_id,
 		    jid);
 
@@ -741,7 +672,7 @@ lm_bs_session_remove_transfer (LmBsSession *session,
 
 	g_return_if_fail (LM_IS_BS_SESSION (session));
 
- 	lm_verbose ("[%d] Cleaning up transfer\n",
+ 	lm_verbose ("[%d] Cleaning up file transfer\n",
 		    id);
 
 	priv = GET_PRIV (session);
@@ -787,7 +718,7 @@ lm_bs_session_start_listener (LmBsSession *session)
 
 	g_return_val_if_fail (LM_IS_BS_SESSION (session), -1);
 
- 	lm_verbose ("Starting listener\n");
+ 	lm_verbose ("Starting file transfer listener\n");
 
 	priv = GET_PRIV (session);
 
@@ -798,7 +729,8 @@ lm_bs_session_start_listener (LmBsSession *session)
 	priv->listener = lm_bs_listener_new_with_context (priv->context);
 
 	lm_bs_listener_set_new_client_function (priv->listener,
-						(LmBsNewClientFunction) bs_session_new_client_connected_cb,
+						(LmBsNewClientFunction)
+						bs_session_new_client_connected_cb,
 						session,
 						NULL);
 

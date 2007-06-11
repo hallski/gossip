@@ -29,10 +29,11 @@
 static void ft_provider_base_init (gpointer g_class);
 
 enum {
-	FT_REQUEST,
-	FT_CANCELLED,
-	FT_ERROR,
-	FT_PROGRESS,
+	REQUEST,
+	CANCELLED,
+	COMPLETE,
+	PROGRESS,
+	ERROR,
 	LAST_SIGNAL
 };
 
@@ -73,7 +74,7 @@ ft_provider_base_init (gpointer g_class)
 	static gboolean initialized = FALSE;
 
 	if (!initialized) {
-		signals[FT_REQUEST] =
+		signals[REQUEST] =
 			g_signal_new ("file-transfer-request",
 				      G_TYPE_FROM_CLASS (g_class),
 				      G_SIGNAL_RUN_LAST,
@@ -83,7 +84,7 @@ ft_provider_base_init (gpointer g_class)
 				      G_TYPE_NONE,
 				      1, GOSSIP_TYPE_FT);
 
-		signals[FT_CANCELLED] =
+		signals[CANCELLED] =
 			g_signal_new ("file-transfer-cancelled",
 				      G_TYPE_FROM_CLASS (g_class),
 				      G_SIGNAL_RUN_LAST,
@@ -93,17 +94,17 @@ ft_provider_base_init (gpointer g_class)
 				      G_TYPE_NONE,
 				      1, G_TYPE_INT);
 
-		signals[FT_ERROR] =
-			g_signal_new ("file-transfer-error",
+		signals[COMPLETE] =
+			g_signal_new ("file-transfer-complete",
 				      G_TYPE_FROM_CLASS (g_class),
 				      G_SIGNAL_RUN_LAST,
 				      0,
 				      NULL, NULL,
-				      libgossip_marshal_VOID__OBJECT_POINTER,
+				      libgossip_marshal_VOID__OBJECT,
 				      G_TYPE_NONE,
-				      2, GOSSIP_TYPE_FT, G_TYPE_POINTER);
+				      1, GOSSIP_TYPE_FT);
 
-		signals[FT_PROGRESS] =
+		signals[PROGRESS] =
 			g_signal_new ("file-transfer-progress",
 				      G_TYPE_FROM_CLASS (g_class),
 				      G_SIGNAL_RUN_LAST,
@@ -112,6 +113,16 @@ ft_provider_base_init (gpointer g_class)
 				      libgossip_marshal_VOID__OBJECT_POINTER,
 				      G_TYPE_NONE,
 				      2, GOSSIP_TYPE_FT, G_TYPE_DOUBLE);
+
+		signals[ERROR] =
+			g_signal_new ("file-transfer-error",
+				      G_TYPE_FROM_CLASS (g_class),
+				      G_SIGNAL_RUN_LAST,
+				      0,
+				      NULL, NULL,
+				      libgossip_marshal_VOID__OBJECT_POINTER,
+				      G_TYPE_NONE,
+				      2, GOSSIP_TYPE_FT, G_TYPE_POINTER);
 
 		initialized = TRUE;
 	}
