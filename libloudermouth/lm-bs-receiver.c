@@ -82,7 +82,7 @@ bs_receiver_client_disconnected (LmBsClient   *client,
 
 	status = lm_bs_transfer_get_status (receiver->transfer);
 
-	if (status != LM_BS_TRANSFER_STATUS_COMPLETED) {
+	if (status != LM_BS_TRANSFER_STATUS_COMPLETE) {
 		GError *error;
 
 		error = g_error_new (lm_error_quark (),
@@ -184,14 +184,14 @@ bs_receiver_read_cb (LmBsClient   *client,
 		break;
 		
 	case STATE_TRANSFER_STARTED:
-		lm_bs_transfer_ref (transfer);
+		g_object_ref (transfer);
 		result = lm_bs_transfer_append_to_file (transfer, data);
 		
 		if (!result) {
 			lm_bs_receiver_unref (receiver);
 		}
 		
-		lm_bs_transfer_unref (transfer);
+		g_object_unref (transfer);
 		break;
 		
 	default:

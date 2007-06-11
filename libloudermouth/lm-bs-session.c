@@ -35,6 +35,7 @@
 #include "lm-bs-listener.h"
 #include "lm-bs-client.h"
 #include "lm-bs-transfer.h"
+
 #include "lm-bs-receiver.h"
 #include "lm-bs-sender.h"
 #include "lm-bs-session.h"
@@ -61,7 +62,6 @@ struct _LmBsSessionPriv {
 
 	LmBsListener *listener;
 
-	LmCallback   *complete_cb;
 	LmCallback   *progress_cb;
 	LmCallback   *failure_cb;
 };
@@ -73,9 +73,17 @@ enum {
 
 static guint signals[LAST_SIGNAL] = { 0 };
 
-static void bs_session_finalize                (GObject     *object);
-static void bs_session_new_client_connected_cb (guint        fd,
-						LmBsSession *session);
+static void bs_session_finalize                (GObject      *object);
+static void bs_session_new_client_connected_cb (guint         fd,
+						LmBsSession  *session);
+static void bs_session_transfer_complete_cb    (LmBsTransfer *transfer,
+						LmBsSession  *session);
+static void bs_session_transfer_progress_cb    (LmBsTransfer *transfer,
+						gdouble       progress,
+						LmBsSession  *session);
+static void bs_session_transfer_error_cb       (LmBsTransfer *transfer,
+						GError       *error,
+						LmBsSession  *session);
 
 G_DEFINE_TYPE (LmBsSession, lm_bs_session, G_TYPE_OBJECT);
 
@@ -105,22 +113,17 @@ static void
 lm_bs_session_init (LmBsSession *session)
 {
 	LmBsSessionPriv *priv;
-	GDestroyNotify   destroy_transfer;
-	GDestroyNotify   destroy_sender;
 
 	priv = GET_PRIV (session);
-
-	destroy_transfer = (GDestroyNotify) lm_bs_transfer_unref;
-	destroy_sender = (GDestroyNotify) lm_bs_sender_unref;
 
 	priv->float_clients = g_hash_table_new_full (g_direct_hash,
 						     g_direct_equal,
 						     NULL,
-						     destroy_sender);
+						     (GDestroyNotify) lm_bs_sender_unref);
 	priv->transfers = g_hash_table_new_full (g_direct_hash, 
 						 g_direct_equal, 
 						 NULL, 
-						 destroy_transfer);
+						 (GDestroyNotify) g_object_unref);
 	priv->float_shas = g_hash_table_new_full (g_str_hash, 
 						  g_str_equal,
 						  g_free,
@@ -138,7 +141,6 @@ bs_session_finalize (GObject *object)
 	
 	priv = GET_PRIV (object);
 
-	_lm_utils_free_callback (priv->complete_cb);
 	_lm_utils_free_callback (priv->progress_cb);
 	_lm_utils_free_callback (priv->failure_cb);
 
@@ -171,6 +173,71 @@ bs_session_new_client_connected_cb (guint        fd,
 	g_hash_table_insert (priv->float_clients,
 			     GUINT_TO_POINTER (fd),
 			     sender);
+}
+
+static void
+bs_session_transfer_complete_cb (LmBsTransfer *transfer,
+				 LmBsSession  *session)
+{
+	guint id;
+
+	g_return_if_fail (LM_IS_BS_SESSION (session));
+
+	id = lm_bs_transfer_get_id (transfer);
+	lm_verbose ("[%d] Transfer complete\n", id);
+	lm_bs_session_remove_transfer (session, id);
+}
+
+static void
+bs_session_transfer_progress_cb (LmBsTransfer *transfer,
+				 gdouble       progress,
+				 LmBsSession  *session)
+{
+	LmBsSessionPriv *priv;
+	LmCallback      *cb;
+	guint            id;
+
+	g_return_if_fail (LM_IS_BS_SESSION (session));
+
+	priv = GET_PRIV (session);
+
+	id = lm_bs_transfer_get_id (transfer);
+
+	lm_verbose ("[%d] Transfer progress: %f %%\n", id, progress * 100);
+
+	cb = priv->progress_cb;
+	if (cb && cb->func) {
+		(* ((LmBsProgressFunction) cb->func)) (cb->user_data, id, progress);
+	}
+}
+
+static void
+bs_session_transfer_error_cb (LmBsTransfer *transfer,
+			      GError       *error,
+			      LmBsSession  *session)
+{
+	LmBsSessionPriv *priv;
+	LmCallback      *cb;
+	guint            id;
+
+	g_return_if_fail (LM_IS_BS_SESSION (session));
+
+	priv = GET_PRIV (session);
+
+	id = lm_bs_transfer_get_id (transfer);
+
+	lm_verbose ("[%d] Transfer error, %s\n", 
+		    id, 
+		    error ? error->message : "no error given");
+
+	cb = priv->failure_cb;
+	if (cb && cb->func) {
+		(* ((LmBsFailureFunction) cb->func)) (cb->user_data,
+						      id,
+						      error);
+	}
+
+	lm_bs_session_remove_transfer (session, id);
 }
 
 void 
@@ -228,54 +295,6 @@ _lm_bs_session_match_sha (LmBsSession *session,
 
 	lm_bs_sender_set_transfer (lm_bs_sender_ref (sender), transfer);
 	_lm_bs_session_remove_sender (session, fd);
-}
-
-void
-_lm_bs_session_transfer_error (LmBsSession *session, 
-			       guint        id,
-			       GError      *error)
-{
-	LmBsSessionPriv *priv;
-	LmCallback      *cb;
-
-	g_return_if_fail (LM_IS_BS_SESSION (session));
-
-	lm_verbose ("[%d] Transfer error, %s\n", 
-		    id, 
-		    error ? error->message : "no error given");
-
-	priv = GET_PRIV (session);
-
-	cb = priv->failure_cb;
-	if (cb && cb->func) {
-		(* ((LmBsFailureFunction) cb->func)) (cb->user_data,
-						      id,
-						      error);
-	}
-
-	lm_bs_session_remove_transfer (session, id);
-}
-
-void
-_lm_bs_session_transfer_completed (LmBsSession *session, 
-				   guint        id)
-{
-	LmBsSessionPriv *priv;
-	LmCallback      *cb;
-
-	g_return_if_fail (LM_IS_BS_SESSION (session));
-
-	priv = GET_PRIV (session);
-
-	lm_verbose ("[%d] Transfer complete\n", 
-		    id);
-
-	cb = priv->complete_cb;
-	if (cb && cb->func) {
-		(* ((LmBsCompleteFunction) cb->func)) (cb->user_data, id);
-	}
-
-	lm_bs_session_remove_transfer (session, id);
 }
 
 GMainContext *
@@ -374,40 +393,40 @@ lm_bs_session_set_failure_function (LmBsSession         *session,
 }
 
 /**
- * lm_bs_session_set_complete_function:
+ * lm_bs_session_set_progress_function:
  * @session: the bitestream session
  * @function: the function that will be called when transfer is 
- * complete
+ * progress
  * @user_data: user supplied pointer. It will be passed to function
  * @notify: function that will be executed on callback destroy, 
  * could be NULL
  *
  * Registers a function to be called when certain file transfer
- * completes within a bitestream session.
+ * progresss within a bitestream session.
  *
  **/
 void
-lm_bs_session_set_complete_function (LmBsSession          *session,
-				     LmBsCompleteFunction  function,
+lm_bs_session_set_progress_function (LmBsSession          *session,
+				     LmBsProgressFunction  function,
 				     gpointer              user_data,
 				     GDestroyNotify        notify)
 {
 	LmBsSessionPriv *priv;
-	LmCallback      *complete_cb;
+	LmCallback      *progress_cb;
 
 	g_return_if_fail (LM_IS_BS_SESSION (session));
 
 	priv = GET_PRIV (session);
 
-	complete_cb = _lm_utils_new_callback (function, 
+	progress_cb = _lm_utils_new_callback (function, 
 					      user_data,
 					      notify);
 
-	if (priv->complete_cb != NULL) {
-		_lm_utils_free_callback (priv->complete_cb);
+	if (priv->progress_cb != NULL) {
+		_lm_utils_free_callback (priv->progress_cb);
 	}
 
-	priv->complete_cb = complete_cb;
+	priv->progress_cb = progress_cb;
 }
 
 /**
@@ -455,12 +474,22 @@ lm_bs_session_receive_file (LmBsSession  *session,
 
 	transfer = lm_bs_transfer_new (session,
 				       connection,
-				       LM_BS_TRANSFER_TYPE_RECEIVER,
+				       LM_BS_TRANSFER_DIRECTION_RECEIVER,
 				       id,
 				       sid,
 				       sender,
 				       location,
 				       file_size);
+
+	g_signal_connect (transfer, "complete",
+			  G_CALLBACK (bs_session_transfer_complete_cb),
+			  session);
+	g_signal_connect (transfer, "progress",
+			  G_CALLBACK (bs_session_transfer_progress_cb),
+			  session);
+	g_signal_connect (transfer, "error",
+			  G_CALLBACK (bs_session_transfer_error_cb),
+			  session);
 	
 	g_hash_table_insert (priv->transfers,
 			     GUINT_TO_POINTER (id),
@@ -512,12 +541,22 @@ lm_bs_session_send_file (LmBsSession  *session,
 
 	transfer = lm_bs_transfer_new (session,
 				       connection,
-				       LM_BS_TRANSFER_TYPE_SENDER,
+				       LM_BS_TRANSFER_DIRECTION_SENDER,
 				       id,
 				       sid,
 				       receiver,
 				       location,
 				       file_size);
+
+	g_signal_connect (transfer, "complete",
+			  G_CALLBACK (bs_session_transfer_complete_cb),
+			  session);
+	g_signal_connect (transfer, "progress",
+			  G_CALLBACK (bs_session_transfer_progress_cb),
+			  session);
+	g_signal_connect (transfer, "error",
+			  G_CALLBACK (bs_session_transfer_error_cb),
+			  session);
 
 	auth_sha = lm_bs_transfer_get_auth_sha (transfer);
 
@@ -565,7 +604,7 @@ lm_bs_session_set_iq_id (LmBsSession *session,
 
 	lm_bs_transfer_set_iq_id (transfer, iq_id);
 
-	if (lm_bs_transfer_get_type (transfer) == LM_BS_TRANSFER_TYPE_SENDER) {
+	if (lm_bs_transfer_get_direction (transfer) == LM_BS_TRANSFER_DIRECTION_SENDER) {
 		g_hash_table_insert (priv->iq_ids, 
 				     g_strdup (iq_id),
 				     GUINT_TO_POINTER (id));

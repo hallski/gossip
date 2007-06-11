@@ -22,11 +22,13 @@
 
 #include <config.h>
 
-#include <glib.h>
-#include <glib/gi18n.h>
 #include <string.h>
 
+#include <glib.h>
+#include <glib/gi18n.h>
+
 #include <loudmouth/lm-error.h>
+
 #include "lm-sock.h"
 #include "lm-debug.h"
 #include "lm-bs-session.h"
@@ -189,7 +191,7 @@ bs_sender_write_next (LmBsSender *sender)
 	g_return_if_fail (transfer != NULL);
 
 	data = NULL;
-	lm_bs_transfer_ref (transfer);
+	g_object_ref (transfer);
 	result = lm_bs_transfer_get_file_content (sender->transfer, &data);
 
 	if (!result) {
@@ -198,7 +200,7 @@ bs_sender_write_next (LmBsSender *sender)
 		lm_bs_client_write_data (sender->client, data);
 	}
 
-	lm_bs_transfer_unref (transfer);
+	g_object_unref (transfer);
 }
 
 static void
@@ -239,7 +241,7 @@ bs_sender_client_disconnected_cb (LmBsClient *client,
 		lm_bs_transfer_close_file (sender->transfer);
 		status = lm_bs_transfer_get_status (sender->transfer);
 
-		if (status != LM_BS_TRANSFER_STATUS_COMPLETED) {
+		if (status != LM_BS_TRANSFER_STATUS_COMPLETE) {
 			GError *error;
 
 			bs_sender_destroy (sender);

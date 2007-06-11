@@ -29,44 +29,58 @@
 #include <loudmouth/lm-error.h>
 
 #include "lm-sha.h"
-#include "lm-bs-session.h"
 #include "lm-bs-client.h"
 #include "lm-bs-transfer.h"
 #include "lm-bs-receiver.h"
 #include "lm-bs-private.h"
 
+#include "libloudermouth-marshal.h"
+
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), LM_TYPE_BS_TRANSFER, LmBsTransferPriv))
+
 #define XMLNS_BYTESTREAMS "http://jabber.org/protocol/bytestreams"
 
 #define FILE_BUFFER_SIZE 1024
 
-struct _LmBsTransfer{
-	gint                ref_count;
+typedef struct _LmBsTransferPriv LmBsTransferPriv;
 
-	LmBsTransferType    type;
+struct _LmBsTransferPriv {
+	LmBsTransferDirection  direction;
+	LmBsTransferStatus     status;
 
-	gchar              *peer_jid;
-	gchar              *location;
-	guint64             bytes_total;
-	guint64             bytes_transfered;
+	LmConnection          *connection;
+	LmBsSession           *session;
 
-	guint               id;
-	gchar              *sid;
-	gchar              *iq_id;
+	GHashTable            *streamhosts;
 
-	LmBsTransferStatus  status;
-	GHashTable         *streamhosts;
+	gchar                 *peer_jid;
+	gchar                 *location;
+	guint                  id;
+	gchar                 *sid;
+	gchar                 *iq_id;
 
-	LmConnection       *connection;
-	LmBsSession        *session;
-	GIOChannel         *file_channel;
-	LmCallback         *activate_cb;
+	GIOChannel            *file_channel;
+	LmCallback            *activate_cb;
+
+	guint64                bytes_total;
+	guint64                bytes_transferred;
 };
 
 typedef struct {
-	gchar        *jid;
 	LmBsTransfer *transfer;
+	gchar        *jid;
 } StreamHostData;
 
+enum {
+	COMPLETE,
+	PROGRESS,
+	ERROR,
+	LAST_SIGNAL
+};
+
+static guint signals[LAST_SIGNAL] = { 0 };
+
+static void     bs_transfer_finalize               (GObject         *object);
 static void     bs_transfer_free_streamhost_data   (gpointer         data);
 static void     bs_transfer_client_connected_cb    (LmBsClient      *client,
 						    StreamHostData  *sreamhost_data);
@@ -77,52 +91,149 @@ static gboolean bs_transfer_channel_open_for_write (LmBsTransfer    *transfer,
 static gboolean bs_transfer_channel_open_for_read  (LmBsTransfer    *transfer,
 						    GError         **error);
 static gchar *  bs_transfer_io_error_to_string     (GError          *error);
-static void     bs_transfer_completed              (LmBsTransfer    *transfer);
-static void     bs_transfer_free                   (LmBsTransfer    *transfer);
+static void     bs_transfer_complete               (LmBsTransfer    *transfer);
+static void     bs_transfer_progress               (LmBsTransfer    *transfer);
+static void     bs_transfer_error                  (LmBsTransfer    *transfer,
+						    const gchar     *error_msg);
 static gchar *  bs_transfer_get_initiator          (LmBsTransfer    *transfer);
 static gchar *  bs_transfer_get_target             (LmBsTransfer    *transfer);
+
+G_DEFINE_TYPE (LmBsTransfer, lm_bs_transfer, G_TYPE_OBJECT);
+
+static void
+lm_bs_transfer_class_init (LmBsTransferClass *klass)
+{
+	GObjectClass *object_class;
+
+	object_class = G_OBJECT_CLASS (klass);
+
+	object_class->finalize = bs_transfer_finalize;
+	
+	signals[COMPLETE] =
+		g_signal_new ("complete",
+			      G_TYPE_FROM_CLASS (klass),
+			      G_SIGNAL_RUN_LAST,
+			      0,
+			      NULL, NULL,
+			      g_cclosure_marshal_VOID__VOID,
+			      G_TYPE_NONE,
+			      0);
+	signals[PROGRESS] =
+		g_signal_new ("progress",
+			      G_TYPE_FROM_CLASS (klass),
+			      G_SIGNAL_RUN_LAST,
+			      0,
+			      NULL, NULL,
+			      g_cclosure_marshal_VOID__DOUBLE,
+			      G_TYPE_NONE,
+			      1, G_TYPE_DOUBLE);
+	signals[ERROR] =
+		g_signal_new ("error",
+			      G_TYPE_FROM_CLASS (klass),
+			      G_SIGNAL_RUN_LAST,
+			      0,
+			      NULL, NULL,
+			      g_cclosure_marshal_VOID__POINTER,
+			      G_TYPE_NONE,
+			      1, G_TYPE_POINTER);
+
+	g_type_class_add_private (object_class, sizeof (LmBsTransferPriv));
+}
+
+static void
+lm_bs_transfer_init (LmBsTransfer *transfer)
+{
+	LmBsTransferPriv *priv;
+
+	priv = GET_PRIV (transfer);
+
+	priv->streamhosts = g_hash_table_new_full (g_str_hash, 
+						   g_str_equal, 
+						   g_free, 
+						   (GDestroyNotify) lm_bs_client_unref);
+}
+
+static void
+bs_transfer_finalize (GObject *object)
+{
+	LmBsTransferPriv *priv;
+	
+	priv = GET_PRIV (object);
+
+	if (priv->activate_cb) {
+		_lm_utils_free_callback (priv->activate_cb);
+	}
+
+	lm_bs_transfer_close_file (LM_BS_TRANSFER (object));
+
+	g_free (priv->peer_jid);
+	g_free (priv->location);
+	g_free (priv->sid);
+	g_free (priv->iq_id);
+
+	g_hash_table_destroy (priv->streamhosts);
+
+	if (priv->session) {
+		g_object_unref (priv->session);
+	}
+
+	if (priv->connection) {
+		lm_connection_unref (priv->connection);
+	}
+
+	(G_OBJECT_CLASS (lm_bs_transfer_parent_class)->finalize) (object);
+}
 
 static void
 bs_transfer_free_streamhost_data (gpointer data)
 {
-	g_free (((StreamHostData *) data)->jid);
-	g_free (data);
+	StreamHostData *streamhost_data;
+
+	streamhost_data = data;
+
+	if (streamhost_data->transfer) {
+		g_object_unref (streamhost_data->transfer);
+	}
+
+	g_free (streamhost_data->jid);
+	g_free (streamhost_data);
 }
 
 static void
 bs_transfer_client_connected_cb (LmBsClient     *client, 
-				 StreamHostData *sreamhost_data)
+				 StreamHostData *streamhost_data)
 {
-	LmBsTransfer *transfer;
-	LmBsReceiver *receiver;
+	LmBsTransfer     *transfer;
+	LmBsTransferPriv *priv;
+	LmBsReceiver     *receiver;
 
-	transfer = sreamhost_data->transfer;
-	transfer->status = LM_BS_TRANSFER_STATUS_CONNECTED;
+	transfer = streamhost_data->transfer;
 
-	receiver = lm_bs_receiver_new (client, transfer, sreamhost_data->jid);
-	g_hash_table_remove_all (transfer->streamhosts);
+	priv = GET_PRIV (transfer);
+
+	priv->status = LM_BS_TRANSFER_STATUS_CONNECTED;
+
+	receiver = lm_bs_receiver_new (client, transfer, streamhost_data->jid);
+	g_hash_table_remove_all (priv->streamhosts);
+
 	lm_bs_receiver_start_transfer (receiver);
 }
 
 static void
 bs_transfer_client_disconnected_cb (LmBsClient     *client,
-				    StreamHostData *sreamhost_data)
+				    StreamHostData *streamhost_data)
 {
-	LmBsTransfer *transfer;
+	LmBsTransfer     *transfer;
+	LmBsTransferPriv *priv;
 	
-	transfer = sreamhost_data->transfer;
-	g_hash_table_remove (transfer->streamhosts, sreamhost_data->jid);
+	transfer = streamhost_data->transfer;
 
-	if (!g_hash_table_size (transfer->streamhosts)) {
-		GError *error;
+	priv = GET_PRIV (transfer);
 
-		error = g_error_new (lm_error_quark (),
-				     LM_BS_TRANSFER_ERROR_UNABLE_TO_CONNECT,
-				     _("Unable to connect to the other party"));
-		_lm_bs_session_transfer_error (transfer->session, 
-					       transfer->id, 
-					       error);
-		g_error_free (error);
+	g_hash_table_remove (priv->streamhosts, streamhost_data->jid);
+
+	if (!g_hash_table_size (priv->streamhosts)) {
+		bs_transfer_error (transfer, _("Unable to connect to the other party"));
 	}
 }
 
@@ -130,20 +241,24 @@ static gboolean
 bs_transfer_channel_open_for_write (LmBsTransfer  *transfer,
 				    GError       **error)
 {
-	if (transfer->file_channel) {
+	LmBsTransferPriv *priv;
+
+	priv = GET_PRIV (transfer);
+
+	if (priv->file_channel) {
 		return TRUE;
 	}
 
-	transfer->file_channel = g_io_channel_new_file (transfer->location,
-							"w",
-							error);
+	priv->file_channel = g_io_channel_new_file (priv->location,
+						    "w",
+						    error);
 
-	if (!transfer->file_channel) {
+	if (!priv->file_channel) {
 		return FALSE;
 	}
 
-	g_io_channel_set_encoding (transfer->file_channel, NULL, NULL);
-	g_io_channel_set_buffered (transfer->file_channel, FALSE);
+	g_io_channel_set_encoding (priv->file_channel, NULL, NULL);
+	g_io_channel_set_buffered (priv->file_channel, FALSE);
 
 	return TRUE;
 }
@@ -152,20 +267,24 @@ static gboolean
 bs_transfer_channel_open_for_read (LmBsTransfer  *transfer,
 				   GError       **error)
 {
-	if (transfer->file_channel) {
+	LmBsTransferPriv *priv;
+
+	priv = GET_PRIV (transfer);
+
+	if (priv->file_channel) {
 		return TRUE;
 	}
 
-	transfer->file_channel = g_io_channel_new_file (transfer->location,
-							"r",
-							error);
+	priv->file_channel = g_io_channel_new_file (priv->location,
+						    "r",
+						    error);
 
-	if (!transfer->file_channel) {
+	if (!priv->file_channel) {
 		return FALSE;
 	}
 
-	g_io_channel_set_encoding (transfer->file_channel, NULL, NULL);
-	g_io_channel_set_buffered (transfer->file_channel, FALSE);
+	g_io_channel_set_encoding (priv->file_channel, NULL, NULL);
+	g_io_channel_set_buffered (priv->file_channel, FALSE);
 
 	return TRUE;
 }
@@ -173,7 +292,7 @@ bs_transfer_channel_open_for_read (LmBsTransfer  *transfer,
 static gchar*
 bs_transfer_io_error_to_string (GError *error)
 {
-	g_return_val_if_fail(error != NULL, NULL);
+	g_return_val_if_fail (error != NULL, NULL);
 
 	if (error->domain == G_FILE_ERROR) {
 		switch(error->code) {
@@ -231,102 +350,34 @@ bs_transfer_io_error_to_string (GError *error)
 }
 
 static void
-bs_transfer_completed (LmBsTransfer *transfer)
+bs_transfer_complete (LmBsTransfer *transfer)
 {
-	LmBsSession *session;
+	LmBsTransferPriv *priv;
 
-	transfer->status = LM_BS_TRANSFER_STATUS_COMPLETED;
-	session = transfer->session;
+	priv = GET_PRIV (transfer);
+
+	priv->status = LM_BS_TRANSFER_STATUS_COMPLETE;
 
 	lm_bs_transfer_close_file (transfer);
-	_lm_bs_session_transfer_completed (session, transfer->id);
+
+	g_signal_emit (transfer, signals[COMPLETE], 0);
 }
 
 static void
-bs_transfer_free (LmBsTransfer *transfer)
+bs_transfer_progress (LmBsTransfer *transfer)
 {
-	LmConnection *connection;
-	LmBsSession  *session;
+	LmBsTransferPriv *priv;
+	gdouble           progress;
 
-	connection = transfer->connection;
-	session = transfer->session;
+	priv = GET_PRIV (transfer);
 
-	if (transfer->activate_cb) {
-		_lm_utils_free_callback (transfer->activate_cb);
+	progress = 0.0;
+
+	if (priv->bytes_total > 0) {
+		progress = (gdouble) priv->bytes_transferred / priv->bytes_total;
 	}
 
-	g_hash_table_destroy (transfer->streamhosts);
-
-	lm_bs_transfer_close_file (transfer);
-
-	g_free (transfer->peer_jid);
-	g_free (transfer->location);
-	g_free (transfer->sid);
-	g_free (transfer->iq_id);
-	g_free (transfer);
-
-	g_object_unref (session);
-	lm_connection_unref (connection);
-}
-
-static gchar *
-bs_transfer_get_initiator (LmBsTransfer *transfer)
-{
-	if (transfer->type == LM_BS_TRANSFER_TYPE_RECEIVER) {
-		return g_strdup (transfer->peer_jid);
-	}
-
-	return lm_connection_get_full_jid (transfer->connection);
-}
-
-static gchar *
-bs_transfer_get_target (LmBsTransfer *transfer)
-{
-	if (transfer->type == LM_BS_TRANSFER_TYPE_RECEIVER) {
-		return lm_connection_get_full_jid (transfer->connection);
-	}
-	return g_strdup (transfer->peer_jid);
-}
-
-LmBsTransfer *
-lm_bs_transfer_new (LmBsSession      *session,
-		    LmConnection     *connection,
-		    LmBsTransferType  type,
-		    guint             id,
-		    const gchar      *sid,
-		    const gchar      *peer_jid,
-		    const gchar      *location,
-		    gint64            bytes_total)
-{
-	LmBsTransfer *transfer;
-
-	transfer = g_new0 (LmBsTransfer, 1);
-
-	transfer->ref_count = 1;
-
-	transfer->peer_jid = g_strdup (peer_jid);
-	transfer->connection = connection;
-
-	lm_connection_ref (connection);
-
-	transfer->type = type;
-	transfer->bytes_total = bytes_total;
-	transfer->location = g_strdup (location);
-	transfer->sid = g_strdup (sid);
-	transfer->id = id;
-	transfer->iq_id = NULL;
-	transfer->status = LM_BS_TRANSFER_STATUS_INITIAL;
-	transfer->streamhosts = g_hash_table_new_full (g_str_hash, 
-						       g_str_equal, 
-						       g_free, 
-						       (GDestroyNotify) lm_bs_client_unref);
-
-	transfer->session = g_object_ref (session);
-	transfer->activate_cb = NULL;
-	transfer->file_channel = NULL;
-	transfer->bytes_transfered = 0;
-
-	return transfer;
+	g_signal_emit (transfer, signals[PROGRESS], 0, progress);
 }
 
 static void
@@ -342,29 +393,110 @@ bs_transfer_error (LmBsTransfer *transfer,
 	g_error_free (error);
 }
 
+static gchar *
+bs_transfer_get_initiator (LmBsTransfer *transfer)
+{
+	LmBsTransferPriv *priv;
+
+	priv = GET_PRIV (transfer);
+
+	if (priv->direction == LM_BS_TRANSFER_DIRECTION_RECEIVER) {
+		return g_strdup (priv->peer_jid);
+	}
+
+	return lm_connection_get_full_jid (priv->connection);
+}
+
+static gchar *
+bs_transfer_get_target (LmBsTransfer *transfer)
+{
+	LmBsTransferPriv *priv;
+
+	priv = GET_PRIV (transfer);
+
+	if (priv->direction == LM_BS_TRANSFER_DIRECTION_RECEIVER) {
+		return lm_connection_get_full_jid (priv->connection);
+	}
+	return g_strdup (priv->peer_jid);
+}
+
+LmBsTransfer *
+lm_bs_transfer_new (LmBsSession           *session,
+		    LmConnection          *connection,
+		    LmBsTransferDirection  direction,
+		    guint                  id,
+		    const gchar           *sid,
+		    const gchar           *peer_jid,
+		    const gchar           *location,
+		    gint64                 bytes_total)
+{
+	LmBsTransfer     *transfer;
+	LmBsTransferPriv *priv;
+
+	g_return_val_if_fail (connection != NULL, NULL);
+	g_return_val_if_fail (LM_IS_BS_SESSION (session), NULL);
+	g_return_val_if_fail (peer_jid != NULL, NULL);
+	g_return_val_if_fail (location != NULL, NULL);
+	g_return_val_if_fail (sid != NULL, NULL);
+
+	transfer = g_object_new (LM_TYPE_BS_TRANSFER, NULL);
+
+	priv = GET_PRIV (transfer);
+
+	priv->status = LM_BS_TRANSFER_STATUS_INITIAL;
+	priv->direction = direction;
+
+	priv->connection = lm_connection_ref (connection);
+	priv->session = g_object_ref (session);
+
+	priv->peer_jid = g_strdup (peer_jid);
+	priv->location = g_strdup (location);
+	priv->id = id;
+	priv->sid = g_strdup (sid);
+	priv->iq_id = NULL;
+
+	priv->file_channel = NULL;
+	priv->activate_cb = NULL;
+
+	priv->bytes_total = bytes_total;
+	priv->bytes_transferred = 0;
+
+	return transfer;
+}
+
 void
 lm_bs_transfer_error (LmBsTransfer *transfer,
 		      GError       *error)
 {
-	LmBsSession *session;
+	LmBsTransferPriv *priv;
 
-	transfer->status = LM_BS_TRANSFER_STATUS_INTERRUPTED;
-	session = transfer->session;
+	g_return_if_fail (LM_IS_BS_TRANSFER (transfer));
+
+	priv = GET_PRIV (transfer);
+
+	priv->status = LM_BS_TRANSFER_STATUS_INTERRUPTED;
 
 	lm_bs_transfer_close_file (transfer);
-	_lm_bs_session_transfer_error (session, transfer->id, error);
+
+	g_signal_emit (transfer, signals[ERROR], 0, error);
 }
 
 gboolean
 lm_bs_transfer_append_to_file (LmBsTransfer *transfer, 
 			       GString      *data)
 {
-	gsize        bytes_written;
-	GIOStatus    io_status;
-	GError      *error;
-	const gchar *error_msg;
-	
-	g_return_val_if_fail (transfer->type == LM_BS_TRANSFER_TYPE_RECEIVER, FALSE);
+	LmBsTransferPriv *priv;
+	GIOStatus         io_status;
+	GError           *error;
+	const gchar      *error_msg;
+	gsize             bytes_written;
+
+	g_return_val_if_fail (LM_IS_BS_TRANSFER (transfer), FALSE);
+
+	priv = GET_PRIV (transfer);
+
+	g_return_val_if_fail (priv->direction == LM_BS_TRANSFER_DIRECTION_RECEIVER, FALSE);
+
 	error = NULL;
 
 	if (!bs_transfer_channel_open_for_write (transfer, &error)) {
@@ -374,7 +506,7 @@ lm_bs_transfer_append_to_file (LmBsTransfer *transfer,
 		return FALSE;
 	}
 
-	io_status = g_io_channel_write_chars (transfer->file_channel, 
+	io_status = g_io_channel_write_chars (priv->file_channel, 
 					      data->str,
 					      data->len,
 					      &bytes_written,
@@ -387,11 +519,14 @@ lm_bs_transfer_append_to_file (LmBsTransfer *transfer,
 		return FALSE;
 	}
 
-	transfer->bytes_transfered += bytes_written;
-	if (transfer->bytes_transfered >= transfer->bytes_total) {
-		bs_transfer_completed (transfer);
+	priv->bytes_transferred += bytes_written;
+
+	if (priv->bytes_transferred >= priv->bytes_total) {
+		bs_transfer_complete (transfer);
 		return FALSE;
 	}
+
+	bs_transfer_progress (transfer);
 
 	return TRUE;
 }
@@ -400,18 +535,23 @@ gboolean
 lm_bs_transfer_get_file_content (LmBsTransfer  *transfer, 
 				 GString      **data)
 {
-	gsize        bytes_read;
-	GIOStatus    io_status;
-	GError      *error;
-	const gchar *error_msg;
-	gchar       *buffer;
+	LmBsTransferPriv *priv;
+	GIOStatus         io_status;
+	GError           *error;
+	const gchar      *error_msg;
+	gchar            *buffer;
+	gsize             bytes_read;
+
+	g_return_val_if_fail (LM_IS_BS_TRANSFER (transfer), FALSE);
 	
-	g_return_val_if_fail (transfer->type == LM_BS_TRANSFER_TYPE_SENDER, FALSE);
+	priv = GET_PRIV (transfer);
+
+	g_return_val_if_fail (priv->direction == LM_BS_TRANSFER_DIRECTION_SENDER, FALSE);
 
 	error = NULL;
 
-	if (transfer->bytes_transfered >= transfer->bytes_total) {
-		bs_transfer_completed (transfer);
+	if (priv->bytes_transferred >= priv->bytes_total) {
+		bs_transfer_complete (transfer);
 		return FALSE;
 	}
 
@@ -423,7 +563,7 @@ lm_bs_transfer_get_file_content (LmBsTransfer  *transfer,
 	}
 
 	buffer = g_malloc (FILE_BUFFER_SIZE);
-	io_status = g_io_channel_read_chars (transfer->file_channel, 
+	io_status = g_io_channel_read_chars (priv->file_channel, 
 					     buffer,
 					     FILE_BUFFER_SIZE,
 					     &bytes_read,
@@ -436,10 +576,11 @@ lm_bs_transfer_get_file_content (LmBsTransfer  *transfer,
 		return FALSE;
 	}
 
-	*data =  g_string_new_len (buffer, bytes_read);
+	*data = g_string_new_len (buffer, bytes_read);
 	g_free (buffer);
 
-	transfer->bytes_transfered += bytes_read;
+	priv->bytes_transferred += bytes_read;
+	bs_transfer_progress (transfer);
 
 	return TRUE;
 }
@@ -447,65 +588,73 @@ lm_bs_transfer_get_file_content (LmBsTransfer  *transfer,
 LmBsTransferStatus
 lm_bs_transfer_get_status (LmBsTransfer *transfer)
 {
-	return transfer->status;
+	LmBsTransferPriv *priv;
+
+	g_return_val_if_fail (LM_IS_BS_TRANSFER (transfer), LM_BS_TRANSFER_STATUS_INITIAL);
+
+	priv = GET_PRIV (transfer);
+
+	return priv->status;
 }
 
 guint64
-lm_bs_transfer_get_bytes_complete (LmBsTransfer *transfer)
+lm_bs_transfer_get_bytes_transferred (LmBsTransfer *transfer)
 {
-	return transfer->bytes_transfered;
+	LmBsTransferPriv *priv;
+
+	g_return_val_if_fail (LM_IS_BS_TRANSFER (transfer), 0);
+
+	priv = GET_PRIV (transfer);
+
+	return priv->bytes_transferred;
 }
 
 guint64
 lm_bs_transfer_get_bytes_total (LmBsTransfer *transfer)
 {
-	return transfer->bytes_total;
+	LmBsTransferPriv *priv;
+
+	g_return_val_if_fail (LM_IS_BS_TRANSFER (transfer), 0);
+
+	priv = GET_PRIV (transfer);
+
+	return priv->bytes_total;
 }
 
 void
 lm_bs_transfer_close_file (LmBsTransfer *transfer)
 {
-	if (!transfer->file_channel) {
+	LmBsTransferPriv *priv;
+
+	g_return_if_fail (LM_IS_BS_TRANSFER (transfer));
+
+	priv = GET_PRIV (transfer);
+
+	if (!priv->file_channel) {
 		return;
 	}
 
-	g_io_channel_unref (transfer->file_channel);
-	transfer->file_channel = NULL;
+	g_io_channel_unref (priv->file_channel);
+	priv->file_channel = NULL;
 }
-
-LmBsTransfer *
-lm_bs_transfer_ref (LmBsTransfer *transfer)
-{
-	g_return_val_if_fail (transfer != NULL, NULL);
-
-	transfer->ref_count++;
-
-	return transfer;
-}
-
-void
-lm_bs_transfer_unref (LmBsTransfer *transfer)
-{
-	g_return_if_fail (transfer != NULL);
-
-	transfer->ref_count--;
-	
-	if (transfer->ref_count == 0) {
-		bs_transfer_free (transfer);
-	}
-}
-
 void 
 lm_bs_transfer_set_iq_id (LmBsTransfer *transfer, 
 			  const gchar  *iq_id)
 {
-	if (transfer->iq_id != NULL) {
-		/* id is already set. no need to override it, 
-		 * because it is same for all streamhosts */
+	LmBsTransferPriv *priv;
+
+	g_return_if_fail (LM_IS_BS_TRANSFER (transfer));
+
+	priv = GET_PRIV (transfer);
+
+	if (priv->iq_id != NULL) {
+		/* The id is already set. no need to override it, 
+		 * because it is same for all streamhosts
+		 */
 		return;
 	}
 
-	transfer->iq_id = g_strdup (iq_id);
+	priv->iq_id = g_strdup (iq_id);
 }
 
 void
@@ -515,27 +664,32 @@ lm_bs_transfer_add_streamhost (LmBsTransfer *transfer,
 			       const gchar  *jid)
 {
 	GMainContext       *context;
+	LmBsTransferPriv   *priv;
 	LmBsClient         *streamhost;
 	LmBsClientFunction  func;
 	LmCallback         *connected_cb;
 	LmCallback         *disconnect_cb;
-	StreamHostData     *sreamhost_data;
+	StreamHostData     *streamhost_data;
 
-	context = _lm_bs_session_get_context (transfer->session);
+	g_return_if_fail (LM_IS_BS_TRANSFER (transfer));
 
-	if (transfer->type == LM_BS_TRANSFER_TYPE_RECEIVER) {
-		sreamhost_data = g_new0 (StreamHostData, 1);
-		sreamhost_data->jid = g_strdup (jid);
-		sreamhost_data->transfer = transfer;
+	priv = GET_PRIV (transfer);
+
+	context = _lm_bs_session_get_context (priv->session);
+
+	if (priv->direction == LM_BS_TRANSFER_DIRECTION_RECEIVER) {
+		streamhost_data = g_new0 (StreamHostData, 1);
+		streamhost_data->transfer = g_object_ref (transfer);
+		streamhost_data->jid = g_strdup (jid);
 
 		func = (LmBsClientFunction) bs_transfer_client_connected_cb;
 		connected_cb = _lm_utils_new_callback (func,
-						       sreamhost_data,
+						       streamhost_data,
 						       NULL);
 
 		func = (LmBsClientFunction) bs_transfer_client_disconnected_cb;
 		disconnect_cb = _lm_utils_new_callback (func, 
-							sreamhost_data,
+							streamhost_data,
 							(GDestroyNotify) bs_transfer_free_streamhost_data);
 
 		streamhost = lm_bs_client_new_with_context (port,
@@ -555,37 +709,56 @@ lm_bs_transfer_add_streamhost (LmBsTransfer *transfer,
 							    context);
 	}
 
-	g_hash_table_insert (transfer->streamhosts,
+	g_hash_table_insert (priv->streamhosts,
 			     g_strdup (jid),
 			     streamhost);
 
-	if (transfer->status == LM_BS_TRANSFER_STATUS_INITIAL &&
-	    transfer->type == LM_BS_TRANSFER_TYPE_RECEIVER) {
+	if (priv->status == LM_BS_TRANSFER_STATUS_INITIAL &&
+	    priv->direction == LM_BS_TRANSFER_DIRECTION_RECEIVER) {
 		lm_bs_client_connect (streamhost);
 	}
+}
+
+guint
+lm_bs_transfer_get_id (LmBsTransfer *transfer)
+{
+	LmBsTransferPriv *priv;
+
+	g_return_val_if_fail (LM_IS_BS_TRANSFER (transfer), 0);
+
+	priv = GET_PRIV (transfer);
+
+	return priv->id;
 }
 
 const gchar *
 lm_bs_transfer_get_sid (LmBsTransfer *transfer)
 {
-	return transfer->sid;
+	LmBsTransferPriv *priv;
+
+	g_return_val_if_fail (LM_IS_BS_TRANSFER (transfer), NULL);
+
+	priv = GET_PRIV (transfer);
+
+	return priv->sid;
 }
 
 gchar * 
 lm_bs_transfer_get_auth_sha (LmBsTransfer *transfer)
 {
-	gchar       *concat;
-	const gchar *sha;
-	gchar       *target;
-	gchar       *initiator;
+	LmBsTransferPriv *priv;
+	gchar            *concat;
+	const gchar      *sha;
+	gchar            *target;
+	gchar            *initiator;
+
+	g_return_val_if_fail (LM_IS_BS_TRANSFER (transfer), NULL);
+
+	priv = GET_PRIV (transfer);
 	
 	initiator = bs_transfer_get_initiator (transfer);
 	target = bs_transfer_get_target (transfer);
-	concat = g_strconcat (transfer->sid,
-			      initiator,
-			      target,
-			      NULL);
-
+	concat = g_strconcat (priv->sid, initiator, target, NULL);
 	sha = lm_sha_hash (concat);
 
 	g_free (initiator);
@@ -595,23 +768,41 @@ lm_bs_transfer_get_auth_sha (LmBsTransfer *transfer)
 	return g_strdup (sha);
 }
 
-LmBsTransferType
-lm_bs_transfer_get_type (LmBsTransfer *transfer)
+LmBsTransferDirection
+lm_bs_transfer_get_direction (LmBsTransfer *transfer)
 {
-	return transfer->type;
+	LmBsTransferPriv *priv;
+
+	g_return_val_if_fail (LM_IS_BS_TRANSFER (transfer), LM_BS_TRANSFER_DIRECTION_SENDER);
+
+	priv = GET_PRIV (transfer);
+
+	return priv->direction;
 }
 
 const gchar *
 lm_bs_transfer_get_iq_id (LmBsTransfer *transfer)
 {
-	return transfer->iq_id;
+	LmBsTransferPriv *priv;
+
+	g_return_val_if_fail (LM_IS_BS_TRANSFER (transfer), NULL);
+
+	priv = GET_PRIV (transfer);
+
+	return priv->iq_id;
 }
 
 gboolean
 lm_bs_transfer_has_streamhost (LmBsTransfer *transfer, 
 			       const gchar  *jid)
 {
-	if (g_hash_table_lookup (transfer->streamhosts, jid)) {
+	LmBsTransferPriv *priv;
+
+	g_return_val_if_fail (LM_IS_BS_TRANSFER (transfer), FALSE);
+
+	priv = GET_PRIV (transfer);
+
+	if (g_hash_table_lookup (priv->streamhosts, jid)) {
 		return TRUE;
 	}
 
@@ -622,32 +813,41 @@ void
 lm_bs_transfer_set_activate_cb (LmBsTransfer *transfer,
 				LmCallback   *activate_cb)
 {
-	g_return_if_fail (transfer != NULL);
+	LmBsTransferPriv *priv;
 
-	if (transfer->activate_cb != NULL) {
-		_lm_utils_free_callback (transfer->activate_cb);
+	g_return_if_fail (LM_IS_BS_TRANSFER (transfer));
+
+	priv = GET_PRIV (transfer);
+
+	if (priv->activate_cb != NULL) {
+		_lm_utils_free_callback (priv->activate_cb);
 	}
 
-	transfer->activate_cb = activate_cb;
+	priv->activate_cb = activate_cb;
 }
 
 void
 lm_bs_transfer_send_success_reply (LmBsTransfer *transfer, 
 				   const gchar  *jid)
 {
-	LmMessage     *m;
-	LmMessageNode *node;
-	LmMessageNode *node1;
-	GError        *error;
-	gchar         *target_jid;
+	LmBsTransferPriv *priv;
+	LmMessage        *m;
+	LmMessageNode    *node;
+	LmMessageNode    *node1;
+	GError           *error;
+	gchar            *target_jid;
 
-	g_return_if_fail (transfer->type == LM_BS_TRANSFER_TYPE_RECEIVER);
+	g_return_if_fail (LM_IS_BS_TRANSFER (transfer));
 
-	m = lm_message_new_with_sub_type (transfer->peer_jid, 
+	priv = GET_PRIV (transfer);
+
+	g_return_if_fail (priv->direction == LM_BS_TRANSFER_DIRECTION_RECEIVER);
+
+	m = lm_message_new_with_sub_type (priv->peer_jid, 
 					  LM_MESSAGE_TYPE_IQ, 
 					  LM_MESSAGE_SUB_TYPE_RESULT);
 
-	lm_message_node_set_attribute (m->node, "id", transfer->iq_id);
+	lm_message_node_set_attribute (m->node, "id", priv->iq_id);
 	target_jid = bs_transfer_get_target (transfer);
 	lm_message_node_set_attribute (m->node,
 				       "from",
@@ -661,7 +861,7 @@ lm_bs_transfer_send_success_reply (LmBsTransfer *transfer,
 
 	error = NULL;
 
-	if (!lm_connection_send (transfer->connection, m, &error)) {
+	if (!lm_connection_send (priv->connection, m, &error)) {
 		g_printerr ("Failed to send message:'%s'\n", 
 			    lm_message_node_to_string (m->node));
 	} 
@@ -674,15 +874,18 @@ void
 lm_bs_transfer_activate (LmBsTransfer *transfer,
 			 const gchar  *jid)
 {
-	LmCallback *cb;
+	LmBsTransferPriv *priv;
+	LmCallback       *cb;
 
+	g_return_if_fail (LM_IS_BS_TRANSFER (transfer));
 	g_return_if_fail (lm_bs_transfer_has_streamhost (transfer, jid));
 
-	g_hash_table_remove_all (transfer->streamhosts);
+	priv = GET_PRIV (transfer);
 
-	cb = transfer->activate_cb;
+	g_hash_table_remove_all (priv->streamhosts);
+
+	cb = priv->activate_cb;
 	if (cb && cb->func) {
-		(* ((LmBsClientFunction) cb->func)) (NULL,
-						     cb->user_data);
+		(* ((LmBsClientFunction) cb->func)) (NULL, cb->user_data);
 	}
 }

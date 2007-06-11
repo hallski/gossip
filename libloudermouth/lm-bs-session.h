@@ -53,8 +53,9 @@ struct _LmBsSessionClass {
 typedef void    (* LmBsFailureFunction)             (gpointer       user_data,
 						     guint          id,
 						     GError        *error);
-typedef void    (* LmBsCompleteFunction)            (gpointer       user_data,
-						     guint          id);
+typedef void    (* LmBsProgressFunction)            (gpointer       user_data,
+						     guint          id,
+						     gdouble        progress);
 
 GType           lm_bs_session_get_type              (void) G_GNUC_CONST;
 
@@ -64,8 +65,8 @@ void            lm_bs_session_set_failure_function  (LmBsSession   *session,
 						     LmBsFailureFunction  function,
 						     gpointer       user_data,
 						     GDestroyNotify notify);
-void            lm_bs_session_set_complete_function (LmBsSession   *session,
-						     LmBsCompleteFunction function,
+void            lm_bs_session_set_progress_function (LmBsSession   *session,
+						     LmBsProgressFunction function,
 						     gpointer       user_data,
 						     GDestroyNotify notify);
 void            lm_bs_session_receive_file          (LmBsSession   *session, 

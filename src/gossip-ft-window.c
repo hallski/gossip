@@ -68,8 +68,9 @@ static void ft_window_error_cb                     (GossipJabber       *jabber,
 						    GossipFT           *ft,
 						    GError             *error,
 						    gpointer            user_data);
-static void ft_window_complete_cb                  (GossipJabber       *jabber,
+static void ft_window_progress_cb                  (GossipJabber       *jabber,
 						    GossipFT           *ft,
+						    gdouble             progress,
 						    gpointer            user_data);
 static void ft_window_event_activated_cb           (GossipEventManager *event_manager,
 						    GossipEvent        *event,
@@ -138,8 +139,8 @@ ft_window_protocol_connected_cb (GossipSession  *session,
 			  G_CALLBACK (ft_window_error_cb),
 			  session);
 	g_signal_connect (jabber,
-			  "file-transfer-complete",
-			  G_CALLBACK (ft_window_complete_cb),
+			  "file-transfer-progress",
+			  G_CALLBACK (ft_window_progress_cb),
 			  session);
 }
 
@@ -157,7 +158,7 @@ ft_window_protocol_disconnected_cb (GossipSession  *session,
 					      ft_window_error_cb,
 					      session);
 	g_signal_handlers_disconnect_by_func (jabber,
-					      ft_window_complete_cb,
+					      ft_window_progress_cb,
 					      session);
 }
 
@@ -245,12 +246,17 @@ ft_window_error_cb (GossipJabber *jabber,
 }
 
 static void
-ft_window_complete_cb (GossipJabber *jabber,
+ft_window_progress_cb (GossipJabber *protocol,
 		       GossipFT     *ft,
+		       gdouble       progress,
 		       gpointer      user_data)
 {
 	GtkWidget *dialog;
 /* 	gchar     *str; */
+
+	if (progress < 1.0) {
+		return;
+	}
 
 /* 	str = g_strdup_printf (_("The file %s has been transfered successfully!"),  */
 /* 			       gossip_ft_get_file_name (ft)); */

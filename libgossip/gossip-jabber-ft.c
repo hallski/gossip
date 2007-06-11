@@ -56,24 +56,25 @@
 #define XMPP_ERROR_XMLNS           "urn:ietf:params:xml:ns:xmpp-stanzas"
 
 struct _GossipJabberFTs {
-	GossipJabber   *jabber;
-	LmConnection   *connection;
-	LmBsSession    *bs_session;
+	GossipJabber *jabber;
+	LmConnection *connection;
+	LmBsSession  *bs_session;
 
-	GHashTable     *str_ids;
-	GHashTable     *ft_ids;
-	GHashTable     *remote_ids;
-	GHashTable     *jid_sids;
+	GHashTable   *str_ids;
+	GHashTable   *ft_ids;
+	GHashTable   *remote_ids;
+	GHashTable   *jid_sids;
 };
 
 static guint           jabber_ft_guess_id_by_sid_and_sender (GossipJabber      *jabber,
 							     const gchar       *sid,
 							     const gchar       *jid);
-static void            jabber_ft_transfer_complete_cb       (GossipJabber      *jabber,
-							     guint              id);
 static void            jabber_ft_transfer_failure_cb        (GossipJabber      *jabber,
 							     guint              id,
 							     GError            *error);
+static void            jabber_ft_transfer_progress_cb       (GossipJabber      *jabber,
+							     guint              id,
+							     gdouble            progress);
 static void            jabber_ft_add_jid_sid_to_table       (GossipJabberFTs   *fts,
 							     const gchar       *jid,
 							     const gchar       *sid,
@@ -122,8 +123,8 @@ gossip_jabber_ft_init (GossipJabber *jabber)
 					    jabber,
 					    NULL);
 
-	lm_bs_session_set_complete_function (fts->bs_session, 
-					    (LmBsCompleteFunction) jabber_ft_transfer_complete_cb,
+	lm_bs_session_set_progress_function (fts->bs_session, 
+					    (LmBsProgressFunction) jabber_ft_transfer_progress_cb,
 					    jabber,
 					    NULL);
 
@@ -213,28 +214,6 @@ jabber_ft_guess_id_by_sid_and_sender (GossipJabber *jabber,
 }
 
 static void
-jabber_ft_transfer_complete_cb (GossipJabber *jabber, 
-				guint         id)
-{
-	GossipJabberFTs *fts;
-	GossipFT        *ft;
-	gchar           *id_str;
-
-	gossip_debug (DEBUG_DOMAIN, "ID[%d] Transfer is complete", id);
-
-	fts = gossip_jabber_get_fts (jabber);
-	id_str = g_strdup_printf ("%d", id);
-	ft = g_hash_table_lookup (fts->ft_ids, id_str);
-	g_free (id_str);
-
-	gossip_debug (DEBUG_DOMAIN, 
-		      "ID[%d], ft_ids hash table size is %d (AFTER REMOVING COMPLETE ENTRY)", 
-		      id, g_hash_table_size (fts->ft_ids));
-
-	g_signal_emit_by_name (fts->jabber, "file-transfer-complete", ft);
-}
-
-static void
 jabber_ft_transfer_failure_cb (GossipJabber *jabber, 
 			       guint         id, 
 			       GError       *error)
@@ -270,6 +249,30 @@ jabber_ft_transfer_failure_cb (GossipJabber *jabber,
 			 ft,
 			 error_code,
 			 error->message ? error->message : "");
+}
+
+static void
+jabber_ft_transfer_progress_cb (GossipJabber *jabber, 
+				guint         id, 
+				gdouble       progress)
+{
+	GossipJabberFTs *fts;
+	GossipFT        *ft;
+	gchar           *id_str;
+
+	gossip_debug (DEBUG_DOMAIN, "ID[%d] Progress: %f %%", id, progress * 100);
+
+	fts = gossip_jabber_get_fts (jabber);
+	id_str = g_strdup_printf ("%d", id);
+	ft = g_hash_table_lookup (fts->ft_ids, id_str);
+	g_free (id_str);
+
+	g_signal_emit_by_name (fts->jabber, "file-transfer-progress", ft, progress);
+	
+	if (progress >= 1.0) {
+		gossip_debug (DEBUG_DOMAIN, "ID[%d] Transfer complete", id);
+/* 		g_signal_emit_by_name (fts->jabber, "file-transfer-complete", ft); */
+	}
 }
 
 static void
@@ -1132,7 +1135,6 @@ gossip_jabber_ft_cancel (GossipJabberFTs *fts,
 /* 	room = (JabberChatroom*) g_hash_table_lookup (chatrooms->room_id_hash,  */
 /* 						       GINT_TO_POINTER (id)); */
 }
-
 
 /*
  * stream stuff

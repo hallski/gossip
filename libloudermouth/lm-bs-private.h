@@ -29,11 +29,6 @@
 G_BEGIN_DECLS
 
 GMainContext * _lm_bs_session_get_context           (LmBsSession   *session);
-void           _lm_bs_session_transfer_error        (LmBsSession   *session,
-						     guint          id,
-						     GError        *error);
-void           _lm_bs_session_transfer_completed    (LmBsSession   *session,
-						     guint          id);
 void           _lm_bs_session_remove_sender         (LmBsSession   *session,
 						     guint          fd);
 void           _lm_bs_session_match_sha             (LmBsSession   *session,

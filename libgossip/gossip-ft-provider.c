@@ -32,7 +32,7 @@ enum {
 	FT_REQUEST,
 	FT_CANCELLED,
 	FT_ERROR,
-	FT_COMPLETE,
+	FT_PROGRESS,
 	LAST_SIGNAL
 };
 
@@ -103,15 +103,15 @@ ft_provider_base_init (gpointer g_class)
 				      G_TYPE_NONE,
 				      2, GOSSIP_TYPE_FT, G_TYPE_POINTER);
 
-		signals[FT_COMPLETE] =
-			g_signal_new ("file-transfer-complete",
+		signals[FT_PROGRESS] =
+			g_signal_new ("file-transfer-progress",
 				      G_TYPE_FROM_CLASS (g_class),
 				      G_SIGNAL_RUN_LAST,
 				      0,
 				      NULL, NULL,
-				      libgossip_marshal_VOID__OBJECT,
+				      libgossip_marshal_VOID__OBJECT_POINTER,
 				      G_TYPE_NONE,
-				      1, GOSSIP_TYPE_FT);
+				      2, GOSSIP_TYPE_FT, G_TYPE_DOUBLE);
 
 		initialized = TRUE;
 	}

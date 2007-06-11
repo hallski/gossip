@@ -1,3 +1,19 @@
+2007-06-11  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-ft-provider.c:
+	* libgossip/gossip-jabber-ft.c:
+	* libloudermouth/libloudermouth-marshal.list:
+	* libloudermouth/lm-bs-private.h:
+	* libloudermouth/lm-bs-receiver.c:
+	* libloudermouth/lm-bs-sender.c:
+	* libloudermouth/lm-bs-session.c:
+	* libloudermouth/lm-bs-session.h:
+	* libloudermouth/lm-bs-transfer.c:
+	* libloudermouth/lm-bs-transfer.h: 
+	* src/gossip-ft-window.c: GObject-ified LmBsTransfer and use signals
+	to send progress, error and complete status instead of setting and
+	calling callbacks. Added progress for transfers to be signalled.
+
 2007-06-11  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-theme-boxes.c (theme_boxes_maybe_append_header):
