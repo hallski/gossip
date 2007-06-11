@@ -63,18 +63,18 @@ static void ft_window_protocol_disconnected_cb     (GossipSession      *session,
 						    gpointer            user_data);
 static void ft_window_request_cb                   (GossipJabber       *jabber,
 						    GossipFT           *ft,
-						    gpointer            user_data);
+						    GossipSession      *session);
 static void ft_window_complete_cb                  (GossipJabber       *jabber,
 						    GossipFT           *ft,
-						    gpointer            user_data);
+						    GossipSession      *session);
 static void ft_window_progress_cb                  (GossipJabber       *jabber,
 						    GossipFT           *ft,
 						    gdouble             progress,
-						    gpointer            user_data);
+						    GossipSession      *session);
 static void ft_window_error_cb                     (GossipJabber       *jabber,
 						    GossipFT           *ft,
 						    GError             *error,
-						    gpointer            user_data);
+						    GossipSession      *session);
 static void ft_window_event_activated_cb           (GossipEventManager *event_manager,
 						    GossipEvent        *event,
 						    GossipJabber       *jabber);
@@ -123,7 +123,7 @@ gossip_ft_window_finalize (GossipSession *session)
 }
 
 /*
- * receiving from another contact
+ * Receiving from another contact
  */
 
 static void
@@ -164,17 +164,20 @@ ft_window_protocol_disconnected_cb (GossipSession  *session,
 					      ft_window_request_cb,
 					      session);
 	g_signal_handlers_disconnect_by_func (jabber,
-					      ft_window_error_cb,
+					      ft_window_complete_cb,
 					      session);
 	g_signal_handlers_disconnect_by_func (jabber,
 					      ft_window_progress_cb,
 					      session);
+	g_signal_handlers_disconnect_by_func (jabber,
+					      ft_window_error_cb,
+					      session);
 }
 
 static void
-ft_window_request_cb (GossipJabber *jabber,
-		      GossipFT     *ft,
-		      gpointer      user_data)
+ft_window_request_cb (GossipJabber  *jabber,
+		      GossipFT      *ft,
+		      GossipSession *session)
 {
 	GossipEvent   *event;
 	GossipContact *contact;
@@ -199,10 +202,46 @@ ft_window_request_cb (GossipJabber *jabber,
 }
 
 static void
-ft_window_error_cb (GossipJabber *jabber,
-		    GossipFT     *ft,
-		    GError       *error,
-		    gpointer      user_data)
+ft_window_complete_cb (GossipJabber  *protocol,
+		       GossipFT      *ft,
+		       GossipSession *session)
+{
+	GtkWidget *dialog;
+ 	gchar     *str;  
+
+  	str = g_strdup_printf (_("The file \"%s\" has been transfered successfully."),   
+  			       gossip_ft_get_file_name (ft));  
+
+	dialog = gtk_message_dialog_new_with_markup (GTK_WINDOW (gossip_app_get_window ()),
+						     GTK_DIALOG_DESTROY_WITH_PARENT,
+						     GTK_MESSAGE_INFO,
+						     GTK_BUTTONS_CLOSE,
+						     "<b>%s</b>\n\n%s",
+						     _("File transfer complete"),
+						     str);
+ 	g_free (str); 
+
+	g_signal_connect_swapped (dialog, "response",
+				  G_CALLBACK (gtk_widget_destroy),
+				  dialog);
+
+	gtk_widget_show (dialog);
+}
+
+static void
+ft_window_progress_cb (GossipJabber  *protocol,
+		       GossipFT      *ft,
+		       gdouble        progress,
+		       GossipSession *session)
+{
+	gossip_debug (DEBUG_DOMAIN, "Progress %f %%", progress);
+}
+
+static void
+ft_window_error_cb (GossipJabber  *jabber,
+		    GossipFT      *ft,
+		    GError        *error,
+		    GossipSession *session)
 {
 	GtkWidget      *dialog;
 	GtkMessageType  type;
@@ -252,45 +291,6 @@ ft_window_error_cb (GossipJabber *jabber,
 				  dialog);
 
 	gtk_widget_show (dialog);
-}
-
-static void
-ft_window_complete_cb (GossipJabber *protocol,
-		       GossipFT     *ft,
-		       gpointer      user_data)
-{
-	GtkWidget *dialog;
-/*  	gchar     *str;  */
-
-	gossip_debug (DEBUG_DOMAIN, "FT is %p", ft);
-
-/*  	str = g_strdup_printf (_("The file %s has been transfered successfully!"),   */
-/*  			       gossip_ft_get_file_name (ft));  */
-
-	dialog = gtk_message_dialog_new_with_markup (GTK_WINDOW (gossip_app_get_window ()),
-						     GTK_DIALOG_DESTROY_WITH_PARENT,
-						     GTK_MESSAGE_INFO,
-						     GTK_BUTTONS_CLOSE,
-						     "<b>%s</b>\n\n%s",
-						     _("File transfer complete"),
-						     _("The file has been successfully transferred!"));
-/* 	g_free (str); */
-
-	g_signal_connect_swapped (dialog, "response",
-				  G_CALLBACK (gtk_widget_destroy),
-				  dialog);
-
-	gtk_widget_show (dialog);
-	
-}
-
-static void
-ft_window_progress_cb (GossipJabber *protocol,
-		       GossipFT     *ft,
-		       gdouble       progress,
-		       gpointer      user_data)
-{
-	gossip_debug (DEBUG_DOMAIN, "Progress %f %%", progress);
 }
 
 static void

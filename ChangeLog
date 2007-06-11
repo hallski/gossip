@@ -1,3 +1,9 @@
+2007-06-12  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-jabber-ft.c:
+	* src/gossip-ft-window.c: Fixed the GossipFT lookup before signalling
+	progress, completion and errors. Include file name in success dialog.
+
 2007-06-11  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-jabber-ft.[ch]:
