@@ -10,7 +10,6 @@ libgossip/gossip-chatroom-provider.c
 libgossip/gossip-contact.c
 libgossip/gossip-log.c
 libgossip/gossip-presence.c
-libgossip/gossip-protocol.c
 libgossip/gossip-jabber-disco.c
 libgossip/gossip-jabber.c
 
