@@ -42,12 +42,14 @@ void             gossip_jabber_ft_decline             (GossipJabberFTs *fts,
 						       GossipFTId       id);
 void             gossip_jabber_ft_cancel              (GossipJabberFTs *fts,
 						       GossipFTId       id);
+void             gossip_jabber_ft_clean_up            (GossipJabberFTs *fts,
+						       GossipFTId       id);
 void             gossip_jabber_ft_send_response       (GossipJabber    *jabber,
 						       const gchar     *to,
 						       const gchar     *id);
 
 /*
- * stream API
+ * Stream API
  */
 void             gossip_jabber_ft_iib_start           (GossipJabber    *jabber,
 						       const gchar     *to);

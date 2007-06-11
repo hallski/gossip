@@ -1,5 +1,11 @@
 2007-06-11  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-jabber-ft.[ch]:
+	* src/gossip-ft-window.c: Make it possible to keep transfers around
+	until the UI decides to clean them up.
+
+2007-06-11  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-ft-provider.c:
 	* libgossip/gossip-jabber-ft.c:
 	* libloudermouth/libloudermouth-marshal.list:
