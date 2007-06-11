@@ -1,5 +1,11 @@
 2007-06-11  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-theme-boxes.c (theme_boxes_maybe_append_header):
+	- Set the foreground color of header labels. Need to update when
+	  changing theme.
+
+2007-06-11  Mikael Hallendal  <micke@imendio.com>
+
 	* libgossip/*.[ch]:
 	* src/*.[ch]:
 	- Removed GossipProtocol and now only use GossipJabber.

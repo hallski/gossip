@@ -600,20 +600,24 @@ theme_boxes_maybe_append_header (GossipTheme        *theme,
 				 GossipMessage      *msg,
 				 gboolean            from_self)
 {
-	GossipContact      *contact;
-	GdkPixbuf          *avatar;
-	GtkTextBuffer      *buffer;
-	const gchar        *name;
-	gboolean            header;
-	GtkTextIter         iter;
-	GtkWidget          *label1, *label2;
-	GtkTextChildAnchor *anchor;
-	GtkWidget          *box;
-	gchar              *str;
-	GossipTime          time;
-	gchar              *tmp;
-	GtkTextIter         start;
+	GossipThemeBoxesPriv *priv;
+	GossipContact        *contact;
+	GdkPixbuf            *avatar;
+	GtkTextBuffer        *buffer;
+	const gchar          *name;
+	gboolean              header;
+	GtkTextIter           iter;
+	GtkWidget            *label1, *label2;
+	GtkTextChildAnchor   *anchor;
+	GtkWidget            *box;
+	gchar                *str;
+	GossipTime            time;
+	gchar                *tmp;
+	GtkTextIter           start;
+	GdkColor              color;
+	gboolean              parse_success;
 
+	priv = GET_PRIV (theme);
 
 	contact = gossip_message_get_sender (msg);
 	avatar = gossip_contact_get_avatar_pixbuf (contact);
@@ -686,6 +690,13 @@ theme_boxes_maybe_append_header (GossipTheme        *theme,
 			       "use-markup", TRUE,
 			       "xalign", 0.0,
 			       NULL);
+
+	parse_success = gdk_color_parse (priv->header_foreground, &color);
+
+	if (parse_success) {
+		gtk_widget_modify_fg (label1, GTK_STATE_NORMAL, &color);
+	}
+
 	g_free (str);
 
 	time = gossip_message_get_timestamp (msg);
@@ -700,6 +711,11 @@ theme_boxes_maybe_append_header (GossipTheme        *theme,
 			       "use-markup", TRUE,
 			       "xalign", 1.0,
 			       NULL);
+	
+	if (parse_success) {
+		gtk_widget_modify_fg (label2, GTK_STATE_NORMAL, &color);
+	}
+
 	g_free (str);
 
 	gtk_misc_set_alignment (GTK_MISC (label1), 0.0, 0.5);
