@@ -30,7 +30,7 @@
 #include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-event.h>
 #include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-protocol.h>
+#include <libgossip/gossip-jabber.h>
 #include <libgossip/gossip-event-manager.h>
 #include <libgossip/gossip-utils.h>
 #include <libgossip/gossip-vcard.h>
@@ -56,26 +56,26 @@ typedef struct {
 	GtkWidget      *personal_table;
 	GtkWidget      *info_requested_hbox;
 
-	GossipProtocol *protocol;
+	GossipJabber   *jabber;
 	GossipContact  *contact;
 	GossipVCard    *vcard;
 } GossipSubscriptionDialog;
 
 static void subscription_dialog_protocol_connected_cb    (GossipSession            *session,
 							  GossipAccount            *account,
-							  GossipProtocol           *protocol,
+							  GossipJabber             *jabber,
 							  gpointer                  user_data);
 static void subscription_dialog_protocol_disconnected_cb (GossipSession            *session,
 							  GossipAccount            *account,
-							  GossipProtocol           *protocol,
+							  GossipJabber             *jabber,
 							  gint                      reason,
 							  gpointer                  user_data);
-static void subscription_dialog_request_cb               (GossipProtocol           *protocol,
+static void subscription_dialog_request_cb               (GossipJabber             *jabber,
 							  GossipContact            *contact,
 							  gpointer                  user_data);
 static void subscription_dialog_event_activated_cb       (GossipEventManager       *event_manager,
 							  GossipEvent              *event,
-							  GossipProtocol           *protocol);
+							  GossipJabber             *jabber);
 static void subscription_dialog_show                     (GossipSubscriptionDialog *dialog);
 static void subscription_dialog_vcard_cb                 (GossipResult              result,
 							  GossipVCard              *vcard,
@@ -131,10 +131,10 @@ gossip_subscription_dialog_finalize (GossipSession *session)
 static void
 subscription_dialog_protocol_connected_cb (GossipSession  *session,
 					   GossipAccount  *account,
-					   GossipProtocol *protocol,
+					   GossipJabber   *jabber,
 					   gpointer        user_data)
 {
-	g_signal_connect (protocol,
+	g_signal_connect (jabber,
 			  "subscription-request",
 			  G_CALLBACK (subscription_dialog_request_cb),
 			  session);
@@ -143,17 +143,17 @@ subscription_dialog_protocol_connected_cb (GossipSession  *session,
 static void
 subscription_dialog_protocol_disconnected_cb (GossipSession  *session,
 					      GossipAccount  *account,
-					      GossipProtocol *protocol,
+					      GossipJabber   *jabber,
 					      gint            reason,
 					      gpointer        user_data)
 {
-	g_signal_handlers_disconnect_by_func (protocol,
+	g_signal_handlers_disconnect_by_func (jabber,
 					      subscription_dialog_request_cb,
 					      session);
 }
 
 static void
-subscription_dialog_request_cb (GossipProtocol *protocol,
+subscription_dialog_request_cb (GossipJabber *jabber,
 				GossipContact  *contact,
 				gpointer        user_data)
 {
@@ -175,7 +175,7 @@ subscription_dialog_request_cb (GossipProtocol *protocol,
 	 */
 	if (type == GOSSIP_CONTACT_TYPE_CONTACTLIST) {
 		gossip_debug (DEBUG_DOMAIN, "Silently accepting request");
-		gossip_protocol_set_subscription (protocol, contact, TRUE);
+		gossip_jabber_set_subscription (jabber, contact, TRUE);
 		return;
 	}
 
@@ -196,13 +196,13 @@ subscription_dialog_request_cb (GossipProtocol *protocol,
 		(gossip_app_get_event_manager (),
 		 event,
 		 (GossipEventActivateFunction) subscription_dialog_event_activated_cb,
-		 G_OBJECT (protocol));
+		 G_OBJECT (jabber));
 }
 
 static void
 subscription_dialog_event_activated_cb (GossipEventManager *event_manager,
 					GossipEvent        *event,
-					GossipProtocol     *protocol)
+					GossipJabber       *jabber)
 {
 	GossipContact            *contact;
 	GossipSubscriptionDialog *dialog;
@@ -217,7 +217,7 @@ subscription_dialog_event_activated_cb (GossipEventManager *event_manager,
 
 	dialog = g_new0 (GossipSubscriptionDialog, 1);
 
-	dialog->protocol = g_object_ref (protocol);
+	dialog->jabber = g_object_ref (jabber);
 	dialog->contact = g_object_ref (contact);
 
 	g_hash_table_insert (dialogs, dialog->contact, dialog);
@@ -469,7 +469,7 @@ subscription_dialog_request_dialog_cb (GtkWidget                *widget,
 				       gint                      response,
 				       GossipSubscriptionDialog *dialog)
 {
-	g_return_if_fail (GOSSIP_IS_PROTOCOL (dialog->protocol));
+	g_return_if_fail (GOSSIP_IS_JABBER (dialog->jabber));
 	g_return_if_fail (GOSSIP_IS_CONTACT (dialog->contact));
 
 	if (response == GTK_RESPONSE_YES ||
@@ -479,9 +479,9 @@ subscription_dialog_request_dialog_cb (GtkWidget                *widget,
 		gossip_debug (DEBUG_DOMAIN, "Sending subscribed");
 
 		subscribed = (response == GTK_RESPONSE_YES);
-		gossip_protocol_set_subscription (dialog->protocol,
-						  dialog->contact,
-						  subscribed);
+		gossip_jabber_set_subscription (dialog->jabber,
+						dialog->contact,
+						subscribed);
 
 		if (subscribed) {
 			GtkWidget   *group_entry;
@@ -498,17 +498,17 @@ subscription_dialog_request_dialog_cb (GtkWidget                *widget,
 
 			gossip_debug (DEBUG_DOMAIN, "Adding contact");
 
-			gossip_protocol_add_contact (dialog->protocol,
-						     gossip_contact_get_id (dialog->contact),
-						     name, group,
-						     message);
+			gossip_jabber_add_contact (dialog->jabber,
+						   gossip_contact_get_id (dialog->contact),
+						   name, group,
+						   message);
 		}
 	}
 
 	g_hash_table_remove (dialogs, dialog->contact);
 	gtk_widget_destroy (widget);
 
-	g_object_unref (dialog->protocol);
+	g_object_unref (dialog->jabber);
 
 	if (dialog->vcard) {
 		g_object_unref (dialog->vcard);

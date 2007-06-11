@@ -31,7 +31,6 @@
 
 #include <libgossip/gossip-account.h>
 #include <libgossip/gossip-contact.h>
-#include <libgossip/gossip-protocol.h>
 #include <libgossip/gossip-presence.h>
 #include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-conf.h>
@@ -71,7 +70,7 @@ sound_protocol_timeout_cb (GossipAccount *account)
 static void
 sound_protocol_connected_cb (GossipSession  *session,
 			     GossipAccount  *account,
-			     GossipProtocol *protocol,
+			     GossipJabber   *jabber,
 			     gpointer        user_data)
 {
 	guint        id;
@@ -114,10 +113,10 @@ sound_disconnected_contact_foreach (GossipContact  *contact,
 }
 
 static void
-sound_protocol_disconnecting_cb (GossipSession  *session,
-				 GossipAccount  *account,
-				 GossipProtocol *protocol,
-				 gpointer        user_data)
+sound_protocol_disconnecting_cb (GossipSession *session,
+				 GossipAccount *account,
+				 GossipJabber  *jabber,
+				 gpointer       user_data)
 {
 	gossip_debug (DEBUG_DOMAIN, 
 		      "Protocol disconnecting for account:'%s'",

@@ -33,7 +33,6 @@
 #include <libgossip/gossip-jabber.h>
 #include <libgossip/gossip-session.h>
 #include <libgossip/gossip-chatroom-provider.h>
-#include <libgossip/gossip-protocol.h>
 #include <libgossip/gossip-utils.h>
 #include <libgossip/gossip-chatroom-manager.h>
 

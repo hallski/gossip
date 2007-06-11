@@ -26,11 +26,11 @@
 #include "gossip-presence.h"
 #include "gossip-account.h"
 #include "gossip-contact.h"
+#include "gossip-jabber.h"
 #include "gossip-log.h"
 #include "gossip-async.h"
 #include "gossip-chatroom-provider.h"
 #include "gossip-account-manager.h"
-#include "gossip-protocol.h"
 #include "gossip-message.h"
 #include "gossip-vcard.h"
 #include "gossip-contact-manager.h"
@@ -64,7 +64,7 @@ GossipSession * gossip_session_new                     (const gchar             
 							const gchar             *chatrooms_file);
 
 /* Get protocol */
-GossipProtocol *gossip_session_get_protocol            (GossipSession           *session,
+GossipJabber *  gossip_session_get_protocol            (GossipSession           *session,
 							GossipAccount           *account);
 
 /* Providers */

@@ -35,7 +35,6 @@
 #include <libgossip/gossip-event.h>
 #include <libgossip/gossip-presence.h>
 #include <libgossip/gossip-chatroom-provider.h>
-#include <libgossip/gossip-protocol.h>
 #include <libgossip/gossip-account-manager.h>
 #include <libgossip/gossip-conf.h>
 #include <libgossip/gossip-debug.h>
@@ -246,24 +245,24 @@ app_throbber_button_press_event_cb           (GtkWidget             *throbber,
 static void     
 app_session_protocol_connecting_cb           (GossipSession         *session,
 					      GossipAccount         *account,
-					      GossipProtocol        *protocol,
+					      GossipJabber          *jabber,
 					      gpointer               user_data);
 static void     
 app_session_protocol_connected_cb            (GossipSession         *session,
 					      GossipAccount         *account,
-					      GossipProtocol        *protocol,
+					      GossipJabber          *jabber,
 					      gpointer               user_data);
 static void     app_reconnect_remove         (gpointer               p);
 static gboolean app_reconnect_cb             (GossipAccount         *account);
 static void     
 app_session_protocol_disconnected_cb         (GossipSession         *session,
 					      GossipAccount         *account,
-					      GossipProtocol        *protocol,
+					      GossipJabber          *jabber,
 					      gint                   reason,
 					      gpointer               user_data);
 static void     
 app_session_protocol_error_cb                (GossipSession         *session,
-					      GossipProtocol        *protocol,
+					      GossipJabber          *jabber,
 					      GossipAccount         *account,
 					      GError                *error,
 					      gpointer               user_data);
@@ -1512,7 +1511,7 @@ app_throbber_button_press_event_cb (GtkWidget      *throbber_ebox,
 static void
 app_session_protocol_connecting_cb (GossipSession  *session,
 				    GossipAccount  *account,
-				    GossipProtocol *protocol,
+				    GossipJabber   *jabber,
 				    gpointer        user_data)
 {
 	GossipAppPriv *priv;
@@ -1540,10 +1539,10 @@ app_restore_saved_presence (void)
 }
 
 static void
-app_session_protocol_connected_cb (GossipSession  *session,
-				   GossipAccount  *account,
-				   GossipProtocol *protocol,
-				   gpointer        user_data)
+app_session_protocol_connected_cb (GossipSession *session,
+				   GossipAccount *account,
+				   GossipJabber  *jabber,
+				   gpointer       user_data)
 {
 	GossipAppPriv *priv;
 	gboolean       connecting;
@@ -1595,11 +1594,11 @@ app_reconnect_cb (GossipAccount *account)
 }
 
 static void
-app_session_protocol_disconnected_cb (GossipSession  *session,
-				      GossipAccount  *account,
-				      GossipProtocol *protocol,
-				      gint            reason,
-				      gpointer        user_data)
+app_session_protocol_disconnected_cb (GossipSession *session,
+				      GossipAccount *account,
+				      GossipJabber  *jabber,
+				      gint           reason,
+				      gpointer       user_data)
 {
 	GossipAppPriv *priv;
 	gboolean       connecting;
@@ -1627,7 +1626,7 @@ app_session_protocol_disconnected_cb (GossipSession  *session,
 	app_favorite_chatroom_menu_update ();
 	gossip_self_presence_updated (gossip_app_get_self_presence ());
 
-	should_reconnect = reason != GOSSIP_PROTOCOL_DISCONNECT_ASKED;
+	should_reconnect = reason != GOSSIP_JABBER_DISCONNECT_ASKED;
 
 #ifdef HAVE_DBUS
 	/* If NM says we are offline that's useless to retry to connect,
@@ -1655,7 +1654,7 @@ app_session_protocol_disconnected_cb (GossipSession  *session,
 
 static void
 app_session_protocol_error_cb (GossipSession  *session,
-			       GossipProtocol *protocol,
+			       GossipJabber   *jabber,
 			       GossipAccount  *account,
 			       GError         *error,
 			       gpointer        user_data)

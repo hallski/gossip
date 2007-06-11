@@ -20,7 +20,6 @@
 
 #include <string.h>
 
-#include <libgossip/gossip-protocol.h>
 #include <libgossip/gossip-session.h>
 
 #include "gossip-transport-discover.h"
@@ -105,21 +104,18 @@ GossipTransportAccountList *
 gossip_transport_account_list_new (GossipJabber *jabber)
 {
 	GossipTransportAccountList *al;
-	GossipProtocol             *protocol;
 
 	g_return_val_if_fail (jabber != NULL, NULL);
-
-	protocol = GOSSIP_PROTOCOL (jabber);
 
 	al = g_new0 (GossipTransportAccountList, 1);
 
 	al->jabber = g_object_ref (jabber);
 
-	al->sig_added = g_signal_connect (protocol,
+	al->sig_added = g_signal_connect (jabber,
 					  "contact-added",
 					  G_CALLBACK (transport_accounts_contact_added_cb),
 					  al);
-	al->sig_removed = g_signal_connect (protocol,
+	al->sig_removed = g_signal_connect (jabber,
 					    "contact-removed",
 					    G_CALLBACK (transport_accounts_contact_removed_cb),
 					    al);
@@ -136,9 +132,9 @@ gossip_transport_account_list_free (GossipTransportAccountList *al)
 
 	account_lists = g_list_remove (account_lists, al);
 
-	g_signal_handler_disconnect (GOSSIP_PROTOCOL (al->jabber),
+	g_signal_handler_disconnect (al->jabber,
 				     al->sig_added);
-	g_signal_handler_disconnect (GOSSIP_PROTOCOL (al->jabber),
+	g_signal_handler_disconnect (al->jabber,
 				     al->sig_removed);
 
 	g_object_unref (al->jabber);

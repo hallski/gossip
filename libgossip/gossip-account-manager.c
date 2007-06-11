@@ -16,8 +16,6 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * Authors: Martyn Russell <martyn@imendio.com>
  */
 
 #include "config.h"
@@ -31,7 +29,6 @@
 
 #include "gossip-debug.h"
 #include "gossip-jabber.h"
-#include "gossip-protocol.h"
 #include "gossip-account-manager.h"
 #include "gossip-private.h"
 #include "gossip-utils.h"

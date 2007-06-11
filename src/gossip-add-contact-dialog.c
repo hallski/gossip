@@ -30,7 +30,6 @@
 #include <libgossip/gossip-jid.h>
 #include <libgossip/gossip-session.h>
 #include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-protocol.h>
 #include <libgossip/gossip-utils.h>
 #include <libgossip/gossip-vcard.h>
 
@@ -181,18 +180,14 @@ add_contact_dialog_id_entry_focus_cb (GtkWidget              *widget,
 {
 	GossipAccountChooser *account_chooser;
 	GossipAccount        *account;
-	GossipProtocol       *protocol;
 	GossipContact        *contact;
 	const gchar          *id;
 	const gchar          *example;
 	gchar                *str;
 	gboolean              lookup = TRUE;
 
-	/* Get protocol for example */
 	account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
 	account = gossip_account_chooser_get_account (account_chooser);
-	protocol = gossip_session_get_protocol (gossip_app_get_session (), 
-						account);
 
 	/* Make sure we aren't looking up the same ID or the example */
 	id = gtk_entry_get_text (GTK_ENTRY (dialog->entry_id));
@@ -244,12 +239,10 @@ static void
 add_contact_dialog_account_chooser_changed_cb (GtkWidget              *account_chooser,
 					       GossipAddContactDialog *dialog)
 {
-	GossipAccount  *account;
-	GossipProtocol *protocol;
-	const gchar    *example;
+	GossipAccount *account;
+	const gchar   *example;
 
 	account = gossip_account_chooser_get_account (GOSSIP_ACCOUNT_CHOOSER (account_chooser));
-	protocol = gossip_session_get_protocol (gossip_app_get_session (), account);
 
 	example = gossip_jid_get_example_string ();
 	gtk_entry_set_text (GTK_ENTRY (dialog->entry_id), example);

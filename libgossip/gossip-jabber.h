@@ -21,7 +21,9 @@
 #ifndef __GOSSIP_JABBER_H__
 #define __GOSSIP_JABBER_H__
 
-#include <libgossip/gossip-protocol.h>
+#include <glib-object.h>
+#include "gossip-async.h"
+#include "gossip-message.h"
 
 G_BEGIN_DECLS
 
@@ -39,24 +41,38 @@ typedef struct _GossipJabberClass GossipJabberClass;
 typedef struct _GossipJabberPriv  GossipJabberPriv;
 
 struct _GossipJabber {
-	GossipProtocol parent;
+	GObject parent;
 };
 
 struct _GossipJabberClass {
-	GossipProtocolClass parent_class;
+	GObjectClass parent_class;
 };
 
-void
-gossip_jabber_setup (GossipProtocol *protocol, GossipAccount *account);
+typedef enum {
+	GOSSIP_JABBER_NO_CONNECTION,
+	GOSSIP_JABBER_NO_SUCH_HOST,
+	GOSSIP_JABBER_TIMED_OUT,
+	GOSSIP_JABBER_AUTH_FAILED,
+	GOSSIP_JABBER_DUPLICATE_USER,
+	GOSSIP_JABBER_INVALID_USER,
+	GOSSIP_JABBER_UNAVAILABLE,
+	GOSSIP_JABBER_UNAUTHORIZED,
+	GOSSIP_JABBER_SPECIFIC_ERROR
+} GossipJabberError;
+
+typedef enum {
+	GOSSIP_JABBER_DISCONNECT_ASKED,
+	GOSSIP_JABBER_DISCONNECT_ERROR
+} GossipJabberDisconnectReason;
+
+GType          gossip_jabber_get_type                  (void) G_GNUC_CONST;
 
 GQuark         gossip_jabber_error_quark               (void) G_GNUC_CONST;
 
-GType          gossip_jabber_get_type                  (void) G_GNUC_CONST;
-void           gossip_jabber_login                     (GossipProtocol *protocol);
-void           gossip_jabber_logout                    (GossipProtocol *protocol);
-gboolean       gossip_jabber_get_vcard                 (GossipJabber        *jabber,
-							GossipContact       *contact,
-							GossipVCardCallback  callback);
+void           gossip_jabber_setup                     (GossipJabber        *jabber,
+							GossipAccount       *account);
+void           gossip_jabber_login                     (GossipJabber        *jabber);
+void           gossip_jabber_logout                    (GossipJabber        *jabber);
 GossipAccount *gossip_jabber_get_account               (GossipJabber        *jabber);
 
 GossipContact *gossip_jabber_get_own_contact           (GossipJabber        *jabber);
@@ -81,6 +97,71 @@ GossipContact *gossip_jabber_new_contact               (GossipJabber        *jab
 							const gchar         *name);
 gboolean       gossip_jabber_is_connected              (GossipJabber        *jabber);
 gboolean       gossip_jabber_is_connecting             (GossipJabber        *jabber);
+void           gossip_jabber_send_message              (GossipJabber        *jabber,
+							GossipMessage       *message);
+void           gossip_jabber_send_composing            (GossipJabber        *jabber,
+							GossipContact       *contact,
+							gboolean             typing);
+void           gossip_jabber_set_presence              (GossipJabber        *jabber,
+							GossipPresence      *presence);
+void           gossip_jabber_set_subscription          (GossipJabber        *jabber,
+							GossipContact       *contact,
+							gboolean             subscribed);
+gboolean       gossip_jabber_set_vcard                 (GossipJabber        *jabber,
+							GossipVCard         *vcard,
+							GossipCallback       callback,
+							gpointer             user_data,
+							GError             **error);
+GossipContact * gossip_jabber_find_contact             (GossipJabber        *jabber,
+							const gchar         *id);
+void            gossip_jabber_add_contact              (GossipJabber        *jabber,
+							const gchar         *id,
+							const gchar         *name,
+							const gchar         *group,
+							const gchar         *message);
+void            gossip_jabber_rename_contact           (GossipJabber        *jabber,
+							GossipContact       *contact,
+							const gchar         *new_name);
+void            gossip_jabber_remove_contact           (GossipJabber        *jabber,
+							GossipContact       *contact);
+void            gossip_jabber_update_contact           (GossipJabber        *jabber,
+							GossipContact       *contact);
+void            gossip_jabber_rename_group             (GossipJabber        *jabber,
+							const gchar         *group,
+							const gchar         *new_name);
+const gchar *   gossip_jabber_get_active_resource      (GossipJabber        *jabber,
+							GossipContact       *contact);
+GList *         gossip_jabber_get_groups               (GossipJabber        *jabber);
+gboolean        gossip_jabber_get_vcard                (GossipJabber        *jabber,
+							GossipContact       *contact,
+							GossipVCardCallback  callback,
+							gpointer             user_data,
+							GError             **error);
+gboolean        gossip_jabber_get_version              (GossipJabber        *jabber,
+							GossipContact          *contact,
+							GossipVersionCallback   callback,
+							gpointer                user_data,
+							GError                **error);
+void            gossip_jabber_register_account         (GossipJabber        *jabber,
+							GossipAccount       *account,
+							GossipVCard         *vcard,
+							GossipErrorCallback  callback,
+							gpointer             user_data);
+void            gossip_jabber_register_cancel          (GossipJabber        *jabber);
+void            gossip_jabber_change_password          (GossipJabber        *jabber,
+							const gchar         *new_password,
+							GossipErrorCallback  callback,
+							gpointer             user_data);
+void            gossip_jabber_change_password_cancel   (GossipJabber        *jabber);
+void            gossip_jabber_get_avatar_requirements  (GossipJabber        *jabber,
+							guint               *min_width,
+							guint               *min_height,
+							guint               *max_width,
+							guint               *max_height,
+							gsize               *max_size,
+							gchar             **format);
+
+const gchar *   gossip_jabber_error_to_string          (GossipJabberError   error);
 
 G_END_DECLS
 

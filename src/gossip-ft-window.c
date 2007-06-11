@@ -33,7 +33,6 @@
 #include <libgossip/gossip-account.h>
 #include <libgossip/gossip-event.h>
 #include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-protocol.h>
 #include <libgossip/gossip-event-manager.h>
 #include <libgossip/gossip-utils.h>
 #include <libgossip/gossip-vcard.h>
@@ -46,35 +45,35 @@
 #define DEBUG_DOMAIN "FileTransferWindow"
 
 typedef struct {
-	GossipProtocol *protocol;
-	GossipFT       *ft;
-	GossipVCard    *vcard;
+	GossipJabber *jabber;
+	GossipFT     *ft;
+	GossipVCard  *vcard;
 } FTData;
 
 #ifdef HAVE_GNOME
 
 static void ft_window_protocol_connected_cb        (GossipSession      *session,
 						    GossipAccount      *account,
-						    GossipProtocol     *protocol,
+						    GossipJabber       *jabber,
 						    gpointer            user_data);
 static void ft_window_protocol_disconnected_cb     (GossipSession      *session,
 						    GossipAccount      *account,
-						    GossipProtocol     *protocol,
+						    GossipJabber       *jabber,
 						    gint                reason,
 						    gpointer            user_data);
-static void ft_window_request_cb                   (GossipProtocol     *protocol,
+static void ft_window_request_cb                   (GossipJabber       *jabber,
 						    GossipFT           *ft,
 						    gpointer            user_data);
-static void ft_window_error_cb                     (GossipProtocol     *protocol,
+static void ft_window_error_cb                     (GossipJabber       *jabber,
 						    GossipFT           *ft,
 						    GError             *error,
 						    gpointer            user_data);
-static void ft_window_complete_cb                  (GossipProtocol     *protocol,
+static void ft_window_complete_cb                  (GossipJabber       *jabber,
 						    GossipFT           *ft,
 						    gpointer            user_data);
 static void ft_window_event_activated_cb           (GossipEventManager *event_manager,
 						    GossipEvent        *event,
-						    GossipProtocol     *protocol);
+						    GossipJabber       *jabber);
 static void ft_window_vcard_cb                     (GossipResult        result,
 						    GossipVCard        *vcard,
 						    FTData             *data);
@@ -126,19 +125,19 @@ gossip_ft_window_finalize (GossipSession *session)
 static void
 ft_window_protocol_connected_cb (GossipSession  *session,
 				 GossipAccount  *account,
-				 GossipProtocol *protocol,
+				 GossipJabber   *jabber,
 				 gpointer        user_data)
 {
-	g_signal_connect (protocol,
+	g_signal_connect (jabber,
 			  "file-transfer-request",
 			  G_CALLBACK (ft_window_request_cb),
 			  session);
 
-	g_signal_connect (protocol,
+	g_signal_connect (jabber,
 			  "file-transfer-error",
 			  G_CALLBACK (ft_window_error_cb),
 			  session);
-	g_signal_connect (protocol,
+	g_signal_connect (jabber,
 			  "file-transfer-complete",
 			  G_CALLBACK (ft_window_complete_cb),
 			  session);
@@ -147,25 +146,25 @@ ft_window_protocol_connected_cb (GossipSession  *session,
 static void
 ft_window_protocol_disconnected_cb (GossipSession  *session,
 				    GossipAccount  *account,
-				    GossipProtocol *protocol,
+				    GossipJabber   *jabber,
 				    gint            reason,
 				    gpointer        user_data)
 {
-	g_signal_handlers_disconnect_by_func (protocol,
+	g_signal_handlers_disconnect_by_func (jabber,
 					      ft_window_request_cb,
 					      session);
-	g_signal_handlers_disconnect_by_func (protocol,
+	g_signal_handlers_disconnect_by_func (jabber,
 					      ft_window_error_cb,
 					      session);
-	g_signal_handlers_disconnect_by_func (protocol,
+	g_signal_handlers_disconnect_by_func (jabber,
 					      ft_window_complete_cb,
 					      session);
 }
 
 static void
-ft_window_request_cb (GossipProtocol *protocol,
-		      GossipFT       *ft,
-		      gpointer        user_data)
+ft_window_request_cb (GossipJabber *jabber,
+		      GossipFT     *ft,
+		      gpointer      user_data)
 {
 	GossipEvent   *event;
 	GossipContact *contact;
@@ -186,14 +185,14 @@ ft_window_request_cb (GossipProtocol *protocol,
 	gossip_event_manager_add (gossip_app_get_event_manager (),
 				  event,
 				  (GossipEventActivateFunction) ft_window_event_activated_cb,
-				  G_OBJECT (protocol));
+				  G_OBJECT (jabber));
 }
 
 static void
-ft_window_error_cb (GossipProtocol *protocol,
-		    GossipFT       *ft,
-		    GError         *error,
-		    gpointer        user_data)
+ft_window_error_cb (GossipJabber *jabber,
+		    GossipFT     *ft,
+		    GError       *error,
+		    gpointer      user_data)
 {
 	GtkWidget      *dialog;
 	GtkMessageType  type;
@@ -246,9 +245,9 @@ ft_window_error_cb (GossipProtocol *protocol,
 }
 
 static void
-ft_window_complete_cb (GossipProtocol *protocol,
-		       GossipFT       *ft,
-		       gpointer        user_data)
+ft_window_complete_cb (GossipJabber *jabber,
+		       GossipFT     *ft,
+		       gpointer      user_data)
 {
 	GtkWidget *dialog;
 /* 	gchar     *str; */
@@ -276,7 +275,7 @@ ft_window_complete_cb (GossipProtocol *protocol,
 static void
 ft_window_event_activated_cb (GossipEventManager *event_manager,
 			      GossipEvent        *event,
-			      GossipProtocol     *protocol)
+			      GossipJabber       *jabber)
 {
 	GossipFT *ft;
 	FTData   *data;
@@ -285,7 +284,7 @@ ft_window_event_activated_cb (GossipEventManager *event_manager,
 
 	data = g_new0 (FTData, 1);
 
-	data->protocol = g_object_ref (protocol);
+	data->jabber = g_object_ref (jabber);
 	data->ft = g_object_ref (ft);
 
 	/* Check if the contact is in the contact list and if it is, used the 
@@ -418,14 +417,14 @@ ft_window_save_filechooser_response_cb (GtkDialog  *dialog,
 		/* TODO: some checks for existing files */
 		gossip_ft_set_location (data->ft, file_location);
 		
-		gossip_ft_provider_accept (GOSSIP_FT_PROVIDER (data->protocol),
+		gossip_ft_provider_accept (GOSSIP_FT_PROVIDER (data->jabber),
 					   gossip_ft_get_id (data->ft));
 	} else {
-		gossip_ft_provider_decline (GOSSIP_FT_PROVIDER (data->protocol),
+		gossip_ft_provider_decline (GOSSIP_FT_PROVIDER (data->jabber),
 					    gossip_ft_get_id (data->ft));
 	}
 	gtk_widget_destroy (GTK_WIDGET(dialog));
-	g_object_unref (data->protocol);
+	g_object_unref (data->jabber);
 	g_object_unref (data->ft);
 	if (data->vcard) {
 		g_object_unref (data->vcard);
@@ -480,7 +479,7 @@ ft_window_request_dialog_cb (GtkWidget *dialog,
 {
 	g_return_if_fail (GTK_IS_DIALOG (dialog));
 
-	g_return_if_fail (GOSSIP_IS_PROTOCOL (data->protocol));
+	g_return_if_fail (GOSSIP_IS_JABBER (data->jabber));
 	g_return_if_fail (GOSSIP_IS_FT (data->ft));
 
 	gtk_widget_destroy (dialog);
@@ -492,11 +491,11 @@ ft_window_request_dialog_cb (GtkWidget *dialog,
 		ft_window_save_filechooser_create (data);
 		return;
 	} else {
-		gossip_ft_provider_decline (GOSSIP_FT_PROVIDER (data->protocol),
+		gossip_ft_provider_decline (GOSSIP_FT_PROVIDER (data->jabber),
 					    gossip_ft_get_id (data->ft));
 	}
 
-	g_object_unref (data->protocol);
+	g_object_unref (data->jabber);
 	g_object_unref (data->ft);
 
 	if (data->vcard) {

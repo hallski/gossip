@@ -30,7 +30,6 @@
 
 #include <libgossip/gossip-jabber.h>
 #include <libgossip/gossip-jid.h>
-#include <libgossip/gossip-protocol.h>
 #include <libgossip/gossip-session.h>
 #include <libgossip/gossip-utils.h>
 #include <libgossip/gossip-vcard.h>
@@ -68,11 +67,11 @@ typedef struct {
 static void     account_widget_jabber_save                              (GossipAccountWidgetJabber *settings);
 static void     account_widget_jabber_protocol_connected_cb             (GossipSession             *session,
 									 GossipAccount             *account,
-									 GossipProtocol            *protocol,
+									 GossipJabber              *jabber,
 									 GossipAccountWidgetJabber *settings);
 static void     account_widget_jabber_protocol_disconnected_cb          (GossipSession             *session,
 									 GossipAccount             *account,
-									 GossipProtocol            *protocol,
+									 GossipJabber              *jabber,
 									 gint                       reason,
 									 GossipAccountWidgetJabber *settings);
 static gboolean account_widget_jabber_entry_focus_cb                    (GtkWidget                 *widget,
@@ -147,7 +146,7 @@ account_widget_jabber_save (GossipAccountWidgetJabber *settings)
 static void
 account_widget_jabber_protocol_connected_cb (GossipSession             *session,
 					     GossipAccount             *account,
-					     GossipProtocol            *protocol,
+					     GossipJabber              *jabber,
 					     GossipAccountWidgetJabber *settings)
 {
 	if (gossip_account_equal (account, settings->account)) {
@@ -159,7 +158,7 @@ account_widget_jabber_protocol_connected_cb (GossipSession             *session,
 static void
 account_widget_jabber_protocol_disconnected_cb (GossipSession             *session,
 						GossipAccount             *account,
-						GossipProtocol            *protocol,
+						GossipJabber              *jabber,
 						gint                       reason,
 						GossipAccountWidgetJabber *settings)
 {
@@ -171,7 +170,7 @@ account_widget_jabber_protocol_disconnected_cb (GossipSession             *sessi
 
 static void
 account_widget_jabber_protocol_error_cb (GossipSession             *session,
-					 GossipProtocol            *protocol,
+					 GossipJabber              *jabber,
 					 GossipAccount             *account,
 					 GError                    *error,
 					 GossipAccountWidgetJabber *settings)
@@ -187,13 +186,14 @@ account_widget_jabber_entry_focus_cb (GtkWidget                 *widget,
 				      GossipAccountWidgetJabber *settings)
 {
 	if (widget == settings->entry_id) {
-		GossipSession  *session;
-		GossipProtocol *protocol;
+		GossipSession *session;
+		GossipJabber  *jabber;
 
 		session = gossip_app_get_session ();
-		protocol = gossip_session_get_protocol (session, settings->account);
+		jabber = gossip_session_get_protocol (session,
+						      settings->account);
 
-		if (protocol) {
+		if (jabber) {
 			const gchar *str;
 
 			str = gtk_entry_get_text (GTK_ENTRY (widget));
@@ -301,16 +301,11 @@ account_widget_jabber_checkbutton_toggled_cb (GtkWidget                 *widget,
 					      GossipAccountWidgetJabber *settings)
 {
 	if (widget == settings->checkbutton_ssl) {
-		GossipSession  *session;
-		GossipProtocol *protocol;
-		guint16         port_with_ssl;
-		guint16         port_without_ssl;
-		guint16         port;
-		gboolean        use_ssl;
-		gboolean        changed = FALSE;
-
-		session = gossip_app_get_session ();
-		protocol = gossip_session_get_protocol (session, settings->account);
+		guint16        port_with_ssl;
+		guint16        port_without_ssl;
+		guint16        port;
+		gboolean       use_ssl;
+		gboolean       changed = FALSE;
 
 		port_with_ssl = gossip_jabber_get_default_port (TRUE);
 		port_without_ssl = gossip_jabber_get_default_port (FALSE);

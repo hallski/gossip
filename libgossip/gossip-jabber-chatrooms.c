@@ -72,7 +72,7 @@ typedef struct {
 	LmMessageHandler      *join_handler;
 } JabberChatroom;
 
-static void             jabber_chatrooms_logged_out_cb        (GossipProtocol         *jabber,
+static void             jabber_chatrooms_logged_out_cb        (GossipJabber           *jabber,
 							       GossipAccount          *account,
 							       gint                    reason,
 							       GossipJabberChatrooms  *chatrooms);
@@ -139,7 +139,7 @@ gossip_jabber_chatrooms_init (GossipJabber *jabber)
 							  (GDestroyNotify) gossip_jid_unref,
 							  NULL);
 
-	g_signal_connect (GOSSIP_PROTOCOL (chatrooms->jabber), "disconnected",
+	g_signal_connect (chatrooms->jabber, "disconnected",
 			  G_CALLBACK (jabber_chatrooms_logged_out_cb),
 			  chatrooms);
 
@@ -175,7 +175,7 @@ gossip_jabber_chatrooms_finalize (GossipJabberChatrooms *chatrooms)
 		return;
 	}
 
-	g_signal_handlers_disconnect_by_func (GOSSIP_PROTOCOL (chatrooms->jabber),
+	g_signal_handlers_disconnect_by_func (chatrooms->jabber,
 					      jabber_chatrooms_logged_out_cb,
 					      chatrooms);
 
@@ -193,7 +193,7 @@ gossip_jabber_chatrooms_finalize (GossipJabberChatrooms *chatrooms)
 }
 
 static void
-jabber_chatrooms_logged_out_cb (GossipProtocol        *jabber,
+jabber_chatrooms_logged_out_cb (GossipJabber          *jabber,
 				GossipAccount         *account,
 				gint                   reason,
 				GossipJabberChatrooms *chatrooms)

@@ -29,7 +29,6 @@
 #include <glib/gi18n.h>
 
 #include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-protocol.h>
 #include <libgossip/gossip-session.h>
 #include <libgossip/gossip-utils.h>
 #include <libgossip/gossip-account-manager.h>
@@ -122,19 +121,19 @@ static gboolean       accounts_dialog_flash_connecting_foreach  (GtkTreeModel   
 static gboolean       accounts_dialog_flash_connecting_cb       (GossipAccountsDialog *dialog);
 static void           accounts_dialog_protocol_connecting_cb    (GossipSession        *session,
 								 GossipAccount        *account,
-								 GossipProtocol       *protocol,
+								 GossipJabber         *jabber,
 								 GossipAccountsDialog *dialog);
 static void           accounts_dialog_protocol_connected_cb     (GossipSession        *session,
 								 GossipAccount        *account,
-								 GossipProtocol       *protocol,
+								 GossipJabber         *jabber,
 								 GossipAccountsDialog *dialog);
 static void           accounts_dialog_protocol_disconnected_cb  (GossipSession        *session,
 								 GossipAccount        *account,
-								 GossipProtocol       *protocol,
+								 GossipJabber         *jabber,
 								 gint                  reason,
 								 GossipAccountsDialog *dialog);
 static void           accounts_dialog_protocol_error_cb         (GossipSession        *session,
-								 GossipProtocol       *protocol,
+								 GossipJabber         *jabber,
 								 GossipAccount        *account,
 								 GError               *error,
 								 GossipAccountsDialog *dialog);
@@ -844,7 +843,7 @@ accounts_dialog_flash_connecting_cb (GossipAccountsDialog *dialog)
 static void
 accounts_dialog_protocol_connecting_cb (GossipSession        *session,
 					GossipAccount        *account,
-					GossipProtocol       *protocol,
+					GossipJabber         *jabber,
 					GossipAccountsDialog *dialog)
 {
 	accounts_dialog_set_connecting (dialog, account);
@@ -853,7 +852,7 @@ accounts_dialog_protocol_connecting_cb (GossipSession        *session,
 static void
 accounts_dialog_protocol_connected_cb (GossipSession        *session,
 				       GossipAccount        *account,
-				       GossipProtocol       *protocol,
+				       GossipJabber         *jabber,
 				       GossipAccountsDialog *dialog)
 {
 	GtkTreeView      *view;
@@ -918,7 +917,7 @@ accounts_dialog_protocol_connected_cb (GossipSession        *session,
 static void
 accounts_dialog_protocol_disconnected_cb (GossipSession        *session,
 					  GossipAccount        *account,
-					  GossipProtocol       *protocol,
+					  GossipJabber         *jabber,
 					  gint                  reason,
 					  GossipAccountsDialog *dialog)
 {
@@ -983,7 +982,7 @@ accounts_dialog_protocol_disconnected_cb (GossipSession        *session,
 
 static void
 accounts_dialog_protocol_error_cb (GossipSession        *session,
-				   GossipProtocol       *protocol,
+				   GossipJabber         *jabber,
 				   GossipAccount        *account,
 				   GError               *error,
 				   GossipAccountsDialog *dialog)

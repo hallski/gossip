@@ -1,5 +1,11 @@
 2007-06-11  Mikael Hallendal  <micke@imendio.com>
 
+	* libgossip/*.[ch]:
+	* src/*.[ch]:
+	- Removed GossipProtocol and now only use GossipJabber.
+
+2007-06-11  Mikael Hallendal  <micke@imendio.com>
+
 	* libgossip/gossip-jabber.[ch]:
 	* libgossip/gossip-protocol.[ch]:
 	* libgossip/gossip-session.c:

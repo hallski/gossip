@@ -60,7 +60,6 @@
 #include <libxml/tree.h>
 
 #include "gossip-chatroom-manager.h"
-#include "gossip-protocol.h"
 #include "gossip-debug.h"
 #include "gossip-session.h"
 #include "gossip-contact-manager.h"

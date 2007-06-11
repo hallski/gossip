@@ -31,7 +31,6 @@
 
 #include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-session.h>
-#include <libgossip/gossip-protocol.h>
 #include <libgossip/gossip-utils.h>
 #include <libgossip/gossip-account.h>
 #include <libgossip/gossip-log.h>
@@ -122,11 +121,11 @@ static void            group_chat_join_cb                     (GossipChatroomPro
 							       gpointer                      user_data);
 static void            group_chat_protocol_connected_cb       (GossipSession                *session,
 							       GossipAccount                *account,
-							       GossipProtocol               *protocol,
+							       GossipJabber                 *jabber,
 							       GossipGroupChat              *chat);
 static void            group_chat_protocol_disconnected_cb    (GossipSession                *session,
 							       GossipAccount                *account,
-							       GossipProtocol               *protocol,
+							       GossipJabber                 *jabber,
 							       gint                          reason,
 							       GossipGroupChat              *chat);
 static gboolean        group_chat_key_press_event_cb          (GtkWidget                    *widget,
@@ -513,7 +512,7 @@ group_chat_join_cb (GossipChatroomProvider   *provider,
 static void
 group_chat_protocol_connected_cb (GossipSession   *session,
 				  GossipAccount   *account,
-				  GossipProtocol  *protocol,
+				  GossipJabber    *jabber,
 				  GossipGroupChat *chat)
 {
 	GossipGroupChatPriv *priv;
@@ -538,7 +537,7 @@ group_chat_protocol_connected_cb (GossipSession   *session,
 static void
 group_chat_protocol_disconnected_cb (GossipSession   *session,
 				     GossipAccount   *account,
-				     GossipProtocol  *protocol,
+				     GossipJabber    *jabber,
 				     gint             reason,
 				     GossipGroupChat *chat)
 {

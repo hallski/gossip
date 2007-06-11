@@ -16,8 +16,6 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * Authors: Martyn Russell <martyn@imendio.com>
  */
 
 #include "config.h"
@@ -32,7 +30,6 @@
 #include "gossip-session.h"
 #include "gossip-debug.h"
 #include "gossip-jabber.h"
-#include "gossip-protocol.h"
 #include "gossip-contact-manager.h"
 #include "gossip-account-manager.h"
 #include "gossip-private.h"
@@ -343,14 +340,13 @@ contact_manager_parse_contact (GossipContactManager *manager,
 
 	if (id && name) {
 		GossipContactManagerPriv *priv;
-		GossipProtocol           *protocol;
+		GossipJabber             *jabber;
 		GossipContact            *contact;
 
 		priv = GET_PRIV (manager);
 
-		protocol = gossip_session_get_protocol (priv->session, account); 
-		contact = gossip_jabber_new_contact (GOSSIP_JABBER (protocol), 
-						     id, name);
+		jabber = gossip_session_get_protocol (priv->session, account); 
+		contact = gossip_jabber_new_contact (jabber, id, name);
 
 		gossip_contact_manager_add (manager, contact);
 	}
@@ -365,7 +361,7 @@ contact_manager_parse_self (GossipContactManager *manager,
 			    xmlNodePtr            node)
 {
 	GossipContactManagerPriv *priv;
-	GossipProtocol           *protocol;
+	GossipJabber             *jabber;
 	GossipContact            *contact;
 	const gchar              *id;
 	const gchar              *name;
@@ -378,8 +374,8 @@ contact_manager_parse_self (GossipContactManager *manager,
 
 	priv = GET_PRIV (manager);
 
-	protocol = gossip_session_get_protocol (priv->session, account); 
-	contact = gossip_protocol_get_own_contact (protocol);
+	jabber = gossip_session_get_protocol (priv->session, account); 
+	contact = gossip_jabber_get_own_contact (jabber);
 
 	id = gossip_contact_get_id (contact);
 	name = gossip_contact_get_name (contact);
@@ -626,15 +622,16 @@ contact_manager_file_save (GossipContactManager *manager)
 
 	/* This is a self contact */
 	for (l = accounts; l; l = l->next) {
-		xmlNodePtr      node, child, p;
-		GossipProtocol *protocol;
-		GossipContact  *contact;
-		const gchar    *name; 
+		xmlNodePtr     node, child, p;
+		GossipJabber  *jabber;
+		GossipContact *contact;
+		const gchar   *name; 
 
 		account = l->data;
 		
-		protocol = gossip_session_get_protocol (priv->session, account);
-		contact = gossip_protocol_get_own_contact (protocol);
+		jabber = gossip_session_get_protocol (priv->session, account);
+		contact = gossip_jabber_get_own_contact (jabber);
+		
 		name = gossip_contact_get_name (contact);
 
 		node = g_hash_table_lookup (nodes, account);

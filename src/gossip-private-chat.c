@@ -16,11 +16,6 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * Authors: Mikael Hallendal <micke@imendio.com>
- *          Richard Hult <richard@imendio.com>
- *          Martyn Russell <martyn@imendio.com>
- *          Geert-Jan Van den Bogaerde <geertjan@gnome.org>
  */
 
 #include "config.h"
@@ -36,7 +31,6 @@
 #include <libgossip/gossip-chatroom.h>
 #include <libgossip/gossip-session.h>
 #include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-protocol.h>
 #include <libgossip/gossip-log.h>
 #include <libgossip/gossip-stock.h>
 
@@ -102,11 +96,11 @@ static void           private_chat_contact_removed_cb           (GossipSession  
 								 GossipPrivateChat      *chat);
 static void           private_chat_protocol_connected_cb        (GossipSession          *session,
 								 GossipAccount          *account,
-								 GossipProtocol         *protocol,
+								 GossipJabber           *jabber,
 								 GossipPrivateChat      *chat);
 static void           private_chat_protocol_disconnected_cb     (GossipSession          *session,
 								 GossipAccount          *account,
-								 GossipProtocol         *protocol,
+								 GossipJabber           *jabber,
 								 gint                    reason,
 								 GossipPrivateChat      *chat);
 static void           private_chat_composing_cb                 (GossipSession          *session,
@@ -599,7 +593,7 @@ private_chat_contact_removed_cb (GossipSession     *session,
 static void
 private_chat_protocol_connected_cb (GossipSession     *session,
 				    GossipAccount     *account,
-				    GossipProtocol    *protocol,
+				    GossipJabber      *jabber,
 				    GossipPrivateChat *chat)
 {
 	GossipPrivateChatPriv *priv;
@@ -623,7 +617,7 @@ private_chat_protocol_connected_cb (GossipSession     *session,
 static void
 private_chat_protocol_disconnected_cb (GossipSession     *session,
 				       GossipAccount     *account,
-				       GossipProtocol    *protocol,
+				       GossipJabber      *jabber,
 				       gint               reason,
 				       GossipPrivateChat *chat)
 {

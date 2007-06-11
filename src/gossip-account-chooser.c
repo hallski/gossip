@@ -28,7 +28,7 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 
-#include <libgossip/gossip-protocol.h>
+#include <libgossip/gossip-jabber.h>
 #include <libgossip/gossip-account-manager.h>
 
 #include "gossip-ui-utils.h"
@@ -95,11 +95,11 @@ static gboolean account_chooser_account_update_foreach   (GtkTreeModel          
 							  struct SetAccountData *data);
 static void     account_chooser_protocol_connected_cb    (GossipSession         *session,
 							  GossipAccount         *account,
-							  GossipProtocol        *protocol,
+							  GossipJabber          *jabber,
 							  GossipAccountChooser  *account_chooser);
 static void     account_chooser_protocol_disconnected_cb (GossipSession         *session,
 							  GossipAccount         *account,
-							  GossipProtocol        *protocol,
+							  GossipJabber          *jabber,
 							  gint                   reason,
 							  GossipAccountChooser  *account_chooser);
 static gboolean account_chooser_set_account_foreach      (GtkTreeModel          *model,
@@ -498,7 +498,7 @@ account_chooser_account_update_foreach (GtkTreeModel          *model,
 static void
 account_chooser_protocol_connected_cb (GossipSession        *session,
 				       GossipAccount        *account,
-				       GossipProtocol       *protocol,
+				       GossipJabber         *jabber,
 				       GossipAccountChooser *account_chooser)
 {
 	GtkComboBox           *combobox;
@@ -525,7 +525,7 @@ account_chooser_protocol_connected_cb (GossipSession        *session,
 static void
 account_chooser_protocol_disconnected_cb (GossipSession        *session,
 					  GossipAccount        *account,
-					  GossipProtocol       *protocol,
+					  GossipJabber         *jabber,
 					  gint                  reason,
 					  GossipAccountChooser *account_chooser)
 {

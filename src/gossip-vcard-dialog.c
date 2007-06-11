@@ -34,7 +34,7 @@
 
 #include <libgossip/gossip-session.h>
 #include <libgossip/gossip-async.h>
-#include <libgossip/gossip-protocol.h>
+#include <libgossip/gossip-jabber.h>
 #include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-avatar.h>
 #include <libgossip/gossip-utils.h>
@@ -640,7 +640,7 @@ vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 	GossipVCard          *vcard;
 	GossipAccount        *account;
 	GossipAccountChooser *account_chooser;
-	GossipProtocol       *protocol;
+	GossipJabber         *jabber;
 	GossipContact        *contact;
 	GError               *error = NULL;
 	GtkTextBuffer        *buffer;
@@ -701,8 +701,9 @@ vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 				  (GossipCallback) vcard_dialog_set_vcard_cb,
 				  NULL, &error);
 
-	protocol = gossip_session_get_protocol (gossip_app_get_session (), account);
-	contact = gossip_protocol_get_own_contact (protocol);
+	jabber = gossip_session_get_protocol (gossip_app_get_session (),
+					      account);
+	contact = gossip_jabber_get_own_contact (jabber);
 	gossip_contact_set_avatar (GOSSIP_CONTACT (contact), avatar);
 
 	if (avatar) {

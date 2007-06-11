@@ -32,7 +32,6 @@
 #include <libgossip/gossip-account.h>
 #include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-event.h>
-#include <libgossip/gossip-protocol.h>
 #include <libgossip/gossip-message.h>
 #include <libgossip/gossip-presence.h>
 #include <libgossip/gossip-debug.h>
@@ -79,11 +78,11 @@ static NotifyNotification *notify_new_message                     (GossipEventMa
 static gboolean            notify_protocol_timeout_cb             (GossipAccount      *account);
 static void                notify_protocol_connected_cb           (GossipSession      *session,
 								   GossipAccount      *account,
-								   GossipProtocol     *protocol,
+								   GossipJabber       *jabber,
 								   gpointer            user_data);
 static void                notify_protocol_disconnected_cb        (GossipSession      *session,
 								   GossipAccount      *account,
-								   GossipProtocol     *protocol,
+								   GossipJabber       *jabber,
 								   gint                reason,
 								   gpointer            user_data);
 static void                notify_contact_presence_updated_cb     (GossipContact      *contact,
@@ -606,11 +605,11 @@ notify_disconnected_contact_foreach (GossipContact  *contact,
 }
 
 static void
-notify_protocol_disconnected_cb (GossipSession  *session,
-				 GossipAccount  *account,
-				 GossipProtocol *protocol,
-				 gint            reason,
-				 gpointer        user_data)
+notify_protocol_disconnected_cb (GossipSession *session,
+				 GossipAccount *account,
+				 GossipJabber  *jabber,
+				 gint           reason,
+				 gpointer       user_data)
 {
 	g_hash_table_remove (account_states, account);
 
@@ -624,10 +623,10 @@ notify_protocol_disconnected_cb (GossipSession  *session,
 }
 
 static void
-notify_protocol_connected_cb (GossipSession  *session,
-			      GossipAccount  *account,
-			      GossipProtocol *protocol,
-			      gpointer        user_data)
+notify_protocol_connected_cb (GossipSession *session,
+			      GossipAccount *account,
+			      GossipJabber  *jabber,
+			      gpointer       user_data)
 {
 	guint        id;
 	const gchar *account_name;
