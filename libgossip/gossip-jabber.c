@@ -16,10 +16,6 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- * 
- * Authors: Mikael Hallendal <micke@imendio.com>
- *          Richard Hult <richard@imendio.com>
- *          Martyn Russell <martyn@imendio.com>
  */
 
 #include "config.h"
@@ -48,6 +44,7 @@
 
 #include "gossip-jid.h"
 #include "gossip-jabber-chatrooms.h"
+#include "gossip-jabber-ns.h"
 #include "gossip-jabber-ft.h"
 #include "gossip-jabber-vcard.h"
 #include "gossip-jabber-disco.h"
@@ -66,11 +63,6 @@
 #define DEBUG_DOMAIN "Jabber"
 
 #define GOSSIP_JABBER_ERROR_DOMAIN "GossipJabber"
-
-/* Common XMPP XML namespaces we use. */
-#define XMPP_VERSION_XMLNS         "jabber:iq:version"
-#define XMPP_ROSTER_XMLNS          "jabber:iq:roster"
-#define XMPP_REGISTER_XMLNS        "jabber:iq:register"
 
 /* We use 3.5 minutes because if the port is just wrong then it
  * will timeout before then with that error.
@@ -219,6 +211,8 @@ static LmHandlerResult  jabber_subscription_message_handler (LmMessageHandler   
 							     LmMessage                  *m,
 							     GossipJabber               *jabber);
 static void             jabber_request_version              (GossipJabber               *jabber,
+							     LmMessage                  *m);
+static void             jabber_request_ping                 (GossipJabber               *jabber,
 							     LmMessage                  *m);
 static void             jabber_request_roster               (GossipJabber               *jabber,
 							     LmMessage                  *m);
@@ -2863,6 +2857,15 @@ jabber_iq_query_handler (LmMessageHandler *handler,
 	    lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_RESULT) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
+	
+	node = lm_message_node_get_child (m->node, "ping");
+	if (node) {
+		xmlns = lm_message_node_get_attribute (node, "xmlns");
+		if (xmlns && strcmp (xmlns, XMPP_PING_XMLNS) == 0) {
+			jabber_request_ping (jabber, m);
+			return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+		}	
+	}
 
 	node = lm_message_node_get_child (m->node, "query");
 	if (!node) {
@@ -3003,6 +3006,36 @@ jabber_request_version (GossipJabber *jabber,
 	lm_connection_send (priv->connection, r, NULL);
 	lm_message_unref (r);
 }
+
+
+static void
+jabber_request_ping (GossipJabber *jabber, LmMessage *m)
+{
+	GossipJabberPriv *priv;
+	LmMessage        *reply;
+	const gchar      *from;
+	const gchar      *id;
+
+	priv = GET_PRIV (jabber);
+
+	from = lm_message_node_get_attribute (m->node, "from");
+	id = lm_message_node_get_attribute (m->node, "id");
+
+	reply = lm_message_new_with_sub_type (from,
+					      LM_MESSAGE_TYPE_IQ,
+					      LM_MESSAGE_SUB_TYPE_RESULT);
+
+	if (id) {
+		lm_message_node_set_attributes (reply->node,
+						"id", id,
+						NULL);
+	}
+	
+	gossip_debug (DEBUG_DOMAIN, "Ping request from:'%s'", from);
+	lm_connection_send (priv->connection, reply, NULL);
+	lm_message_unref (reply);
+}
+
 
 static void
 jabber_request_roster (GossipJabber *jabber,

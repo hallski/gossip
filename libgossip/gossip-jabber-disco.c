@@ -16,8 +16,6 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * Author: Martyn Russell <martyn@imendio.com>
  */
 
 #include "config.h"
@@ -32,6 +30,7 @@
 #include <libgossip/gossip-ft.h>
 #include <libgossip/gossip-utils.h>
 
+#include "gossip-jabber-ns.h"
 #include "gossip-jabber-private.h"
 #include "gossip-jabber-disco.h"
 
@@ -763,6 +762,8 @@ jabber_disco_info_handler (LmMessageHandler *handler,
 	lm_message_node_set_attribute (node, "var", XMPP_BYTESTREAMS_FEATURE);
 	node = lm_message_node_add_child (q_node, "feature", NULL);
 	lm_message_node_set_attribute (node, "var", XMPP_MUC_FEATURE);
+	node = lm_message_node_add_child (q_node, "feature", NULL);
+	lm_message_node_set_attribute (node, "var", XMPP_PING_XMLNS);
 	lm_connection_send (connection, m, NULL);
 	lm_message_unref (m);
 

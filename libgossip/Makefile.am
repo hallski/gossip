@@ -94,6 +94,7 @@ libgossip_jabber_la_SOURCES =                  		\
 	gossip-jabber-ft.h				\
 	gossip-jabber-ft-utils.c			\
 	gossip-jabber-ft-utils.h			\
+	gossip-jabber-ns.h                              \
 	gossip-jabber-private.h                 	\
 	gossip-jabber-vcard.c				\
 	gossip-jabber-vcard.h				\

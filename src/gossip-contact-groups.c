@@ -88,7 +88,8 @@ contact_groups_file_parse (const gchar *filename)
 	xmlNodePtr       account;
 	xmlNodePtr       node;
 
-	gossip_debug (DEBUG_DOMAIN, "Attempting to parse file:'%s'...", filename);
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Attempting to parse file:'%s'...", filename);
 
 	ctxt = xmlNewParserCtxt ();
 

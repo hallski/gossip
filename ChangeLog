@@ -1,3 +1,13 @@
+2007-06-16  Mikael Hallendal  <micke@imendio.com>
+
+	* libgossip/Makefiles.am:
+	* libgossip/gossip-jabber-ns.h: Added.
+	* libgossip/gossip-jabber-disco.c (jabber_disco_info_handler): Added
+	xmpp ping support to the disco reply.
+	* libgossip/gossip-jabber.c:
+	(jabber_iq_query_handler, jabber_request_ping): Added support for XMPP
+	Ping. Fixes #448072 (Michael Scherer, Mikael Hallendal).
+
 2007-06-12  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-jabber-ft.c:
