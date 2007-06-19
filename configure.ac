@@ -333,14 +333,6 @@ AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",[Gettext package name])
 AM_GLIB_GNU_GETTEXT
 
 
-dnl -----------------------------------------------------------
-dnl Bleeding Edge Loudmouth?
-dnl -----------------------------------------------------------
-CFLAGS=`pkg-config --cflags loudmouth-1.0`
-LDFLAGS=`pkg-config --libs loudmouth-1.0`
-
-dnl -----------------------------------------------------------
-
 AC_OUTPUT([
   Makefile
   ui/Makefile
