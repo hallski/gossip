@@ -1071,6 +1071,9 @@ jabber_disconnect_cb (LmConnection       *connection,
 	case LM_DISCONNECT_REASON_UNKNOWN:
 		gossip_reason = GOSSIP_JABBER_DISCONNECT_ERROR;
 		break;
+	default:
+		gossip_reason = GOSSIP_JABBER_DISCONNECT_ERROR;
+		break;
 	}
 
 	g_signal_emit_by_name (jabber, "disconnected", priv->account, gossip_reason);

@@ -278,7 +278,6 @@ jabber_ft_transfer_error_cb (LmBsSession  *session,
 	GossipFT        *ft;
 	GossipFTError    error_code;
 
-
 	fts = gossip_jabber_get_fts (jabber);
 	ft = jabber_ft_get_ft_from_id (jabber, id);
 
@@ -293,6 +292,9 @@ jabber_ft_transfer_error_cb (LmBsSession  *session,
 
 	case LM_BS_TRANSFER_ERROR_UNABLE_TO_CONNECT:
 		error_code = GOSSIP_FT_ERROR_UNABLE_TO_CONNECT;
+		break;
+	default:
+		error_code = GOSSIP_FT_ERROR_UNKNOWN;
 		break;
 	}
 
