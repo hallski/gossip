@@ -172,7 +172,7 @@ ft_class_init (GossipFTClass *class)
 							      NULL,
 							      G_PARAM_READWRITE));
 	g_object_class_install_property (object_class,
-					 PROP_SID,
+					 PROP_LOCATION,
 					 g_param_spec_string ("location",
 							      "Location",
 							      "Where to store the file on the file system (URI)",

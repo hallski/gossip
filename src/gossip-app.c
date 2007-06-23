@@ -660,6 +660,8 @@ app_setup_contact_list_sort_criterium (void)
 				      "sort-criterium", enum_value->value,
 				      NULL);
 		}
+
+		g_free (str);
 	} 
 }
 
@@ -2034,6 +2036,8 @@ app_notify_sort_criterium_cb (GossipConf  *conf,
 			gossip_contact_list_set_sort_criterium (priv->contact_list, 
 								enum_value->value);
 		}
+		
+		g_free (str);
 	}
 }
 

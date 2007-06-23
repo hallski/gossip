@@ -245,6 +245,22 @@
       </locale>
     </schema>
 
+    <schema>
+      <key>/schemas/apps/gossip/file_transfer/default_folder</key>
+      <applyto>/apps/gossip/file_transfer/default_folder</applyto>
+      <owner>gossip</owner>
+      <type>string</type>
+      <default></default>
+      <locale name="C">
+        <short>The default location for file transfers to be saved to</short>
+	<long>
+	This is updated each time the user changes the location they
+      wish to save the file to so that the last location used to save
+      file transfers can be used without prompting the user each time.
+	</long>
+      </locale>
+    </schema>
+
   </schemalist>  
 </gconfschemafile>
 

@@ -40,7 +40,7 @@ struct _GossipFTProviderIface {
 	GTypeInterface g_iface;
 
 	/* Virtual Table */
-	GossipFTId (*send)    (GossipFTProvider *provider,
+	GossipFT*  (*send)    (GossipFTProvider *provider,
 			       GossipContact    *contact,
 			       const gchar      *file);
 	void       (*cancel)  (GossipFTProvider *provider,
@@ -53,7 +53,7 @@ struct _GossipFTProviderIface {
 
 GType      gossip_ft_provider_get_type (void) G_GNUC_CONST;
 
-GossipFTId gossip_ft_provider_send     (GossipFTProvider *provider,
+GossipFT * gossip_ft_provider_send     (GossipFTProvider *provider,
 					GossipContact    *contact,
 					const gchar      *file);
 void       gossip_ft_provider_cancel   (GossipFTProvider *provider,

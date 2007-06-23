@@ -31,6 +31,7 @@ static void ft_provider_base_init (gpointer g_class);
 enum {
 	REQUEST,
 	CANCELLED,
+	INITIATED,
 	COMPLETE,
 	PROGRESS,
 	ERROR,
@@ -84,15 +85,25 @@ ft_provider_base_init (gpointer g_class)
 				      G_TYPE_NONE,
 				      1, GOSSIP_TYPE_FT);
 
-		signals[CANCELLED] =
-			g_signal_new ("file-transfer-cancelled",
+		signals[INITIATED] =
+			g_signal_new ("file-transfer-initiated",
 				      G_TYPE_FROM_CLASS (g_class),
 				      G_SIGNAL_RUN_LAST,
 				      0,
 				      NULL, NULL,
-				      libgossip_marshal_VOID__INT,
+				      libgossip_marshal_VOID__OBJECT,
 				      G_TYPE_NONE,
-				      1, G_TYPE_INT);
+				      1, GOSSIP_TYPE_FT);
+
+		signals[COMPLETE] =
+			g_signal_new ("file-transfer-complete",
+				      G_TYPE_FROM_CLASS (g_class),
+				      G_SIGNAL_RUN_LAST,
+				      0,
+				      NULL, NULL,
+				      libgossip_marshal_VOID__OBJECT,
+				      G_TYPE_NONE,
+				      1, GOSSIP_TYPE_FT);
 
 		signals[COMPLETE] =
 			g_signal_new ("file-transfer-complete",
@@ -128,14 +139,14 @@ ft_provider_base_init (gpointer g_class)
 	}
 }
 
-GossipFTId
+GossipFT *
 gossip_ft_provider_send (GossipFTProvider *provider,
 			 GossipContact    *contact,
 			 const gchar      *file)
 {
-	g_return_val_if_fail (GOSSIP_IS_FT_PROVIDER (provider), 0);
-	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), 0);
-	g_return_val_if_fail (file != NULL, 0);
+	g_return_val_if_fail (GOSSIP_IS_FT_PROVIDER (provider), NULL);
+	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
+	g_return_val_if_fail (file != NULL, NULL);
 
 	if (GOSSIP_FT_PROVIDER_GET_IFACE (provider)->send) {
 		return GOSSIP_FT_PROVIDER_GET_IFACE (provider)->send (provider,
@@ -143,7 +154,7 @@ gossip_ft_provider_send (GossipFTProvider *provider,
 								      file);
 	}
 
-	return 0;
+	return NULL;
 }
 
 void

@@ -1,3 +1,29 @@
+2007-06-23  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-preferences.h:
+	* gossip.schemas.in: Added preference to save the last used
+	location for file transfers so we don't have to keep prompting the
+	user where to save files.
+	
+	* libgossip/gossip-ft-provider.[ch]: Return a GossipFT* instead of
+	a GossipFTId when sending a file.
+	
+	* libgossip/gossip-ft.c: Fixed the enum used for the "location"
+	property.
+	
+	* libgossip/gossip-jabber-ft.[ch]:
+	* libgossip/gossip-jabber.c:
+	* libloudermouth/lm-bs-session.c:
+	* libloudermouth/lm-bs-transfer.c: Added an "initiated" signal.
+
+	* src/gossip-app.c: Fixed a memory leak when requesting a
+	preference for the sorting on the contact list.
+	
+	* src/gossip-ft-window.c:
+	* ui/file-transfer.glade: Rework the file transfer UI so we have
+	one dialog which works for sending and receiving and shows
+	progress too.
+
 2007-06-21  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-ft-window.c: Line things up with a size group and

@@ -71,6 +71,9 @@ static guint           jabber_ft_guess_id_by_sid_and_sender (GossipJabber      *
 							     const gchar       *jid);
 static GossipFT *      jabber_ft_get_ft_from_id             (GossipJabber      *jabber,
 							     guint              id);
+static void            jabber_ft_transfer_initiated_cb      (LmBsSession       *session,
+							     guint              id,
+							     GossipJabber      *jabber);
 static void            jabber_ft_transfer_complete_cb       (LmBsSession       *session,
 							     guint              id,
 							     GossipJabber      *jabber);
@@ -124,6 +127,10 @@ gossip_jabber_ft_init (GossipJabber *jabber)
 	fts->jabber     = g_object_ref (jabber);
 	fts->connection = lm_connection_ref (connection);
 	fts->bs_session = lm_bs_session_new (NULL);
+
+	g_signal_connect (fts->bs_session, "transfer-initiated", 
+			  G_CALLBACK (jabber_ft_transfer_initiated_cb),
+			  jabber);
 
 	g_signal_connect (fts->bs_session, "transfer-complete", 
 			  G_CALLBACK (jabber_ft_transfer_complete_cb),
@@ -235,6 +242,21 @@ jabber_ft_get_ft_from_id (GossipJabber *jabber,
 	ft = g_hash_table_lookup (fts->ft_ids, id_str);
 
 	return ft;
+}
+
+static void
+jabber_ft_transfer_initiated_cb (LmBsSession  *session,
+				 guint         id,
+				 GossipJabber *jabber)
+{
+	GossipJabberFTs *fts;
+	GossipFT        *ft;
+
+	fts = gossip_jabber_get_fts (jabber);
+	ft = jabber_ft_get_ft_from_id (jabber, id);
+ 
+	gossip_debug (DEBUG_DOMAIN, "ID[%d] Transfer initiated", id);
+	g_signal_emit_by_name (fts->jabber, "file-transfer-initiated", ft); 
 }
 
 static void
@@ -880,7 +902,7 @@ jabber_ft_get_unique_sid (void)
  * Sending
  */
 
-GossipFTId
+GossipFT *
 gossip_jabber_ft_send (GossipJabberFTs *fts,
 		       GossipContact   *contact,
 		       const gchar     *file)
@@ -1013,7 +1035,7 @@ gossip_jabber_ft_send (GossipJabberFTs *fts,
 	g_free (file_size);
 	g_free (mime_type);
 
-	return id;
+	return ft;
 }
 
 void

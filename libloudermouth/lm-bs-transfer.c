@@ -72,6 +72,7 @@ typedef struct {
 } StreamHostData;
 
 enum {
+	INITIATED,
 	COMPLETE,
 	PROGRESS,
 	ERROR,
@@ -91,6 +92,7 @@ static gboolean bs_transfer_channel_open_for_write (LmBsTransfer    *transfer,
 static gboolean bs_transfer_channel_open_for_read  (LmBsTransfer    *transfer,
 						    GError         **error);
 static gchar *  bs_transfer_io_error_to_string     (GError          *error);
+static void     bs_transfer_initiated              (LmBsTransfer    *transfer);
 static void     bs_transfer_complete               (LmBsTransfer    *transfer);
 static void     bs_transfer_progress               (LmBsTransfer    *transfer);
 static void     bs_transfer_error                  (LmBsTransfer    *transfer,
@@ -109,6 +111,16 @@ lm_bs_transfer_class_init (LmBsTransferClass *klass)
 
 	object_class->finalize = bs_transfer_finalize;
 	
+	signals[INITIATED] =
+		g_signal_new ("initiated",
+			      G_TYPE_FROM_CLASS (klass),
+			      G_SIGNAL_RUN_LAST,
+			      0,
+			      NULL, NULL,
+			      g_cclosure_marshal_VOID__VOID,
+			      G_TYPE_NONE,
+			      0);
+
 	signals[COMPLETE] =
 		g_signal_new ("complete",
 			      G_TYPE_FROM_CLASS (klass),
@@ -118,6 +130,7 @@ lm_bs_transfer_class_init (LmBsTransferClass *klass)
 			      g_cclosure_marshal_VOID__VOID,
 			      G_TYPE_NONE,
 			      0);
+
 	signals[PROGRESS] =
 		g_signal_new ("progress",
 			      G_TYPE_FROM_CLASS (klass),
@@ -127,6 +140,7 @@ lm_bs_transfer_class_init (LmBsTransferClass *klass)
 			      g_cclosure_marshal_VOID__DOUBLE,
 			      G_TYPE_NONE,
 			      1, G_TYPE_DOUBLE);
+
 	signals[ERROR] =
 		g_signal_new ("error",
 			      G_TYPE_FROM_CLASS (klass),
@@ -347,6 +361,18 @@ bs_transfer_io_error_to_string (GError *error)
 	}
 
 	return _("Unknown error");
+}
+
+static void
+bs_transfer_initiated (LmBsTransfer *transfer)
+{
+	LmBsTransferPriv *priv;
+
+	priv = GET_PRIV (transfer);
+
+	priv->status = LM_BS_TRANSFER_STATUS_INITIAL;
+
+	g_signal_emit (transfer, signals[INITIATED], 0);
 }
 
 static void
@@ -729,6 +755,7 @@ lm_bs_transfer_add_streamhost (LmBsTransfer *transfer,
 
 	if (priv->status == LM_BS_TRANSFER_STATUS_INITIAL &&
 	    priv->direction == LM_BS_TRANSFER_DIRECTION_RECEIVER) {
+		bs_transfer_initiated (transfer);
 		lm_bs_client_connect (streamhost);
 	}
 }
@@ -895,6 +922,8 @@ lm_bs_transfer_activate (LmBsTransfer *transfer,
 	g_return_if_fail (lm_bs_transfer_has_streamhost (transfer, jid));
 
 	priv = GET_PRIV (transfer);
+
+	bs_transfer_initiated (transfer);
 
 	g_hash_table_remove_all (priv->streamhosts);
 

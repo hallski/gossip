@@ -261,7 +261,7 @@ static void             jabber_chatroom_browse_rooms        (GossipChatroomProvi
 
 /* File Transfers */
 static void             jabber_ft_init                      (GossipFTProviderIface      *iface);
-static GossipFTId       jabber_ft_send                      (GossipFTProvider           *provider,
+static GossipFT *       jabber_ft_send                      (GossipFTProvider           *provider,
 							     GossipContact              *contact,
 							     const gchar                *file);
 static void             jabber_ft_cancel                    (GossipFTProvider           *provider,
@@ -3483,7 +3483,7 @@ jabber_ft_init (GossipFTProviderIface *iface)
 	iface->decline = jabber_ft_decline;
 }
 
-static GossipFTId
+static GossipFT *
 jabber_ft_send (GossipFTProvider *provider,
 		GossipContact    *contact,
 		const gchar      *file)
@@ -3491,9 +3491,9 @@ jabber_ft_send (GossipFTProvider *provider,
 	GossipJabber     *jabber;
 	GossipJabberPriv *priv;
 
-	g_return_val_if_fail (GOSSIP_IS_JABBER (provider), 0);
-	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), 0);
-	g_return_val_if_fail (file != NULL, 0);
+	g_return_val_if_fail (GOSSIP_IS_JABBER (provider), NULL);
+	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
+	g_return_val_if_fail (file != NULL, NULL);
 
 	jabber = GOSSIP_JABBER (provider);
 	priv = GET_PRIV (jabber);

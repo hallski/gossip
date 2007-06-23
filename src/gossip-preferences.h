@@ -49,6 +49,8 @@ G_BEGIN_DECLS
 
 #define GOSSIP_PREFS_HINTS_CLOSE_MAIN_WINDOW      GOSSIP_PREFS_PATH "/hints/close_main_window"
 
+#define GOSSIP_PREFS_FILE_TRANSFER_DEFAULT_FOLDER GOSSIP_PREFS_PATH "/file_transfer/default_folder"
+
 void gossip_preferences_show (void);
 
 G_END_DECLS

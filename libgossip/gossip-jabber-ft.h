@@ -33,7 +33,7 @@ typedef struct _GossipJabberFTs GossipJabberFTs;
 
 GossipJabberFTs *gossip_jabber_ft_init                (GossipJabber    *jabber);
 void             gossip_jabber_ft_finalize            (GossipJabberFTs *fts);
-GossipFTId       gossip_jabber_ft_send                (GossipJabberFTs *fts,
+GossipFT *       gossip_jabber_ft_send                (GossipJabberFTs *fts,
 						       GossipContact   *contact,
 						       const gchar     *file_name);
 void             gossip_jabber_ft_accept              (GossipJabberFTs *fts,

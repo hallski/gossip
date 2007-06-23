@@ -66,6 +66,7 @@ struct _LmBsSessionPriv {
 };
 
 enum {
+	TRANSFER_INITIATED,
 	TRANSFER_COMPLETE,
 	TRANSFER_PROGRESS,
 	TRANSFER_ERROR,
@@ -76,6 +77,8 @@ static guint signals[LAST_SIGNAL] = { 0 };
 
 static void bs_session_finalize                (GObject      *object);
 static void bs_session_new_client_connected_cb (guint         fd,
+						LmBsSession  *session);
+static void bs_session_transfer_initiated_cb   (LmBsTransfer *transfer,
 						LmBsSession  *session);
 static void bs_session_transfer_complete_cb    (LmBsTransfer *transfer,
 						LmBsSession  *session);
@@ -97,6 +100,16 @@ lm_bs_session_class_init (LmBsSessionClass *klass)
 
 	object_class->finalize = bs_session_finalize;
 
+	signals[TRANSFER_INITIATED] =
+		g_signal_new ("transfer-initiated",
+			      G_TYPE_FROM_CLASS (klass),
+			      G_SIGNAL_RUN_LAST,
+			      0,
+			      NULL, NULL,
+			      g_cclosure_marshal_VOID__UINT,
+			      G_TYPE_NONE,
+			      1, G_TYPE_UINT);
+
 	signals[TRANSFER_COMPLETE] =
 		g_signal_new ("transfer-complete",
 			      G_TYPE_FROM_CLASS (klass),
@@ -106,6 +119,7 @@ lm_bs_session_class_init (LmBsSessionClass *klass)
 			      g_cclosure_marshal_VOID__UINT,
 			      G_TYPE_NONE,
 			      1, G_TYPE_UINT);
+
 	signals[TRANSFER_PROGRESS] =
 		g_signal_new ("transfer-progress",
 			      G_TYPE_FROM_CLASS (klass),
@@ -115,6 +129,7 @@ lm_bs_session_class_init (LmBsSessionClass *klass)
 			      libloudermouth_marshal_VOID__UINT_DOUBLE,
 			      G_TYPE_NONE,
 			      2, G_TYPE_UINT, G_TYPE_DOUBLE);
+
 	signals[TRANSFER_ERROR] =
 		g_signal_new ("transfer-error",
 			      G_TYPE_FROM_CLASS (klass),
@@ -192,6 +207,20 @@ bs_session_new_client_connected_cb (guint        fd,
 	g_hash_table_insert (priv->float_clients,
 			     GUINT_TO_POINTER (fd),
 			     sender);
+}
+
+static void
+bs_session_transfer_initiated_cb (LmBsTransfer *transfer,
+				  LmBsSession  *session)
+{
+	guint id;
+
+	g_return_if_fail (LM_IS_BS_SESSION (session));
+
+	id = lm_bs_transfer_get_id (transfer);
+	lm_verbose ("[%d] File transfer initiated\n", id);
+
+	g_signal_emit (session, signals[TRANSFER_INITIATED], 0, id);
 }
 
 static void
@@ -412,6 +441,9 @@ lm_bs_session_receive_file (LmBsSession  *session,
 				       location,
 				       file_size);
 
+	g_signal_connect (transfer, "initiated",
+			  G_CALLBACK (bs_session_transfer_initiated_cb),
+			  session);
 	g_signal_connect (transfer, "complete",
 			  G_CALLBACK (bs_session_transfer_complete_cb),
 			  session);
@@ -479,6 +511,9 @@ lm_bs_session_send_file (LmBsSession  *session,
 				       location,
 				       file_size);
 
+	g_signal_connect (transfer, "initiated",
+			  G_CALLBACK (bs_session_transfer_initiated_cb),
+			  session);
 	g_signal_connect (transfer, "complete",
 			  G_CALLBACK (bs_session_transfer_complete_cb),
 			  session);
