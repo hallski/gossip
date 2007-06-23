@@ -305,6 +305,7 @@ ft_dialog_error_cb (GossipJabber  *jabber,
 
 	type = GTK_MESSAGE_ERROR;
 
+	str1 = NULL;
 	str2 = error->message;
 
 	switch (error->code) {

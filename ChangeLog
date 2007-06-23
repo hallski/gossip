@@ -1,5 +1,10 @@
 2007-06-23  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-ft-window.c: (ft_dialog_error_cb): Fixed compile
+	error with uninitialised variable.
+
+2007-06-23  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-preferences.h:
 	* gossip.schemas.in: Added preference to save the last used
 	location for file transfers so we don't have to keep prompting the
