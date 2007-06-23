@@ -53,6 +53,8 @@ typedef struct {
 	GtkWidget    *progressbar;
 	GtkWidget    *button_yes;
 	GtkWidget    *button_no;
+	GtkWidget    *button_open_folder;
+	GtkWidget    *button_open;
 	GtkWidget    *button_close;
 
 	GossipJabber *jabber;
@@ -99,6 +101,8 @@ static void ft_dialog_destroy_cb                     (GtkDialog          *widget
 static void ft_dialog_response_cb                    (GtkWidget          *widget,
 						      gint                response,
 						      GossipFTDialog     *dialog);
+static void ft_dialog_show_complete                  (GossipFTDialog     *dialog);
+static void ft_dialog_show_transferring              (GossipFTDialog     *dialog);
 static void ft_dialog_show                           (GossipJabber       *jabber,
 						      GossipFT           *ft);
 static void ft_dialog_select_filechooser_response_cb (GtkDialog          *widget,
@@ -234,33 +238,13 @@ ft_dialog_complete_cb (GossipJabber  *jabber,
 		       GossipSession *session)
 {
 	GossipFTDialog *dialog;
-	gchar          *str;
 
 	dialog = g_hash_table_lookup (dialogs, ft);
 	if (!dialog) {
 		return;
 	}	      
-
-	/* Set up widgets */
-	gtk_widget_hide (dialog->button_yes);
-	gtk_widget_hide (dialog->button_no);
- 	gtk_widget_show (dialog->button_close); 
-
-	gtk_button_set_use_stock (GTK_BUTTON (dialog->button_close), TRUE);
-	gtk_button_set_label (GTK_BUTTON (dialog->button_close), 
-			      GTK_STOCK_CLOSE);
-
-	str = g_strdup_printf ("<span weight='bold' size='larger'>%s</span>", 
-			       _("Transfer complete"));
-	gtk_label_set_markup (GTK_LABEL (dialog->label_title), str);
-	gtk_label_set_use_markup (GTK_LABEL (dialog->label_title), TRUE);
-	g_free (str);
 	
-	gtk_label_set_text (GTK_LABEL (dialog->label_action), 
-			    _("The file has been transfered successfully."));
-
-	gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (dialog->progressbar), 1.0);
-	gtk_progress_bar_set_text (GTK_PROGRESS_BAR (dialog->progressbar), "100 %");
+	ft_dialog_show_complete (dialog);
 }
 
 static void
@@ -363,30 +347,12 @@ ft_dialog_save_filechooser_response_cb (GtkDialog      *widget,
 	const gchar *file_location;
 	
 	if (response_id == GTK_RESPONSE_OK) {
-		gchar *str;
-
 		file_location = gtk_file_chooser_get_uri (GTK_FILE_CHOOSER (widget));
 
 		/* TODO: some checks for existing files */
 
 		/* Set up widgets */
-		gtk_widget_hide (dialog->button_yes);
-		gtk_widget_hide (dialog->button_no);
-		gtk_widget_show (dialog->button_close);
-		gtk_widget_show (dialog->progressbar);
-
-		gtk_button_set_use_stock (GTK_BUTTON (dialog->button_close), TRUE);
-		gtk_button_set_label (GTK_BUTTON (dialog->button_close), 
-				      GTK_STOCK_CANCEL);
-
-		str = g_strdup_printf ("<span weight='bold' size='larger'>%s</span>", 
-				       _("Transferring file"));
-		gtk_label_set_markup (GTK_LABEL (dialog->label_title), str);
-		gtk_label_set_use_markup (GTK_LABEL (dialog->label_title), TRUE);
-		g_free (str);
-
-		gtk_label_set_text (GTK_LABEL (dialog->label_action),
-				    _("Transfer is in progress..."));
+		ft_dialog_show_transferring (dialog);
 
 		/* Send acceptance response */
 		gossip_ft_set_location (dialog->ft, file_location);
@@ -470,21 +436,96 @@ ft_dialog_response_cb (GtkWidget      *widget,
 		       gint            response,
 		       GossipFTDialog *dialog)
 {
-	if (response == GTK_RESPONSE_YES) {
+	const gchar *location;
+	gchar       *dirname;
+
+	switch (response) {
+	case GTK_RESPONSE_YES:
 		gtk_widget_set_sensitive (dialog->button_yes, FALSE);
 		gtk_widget_set_sensitive (dialog->button_no, FALSE);
 
 		ft_dialog_save_filechooser_create (dialog);
 		return;
-	}
-
-	if (response == GTK_RESPONSE_NO ||
-	    response == GTK_RESPONSE_DELETE_EVENT) {
+	case GTK_RESPONSE_NO:
+	case GTK_RESPONSE_DELETE_EVENT:
 		gossip_ft_provider_decline (GOSSIP_FT_PROVIDER (dialog->jabber),
 					    gossip_ft_get_id (dialog->ft));
+		break;
+
+	case 1:
+		/* Open folder */
+	        location = gossip_ft_get_location (dialog->ft);
+		dirname = g_path_get_dirname (location);
+		gossip_debug (DEBUG_DOMAIN, "Showing location:'%s'", dirname);
+		gossip_url_show (dirname);
+		g_free (dirname);
+		return;
+
+	case 2:
+		/* Open */
+	        location = gossip_ft_get_location (dialog->ft);
+		gossip_debug (DEBUG_DOMAIN, "Opening uri:'%s'", location);
+		gossip_url_show (location);
+		return;
+
+	default:
+		break;
 	}
-		
+
 	gtk_widget_destroy (widget);
+}
+
+static void
+ft_dialog_show_complete (GossipFTDialog *dialog)
+{
+	gchar *str;
+
+	/* Set up widgets */
+	gtk_widget_hide (dialog->button_yes);
+	gtk_widget_hide (dialog->button_no);
+ 	gtk_widget_show (dialog->button_open_folder); 
+ 	gtk_widget_show (dialog->button_open); 
+ 	gtk_widget_show (dialog->button_close); 
+
+	gtk_button_set_use_stock (GTK_BUTTON (dialog->button_close), TRUE);
+	gtk_button_set_label (GTK_BUTTON (dialog->button_close), 
+			      GTK_STOCK_CLOSE);
+
+	str = g_strdup_printf ("<span weight='bold' size='larger'>%s</span>", 
+			       _("Transfer complete"));
+	gtk_label_set_markup (GTK_LABEL (dialog->label_title), str);
+	gtk_label_set_use_markup (GTK_LABEL (dialog->label_title), TRUE);
+	g_free (str);
+	
+	gtk_label_set_text (GTK_LABEL (dialog->label_action), 
+			    _("The file has been transfered successfully."));
+
+	gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (dialog->progressbar), 1.0);
+	gtk_progress_bar_set_text (GTK_PROGRESS_BAR (dialog->progressbar), "100 %");
+}
+
+static void
+ft_dialog_show_transferring (GossipFTDialog *dialog)
+{
+	gchar *str;
+
+	gtk_widget_hide (dialog->button_yes);
+	gtk_widget_hide (dialog->button_no);
+	gtk_widget_show (dialog->button_close);
+	gtk_widget_show (dialog->progressbar);
+	
+	gtk_button_set_use_stock (GTK_BUTTON (dialog->button_close), TRUE);
+	gtk_button_set_label (GTK_BUTTON (dialog->button_close), 
+			      GTK_STOCK_CANCEL);
+	
+	str = g_strdup_printf ("<span weight='bold' size='larger'>%s</span>", 
+			       _("Transferring file"));
+	gtk_label_set_markup (GTK_LABEL (dialog->label_title), str);
+	gtk_label_set_use_markup (GTK_LABEL (dialog->label_title), TRUE);
+	g_free (str);
+	
+	gtk_label_set_text (GTK_LABEL (dialog->label_action),
+			    _("Transfer is in progress..."));
 }
 
 static void
@@ -493,6 +534,10 @@ ft_dialog_show (GossipJabber *jabber,
 {
 	GossipFTDialog *dialog;
 	GossipContact  *contact;
+	GtkSizeGroup   *size_group;
+	GtkWidget      *label_id_stub;
+	GtkWidget      *label_file_name_stub;
+	GtkWidget      *label_file_size_stub;
 	GtkWidget      *label_id;
 	GtkWidget      *label_file_name;
 	GtkWidget      *label_file_size;
@@ -513,6 +558,9 @@ ft_dialog_show (GossipJabber *jabber,
 				      NULL,
 				      "file_transfer_dialog", &dialog->dialog,
 				      "image_action", &dialog->image_action,
+				      "label_id_stub", &label_id_stub,
+				      "label_file_name_stub", &label_file_name_stub,
+				      "label_file_size_stub", &label_file_size_stub,
 				      "label_action", &dialog->label_action,
 				      "label_title", &dialog->label_title,
 				      "label_id", &label_id,
@@ -521,19 +569,27 @@ ft_dialog_show (GossipJabber *jabber,
 				      "progressbar", &dialog->progressbar,
 				      "button_yes", &dialog->button_yes,
 				      "button_no", &dialog->button_no,
+				      "button_open_folder", &dialog->button_open_folder,
+				      "button_open", &dialog->button_open,
 				      "button_close", &dialog->button_close,
 				      NULL);
 
 	contact = gossip_ft_get_contact (ft);
 	name = gossip_contact_get_name (contact);
 
+	size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
+	gtk_size_group_add_widget (size_group, label_id_stub);
+	gtk_size_group_add_widget (size_group, label_file_name_stub);
+	gtk_size_group_add_widget (size_group, label_file_size_stub);
+	g_object_unref (size_group);
+
 	gtk_label_set_text (GTK_LABEL (dialog->label_action), 
-			    _("This person wishes to send you this file:"));
+			    _("Do you want to accept this file?"));
 
 	if (name) {
-		who = g_strdup_printf (_("%s would like to send you a file."), name);
+		who = g_strdup_printf (_("%s would like to send you a file"), name);
 	} else {
-		who = g_strdup (_("Someone would like to send you a file."));
+		who = g_strdup (_("Someone would like to send you a file"));
 	}
 
 	str = g_strdup_printf ("<span weight='bold' size='larger'>%s</span>", who);
