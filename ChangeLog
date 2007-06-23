@@ -1,9 +1,26 @@
 2007-06-20  Mikael Hallendal  <micke@imendio.com>
 
-	* libgossip/gossip-jabber.c (jabber_disconnect_cb): Make sure 
+	* libgossip/gossip-jabber.c (jabber_disconnect_cb): Make sure
 	gossip_reason is set to build with warnings.
-	* libgossip/gossip-jabber-ft.c (jabber_ft_transfer_error_cb): Make sure 
+	* libgossip/gossip-jabber-ft.c (jabber_ft_transfer_error_cb): Make sure
 	error_code is set, fixes build warning.
+
+2007-06-20  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-ft-provider.c:
+	* libgossip/libgossip-marshal.list:
+	* libloudermouth/lm-bs-transfer.c: Fix the progress signalling and
+	throttle the progress signalling to once every 100th of a second
+	at most.
+
+	* src/gossip-app.c:
+	* src/gossip-contact-list.c: Rename things to GossipFTDialog,
+	instead of Window.
+	
+	* ui/file-transfer.glade:
+	* src/gossip-ft-window.[ch]: Rework the dialog so we reuse the
+	initial request dialog to show progress and information about each
+	transfer in one place.
 
 2007-06-19  Richard Hult  <richard@imendio.com>
 

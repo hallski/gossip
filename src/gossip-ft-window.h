@@ -20,21 +20,21 @@
  * Authors: Martyn Russell <martyn@imendio.com>
  */
 
-#ifndef __GOSSIP_FT_WINDOW_H__
-#define __GOSSIP_FT_WINDOW_H__
+#ifndef __GOSSIP_FT_DIALOG_H__
+#define __GOSSIP_FT_DIALOG_H__
 
 #include <libgossip/gossip-session.h>
 #include <libgossip/gossip-contact.h>
 
 G_BEGIN_DECLS
 
-void gossip_ft_window_init               (GossipSession *session);
-void gossip_ft_window_finalize           (GossipSession *session);
+void gossip_ft_dialog_init               (GossipSession *session);
+void gossip_ft_dialog_finalize           (GossipSession *session);
 
-void gossip_ft_window_send_file          (GossipContact *account);
-void gossip_ft_window_send_file_from_uri (GossipContact *contact,
+void gossip_ft_dialog_send_file          (GossipContact *account);
+void gossip_ft_dialog_send_file_from_uri (GossipContact *contact,
 					  const gchar   *file);
 
 G_END_DECLS
 
-#endif /* __GOSSIP_FT_WINDOW_H__ */
+#endif /* __GOSSIP_FT_DIALOG_H__ */

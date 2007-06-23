@@ -42,82 +42,110 @@
 #include "gossip-ui-utils.h"
 #include "gossip-app.h"
 
-#define DEBUG_DOMAIN "FileTransferWindow"
+#define DEBUG_DOMAIN "FileTransferDialog"
 
 typedef struct {
+	GtkWidget    *dialog;
+
+	GtkWidget    *label_title;
+	GtkWidget    *image_action;
+	GtkWidget    *label_action;
+	GtkWidget    *progressbar;
+	GtkWidget    *button_yes;
+	GtkWidget    *button_no;
+	GtkWidget    *button_close;
+
 	GossipJabber *jabber;
 	GossipFT     *ft;
-	GossipVCard  *vcard;
-} FTData;
+} GossipFTDialog;
 
 #ifdef HAVE_GNOME
 
-static void ft_window_protocol_connected_cb        (GossipSession      *session,
-						    GossipAccount      *account,
-						    GossipJabber       *jabber,
-						    gpointer            user_data);
-static void ft_window_protocol_disconnected_cb     (GossipSession      *session,
-						    GossipAccount      *account,
-						    GossipJabber       *jabber,
-						    gint                reason,
-						    gpointer            user_data);
-static void ft_window_request_cb                   (GossipJabber       *jabber,
-						    GossipFT           *ft,
-						    GossipSession      *session);
-static void ft_window_complete_cb                  (GossipJabber       *jabber,
-						    GossipFT           *ft,
-						    GossipSession      *session);
-static void ft_window_progress_cb                  (GossipJabber       *jabber,
-						    GossipFT           *ft,
-						    gdouble             progress,
-						    GossipSession      *session);
-static void ft_window_error_cb                     (GossipJabber       *jabber,
-						    GossipFT           *ft,
-						    GError             *error,
-						    GossipSession      *session);
-static void ft_window_event_activated_cb           (GossipEventManager *event_manager,
-						    GossipEvent        *event,
-						    GossipJabber       *jabber);
-static void ft_window_vcard_cb                     (GossipResult        result,
-						    GossipVCard        *vcard,
-						    FTData             *data);
-static void ft_window_request_dialog_cb            (GtkWidget          *dialog,
-						    gint                response,
-						    FTData             *data);
-static void ft_window_filechooser_create           (GossipContact      *contact);
-static void ft_window_filechooser_response_cb      (GtkDialog          *dialog,
-						    gint                response_id,
-						    GossipContact      *contact);
-static void ft_window_save_filechooser_create      (FTData             *data);
-static void ft_window_save_filechooser_response_cb (GtkDialog          *dialog,
-						    gint                response_id,
-						    FTData             *data);
+static void ft_dialog_protocol_connected_cb          (GossipSession      *session,
+						      GossipAccount      *account,
+						      GossipJabber       *jabber,
+						      gpointer            user_data);
+static void ft_dialog_protocol_disconnected_cb       (GossipSession      *session,
+						      GossipAccount      *account,
+						      GossipJabber       *jabber,
+						      gint                reason,
+						      gpointer            user_data);
+static void ft_dialog_request_cb                     (GossipJabber       *jabber,
+						      GossipFT           *ft,
+						      GossipSession      *session);
+static void ft_dialog_complete_cb                    (GossipJabber       *jabber,
+						      GossipFT           *ft,
+						      GossipSession      *session);
+static void ft_dialog_progress_cb                    (GossipJabber       *jabber,
+						      GossipFT           *ft,
+						      gdouble             progress,
+						      GossipSession      *session);
+static void ft_dialog_error_cb                       (GossipJabber       *jabber,
+						      GossipFT           *ft,
+						      GError             *error,
+						      GossipSession      *session);
+static void ft_dialog_event_activated_cb             (GossipEventManager *event_manager,
+						      GossipEvent        *event,
+						      GossipJabber       *jabber);
+static void ft_dialog_response_cb                    (GtkWidget          *dialog,
+						      gint                response,
+						      GossipFTDialog     *data);
+static void ft_dialog_save_filechooser_response_cb   (GtkDialog          *widget,
+						      gint                response_id,
+						      GossipFTDialog     *dialog);
+static void ft_dialog_save_filechooser_create        (GossipFTDialog     *dialog);
+static void ft_dialog_destroy_cb                     (GtkDialog          *widget,
+						      GossipFTDialog     *dialog);
+static void ft_dialog_response_cb                    (GtkWidget          *widget,
+						      gint                response,
+						      GossipFTDialog     *dialog);
+static void ft_dialog_show                           (GossipJabber       *jabber,
+						      GossipFT           *ft);
+static void ft_dialog_select_filechooser_response_cb (GtkDialog          *widget,
+						      gint                response_id,
+						      GossipContact      *contact);
+static void ft_dialog_select_filechooser_create      (GossipContact      *contact);
+
+
+static GHashTable *dialogs = NULL;
 
 void
-gossip_ft_window_init (GossipSession *session)
+gossip_ft_dialog_init (GossipSession *session)
 {
 	g_object_ref (session);
 
+	if (!dialogs) {
+		dialogs = g_hash_table_new_full (g_direct_hash, 
+						 g_direct_equal,
+						 (GDestroyNotify) g_object_unref,
+						 NULL);
+	}
+
 	g_signal_connect (session,
 			  "protocol-connected",
-			  G_CALLBACK (ft_window_protocol_connected_cb),
+			  G_CALLBACK (ft_dialog_protocol_connected_cb),
 			  NULL);
 
 	g_signal_connect (session,
 			  "protocol-disconnected",
-			  G_CALLBACK (ft_window_protocol_disconnected_cb),
+			  G_CALLBACK (ft_dialog_protocol_disconnected_cb),
 			  NULL);
 }
 
 void
-gossip_ft_window_finalize (GossipSession *session)
+gossip_ft_dialog_finalize (GossipSession *session)
 {
 	g_signal_handlers_disconnect_by_func (session,
-					      ft_window_protocol_connected_cb,
+					      ft_dialog_protocol_connected_cb,
 					      NULL);
 	g_signal_handlers_disconnect_by_func (session,
-					      ft_window_protocol_disconnected_cb,
+					      ft_dialog_protocol_disconnected_cb,
 					      NULL);
+
+	if (dialogs) {
+		g_hash_table_destroy (dialogs);
+		dialogs = NULL;
+	}
 
 	g_object_unref (session);
 }
@@ -125,57 +153,56 @@ gossip_ft_window_finalize (GossipSession *session)
 /*
  * Receiving from another contact
  */
-
 static void
-ft_window_protocol_connected_cb (GossipSession  *session,
+ft_dialog_protocol_connected_cb (GossipSession  *session,
 				 GossipAccount  *account,
 				 GossipJabber   *jabber,
 				 gpointer        user_data)
 {
 	g_signal_connect (jabber,
 			  "file-transfer-request",
-			  G_CALLBACK (ft_window_request_cb),
+			  G_CALLBACK (ft_dialog_request_cb),
 			  session);
 
 	g_signal_connect (jabber,
 			  "file-transfer-complete",
-			  G_CALLBACK (ft_window_complete_cb),
+			  G_CALLBACK (ft_dialog_complete_cb),
 			  session);
 
 	g_signal_connect (jabber,
 			  "file-transfer-progress",
-			  G_CALLBACK (ft_window_progress_cb),
+			  G_CALLBACK (ft_dialog_progress_cb),
 			  session);
 
 	g_signal_connect (jabber,
 			  "file-transfer-error",
-			  G_CALLBACK (ft_window_error_cb),
+			  G_CALLBACK (ft_dialog_error_cb),
 			  session);
 }
 
 static void
-ft_window_protocol_disconnected_cb (GossipSession  *session,
+ft_dialog_protocol_disconnected_cb (GossipSession  *session,
 				    GossipAccount  *account,
 				    GossipJabber   *jabber,
 				    gint            reason,
 				    gpointer        user_data)
 {
 	g_signal_handlers_disconnect_by_func (jabber,
-					      ft_window_request_cb,
+					      ft_dialog_request_cb,
 					      session);
 	g_signal_handlers_disconnect_by_func (jabber,
-					      ft_window_complete_cb,
+					      ft_dialog_complete_cb,
 					      session);
 	g_signal_handlers_disconnect_by_func (jabber,
-					      ft_window_progress_cb,
+					      ft_dialog_progress_cb,
 					      session);
 	g_signal_handlers_disconnect_by_func (jabber,
-					      ft_window_error_cb,
+					      ft_dialog_error_cb,
 					      session);
 }
 
 static void
-ft_window_request_cb (GossipJabber  *jabber,
+ft_dialog_request_cb (GossipJabber  *jabber,
 		      GossipFT      *ft,
 		      GossipSession *session)
 {
@@ -197,48 +224,69 @@ ft_window_request_cb (GossipJabber  *jabber,
 
 	gossip_event_manager_add (gossip_app_get_event_manager (),
 				  event,
-				  (GossipEventActivateFunction) ft_window_event_activated_cb,
+				  (GossipEventActivateFunction) ft_dialog_event_activated_cb,
 				  G_OBJECT (jabber));
 }
 
 static void
-ft_window_complete_cb (GossipJabber  *protocol,
+ft_dialog_complete_cb (GossipJabber  *jabber,
 		       GossipFT      *ft,
 		       GossipSession *session)
 {
-	GtkWidget *dialog;
- 	gchar     *str;  
+	GossipFTDialog *dialog;
+	gchar          *str;
 
-  	str = g_strdup_printf (_("The file \"%s\" has been transfered successfully."),   
-  			       gossip_ft_get_file_name (ft));  
+	dialog = g_hash_table_lookup (dialogs, ft);
+	if (!dialog) {
+		return;
+	}	      
 
-	dialog = gtk_message_dialog_new_with_markup (GTK_WINDOW (gossip_app_get_window ()),
-						     GTK_DIALOG_DESTROY_WITH_PARENT,
-						     GTK_MESSAGE_INFO,
-						     GTK_BUTTONS_CLOSE,
-						     "<b>%s</b>\n\n%s",
-						     _("File transfer complete"),
-						     str);
- 	g_free (str); 
+	/* Set up widgets */
+	gtk_widget_hide (dialog->button_yes);
+	gtk_widget_hide (dialog->button_no);
+ 	gtk_widget_show (dialog->button_close); 
 
-	g_signal_connect_swapped (dialog, "response",
-				  G_CALLBACK (gtk_widget_destroy),
-				  dialog);
+	gtk_button_set_use_stock (GTK_BUTTON (dialog->button_close), TRUE);
+	gtk_button_set_label (GTK_BUTTON (dialog->button_close), 
+			      GTK_STOCK_CLOSE);
 
-	gtk_widget_show (dialog);
+	str = g_strdup_printf ("<span weight='bold' size='larger'>%s</span>", 
+			       _("Transfer complete"));
+	gtk_label_set_markup (GTK_LABEL (dialog->label_title), str);
+	gtk_label_set_use_markup (GTK_LABEL (dialog->label_title), TRUE);
+	g_free (str);
+	
+	gtk_label_set_text (GTK_LABEL (dialog->label_action), 
+			    _("The file has been transfered successfully."));
+
+	gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (dialog->progressbar), 1.0);
+	gtk_progress_bar_set_text (GTK_PROGRESS_BAR (dialog->progressbar), "100 %");
 }
 
 static void
-ft_window_progress_cb (GossipJabber  *protocol,
+ft_dialog_progress_cb (GossipJabber  *jabber,
 		       GossipFT      *ft,
 		       gdouble        progress,
 		       GossipSession *session)
 {
-	gossip_debug (DEBUG_DOMAIN, "Progress %f %%", progress);
+	GossipFTDialog *dialog;
+	gchar          *progress_str;
+
+	dialog = g_hash_table_lookup (dialogs, ft);
+	if (!dialog) {
+		return;
+	}	      
+
+	progress_str = g_strdup_printf ("%.2f %%", progress * 100);
+	gossip_debug (DEBUG_DOMAIN, "Progress %s", progress_str);
+
+	gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (dialog->progressbar), progress);
+	gtk_progress_bar_set_text (GTK_PROGRESS_BAR (dialog->progressbar), progress_str);
+	g_free (progress_str);
 }
 
 static void
-ft_window_error_cb (GossipJabber  *jabber,
+ft_dialog_error_cb (GossipJabber  *jabber,
 		    GossipFT      *ft,
 		    GError        *error,
 		    GossipSession *session)
@@ -294,252 +342,308 @@ ft_window_error_cb (GossipJabber  *jabber,
 }
 
 static void
-ft_window_event_activated_cb (GossipEventManager *event_manager,
+ft_dialog_event_activated_cb (GossipEventManager *event_manager,
 			      GossipEvent        *event,
 			      GossipJabber       *jabber)
 {
 	GossipFT *ft;
-	FTData   *data;
 
 	ft = GOSSIP_FT (gossip_event_get_data (event));
-
-	data = g_new0 (FTData, 1);
-
-	data->jabber = g_object_ref (jabber);
-	data->ft = g_object_ref (ft);
-
-	/* Check if the contact is in the contact list and if it is, used the 
-	 * local name.
-	 *
-	 * If the contact is not in the contact list, ask for the VCard.
-	 */
-	gossip_session_get_vcard (gossip_app_get_session (),
-				  NULL,
-				  gossip_ft_get_contact (ft),
-				  (GossipVCardCallback) ft_window_vcard_cb,
-				  data,
-				  NULL);
+	ft_dialog_show (jabber, ft);
 }
 
+/* 
+ * File chooser dialog to set save location
+ */
 static void
-ft_window_vcard_cb (GossipResult  result,
-		    GossipVCard  *vcard,
-		    FTData       *data)
-{
-	GossipContact *contact;
-	GtkWidget     *dialog;
-	GtkWidget     *who_label;
-	GtkWidget     *id_label;
-	GtkWidget     *website_label;
-	GtkWidget     *personal_table;
-	GtkWidget     *file_name_label;
-	GtkWidget     *file_size_label;
-	const gchar   *name = NULL;
-	const gchar   *url = NULL;
-	gchar         *who;
-	gchar         *str;
-	gint           num_matches = 0;
-	gchar         *file_size;
-
-	if (GOSSIP_IS_VCARD (vcard)) {
-		data->vcard = g_object_ref (vcard);
-
-		name = gossip_vcard_get_name (vcard);
-		url = gossip_vcard_get_url (vcard);
-	}
-
-	contact = gossip_ft_get_contact (data->ft);
-
-	gossip_glade_get_file_simple ("file-transfer.glade",
-				      "file_transfer_dialog",
-				      NULL,
-				      "file_transfer_dialog", &dialog,
-				      "who_label", &who_label,
-				      "id_label", &id_label,
-				      "website_label", &website_label,
-				      "personal_table", &personal_table,
-				      "file_name_label", &file_name_label,
-				      "file_size_label", &file_size_label,
-				      NULL);
-
-	if (name) {
-		who = g_strdup_printf (_("%s would like to send you a file."),
-				       name);
-	} else {
-		who = g_strdup (_("Someone would like to send you a file."));
-	}
-
-	str = g_strdup_printf ("<span weight='bold' size='larger'>%s</span>", who);
-	gtk_label_set_markup (GTK_LABEL (who_label), str);
-	gtk_label_set_use_markup (GTK_LABEL (who_label), TRUE);
-	g_free (str);
-	g_free (who);
-
-	gtk_label_set_text (GTK_LABEL (file_name_label), gossip_ft_get_file_name (data->ft));
-
-	file_size = gnome_vfs_format_file_size_for_display (gossip_ft_get_file_size (data->ft));
-	gtk_label_set_text (GTK_LABEL (file_size_label), file_size);
-	g_free (file_size);
-
-	gtk_label_set_text (GTK_LABEL (id_label), gossip_contact_get_id (contact));
-
-	if (!G_STR_EMPTY (url)) {
-		GArray *start, *end;
-
-		start = g_array_new (FALSE, FALSE, sizeof (gint));
-		end = g_array_new (FALSE, FALSE, sizeof (gint));
-
-		num_matches = gossip_regex_match (GOSSIP_REGEX_ALL, url, start, end);
-
-		g_array_free (start, TRUE);
-		g_array_free (end, TRUE);
-	}
-
-	if (num_matches > 0) {
-		GtkWidget *href;
-		GtkWidget *alignment;
-
-		href = gossip_link_button_new (url, url);
-
-		alignment = gtk_alignment_new (0, 1, 0, 0.5);
-		gtk_container_add (GTK_CONTAINER (alignment), href);
-
-		gtk_table_attach (GTK_TABLE (personal_table),
-				  alignment,
-				  1, 2,
-				  1, 2,
-				  GTK_FILL, GTK_FILL,
-				  0, 0);
-
-		gtk_widget_show_all (personal_table);
-	} else {
-		gtk_widget_hide (website_label);
-	}
-
-	g_signal_connect (dialog,
-			  "response",
-			  G_CALLBACK (ft_window_request_dialog_cb),
-			  data);
-
-	gtk_widget_show (dialog);
-}
-
-
-
-static void
-ft_window_save_filechooser_response_cb (GtkDialog  *dialog,
-				        gint        response_id,
-				        FTData     *data)
+ft_dialog_save_filechooser_response_cb (GtkDialog      *widget,
+				        gint            response_id,
+				        GossipFTDialog *dialog)
 {
 	const gchar *file_location;
 	
 	if (response_id == GTK_RESPONSE_OK) {
-		file_location = gtk_file_chooser_get_uri (GTK_FILE_CHOOSER (dialog));
+		gchar *str;
+
+		file_location = gtk_file_chooser_get_uri (GTK_FILE_CHOOSER (widget));
+
 		/* TODO: some checks for existing files */
-		gossip_ft_set_location (data->ft, file_location);
+
+		/* Set up widgets */
+		gtk_widget_hide (dialog->button_yes);
+		gtk_widget_hide (dialog->button_no);
+		gtk_widget_show (dialog->button_close);
+		gtk_widget_show (dialog->progressbar);
+
+		gtk_button_set_use_stock (GTK_BUTTON (dialog->button_close), TRUE);
+		gtk_button_set_label (GTK_BUTTON (dialog->button_close), 
+				      GTK_STOCK_CANCEL);
+
+		str = g_strdup_printf ("<span weight='bold' size='larger'>%s</span>", 
+				       _("Transferring file"));
+		gtk_label_set_markup (GTK_LABEL (dialog->label_title), str);
+		gtk_label_set_use_markup (GTK_LABEL (dialog->label_title), TRUE);
+		g_free (str);
+
+		gtk_label_set_text (GTK_LABEL (dialog->label_action),
+				    _("Transfer is in progress..."));
+
+		/* Send acceptance response */
+		gossip_ft_set_location (dialog->ft, file_location);
 		
-		gossip_ft_provider_accept (GOSSIP_FT_PROVIDER (data->jabber),
-					   gossip_ft_get_id (data->ft));
+		gossip_ft_provider_accept (GOSSIP_FT_PROVIDER (dialog->jabber),
+					   gossip_ft_get_id (dialog->ft));
+
+		gtk_widget_destroy (GTK_WIDGET (widget));
 	} else {
-		gossip_ft_provider_decline (GOSSIP_FT_PROVIDER (data->jabber),
-					    gossip_ft_get_id (data->ft));
+		gossip_ft_provider_decline (GOSSIP_FT_PROVIDER (dialog->jabber),
+					    gossip_ft_get_id (dialog->ft));
+		gtk_widget_destroy (GTK_WIDGET (dialog->dialog));
 	}
-	gtk_widget_destroy (GTK_WIDGET(dialog));
-	g_object_unref (data->jabber);
-	g_object_unref (data->ft);
-	if (data->vcard) {
-		g_object_unref (data->vcard);
-	}
-	g_free (data);
 }
 
 static void
-ft_window_save_filechooser_create (FTData *data)
+ft_dialog_save_filechooser_create (GossipFTDialog *dialog)
 {
-	GtkWidget     *dialog;
+	GtkWidget     *widget;
 	GtkFileFilter *filter;
 	const gchar   *file_name;
 
 	gossip_debug (DEBUG_DOMAIN, "Creating filechooser...");
 
-	dialog = g_object_new (GTK_TYPE_FILE_CHOOSER_DIALOG,
+	widget = g_object_new (GTK_TYPE_FILE_CHOOSER_DIALOG,
 			       "action", GTK_FILE_CHOOSER_ACTION_SAVE,
 			       "select-multiple", FALSE,
 			       NULL);
 
-	gtk_window_set_title (GTK_WINDOW (dialog), _("Save file as..."));
-	file_name = gossip_ft_get_file_name (data->ft);
-	gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER(dialog),
+	gtk_window_set_title (GTK_WINDOW (widget), _("Save file as..."));
+	file_name = gossip_ft_get_file_name (dialog->ft);
+	gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (widget),
 					   file_name);
-	gtk_dialog_add_buttons (GTK_DIALOG (dialog),
+	gtk_dialog_add_buttons (GTK_DIALOG (widget),
 				GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 				GTK_STOCK_SAVE, GTK_RESPONSE_OK,
 				NULL);
 
-	gtk_dialog_set_default_response (GTK_DIALOG (dialog),
+	gtk_window_set_transient_for (GTK_WINDOW (widget), 
+				      GTK_WINDOW (dialog->dialog));
+	gtk_window_set_destroy_with_parent (GTK_WINDOW (widget), TRUE);
+
+	gtk_dialog_set_default_response (GTK_DIALOG (widget),
 					 GTK_RESPONSE_OK);
 
-	g_signal_connect (dialog, "response",
-			  G_CALLBACK (ft_window_save_filechooser_response_cb),
-			  data);
+	g_signal_connect (widget, "response",
+			  G_CALLBACK (ft_dialog_save_filechooser_response_cb),
+			  dialog);
+
+	/* Filters */
+	filter = gtk_file_filter_new ();
+	gtk_file_filter_set_name (filter, "All Files");
+	gtk_file_filter_add_pattern (filter, "*");
+	gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (widget), filter);
+
+	gtk_widget_show (widget);
+}
+
+/* 
+ * Receiving dialog 
+ */
+static void
+ft_dialog_destroy_cb (GtkDialog      *widget,
+		      GossipFTDialog *dialog)
+{
+	g_hash_table_remove (dialogs, dialog->ft);
+
+	if (dialog->jabber) {
+		g_object_unref (dialog->jabber);
+	}
+
+	if (dialog->ft) {
+		g_object_unref (dialog->ft);
+	}
+
+	g_free (dialog);
+}
+
+static void
+ft_dialog_response_cb (GtkWidget      *widget,
+		       gint            response,
+		       GossipFTDialog *dialog)
+{
+	if (response == GTK_RESPONSE_YES) {
+		gtk_widget_set_sensitive (dialog->button_yes, FALSE);
+		gtk_widget_set_sensitive (dialog->button_no, FALSE);
+
+		ft_dialog_save_filechooser_create (dialog);
+		return;
+	}
+
+	if (response == GTK_RESPONSE_NO ||
+	    response == GTK_RESPONSE_DELETE_EVENT) {
+		gossip_ft_provider_decline (GOSSIP_FT_PROVIDER (dialog->jabber),
+					    gossip_ft_get_id (dialog->ft));
+	}
+		
+	gtk_widget_destroy (widget);
+}
+
+static void
+ft_dialog_show (GossipJabber *jabber,
+		GossipFT     *ft)
+{
+	GossipFTDialog *dialog;
+	GossipContact  *contact;
+	GtkWidget      *label_id;
+	GtkWidget      *label_file_name;
+	GtkWidget      *label_file_size;
+	const gchar    *name = NULL;
+	gchar          *who;
+	gchar          *str;
+	gchar          *file_size;
+
+	dialog = g_new0 (GossipFTDialog, 1);
+
+	dialog->ft = g_object_ref (ft);
+	dialog->jabber = g_object_ref (jabber);
+
+	g_hash_table_insert (dialogs, g_object_ref (dialog->ft), dialog);
+
+	gossip_glade_get_file_simple ("file-transfer.glade",
+				      "file_transfer_dialog",
+				      NULL,
+				      "file_transfer_dialog", &dialog->dialog,
+				      "image_action", &dialog->image_action,
+				      "label_action", &dialog->label_action,
+				      "label_title", &dialog->label_title,
+				      "label_id", &label_id,
+				      "label_file_name", &label_file_name,
+				      "label_file_size", &label_file_size,
+				      "progressbar", &dialog->progressbar,
+				      "button_yes", &dialog->button_yes,
+				      "button_no", &dialog->button_no,
+				      "button_close", &dialog->button_close,
+				      NULL);
+
+	contact = gossip_ft_get_contact (ft);
+	name = gossip_contact_get_name (contact);
+
+	gtk_label_set_text (GTK_LABEL (dialog->label_action), 
+			    _("This person wishes to send you this file:"));
+
+	if (name) {
+		who = g_strdup_printf (_("%s would like to send you a file."), name);
+	} else {
+		who = g_strdup (_("Someone would like to send you a file."));
+	}
+
+	str = g_strdup_printf ("<span weight='bold' size='larger'>%s</span>", who);
+	gtk_label_set_markup (GTK_LABEL (dialog->label_title), str);
+	gtk_label_set_use_markup (GTK_LABEL (dialog->label_title), TRUE);
+	g_free (str);
+	g_free (who);
+
+	gtk_label_set_text (GTK_LABEL (label_file_name), gossip_ft_get_file_name (ft));
+
+	file_size = gnome_vfs_format_file_size_for_display (gossip_ft_get_file_size (ft));
+	gtk_label_set_text (GTK_LABEL (label_file_size), file_size);
+	g_free (file_size);
+
+	gtk_label_set_text (GTK_LABEL (label_id), gossip_contact_get_id (contact));
+
+	g_signal_connect (dialog->dialog, "response",
+			  G_CALLBACK (ft_dialog_response_cb),
+			  dialog);
+	g_signal_connect (dialog->dialog, "destroy",
+			  G_CALLBACK (ft_dialog_destroy_cb),
+			  dialog);
+
+	gtk_widget_show (dialog->dialog);
+}
+
+/*
+ * Sending with the file chooser
+ */
+static void
+ft_dialog_select_filechooser_response_cb (GtkDialog     *widget,
+					  gint           response_id,
+					  GossipContact *contact)
+{
+	if (response_id == GTK_RESPONSE_OK) {
+		GSList *list;
+
+		list = gtk_file_chooser_get_uris (GTK_FILE_CHOOSER (widget));
+
+		if (list) {
+			GSList *l;
+
+			gossip_debug (DEBUG_DOMAIN, "File chooser selected files:");
+
+			for (l = list; l; l = l->next) {
+				gchar *file;
+
+				file = l->data;
+
+				gossip_debug (DEBUG_DOMAIN, "\t%s", file);
+				gossip_ft_dialog_send_file_from_uri (contact, file);
+
+				g_free (file);
+			}
+
+			g_slist_free (list);
+		} else {
+			gossip_debug (DEBUG_DOMAIN, "File chooser had no files selected");
+		}
+	}
+
+	g_object_unref (contact);
+	gtk_widget_destroy (GTK_WIDGET (widget));
+}
+
+static void
+ft_dialog_select_filechooser_create (GossipContact *contact)
+{
+	GtkWidget     *widget;
+	GtkFileFilter *filter;
+
+	gossip_debug (DEBUG_DOMAIN, "Creating selection filechooser...");
+
+	widget = g_object_new (GTK_TYPE_FILE_CHOOSER_DIALOG,
+			       "action", GTK_FILE_CHOOSER_ACTION_OPEN,
+			       "select-multiple", FALSE,
+			       NULL);
+
+	gtk_window_set_title (GTK_WINDOW (widget), _("Select a file"));
+	gtk_dialog_add_buttons (GTK_DIALOG (widget),
+				GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+				GTK_STOCK_OPEN, GTK_RESPONSE_OK,
+				NULL);
+
+	gtk_dialog_set_default_response (GTK_DIALOG (widget),
+					 GTK_RESPONSE_OK);
+
+	g_signal_connect (widget, "response",
+			  G_CALLBACK (ft_dialog_select_filechooser_response_cb),
+			  g_object_ref (contact));
 
 	/* filters */
 	filter = gtk_file_filter_new ();
 	gtk_file_filter_set_name (filter, "All Files");
 	gtk_file_filter_add_pattern (filter, "*");
-	gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dialog), filter);
+	gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (widget), filter);
 
-	gtk_widget_show (dialog);
+	gtk_widget_show (widget);
 }
-
-
-static void
-ft_window_request_dialog_cb (GtkWidget *dialog,
-			     gint       response,
-			     FTData    *data)
-{
-	g_return_if_fail (GTK_IS_DIALOG (dialog));
-
-	g_return_if_fail (GOSSIP_IS_JABBER (data->jabber));
-	g_return_if_fail (GOSSIP_IS_FT (data->ft));
-
-	gtk_widget_destroy (dialog);
-
-/* 	g_return_if_fail (GOSSIP_IS_CONTACT (contact)); */
-/* 	g_return_if_fail (!G_STR_EMPTY (file)); */
-
-	if (response == GTK_RESPONSE_YES) {
-		ft_window_save_filechooser_create (data);
-		return;
-	} else {
-		gossip_ft_provider_decline (GOSSIP_FT_PROVIDER (data->jabber),
-					    gossip_ft_get_id (data->ft));
-	}
-
-	g_object_unref (data->jabber);
-	g_object_unref (data->ft);
-
-	if (data->vcard) {
-		g_object_unref (data->vcard);
-	}
-
-	g_free (data);
-}
-
-/*
- * sending with the file chooser
- */
 
 void
-gossip_ft_window_send_file (GossipContact *contact)
+gossip_ft_dialog_send_file (GossipContact *contact)
 {
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 
-	ft_window_filechooser_create (contact);
+	ft_dialog_select_filechooser_create (contact);
 }
 
 void
-gossip_ft_window_send_file_from_uri (GossipContact *contact,
+gossip_ft_dialog_send_file_from_uri (GossipContact *contact,
 				     const gchar   *file)
 {
 	GossipSession    *session;
@@ -557,96 +661,25 @@ gossip_ft_window_send_file_from_uri (GossipContact *contact,
 	gossip_ft_provider_send (provider, contact, file);
 }
 
-static void
-ft_window_filechooser_create (GossipContact *contact)
-{
-	GtkWidget     *dialog;
-	GtkFileFilter *filter;
-
-	gossip_debug (DEBUG_DOMAIN, "Creating filechooser...");
-
-	dialog = g_object_new (GTK_TYPE_FILE_CHOOSER_DIALOG,
-			       "action", GTK_FILE_CHOOSER_ACTION_OPEN,
-			       "select-multiple", FALSE,
-			       NULL);
-
-	gtk_window_set_title (GTK_WINDOW (dialog), _("Select a file"));
-	gtk_dialog_add_buttons (GTK_DIALOG (dialog),
-				GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-				GTK_STOCK_OPEN, GTK_RESPONSE_OK,
-				NULL);
-
-	gtk_dialog_set_default_response (GTK_DIALOG (dialog),
-					 GTK_RESPONSE_OK);
-
-	g_signal_connect (dialog, "response",
-			  G_CALLBACK (ft_window_filechooser_response_cb),
-			  g_object_ref (contact));
-
-	/* filters */
-	filter = gtk_file_filter_new ();
-	gtk_file_filter_set_name (filter, "All Files");
-	gtk_file_filter_add_pattern (filter, "*");
-	gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dialog), filter);
-
-	gtk_widget_show (dialog);
-}
-
-static void
-ft_window_filechooser_response_cb (GtkDialog     *dialog,
-				   gint           response_id,
-				   GossipContact *contact)
-{
-	if (response_id == GTK_RESPONSE_OK) {
-		GSList *list;
-
-		list = gtk_file_chooser_get_uris (GTK_FILE_CHOOSER (dialog));
-
-		if (list) {
-			GSList *l;
-
-			gossip_debug (DEBUG_DOMAIN, "File chooser selected files:");
-
-			for (l = list; l; l = l->next) {
-				gchar *file;
-
-				file = l->data;
-
-				gossip_debug (DEBUG_DOMAIN, "\t%s", file);
-				gossip_ft_window_send_file_from_uri (contact, file);
-
-				g_free (file);
-			}
-
-			g_slist_free (list);
-		} else {
-			gossip_debug (DEBUG_DOMAIN, "File chooser had no files selected");
-		}
-	}
-
-	g_object_unref (contact);
-	gtk_widget_destroy (GTK_WIDGET (dialog));
-}
-
 #else
 
 void
-gossip_ft_window_init               (GossipSession *session)
+gossip_ft_dialog_init (GossipSession *session)
 {
 }
 
 void
-gossip_ft_window_finalize           (GossipSession *session)
+gossip_ft_dialog_finalize (GossipSession *session)
 {
 }
 
 void
-gossip_ft_window_send_file          (GossipContact *account)
+gossip_ft_dialog_send_file (GossipContact *account)
 {
 }
 
 void
-gossip_ft_window_send_file_from_uri (GossipContact *contact,
+gossip_ft_dialog_send_file_from_uri (GossipContact *contact,
 				     const gchar   *file)
 {
 }

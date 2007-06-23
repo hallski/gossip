@@ -368,6 +368,9 @@ bs_transfer_progress (LmBsTransfer *transfer)
 {
 	LmBsTransferPriv *priv;
 	gdouble           progress;
+	GTimeVal          current_time;
+	GTimeVal          interval_time;
+	static GTimeVal   last_time = { 0, 0 };
 
 	priv = GET_PRIV (transfer);
 
@@ -377,7 +380,18 @@ bs_transfer_progress (LmBsTransfer *transfer)
 		progress = (gdouble) priv->bytes_transferred / priv->bytes_total;
 	}
 
-	g_signal_emit (transfer, signals[PROGRESS], 0, progress);
+	g_get_current_time (&current_time);
+
+	/* Only allow signalling every 100th of a second) */
+	interval_time = last_time;
+	g_time_val_add (&interval_time, G_USEC_PER_SEC / 100);
+
+	/* Throttle the signalling so we don't enter a tight loop */
+	if (current_time.tv_sec - interval_time.tv_sec > 0 ||
+	    current_time.tv_usec - interval_time.tv_usec > 0) {
+		g_signal_emit (transfer, signals[PROGRESS], 0, progress);
+		last_time = current_time;
+	}
 }
 
 static void

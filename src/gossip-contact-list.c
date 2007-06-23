@@ -2831,7 +2831,7 @@ contact_list_action_cb (GtkAction         *action,
 
 		contact = gossip_contact_list_get_selected (list);
 		if (contact) {
-			gossip_ft_window_send_file (contact);
+			gossip_ft_dialog_send_file (contact);
 			g_object_unref (contact);
 		}
 

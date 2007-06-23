@@ -446,7 +446,7 @@ app_finalize (GObject *object)
 					      app_event_added_cb,
 					      NULL);
 
-	gossip_ft_window_finalize (priv->session);
+	gossip_ft_dialog_finalize (priv->session);
 	gossip_subscription_dialog_finalize (priv->session);
 	
 	g_object_unref (priv->self_presence);
@@ -710,7 +710,7 @@ app_setup (GossipSession *session)
 		      "Initialising session listeners "
 		      "(subscription, file transfer, etc)");
 	gossip_subscription_dialog_init (priv->session);
-	gossip_ft_window_init (priv->session);
+	gossip_ft_dialog_init (priv->session);
 
 	if (gossip_accounts_dialog_is_needed ()) {
 		gossip_debug (DEBUG_DOMAIN_SETUP,
