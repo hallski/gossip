@@ -1,5 +1,13 @@
 2007-06-23  Martyn Russell  <martyn@imendio.com>
 
+	* src/Makefile.am:
+	* src/gossip-app.c:
+	* src/gossip-contact-list.c:
+	* src/gossip-ft-dialog.[ch]:
+	* src/gossip-ft-window.[ch]: Renamed gossip-ft-window to gossip-ft-dialog.
+
+2007-06-23  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-ft-window.c: (ft_dialog_error_cb): Fixed compile
 	error with uninitialised variable.
 

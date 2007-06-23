@@ -59,7 +59,7 @@ gossip_SOURCES = 				                        	\
 	gossip-edit-contact-dialog.c       gossip-edit-contact-dialog.h	   	\
 	gossip-email.c                     gossip-email.h                  	\
 	gossip-self-presence.c             gossip-self-presence.h          	\
-	gossip-ft-window.c		   gossip-ft-window.h		   	\
+	gossip-ft-dialog.c		   gossip-ft-dialog.h		   	\
 	gossip-geometry.c		   gossip-geometry.h		   	\
 	gossip-glade.c                     gossip-glade.h                  	\
 	gossip-group-chat.c	           gossip-group-chat.h		   	\

@@ -38,7 +38,7 @@
 #include <libgossip/gossip-vcard.h>
 #include <libgossip/gossip-conf.h>
 
-#include "gossip-ft-window.h"
+#include "gossip-ft-dialog.h"
 #include "gossip-glade.h"
 #include "gossip-ui-utils.h"
 #include "gossip-app.h"

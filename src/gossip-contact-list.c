@@ -44,7 +44,7 @@
 #include "gossip-contact-list.h"
 #include "gossip-edit-contact-dialog.h"
 #include "gossip-email.h"
-#include "gossip-ft-window.h"
+#include "gossip-ft-dialog.h"
 #include "gossip-log-window.h"
 #include "gossip-marshal.h"
 #include "gossip-sound.h"

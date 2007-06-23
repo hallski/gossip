@@ -49,7 +49,7 @@
 #include "gossip-contact-list.h"
 #include "gossip-glade.h"
 #include "gossip-self-presence.h"
-#include "gossip-ft-window.h"
+#include "gossip-ft-dialog.h"
 #include "gossip-geometry.h"
 #include "gossip-group-chat.h"
 #include "gossip-hint.h"
