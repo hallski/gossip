@@ -105,16 +105,6 @@ ft_provider_base_init (gpointer g_class)
 				      G_TYPE_NONE,
 				      1, GOSSIP_TYPE_FT);
 
-		signals[COMPLETE] =
-			g_signal_new ("file-transfer-complete",
-				      G_TYPE_FROM_CLASS (g_class),
-				      G_SIGNAL_RUN_LAST,
-				      0,
-				      NULL, NULL,
-				      libgossip_marshal_VOID__OBJECT,
-				      G_TYPE_NONE,
-				      1, GOSSIP_TYPE_FT);
-
 		signals[PROGRESS] =
 			g_signal_new ("file-transfer-progress",
 				      G_TYPE_FROM_CLASS (g_class),

@@ -1,3 +1,8 @@
+2007-06-25  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-ft-provider.c: (ft_provider_base_init): Fixed
+	duplicate signal warning when starting Gossip.
+
 2007-06-23  Martyn Russell  <martyn@imendio.com>
 
 	* src/Makefile.am:
