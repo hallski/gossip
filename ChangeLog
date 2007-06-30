@@ -1,3 +1,8 @@
+2007-06-30  Richard Hult  <richard@imendio.com>
+
+	* ui/main.glade: Set a proper name for the menu bar (there is no
+	Swedish conspiracy).
+
 2007-06-25  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-ft-provider.c: (ft_provider_base_init): Fixed
