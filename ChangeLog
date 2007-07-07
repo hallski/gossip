@@ -1,3 +1,8 @@
+2007-07-07  Richard Hult  <richard@imendio.com>
+
+	* ui/main.glade: Make the accounts dialog center-on-parent like the
+	rest of the transient dialogs.
+
 2007-06-30  Richard Hult  <richard@imendio.com>
 
 	* ui/main.glade: Set a proper name for the menu bar (there is no
