@@ -109,7 +109,7 @@ libgossip_jabber_la_SOURCES =                  		\
 
 libgossip_jabber_la_LIBADD = 				\
 	$(GOSSIP_JABBER_LIBS) 				\
-	$(top_srcdir)/libloudermouth/libloudermouth.la
+	$(top_builddir)/libloudermouth/libloudermouth.la
 
 dtddir = $(datadir)/gossip
 dtd_DATA = 						\

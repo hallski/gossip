@@ -1,5 +1,16 @@
 2007-07-17  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/Makefile.am:
+	* libloudermouth/Makefile.am: Fixed make distcheck issues.
+	
+	* libgossip/gossip-stock.h: Removed unused stock definitions for protocols.
+	* protocols/gossip-aim.png: Removed unused.
+	* protocols/gossip-icq.png: Removed unused.
+	* protocols/gossip-msn.png: Removed unused.
+	* protocols/gossip-yahoo.png: Removed unused.
+
+2007-07-17  Martyn Russell  <martyn@imendio.com>
+
 	* ui/file-transfer.glade: Don't set a size for the width of the
 	file transfer dialog to make sure we don't cut off text in labels,
 	fixes bug #456855 (Marco Barisione).

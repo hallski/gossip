@@ -42,11 +42,6 @@ G_BEGIN_DECLS
 
 #define GOSSIP_STOCK_CONTACT_INFORMATION "vcard_16"
 
-#define GOSSIP_STOCK_AIM                 "gossip-aim"
-#define GOSSIP_STOCK_ICQ                 "gossip-icq"
-#define GOSSIP_STOCK_MSN                 "gossip-msn"
-#define GOSSIP_STOCK_YAHOO               "gossip-yahoo"
-
 #define GOSSIP_STOCK_GROUP_MESSAGE       "gossip-group-message"
 
 #define GOSSIP_STOCK_FILE_TRANSFER       "gossip-file-transfer"

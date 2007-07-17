@@ -24,12 +24,10 @@ libloudermouth_la_SOURCES =           			\
 	lm-bs-transfer.c				\
 	lm-bs-transfer.h				\
 	lm-debug.h					\
-	lm-connection.h					\
 	lm-internals.h					\
 	lm-parser.h					\
 	lm-sha.h					\
 	lm-sock.h					\
-	lm-ssl-internals.h				\
 	loudermouth.h					\
 	libloudermouth-marshal-main.c
 
