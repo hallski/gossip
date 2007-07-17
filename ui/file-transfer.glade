@@ -5,7 +5,6 @@
 
 <widget class="GtkDialog" id="file_transfer_dialog">
   <property name="border_width">5</property>
-  <property name="width_request">450</property>
   <property name="title" translatable="yes">File Transfer</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>

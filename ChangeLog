@@ -1,3 +1,9 @@
+2007-07-17  Martyn Russell  <martyn@imendio.com>
+
+	* ui/file-transfer.glade: Don't set a size for the width of the
+	file transfer dialog to make sure we don't cut off text in labels,
+	fixes bug #456855 (Marco Barisione).
+
 2007-07-07  Richard Hult  <richard@imendio.com>
 
 	* ui/main.glade: Make the accounts dialog center-on-parent like the
