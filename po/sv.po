@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-07-29 00:51+0200\n"
-"PO-Revision-Date: 2007-07-29 00:53+0100\n"
+"PO-Revision-Date: 2007-07-30 18:14+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -1439,7 +1439,7 @@ msgstr "Gå in i rummet vid uppstart"
 
 #: ../ui/group-chat.glade.h:8
 msgid "Join this chat room when Gossip starts and you are connected"
-msgstr "Gå in i detta chattrum när Gossip startar och du ansluts"
+msgstr "Gå in i detta chattrum när Gossip startar och du är ansluten"
 
 #: ../ui/group-chat.glade.h:9
 msgid "Manage Favorite Rooms"
