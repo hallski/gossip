@@ -1,5 +1,9 @@
 2007-08-11  Martyn Russell  <martyn@imendio.com>
 
+	* configure.ac: Bump version.
+
+2007-08-11  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-about-dialog.c:
 	* src/gossip-main.c:
 	* src/gossip-sound.c: Use the PACKAGE_TARNAME instead of "gossip"
