@@ -142,7 +142,7 @@
 	xmpp ping support to the disco reply.
 	* libgossip/gossip-jabber.c:
 	(jabber_iq_query_handler, jabber_request_ping): Added support for XMPP
-	Ping. Fixes #448072 (Michael Scherer, Mikael Hallendal).
+	Ping. Fixes bug #448072 (Michael Scherer, Mikael Hallendal).
 
 2007-06-12  Martyn Russell  <martyn@imendio.com>
 
@@ -475,7 +475,8 @@
 2007-06-03  Kristian Rietveld  <kris@gtk.org>
 
 	* ui/main.glade: set use_stock for button_connect to False, to avoid a
-	crasher when opening the accounts window with GTK+ trunk.  (#442456).
+	crasher when opening the accounts window with GTK+ trunk.  Fixes
+	bug #442456.
 
 2007-06-03  Mikael Hallendal  <micke@imendio.com>
 
@@ -719,7 +720,8 @@
 
 2007-05-31  Martyn Russell  <martyn@imendio.com>
 
-	Added basic support for file transfer
+	Added basic support for file transfer, this finally fixes bug
+	#141569 (Dimitur Kirov, Martyn Russell) 
 	
 	* libgossip/gossip-ft.[ch]: Added class properties like mime type,
 	file size, etc.
@@ -897,7 +899,7 @@
 	- Override the functions instead of connecting to the signals since
 	GossipContactList is a subclass of GtkTreeView.
 	(contact_list_drag_drop):
-	- Override drag_drop to get rid of a warning about it. Fixes #434423.
+	- Override drag_drop to get rid of a warning about it. Fixes bug #434423.
 
 2007-05-31  Mikael Hallendal  <micke@imendio.com>
 
@@ -912,7 +914,7 @@
 	gossip_message_is_action.
 	* src/gossip-notify.c (notify_new_message): Use the new functions in
 	GossipMessage to insert the action string instead of the body in
-	notification popups. Fixes #416912.
+	notification popups. Fixes bug #416912.
 
 2007-05-31  Kristian Rietveld  <kris@gtk.org>
 
@@ -1030,7 +1032,7 @@
 2007-05-30  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-galago.c (galago_get_account): Update call to get the
-	account parameter. Fixes #442190 (Aredridel).
+	account parameter. Fixes bug #442190 (Aredridel).
 
 2007-05-30  Mikael Hallendal  <micke@imendio.com>
 
@@ -1103,7 +1105,7 @@
 
 	* src/gossip-ui-utils.c: 
 	- Cleaned up the code a bit and made it match Gossip code style.
-	- Fixes #441568.
+	- Fixes bug #441568.
 
 2007-05-28  Mikael Hallendal  <micke@imendio.com>
 
@@ -1161,7 +1163,7 @@
 	- Reworked the flashing to have one heartbeat callback for the entire 
 	  contact list.
 	- Made it possible to remove FlashData and FlashTimeoutData.
-	- Now blinking in sync for all contacts. Fixes #441625 (Mikael
+	- Now blinking in sync for all contacts. Fixes bug #441625 (Mikael
 	Hallendal)
 
 2007-05-27  Mikael Hallendal  <micke@imendio.com>
@@ -1358,7 +1360,7 @@
 	* src/gossip-notify.c:
 	* src/gossip-subscription-dialog.c: (subscription_dialog_show),
 	(subscription_dialog_vcard_cb): Include the account name in the
-	subscription request, fixes #412055 (Chris RIvas, Martyn
+	subscription request, fixes bug #412055 (Chris RIvas, Martyn
 	Russell). 
 	
 2007-05-26  Mikael Hallendal  <micke@imendio.com>
