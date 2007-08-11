@@ -1,5 +1,12 @@
 2007-08-11  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-app.c:
+	(app_restore_user_accels):
+	(app_save_user_accels): Use the more commonly used location to
+	store the keymap accels. Fixes bug #461302 (Wouter Bolsterlee).
+	
+2007-08-11  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-presence-chooser.c: Add tooltip to presence chooser
 	button when the status is ellipsized, fixes bug #415257 (Madcat).
 
