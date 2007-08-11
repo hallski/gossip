@@ -1,5 +1,11 @@
 2007-08-11  Martyn Russell  <martyn@imendio.com>
 
+	* ui/chat.glade: Use F12 instead of F11 to show or hide the
+	contacts in group chat, F11 is more commonly used to toggle full
+	screen, this fixes bug #462824.
+
+2007-08-11  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-chatroom.h:
 	* src/gossip-chat-window.c:
 	(gossip_chat_window_init):

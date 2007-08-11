@@ -343,7 +343,7 @@
 		      <property name="label" translatable="yes">_Show Contacts</property>
 		      <property name="use_underline">True</property>
 		      <property name="active">True</property>
-		      <accelerator key="F11" modifiers="0" signal="activate"/>
+		      <accelerator key="F12" modifiers="0" signal="activate"/>
 		    </widget>
 		  </child>
 		</widget>
