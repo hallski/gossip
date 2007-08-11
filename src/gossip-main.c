@@ -107,7 +107,8 @@ main (int argc, char *argv[])
 	g_set_application_name (PACKAGE_NAME);
 
 #ifdef HAVE_GNOME
-	program = gnome_program_init ("gossip", PACKAGE_VERSION,
+	program = gnome_program_init (PACKAGE_TARNAME, 
+				      PACKAGE_VERSION,
 				      LIBGNOMEUI_MODULE,
 				      argc, argv,
 				      GNOME_PROGRAM_STANDARD_PROPERTIES,
@@ -125,7 +126,7 @@ main (int argc, char *argv[])
 	}
 #endif
 
-	gossip_window_set_default_icon_name ("gossip");
+	gossip_window_set_default_icon_name (PACKAGE_TARNAME);
 
 	/* Get all accounts. */
 	session = gossip_session_new (NULL, NULL, NULL);

@@ -241,15 +241,15 @@ gossip_sound_play (GossipSound sound)
 	switch (sound) {
 	case GOSSIP_SOUND_CHAT:
 		gossip_debug (DEBUG_DOMAIN, "Triggering 'Chat' event.");
-		gnome_triggers_do (NULL, NULL, "gossip", "Chat", NULL);
+		gnome_triggers_do (NULL, NULL, PACKAGE_TARNAME, "Chat", NULL);
 		break;
 	case GOSSIP_SOUND_ONLINE:
 		gossip_debug (DEBUG_DOMAIN, "Triggering 'Online' event.");
-		gnome_triggers_do (NULL, NULL, "gossip", "Online", NULL);
+		gnome_triggers_do (NULL, NULL, PACKAGE_TARNAME, "Online", NULL);
 		break;
 	case GOSSIP_SOUND_OFFLINE:
 		gossip_debug (DEBUG_DOMAIN, "Triggering 'Offline' event.");
-		gnome_triggers_do (NULL, NULL, "gossip", "Offline", NULL);
+		gnome_triggers_do (NULL, NULL, PACKAGE_TARNAME, "Offline", NULL);
 		break;
 	default:
 		gossip_debug (DEBUG_DOMAIN, "Unknown sound type.");

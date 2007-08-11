@@ -1,5 +1,12 @@
 2007-08-11  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-about-dialog.c:
+	* src/gossip-main.c:
+	* src/gossip-sound.c: Use the PACKAGE_TARNAME instead of "gossip"
+	in places where it makes sense.
+
+2007-08-11  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-app.c:
 	(app_restore_user_accels):
 	(app_save_user_accels): Use the more commonly used location to

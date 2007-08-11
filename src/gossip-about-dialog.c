@@ -101,7 +101,7 @@ gossip_about_dialog_new (GtkWindow *parent)
 			       "wrap-license", TRUE,
 			       "copyright", "Imendio AB 2002-2007",
 			       "documenters", documenters,
-			       "logo-icon-name", "gossip",
+			       "logo-icon-name", PACKAGE_TARNAME,
 			       "translator-credits", _("translator-credits"),
 			       "version", PACKAGE_VERSION,
 			       "website", WEB_SITE,
