@@ -1,5 +1,10 @@
 2007-08-11  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-presence-chooser.c: Add tooltip to presence chooser
+	button when the status is ellipsized, fixes bug #415257 (Madcat).
+
+2007-08-11  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-chat-view.c:
 	* src/gossip-group-chat.c: Make sure we don't scroll smoothly when
 	joining group chats, only when receiving new messages. This

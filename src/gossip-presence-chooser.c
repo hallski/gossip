@@ -57,6 +57,8 @@ typedef struct {
 	guint                scroll_timeout_id;
 	GossipPresenceState  scroll_state;
 	gchar               *scroll_status;
+
+	GtkTooltips         *tooltips;
 } GossipPresenceChooserPriv;
 
 static void     presence_chooser_finalize               (GObject               *object);
@@ -107,6 +109,8 @@ static void     presence_chooser_flash_start_cb         (GossipSelfPresence *sel
 							 GossipPresenceChooser *chooser);
 static void     presence_chooser_flash_stop_cb          (GossipSelfPresence *self_presence,
 							 GossipPresenceChooser *chooser);
+static void     presence_chooser_set_tooltip            (GossipPresenceChooser *chooser,
+							 const gchar* text);
 
 G_DEFINE_TYPE (GossipPresenceChooser, gossip_presence_chooser, GTK_TYPE_TOGGLE_BUTTON);
 
@@ -176,6 +180,8 @@ gossip_presence_chooser_init (GossipPresenceChooser *chooser)
 	arrow = gtk_arrow_new (GTK_ARROW_DOWN, GTK_SHADOW_OUT);
 	gtk_widget_show (arrow);
 	gtk_container_add (GTK_CONTAINER (alignment), arrow);
+
+	priv->tooltips = gtk_tooltips_new ();
 
 	g_signal_connect (chooser, "toggled",
 			  G_CALLBACK (presence_chooser_toggled_cb),
@@ -265,6 +271,8 @@ presence_chooser_set_state (GossipPresenceChooser *chooser,
 
 	presence_chooser_reset_scroll_timeout (chooser);
 	g_signal_emit (chooser, signals[CHANGED], 0, state, status);
+
+	presence_chooser_set_tooltip (chooser, status);
 }
 
 static void
@@ -438,6 +446,8 @@ presence_chooser_noncustom_activate_cb (GtkWidget             *item,
 
 	presence_chooser_reset_scroll_timeout (chooser);
 	g_signal_emit (chooser, signals[CHANGED], 0, state, status);
+
+	presence_chooser_set_tooltip (chooser, status);
 }
 
 static void
@@ -859,6 +869,23 @@ presence_chooser_flash_stop_cb (GossipSelfPresence    *self_presence,
 				     gossip_self_presence_get_current_state (gossip_app_get_self_presence ()));
 }
 
+static void
+presence_chooser_set_tooltip (GossipPresenceChooser *chooser, const gchar* text)
+{
+	GossipPresenceChooserPriv *priv;
+	PangoLayout *layout;
+
+	priv = GET_PRIV (chooser);
+
+	layout = gtk_label_get_layout (GTK_LABEL (priv->label));
+
+	if (pango_layout_is_ellipsized (layout)) {
+		gtk_tooltips_set_tip (GTK_TOOLTIPS (priv->tooltips), GTK_WIDGET (chooser), text, text);
+		gtk_tooltips_enable (priv->tooltips);
+	} else {
+		gtk_tooltips_disable (priv->tooltips);
+	}
+}
 
 static gboolean
 presence_chooser_scroll_event_cb (GtkWidget      *chooser,
@@ -1084,6 +1111,8 @@ gossip_presence_chooser_set_status (GossipPresenceChooser *chooser,
 	priv = GET_PRIV (chooser);
 
 	gtk_label_set_text (GTK_LABEL (priv->label), status);
+
+	presence_chooser_set_tooltip (chooser, status);
 }
 
 static void
