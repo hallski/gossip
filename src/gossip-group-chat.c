@@ -245,6 +245,10 @@ static void            group_chat_cl_expander_cell_data_func  (GtkTreeViewColumn
 static void            group_chat_cl_set_background           (GossipGroupChat              *chat,
 							       GtkCellRenderer              *cell,
 							       gboolean                      is_header);
+static void            group_chat_set_scrolling_for_events    (GossipGroupChat              *chat,
+							       gboolean                      disable);
+static gboolean        group_chat_scroll_down_when_idle_func  (GossipGroupChat             *chat);
+static void            group_chat_scroll_down_when_idle       (GossipGroupChat             *chat);
 
 enum {
 	COL_STATUS,
@@ -413,6 +417,34 @@ group_chat_retry_connection_clicked_cb (GtkWidget       *button,
 }
 
 static void
+group_chat_set_scrolling_for_events (GossipGroupChat *chat,
+				     gboolean         disable)
+{
+	GossipGroupChatPriv *priv;
+	gboolean             recently_joined;
+
+	priv = GET_PRIV (chat);
+
+	recently_joined = priv->time_joined + 5 > gossip_time_get_current ();
+
+	if (!recently_joined) {
+		return;
+	}
+
+	if (disable) {
+		/* If we joined the group chat in the last 5 seconds, don't
+		 * scroll on new presence messages. We need to do this because
+		 * unlike normal messages, we don't have a timestamp all the
+		 * time.
+		 */
+		gossip_chat_view_allow_scroll (GOSSIP_CHAT (chat)->view, FALSE);
+	} else {
+		/* Enable scrolling again */
+		gossip_chat_view_allow_scroll (GOSSIP_CHAT (chat)->view, TRUE);
+	}
+}
+
+static void
 group_chat_join (GossipGroupChat *chat)
 {
 	GossipGroupChatPriv *priv;
@@ -424,8 +456,10 @@ group_chat_join (GossipGroupChat *chat)
 				       (GossipChatroomJoinCb) group_chat_join_cb,
 				       NULL);
 
+	group_chat_set_scrolling_for_events (chat, TRUE);
 	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, 
 				       _("Connecting..."));
+	group_chat_set_scrolling_for_events (chat, FALSE);
 
 	g_signal_emit_by_name (chat, "status-changed");
 }
@@ -461,6 +495,11 @@ group_chat_join_cb (GossipChatroomProvider   *provider,
 	chatview = chat->view;
 	g_signal_emit_by_name (chat, "status-changed");
 
+	/* Set the time we joined this chatroom so we know for new
+	 * messages if they are backlog or not.
+	 */
+	priv->time_joined = gossip_time_get_current ();
+
 	/* Check the result */
 	switch (result) {
 	case GOSSIP_CHATROOM_JOIN_OK:
@@ -469,7 +508,9 @@ group_chat_join_cb (GossipChatroomProvider   *provider,
 
 	case GOSSIP_CHATROOM_JOIN_NEED_PASSWORD:
 	case GOSSIP_CHATROOM_JOIN_UNKNOWN_HOST:
+		group_chat_set_scrolling_for_events (GOSSIP_GROUP_CHAT (chat), TRUE);
 		gossip_chat_view_append_event (chatview, result_str);
+		group_chat_set_scrolling_for_events (GOSSIP_GROUP_CHAT (chat), FALSE);
 		return;
 
 	case GOSSIP_CHATROOM_JOIN_NICK_IN_USE:
@@ -484,11 +525,13 @@ group_chat_join_cb (GossipChatroomProvider   *provider,
 				  G_CALLBACK (group_chat_retry_connection_clicked_cb),
 				  chat);
 
+		group_chat_set_scrolling_for_events (GOSSIP_GROUP_CHAT (chat), TRUE);
 		gossip_chat_view_append_event (chatview, result_str);
 		gossip_chat_view_append_button (chatview,
 						NULL,
 						button,
 						NULL);
+		group_chat_set_scrolling_for_events (GOSSIP_GROUP_CHAT (chat), FALSE);
 
 		return;
 	}
@@ -504,7 +547,9 @@ group_chat_join_cb (GossipChatroomProvider   *provider,
 	gtk_widget_set_sensitive (priv->scrolled_window_contacts, TRUE);
 	gtk_widget_set_sensitive (priv->scrolled_window_input, TRUE);
 
+	group_chat_set_scrolling_for_events (GOSSIP_GROUP_CHAT (chat), TRUE);
 	gossip_chat_view_append_event (chatview, _("Connected"));
+	group_chat_set_scrolling_for_events (GOSSIP_GROUP_CHAT (chat), FALSE);
 
 	gtk_widget_grab_focus (GOSSIP_CHAT (chat)->input_text_view);
 }
@@ -556,8 +601,10 @@ group_chat_protocol_disconnected_cb (GossipSession   *session,
 	gtk_widget_set_sensitive (priv->scrolled_window_input, FALSE);
 
 	/* i18n: Disconnected as in "was disconnected". */
+	group_chat_set_scrolling_for_events (chat, TRUE);
 	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view,
 				       _("Disconnected"));
+	group_chat_set_scrolling_for_events (chat, FALSE);
 
 	g_signal_emit_by_name (chat, "status-changed");
 }
@@ -761,7 +808,11 @@ group_chat_drag_data_received (GtkWidget        *widget,
 		/* Send event to chat window */
 		str = g_strdup_printf (_("Invited %s to join this chat conference."),
 				       gossip_contact_get_id (contact));
+
+		group_chat_set_scrolling_for_events (chat, TRUE);
 		gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, str);
+		group_chat_set_scrolling_for_events (chat, FALSE);
+
 		g_free (str);
 		
 		gossip_chat_invite_dialog_show (contact, gossip_chatroom_get_id (priv->chatroom));
@@ -1004,8 +1055,8 @@ group_chat_contacts_find (GossipGroupChat *chat,
 
 static gint
 group_chat_contacts_completion_func (const gchar *s1,
-				    const gchar *s2,
-				    gsize        n)
+				     const gchar *s2,
+				     gsize        n)
 {
 	gchar *tmp, *nick1, *nick2;
 	gint   ret;
@@ -1181,6 +1232,39 @@ group_chat_create_ui (GossipGroupChat *chat)
 	g_list_free (list);
 }
 
+/* Scroll down after the back-log has been received. */
+static gboolean
+group_chat_scroll_down_when_idle_func (GossipGroupChat *chat)
+{
+	GossipGroupChatPriv *priv;
+
+	priv = GET_PRIV (chat);
+
+	gossip_chat_scroll_down (GOSSIP_CHAT (chat));
+
+	priv->scroll_idle_id = 0;
+
+	return FALSE;
+}
+
+static void
+group_chat_scroll_down_when_idle (GossipGroupChat *chat)
+{
+	GossipGroupChatPriv *priv;
+	
+	priv = GET_PRIV (chat);
+	
+	/* Add an idle timeout to scroll to the bottom */
+	if (priv->scroll_idle_id) {
+		g_source_remove (priv->scroll_idle_id);
+		priv->scroll_idle_id = 0;
+	}
+	
+	priv->scroll_idle_id = g_idle_add ((GSourceFunc) 
+					   group_chat_scroll_down_when_idle_func, 
+					   chat);
+}
+
 static void
 group_chat_new_message_cb (GossipChatroomProvider *provider,
 			   gint                    id,
@@ -1206,6 +1290,10 @@ group_chat_new_message_cb (GossipChatroomProvider *provider,
 		      "[%d] New message with timestamp:%d, message %s backlog", 
 		      id, timestamp, is_backlog ? "IS" : "IS NOT");
 
+	if (is_backlog) {
+		gossip_chat_view_allow_scroll (GOSSIP_CHAT (chat)->view, FALSE);
+	}
+
 	invite = gossip_message_get_invite (message);
 	if (invite) {
 		gossip_chat_view_append_invite (GOSSIP_CHAT (chat)->view,
@@ -1229,15 +1317,23 @@ group_chat_new_message_cb (GossipChatroomProvider *provider,
 		}
 	}
 
+	/* Play sound? */
 	if (!is_backlog && 
 	    gossip_chat_should_play_sound (GOSSIP_CHAT (chat)) &&
 	    gossip_chat_should_highlight_nick (message, priv->own_contact)) {
 		gossip_sound_play (GOSSIP_SOUND_CHAT);
 	}
 
+	/* Log message? */
 	if (!is_backlog) {
 		log_manager = gossip_session_get_log_manager (gossip_app_get_session ());
 		gossip_log_message_for_chatroom (log_manager, priv->chatroom, message, FALSE);
+	}
+
+	/* Re-enable scrolling? */
+	if (is_backlog) {
+		gossip_chat_view_allow_scroll (GOSSIP_CHAT (chat)->view, TRUE);
+		group_chat_scroll_down_when_idle (chat);
 	}
 
 	g_signal_emit_by_name (chat, "new-message", message, is_backlog);
@@ -1259,7 +1355,9 @@ group_chat_new_event_cb (GossipChatroomProvider *provider,
 
 	gossip_debug (DEBUG_DOMAIN, "[%d] New event:'%s'", id, event);
 
+	group_chat_set_scrolling_for_events (chat, TRUE);
 	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, event);
+	group_chat_set_scrolling_for_events (chat, FALSE);
 }
 
 static void
@@ -1289,7 +1387,11 @@ group_chat_topic_changed_cb (GossipChatroomProvider *provider,
 	event = g_strdup_printf (_("%s has set the topic: %s"),
 				 gossip_contact_get_name (who),
 				 new_topic);
+
+	group_chat_set_scrolling_for_events (chat, TRUE);
 	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, event);
+	group_chat_set_scrolling_for_events (chat, FALSE);
+
 	g_free (event);
 
 	g_signal_emit_by_name (chat, "status-changed");
@@ -1512,7 +1614,7 @@ group_chat_contact_joined_cb (GossipChatroom  *chatroom,
 			      GossipContact   *contact,
 			      GossipGroupChat *chat)
 {
-	GossipGroupChatPriv       *priv;
+	GossipGroupChatPriv *priv;
 
 	priv = GET_PRIV (chat);
 
@@ -1529,18 +1631,20 @@ group_chat_contact_joined_cb (GossipChatroom  *chatroom,
 			  chat);
 
 	g_signal_emit_by_name (chat, "contact_added", contact);
-	
+
 	/* Add event to chatroom */
 	if (!gossip_contact_equal (priv->own_contact, contact)) {
 		gchar *str;
 
 		str = g_strdup_printf (_("%s has joined the room"),
 				       gossip_contact_get_name (contact));
+		
+		group_chat_set_scrolling_for_events (chat, TRUE);
 		gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, str);
+		group_chat_set_scrolling_for_events (chat, FALSE);
+
 		g_free (str);
 	}
-
-	priv->time_joined = gossip_time_get_current ();
 }
 
 static void
@@ -1571,7 +1675,11 @@ group_chat_contact_left_cb (GossipChatroom  *chatroom,
 		gchar *str;
 		str = g_strdup_printf (_("%s has left the room"),
 				       gossip_contact_get_name (contact));
+
+		group_chat_set_scrolling_for_events (chat, TRUE);
 		gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, str);
+		group_chat_set_scrolling_for_events (chat, FALSE);
+
 		g_free (str);
 	}
 }
@@ -2098,22 +2206,6 @@ group_chat_get_role_iter (GossipGroupChat    *chat,
 	}
 }
 
-/* Scroll down after the back-log has been received. */
-static gboolean
-group_chat_scroll_down_idle_func (GossipChat *chat)
-{
-	GossipGroupChatPriv *priv;
-
-	priv = GET_PRIV (chat);
-
-	gossip_chat_scroll_down (chat);
-	g_object_unref (chat);
-
-	priv->scroll_idle_id = 0;
-
-	return FALSE;
-}
-
 /* Copied from the jabber backend for now since we don't have an abstraction for
  * "contacts" for group chats. Casefolds the node part (the part before @).
  */
@@ -2238,9 +2330,7 @@ gossip_group_chat_new (GossipChatroomProvider *provider,
 	
  	gossip_chat_present (GOSSIP_CHAT (chat)); 
 
-	priv->scroll_idle_id = g_idle_add ((GSourceFunc) 
-					   group_chat_scroll_down_idle_func, 
-					   g_object_ref (chat));
+	group_chat_scroll_down_when_idle (chat);
 
 	return chat;
 }

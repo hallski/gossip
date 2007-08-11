@@ -1,3 +1,10 @@
+2007-08-11  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chat-view.c:
+	* src/gossip-group-chat.c: Make sure we don't scroll smoothly when
+	joining group chats, only when receiving new messages. This
+	partially fixes bug #451044.
+
 2007-07-19  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-private-chat.c: 
