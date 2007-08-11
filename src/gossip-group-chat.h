@@ -61,6 +61,7 @@ GossipChatroomProvider *
 		 gossip_group_chat_get_chatroom_provider (GossipGroupChat        *group_chat);
 GossipChatroom * gossip_group_chat_get_chatroom          (GossipGroupChat        *group_chat);
 void             gossip_group_chat_set_topic             (GossipGroupChat        *group_chat);
+void             gossip_group_chat_set_nick              (GossipGroupChat        *group_chat);
 
 G_END_DECLS
 

@@ -43,6 +43,26 @@ typedef struct _GossipChatroomContactInfo GossipChatroomContactInfo;
 typedef struct _GossipChatroomInvite      GossipChatroomInvite;
 typedef gint                              GossipChatroomId;
 
+/*
+ * Privilege  	                        None  	Visitor  Participant  	Moderator
+
+ * Present in Room  	                No  	Yes  	 Yes  		Yes
+ * Receive Messages 	                No 	Yes 	 Yes 		Yes
+ * Change Availability Status 	        No 	Yes 	 Yes 		Yes
+ * Change Room Nickname 	        No 	Yes* 	 Yes 		Yes
+ * Send Private Messages 	        No 	Yes* 	 Yes 		Yes
+ * Invite Other Users 	                No 	Yes* 	 Yes* 		Yes
+ * Send Messages to All 	        No 	No** 	 Yes 		Yes
+ * Modify Subject 	                No 	No* 	 Yes* 		Yes
+ * Kick Participants and Visitors 	No 	No 	 No 		Yes
+ * Grant Voice 	                        No 	No 	 No 		Yes
+ * Revoke Voice 	                No 	No 	 No 		Yes***
+ *
+ * - *   Default; configuration settings MAY modify this privilege.
+ * - **  An implementation MAY grant voice by default to visitors in unmoderated rooms.
+ * - *** A moderator MUST NOT be able to revoke voice privileges from an admin or owner.
+ */
+
 struct _GossipChatroom {
 	GObject parent;
 };

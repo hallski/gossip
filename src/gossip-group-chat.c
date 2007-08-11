@@ -177,11 +177,15 @@ static void            group_chat_topic_changed_cb            (GossipChatroomPro
 							       GossipContact                *who,
 							       const gchar                  *new_topic,
 							       GossipGroupChat              *chat);
-static void            group_chat_topic_entry_activate_cb     (GtkWidget                    *entry,
+static void            group_chat_dialog_entry_activate_cb    (GtkWidget                    *entry,
 							       GtkDialog                    *dialog);
-static void            group_chat_topic_response_cb           (GtkWidget                    *dialog,
+static void            group_chat_dialog_response_cb          (GtkWidget                    *dialog,
 							       gint                          response,
 							       GossipGroupChat              *chat);
+static void            group_chat_dialog_new                  (GossipGroupChat              *chat,
+							       const gchar                  *action,
+							       const gchar                  *message,
+							       const gchar                  *pretext);
 static void            group_chat_contact_joined_cb           (GossipChatroom               *chatroom,
 							       GossipContact                *contact,
 							       GossipGroupChat              *chat);
@@ -247,8 +251,9 @@ static void            group_chat_cl_set_background           (GossipGroupChat  
 							       gboolean                      is_header);
 static void            group_chat_set_scrolling_for_events    (GossipGroupChat              *chat,
 							       gboolean                      disable);
-static gboolean        group_chat_scroll_down_when_idle_func  (GossipGroupChat             *chat);
-static void            group_chat_scroll_down_when_idle       (GossipGroupChat             *chat);
+static gboolean        group_chat_scroll_down_when_idle_func  (GossipGroupChat              *chat);
+static void            group_chat_scroll_down_when_idle       (GossipGroupChat              *chat);
+
 
 enum {
 	COL_STATUS,
@@ -1398,40 +1403,57 @@ group_chat_topic_changed_cb (GossipChatroomProvider *provider,
 }
 
 static void
-group_chat_topic_entry_activate_cb (GtkWidget *entry,
-				    GtkDialog *dialog)
+group_chat_dialog_entry_activate_cb (GtkWidget *entry,
+				     GtkDialog *dialog)
 {
 	gtk_dialog_response (dialog, GTK_RESPONSE_OK);
 }
 
 static void
-group_chat_topic_response_cb (GtkWidget       *dialog,
-			      gint             response,			      
-			      GossipGroupChat *chat)
+group_chat_dialog_response_cb (GtkWidget       *dialog,
+			       gint             response,			      
+			       GossipGroupChat *chat)
 {
 	if (response == GTK_RESPONSE_OK) {
 		GtkWidget   *entry;
-		const gchar *topic;
+		const gchar *str;
 
 		entry = g_object_get_data (G_OBJECT (dialog), "entry");
-		topic = gtk_entry_get_text (GTK_ENTRY (entry));
+		str = gtk_entry_get_text (GTK_ENTRY (entry));
 		
-		if (!G_STR_EMPTY (topic)) {
-			GossipGroupChatPriv *priv;
+		if (!G_STR_EMPTY (str)) {
+			const gchar *purpose;
+	
+			purpose = g_object_get_data (G_OBJECT (dialog), "action");
+			if (purpose) { 
+				GossipGroupChatPriv *priv;
 
-			priv = GET_PRIV (chat);
+				priv = GET_PRIV (chat);
 
-			gossip_chatroom_provider_change_topic (priv->chatroom_provider,
-							       gossip_chatroom_get_id (priv->chatroom),
-							       topic);
+				if (strcmp (purpose, "change-topic") == 0) {
+					gossip_chatroom_provider_change_topic (priv->chatroom_provider,
+									       gossip_chatroom_get_id (priv->chatroom),
+									       str);
+				}
+				else if (strcmp (purpose, "change-nick") == 0) {
+					gossip_chatroom_provider_change_nick (priv->chatroom_provider,
+									      gossip_chatroom_get_id (priv->chatroom),
+									      str);
+				}
+			} else {
+				g_warning ("Action for group chat dialog unknown, doing nothing");
+			}
 		}
 	}
 
 	gtk_widget_destroy (dialog);
 }
 
-void
-gossip_group_chat_set_topic (GossipGroupChat *chat)
+static void
+group_chat_dialog_new (GossipGroupChat *chat,
+		       const gchar     *action,
+		       const gchar     *message, 
+		       const gchar     *pretext)
 {
 	GossipGroupChatPriv *priv;
 	GossipChatWindow    *chat_window;
@@ -1439,8 +1461,9 @@ gossip_group_chat_set_topic (GossipGroupChat *chat)
 	GtkWidget           *dialog;
 	GtkWidget           *entry;
 	GtkWidget           *hbox;
-	const gchar         *topic;
 
+	g_return_if_fail (!G_STR_EMPTY (action));
+	g_return_if_fail (!G_STR_EMPTY (message));
 
 	priv = GET_PRIV (chat);
 
@@ -1451,31 +1474,57 @@ gossip_group_chat_set_topic (GossipGroupChat *chat)
 					 0,
 					 GTK_MESSAGE_QUESTION,
 					 GTK_BUTTONS_OK_CANCEL,
-					 _("Enter the new topic you want to set for this room:"));
-
-	topic = gtk_label_get_text (GTK_LABEL (priv->label_topic));
+					 message);
 
 	hbox = gtk_hbox_new (FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox),
 			    hbox, FALSE, TRUE, 4);
 
 	entry = gtk_entry_new ();
-	gtk_entry_set_text (GTK_ENTRY (entry), topic);
+	gtk_entry_set_text (GTK_ENTRY (entry), pretext ? pretext : ""); 
 	gtk_editable_select_region (GTK_EDITABLE (entry), 0, -1);
 		    
 	gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 4);
 
 	g_object_set (GTK_MESSAGE_DIALOG (dialog)->label, "use-markup", TRUE, NULL);
 	g_object_set_data (G_OBJECT (dialog), "entry", entry);
+	g_object_set_data_full (G_OBJECT (dialog), "action", g_strdup (action), g_free);
 
 	g_signal_connect (entry, "activate",
-			  G_CALLBACK (group_chat_topic_entry_activate_cb),
+			  G_CALLBACK (group_chat_dialog_entry_activate_cb),
 			  dialog);
 	g_signal_connect (dialog, "response",
-			  G_CALLBACK (group_chat_topic_response_cb),
+			  G_CALLBACK (group_chat_dialog_response_cb),
 			  chat);
 
 	gtk_widget_show_all (dialog);
+}
+
+void
+gossip_group_chat_set_topic (GossipGroupChat *group_chat)
+{
+	GossipGroupChatPriv *priv;
+
+	priv = GET_PRIV (group_chat);
+
+	group_chat_dialog_new (group_chat, 
+			       "change-topic", 
+			       _("Enter the new topic you want to set for this room:"),
+			       gtk_label_get_text (GTK_LABEL (priv->label_topic)));
+
+}
+
+void
+gossip_group_chat_set_nick (GossipGroupChat *group_chat)
+{
+	GossipGroupChatPriv *priv;
+
+	priv = GET_PRIV (group_chat);
+
+	group_chat_dialog_new (group_chat, 
+			       "change-nick", 
+			       _("Enter the new nickname you want to be know by:"),
+			       gossip_chatroom_get_nick (priv->chatroom));
 }
 
 static void

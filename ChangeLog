@@ -1,5 +1,21 @@
 2007-08-11  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-chatroom.h:
+	* src/gossip-chat-window.c:
+	(gossip_chat_window_init):
+	(chat_window_room_set_nick_activate_cb):
+	* src/gossip-group-chat.c:
+	(group_chat_dialog_entry_activate_cb):
+	(group_chat_dialog_response_cb):
+	(group_chat_dialog_new):
+	(gossip_group_chat_set_topic):
+	(gossip_group_chat_set_nick):
+	* src/gossip-group-chat.h:
+	* ui/chat.glade: Add a menu item to the group chat window to
+	change your nick.
+
+2007-08-11  Martyn Russell  <martyn@imendio.com>
+
 	* configure.ac: Bump version.
 
 2007-08-11  Martyn Russell  <martyn@imendio.com>
