@@ -752,7 +752,7 @@ chat_view_append_message (GossipChatView *view,
 			  gboolean        from_self)
 {
 	GossipChatViewPriv *priv;
-	gboolean            scroll_down;
+	gboolean            bottom;
 
 	priv = GET_PRIV (view);
 
@@ -760,7 +760,7 @@ chat_view_append_message (GossipChatView *view,
 		return;
 	}
 
-	scroll_down = chat_view_is_scrolled_down (view);
+	bottom = chat_view_is_scrolled_down (view);
 
 	chat_view_maybe_trim_buffer (view);
 
@@ -775,7 +775,7 @@ chat_view_append_message (GossipChatView *view,
 					     view, msg, from_self);
 	}
 
-	if (scroll_down) {
+	if (bottom) {
 		gossip_chat_view_scroll_down_smoothly (view);
 	}
 }
@@ -1040,8 +1040,8 @@ gossip_chat_view_append_button (GossipChatView *view,
 }
 
 void
-gossip_chat_view_scroll (GossipChatView *view,
-			 gboolean        allow_scrolling)
+gossip_chat_view_allow_scroll (GossipChatView *view,
+			       gboolean        allow_scrolling)
 {
 	GossipChatViewPriv *priv;
 

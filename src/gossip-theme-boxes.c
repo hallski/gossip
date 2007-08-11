@@ -588,7 +588,13 @@ table_size_allocate_cb (GtkWidget     *view,
 
         gtk_widget_get_size_request (box, NULL, &height);
 
-	width = allocation->width - gtk_text_view_get_right_margin (GTK_TEXT_VIEW (view)) - gtk_text_view_get_left_margin (GTK_TEXT_VIEW (view)) - 2 * MARGIN - 2 * HEADER_PADDING;
+	width = allocation->width;
+	
+	width -= \
+		gtk_text_view_get_right_margin (GTK_TEXT_VIEW (view)) - \
+		gtk_text_view_get_left_margin (GTK_TEXT_VIEW (view));
+	width -= 2 * MARGIN;
+	width -= 2 * HEADER_PADDING;
 
         gtk_widget_set_size_request (box, width, height);
 }
@@ -679,9 +685,9 @@ theme_boxes_maybe_append_header (GossipTheme        *theme,
 
 	}
 
-	g_signal_connect (view, "size-allocate",
-			  G_CALLBACK (table_size_allocate_cb),
-			  box);
+	g_signal_connect_object (view, "size-allocate",
+				 G_CALLBACK (table_size_allocate_cb),
+				 box, 0);
 
 	str = g_strdup_printf ("<b>%s</b>", name);
 

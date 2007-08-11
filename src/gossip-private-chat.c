@@ -1027,7 +1027,7 @@ gossip_private_chat_new (GossipContact *own_contact,
 	view = GOSSIP_CHAT (chat)->view;
 
 	/* Turn off scrolling temporarily */
-	gossip_chat_view_scroll (view, FALSE);
+	gossip_chat_view_allow_scroll (view, FALSE);
 
 	/* Add messages from last conversation */
 	log_manager = gossip_session_get_log_manager (gossip_app_get_session ());
@@ -1059,7 +1059,7 @@ gossip_private_chat_new (GossipContact *own_contact,
 	g_list_free (messages);
 
 	/* Turn back on scrolling */
-	gossip_chat_view_scroll (view, TRUE);
+	gossip_chat_view_allow_scroll (view, TRUE);
 
 	/* Scroll to the most recent messages, we reference the chat
 	 * for the duration of the scroll func.

@@ -79,7 +79,7 @@ void            gossip_chat_view_append_button             (GossipChatView *view
 							    GtkWidget      *button2);
 void            gossip_chat_view_set_margin                (GossipChatView *view,
 							    gint            margin);
-void            gossip_chat_view_scroll                    (GossipChatView *view,
+void            gossip_chat_view_allow_scroll              (GossipChatView *view,
 							    gboolean        allow_scrolling);
 void            gossip_chat_view_scroll_down               (GossipChatView *view);
 void            gossip_chat_view_scroll_down_smoothly      (GossipChatView *view);

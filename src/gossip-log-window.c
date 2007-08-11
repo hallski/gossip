@@ -302,7 +302,7 @@ log_window_find_changed_cb (GtkTreeSelection *selection,
 	gossip_chat_view_clear (window->chatview_find);
 
 	/* Turn off scrolling temporarily */
-	gossip_chat_view_scroll (window->chatview_find, FALSE);
+	gossip_chat_view_allow_scroll (window->chatview_find, FALSE);
 
 	/* Get own contact to know which messages are from me or the contact */
 	own_contact = gossip_session_get_own_contact (gossip_app_get_session (),
@@ -336,7 +336,7 @@ log_window_find_changed_cb (GtkTreeSelection *selection,
 	g_list_free (messages);
 
 	/* Scroll to the most recent messages */
-	gossip_chat_view_scroll (window->chatview_find, TRUE);
+	gossip_chat_view_allow_scroll (window->chatview_find, TRUE);
 
 	/* Highlight and find messages */
 	gossip_chat_view_highlight (window->chatview_find,
@@ -1008,7 +1008,7 @@ log_window_contacts_get_messages (GossipLogWindow *window,
 	gossip_chat_view_clear (window->chatview_contacts);
 
 	/* Turn off scrolling temporarily */
-	gossip_chat_view_scroll (window->chatview_find, FALSE);
+	gossip_chat_view_allow_scroll (window->chatview_contacts, FALSE);
 
 	/* Get own contact to know which messages are from me or the contact */
 	account = gossip_contact_get_account (contact);
@@ -1045,10 +1045,10 @@ log_window_contacts_get_messages (GossipLogWindow *window,
 	g_object_unref (contact);
 
 	/* Turn back on scrolling */
-	gossip_chat_view_scroll (window->chatview_find, TRUE);
+	gossip_chat_view_allow_scroll (window->chatview_contacts, TRUE);
 
 	/* Scroll to the most recent messages */
-	gossip_chat_view_scroll_down_smoothly (window->chatview_contacts);
+	gossip_chat_view_scroll_down (window->chatview_contacts);
 
 	/* Give the search entry main focus */
 	gtk_widget_grab_focus (window->entry_contacts);
@@ -1605,7 +1605,7 @@ log_window_chatrooms_get_messages (GossipLogWindow *window,
 	gossip_chat_view_clear (window->chatview_chatrooms);
 
 	/* Turn off scrolling temporarily */
-	gossip_chat_view_scroll (window->chatview_find, FALSE);
+	gossip_chat_view_allow_scroll (window->chatview_chatrooms, FALSE);
 
 	/* Get messages */
 	messages = gossip_log_get_messages_for_chatroom (window->log_manager, chatroom, date);
@@ -1628,10 +1628,10 @@ log_window_chatrooms_get_messages (GossipLogWindow *window,
 	g_object_unref (chatroom);
 
 	/* Turn back on scrolling */
-	gossip_chat_view_scroll (window->chatview_find, TRUE);
+	gossip_chat_view_allow_scroll (window->chatview_chatrooms, TRUE);
 
 	/* Scroll to the most recent messages */
-	gossip_chat_view_scroll_down_smoothly (window->chatview_chatrooms);
+	gossip_chat_view_scroll_down (window->chatview_chatrooms);
 
 	/* Give the search entry main focus */
 	gtk_widget_grab_focus (window->entry_chatrooms);

@@ -1,3 +1,22 @@
+2007-07-19  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-private-chat.c: 
+	* src/gossip-chat-view.[ch]: Change _scroll() function to
+	_allow_scroll() to make more sense. 
+	
+	* src/gossip-log-window.c: Don't allow/disallow scrolling on the
+	wrong GossipChatView, we were doing this to the find chatview when
+	we meant to do it for the contact and chatroom chatviews - cut and
+	paste strikes again. Partially fixes bug #451044.
+	
+	* src/gossip-smiley.h: Clean up function definitions.
+	
+	* src/gossip-theme-boxes.c: Fix nasty error, where we clear the
+	GossipChatView but still expect the GtkBox to exist in the
+	size-allocate callback as user data, even though it has been
+	destroyed. This was causing gtk_widget_{get|set}_size_request()
+	warnings.
+
 2007-07-17  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/Makefile.am:

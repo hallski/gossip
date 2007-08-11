@@ -151,14 +151,13 @@ static const GossipSmileyPattern smileys[] = {
 	{ GOSSIP_SMILEY_SICK,         ")o+" }
 };
 
-
-GdkPixbuf *     gossip_chat_view_get_smiley_image          (GossipSmiley    smiley);
-const gchar *   gossip_chat_view_get_smiley_text           (GossipSmiley    smiley);
-GtkWidget *     gossip_chat_view_get_smiley_menu           (GCallback       callback,
-							    gpointer        user_data,
-							    GtkTooltips    *tooltips);
-GdkPixbuf *gossip_pixbuf_from_smiley                (GossipSmiley         type,
-						     GtkIconSize          icon_size);
+GdkPixbuf *  gossip_chat_view_get_smiley_image (GossipSmiley  smiley);
+const gchar *gossip_chat_view_get_smiley_text  (GossipSmiley  smiley);
+GtkWidget *  gossip_chat_view_get_smiley_menu  (GCallback     callback,
+						gpointer      user_data,
+						GtkTooltips  *tooltips);
+GdkPixbuf *  gossip_pixbuf_from_smiley         (GossipSmiley  type,
+						GtkIconSize   icon_size);
 
 G_END_DECLS
 
