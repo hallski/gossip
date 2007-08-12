@@ -37,20 +37,29 @@ typedef struct _GossipChatroomProvider      GossipChatroomProvider;
 typedef struct _GossipChatroomProviderIface GossipChatroomProviderIface;
 
 typedef enum {
-	GOSSIP_CHATROOM_JOIN_OK,
-	GOSSIP_CHATROOM_JOIN_NICK_IN_USE,
-	GOSSIP_CHATROOM_JOIN_NEED_PASSWORD,
-	GOSSIP_CHATROOM_JOIN_ALREADY_OPEN,
-	GOSSIP_CHATROOM_JOIN_TIMED_OUT,
-	GOSSIP_CHATROOM_JOIN_UNKNOWN_HOST,
-	GOSSIP_CHATROOM_JOIN_UNKNOWN_ERROR,
-	GOSSIP_CHATROOM_JOIN_CANCELED
-} GossipChatroomJoinResult;
+	GOSSIP_CHATROOM_ERROR_NONE,
 
-typedef void (*GossipChatroomJoinCb) (GossipChatroomProvider   *provider,
-				      GossipChatroomJoinResult  result,
-				      gint                      id,
-				      gpointer                  user_data);
+	/* MUC errors */
+	GOSSIP_CHATROOM_ERROR_PASSWORD_INVALID_OR_MISSING,
+	GOSSIP_CHATROOM_ERROR_USER_BANNED,
+	GOSSIP_CHATROOM_ERROR_ROOM_NOT_FOUND,
+	GOSSIP_CHATROOM_ERROR_ROOM_CREATION_RESTRICTED,
+	GOSSIP_CHATROOM_ERROR_USE_RESERVED_ROOM_NICK,
+	GOSSIP_CHATROOM_ERROR_NOT_ON_MEMBERS_LIST,
+	GOSSIP_CHATROOM_ERROR_NICK_IN_USE,
+	GOSSIP_CHATROOM_ERROR_MAXIMUM_USERS_REACHED,
+
+	/* Internal errors */
+	GOSSIP_CHATROOM_ERROR_ALREADY_OPEN,
+	GOSSIP_CHATROOM_ERROR_TIMED_OUT,
+	GOSSIP_CHATROOM_ERROR_CANCELED,
+	GOSSIP_CHATROOM_ERROR_UNKNOWN
+} GossipChatroomError;
+
+typedef void (*GossipChatroomJoinCb)   (GossipChatroomProvider   *provider,
+					GossipChatroomId          id,
+					GossipChatroomError       error,
+					gpointer                  user_data);
 typedef void (*GossipChatroomBrowseCb) (GossipChatroomProvider   *provider,
 					const gchar              *server,
 					GList                    *rooms,
@@ -144,7 +153,7 @@ void         gossip_chatroom_provider_browse_rooms       (GossipChatroomProvider
 							  GossipChatroomBrowseCb  callback,
 							  gpointer                user_data);
 
-const gchar *gossip_chatroom_provider_join_result_as_str (GossipChatroomJoinResult result);
+const gchar *gossip_chatroom_provider_error_to_string    (GossipChatroomError     error);
 
 G_END_DECLS
 

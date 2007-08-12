@@ -34,6 +34,7 @@ enum {
 	CHATROOM_NEW_MESSAGE,
 	CHATROOM_NEW_EVENT,
 	CHATROOM_TOPIC_CHANGED,
+	CHATROOM_ERROR,
 	LAST_SIGNAL
 };
 
@@ -111,6 +112,15 @@ chatroom_provider_base_init (gpointer g_class)
 				      libgossip_marshal_VOID__INT_OBJECT_STRING,
 				      G_TYPE_NONE,
 				      3, G_TYPE_INT, GOSSIP_TYPE_CONTACT, G_TYPE_STRING);
+		signals[CHATROOM_ERROR] =
+			g_signal_new ("chatroom-error",
+				      G_TYPE_FROM_CLASS (g_class),
+				      G_SIGNAL_RUN_LAST,
+				      0,
+				      NULL, NULL,
+				      libgossip_marshal_VOID__INT_INT,
+				      G_TYPE_NONE,
+				      2, G_TYPE_INT, G_TYPE_INT);
 
 		initialized = TRUE;
 	}
@@ -322,38 +332,59 @@ gossip_chatroom_provider_browse_rooms (GossipChatroomProvider *provider,
 }
 
 const gchar *
-gossip_chatroom_provider_join_result_as_str (GossipChatroomJoinResult result)
+gossip_chatroom_provider_error_to_string (GossipChatroomError error)
 {
-	const gchar *last_error = NULL;
+	const gchar *str = NULL;
 
-	switch (result) {
-	case GOSSIP_CHATROOM_JOIN_NICK_IN_USE:
-		last_error = _("The nickname you have chosen is already in use.");
+	switch (error) {
+	case GOSSIP_CHATROOM_ERROR_PASSWORD_INVALID_OR_MISSING:
+		str = _("The chat room you tried to join requires a password. "
+			"You either failed to supply a password or the password you tried was incorrect.");
 		break;
 
-	case GOSSIP_CHATROOM_JOIN_NEED_PASSWORD:
-		last_error = _("The chat room you tried to join requires a password.");
+	case GOSSIP_CHATROOM_ERROR_USER_BANNED:
+		str = _("You have been banned from this chatroom.");
 		break;
 
-	case GOSSIP_CHATROOM_JOIN_TIMED_OUT:
-		last_error = _("The remote conference server did not respond in a sensible time.");
+	case GOSSIP_CHATROOM_ERROR_ROOM_NOT_FOUND:
+		str = _("The conference room you tried to join could not be found.");
 		break;
 
-	case GOSSIP_CHATROOM_JOIN_UNKNOWN_HOST:
-		last_error = _("The conference server you tried to join could not be found.");
+	case GOSSIP_CHATROOM_ERROR_ROOM_CREATION_RESTRICTED:
+		str = _("Chatroom creation is restricted on this server.");
 		break;
 
-	case GOSSIP_CHATROOM_JOIN_UNKNOWN_ERROR:
-		last_error = _("An unknown error occurred, check your details are correct.");
+	case GOSSIP_CHATROOM_ERROR_USE_RESERVED_ROOM_NICK:
+		str = _("Chatroom reserved nick names must be used on this server.");
 		break;
 
-	case GOSSIP_CHATROOM_JOIN_CANCELED:
-		last_error = _("Joining the chatroom was canceled.");
+	case GOSSIP_CHATROOM_ERROR_NOT_ON_MEMBERS_LIST:
+		str = _("You are not on the chatroom's members list.");
+		break;
+
+	case GOSSIP_CHATROOM_ERROR_NICK_IN_USE:
+		str = _("The nickname you have chosen is already in use.");
+		break;
+
+	case GOSSIP_CHATROOM_ERROR_MAXIMUM_USERS_REACHED:
+		str = _("The maximum number of users for this chatroom has been reached.");
+		break;
+
+	case GOSSIP_CHATROOM_ERROR_TIMED_OUT:
+		str = _("The remote conference server did not respond in a sensible time.");
+		break;
+
+	case GOSSIP_CHATROOM_ERROR_UNKNOWN:
+		str = _("An unknown error occurred, check your details are correct.");
+		break;
+
+	case GOSSIP_CHATROOM_ERROR_CANCELED:
+		str = _("Joining the chatroom was canceled.");
 		break;
 
 	default:
 		break;
 	}
 
-	return last_error;
+	return str;
 }

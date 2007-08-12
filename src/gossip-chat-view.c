@@ -128,8 +128,8 @@ static void     chat_view_invite_accept_cb           (GtkWidget                *
 static void     chat_view_invite_decline_cb          (GtkWidget                *button,
 						      gpointer                  user_data);
 static void     chat_view_invite_join_cb             (GossipChatroomProvider   *provider,
-						      GossipChatroomJoinResult  result,
-						      gint                      id,
+						      GossipChatroomId          id,
+						      GossipChatroomError       error,
 						      gpointer                  user_data);
 static void     chat_view_theme_changed_cb           (GossipThemeManager       *manager,
 						      GossipChatView           *view);
@@ -694,17 +694,16 @@ chat_view_invite_decline_cb (GtkWidget *button,
 }
 
 static void
-chat_view_invite_join_cb (GossipChatroomProvider   *provider,
-			  GossipChatroomJoinResult  result,
-			  gint                      id,
-			  gpointer                  user_data)
+chat_view_invite_join_cb (GossipChatroomProvider *provider,
+			  GossipChatroomId        id,
+			  GossipChatroomError     error,
+			  gpointer                user_data)
 {
 	GossipChatroom  *chatroom;
 	GossipGroupChat *chat;
 
 	chatroom = gossip_chatroom_provider_find_by_id (provider, id);
 	chat = gossip_group_chat_new (provider, chatroom);
-/* 	g_object_unref (chat); */
 }
 
 static void

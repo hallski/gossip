@@ -1,3 +1,15 @@
+2007-08-12  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-chatroom-provider.c:
+	* libgossip/gossip-chatroom-provider.h:
+	* libgossip/gossip-jabber-chatrooms.c:
+	* libgossip/libgossip-marshal.list:
+	* src/gossip-chat-view.c:
+	* src/gossip-group-chat.c: Make it possible for Chatroom errors to
+	be propagated up the stack, for example, before now, if you change
+	your nick to one an already taken there was no feedback to the
+	user, now that feedback is presented in the chatroom.
+
 2007-08-11  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-presence-chooser.c: Fixed the implementation of
