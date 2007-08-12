@@ -1,5 +1,28 @@
 2007-08-12  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-chatroom-manager.c:
+	* libgossip/gossip-session.c: 
+	* src/gossip-app.c: Change to gossip_chatroom_get_is_favourite() API.
+	
+	* libgossip/gossip-chatroom.[ch]: Added to the GossipChatroom object
+	Description, Subject, Features and Occupants properties.
+
+	* libgossip/gossip-jabber-chatrooms.c: Implement filling in more
+	chatroom information and actually use correct MUC standards for
+	joining a room. Also implement password protected MUC, fixes bug
+	#136828. 
+
+	* libgossip/gossip-jabber-disco.[ch]: Add a function to get the
+	LmMessageNode for the data element of a disco item (which is
+	unique to each disco service you request information from).
+
+	* src/gossip-edit-chatroom-dialog.c:
+	* src/gossip-new-chatroom-dialog.c:
+	* ui/group-chat.glade: Make it possible to set the password in the
+	UI and show more information when browsing rooms on servers.
+
+2007-08-12  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-chatroom-provider.c:
 	* libgossip/gossip-chatroom-provider.h:
 	* libgossip/gossip-jabber-chatrooms.c:

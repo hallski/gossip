@@ -56,8 +56,10 @@ typedef struct {
 } JabberDiscoIdentity;
 
 typedef struct {
-	GList *identities;
-	GList *features;
+	GList         *identities;
+	GList         *features;
+
+	LmMessageNode *data;
 } JabberDiscoInfo;
 
 typedef struct {
@@ -66,38 +68,38 @@ typedef struct {
 } FindInfo;
 
 struct _GossipJabberDisco {
-	GossipJabber *jabber;
-	GossipJID    *to;
+	GossipJabber     *jabber;
+	GossipJID        *to;
 
 	LmMessageHandler *message_handler;
 
-	gpointer      user_data;
+	gpointer          user_data;
 
 	/* Items */
 	GossipJabberDiscoItemFunc item_func;
 
-	GList        *items;
-	gint          items_remaining;
-	gint          items_total;
+	GList            *items;
+	gint              items_remaining;
+	gint              items_total;
 
 	/* Flags */
-	gboolean      item_lookup;
-	gboolean      destroying;
+	gboolean          item_lookup;
+	gboolean          destroying;
 
 	/* Errors */
-	GError       *last_error;
+	GError           *last_error;
 
 	/* Misc */
-	guint         timeout_id;
+	guint             timeout_id;
 };
 
 struct _GossipJabberDiscoItem {
-	GossipJID *jid;
+	GossipJID       *jid;
 
-	gchar     *node;
-	gchar     *name;
+	gchar           *node;
+	gchar           *name;
 
-	guint      timeout_id;
+	guint            timeout_id;
 
 	JabberDiscoInfo *info;
 };
@@ -616,11 +618,12 @@ jabber_disco_handle_info (GossipJabberDisco *disco,
 	GossipJabberDiscoItem *item;
 	JabberDiscoInfo       *info;
 	GList                 *l;
-	const char            *from;
-	const char            *category;
-	const char            *type;
-	const char            *name;
-	const char            *feature;
+	const gchar           *from;
+	const gchar           *category;
+	const gchar           *type;
+	const gchar           *name;
+	const gchar           *feature;
+	const gchar           *ns; 
 
 	if (!disco->item_lookup) {
 		disco->items_remaining--;
@@ -694,6 +697,12 @@ jabber_disco_handle_info (GossipJabberDisco *disco,
 
 	item->info = info;
 
+	node = lm_message_node_find_child (m->node, "x");
+	ns = lm_message_node_get_attribute (node, "xmlns");
+	if (ns && strcmp (ns, "jabber:x:data") == 0) {
+		info->data = node;
+	}
+
 	/* Remove timeout */
 	if (item->timeout_id) {
 		g_source_remove (item->timeout_id);
@@ -732,26 +741,34 @@ jabber_disco_info_handler (LmMessageHandler *handler,
 	if (subtype != LM_MESSAGE_SUB_TYPE_GET) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
+
 	node = lm_message_node_get_child (request_message->node, "query");
 	if(!node) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
+
 	xmlns = lm_message_node_get_attribute (node, "xmlns");
 	if(!xmlns || strcmp (xmlns, XMPP_DISCO_INFO_XMLNS) != 0) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
+
 	to_str = lm_message_node_get_attribute (request_message->node, "from");
 	id_str = lm_message_node_get_attribute (request_message->node, "id");
+
 	m = lm_message_new_with_sub_type (to_str,
 					  LM_MESSAGE_TYPE_IQ,
 					  LM_MESSAGE_SUB_TYPE_RESULT);
+
 	lm_message_node_set_attribute (m->node, "id", id_str);
 	q_node = lm_message_node_add_child (m->node, "query", NULL);
+
 	lm_message_node_set_attribute (q_node, "xmlns", XMPP_DISCO_INFO_XMLNS);
 	node = lm_message_node_add_child (q_node, "identity", NULL);
+
 	lm_message_node_set_attribute (node, "category", "client");
 	lm_message_node_set_attribute (node, "type", "pc");
 	lm_message_node_set_attribute (node, "name", PACKAGE_STRING);
+
 	node = lm_message_node_add_child (q_node, "feature", NULL);
 	lm_message_node_set_attribute (node, "var", XMPP_DISCO_INFO_XMLNS);
 	node = lm_message_node_add_child (q_node, "feature", NULL);
@@ -764,6 +781,7 @@ jabber_disco_info_handler (LmMessageHandler *handler,
 	lm_message_node_set_attribute (node, "var", XMPP_MUC_FEATURE);
 	node = lm_message_node_add_child (q_node, "feature", NULL);
 	lm_message_node_set_attribute (node, "var", XMPP_PING_XMLNS);
+
 	lm_connection_send (connection, m, NULL);
 	lm_message_unref (m);
 
@@ -1143,6 +1161,18 @@ gossip_jabber_disco_item_get_features (GossipJabberDiscoItem *item)
 	g_return_val_if_fail (item->info != NULL, NULL);
 
 	return item->info->features;
+}
+
+LmMessageNode *        
+gossip_jabber_disco_item_get_data (GossipJabberDiscoItem *item)
+{
+	g_return_val_if_fail (item != NULL, NULL);
+
+	if (item->info == NULL) {
+		return NULL;
+	}
+
+	return item->info->data;
 }
 
 gboolean

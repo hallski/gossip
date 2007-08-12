@@ -42,6 +42,7 @@ typedef struct {
 	GtkWidget      *entry_nickname;
 	GtkWidget      *entry_server;
 	GtkWidget      *entry_room;
+	GtkWidget      *entry_password;
 	GtkWidget      *checkbutton_auto_connect;
 	GtkWidget      *button_save;
 
@@ -78,6 +79,9 @@ edit_chatroom_dialog_set (GossipEditChatroomDialog *dialog)
 
 	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_room));
 	g_object_set (dialog->chatroom, "room", str, NULL);
+
+	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_password));
+	g_object_set (dialog->chatroom, "password", str, NULL);
 
 	togglebutton = GTK_TOGGLE_BUTTON (dialog->checkbutton_auto_connect);
 	g_object_set (dialog->chatroom, "auto_connect",
@@ -149,6 +153,7 @@ gossip_edit_chatroom_dialog_show (GtkWindow      *parent,
 				       "label_server", &label_server,
 				       "entry_server", &dialog->entry_server,
 				       "entry_room", &dialog->entry_room,
+				       "entry_password", &dialog->entry_password,
 				       "checkbutton_auto_connect", &dialog->checkbutton_auto_connect,
 				       "button_save", &dialog->button_save,
 				       NULL);
@@ -175,6 +180,8 @@ gossip_edit_chatroom_dialog_show (GtkWindow      *parent,
 			    gossip_chatroom_get_server (chatroom));
 	gtk_entry_set_text (GTK_ENTRY (dialog->entry_room),
 			    gossip_chatroom_get_room (chatroom));
+	gtk_entry_set_text (GTK_ENTRY (dialog->entry_password),
+			    gossip_chatroom_get_password (chatroom));
 	gtk_toggle_button_set_active (
 		GTK_TOGGLE_BUTTON (dialog->checkbutton_auto_connect),
 		gossip_chatroom_get_auto_connect (chatroom));

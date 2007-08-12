@@ -783,7 +783,7 @@ chatroom_manager_file_save (GossipChatroomManager *manager)
 
 		xmlNewTextChild (node, NULL, "password", gossip_chatroom_get_password (chatroom));
 		xmlNewChild (node, NULL, "auto_connect", gossip_chatroom_get_auto_connect (chatroom) ? "yes" : "no");
-		xmlNewChild (node, NULL, "favourite", gossip_chatroom_get_is_favourite (chatroom) ? "yes" : "no");
+		xmlNewChild (node, NULL, "favourite", gossip_chatroom_get_favourite (chatroom) ? "yes" : "no");
 
 		account = gossip_chatroom_get_account (chatroom);
 		if (account) {

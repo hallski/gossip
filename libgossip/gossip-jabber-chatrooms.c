@@ -39,7 +39,9 @@
 
 #define DEBUG_DOMAIN "JabberChatrooms"
 
-#define XMPP_MUC_USER_XMLNS "http://jabber.org/protocol/muc#user"
+#define XMPP_MUC_XMLNS       "http://jabber.org/protocol/muc"
+#define XMPP_MUC_OWNER_XMLNS "http://jabber.org/protocol/muc#owner"
+#define XMPP_MUC_USER_XMLNS  "http://jabber.org/protocol/muc#user"
 
 #define JOIN_TIMEOUT 20000
 
@@ -97,7 +99,10 @@ static LmHandlerResult  jabber_chatrooms_join_cb              (LmMessageHandler 
 							       LmMessage              *message,
 							       JabberChatroom         *room);
 static GossipChatroomError
-                        jabber_chatroom_error_from_code       (gint                    code);
+                        jabber_chatrooms_error_from_code      (gint                    code);
+static GArray *         jabber_chatrooms_get_status           (LmMessage              *m);
+static gboolean         jabber_chatrooms_has_status           (GArray                 *status, 
+							       gint                    code);
 static void             jabber_chatrooms_get_rooms_foreach    (gpointer                key,
 							       JabberChatroom         *room,
 							       GList                 **list);
@@ -432,7 +437,7 @@ jabber_chatrooms_get_contact (JabberChatroom *room,
 }
 
 static GossipChatroomError 
-jabber_chatroom_error_from_code (gint code)
+jabber_chatrooms_error_from_code (gint code)
 {
 	switch (code) {
 	case 401: return GOSSIP_CHATROOM_ERROR_PASSWORD_INVALID_OR_MISSING;
@@ -453,6 +458,69 @@ jabber_chatroom_error_from_code (gint code)
 	}
 	
 	return GOSSIP_CHATROOM_ERROR_UNKNOWN;
+}
+
+static GArray *
+jabber_chatrooms_get_status (LmMessage *m)
+{
+	LmMessageNode *node;
+	GArray        *status = NULL;
+
+	if (!m) {
+		return NULL;
+	}
+
+	node = lm_message_node_get_child (m->node, "x");
+	if (!node) {
+		return NULL;
+	}
+
+	node = node->children;
+
+	while (node) {
+		if (!node) {
+			break;
+		}
+
+		if (node->name && strcmp (node->name, "status") == 0) {
+			const gchar *code;
+
+			code = lm_message_node_get_attribute (node, "code");
+			if (code) {
+				gint value;
+
+				if (!status) {
+					status = g_array_new (FALSE, FALSE, sizeof (gint));
+				}
+
+				value = atoi (code);
+				g_array_append_val (status, value);
+			}
+		}
+
+		node = node->next;
+	}
+
+	return status;
+}
+
+static gboolean 
+jabber_chatrooms_has_status (GArray *status, 
+			     gint    code)
+{
+	gint i = 0;
+
+	if (!status) {
+		return FALSE;
+	}
+	
+	for (i = 0; i < status->len; i++) {
+		if (g_array_index (status, gint, i) == code) {
+			return TRUE;
+		}
+	}
+	
+	return FALSE;
 }
 
 static LmHandlerResult
@@ -550,7 +618,7 @@ jabber_chatrooms_presence_handler (LmMessageHandler      *handler,
 			str = lm_message_node_get_attribute (node, "code");
 			code = str ? atoi (str) : 0;
 			
-			error = jabber_chatroom_error_from_code (code);
+			error = jabber_chatrooms_error_from_code (code);
 			gossip_debug (DEBUG_DOMAIN, "ID[%d] %s", 
 				      id, gossip_chatroom_provider_error_to_string (error));
 			
@@ -617,6 +685,131 @@ jabber_chatrooms_join_timeout_cb (JabberChatroom *room)
 	return FALSE;
 }
 
+static void
+jabber_chatrooms_create_instant_room (JabberChatroom *room)
+{
+	LmMessage     *m;
+	LmMessageNode *node;
+	GossipAccount *account;
+	gchar         *from;
+	const gchar   *to;
+
+	m = lm_message_new_with_sub_type (NULL,
+					  LM_MESSAGE_TYPE_IQ,
+					  LM_MESSAGE_SUB_TYPE_SET);
+
+	account = gossip_contact_get_account (room->own_contact);
+	from = g_strconcat (gossip_account_get_id (account),
+			    "/",
+			    gossip_account_get_resource (account),
+			    NULL);
+	lm_message_node_set_attribute (m->node, "from", from);
+	g_free (from);
+
+	to = gossip_chatroom_get_id_str (room->chatroom);
+	lm_message_node_set_attribute (m->node, "to", to);
+
+	node = lm_message_node_add_child (m->node, "query", NULL);
+        lm_message_node_set_attributes (node, "xmlns", XMPP_MUC_OWNER_XMLNS, NULL);
+
+        node = lm_message_node_add_child (node, "x", NULL);
+        lm_message_node_set_attributes (node, 
+					"xmlns", "jabber:x:data", 
+					"type", "submit",
+					NULL);
+
+	lm_connection_send (room->connection, m,  NULL);
+	lm_message_unref (m);
+}
+
+static void
+jabber_chatrooms_create_reserved_room (JabberChatroom *room)
+{
+	LmMessage     *m;
+	LmMessageNode *node;
+	LmMessageNode *child;
+	GossipAccount *account;
+	gchar         *from;
+	const gchar   *to;
+	const gchar   *name;
+	const gchar   *password;
+
+	m = lm_message_new_with_sub_type (NULL,
+					  LM_MESSAGE_TYPE_IQ,
+					  LM_MESSAGE_SUB_TYPE_SET);
+
+	account = gossip_contact_get_account (room->own_contact);
+	from = g_strconcat (gossip_account_get_id (account),
+			    "/",
+			    gossip_account_get_resource (account),
+			    NULL);
+	lm_message_node_set_attribute (m->node, "from", from);
+	g_free (from);
+
+	to = gossip_chatroom_get_id_str (room->chatroom);
+	lm_message_node_set_attribute (m->node, "to", to);
+
+	node = lm_message_node_add_child (m->node, "query", NULL);
+        lm_message_node_set_attributes (node, "xmlns", XMPP_MUC_OWNER_XMLNS, NULL);
+
+        node = lm_message_node_add_child (node, "x", NULL);
+        lm_message_node_set_attributes (node, 
+					"xmlns", "jabber:x:data", 
+					"type", "submit",
+					NULL);
+
+	/* FIXME: This is a shortcut for now, we should use their forms */
+	name = gossip_chatroom_get_name (room->chatroom);
+	password = gossip_chatroom_get_password (room->chatroom);
+
+        child = lm_message_node_add_child (node, "field", NULL);
+        lm_message_node_set_attributes (child, "var", "muc#roomconfig_roomname", NULL);
+        lm_message_node_add_child (child, "value", name);
+	
+        child = lm_message_node_add_child (node, "field", NULL);
+        lm_message_node_set_attributes (child, "var", "muc#roomconfig_passwordprotectedroom", NULL);
+        lm_message_node_add_child (child, "value", password ? "1" : "0");
+
+	child = lm_message_node_add_child (node, "field", NULL);
+	lm_message_node_set_attributes (child, "var", "muc#roomconfig_roomsecret", NULL);
+	lm_message_node_add_child (child, "value", password ? password : "");
+	
+	/* Finally send */
+	lm_connection_send (room->connection, m,  NULL);
+	lm_message_unref (m);
+}
+
+static void
+jabber_chatrooms_request_reserved_room (JabberChatroom *room)
+{
+	LmMessage     *m;
+	LmMessageNode *node;
+	GossipAccount *account;
+	gchar         *from;
+	const gchar   *to;
+
+	m = lm_message_new_with_sub_type (NULL,
+					  LM_MESSAGE_TYPE_IQ,
+					  LM_MESSAGE_SUB_TYPE_GET);
+
+	account = gossip_contact_get_account (room->own_contact);
+	from = g_strconcat (gossip_account_get_id (account),
+			    "/",
+			    gossip_account_get_resource (account),
+			    NULL);
+	lm_message_node_set_attribute (m->node, "from", from);
+	g_free (from);
+
+	to = gossip_chatroom_get_id_str (room->chatroom);
+	lm_message_node_set_attribute (m->node, "to", to);
+
+	node = lm_message_node_add_child (m->node, "query", NULL);
+        lm_message_node_set_attributes (node, "xmlns", XMPP_MUC_OWNER_XMLNS, NULL);
+
+	lm_connection_send (room->connection, m,  NULL);
+	lm_message_unref (m);
+}
+
 static LmHandlerResult
 jabber_chatrooms_join_cb (LmMessageHandler *handler,
 			  LmConnection     *connection,
@@ -633,6 +826,7 @@ jabber_chatrooms_join_cb (LmMessageHandler *handler,
 	const gchar           *from;
 	GossipJID             *jid;
 	JabberChatroom        *room_found;
+	GArray                *status_codes;
 	gboolean               room_match = FALSE;
 
 	if (!room || !room->join_handler) {
@@ -673,6 +867,22 @@ jabber_chatrooms_join_cb (LmMessageHandler *handler,
 		room->join_handler = NULL;
 	}
 
+	/* Check status code */
+	status_codes = jabber_chatrooms_get_status (m);
+	if (status_codes) {
+		if (jabber_chatrooms_has_status (status_codes, 201)) {
+			/* Room was created for us */
+			if (0) {
+				jabber_chatrooms_request_reserved_room (room);
+				jabber_chatrooms_create_instant_room (room); 
+			} else {
+				jabber_chatrooms_create_reserved_room (room);
+			}
+		}
+
+		g_array_free (status_codes, TRUE);
+	}
+
 	/* Check for error */
 	type = lm_message_get_sub_type (m);
 	if (type == LM_MESSAGE_SUB_TYPE_ERROR) {
@@ -686,7 +896,7 @@ jabber_chatrooms_join_cb (LmMessageHandler *handler,
 		str = lm_message_node_get_attribute (node, "code");
 		code = str ? atoi (str) : 0;
 
-		error = jabber_chatroom_error_from_code (code);
+		error = jabber_chatrooms_error_from_code (code);
 		gossip_debug (DEBUG_DOMAIN, "ID[%d] %s", 
 			      id, gossip_chatroom_provider_error_to_string (error));
 
@@ -741,8 +951,10 @@ gossip_jabber_chatrooms_join (GossipJabberChatrooms *chatrooms,
 	GossipChatroomId   id;
 	JabberChatroom    *room, *existing_room;
 	LmMessage         *m;
+	LmMessageNode     *node;
 	const gchar       *show = NULL;
 	gchar             *id_str;
+	const gchar       *password;
 
 	g_return_val_if_fail (chatrooms != NULL, 0);
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), 0);
@@ -796,6 +1008,15 @@ gossip_jabber_chatrooms_join (GossipJabberChatrooms *chatrooms,
 	m = lm_message_new_with_sub_type (gossip_jid_get_full (room->jid),
 					  LM_MESSAGE_TYPE_PRESENCE,
 					  LM_MESSAGE_SUB_TYPE_AVAILABLE);
+
+	node = lm_message_node_add_child (m->node, "x", NULL);
+	lm_message_node_set_attribute (node, "xmlns", XMPP_MUC_XMLNS);
+
+	/* If we have a password, set one */
+	password = gossip_chatroom_get_password (chatroom);
+	if (!G_STR_EMPTY (password)) {
+		lm_message_node_add_child (node, "password", password);
+	}
 
 	g_hash_table_insert (chatrooms->room_id_hash,
 			     GINT_TO_POINTER (id),
@@ -1244,10 +1465,12 @@ jabber_chatrooms_browse_rooms_cb (GossipJabberDisco     *disco,
 	} 
 
 	if (!room && !timeout && !error) {
-		GossipAccount  *account;
-		const gchar    *server;
-		const gchar    *name;
-		gchar          *room;
+		GossipAccount         *account;
+		GossipChatroomFeature  features = 0;
+		const gchar           *server;
+		const gchar           *name;
+		gchar                 *room;
+		LmMessageNode         *node;
 		
 		gossip_debug (DEBUG_DOMAIN, 
 			      "Chatroom found on server not set up here, creating for:'%s'...",
@@ -1263,9 +1486,97 @@ jabber_chatrooms_browse_rooms_cb (GossipJabberDisco     *disco,
 					 "type", GOSSIP_CHATROOM_TYPE_NORMAL,
 					 "account", account,
 					 "server", server,
-					 "name", room,
+					 "name", name,
 					 "room", room,
 					 NULL);
+
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Chatroom:'%s' has the following features:...",
+			      gossip_jid_get_full (jid));
+
+		/* Sort ouf the features */
+		if (gossip_jabber_disco_item_has_feature (item, "muc_hidden")) { 
+			features |= GOSSIP_CHATROOM_FEATURE_HIDDEN;
+		}
+
+		if (gossip_jabber_disco_item_has_feature (item, "muc_membersonly")) { 
+			features |= GOSSIP_CHATROOM_FEATURE_MEMBERS_ONLY;
+		}
+
+		if (gossip_jabber_disco_item_has_feature (item, "muc_moderated")) { 
+			features |= GOSSIP_CHATROOM_FEATURE_MODERATED;
+		}
+
+		if (gossip_jabber_disco_item_has_feature (item, "muc_nonanonymous")) { 
+			features |= GOSSIP_CHATROOM_FEATURE_NONANONYMOUS;
+		}
+
+		if (gossip_jabber_disco_item_has_feature (item, "muc_open")) { 
+			features |= GOSSIP_CHATROOM_FEATURE_OPEN;
+		}
+
+		if (gossip_jabber_disco_item_has_feature (item, "muc_passwordprotected")) { 
+			features |= GOSSIP_CHATROOM_FEATURE_PASSWORD_PROTECTED;
+		}
+
+		if (gossip_jabber_disco_item_has_feature (item, "muc_persistent")) { 
+			features |= GOSSIP_CHATROOM_FEATURE_PERSISTENT;
+		}
+
+		if (gossip_jabber_disco_item_has_feature (item, "muc_public")) { 
+			features |= GOSSIP_CHATROOM_FEATURE_PUBLIC;
+		}
+
+		if (gossip_jabber_disco_item_has_feature (item, "muc_semianonymous")) { 
+			features |= GOSSIP_CHATROOM_FEATURE_SEMIANONYMOUS;
+		}
+
+		if (gossip_jabber_disco_item_has_feature (item, "muc_temporary")) { 
+			features |= GOSSIP_CHATROOM_FEATURE_TEMPORARY;
+		}
+
+		if (gossip_jabber_disco_item_has_feature (item, "muc_unmoderated")) { 
+			features |= GOSSIP_CHATROOM_FEATURE_PERSISTENT;
+		}
+
+		if (gossip_jabber_disco_item_has_feature (item, "muc_unsecured")) { 
+			features |= GOSSIP_CHATROOM_FEATURE_UNSECURED;
+		}
+
+		gossip_chatroom_set_features (chatroom, features);
+
+		/* Get the MUC specific data */
+		node = gossip_jabber_disco_item_get_data (item);
+		if (node) {
+			node = node->children;
+
+			while (node) {
+				if (node->name && strcmp (node->name, "field") == 0) {
+					const gchar *var;
+					const gchar *val;
+
+					var = lm_message_node_get_attribute (node, "var");
+					val = lm_message_node_get_value (node->children);
+
+					if (var && val) {
+						if (strcmp (var, "muc#roominfo_description") == 0) {
+							gossip_chatroom_set_description (chatroom, val);
+						} 
+						else if (strcmp (var, "muc#roominfo_subject") == 0) {
+							gossip_chatroom_set_subject (chatroom, val);
+						}
+						else if (strcmp (var, "muc#roominfo_occupants") == 0) {
+							gossip_chatroom_set_occupants (chatroom, atoi (val));
+						}
+					}
+				}
+
+				node = node->next;
+			}
+		}
+
+
+		/* Clean up */
 		g_free (room);
 	}
 

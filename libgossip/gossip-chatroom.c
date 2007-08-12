@@ -34,26 +34,30 @@
 typedef struct _GossipChatroomPriv GossipChatroomPriv;
 
 struct _GossipChatroomPriv {
-	GossipAccount        *account;
+	GossipAccount         *account;
 
-	GossipChatroomType    type;
+	GossipChatroomType     type;
+	GossipChatroomId       id;
+	gchar                 *id_str;
 
-	GossipChatroomId      id;
+	gchar                 *name;
+	gchar                 *description;
+	gchar                 *subject;
+	gchar                 *nick;
+	gchar                 *server;
+	gchar                 *room;
+	gchar                 *password;
+	gboolean               auto_connect;
+	gboolean               favourite;
 
-	gchar                *id_str;
+	GossipChatroomFeature  features;
+	GossipChatroomStatus   status;
 
-	gchar                *name;
-	gchar                *nick;
-	gchar                *server;
-	gchar                *room;
-	gchar                *password;
-	gboolean              auto_connect;
-	gboolean              favourite;
+	guint                  occupants;
 
-	GossipChatroomStatus  status;
-	gchar                *last_error;
+	gchar                 *last_error;
 
-	GHashTable           *contacts;
+	GHashTable            *contacts;
 };
 
 struct _GossipChatroomInvite {
@@ -82,13 +86,17 @@ enum {
 	PROP_ID_STR,
 	PROP_TYPE,
 	PROP_NAME,
+	PROP_DESCRIPTION,
+	PROP_SUBJECT,
 	PROP_NICK,
 	PROP_SERVER,
 	PROP_ROOM,
 	PROP_PASSWORD,
 	PROP_AUTO_CONNECT,
 	PROP_FAVOURITE,
+	PROP_FEATURES,
 	PROP_STATUS,
+	PROP_OCCUPANTS,
 	PROP_LAST_ERROR,
 	PROP_ACCOUNT,
 };
@@ -192,8 +200,24 @@ chatroom_class_init (GossipChatroomClass *class)
 					 PROP_NAME,
 					 g_param_spec_string ("name",
 							      "Chatroom Name",
-							      "What you call this chatroom",
-							      "Default",
+							      "The friendly name for this chatroom",
+							      "",
+							      G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
+					 PROP_DESCRIPTION,
+					 g_param_spec_string ("description",
+							      "Chatroom Description",
+							      "A more detailed description of this chatroom",
+							      "",
+							      G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
+					 PROP_SUBJECT,
+					 g_param_spec_string ("subject",
+							      "Chatroom Subject",
+							      "The conversation topic",
+							      "Random Crap",
 							      G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class,
@@ -245,6 +269,16 @@ chatroom_class_init (GossipChatroomClass *class)
 							       G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class,
+					 PROP_FEATURES,
+					 g_param_spec_int ("features",
+							   "Chatroom Features",
+							   "Features of the room, hidden, passworded, etc",
+							   G_MININT,
+							   G_MAXINT,
+							   0,
+							   G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
 					 PROP_STATUS,
 					 g_param_spec_int ("status",
 							   "Chatroom Status",
@@ -252,6 +286,16 @@ chatroom_class_init (GossipChatroomClass *class)
 							   G_MININT,
 							   G_MAXINT,
 							   GOSSIP_CHATROOM_STATUS_UNKNOWN,
+							   G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
+					 PROP_OCCUPANTS,
+					 g_param_spec_uint ("occupants",
+							   "Chatroom Occupant Count",
+							   "The number of estimated occupants in the room",
+							   0,
+							   G_MAXUINT,
+							   0,
 							   G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class,
@@ -377,6 +421,12 @@ chatroom_get_property (GObject    *object,
 	case PROP_NAME:
 		g_value_set_string (value, priv->name);
 		break;
+	case PROP_DESCRIPTION:
+		g_value_set_string (value, priv->description);
+		break;
+	case PROP_SUBJECT:
+		g_value_set_string (value, priv->subject);
+		break;
 	case PROP_NICK:
 		g_value_set_string (value, priv->nick);
 		break;
@@ -395,8 +445,14 @@ chatroom_get_property (GObject    *object,
 	case PROP_FAVOURITE:
 		g_value_set_boolean (value, priv->favourite);
 		break;
+	case PROP_FEATURES:
+		g_value_set_int (value, priv->features);
+		break;
 	case PROP_STATUS:
 		g_value_set_int (value, priv->status);
+		break;
+	case PROP_OCCUPANTS:
+		g_value_set_uint (value, priv->occupants);
 		break;
 	case PROP_LAST_ERROR:
 		g_value_set_string (value, priv->last_error);
@@ -428,6 +484,14 @@ chatroom_set_property (GObject      *object,
 		gossip_chatroom_set_name (GOSSIP_CHATROOM (object),
 					  g_value_get_string (value));
 		break;
+	case PROP_DESCRIPTION:
+		gossip_chatroom_set_description (GOSSIP_CHATROOM (object),
+						 g_value_get_string (value));
+		break;
+	case PROP_SUBJECT:
+		gossip_chatroom_set_subject (GOSSIP_CHATROOM (object),
+					     g_value_get_string (value));
+		break;
 	case PROP_NICK:
 		gossip_chatroom_set_nick (GOSSIP_CHATROOM (object),
 				       g_value_get_string (value));
@@ -452,9 +516,17 @@ chatroom_set_property (GObject      *object,
 		gossip_chatroom_set_favourite (GOSSIP_CHATROOM (object),
 					       g_value_get_boolean (value));
 		break;
+	case PROP_FEATURES:
+		gossip_chatroom_set_features (GOSSIP_CHATROOM (object),
+					      g_value_get_int (value));
+		break;
 	case PROP_STATUS:
 		gossip_chatroom_set_status (GOSSIP_CHATROOM (object),
 					    g_value_get_int (value));
+		break;
+	case PROP_OCCUPANTS:
+		gossip_chatroom_set_occupants (GOSSIP_CHATROOM (object),
+					       g_value_get_uint (value));
 		break;
 	case PROP_LAST_ERROR:
 		gossip_chatroom_set_last_error (GOSSIP_CHATROOM (object),
@@ -520,6 +592,28 @@ gossip_chatroom_get_name (GossipChatroom *chatroom)
 }
 
 const gchar *
+gossip_chatroom_get_description (GossipChatroom *chatroom)
+{
+	GossipChatroomPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
+
+	priv = GET_PRIV (chatroom);
+	return priv->description;
+}
+
+const gchar *
+gossip_chatroom_get_subject (GossipChatroom *chatroom)
+{
+	GossipChatroomPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
+
+	priv = GET_PRIV (chatroom);
+	return priv->subject;
+}
+
+const gchar *
 gossip_chatroom_get_nick (GossipChatroom *chatroom)
 {
 	GossipChatroomPriv *priv;
@@ -575,14 +669,27 @@ gossip_chatroom_get_auto_connect (GossipChatroom *chatroom)
 }
 
 gboolean
-gossip_chatroom_get_is_favourite (GossipChatroom *chatroom)
+gossip_chatroom_get_favourite (GossipChatroom *chatroom)
 {
 	GossipChatroomPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), FALSE);
 
 	priv = GET_PRIV (chatroom);
+
 	return priv->favourite;
+}
+
+GossipChatroomFeature
+gossip_chatroom_get_features (GossipChatroom *chatroom)
+{
+	GossipChatroomPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), 0);
+
+	priv = GET_PRIV (chatroom);
+
+	return priv->features;
 }
 
 GossipChatroomStatus
@@ -596,6 +703,18 @@ gossip_chatroom_get_status (GossipChatroom *chatroom)
 	priv = GET_PRIV (chatroom);
 
 	return priv->status;
+}
+
+GossipChatroomStatus
+gossip_chatroom_get_occupants (GossipChatroom *chatroom)
+{
+	GossipChatroomPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), 0);
+
+	priv = GET_PRIV (chatroom);
+
+	return priv->occupants;
 }
 
 const gchar *
@@ -654,6 +773,40 @@ gossip_chatroom_set_name (GossipChatroom *chatroom,
 	priv->name = g_strdup (name);
 
 	g_object_notify (G_OBJECT (chatroom), "name");
+}
+
+void
+gossip_chatroom_set_description (GossipChatroom *chatroom,
+				 const gchar    *description)
+{
+	GossipChatroomPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
+	g_return_if_fail (description != NULL);
+
+	priv = GET_PRIV (chatroom);
+
+	g_free (priv->description);
+	priv->description = g_strdup (description);
+
+	g_object_notify (G_OBJECT (chatroom), "description");
+}
+
+void
+gossip_chatroom_set_subject (GossipChatroom *chatroom,
+			     const gchar    *subject)
+{
+	GossipChatroomPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
+	g_return_if_fail (subject != NULL);
+
+	priv = GET_PRIV (chatroom);
+
+	g_free (priv->subject);
+	priv->subject = g_strdup (subject);
+
+	g_object_notify (G_OBJECT (chatroom), "subject");
 }
 
 void
@@ -773,6 +926,21 @@ chatroom_clear_contacts (GossipChatroom *chatroom)
 }
 
 void
+gossip_chatroom_set_features (GossipChatroom         *chatroom,
+			      GossipChatroomFeature   features)
+{
+	GossipChatroomPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
+
+	priv = GET_PRIV (chatroom);
+
+	priv->features = features;
+
+	g_object_notify (G_OBJECT (chatroom), "features");
+}
+
+void
 gossip_chatroom_set_status (GossipChatroom       *chatroom,
 			    GossipChatroomStatus  status)
 {
@@ -789,6 +957,21 @@ gossip_chatroom_set_status (GossipChatroom       *chatroom,
 	}
 
 	g_object_notify (G_OBJECT (chatroom), "status");
+}
+
+void
+gossip_chatroom_set_occupants (GossipChatroom *chatroom,
+			       guint           occupants)
+{
+	GossipChatroomPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
+
+	priv = GET_PRIV (chatroom);
+
+	priv->occupants = occupants;
+
+	g_object_notify (G_OBJECT (chatroom), "occupants");
 }
 
 void

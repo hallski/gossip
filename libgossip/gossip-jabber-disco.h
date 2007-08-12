@@ -31,7 +31,7 @@
 
 G_BEGIN_DECLS
 
-typedef struct _GossipJabberDisco GossipJabberDisco;
+typedef struct _GossipJabberDisco     GossipJabberDisco;
 typedef struct _GossipJabberDiscoItem GossipJabberDiscoItem;
 
 typedef void (*GossipJabberDiscoItemFunc) (GossipJabberDisco     *disco,
@@ -63,6 +63,7 @@ GossipJID *            gossip_jabber_disco_item_get_jid          (GossipJabberDi
 const gchar *          gossip_jabber_disco_item_get_type         (GossipJabberDiscoItem     *item);
 const gchar *          gossip_jabber_disco_item_get_name         (GossipJabberDiscoItem     *item);
 const GList *          gossip_jabber_disco_item_get_features     (GossipJabberDiscoItem     *item);
+LmMessageNode *        gossip_jabber_disco_item_get_data         (GossipJabberDiscoItem     *item);
 gboolean               gossip_jabber_disco_item_has_category     (GossipJabberDiscoItem     *item,
 								  const gchar               *category);
 gboolean               gossip_jabber_disco_item_has_feature      (GossipJabberDiscoItem     *item,

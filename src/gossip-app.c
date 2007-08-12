@@ -1114,7 +1114,7 @@ app_favorite_chatroom_menu_update (void)
 		account = gossip_chatroom_get_account (chatroom);
 		menu_item = g_object_get_data (G_OBJECT (chatroom), "menu_item");
 
-		visible = gossip_chatroom_get_is_favourite (chatroom);
+		visible = gossip_chatroom_get_favourite (chatroom);
 		visible &= gossip_session_is_connected (priv->session, account);
 
 		if (visible) {
@@ -1150,7 +1150,7 @@ app_favorite_chatroom_menu_add (GossipChatroom *chatroom)
 	account = gossip_chatroom_get_account (chatroom);
 	menu_item = g_object_get_data (G_OBJECT (chatroom), "menu_item");
 
-	visible = gossip_chatroom_get_is_favourite (chatroom);
+	visible = gossip_chatroom_get_favourite (chatroom);
 	visible &= gossip_session_is_connected (priv->session, account);
 
 	if (menu_item) {
@@ -1213,7 +1213,7 @@ app_favorite_chatroom_menu_removed_cb (GossipChatroomManager *manager,
 	account = gossip_chatroom_get_account (chatroom);
 	menu_item = g_object_get_data (G_OBJECT (chatroom), "menu_item");
 
-	visible = gossip_chatroom_get_is_favourite (chatroom);
+	visible = gossip_chatroom_get_favourite (chatroom);
 	visible &= gossip_session_is_connected (priv->session, account);
 
 	g_object_set_data (G_OBJECT (chatroom), "menu_item", NULL);

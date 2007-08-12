@@ -1978,7 +1978,7 @@ gossip_session_chatroom_join_favorites (GossipSession *session)
 
 		chatroom = l->data;
 
-		if (!gossip_chatroom_get_is_favourite (chatroom)) {
+		if (!gossip_chatroom_get_favourite (chatroom)) {
 			continue;
 		}
 
