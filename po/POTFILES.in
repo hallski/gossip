@@ -34,6 +34,7 @@ src/gossip-chatrooms-window.c
 src/gossip-contact-info-dialog.c
 src/gossip-contact-list.c
 src/gossip-edit-contact-dialog.c
+src/gossip-ft-dialog.c
 src/gossip-galago.c
 src/gossip-group-chat.c
 src/gossip-hint.c
