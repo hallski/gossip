@@ -1,3 +1,11 @@
+2007-08-16  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-jabber-chatrooms.c:
+	(jabber_chatrooms_browse_rooms_cb): Improve the way we set up
+	rooms from the "browse" feature, if we already have rooms created
+	from our favourites, then make sure we update their details too,
+	not just new unknown rooms.
+
 2007-08-12  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-chatroom-manager.c:

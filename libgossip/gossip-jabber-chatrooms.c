@@ -1466,11 +1466,8 @@ jabber_chatrooms_browse_rooms_cb (GossipJabberDisco     *disco,
 
 	if (!room && !timeout && !error) {
 		GossipAccount         *account;
-		GossipChatroomFeature  features = 0;
 		const gchar           *server;
-		const gchar           *name;
 		gchar                 *room;
-		LmMessageNode         *node;
 		
 		gossip_debug (DEBUG_DOMAIN, 
 			      "Chatroom found on server not set up here, creating for:'%s'...",
@@ -1479,20 +1476,25 @@ jabber_chatrooms_browse_rooms_cb (GossipJabberDisco     *disco,
 		account = gossip_jabber_get_account (chatrooms->jabber);
 		server = gossip_jid_get_part_host (jid);
 		room = gossip_jid_get_part_name (jid);
-		name = gossip_jabber_disco_item_get_name (item);
 
 		/* Create new chatroom */
 		chatroom = g_object_new (GOSSIP_TYPE_CHATROOM,
 					 "type", GOSSIP_CHATROOM_TYPE_NORMAL,
 					 "account", account,
 					 "server", server,
-					 "name", name,
 					 "room", room,
 					 NULL);
 
-		gossip_debug (DEBUG_DOMAIN, 
-			      "Chatroom:'%s' has the following features:...",
-			      gossip_jid_get_full (jid));
+		g_free (room);
+	}
+
+	if (chatroom) {
+		GossipChatroomFeature  features = 0;
+		LmMessageNode         *node;
+		const gchar           *name;
+
+		name = gossip_jabber_disco_item_get_name (item);
+		gossip_chatroom_set_name (chatroom, name);
 
 		/* Sort ouf the features */
 		if (gossip_jabber_disco_item_has_feature (item, "muc_hidden")) { 
@@ -1575,12 +1577,6 @@ jabber_chatrooms_browse_rooms_cb (GossipJabberDisco     *disco,
 			}
 		}
 
-
-		/* Clean up */
-		g_free (room);
-	}
-
-	if (chatroom) {
 		gossip_debug (DEBUG_DOMAIN, 
 			      "Chatroom:'%s' added to list found on server:'%s'...",
 			      gossip_chatroom_get_room (chatroom),
