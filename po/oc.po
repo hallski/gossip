@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: gossip 0.7.8\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-06-16 16:43+0200\n"
-"PO-Revision-Date: 2007-07-29 13:20+0200\n"
-"Last-Translator: Yannig MARCHEGAY <yannig@marchegay.org>\n"
+"PO-Revision-Date: 2007-08-07 12:12+0200\n"
+"Last-Translator: Yannig MARCHEGAY (Kokoyaya) <yannig@marchegay.org>\n"
 "Language-Team: Occitan (post 1500) <ubuntu-l10n-oci@lists.ubuntu.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -216,7 +216,7 @@ msgstr ""
 msgid "Owner"
 msgid_plural "Owners"
 msgstr[0] "Propietari"
-msgstr[1] "Propriétaires"
+msgstr[1] "Propietaris"
 
 #: ../libgossip/gossip-chatroom.c:999
 msgid "Administrator"
@@ -226,7 +226,7 @@ msgstr ""
 msgid "Member"
 msgid_plural "Members"
 msgstr[0] "Sòci"
-msgstr[1] "Membres"
+msgstr[1] "Sòcis"
 
 #: ../libgossip/gossip-chatroom.c:1003
 msgid "Outcast"
@@ -709,7 +709,7 @@ msgstr "_Copiar l'adreça del ligam"
 
 #: ../src/gossip-chat-view.c:453
 msgid "_Open Link"
-msgstr "_Dubrir lo ligam"
+msgstr "_Dobrir lo ligam"
 
 #: ../src/gossip-chat-view.c:692
 msgid "Your invitation has been declined"
@@ -731,8 +731,8 @@ msgstr "~Refusar"
 #: ../ui/main.glade.h:64
 msgid "New Message"
 msgid_plural "New Messages"
-msgstr[0] "Messatge nòu"
-msgstr[1] "Nouveaux messages"
+msgstr[0] "Messatge novèl"
+msgstr[1] "Messatges novèls"
 
 #: ../src/gossip-chat-window.c:742
 msgid "Chat Room"
@@ -1114,7 +1114,7 @@ msgstr ""
 
 #: ../src/gossip-notify.c:539
 msgid "Show"
-msgstr "Mostrar"
+msgstr "Visualizacion"
 
 #: ../src/gossip-notify.c:545
 msgid "Contact Information"
@@ -1321,7 +1321,7 @@ msgstr ""
 
 #: ../ui/chat.glade.h:18
 msgid "_Close"
-msgstr "_Barrar"
+msgstr "_Tampar"
 
 #: ../ui/chat.glade.h:19
 msgid "_Conversation"
@@ -1720,7 +1720,7 @@ msgstr ""
 
 #: ../ui/main.glade.h:72
 msgid "Search"
-msgstr "Recèrcar"
+msgstr "Recercar"
 
 #: ../ui/main.glade.h:73
 msgid ""
