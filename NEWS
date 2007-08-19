@@ -1,3 +1,31 @@
+NEW in 0.27:
+==============
+- Fixed #136828, Support for password protected group chats (Martyn Russell)
+- Fixed #141569, File transfer support (Dimitur Kirov, Martyn Russell)
+- Fixed #412055, Subscription requests don't show which account they are for (Chris RIvas, Martyn Russell)
+- Fixed #415257, Add tooltip on status button when status is ellipsized (Madcat)
+- Fixed #416912, Substitution of "/me" not working in notifications (Mikael Hallendal)
+- Fixed #434423, Drag-dropping from one group to another emits a gtk warning (Mikael Hallendal)
+- Fixed #441568, Rounded corners on non-transparent avatars in Contact List. (Martyn Russell)
+- Fixed #441625, Make the flashing icons be in sync (Mikael Hallendal)
+- Fixed #442190, Galago support fails to compile (Aredridel)
+- Fixed #442423, Changing "Show avatars" doesn't work without restart (Mikael Hallendal)
+- Fixed #442456, Crash when opening Accounts window w/ GTK+ trunk (Kristian Rietveld)
+- Fixed #444127, Can't login with newly created account (Martyn Russell)
+- Fixed #448072, xmpp ping support for gossip (Michael Scherer, Mikael Hallendal)
+- Fixed #456855, Size of the file transfer dialog (Marco Barisione)
+- Fixed #461302, Use correct accel map path (Wouter Bolsterlee)
+- Fixed #462824, F11 usually means "fullscreen" (Martyn Russell)
+
+Translations:
+- Updated fr: Stéphane Raimbault
+- Updated nb: Kjartan Maraas
+- Updated sv: Daniel Nylander
+- Updated hu: Gabor Kelemen
+- Updated dz: Pema Geyleg
+- Updated eu: Inaki Larranaga Murgoitio
+
+
 NEW in 0.26:
 ==============
 - Fixed #442134, crash in Gossip Instant Messenger: Nothing.  Gossip was ico... (Mikael Hallendal)
