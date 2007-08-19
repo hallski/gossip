@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: gossip 0.7.8\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-06-16 16:43+0200\n"
-"PO-Revision-Date: 2007-08-07 12:12+0200\n"
+"PO-Revision-Date: 2007-08-19 21:41+0200\n"
 "Last-Translator: Yannig MARCHEGAY (Kokoyaya) <yannig@marchegay.org>\n"
 "Language-Team: Occitan (post 1500) <ubuntu-l10n-oci@lists.ubuntu.com>\n"
 "MIME-Version: 1.0\n"
@@ -928,7 +928,7 @@ msgstr ""
 
 #: ../src/gossip-ft-window.c:470
 msgid "Save file as..."
-msgstr ""
+msgstr "Enregistrar lo fichièr"
 
 #: ../src/gossip-ft-window.c:573
 msgid "Select a file"
@@ -1200,7 +1200,7 @@ msgstr ""
 
 #: ../src/gossip-theme-boxes.c:882 ../src/gossip-theme-irc.c:456
 msgid "%A %d %B %Y"
-msgstr ""
+msgstr "%A %d %B %Y"
 
 #: ../src/gossip-theme-manager.c:79
 msgid "Classic"
@@ -1313,7 +1313,7 @@ msgstr ""
 
 #: ../ui/chat.glade.h:16 ../ui/main.glade.h:114
 msgid "_Add Contact..."
-msgstr ""
+msgstr "_Apondre un contacte..."
 
 #: ../ui/chat.glade.h:17
 msgid "_Add To Favorites"
@@ -1555,7 +1555,7 @@ msgstr ""
 
 #: ../ui/main.glade.h:24
 msgid "Accou_nt:"
-msgstr ""
+msgstr "Co_mpte :"
 
 #: ../ui/main.glade.h:27
 msgid "Add Contact"
@@ -1615,7 +1615,7 @@ msgstr "Contèxte"
 
 #: ../ui/main.glade.h:42
 msgid "Country:"
-msgstr ""
+msgstr "Païs\\:"
 
 #: ../ui/main.glade.h:43
 msgid "Cr_eate"
@@ -1862,7 +1862,7 @@ msgstr "_A prepaus"
 
 #: ../ui/main.glade.h:113
 msgid "_Accounts"
-msgstr ""
+msgstr "_Comptes"
 
 #: ../ui/main.glade.h:115
 msgid "_Add to status message list"
