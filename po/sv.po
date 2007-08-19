@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-08-13 01:38+0200\n"
-"PO-Revision-Date: 2007-08-13 08:55+0100\n"
+"POT-Creation-Date: 2007-08-20 00:21+0200\n"
+"PO-Revision-Date: 2007-08-20 00:22+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -953,6 +953,82 @@ msgstr ""
 "\n"
 "Du kan hämta kontaktinformation från servern."
 
+#: ../src/gossip-ft-dialog.c:229
+#, c-format
+msgid "New file transfer request from %s"
+msgstr "Ny filöverföringsförfrågan från %s"
+
+#: ../src/gossip-ft-dialog.c:314
+msgid "Your file transfer offer declined."
+msgstr "Ditt erbjudande om filöverföring nekades."
+
+#: ../src/gossip-ft-dialog.c:315
+msgid "The other user decided not to continue."
+msgstr "Den andra användaren beslöts sig för att inte fortsätta."
+
+#: ../src/gossip-ft-dialog.c:320
+msgid "Unable to complete the file transfer."
+msgstr "Kunde inte färdigställa filöverföringen."
+
+#: ../src/gossip-ft-dialog.c:325
+msgid "Unable to start the file transfer."
+msgstr "Kunde inte starta filöverföringen."
+
+#: ../src/gossip-ft-dialog.c:330
+msgid "File transfer is not supported by both parties."
+msgstr "Filöverföring stöds inte av båda parter."
+
+#: ../src/gossip-ft-dialog.c:334
+msgid "An unknown error occurred during file transfer."
+msgstr "Ett okänt fel inträffade under filöverföringen."
+
+#: ../src/gossip-ft-dialog.c:498
+msgid "Transfer complete"
+msgstr "Överföringen är färdig"
+
+#: ../src/gossip-ft-dialog.c:504
+msgid "The file has been transfered successfully."
+msgstr "Filen har överförts utan fel."
+
+#: ../src/gossip-ft-dialog.c:539
+msgid "Transferring file"
+msgstr "Överför fil"
+
+#: ../src/gossip-ft-dialog.c:545
+msgid "Please wait while the file is transferred"
+msgstr "Vänta under tiden filen överförs"
+
+#: ../src/gossip-ft-dialog.c:615
+#, c-format
+msgid "%s would like to send you a file"
+msgstr "%s vill skicka en fil till dig"
+
+#: ../src/gossip-ft-dialog.c:617
+msgid "Someone would like to send you a file"
+msgstr "Någon vill skicka en fil till dig"
+
+#: ../src/gossip-ft-dialog.c:620
+#: ../ui/file-transfer.glade.h:2
+msgid "Do you want to accept this file?"
+msgstr "Vill du acceptera denna fil?"
+
+#: ../src/gossip-ft-dialog.c:623
+#, c-format
+msgid "Attempting to send file to %s"
+msgstr "Försöker att skicka fil till %s"
+
+#: ../src/gossip-ft-dialog.c:625
+msgid "Attempting to send file"
+msgstr "Försöker att skicka fil"
+
+#: ../src/gossip-ft-dialog.c:628
+msgid "Please wait while the other participant responds"
+msgstr "Vänta tills dess att andra deltagare svarar"
+
+#: ../src/gossip-ft-dialog.c:751
+msgid "Select a file"
+msgstr "Välj en fil"
+
 #: ../src/gossip-group-chat.c:472
 msgid "Connecting..."
 msgstr "Ansluter..."
@@ -1418,10 +1494,6 @@ msgstr "_Flikar"
 #: ../ui/file-transfer.glade.h:1
 msgid "Contact ID:"
 msgstr "Kontakt-id:"
-
-#: ../ui/file-transfer.glade.h:2
-msgid "Do you want to accept this file?"
-msgstr "Vill du acceptera denna fil?"
 
 #: ../ui/file-transfer.glade.h:3
 msgid "File Transfer"
@@ -2077,28 +2149,6 @@ msgstr "inställningar för msn-konto"
 
 #~ msgid "The chat room you tried to join requires a password."
 #~ msgstr "Chattrummet du försökte gå in i kräver ett lösenord."
-#~ msgid "New file transfer request from %s"
-#~ msgstr "Ny filöverföringsförfrågan från %s"
-#~ msgid "The file \"%s\" has been transfered successfully."
-#~ msgstr "Filen \"%s\" har överförts."
-#~ msgid "File transfer complete"
-#~ msgstr "Filöverföringen är färdig"
-#~ msgid "Your file transfer offer declined."
-#~ msgstr "Ditt erbjudande om filöverföring nekades."
-#~ msgid "The other user decided not to continue."
-#~ msgstr "Den andra användaren beslöts sig för att inte fortsätta."
-#~ msgid "Unable to complete the file transfer."
-#~ msgstr "Kunde inte färdigställa filöverföringen."
-#~ msgid "Unable to start the file transfer."
-#~ msgstr "Kunde inte starta filöverföringen."
-#~ msgid "File transfer is not supported by both parties."
-#~ msgstr "Filöverföring stöds inte av båda parter."
-#~ msgid "An unknown error occurred during file transfer."
-#~ msgstr "Ett okänt fel inträffade under filöverföringen."
-#~ msgid "%s would like to send you a file."
-#~ msgstr "%s vill skicka en fil till dig."
-#~ msgid "Someone would like to send you a file."
-#~ msgstr "Någon vill skicka en fil till dig."
 #~ msgid "Save file as..."
 #~ msgstr "Spara filen som..."
 #~ msgid "File name:"
