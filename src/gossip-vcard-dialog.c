@@ -476,14 +476,14 @@ vcard_dialog_birthday_button_popup_cb (GossipPopupButton *popup_button,
 	gtk_button_box_set_layout (GTK_BUTTON_BOX (bbox), GTK_BUTTONBOX_END);
 	gtk_box_pack_start (GTK_BOX (vbox), bbox, FALSE, FALSE, 0);
 
-	button = gtk_button_new_with_label (_("Cancel"));
+	button = gtk_button_new_with_label (GTK_STOCK_CANCEL);
 	gtk_container_add (GTK_CONTAINER (bbox), button);
 	g_signal_connect (button,
 			  "clicked",
 			  G_CALLBACK (vcard_dialog_birthday_cancel_clicked_cb),
 			  popup_button);
 
-	button = gtk_button_new_with_label (_("OK"));
+	button = gtk_button_new_with_label (GTK_STOCK_OK);
 	gtk_container_add (GTK_CONTAINER (bbox), button);
 	g_signal_connect (button, "clicked",
 			  G_CALLBACK (vcard_dialog_birthday_ok_clicked_cb),

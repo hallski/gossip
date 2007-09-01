@@ -818,7 +818,10 @@ new_chatroom_dialog_browse_cb (GossipChatroomProvider  *provider,
 				      GTK_STOCK_FIND,
 				      GTK_ICON_SIZE_BUTTON); 
 
-	str = g_strdup_printf (_("Found %d conference rooms"), g_list_length (rooms));
+	str = g_strdup_printf (ngettext ("Found %d conference room", 
+					 "Found %d conference rooms", 
+					 g_list_length (rooms)), 
+			       g_list_length (rooms));
 	gtk_label_set_text (GTK_LABEL (dialog->label_status), str);
 	g_free (str);
 

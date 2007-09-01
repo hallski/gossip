@@ -1,3 +1,15 @@
+2007-09-01  Martyn Russell  <martyn@imendio.com>
+
+	Patch from Jordi Mallach:
+	
+	* src/gossip-new-chatroom-dialog.c:
+	(new_chatroom_dialog_browse_cb): Use ngettext() as needed.
+
+	* src/gossip-vcard-dialog.c:
+	(vcard_dialog_birthday_button_popup_cb): Use GTK stock strings.
+	
+	* ui/main.glade: Fix typo, to unify nearly identical strings.
+
 2007-08-19  Martyn Russell  <martyn@imendio.com>
 
 	* Release 0.27.

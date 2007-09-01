@@ -5143,7 +5143,7 @@ You can also use the name of a group to show only contacts in a specific group.<
 		      <child>
 			<widget class="GtkLabel" id="label_no_account_blurb">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">To add a new account, you can click on the 'Add' button and a new entry will be created for you to started configuring.
+			  <property name="label" translatable="yes">To add a new account, you can click on the 'Add' button and a new entry will be created for you to start configuring.
 
 If you do not want to add an account, simply click on the account you want to configure in the list on the left.</property>
 			  <property name="use_underline">False</property>
