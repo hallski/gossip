@@ -44,7 +44,7 @@ typedef struct _GossipGroupChatClass GossipGroupChatClass;
 typedef struct _GossipGroupChatPriv  GossipGroupChatPriv;
 
 struct _GossipGroupChat {
-	GossipChat parent;
+	GossipChat           parent;
 
 	GossipGroupChatPriv *priv;
 };
@@ -60,8 +60,10 @@ GossipChatroomId gossip_group_chat_get_chatroom_id       (GossipGroupChat       
 GossipChatroomProvider *
 		 gossip_group_chat_get_chatroom_provider (GossipGroupChat        *group_chat);
 GossipChatroom * gossip_group_chat_get_chatroom          (GossipGroupChat        *group_chat);
+GossipContact *  gossip_group_chat_get_selected_contact  (GossipGroupChat        *group_chat);
 void             gossip_group_chat_set_topic             (GossipGroupChat        *group_chat);
 void             gossip_group_chat_set_nick              (GossipGroupChat        *group_chat);
+void             gossip_group_chat_kick                  (GossipGroupChat        *group_chat);
 
 G_END_DECLS
 

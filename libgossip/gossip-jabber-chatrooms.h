@@ -54,6 +54,10 @@ void           gossip_jabber_chatrooms_change_nick         (GossipJabberChatroom
 							    const gchar           *new_nick);
 void           gossip_jabber_chatrooms_leave               (GossipJabberChatrooms *chatrooms,
 							    GossipChatroomId       id);
+void           gossip_jabber_chatrooms_kick                (GossipJabberChatrooms *chatrooms,
+							    GossipChatroomId       id,
+							    GossipContact         *contact,
+							    const gchar           *reason);
 GossipChatroom *
 	       gossip_jabber_chatrooms_find_by_id          (GossipJabberChatrooms *chatrooms,
 							    GossipChatroomId       id);

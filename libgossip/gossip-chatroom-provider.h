@@ -87,6 +87,10 @@ struct _GossipChatroomProviderIface {
 					     const gchar            *new_nick);
 	void             (*leave)           (GossipChatroomProvider *provider,
 					     GossipChatroomId        id);
+	void             (*kick)            (GossipChatroomProvider *provider,
+					     GossipChatroomId        id,
+					     GossipContact          *contact,
+					     const gchar            *reason);
 	GossipChatroom * (*find_by_id)      (GossipChatroomProvider *provider,
 					     GossipChatroomId        id);
 	GossipChatroom * (*find)            (GossipChatroomProvider *provider,
@@ -129,6 +133,10 @@ void         gossip_chatroom_provider_change_nick        (GossipChatroomProvider
 							  const gchar            *new_nick);
 void         gossip_chatroom_provider_leave              (GossipChatroomProvider *provider,
 							  GossipChatroomId        id);
+void         gossip_chatroom_provider_kick               (GossipChatroomProvider *provider,
+							  GossipChatroomId        id,
+							  GossipContact          *contact,
+							  const gchar            *reason);
 GossipChatroom *
 	     gossip_chatroom_provider_find_by_id         (GossipChatroomProvider *provider,
 							  GossipChatroomId        id);

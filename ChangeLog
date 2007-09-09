@@ -1,5 +1,21 @@
 2007-09-09  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-chatroom-provider.[ch]: Add _kick() function
+	and "chatroom-kicked" signal.
+	
+	* libgossip/gossip-jabber.c:
+	* libgossip/gossip-jabber-chatrooms.[ch]: Add _kick() function and
+	recognise when we have been kicked from the presence message we
+	receive. 
+	
+	* src/gossip-chat-window.c:
+	* src/gossip-group-chat.c: 
+	* ui/chat.glade: Added a menu item which launches a dialog when
+	kicking a user based on the selection from the contact list in the
+	chat window. Also did some small clean ups. Fixes bug #475143.
+
+2007-09-09  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-log.c: Fixed the searching for text in log
 	files. We weren't looking in the right directories in the first
 	place (more telepathy code removed). Also patched a leak were we
