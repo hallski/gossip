@@ -1,3 +1,13 @@
+2007-09-09  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-log.c: Fixed the searching for text in log
+	files. We weren't looking in the right directories in the first
+	place (more telepathy code removed). Also patched a leak were we
+	wouldn't ref the contact used in search hits returned but would
+	unref them when freeing the hit. Fixes bug #475061.
+	
+	* src/gossip-log-window.c: Added some debugging.
+
 2007-09-01  Martyn Russell  <martyn@imendio.com>
 
 	Patch from Jordi Mallach:

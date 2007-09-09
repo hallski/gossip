@@ -185,8 +185,6 @@ static void            log_get_all_log_files_in_directory      (const gchar     
 								GList                **files);
 static void            log_get_all_log_files_for_account_dir   (const gchar           *account_dir,
 								GList                **files);
-static void            log_get_all_log_files_for_type_dir      (const gchar           *type_dir,
-								GList                **files);
 static GossipAccount * log_get_account_from_filename           (GossipLogManager      *manager,
 								const gchar           *filename);
 static gchar *         log_get_date_from_filename              (const gchar           *filename);
@@ -289,11 +287,14 @@ gossip_log_manager_new (GossipSession *session)
 
 	/* We only support this when running GNOME. */
 #ifdef HAVE_GNOME
+
 	/* Check for new log protocol version, and if so we fix the
 	 * differences here.
 	 */
 	version = log_check_version ();
-	if (version == LOG_VERSION_0 || version == LOG_VERSION_1) {
+
+	if (version == LOG_VERSION_0 || 
+	    version == LOG_VERSION_1) {
 		GDir        *dir;
 		gchar       *log_directory;
 		const gchar *basename;
@@ -694,9 +695,11 @@ log_check_version (void)
 		g_chmod (filename, LOG_FILE_CREATE_MODE);
 		g_free (filename);
 
+
 		/* There is a bug with log version 1.0, the version file was
 		 * not created when gossip creates a new log directory.
-		 * Here we try to guess if we have version_0 or version_1 */
+		 * Here we try to guess if we have version_0 or version_1
+		 */
 		dir = g_dir_open (log_directory, 0, NULL);
 		if (!dir) {
 			gossip_debug (DEBUG_DOMAIN, "Could not open directory:'%s'",
@@ -986,7 +989,8 @@ log_get_all_log_files_for_chatrooms_dir (const gchar  *chatrooms_dir,
 }
 
 static void
-log_get_all_log_files_in_directory (const gchar *directory, GList **files)
+log_get_all_log_files_in_directory (const gchar  *directory, 
+				    GList       **files)
 {
 	GDir        *dir;
 	const gchar *name;
@@ -1054,36 +1058,6 @@ log_get_all_log_files_for_account_dir (const gchar  *account_dir,
 	g_dir_close (dir);
 }
 
-static void
-log_get_all_log_files_for_type_dir (const gchar  *type_dir,
-				    GList       **files)
-{
-	GDir        *dir;
-	const gchar *name;
-	gchar       *path;
-
-	dir = g_dir_open (type_dir, 0, NULL);
-	if (!dir) {
-		gossip_debug (DEBUG_DOMAIN, "Could not open directory:'%s'", type_dir);
-		return;
-	}
-
-	while ((name = g_dir_read_name (dir)) != NULL) {
-		path = g_build_filename (type_dir, name, NULL);
-
-		if (!g_file_test (path, G_FILE_TEST_IS_DIR)) {
-			g_free (path);
-			continue;
-		}
-
-		log_get_all_log_files_for_account_dir (path, files);
-
-		g_free (path);
-	}
-
-	g_dir_close (dir);
-}
-
 static gboolean
 log_get_all_log_files (GList **files)
 {
@@ -1110,7 +1084,7 @@ log_get_all_log_files (GList **files)
 
 	while ((name = g_dir_read_name (dir)) != NULL) {
 		account_dir = g_build_filename (log_directory, name, NULL);
-		log_get_all_log_files_for_type_dir (account_dir, files);
+		log_get_all_log_files_for_account_dir (account_dir, files);
 		g_free (account_dir);
 	}
 
@@ -2172,6 +2146,7 @@ gossip_log_search_new (GossipLogManager *manager,
 
 		/* FIXME: Handle chatrooms */
 		if (strstr (filename, LOG_DIR_CHATROOMS)) {
+			gossip_debug (DEBUG_DOMAIN, "Ignoring chatroom filename:'%s'", filename);
 			continue;
 		}
 
@@ -2190,6 +2165,7 @@ gossip_log_search_new (GossipLogManager *manager,
 		if (strstr (contents_casefold, text_casefold)) {
 			GossipLogSearchHit *hit;
 			GossipAccount      *account;
+			GossipContact      *contact;
 			gchar              *contact_id;
 
 			account = log_get_account_from_filename (manager, filename);
@@ -2202,23 +2178,31 @@ gossip_log_search_new (GossipLogManager *manager,
 			}
 
 			contact_id = log_get_contact_id_from_filename (filename);
+			contact = gossip_contact_manager_find (contact_manager, 
+							       account, 
+							       contact_id);
+			g_free (contact_id);
+
+			if (!contact) {
+				/* FIXME: What do we do here, do we
+				 * create a new contact explicitly for
+				 * this log entry?
+				 */
+				continue;
+			}
 
 			hit = g_new0 (GossipLogSearchHit, 1);
 
 			hit->date = log_get_date_from_filename (filename);
 			hit->filename = g_strdup (filename);
 			hit->account = g_object_ref (account);
-			hit->contact = gossip_contact_manager_find (contact_manager, 
-								    account,
-								    contact_id);
+			hit->contact = g_object_ref (contact);
 
 			hits = g_list_append (hits, hit);
 
 			gossip_debug (DEBUG_DOMAIN, 
 				      "Found text:'%s' in file:'%s' on date:'%s'...",
 				      text, hit->filename, hit->date);
-
-			g_free (contact_id);
 		}
 
 		g_free (contents_casefold);

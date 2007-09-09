@@ -371,6 +371,8 @@ log_window_find_populate (GossipLogWindow *window,
 	GtkListStore       *store;
 	GtkTreeIter         iter;
 
+	gossip_debug (DEBUG_DOMAIN, "Clearing search results treeview/textview");
+		
 	view = GTK_TREE_VIEW (window->treeview_find);
 	model = gtk_tree_view_get_model (view);
 	selection = gtk_tree_view_get_selection (view);
@@ -384,11 +386,14 @@ log_window_find_populate (GossipLogWindow *window,
 
 	if (G_STR_EMPTY (search_criteria)) {
 		/* Just clear the search. */
+		gossip_debug (DEBUG_DOMAIN, "No search results found");
 		return;
 	}
 
+	gossip_debug (DEBUG_DOMAIN, "Starting search...");
 	hits = gossip_log_search_new (window->log_manager, search_criteria);
 
+	gossip_debug (DEBUG_DOMAIN, "Adding %d hits", g_list_length (hits));
 	for (l = hits; l; l = l->next) {
 		const gchar *date;
 		gchar       *date_readable;
@@ -521,12 +526,14 @@ log_window_button_find_clicked_cb (GtkWidget       *widget,
 
 	/* Don't find the same crap again */
 	if (window->last_find && strcmp (window->last_find, str) == 0) {
+		gossip_debug (DEBUG_DOMAIN, "Not searching for:'%s' in all log files (same as last search)", str);
 		return;
 	}
 
 	g_free (window->last_find);
 	window->last_find = g_strdup (str);
 
+	gossip_debug (DEBUG_DOMAIN, "Searching for:'%s' in all log files", str);
 	log_window_find_populate (window, str);
 }
 
