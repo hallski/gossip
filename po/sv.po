@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-08-20 00:21+0200\n"
-"PO-Revision-Date: 2007-08-20 00:22+0100\n"
+"POT-Creation-Date: 2007-09-10 20:00+0200\n"
+"PO-Revision-Date: 2007-09-10 20:01+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -250,47 +250,47 @@ msgstr[1] "Utstötta"
 msgid "No affiliation"
 msgstr "Ingen anknytning"
 
-#: ../libgossip/gossip-chatroom-provider.c:341
+#: ../libgossip/gossip-chatroom-provider.c:370
 msgid "The chat room you tried to join requires a password. You either failed to supply a password or the password you tried was incorrect."
 msgstr "Chattrummet som du försöker att gå in i kräver ett lösenord. Du misslyckades antingen med att ange ett lösenord eller att lösenordet som du angav var felaktigt."
 
-#: ../libgossip/gossip-chatroom-provider.c:346
+#: ../libgossip/gossip-chatroom-provider.c:375
 msgid "You have been banned from this chatroom."
 msgstr "Du har blivit bannlyst från det här chattrummet."
 
-#: ../libgossip/gossip-chatroom-provider.c:350
+#: ../libgossip/gossip-chatroom-provider.c:379
 msgid "The conference room you tried to join could not be found."
 msgstr "Konferensrummet du försökte gå in på kunde inte hittas."
 
-#: ../libgossip/gossip-chatroom-provider.c:354
+#: ../libgossip/gossip-chatroom-provider.c:383
 msgid "Chatroom creation is restricted on this server."
 msgstr "Skapandet av chattrum på det här servern är begränsat."
 
-#: ../libgossip/gossip-chatroom-provider.c:358
+#: ../libgossip/gossip-chatroom-provider.c:387
 msgid "Chatroom reserved nick names must be used on this server."
 msgstr "Reserverade smeknamn i chattrummet måste användas på det här servern."
 
-#: ../libgossip/gossip-chatroom-provider.c:362
+#: ../libgossip/gossip-chatroom-provider.c:391
 msgid "You are not on the chatroom's members list."
 msgstr "Du finns inte med på chattrummets medlemslista."
 
-#: ../libgossip/gossip-chatroom-provider.c:366
+#: ../libgossip/gossip-chatroom-provider.c:395
 msgid "The nickname you have chosen is already in use."
 msgstr "Smeknamnet du har valt är upptaget."
 
-#: ../libgossip/gossip-chatroom-provider.c:370
+#: ../libgossip/gossip-chatroom-provider.c:399
 msgid "The maximum number of users for this chatroom has been reached."
 msgstr "Det maximala antalet användare för det här chattrummet har uppnåtts."
 
-#: ../libgossip/gossip-chatroom-provider.c:374
+#: ../libgossip/gossip-chatroom-provider.c:403
 msgid "The remote conference server did not respond in a sensible time."
 msgstr "Fjärrkonferensservern svarade inte inom en rimlig tid."
 
-#: ../libgossip/gossip-chatroom-provider.c:378
+#: ../libgossip/gossip-chatroom-provider.c:407
 msgid "An unknown error occurred, check your details are correct."
 msgstr "Ett okänt fel har inträffat, kontrollera att dina detaljer är korrekta."
 
-#: ../libgossip/gossip-chatroom-provider.c:382
+#: ../libgossip/gossip-chatroom-provider.c:411
 msgid "Joining the chatroom was canceled."
 msgstr "Gå in i chattrummet avbröts."
 
@@ -376,60 +376,60 @@ msgstr "Den här funktionen är inte implementerad"
 msgid "The remote service timed out"
 msgstr "Tidsgränsen för fjärrtjänsten överstegs"
 
-#: ../libgossip/gossip-jabber.c:529
+#: ../libgossip/gossip-jabber.c:533
 msgid "new account"
 msgstr "nytt konto"
 
-#: ../libgossip/gossip-jabber.c:530
+#: ../libgossip/gossip-jabber.c:534
 msgid "Home"
 msgstr "Hemma"
 
-#: ../libgossip/gossip-jabber.c:1378
-#: ../libgossip/gossip-jabber.c:1517
+#: ../libgossip/gossip-jabber.c:1382
+#: ../libgossip/gossip-jabber.c:1521
 msgid "Couldn't send message!"
 msgstr "Kunde inte sända meddelande!"
 
-#: ../libgossip/gossip-jabber.c:1464
+#: ../libgossip/gossip-jabber.c:1468
 msgid "Connection could not be opened"
 msgstr "Anslutning kunde inte öppnas"
 
-#: ../libgossip/gossip-jabber.c:3844
+#: ../libgossip/gossip-jabber.c:3867
 msgid "An unknown error occurred."
 msgstr "Ett okänt fel inträffade."
 
-#: ../libgossip/gossip-jabber.c:3848
+#: ../libgossip/gossip-jabber.c:3871
 msgid "Connection refused."
 msgstr "Anslutning vägrades."
 
-#: ../libgossip/gossip-jabber.c:3851
+#: ../libgossip/gossip-jabber.c:3874
 msgid "Server address could not be resolved."
 msgstr "Serverns address kunde inte slås upp."
 
-#: ../libgossip/gossip-jabber.c:3854
+#: ../libgossip/gossip-jabber.c:3877
 msgid "Connection timed out."
 msgstr "Anslutning timade ut."
 
-#: ../libgossip/gossip-jabber.c:3857
+#: ../libgossip/gossip-jabber.c:3880
 msgid "Authentication failed."
 msgstr "Autentisering misslyckades."
 
-#: ../libgossip/gossip-jabber.c:3860
+#: ../libgossip/gossip-jabber.c:3883
 msgid "The username you are trying already exists."
 msgstr "Användarnamnet du försöker använda existerar redan."
 
-#: ../libgossip/gossip-jabber.c:3863
+#: ../libgossip/gossip-jabber.c:3886
 msgid "The username you are trying is not valid."
 msgstr "Användarnamnet du försöker använda är inte giltigt."
 
-#: ../libgossip/gossip-jabber.c:3866
+#: ../libgossip/gossip-jabber.c:3889
 msgid "This feature is unavailable."
 msgstr "Denna funktion är inte tillgänglig."
 
-#: ../libgossip/gossip-jabber.c:3869
+#: ../libgossip/gossip-jabber.c:3892
 msgid "This feature is unauthorized."
 msgstr "Denna funktion är inte auktoriserad."
 
-#: ../libgossip/gossip-jabber.c:3872
+#: ../libgossip/gossip-jabber.c:3895
 msgid "A specific protocol error occurred that was unexpected."
 msgstr "Ett oväntat specifikt protokollfel inträffade."
 
@@ -556,6 +556,7 @@ msgid "<b>No Account Selected</b>"
 msgstr "<b>Inget konto valt</b>"
 
 #: ../src/gossip-accounts-dialog.c:386
+#: ../ui/main.glade.h:100
 msgid ""
 "To add a new account, you can click on the 'Add' button and a new entry will be created for you to start configuring.\n"
 "\n"
@@ -786,27 +787,27 @@ msgstr "Acceptera"
 msgid "Decline"
 msgstr "Neka"
 
-#: ../src/gossip-chat-window.c:740
-#: ../src/gossip-chat-window.c:770
+#: ../src/gossip-chat-window.c:748
+#: ../src/gossip-chat-window.c:778
 #: ../ui/main.glade.h:64
 msgid "New Message"
 msgid_plural "New Messages"
 msgstr[0] "Nytt meddelande"
 msgstr[1] "Nya meddelanden"
 
-#: ../src/gossip-chat-window.c:746
+#: ../src/gossip-chat-window.c:754
 msgid "Chat Room"
 msgstr "Chattrum"
 
-#: ../src/gossip-chat-window.c:751
-#: ../src/gossip-chat-window.c:774
+#: ../src/gossip-chat-window.c:759
+#: ../src/gossip-chat-window.c:782
 #, c-format
 msgid "Conversation"
 msgid_plural "Conversations (%d)"
 msgstr[0] "Samtal"
 msgstr[1] "Samtal (%d)"
 
-#: ../src/gossip-chat-window.c:1392
+#: ../src/gossip-chat-window.c:1446
 msgid "Typing a message."
 msgstr "Skriver ett meddelande."
 
@@ -908,7 +909,7 @@ msgid "Email contact"
 msgstr "E-posta kontakt"
 
 #: ../src/gossip-contact-list.c:368
-#: ../ui/chat.glade.h:30
+#: ../ui/chat.glade.h:31
 #: ../ui/main.glade.h:151
 msgid "_View Previous Conversations"
 msgstr "_Visa tidigare samtal"
@@ -1029,62 +1030,74 @@ msgstr "Vänta tills dess att andra deltagare svarar"
 msgid "Select a file"
 msgstr "Välj en fil"
 
-#: ../src/gossip-group-chat.c:472
+#: ../src/gossip-group-chat.c:478
 msgid "Connecting..."
 msgstr "Ansluter..."
 
 #. FIXME: Need special case for nickname to put an
 #. * entry in the chat view and to request a new nick.
 #.
-#: ../src/gossip-group-chat.c:539
+#: ../src/gossip-group-chat.c:545
 msgid "Retry connection"
 msgstr "Återanslut"
 
 #. i18n: An event, as in "has now been connected".
-#: ../src/gossip-group-chat.c:567
+#: ../src/gossip-group-chat.c:573
 #: ../src/gossip-private-chat.c:612
 msgid "Connected"
 msgstr "Ansluten"
 
-#: ../src/gossip-group-chat.c:622
+#: ../src/gossip-group-chat.c:627
 #: ../src/gossip-private-chat.c:638
 msgid "Disconnected"
 msgstr "Ifrånkopplad"
 
 #. Send event to chat window
-#: ../src/gossip-group-chat.c:825
+#: ../src/gossip-group-chat.c:830
 #, c-format
 msgid "Invited %s to join this chat conference."
 msgstr "Inbjöd %s till att gå med i chattkonferens."
 
-#: ../src/gossip-group-chat.c:1117
+#: ../src/gossip-group-chat.c:908
 msgid "<b>Topic:</b>"
 msgstr "<b>Ämne:</b>"
 
-#: ../src/gossip-group-chat.c:1403
+#: ../src/gossip-group-chat.c:1095
+msgid "You have been kicked from this room"
+msgstr "Du har blivit utsparkad från det här chattrummet"
+
+#: ../src/gossip-group-chat.c:1220
 #, c-format
 msgid "%s has set the topic: %s"
 msgstr "%s har satt ämnet: %s"
 
-#: ../src/gossip-group-chat.c:1548
+#: ../src/gossip-group-chat.c:1406
 msgid "Enter the new topic you want to set for this room:"
 msgstr "Ange det nya ämnet som du vill ställa in för det här rummet:"
 
-#: ../src/gossip-group-chat.c:1562
+#: ../src/gossip-group-chat.c:1420
 msgid "Enter the new nickname you want to be know by:"
 msgstr "Ange det nya smeknamnet som du vill bli känd som:"
 
-#: ../src/gossip-group-chat.c:1724
+#: ../src/gossip-group-chat.c:1433
+msgid "What reason do you want to give for removing this user from the room?"
+msgstr "Vilken anledning vill du ge för att ta bort denna användare från chattrummet?"
+
+#: ../src/gossip-group-chat.c:1434
+msgid "You have been removed from the room by an administrator."
+msgstr "Du har blivit borttagen från det här chattrummet av en administratör."
+
+#: ../src/gossip-group-chat.c:1808
 #, c-format
 msgid "%s has joined the room"
 msgstr "%s har gått in i rummet"
 
-#: ../src/gossip-group-chat.c:1761
+#: ../src/gossip-group-chat.c:1845
 #, c-format
 msgid "%s has left the room"
 msgstr "%s har lämnat rummet"
 
-#: ../src/gossip-group-chat.c:2109
+#: ../src/gossip-group-chat.c:2193
 #, c-format
 msgid "Topic: %s"
 msgstr "Ämne: %s"
@@ -1093,15 +1106,15 @@ msgstr "Ämne: %s"
 msgid "Do not show this again"
 msgstr "Visa inte det här igen"
 
-#: ../src/gossip-log-window.c:474
+#: ../src/gossip-log-window.c:479
 msgid "Account"
 msgstr "Konto"
 
-#: ../src/gossip-log-window.c:481
+#: ../src/gossip-log-window.c:486
 msgid "Conversation With"
 msgstr "Samtal med"
 
-#: ../src/gossip-log-window.c:491
+#: ../src/gossip-log-window.c:496
 msgid "Date"
 msgstr "Datum"
 
@@ -1181,14 +1194,16 @@ msgstr "Beskrivning"
 
 #: ../src/gossip-new-chatroom-dialog.c:821
 #, c-format
-msgid "Found %d conference rooms"
-msgstr "Hittade %d konferensrum"
+msgid "Found %d conference room"
+msgid_plural "Found %d conference rooms"
+msgstr[0] "Hittade %d konferensrum"
+msgstr[1] "Hittade %d konferensrum"
 
-#: ../src/gossip-new-chatroom-dialog.c:857
+#: ../src/gossip-new-chatroom-dialog.c:860
 msgid "Browsing for conference rooms, please wait..."
 msgstr "Bläddrar efter konferensrum, vänta..."
 
-#: ../src/gossip-new-chatroom-dialog.c:901
+#: ../src/gossip-new-chatroom-dialog.c:904
 msgid "Browsing cancelled!"
 msgstr "Bläddring avbröts!"
 
@@ -1350,14 +1365,6 @@ msgstr "Välj din avatarbild"
 msgid "No Image"
 msgstr "Ingen bild"
 
-#: ../src/gossip-vcard-dialog.c:479
-msgid "Cancel"
-msgstr "Avbryt"
-
-#: ../src/gossip-vcard-dialog.c:486
-msgid "OK"
-msgstr "OK"
-
 #: ../src/gossip-vcard-dialog.c:739
 msgid "The server does not seem to be responding."
 msgstr "Servern verkar inte svara."
@@ -1467,27 +1474,31 @@ msgid "_Detach Tab"
 msgstr "_Koppla loss flik"
 
 #: ../ui/chat.glade.h:24
+msgid "_Kick..."
+msgstr "S_parka ut..."
+
+#: ../ui/chat.glade.h:25
 msgid "_Next Tab"
 msgstr "_Nästa flik"
 
-#: ../ui/chat.glade.h:25
+#: ../ui/chat.glade.h:26
 msgid "_Paste"
 msgstr "Klistra _in"
 
-#: ../ui/chat.glade.h:26
+#: ../ui/chat.glade.h:27
 msgid "_Previous Tab"
 msgstr "_Föregående flik"
 
-#: ../ui/chat.glade.h:27
+#: ../ui/chat.glade.h:28
 #: ../ui/main.glade.h:144
 msgid "_Room"
 msgstr "_Rum"
 
-#: ../ui/chat.glade.h:28
+#: ../ui/chat.glade.h:29
 msgid "_Show Contacts"
 msgstr "_Visa kontakter"
 
-#: ../ui/chat.glade.h:29
+#: ../ui/chat.glade.h:30
 msgid "_Tabs"
 msgstr "_Flikar"
 
@@ -1951,16 +1962,6 @@ msgstr "Detta namn kommer att användas för att identifiera dig i chattfönster
 msgid "This name will be used to identify you when new contacts lookup your details"
 msgstr "Detta namn kommer att användas för att identifiera dig när nya kontakter kontrollerar din information"
 
-#: ../ui/main.glade.h:100
-msgid ""
-"To add a new account, you can click on the 'Add' button and a new entry will be created for you to started configuring.\n"
-"\n"
-"If you do not want to add an account, simply click on the account you want to configure in the list on the left."
-msgstr ""
-"För att lägga till ett nytt konto kan du klicka på knappen \"Lägg till\" och en ny post kommer att skapas för dig att börja konfigurera.\n"
-"\n"
-"Om du inte vill lägga till ett konto, kan du helt enkelt klicka på kontot, i listan till vänster, som du vill konfigurera."
-
 #: ../ui/main.glade.h:103
 msgid "Use default name here from the contact's VCard."
 msgstr "Använd standardnamnet här från kontaktens VCard."
@@ -2147,6 +2148,22 @@ msgstr "inställningar för jabberkonto"
 msgid "msn account settings"
 msgstr "inställningar för msn-konto"
 
+#~ msgid "Cancel"
+#~ msgstr "Avbryt"
+#~ msgid "OK"
+#~ msgstr "OK"
+#~ msgid ""
+#~ "To add a new account, you can click on the 'Add' button and a new entry "
+#~ "will be created for you to started configuring.\n"
+#~ "\n"
+#~ "If you do not want to add an account, simply click on the account you "
+#~ "want to configure in the list on the left."
+#~ msgstr ""
+#~ "För att lägga till ett nytt konto kan du klicka på knappen \"Lägg till\" "
+#~ "och en ny post kommer att skapas för dig att börja konfigurera.\n"
+#~ "\n"
+#~ "Om du inte vill lägga till ett konto, kan du helt enkelt klicka på "
+#~ "kontot, i listan till vänster, som du vill konfigurera."
 #~ msgid "The chat room you tried to join requires a password."
 #~ msgstr "Chattrummet du försökte gå in i kräver ett lösenord."
 #~ msgid "Save file as..."
