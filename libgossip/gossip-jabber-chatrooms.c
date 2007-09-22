@@ -776,11 +776,11 @@ jabber_chatrooms_create_reserved_room (JabberChatroom *room)
 	
         child = lm_message_node_add_child (node, "field", NULL);
         lm_message_node_set_attributes (child, "var", "muc#roomconfig_passwordprotectedroom", NULL);
-        lm_message_node_add_child (child, "value", password ? "1" : "0");
+        lm_message_node_add_child (child, "value", G_STR_EMPTY (password) ? "0" : "1");
 
 	child = lm_message_node_add_child (node, "field", NULL);
 	lm_message_node_set_attributes (child, "var", "muc#roomconfig_roomsecret", NULL);
-	lm_message_node_add_child (child, "value", password ? password : "");
+	lm_message_node_add_child (child, "value", G_STR_EMPTY (password) ? "" : password);
 	
 	/* Finally send */
 	lm_connection_send (room->connection, m,  NULL);

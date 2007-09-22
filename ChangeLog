@@ -1,5 +1,13 @@
 2007-09-22  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-jabber-chatrooms.c: Fixed a bug where we would
+	create a password protected room if the password string was "".
+	
+	* src/gossip-chatrooms-window.c: Add a column to show if a room is
+	password protected.
+
+2007-09-22  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-chatroom-provider.[ch]: 
 	* libgossip/gossip-jabber-chatrooms.[ch]: 
 	* libgossip/gossip-jabber.c: Add function to get all contacts in a
