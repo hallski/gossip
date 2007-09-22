@@ -1,5 +1,12 @@
 2007-09-22  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-notify.c: Improve the notification messages and make
+	sure we escape them before using them with libnotify. Added
+	support for file transfer notifications too. Fixes bug #475882
+	(Alex Jones).
+
+2007-09-22  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-jabber-chatrooms.c: Fixed a bug where we would
 	create a password protected room if the password string was "".
 	
