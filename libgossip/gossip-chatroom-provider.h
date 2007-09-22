@@ -91,6 +91,8 @@ struct _GossipChatroomProviderIface {
 					     GossipChatroomId        id,
 					     GossipContact          *contact,
 					     const gchar            *reason);
+	GSList *         (*get_contacts)    (GossipChatroomProvider *provider,
+					     GossipChatroomId        id);
 	GossipChatroom * (*find_by_id)      (GossipChatroomProvider *provider,
 					     GossipChatroomId        id);
 	GossipChatroom * (*find)            (GossipChatroomProvider *provider,
@@ -137,6 +139,8 @@ void         gossip_chatroom_provider_kick               (GossipChatroomProvider
 							  GossipChatroomId        id,
 							  GossipContact          *contact,
 							  const gchar            *reason);
+GSList *     gossip_chatroom_provider_get_contacts       (GossipChatroomProvider *provider,
+							  GossipChatroomId        id);
 GossipChatroom *
 	     gossip_chatroom_provider_find_by_id         (GossipChatroomProvider *provider,
 							  GossipChatroomId        id);

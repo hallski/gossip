@@ -604,6 +604,7 @@ jabber_chatrooms_presence_handler (LmMessageHandler      *handler,
 		contact = jabber_chatrooms_get_contact (room, jid, NULL);
 		if (gossip_jid_equals (jid, room->jid)) {
 			gossip_debug (DEBUG_DOMAIN, "ID[%d] We have been kicked!", id);
+			gossip_chatroom_set_status (room->chatroom, GOSSIP_CHATROOM_STATUS_INACTIVE);
 			g_signal_emit_by_name (chatrooms->jabber, "chatroom-kicked", id);
 			jabber_chatrooms_close (chatrooms, id);
 		} else {
@@ -1313,6 +1314,23 @@ gossip_jabber_chatrooms_kick (GossipJabberChatrooms *chatrooms,
 	
 	lm_connection_send (chatrooms->connection, m, NULL);
 	lm_message_unref (m);
+}
+
+GSList *
+gossip_jabber_chatrooms_get_contacts (GossipJabberChatrooms *chatrooms, 
+				      GossipChatroomId       id)
+{
+	JabberChatroom *room;
+
+	g_return_val_if_fail (chatrooms != NULL, NULL);
+
+	room = g_hash_table_lookup (chatrooms->room_id_hash,
+				    GINT_TO_POINTER (id));
+	if (!room) {
+		return NULL;
+	}
+
+	return room->contacts;
 }
 
 GossipChatroom *

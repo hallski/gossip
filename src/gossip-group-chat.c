@@ -80,7 +80,6 @@ struct _GossipGroupChatPriv {
 
 	GCompletion            *completion;
 
-	GHashTable             *contacts;
 	GList                  *private_chats;
 
 	guint                   scroll_idle_id;
@@ -1293,15 +1292,6 @@ group_chat_dialog_response_cb (GtkWidget       *dialog,
 									      gossip_chatroom_get_id (priv->chatroom),
 									      str);
 				}
-				else if (strcmp (purpose, "kick") == 0) {
-					GossipContact *contact;
-
-					contact = g_object_get_data (G_OBJECT (dialog), "contact");
-					gossip_chatroom_provider_kick (priv->chatroom_provider,
-								       gossip_chatroom_get_id (priv->chatroom),
-								       contact,
-								       str);
-				}
 			} else {
 				g_warning ("Action for group chat dialog unknown, doing nothing");
 			}
@@ -1399,6 +1389,8 @@ gossip_group_chat_set_topic (GossipGroupChat *group_chat)
 {
 	GossipGroupChatPriv *priv;
 
+	g_return_if_fail (GOSSIP_IS_GROUP_CHAT (group_chat));
+
 	priv = GET_PRIV (group_chat);
 
 	group_chat_dialog_new (group_chat, 
@@ -1413,6 +1405,8 @@ gossip_group_chat_set_nick (GossipGroupChat *group_chat)
 {
 	GossipGroupChatPriv *priv;
 
+	g_return_if_fail (GOSSIP_IS_GROUP_CHAT (group_chat));
+
 	priv = GET_PRIV (group_chat);
 
 	group_chat_dialog_new (group_chat, 
@@ -1422,16 +1416,35 @@ gossip_group_chat_set_nick (GossipGroupChat *group_chat)
 }
 
 void
-gossip_group_chat_kick (GossipGroupChat *group_chat)
+gossip_group_chat_kick (GossipGroupChat *group_chat,
+			GossipContact   *contact)
 {
 	GossipGroupChatPriv *priv;
+	GossipContact       *contact_to_kick = NULL;
+	gchar               *str;
+
+	g_return_if_fail (GOSSIP_IS_GROUP_CHAT (group_chat));
 
 	priv = GET_PRIV (group_chat);
 
-	group_chat_dialog_new (group_chat, 
-			       "kick", 
-			       _("What reason do you want to give for removing this user from the room?"),
-			       _("You have been removed from the room by an administrator."));
+	if (contact) {
+		contact_to_kick = contact;
+	} else {
+		contact_to_kick = gossip_group_chat_get_selected_contact (group_chat);
+	}
+
+	g_return_if_fail (contact_to_kick != NULL);
+
+	str = g_strdup_printf (_("Kicking %s"), 
+			       gossip_contact_get_name (contact_to_kick)); 
+	gossip_chat_view_append_event (GOSSIP_CHAT (group_chat)->view, str);
+	g_free (str);
+
+	gossip_chatroom_provider_kick (priv->chatroom_provider,
+				       gossip_chatroom_get_id (priv->chatroom),
+				       contact_to_kick,
+				       _("You have been removed from the "
+					 "room by an administrator."));
 }
 
 static void
@@ -1603,10 +1616,7 @@ group_chat_cl_find_foreach (GtkTreeModel    *model,
 		return FALSE;
 	}
 
-	gtk_tree_model_get (model,
-			    iter,
-			    COL_CONTACT, &contact,
-			    -1);
+	gtk_tree_model_get (model, iter, COL_CONTACT, &contact, -1);
 
 	equal = gossip_contact_equal (data->contact, contact);
 	g_object_unref (contact);
@@ -2072,6 +2082,42 @@ group_chat_send (GossipGroupChat *chat)
 		gossip_chatroom_provider_change_nick (priv->chatroom_provider,
 						      gossip_chatroom_get_id (priv->chatroom),
 						      nick);
+		handled_command = TRUE;
+	}
+	else if (g_ascii_strncasecmp (msg, "/kick ", 6) == 0 && strlen (msg) > 6) {
+		GSList        *contacts, *l;
+		GossipContact *contact = NULL;
+		const gchar   *nick;
+
+		nick = msg + 6;
+
+		contacts = gossip_chatroom_provider_get_contacts (priv->chatroom_provider,
+								  gossip_chatroom_get_id (priv->chatroom));
+
+		for (l = contacts; l && !contact; l = l->next) {
+			const gchar *name;
+			gchar       *name_caseless;
+			gchar       *nick_caseless;
+			
+			name = gossip_contact_get_name (l->data);
+			name_caseless = g_utf8_casefold (name, -1);
+			nick_caseless = g_utf8_casefold (nick, -1);
+
+			if (strcmp (name_caseless, nick_caseless) == 0) {
+				contact = l->data;
+			}
+
+			g_free (nick_caseless);
+			g_free (name_caseless);
+		}
+		
+		if (contact) {
+			gossip_group_chat_kick (chat, contact);
+		} else {
+			gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, 
+						       _("Nick was not recogized"));
+		}
+
 		handled_command = TRUE;
 	}
 	else if (g_ascii_strncasecmp (msg, "/topic ", 7) == 0 && strlen (msg) > 7) {

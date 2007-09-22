@@ -249,6 +249,21 @@ gossip_chatroom_provider_kick (GossipChatroomProvider *provider,
 	}
 }
 
+GSList *
+gossip_chatroom_provider_get_contacts (GossipChatroomProvider *provider,
+				       GossipChatroomId        id)
+{
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM_PROVIDER (provider), NULL);
+	g_return_val_if_fail (id > 0, NULL);
+
+	if (GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->get_contacts) {
+		return GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->get_contacts (provider,
+										    id);
+	}
+
+	return NULL;
+}
+
 GossipChatroom *
 gossip_chatroom_provider_find_by_id (GossipChatroomProvider *provider,
 				     GossipChatroomId        id)

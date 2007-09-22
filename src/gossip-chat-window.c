@@ -867,6 +867,8 @@ chat_window_update_menu (GossipChatWindow *window)
 		gtk_widget_set_sensitive (priv->menu_conv_insert_smiley, is_connected);
 		gtk_widget_set_sensitive (priv->menu_room_join_new, is_connected);
 		gtk_widget_set_sensitive (priv->menu_room_invite, is_connected);
+		gtk_widget_set_sensitive (priv->menu_room_set_topic, is_connected);
+		gtk_widget_set_sensitive (priv->menu_room_set_nick, is_connected);
 
 		/* We need to block the signal here because all we are
 		 * really trying to do is check or uncheck the menu
@@ -1252,7 +1254,7 @@ chat_window_room_kick_activate_cb (GtkWidget        *menuitem,
 	}
 
 	group_chat = GOSSIP_GROUP_CHAT (priv->current_chat);
-	gossip_group_chat_kick (group_chat);
+	gossip_group_chat_kick (group_chat, NULL);
 }
 
 static void

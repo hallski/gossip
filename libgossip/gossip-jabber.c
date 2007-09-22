@@ -242,6 +242,8 @@ static void             jabber_chatroom_kick                (GossipChatroomProvi
 							     GossipChatroomId            id,
 							     GossipContact              *contact,
 							     const gchar                *reason);
+static GSList *         jabber_chatroom_get_contacts        (GossipChatroomProvider     *provider,
+							     GossipChatroomId            id);
 static GossipChatroom * jabber_chatroom_find_by_id          (GossipChatroomProvider     *provider,
 							     GossipChatroomId            id);
 static GossipChatroom * jabber_chatroom_find                (GossipChatroomProvider     *provider,
@@ -3247,6 +3249,7 @@ jabber_chatroom_init (GossipChatroomProviderIface *iface)
 	iface->change_nick     = jabber_chatroom_change_nick;
 	iface->leave           = jabber_chatroom_leave;
 	iface->kick            = jabber_chatroom_kick;
+	iface->get_contacts    = jabber_chatroom_get_contacts;
 	iface->find_by_id      = jabber_chatroom_find_by_id;
 	iface->find            = jabber_chatroom_find;
 	iface->invite          = jabber_chatroom_invite;
@@ -3370,6 +3373,21 @@ jabber_chatroom_kick (GossipChatroomProvider *provider,
 	priv = GET_PRIV (jabber);
 
 	gossip_jabber_chatrooms_kick (priv->chatrooms, id, contact, reason);
+}
+
+static GSList *
+jabber_chatroom_get_contacts (GossipChatroomProvider *provider,
+			      GossipChatroomId        id)
+{
+	GossipJabber     *jabber;
+	GossipJabberPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_JABBER (provider), NULL);
+
+	jabber = GOSSIP_JABBER (provider);
+	priv = GET_PRIV (jabber);
+
+	return gossip_jabber_chatrooms_get_contacts (priv->chatrooms, id);
 }
 
 static GossipChatroom *

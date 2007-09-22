@@ -1,3 +1,21 @@
+2007-09-22  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-chatroom-provider.[ch]: 
+	* libgossip/gossip-jabber-chatrooms.[ch]: 
+	* libgossip/gossip-jabber.c: Add function to get all contacts in a
+	chatroom and when we get kicked we now set the chatroom state so
+	menus are updated correctly in the chat window. 
+
+	* src/gossip-chat-window.c: Make sure we include updating the set-topic
+	and set-nick menu items when setting sensitive items based on
+	our connected state.
+
+	* src/gossip-group-chat.[ch]: Make it possible to kick someone
+	with the "/kick" command and also don't prompt for a reason - some
+	servers don't even use this so we supply a default. Also use
+	events to let the user know that they are kicking someone for
+	backlog purposes.
+
 2007-09-09  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-chatroom-provider.[ch]: Add _kick() function

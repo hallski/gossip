@@ -58,6 +58,8 @@ void           gossip_jabber_chatrooms_kick                (GossipJabberChatroom
 							    GossipChatroomId       id,
 							    GossipContact         *contact,
 							    const gchar           *reason);
+GSList *       gossip_jabber_chatrooms_get_contacts        (GossipJabberChatrooms *chatrooms, 
+							    GossipChatroomId       id);
 GossipChatroom *
 	       gossip_jabber_chatrooms_find_by_id          (GossipJabberChatrooms *chatrooms,
 							    GossipChatroomId       id);

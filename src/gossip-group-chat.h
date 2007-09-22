@@ -63,7 +63,8 @@ GossipChatroom * gossip_group_chat_get_chatroom          (GossipGroupChat       
 GossipContact *  gossip_group_chat_get_selected_contact  (GossipGroupChat        *group_chat);
 void             gossip_group_chat_set_topic             (GossipGroupChat        *group_chat);
 void             gossip_group_chat_set_nick              (GossipGroupChat        *group_chat);
-void             gossip_group_chat_kick                  (GossipGroupChat        *group_chat);
+void             gossip_group_chat_kick                  (GossipGroupChat        *group_chat,
+							  GossipContact          *contact);
 
 G_END_DECLS
 
