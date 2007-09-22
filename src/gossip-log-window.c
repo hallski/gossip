@@ -72,6 +72,13 @@ typedef struct {
 	GtkWidget        *scrolledwindow_chatrooms;
 	GossipChatView   *chatview_chatrooms;
 
+	GtkWidget        *vbox_links_find;
+	GtkWidget        *entry_links_find;
+	GtkWidget        *button_links_find;
+	GtkWidget        *button_links_open;
+	GtkWidget        *treeview_links;
+
+	gchar            *last_links_find;
 	gchar            *last_find;
 
 	GossipLogManager *log_manager;
@@ -169,6 +176,7 @@ static void            log_window_entry_chatrooms_changed_cb          (GtkWidget
 								       GossipLogWindow  *window);
 static void            log_window_entry_chatrooms_activate_cb         (GtkWidget        *entry,
 								       GossipLogWindow  *window);
+/* Window */
 static void            log_window_destroy_cb                          (GtkWidget        *widget,
 								       GossipLogWindow  *window);
 
@@ -194,6 +202,17 @@ enum {
 	COL_CHATROOMS_NAME,
 	COL_CHATROOMS_POINTER,
 	COL_CHATROOMS_COUNT
+};
+
+enum {
+	COL_LINKS_STATUS,
+	COL_LINKS_ACCOUNT,
+	COL_LINKS_CONTACT,
+	COL_LINKS_CONTACT_NAME,
+	COL_LINKS_DATE,
+	COL_LINKS_DATE_READABLE,
+	COL_LINKS_URL,
+	COL_LINKS_COUNT
 };
 
 /*
@@ -526,7 +545,10 @@ log_window_button_find_clicked_cb (GtkWidget       *widget,
 
 	/* Don't find the same crap again */
 	if (window->last_find && strcmp (window->last_find, str) == 0) {
-		gossip_debug (DEBUG_DOMAIN, "Not searching for:'%s' in all log files (same as last search)", str);
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Not searching for:'%s' in all log files "
+			      "(same as last search)", 
+			      str);
 		return;
 	}
 
@@ -1756,12 +1778,256 @@ log_window_entry_chatrooms_activate_cb (GtkWidget       *entry,
 }
 
 /*
+ * Links
+ */
+static void
+log_window_links_changed_cb (GtkTreeSelection *selection,
+			     GossipLogWindow  *window)
+{
+	GtkTreeView   *view;
+	GtkTreeModel  *model;
+	GtkTreeIter    iter;
+
+	/* Get selected information */
+	view = GTK_TREE_VIEW (window->treeview_links);
+	model = gtk_tree_view_get_model (view);
+
+	if (!gtk_tree_selection_get_selected (selection, NULL, &iter)) {
+		gtk_widget_set_sensitive (window->button_links_open, FALSE);
+		return;
+	}
+
+	gtk_widget_set_sensitive (window->button_links_open, TRUE);
+}
+
+static void
+log_window_links_populate (GossipLogWindow *window,
+			   const gchar     *search_criteria)
+{
+	GossipAccount      *account;
+	GossipContact      *contact;
+
+	GList              *hits;
+	GList              *l;
+	GossipLogSearchHit *hit;
+
+	GtkTreeView        *view;
+	GtkTreeModel       *model;
+	GtkTreeSelection   *selection;
+	GtkListStore       *store;
+	GtkTreeIter         iter;
+
+	gossip_debug (DEBUG_DOMAIN, "Clearing link results treeview");
+		
+	view = GTK_TREE_VIEW (window->treeview_links);
+	model = gtk_tree_view_get_model (view);
+	selection = gtk_tree_view_get_selection (view);
+	store = GTK_LIST_STORE (model);
+
+	gtk_list_store_clear (store);
+
+	gossip_debug (DEBUG_DOMAIN, "Starting link search...");
+	hits = gossip_log_search_links_new (window->log_manager, 
+					    G_STR_EMPTY (search_criteria) ? NULL : search_criteria);
+
+	gossip_debug (DEBUG_DOMAIN, "Adding %d hits", g_list_length (hits));
+	for (l = hits; l; l = l->next) {
+		const gchar *url;
+		const gchar *date;
+		gchar       *date_readable;
+
+		hit = l->data;
+
+		account = gossip_log_search_hit_get_account (hit);
+		contact = gossip_log_search_hit_get_contact (hit);
+
+		/* Protect against invalid data (corrupt or old log files. */
+		if (!account || !contact) {
+			continue;
+		}
+
+		url = gossip_log_search_hit_get_link (hit);
+		date = gossip_log_search_hit_get_date (hit);
+		date_readable = gossip_log_get_date_readable (date);
+
+		gtk_list_store_append (store, &iter);
+		gtk_list_store_set (store, &iter,
+				    COL_LINKS_ACCOUNT, account,
+				    COL_LINKS_CONTACT, contact,
+				    COL_LINKS_CONTACT_NAME, gossip_contact_get_name (contact),
+				    COL_LINKS_DATE, date,
+				    COL_LINKS_DATE_READABLE, date_readable,
+				    COL_LINKS_URL, url,
+				    -1);
+
+		g_free (date_readable);
+	}
+
+	if (hits) {
+		gossip_log_search_free (hits);
+	}
+}
+
+static void
+log_window_links_setup (GossipLogWindow *window)
+{
+	GtkTreeView       *view;
+	GtkTreeModel      *model;
+	GtkTreeSelection  *selection;
+	GtkTreeSortable   *sortable;
+	GtkTreeViewColumn *column;
+	GtkListStore      *store;
+	GtkCellRenderer   *cell;
+	gint               offset;
+
+	view = GTK_TREE_VIEW (window->treeview_links);
+	selection = gtk_tree_view_get_selection (view);
+
+	/* New store */
+	store = gtk_list_store_new (COL_LINKS_COUNT,
+				    GDK_TYPE_PIXBUF,        /* account status */
+				    GOSSIP_TYPE_ACCOUNT,    /* account */
+				    GOSSIP_TYPE_CONTACT,    /* contact */
+				    G_TYPE_STRING,          /* name */
+				    G_TYPE_STRING,          /* date */
+				    G_TYPE_STRING,          /* date_readable */
+				    G_TYPE_STRING);         /* url */
+
+	model = GTK_TREE_MODEL (store);
+	sortable = GTK_TREE_SORTABLE (store);
+
+	gtk_tree_view_set_model (view, model);
+
+	/* Account */
+	column = gtk_tree_view_column_new ();
+
+	cell = gtk_cell_renderer_pixbuf_new ();
+	gtk_tree_view_column_pack_start (column, cell, FALSE);
+	gtk_tree_view_column_set_cell_data_func (column, cell,
+						 (GtkTreeCellDataFunc)
+						 log_window_find_pixbuf_data_func,
+						 window,
+						 NULL);
+
+	cell = gtk_cell_renderer_text_new ();
+	gtk_tree_view_column_pack_start (column, cell, TRUE);
+	gtk_tree_view_column_set_cell_data_func (column, cell,
+						 (GtkTreeCellDataFunc)
+						 log_window_find_text_data_func,
+						 window,
+						 NULL);
+
+	gtk_tree_view_column_set_title (column, _("Account"));
+	gtk_tree_view_append_column (view, column);
+
+	gtk_tree_view_column_set_resizable (column, TRUE);
+	gtk_tree_view_column_set_clickable (column, TRUE);
+
+	/* Who */
+	cell = gtk_cell_renderer_text_new ();
+	g_object_set (cell, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+	offset = gtk_tree_view_insert_column_with_attributes (view, -1, _("Conversation With"),
+							      cell, "text", COL_LINKS_CONTACT_NAME,
+							      NULL);
+
+	column = gtk_tree_view_get_column (view, offset - 1);
+	gtk_tree_view_column_set_sort_column_id (column, COL_LINKS_CONTACT_NAME);
+	gtk_tree_view_column_set_resizable (column, TRUE);
+	gtk_tree_view_column_set_clickable (column, TRUE);
+
+	/* Date */
+	cell = gtk_cell_renderer_text_new ();
+	offset = gtk_tree_view_insert_column_with_attributes (view, -1, _("Date"),
+							      cell, "text", COL_LINKS_DATE_READABLE,
+							      NULL);
+
+	column = gtk_tree_view_get_column (view, offset - 1);
+	gtk_tree_view_column_set_sort_column_id (column, COL_LINKS_DATE);
+	gtk_tree_view_column_set_resizable (column, TRUE);
+	gtk_tree_view_column_set_clickable (column, TRUE);
+
+	/* Link */
+	cell = gtk_cell_renderer_text_new ();
+	g_object_set (cell, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+	offset = gtk_tree_view_insert_column_with_attributes (view, -1, _("Link"),
+							      cell, "text", COL_LINKS_URL,
+							      NULL);
+
+	column = gtk_tree_view_get_column (view, offset - 1);
+	gtk_tree_view_column_set_sort_column_id (column, COL_LINKS_URL);
+	gtk_tree_view_column_set_resizable (column, TRUE);
+	gtk_tree_view_column_set_clickable (column, TRUE);
+
+	/* Set up treeview properties */
+	gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
+	gtk_tree_sortable_set_sort_column_id (sortable,
+					      COL_LINKS_DATE,
+					      GTK_SORT_ASCENDING);
+
+	/* Set up signals */
+	g_signal_connect (selection, "changed",
+			  G_CALLBACK (log_window_links_changed_cb),
+			  window);
+
+	g_object_unref (store);
+}
+
+static void
+log_window_button_links_find_clicked_cb (GtkWidget       *widget,
+					 GossipLogWindow *window)
+{
+	const gchar *str;
+
+	str = gtk_entry_get_text (GTK_ENTRY (window->entry_links_find));
+
+	/* Don't find the same crap again */
+	if (window->last_links_find && strcmp (window->last_links_find, str) == 0) {
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Not searching for:'%s' in all links in all "
+			      "log files (same as last search)", 
+			      str);
+		return;
+	}
+
+	g_free (window->last_links_find);
+	window->last_links_find = g_strdup (str);
+
+	gossip_debug (DEBUG_DOMAIN, "Searching for:'%s' in links in all log files", str);
+	log_window_links_populate (window, str);
+}
+
+static void
+log_window_button_links_open_clicked_cb (GtkWidget       *widget,
+					 GossipLogWindow *window)
+{
+	GtkTreeView      *view;
+	GtkTreeModel     *model;
+	GtkTreeSelection *selection;
+	GtkTreeIter       iter;
+	gchar            *url;
+
+	/* Get selected information */
+	view = GTK_TREE_VIEW (window->treeview_links);
+	model = gtk_tree_view_get_model (view);
+	selection = gtk_tree_view_get_selection (view);
+
+	if (!gtk_tree_selection_get_selected (selection, NULL, &iter)) {
+		return;
+	}
+	
+	gtk_tree_model_get (model, &iter, COL_LINKS_URL, &url, -1);
+	gossip_url_show (url);
+	g_free (url);
+}
+
+/*
  * Other window callbacks
  */
 static void
 log_window_destroy_cb (GtkWidget       *widget,
 		       GossipLogWindow *window)
 {
+	g_free (window->last_links_find);
 	g_free (window->last_find);
 
 	gossip_log_handler_remove
@@ -1828,6 +2094,10 @@ gossip_log_window_show (GossipContact  *contact,
 				       "vbox_chatrooms", &window->vbox_chatrooms,
 				       "treeview_chatrooms", &window->treeview_chatrooms,
 				       "scrolledwindow_chatrooms", &window->scrolledwindow_chatrooms,
+				       "entry_links_find", &window->entry_links_find,
+				       "button_links_find", &window->button_links_find,
+				       "button_links_open", &window->button_links_open,
+				       "treeview_links", &window->treeview_links,
 				       NULL);
 	gossip_glade_connect (glade,
 			      window,
@@ -1840,6 +2110,8 @@ gossip_log_window_show (GossipContact  *contact,
 			      "entry_contacts", "activate", log_window_entry_contacts_activate_cb,
 			      "entry_chatrooms", "changed", log_window_entry_chatrooms_changed_cb,
 			      "entry_chatrooms", "activate", log_window_entry_chatrooms_activate_cb,
+			      "button_links_find", "clicked", log_window_button_links_find_clicked_cb,
+			      "button_links_open", "clicked", log_window_button_links_open_clicked_cb,
 			      NULL);
 
 	g_object_unref (glade);
@@ -1936,6 +2208,10 @@ gossip_log_window_show (GossipContact  *contact,
 	log_window_chatrooms_setup (window);
 	log_window_chatrooms_populate (window);
 
+	/* Links List */
+	log_window_links_setup (window);
+	log_window_links_populate (window, NULL);
+
 	/* Select contact or chatroom */
 	if (contact) {
 		gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook), 1);
@@ -1943,6 +2219,8 @@ gossip_log_window_show (GossipContact  *contact,
 	} else if (chatroom) {
 		gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook), 2);
 		log_window_chatrooms_set_selected (window, chatroom);
+	} else {
+		gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook), 0);
 	}
 
 	gtk_widget_show (window->window);

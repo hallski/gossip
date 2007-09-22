@@ -105,11 +105,14 @@ gboolean          gossip_log_exists_for_chatroom       (GossipChatroom        *c
 /* Searching */
 GList *           gossip_log_search_new                (GossipLogManager      *manager,
 							const gchar           *text);
+GList *           gossip_log_search_links_new          (GossipLogManager      *manager,
+							const gchar           *text);
 void              gossip_log_search_free               (GList                 *hits);
 GossipAccount *   gossip_log_search_hit_get_account    (GossipLogSearchHit    *hit);
 GossipContact *   gossip_log_search_hit_get_contact    (GossipLogSearchHit    *hit);
 const gchar *     gossip_log_search_hit_get_date       (GossipLogSearchHit    *hit);
 const gchar *     gossip_log_search_hit_get_filename   (GossipLogSearchHit    *hit);
+const gchar *     gossip_log_search_hit_get_link       (GossipLogSearchHit    *hit);
 
 G_END_DECLS
 

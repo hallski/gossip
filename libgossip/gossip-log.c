@@ -116,6 +116,7 @@ struct _GossipLogSearchHit {
 	GossipContact *contact;
 	gchar         *filename;
 	gchar         *date;
+	gchar         *link;
 };
 
 typedef struct {
@@ -2216,6 +2217,162 @@ gossip_log_search_new (GossipLogManager *manager,
 	return hits;
 }
 
+GList *
+gossip_log_search_links_new (GossipLogManager *manager,
+			     const gchar      *text)
+{
+	GossipLogManagerPriv *priv;
+	GossipContactManager *contact_manager;
+	GList                *files;
+	GList                *l;
+	const gchar          *filename;
+	gchar                *text_casefold = NULL;
+	gchar                *contents;
+	gchar                *contents_casefold;
+	GList                *hits = NULL;
+
+	g_return_val_if_fail (GOSSIP_IS_LOG_MANAGER (manager), NULL);
+
+	priv = GET_PRIV (manager);
+	
+	if (!G_STR_EMPTY (text)) {
+		text_casefold = g_utf8_casefold (text, -1);
+	}
+
+	if (log_get_all_log_files (&files)) {
+		gossip_debug (DEBUG_DOMAIN, "Found %d log files in total", g_list_length (files));
+	} else {
+		gossip_debug (DEBUG_DOMAIN, "Failed to retrieve all log files");
+	}
+
+	/* Do this here instead of for each file */
+	contact_manager = gossip_session_get_contact_manager (priv->session);
+
+	for (l = files; l; l = l->next) {
+		GMappedFile *file;
+		GArray      *start, *end;
+		gsize        length;
+		gint         num_matches;
+		gint         i;
+
+		filename = l->data;
+
+		/* FIXME: Handle chatrooms */
+		if (strstr (filename, LOG_DIR_CHATROOMS)) {
+			gossip_debug (DEBUG_DOMAIN, "Ignoring chatroom filename:'%s'", filename);
+			continue;
+		}
+
+		file = g_mapped_file_new (filename, FALSE, NULL);
+		if (!file) {
+			continue;
+		}
+
+		length = g_mapped_file_get_length (file);
+		contents = g_mapped_file_get_contents (file);
+
+		contents_casefold = g_utf8_casefold (contents, length);
+
+		g_mapped_file_free (file);
+
+		/* Use Regex to find links */
+		start = g_array_new (FALSE, FALSE, sizeof (gint));
+		end = g_array_new (FALSE, FALSE, sizeof (gint));
+		
+		num_matches = gossip_regex_match (GOSSIP_REGEX_BROWSER,
+						  contents_casefold, 
+						  start, end);
+		
+		for (i = 0; i < num_matches; i++) {
+			gchar    *link;
+			gint      s = 0;
+			gint      e = 0;
+			gboolean  add_link = TRUE;
+
+			s = g_array_index (start, gint, i);
+			e = g_array_index (end, gint, i);
+
+			link = gossip_substring (contents_casefold, s, e);
+			if (G_STR_EMPTY (link) ||
+			    (!G_STR_EMPTY (text_casefold) &&
+			     !strstr (contents_casefold, text_casefold))) {
+				add_link = FALSE;
+			}
+
+			if (add_link) {
+				GossipLogSearchHit *hit;
+				GossipAccount      *account;
+				GossipContact      *contact;
+				gchar              *contact_id;
+				gint                len;
+
+				/* FIX a nasty issue where we get the
+				 * </message> in part in the URL from
+				 * the log file format.
+				 */
+				len = strlen (link);
+				if (link[len - 1] == '<') {
+					link[len - 1] = '\0';
+				}
+				
+				account = log_get_account_from_filename (manager, filename);
+				if (!account) {
+					/* We must have other directories in
+					 * here which are not account
+					 * directories, so we just ignore them.
+					 */
+					g_free (link);
+					continue;
+				}
+				
+				contact_id = log_get_contact_id_from_filename (filename);
+				contact = gossip_contact_manager_find (contact_manager, 
+								       account, 
+								       contact_id);
+				g_free (contact_id);
+				
+				if (!contact) {
+					/* FIXME: What do we do here, do we
+					 * create a new contact explicitly for
+					 * this log entry?
+					 */
+					g_free (link);
+					continue;
+				}
+				
+				hit = g_new0 (GossipLogSearchHit, 1);
+				
+				hit->date = log_get_date_from_filename (filename);
+				hit->filename = g_strdup (filename);
+				hit->account = g_object_ref (account);
+				hit->contact = g_object_ref (contact);
+				hit->link = link;
+
+				hits = g_list_append (hits, hit);
+				
+				gossip_debug (DEBUG_DOMAIN, 
+					      "Found link:'%s' in file:'%s' on date:'%s'...",
+					      link, hit->filename, hit->date);
+				continue;
+			}
+			
+			g_free (link);
+		}
+
+		g_array_free (start, TRUE);
+		g_array_free (end, TRUE);
+
+		g_free (contents_casefold);
+	}
+
+	g_list_foreach (files, (GFunc) g_free, NULL);
+	g_list_free (files);
+
+	g_free (text_casefold);
+
+	return hits;
+}
+
 void
 gossip_log_search_free (GList *hits)
 {
@@ -2237,6 +2394,7 @@ gossip_log_search_free (GList *hits)
 
 		g_free (hit->date);
 		g_free (hit->filename);
+		g_free (hit->link);
 
 		g_free (hit);
 	}
@@ -2275,3 +2433,12 @@ gossip_log_search_hit_get_filename (GossipLogSearchHit *hit)
 
 	return hit->filename;
 }
+
+const gchar *
+gossip_log_search_hit_get_link (GossipLogSearchHit *hit)
+{
+	g_return_val_if_fail (hit != NULL, NULL);
+
+	return hit->link;
+}
+

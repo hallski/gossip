@@ -1,5 +1,13 @@
 2007-09-22  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-log.[ch]:
+	* src/gossip-log-window.c:
+	* ui/main.glade: Make it possible to find links sent in private
+	chats and list them. This only works for private chats so far, not
+	group chats.
+
+2007-09-22  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-notify.c: Improve the notification messages and make
 	sure we escape them before using them with libnotify. Added
 	support for file transfer notifications too. Fixes bug #475882
