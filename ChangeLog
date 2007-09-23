@@ -1,3 +1,11 @@
+2007-09-23  Richard Hult  <richard@imendio.com>
+
+	* acinclude.m4:
+	* configure.ac:
+	* libgossip/Makefile.am:
+	* src/Makefile.am: First step in simplifying the platform
+	dependent build parts.
+
 2007-09-22  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-log.[ch]:
