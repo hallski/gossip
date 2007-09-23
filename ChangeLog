@@ -1,5 +1,16 @@
 2007-09-23  Richard Hult  <richard@imendio.com>
 
+	* configure.ac: Fix build on X11.
+
+2007-09-23  Richard Hult  <richard@imendio.com>
+
+	* libgossip/gossip-ft.c: (gossip_ft_set_file_size):
+	* libgossip/gossip-ft.h:
+	* libgossip/gossip-jabber-ft.c: (jabber_ft_get_file_details),
+	(jabber_ft_get_unique_sid), (gossip_jabber_ft_send):
+
+2007-09-23  Richard Hult  <richard@imendio.com>
+
 	* acinclude.m4:
 	* configure.ac:
 	* libgossip/Makefile.am:

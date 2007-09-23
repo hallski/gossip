@@ -43,13 +43,15 @@ dnl -----------------------------------------------------------
 dnl Platform (GTK+ X11 or GTK OS X)
 dnl -----------------------------------------------------------
 IMENDIO_GTK_OSX
-if test $HAVE_GTK_OSX = no; then
+if test $HAVE_GTK_OSX != 1; then
    AC_DEFINE(HAVE_GNOME, 1, [whether to use the GNOME backend])
    AM_CONDITIONAL(HAVE_GNOME, true)
    AM_CONDITIONAL(HAVE_COCOA, false)
    gconf_pkgconfig=gconf-2.0
    gnome_vfs_pkgconfig=gnome-vfs-2.0
    libgnomeui_pkgconfig=libgnomeui-2.0
+   PLATFORM_CFLAGS=
+   PLATFORM_LDFLAGS=
    platform="GTK+ X11"
 else
    AC_DEFINE(HAVE_COCOA, 1, [whether to use the Cocoa backend])
