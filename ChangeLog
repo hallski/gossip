@@ -1,5 +1,13 @@
 2007-09-23  Richard Hult  <richard@imendio.com>
 
+	* libgossip/gossip-ft.[ch]: (gossip_ft_get_file_size_for_display):
+	New function, implement using GnomeVFS with a simplistic fallback.
+	
+	* libgossip/gossip-jabber-ft.c: (jabber_ft_get_file_details):
+	Implement for the GnomeVFS-less case.
+
+2007-09-23  Richard Hult  <richard@imendio.com>
+
 	* acinclude.m4:
 	* configure.ac:
 	* libgossip/Makefile.am: Fix the build on X11 for real this time,

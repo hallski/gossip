@@ -22,6 +22,8 @@
 
 #include "config.h"
 
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -822,7 +824,7 @@ jabber_ft_get_file_details (const gchar  *uri,
 			    gchar       **file_size,
 			    gchar       **mime_type)
 {
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 	GnomeVFSFileInfo *file_info;
 	GnomeVFSResult    result;
 
@@ -861,8 +863,37 @@ jabber_ft_get_file_details (const gchar  *uri,
 	gnome_vfs_file_info_unref (file_info);
 
 	return TRUE;
+#else
+	{
+		struct stat buf;
+
+		/* This is not that nice but at least makes
+		 * filetransfer work without GnomeVFS.
+		 */
+		if (!g_str_has_prefix (uri, "file://")) {
+			return FALSE;
+		}
+
+		if (stat (uri + 7, &buf) < 0) {
+			return FALSE;
+		}
+			
+		if (file_name) {
+			*file_name = g_path_get_basename (uri);
+		}
+
+		if (file_size) {
+			*file_size = g_strdup_printf ("%d", (guint) buf.st_size);
+		}
+		
+		/* FIXME: Is there a way to get the mime type on OS X? */
+		if (mime_type) {
+			*mime_type = g_strdup ("application/octet-stream");
+		}
+
+		return TRUE;
+	}
 #endif
-	return FALSE;
 }
 
 static gchar *
@@ -922,21 +953,22 @@ gossip_jabber_ft_send (GossipJabberFTs *fts,
 	const gchar   *sid;
 	gchar         *file_path;
 
-	g_return_val_if_fail (fts != NULL, 0);
-	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), 0);
-	g_return_val_if_fail (file != NULL, 0);
+	g_return_val_if_fail (fts != NULL, NULL);
+	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
+	g_return_val_if_fail (file != NULL, NULL);
 
 	connection = gossip_jabber_get_connection (fts->jabber);
 	own_contact = gossip_jabber_get_own_contact (fts->jabber);
 
 	to = jabber_ft_get_contact_last_jid (contact);
 
+	file_name = NULL;
 	ok = jabber_ft_get_file_details (file,
 					 &file_name,
 					 &file_size,
 					 &mime_type);
 	if (!ok) {
-		return 0;
+		return NULL;
 	}
 
 	m = lm_message_new_with_sub_type (to,

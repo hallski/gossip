@@ -439,6 +439,22 @@ gossip_ft_set_file_size (GossipFT *ft,
 	priv->file_size = file_size;
 }
 
+gchar *
+gossip_ft_get_file_size_for_display (GossipFT *ft)
+{
+	GossipFTPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_FT (ft), NULL);
+
+	priv = GET_PRIV (ft);
+
+#ifdef HAVE_PLATFORM_X11
+	return gnome_vfs_format_file_size_for_display (priv->file_size);
+#else
+	return g_strdup_printf ("%d kB", priv->file_size / 1024);
+#endif
+}
+
 const gchar *
 gossip_ft_get_file_mime_type (GossipFT *ft)
 {

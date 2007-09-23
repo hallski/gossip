@@ -60,34 +60,33 @@ typedef enum {
 	GOSSIP_FT_ERROR_UNKNOWN
 } GossipFTError;
 
-GType          gossip_ft_get_gtype           (void) G_GNUC_CONST;
-
-GossipFT *     gossip_ft_new                (void);
-GossipFTType   gossip_ft_get_type           (GossipFT      *ft);
-void           gossip_ft_set_type           (GossipFT      *ft,
-					     GossipFTType   type);
-GossipContact *gossip_ft_get_contact        (GossipFT      *ft);
-void           gossip_ft_set_contact        (GossipFT      *ft,
-					     GossipContact *contact);
-GossipFTId     gossip_ft_get_id             (GossipFT      *ft);
-const gchar *  gossip_ft_get_file_name      (GossipFT      *ft);
-void           gossip_ft_set_file_name      (GossipFT      *ft,
-					     const gchar   *file_name);
-guint64        gossip_ft_get_file_size      (GossipFT      *ft);
-void           gossip_ft_set_file_size      (GossipFT      *ft,
-					     guint64        file_size);
-const gchar *  gossip_ft_get_file_mime_type (GossipFT      *ft);
-void           gossip_ft_set_file_mime_type (GossipFT      *ft,
-					     const gchar   *file_mime_type);
-const gchar *  gossip_ft_get_sid            (GossipFT      *ft);
-void           gossip_ft_set_sid            (GossipFT      *ft,
-					     const gchar   *sid);
-const gchar *  gossip_ft_get_location       (GossipFT      *ft);
-void           gossip_ft_set_location       (GossipFT      *ft,
-					     const gchar   *location);
-
-gboolean       gossip_ft_equal              (gconstpointer  a,
-					     gconstpointer  b);
+GType          gossip_ft_get_gtype                 (void) G_GNUC_CONST;
+GossipFT *     gossip_ft_new                       (void);
+GossipFTType   gossip_ft_get_type                  (GossipFT      *ft);
+void           gossip_ft_set_type                  (GossipFT      *ft,
+						    GossipFTType   type);
+GossipContact *gossip_ft_get_contact               (GossipFT      *ft);
+void           gossip_ft_set_contact               (GossipFT      *ft,
+						    GossipContact *contact);
+GossipFTId     gossip_ft_get_id                    (GossipFT      *ft);
+const gchar *  gossip_ft_get_file_name             (GossipFT      *ft);
+void           gossip_ft_set_file_name             (GossipFT      *ft,
+						    const gchar   *file_name);
+guint64        gossip_ft_get_file_size             (GossipFT      *ft);
+void           gossip_ft_set_file_size             (GossipFT      *ft,
+						    guint64        file_size);
+gchar *        gossip_ft_get_file_size_for_display (GossipFT      *ft);
+const gchar *  gossip_ft_get_file_mime_type        (GossipFT      *ft);
+void           gossip_ft_set_file_mime_type        (GossipFT      *ft,
+						    const gchar   *file_mime_type);
+const gchar *  gossip_ft_get_sid                   (GossipFT      *ft);
+void           gossip_ft_set_sid                   (GossipFT      *ft,
+						    const gchar   *sid);
+const gchar *  gossip_ft_get_location              (GossipFT      *ft);
+void           gossip_ft_set_location              (GossipFT      *ft,
+						    const gchar   *location);
+gboolean       gossip_ft_equal                     (gconstpointer  a,
+						    gconstpointer  b);
 
 G_END_DECLS
 
