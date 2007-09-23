@@ -45,8 +45,8 @@ static time_t timestamp = 0;;
 gint32
 gossip_idle_get_seconds (void)
 {
-	static gboolean          inited = FALSE;
 #ifdef HAVE_XSS
+	static gboolean          inited = FALSE;
 	static XScreenSaverInfo *ss_info = NULL;
 	gint                     event_base;
 	gint                     error_base;

@@ -26,10 +26,6 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 
-#ifdef HAVE_PLATFORM_X11
-#include <libgnomevfs/gnome-vfs.h>
-#endif
-
 #include <libgossip/gossip-account.h>
 #include <libgossip/gossip-event.h>
 #include <libgossip/gossip-debug.h>
@@ -65,8 +61,6 @@ typedef struct {
 	GossipJabber *jabber;
 	GossipFT     *ft;
 } GossipFTDialog;
-
-#ifdef HAVE_PLATFORM_X11
 
 static void ft_dialog_protocol_connected_cb          (GossipSession      *session,
 						      GossipAccount      *account,
@@ -637,7 +631,7 @@ ft_dialog_show (GossipJabber *jabber,
 	gtk_label_set_text (GTK_LABEL (dialog->label_action), action);
 	gtk_label_set_text (GTK_LABEL (label_file_name), gossip_ft_get_file_name (ft));
 
-	file_size = gnome_vfs_format_file_size_for_display (gossip_ft_get_file_size (ft));
+	file_size = gossip_ft_get_file_size_for_display (ft);
 	gtk_label_set_text (GTK_LABEL (label_file_size), file_size);
 	g_free (file_size);
 
@@ -647,7 +641,7 @@ ft_dialog_show (GossipJabber *jabber,
 					     GOSSIP_PREFS_FILE_TRANSFER_DEFAULT_FOLDER,
 					     &default_folder) || !default_folder) {
 			default_folder = g_build_path (G_DIR_SEPARATOR_S, 
-						       g_get_home_dir(),
+						       g_get_home_dir (),
 						       "Desktop",
 						       NULL);
 		}
@@ -798,30 +792,6 @@ gossip_ft_dialog_send_file_from_uri (GossipContact *contact,
 	provider = gossip_session_get_ft_provider (session, account);
 
 	ft = gossip_ft_provider_send (provider, contact, file);
+
  	ft_dialog_show (jabber, ft);
 }
-
-#else
-
-void
-gossip_ft_dialog_init (GossipSession *session)
-{
-}
-
-void
-gossip_ft_dialog_finalize (GossipSession *session)
-{
-}
-
-void
-gossip_ft_dialog_send_file (GossipContact *account)
-{
-}
-
-void
-gossip_ft_dialog_send_file_from_uri (GossipContact *contact,
-				     const gchar   *file)
-{
-}
-
-#endif

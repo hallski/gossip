@@ -1,5 +1,12 @@
 2007-09-23  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-ft-dialog.c: (ft_dialog_show): Get rid of platform
+	ifdef, no longer needed.
+	
+	* src/gossip-idle.c: Fix build on non-X11.
+
+2007-09-23  Richard Hult  <richard@imendio.com>
+
 	* libgossip/gossip-ft.[ch]: (gossip_ft_get_file_size_for_display):
 	New function, implement using GnomeVFS with a simplistic fallback.
 	
