@@ -38,41 +38,34 @@ DESKTOP_FILE_UTILS_REQUIRED=0.2.90
 LIBPANELAPPLET_REQUIRED=2.10.0
 DBUS_REQUIRED=0.61
 
-dnl -----------------------------------------------------------
-dnl Backend (currently GNOME or Cocoa)
-dnl -----------------------------------------------------------
-# Checking for carbon since it's C. Should check for cocoa really.
-AC_CHECK_HEADER([Carbon/Carbon.h], auto_backend=cocoa, auto_backend=gnome)
-AC_ARG_WITH(backend,
-	    AS_HELP_STRING([--with-backend=@<:@gnome|cocoa|auto@:>@], 
-			   [Which backend to use [[default=auto]]]),
-	    ac_backend=$withval,
-	    ac_backend=$auto_backend)
 
-if test "x$ac_backend" = xgnome; then
+dnl -----------------------------------------------------------
+dnl Platform (GTK+ X11 or GTK OS X)
+dnl -----------------------------------------------------------
+IMENDIO_GTK_OSX
+if test $HAVE_GTK_OSX = no; then
    AC_DEFINE(HAVE_GNOME, 1, [whether to use the GNOME backend])
+   AM_CONDITIONAL(HAVE_GNOME, true)
+   AM_CONDITIONAL(HAVE_COCOA, false)
    gconf_pkgconfig=gconf-2.0
    gnome_vfs_pkgconfig=gnome-vfs-2.0
    libgnomeui_pkgconfig=libgnomeui-2.0
-   BACKEND_CFLAGS=
-   BACKEND_LDFLAGS=
-elif test "x$ac_backend" = xcocoa; then
+   platform="GTK+ X11"
+else
    AC_DEFINE(HAVE_COCOA, 1, [whether to use the Cocoa backend])
+   AM_CONDITIONAL(HAVE_GNOME, false)
+   AM_CONDITIONAL(HAVE_COCOA, true)
+   gconf_pkgconfig=gconf-2.0
    gconf_pkgconfig=
    gnome_vfs_pkgconfig=
    libgnomeui_pkgconfig=
    AM_CONDITIONAL(GCONF_SCHEMAS_INSTALL, false)
-   BACKEND_CFLAGS="-xobjective-c"
-   BACKEND_LDFLAGS="-framework AppKit -framework IOKit -framework Carbon -lobjc"
-else
-   AC_MSG_ERROR([Invalid backend])
+   PLATFORM_CFLAGS="-xobjective-c"
+   PLATFORM_LDFLAGS="$GTK_OSX_LDFLAGS -framework AppKit -framework IOKit -lobjc"
+   platform="GTK+ OS X"
 fi
-
-AC_SUBST(BACKEND_CFLAGS)
-AC_SUBST(BACKEND_LDFLAGS)
-
-AM_CONDITIONAL(HAVE_GNOME, test x$ac_backend = xgnome)
-AM_CONDITIONAL(HAVE_COCOA, test x$ac_backend = xcocoa)
+AC_SUBST(PLATFORM_CFLAGS)
+AC_SUBST(PLATFORM_LDFLAGS)
 
 
 dnl -----------------------------------------------------------
@@ -351,7 +344,7 @@ AC_OUTPUT([
 
 echo
 echo "Prefix:    $prefix"
-echo "Backend:   $ac_backend"
+echo "Platform:  $platform"
 echo "DBUS:      $have_dbus"
 echo "Galago:    $have_galago"
 echo "ASpell:    $have_aspell"

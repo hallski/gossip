@@ -7,7 +7,7 @@ AM_CPPFLAGS =	                                 	\
 	-DDATADIR=\""$(datadir)"\"              	\
 	-DLIBDIR=\""$(libdir)"\"			\
 	-DDBUS_API_SUBJECT_TO_CHANGE			\
-	$(GOSSIP_CFLAGS) $(WARN_CFLAGS) $(BACKEND_CFLAGS)
+	$(GOSSIP_CFLAGS) $(WARN_CFLAGS) $(PLATFORM_CFLAGS)
 
 if HAVE_DBUS
 dbus_binding_sources = gossip-dbus.xml
@@ -97,7 +97,7 @@ gossip_LDADD = \
 	$(GOSSIP_LIBS)							   	\
 	$(XSS_LIBS)
 
-gossip_LDFLAGS = $(BACKEND_LDFLAGS)
+gossip_LDFLAGS = $(PLATFORM_LDFLAGS)
 
 dtddir = $(datadir)/gossip
 dtd_DATA = 									\

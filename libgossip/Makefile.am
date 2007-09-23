@@ -8,19 +8,19 @@ AM_CPPFLAGS =                                           \
 	$(GOSSIP_JABBER_CFLAGS)                         \
 	$(LIBLOUDERMOUTH_CFLAGS)			\
 	$(WARN_CFLAGS) 					\
-	$(BACKEND_CFLAGS)
+	$(PLATFORM_CFLAGS)
 
 noinst_LTLIBRARIES = 					\
 	libgossip-jabber.la 				\
 	libgossip.la
 
 if HAVE_GNOME
-backend_impl = 						\
+platform_impl = 						\
 	gossip-conf-gnome.c				\
 	gossip-paths-gnome.c
 endif
 if HAVE_COCOA
-backend_impl = 						\
+platform_impl = 						\
 	gossip-conf-cocoa.c				\
 	gossip-paths-cocoa.c
 endif
@@ -75,7 +75,7 @@ libgossip_la_SOURCES =             			\
 	gossip-version-info.c      			\
 	gossip-version-info.h      			\
 	libgossip-marshal-main.c			\
-	$(backend_impl)
+	$(platform_impl)
 
 libgossip_la_LIBADD =              			\
 	$(LIBGOSSIP_LIBS)          			\
