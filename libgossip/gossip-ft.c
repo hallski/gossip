@@ -22,6 +22,10 @@
 
 #include "config.h"
 
+#ifdef HAVE_PLATFORM_X11
+#include <libgnomevfs/gnome-vfs.h>
+#endif
+
 #include "gossip-ft.h"
 #include "gossip-debug.h"
 
