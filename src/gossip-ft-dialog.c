@@ -26,7 +26,7 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 #include <libgnomevfs/gnome-vfs.h>
 #endif
 
@@ -66,7 +66,7 @@ typedef struct {
 	GossipFT     *ft;
 } GossipFTDialog;
 
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 
 static void ft_dialog_protocol_connected_cb          (GossipSession      *session,
 						      GossipAccount      *account,

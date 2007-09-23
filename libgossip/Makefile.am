@@ -14,13 +14,13 @@ noinst_LTLIBRARIES = 					\
 	libgossip-jabber.la 				\
 	libgossip.la
 
-if HAVE_GNOME
-platform_impl = 						\
+if HAVE_PLATFORM_X11
+platform_impl = 					\
 	gossip-conf-gnome.c				\
 	gossip-paths-gnome.c
 endif
-if HAVE_COCOA
-platform_impl = 						\
+if HAVE_PLATFORM_OSX
+platform_impl = 					\
 	gossip-conf-cocoa.c				\
 	gossip-paths-cocoa.c
 endif

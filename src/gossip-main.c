@@ -32,7 +32,7 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 #include <libgnome/gnome-program.h>
 #include <libgnomeui/gnome-ui-init.h>
 #endif
@@ -64,7 +64,7 @@ int
 main (int argc, char *argv[])
 {
 	gchar                *localedir;
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 	GnomeProgram         *program;
 #else
 	GError               *error = NULL;
@@ -106,7 +106,7 @@ main (int argc, char *argv[])
 
 	g_set_application_name (PACKAGE_NAME);
 
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 	program = gnome_program_init (PACKAGE_TARNAME, 
 				      PACKAGE_VERSION,
 				      LIBGNOMEUI_MODULE,
@@ -215,27 +215,10 @@ main (int argc, char *argv[])
 
 	gossip_stock_finalize ();
 
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 	g_object_unref (program);
 #endif
 
 	return EXIT_SUCCESS;
 }
 
-/*
-
-  Still leaked from just starting up, connecting one account, disconnecting it
-  from the menu, quitting:
-
-  1 GossipAccount, 64 bytes
-  2 GossipPresence, 64 bytes
-  1 GossipJabber, 80 bytes
-  2 GossipContact, 104 bytes
-
-  Having a chat window open and connecting/disconnecting a few times before
-  quitting:
-
-  5 GossipAccount, 340 bytes
-  10 GossipContact, 520 bytes
-
-*/

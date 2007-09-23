@@ -24,7 +24,7 @@
 
 #include "config.h"
 
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 #include <libgnome/gnome-sound.h>
 #include <libgnome/gnome-triggers.h>
 #endif
@@ -237,7 +237,7 @@ gossip_sound_play (GossipSound sound)
 		return;
 	}
 
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 	switch (sound) {
 	case GOSSIP_SOUND_CHAT:
 		gossip_debug (DEBUG_DOMAIN, "Triggering 'Chat' event.");
@@ -265,7 +265,7 @@ gossip_sound_init (GossipSession *session)
 
 	g_assert (saved_session == NULL);
 
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 	gnome_sound_init (NULL);
 	gnome_sound_sample_load ("gossip/Chat", DATADIR "/sounds/gossip/chat1.wav");
 	gnome_sound_sample_load ("gossip/Online", DATADIR "/sounds/gossip/online.wav");
@@ -303,7 +303,7 @@ gossip_sound_finalize (void)
 {
 	g_assert (saved_session != NULL);
 
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 	gnome_sound_shutdown ();
 #endif
 

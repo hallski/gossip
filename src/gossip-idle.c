@@ -30,7 +30,7 @@
 #include <X11/Xutil.h>
 #include <X11/extensions/scrnsaver.h>
 #include <gdk/gdkx.h>
-#elif defined(HAVE_COCOA)
+#elif defined(HAVE_PLATFORM_OSX)
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreServices/CoreServices.h>
 #include <IOKit/IOKitLib.h>
@@ -75,7 +75,8 @@ gossip_idle_get_seconds (void)
 
 	return idle;
 
-#elif defined(HAVE_COCOA)
+#elif defined(HAVE_PLATFORM_OSX)
+	static gboolean            inited = FALSE;
 	static mach_port_t         port;
 	static io_registry_entry_t object;
 	CFMutableDictionaryRef     properties;

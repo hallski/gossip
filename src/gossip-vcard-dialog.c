@@ -27,7 +27,7 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 #include <libgnomeui/libgnomeui.h>
 #include <libgnomevfs/gnome-vfs-mime-utils.h>
 #endif
@@ -98,7 +98,7 @@ typedef struct {
 	gint       last_account_selected;
 	gchar     *avatar_format;
 
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 	GnomeThumbnailFactory *thumbs;
 #endif
 } GossipVCardDialog;
@@ -262,7 +262,7 @@ vcard_dialog_avatar_clicked_cb (GtkWidget         *button,
 	gtk_widget_show (chooser_dialog);
 }
 
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 static GdkPixbuf *
 vcard_dialog_scale_down_to_width (GdkPixbuf *pixbuf, gint wanted_width)
 {
@@ -291,7 +291,7 @@ static void
 vcard_dialog_avatar_update_preview_cb (GtkFileChooser    *chooser,
 				       GossipVCardDialog *dialog)
 {
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 	gchar *uri;
 
 	uri = gtk_file_chooser_get_preview_uri (chooser);

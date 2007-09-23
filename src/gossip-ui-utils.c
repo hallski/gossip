@@ -30,11 +30,11 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 #include <gdk/gdkx.h>
 #include <libgnome/gnome-url.h>
 #include <libgnomeui/libgnomeui.h>
-#elif defined (HAVE_COCOA)
+#elif defined (HAVE_PLATFORM_OSX)
 #include <Cocoa/Cocoa.h>
 #endif
 
@@ -325,7 +325,7 @@ fixup_url (const gchar *url)
 	return real_url;
 }
 
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 void
 gossip_url_show (const char *url)
 {
@@ -341,7 +341,7 @@ gossip_url_show (const char *url)
 
 	g_free (real_url);
 }
-#elif defined(HAVE_COCOA)
+#elif defined(HAVE_PLATFORM_OSX)
 void
 gossip_url_show (const char *url)
 {
@@ -368,7 +368,7 @@ gossip_url_show (const char *url)
 void
 gossip_help_show (void)
 {
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 	gboolean   ok;
 	GtkWidget *dialog;
 	GError    *err = NULL;
@@ -393,7 +393,7 @@ gossip_help_show (void)
 	gtk_widget_show (dialog);
 
 	g_error_free (err);
-#elif defined(HAVE_COCOA)
+#elif defined(HAVE_PLATFORM_OSX)
 	/* Nothing for now. */
 #endif
 }
@@ -424,9 +424,9 @@ gossip_link_button_new (const gchar *url,
 void
 gossip_window_set_default_icon_name (const gchar *name)
 {
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 	gtk_window_set_default_icon_name (name);
-#elif defined(HAVE_COCOA)
+#elif defined(HAVE_PLATFORM_OSX)
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	gchar             *path;
 	NSString          *tmp;
@@ -448,9 +448,9 @@ gossip_window_set_default_icon_name (const gchar *name)
 void
 gossip_request_user_attention (void)
 {
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 	/* Nothing for now. */
-#elif defined(HAVE_COCOA)
+#elif defined(HAVE_PLATFORM_OSX)
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	[NSApp requestUserAttention: NSInformationalRequest];
 	[pool release];

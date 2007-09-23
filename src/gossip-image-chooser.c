@@ -28,7 +28,7 @@
 #include <gtk/gtkbutton.h>
 #include <gtk/gtkdnd.h>
 
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 #include <libgnomevfs/gnome-vfs-ops.h>
 #endif
 
@@ -463,7 +463,7 @@ image_chooser_drag_data_received_cb (GtkWidget          *widget,
 	target_type = gdk_atom_name (selection_data->target);
 
 	if (!strcmp (target_type, URI_LIST_TYPE)) {
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 		GnomeVFSHandle   *handle;
 		GnomeVFSResult    result;
 		GnomeVFSFileInfo  info;

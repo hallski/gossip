@@ -42,30 +42,22 @@ DBUS_REQUIRED=0.61
 dnl -----------------------------------------------------------
 dnl Platform (GTK+ X11 or GTK OS X)
 dnl -----------------------------------------------------------
-IMENDIO_GTK_OSX
-if test $HAVE_GTK_OSX != 1; then
-   AC_DEFINE(HAVE_GNOME, 1, [whether to use the GNOME backend])
-   AM_CONDITIONAL(HAVE_GNOME, true)
-   AM_CONDITIONAL(HAVE_COCOA, false)
+IGE_PLATFORM_CHECK
+echo "Platform: $IGE_PLATFORM, $IGE_PLATFORM_NAME"
+if test "x$IGE_PLATFORM" = xx11; then
    gconf_pkgconfig=gconf-2.0
    gnome_vfs_pkgconfig=gnome-vfs-2.0
    libgnomeui_pkgconfig=libgnomeui-2.0
    PLATFORM_CFLAGS=
    PLATFORM_LDFLAGS=
-   platform="GTK+ X11"
 else
-   AC_DEFINE(HAVE_COCOA, 1, [whether to use the Cocoa backend])
-   AM_CONDITIONAL(HAVE_GNOME, false)
-   AM_CONDITIONAL(HAVE_COCOA, true)
-   gconf_pkgconfig=gconf-2.0
    gconf_pkgconfig=
    gnome_vfs_pkgconfig=
    libgnomeui_pkgconfig=
-   AM_CONDITIONAL(GCONF_SCHEMAS_INSTALL, false)
    PLATFORM_CFLAGS="-xobjective-c"
-   PLATFORM_LDFLAGS="$GTK_OSX_LDFLAGS -framework AppKit -framework IOKit -lobjc"
-   platform="GTK+ OS X"
+   PLATFORM_LDFLAGS="-framework Carbon -framework AppKit -framework IOKit -lobjc"
 fi
+AM_CONDITIONAL(GCONF_SCHEMAS_INSTALL, test "x$IGE_PLATFORM" = xx11)
 AC_SUBST(PLATFORM_CFLAGS)
 AC_SUBST(PLATFORM_LDFLAGS)
 
@@ -255,7 +247,7 @@ have_xss="no"
 
 # Only check for XSS under GNOME, it doesn't make sense to find it
 # when we're not using X (like on OSX).
-if test x$ac_backend = xgnome; then
+if test $IGE_PLATFORM = x11; then
    x_libs="$X_PRE_LIBS $X_LIBS -lX11 $X_EXTRA_LIBS"
 
    AC_CHECK_FUNC(XScreenSaverQueryInfo, [
@@ -346,7 +338,7 @@ AC_OUTPUT([
 
 echo
 echo "Prefix:    $prefix"
-echo "Platform:  $platform"
+echo "Platform:  $IGE_PLATFORM_NAME"
 echo "DBUS:      $have_dbus"
 echo "Galago:    $have_galago"
 echo "ASpell:    $have_aspell"

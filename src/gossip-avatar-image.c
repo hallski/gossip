@@ -25,7 +25,7 @@
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
 
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 #include <gdk/gdkx.h>
 #endif
 
@@ -112,7 +112,7 @@ avatar_image_finalize (GObject *object)
 	G_OBJECT_CLASS (gossip_avatar_image_parent_class)->finalize (object);
 }
 
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 static GdkFilterReturn
 avatar_image_filter_func (GdkXEvent  *gdkxevent,
 			  GdkEvent   *event,
@@ -143,7 +143,7 @@ avatar_image_filter_func (GdkXEvent  *gdkxevent,
 static void
 avatar_image_add_filter (GossipAvatarImage *avatar_image)
 {
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 	Window     window;
 	GdkWindow *gdkwindow;
 	gint       mask;
@@ -171,7 +171,7 @@ avatar_image_add_filter (GossipAvatarImage *avatar_image)
 static void
 avatar_image_remove_filter (GossipAvatarImage *avatar_image)
 {
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 	gdk_window_remove_filter (NULL, avatar_image_filter_func, avatar_image);
 #endif
 }

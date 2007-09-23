@@ -68,7 +68,7 @@
 #include "gossip-private.h"
 #include "gossip-utils.h"
 
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 #include <libgnomevfs/gnome-vfs.h>
 #endif
 
@@ -141,7 +141,7 @@ typedef enum {
 static void            gossip_log_manager_class_init           (GossipLogManagerClass *klass);
 static void            gossip_log_manager_init                 (GossipLogManager      *manager);
 static void            log_manager_finalize                    (GObject               *object);
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 static void            log_move_contact_dirs                   (GossipLogManager      *manager,
 								const gchar           *log_directory,
 								const gchar           *filename,
@@ -168,7 +168,7 @@ static void            log_handlers_notify_all                 (GossipLogManager
 								GossipChatroom        *chatroom,
 								GossipMessage         *message);
 static gboolean        log_check_dir                           (gchar                **directory);
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 static LogVersion      log_check_version                       (void);
 #endif
 static gboolean        log_check_dir                           (gchar **directory);
@@ -258,7 +258,7 @@ gossip_log_manager_new (GossipSession *session)
 	GossipLogManagerPriv *priv;
 	GossipLogManager     *manager;
 	GossipAccountManager *account_manager;
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 	LogVersion            version;
 #endif
 	GList                *accounts, *l;
@@ -287,7 +287,7 @@ gossip_log_manager_new (GossipSession *session)
 			  NULL);
 
 	/* We only support this when running GNOME. */
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 
 	/* Check for new log protocol version, and if so we fix the
 	 * differences here.
@@ -356,12 +356,12 @@ gossip_log_manager_new (GossipSession *session)
 		g_dir_close (dir);
 		g_free (log_directory);
 	}
-#endif /* HAVE_GNOME */
+#endif /* HAVE_PLATFORM_X11 */
 
 	return manager;
 }
 
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 static void
 log_move_contact_dirs (GossipLogManager *manager,
 		       const gchar      *log_directory,
@@ -473,7 +473,7 @@ log_account_renamed_cb (GossipAccount *account,
 			GParamSpec    *param,
 			gpointer       user_data)
 {
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 	const gchar    *old_name;
 	const gchar    *new_name;
 	gchar          *log_directory;
@@ -516,7 +516,7 @@ log_account_renamed_cb (GossipAccount *account,
 static gchar *
 log_escape (const gchar *str)
 {
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 	return gnome_vfs_escape_host_and_path_string (str);
 #else
 	return g_strdup (str);
@@ -526,7 +526,7 @@ log_escape (const gchar *str)
 static gchar *
 log_unescape (const gchar *str)
 {
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 	return gnome_vfs_unescape_string_for_display (str);
 #else
 	return g_strdup (str);
@@ -667,7 +667,7 @@ log_handlers_notify_all (GossipLogManager *manager,
 	g_list_free (handlers);
 }
 
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 static LogVersion
 log_check_version (void)
 {
@@ -760,7 +760,7 @@ log_check_version (void)
 	
 	return LOG_VERSION_LAST;
 }
-#endif /* HAVE_GNOME */
+#endif /* HAVE_PLATFORM_X11 */
 
 static gboolean
 log_check_dir (gchar **directory)
