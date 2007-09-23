@@ -29,7 +29,7 @@
 
 #include <libloudermouth/loudermouth.h>
 
-#ifdef HAVE_GNOME
+#ifdef HAVE_PLATFORM_X11
 #include <libgnomevfs/gnome-vfs.h>
 #endif
 
