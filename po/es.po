@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip.HEAD.es\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-10 04:13+0100\n"
-"PO-Revision-Date: 2007-09-20 19:59+0200\n"
+"POT-Creation-Date: 2007-09-22 11:51+0100\n"
+"PO-Revision-Date: 2007-09-26 12:05+0200\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Spanish <traductores@es.gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -276,49 +276,49 @@ msgstr[1] "Parias"
 msgid "No affiliation"
 msgstr "Sin afiliación"
 
-#: ../libgossip/gossip-chatroom-provider.c:370
+#: ../libgossip/gossip-chatroom-provider.c:385
 msgid ""
 "The chat room you tried to join requires a password. You either failed to "
 "supply a password or the password you tried was incorrect."
 msgstr ""
 
-#: ../libgossip/gossip-chatroom-provider.c:375
+#: ../libgossip/gossip-chatroom-provider.c:390
 msgid "You have been banned from this chatroom."
 msgstr "Le han expulsado de esta sala de chat."
 
-#: ../libgossip/gossip-chatroom-provider.c:379
+#: ../libgossip/gossip-chatroom-provider.c:394
 msgid "The conference room you tried to join could not be found."
 msgstr "No se pudo encontrar la sala de conferencias a la que intentó unirse."
 
-#: ../libgossip/gossip-chatroom-provider.c:383
+#: ../libgossip/gossip-chatroom-provider.c:398
 msgid "Chatroom creation is restricted on this server."
 msgstr "La creación de salas de chat está restringida en este servidor."
 
-#: ../libgossip/gossip-chatroom-provider.c:387
+#: ../libgossip/gossip-chatroom-provider.c:402
 msgid "Chatroom reserved nick names must be used on this server."
 msgstr ""
 
-#: ../libgossip/gossip-chatroom-provider.c:391
+#: ../libgossip/gossip-chatroom-provider.c:406
 msgid "You are not on the chatroom's members list."
 msgstr "No está en la lista de miembros de esta sala de chat."
 
-#: ../libgossip/gossip-chatroom-provider.c:395
+#: ../libgossip/gossip-chatroom-provider.c:410
 msgid "The nickname you have chosen is already in use."
 msgstr "El apodo que ha elegido ya se está usando."
 
-#: ../libgossip/gossip-chatroom-provider.c:399
+#: ../libgossip/gossip-chatroom-provider.c:414
 msgid "The maximum number of users for this chatroom has been reached."
 msgstr ""
 
-#: ../libgossip/gossip-chatroom-provider.c:403
+#: ../libgossip/gossip-chatroom-provider.c:418
 msgid "The remote conference server did not respond in a sensible time."
 msgstr "El servidor remoto de la conferencia no respondió en un tiempo razonable."
 
-#: ../libgossip/gossip-chatroom-provider.c:407
+#: ../libgossip/gossip-chatroom-provider.c:422
 msgid "An unknown error occurred, check your details are correct."
 msgstr "Ocurrió un error desconocido, compruebe si sus detalles son correctos."
 
-#: ../libgossip/gossip-chatroom-provider.c:411
+#: ../libgossip/gossip-chatroom-provider.c:426
 msgid "Joining the chatroom was canceled."
 msgstr ""
 
@@ -397,59 +397,59 @@ msgstr "Esta característica no está implementada"
 msgid "The remote service timed out"
 msgstr ""
 
-#: ../libgossip/gossip-jabber.c:533
+#: ../libgossip/gossip-jabber.c:535
 msgid "new account"
 msgstr "Cuenta nueva"
 
-#: ../libgossip/gossip-jabber.c:534
+#: ../libgossip/gossip-jabber.c:536
 msgid "Home"
 msgstr "Inicio"
 
-#: ../libgossip/gossip-jabber.c:1382 ../libgossip/gossip-jabber.c:1521
+#: ../libgossip/gossip-jabber.c:1384 ../libgossip/gossip-jabber.c:1523
 msgid "Couldn't send message!"
 msgstr "No se pudo enviar el mensaje."
 
-#: ../libgossip/gossip-jabber.c:1468
+#: ../libgossip/gossip-jabber.c:1470
 msgid "Connection could not be opened"
 msgstr "La conexión no se pudo abrir"
 
-#: ../libgossip/gossip-jabber.c:3867
+#: ../libgossip/gossip-jabber.c:3885
 msgid "An unknown error occurred."
 msgstr "Ha ocurrido un error desconocido."
 
-#: ../libgossip/gossip-jabber.c:3871
+#: ../libgossip/gossip-jabber.c:3889
 msgid "Connection refused."
 msgstr "Conexión rechazada."
 
-#: ../libgossip/gossip-jabber.c:3874
+#: ../libgossip/gossip-jabber.c:3892
 msgid "Server address could not be resolved."
 msgstr "La dirección del servidor no se ha podido resolver."
 
-#: ../libgossip/gossip-jabber.c:3877
+#: ../libgossip/gossip-jabber.c:3895
 msgid "Connection timed out."
 msgstr "La conexión expiró."
 
-#: ../libgossip/gossip-jabber.c:3880
+#: ../libgossip/gossip-jabber.c:3898
 msgid "Authentication failed."
 msgstr "Falló la autenticación."
 
-#: ../libgossip/gossip-jabber.c:3883
+#: ../libgossip/gossip-jabber.c:3901
 msgid "The username you are trying already exists."
 msgstr "El usuario que ha elegido ya existe."
 
-#: ../libgossip/gossip-jabber.c:3886
+#: ../libgossip/gossip-jabber.c:3904
 msgid "The username you are trying is not valid."
 msgstr "El usuario que ha elegido no es válido."
 
-#: ../libgossip/gossip-jabber.c:3889
+#: ../libgossip/gossip-jabber.c:3907
 msgid "This feature is unavailable."
 msgstr "Esta característica no está disponible."
 
-#: ../libgossip/gossip-jabber.c:3892
+#: ../libgossip/gossip-jabber.c:3910
 msgid "This feature is unauthorized."
 msgstr "Esta característica no está autorizada."
 
-#: ../libgossip/gossip-jabber.c:3895
+#: ../libgossip/gossip-jabber.c:3913
 msgid "A specific protocol error occurred that was unexpected."
 msgstr "Ocurrió un error inesperado específico del protocolo."
 
@@ -850,7 +850,7 @@ msgid_plural "Conversations (%d)"
 msgstr[0] "Conversación"
 msgstr[1] "Conversaciones (%d)"
 
-#: ../src/gossip-chat-window.c:1446
+#: ../src/gossip-chat-window.c:1448
 msgid "Typing a message."
 msgstr "Tecleando un mensaje."
 
@@ -1023,19 +1023,19 @@ msgstr "Ha ocurrido un error desconocido durante la transferencia del archivo."
 
 #: ../src/gossip-ft-dialog.c:498
 msgid "Transfer complete"
-msgstr ""
+msgstr "Transferencia completada"
 
 #: ../src/gossip-ft-dialog.c:504
 msgid "The file has been transfered successfully."
-msgstr ""
+msgstr "El archivo se ha enviado satisfactoriamente."
 
 #: ../src/gossip-ft-dialog.c:539
 msgid "Transferring file"
-msgstr ""
+msgstr "Transmitiendo archivo"
 
 #: ../src/gossip-ft-dialog.c:545
 msgid "Please wait while the file is transferred"
-msgstr ""
+msgstr "Espere mientras se transfiere el archivo"
 
 #: ../src/gossip-ft-dialog.c:615
 #, c-format
@@ -1053,89 +1053,94 @@ msgstr "¿Quiere aceptar este archivo?"
 #: ../src/gossip-ft-dialog.c:623
 #, c-format
 msgid "Attempting to send file to %s"
-msgstr ""
+msgstr "Intentando enviar un archivo a %s"
 
 #: ../src/gossip-ft-dialog.c:625
 msgid "Attempting to send file"
-msgstr ""
+msgstr "Intentando enviar un archivo"
 
 #: ../src/gossip-ft-dialog.c:628
 msgid "Please wait while the other participant responds"
-msgstr ""
+msgstr "Espere a que el otro participante responda"
 
 #: ../src/gossip-ft-dialog.c:751
 msgid "Select a file"
 msgstr "Seleccione un archivo"
 
-#: ../src/gossip-group-chat.c:478
+#: ../src/gossip-group-chat.c:477
 msgid "Connecting..."
 msgstr "Conectando..."
 
 #. FIXME: Need special case for nickname to put an
 #. * entry in the chat view and to request a new nick.
 #.
-#: ../src/gossip-group-chat.c:545
+#: ../src/gossip-group-chat.c:544
 msgid "Retry connection"
 msgstr ""
 
 #. i18n: An event, as in "has now been connected".
-#: ../src/gossip-group-chat.c:573 ../src/gossip-private-chat.c:612
+#: ../src/gossip-group-chat.c:572 ../src/gossip-private-chat.c:612
 msgid "Connected"
 msgstr "Conectado"
 
-#: ../src/gossip-group-chat.c:627 ../src/gossip-private-chat.c:638
+#: ../src/gossip-group-chat.c:626 ../src/gossip-private-chat.c:638
 msgid "Disconnected"
 msgstr "Desconectado"
 
 #. Send event to chat window
-#: ../src/gossip-group-chat.c:830
+#: ../src/gossip-group-chat.c:829
 #, c-format
 msgid "Invited %s to join this chat conference."
 msgstr "Invitó a %s a unirse en esta conferencia por chat."
 
-#: ../src/gossip-group-chat.c:908
+#: ../src/gossip-group-chat.c:907
 msgid "<b>Topic:</b>"
 msgstr "<b>Tema:</b>"
 
-#: ../src/gossip-group-chat.c:1095
+#: ../src/gossip-group-chat.c:1094
 msgid "You have been kicked from this room"
-msgstr ""
+msgstr "Se le ha echado de esta sala"
 
-#: ../src/gossip-group-chat.c:1220
+#: ../src/gossip-group-chat.c:1219
 #, c-format
 msgid "%s has set the topic: %s"
 msgstr "%s ha puesto el tema: %s"
 
-#: ../src/gossip-group-chat.c:1406
+#: ../src/gossip-group-chat.c:1398
 msgid "Enter the new topic you want to set for this room:"
 msgstr "Introduzca el nuevo tema que quiere establecer para esta sala:"
 
-#: ../src/gossip-group-chat.c:1420
+#: ../src/gossip-group-chat.c:1414
 msgid "Enter the new nickname you want to be know by:"
 msgstr "Introduzca el nuevo apodo por el que quiere que se le conozca:"
 
-#: ../src/gossip-group-chat.c:1433
-msgid "What reason do you want to give for removing this user from the room?"
-msgstr ""
+#: ../src/gossip-group-chat.c:1438
+#, c-format
+msgid "Kicking %s"
+msgstr "Echando a %s"
 
-#: ../src/gossip-group-chat.c:1434
+#: ../src/gossip-group-chat.c:1446
 msgid "You have been removed from the room by an administrator."
-msgstr ""
+msgstr "Ha sido expulsado de la sala por un administrador."
 
-#: ../src/gossip-group-chat.c:1808
+#: ../src/gossip-group-chat.c:1818
 #, c-format
 msgid "%s has joined the room"
 msgstr "%s se ha unido a la sala"
 
-#: ../src/gossip-group-chat.c:1845
+#: ../src/gossip-group-chat.c:1855
 #, c-format
 msgid "%s has left the room"
 msgstr "%s ha dejado la sala"
 
-#: ../src/gossip-group-chat.c:2193
+#: ../src/gossip-group-chat.c:2118
+msgid "Nick was not recogized"
+msgstr "No se reconoció el apodo"
+
+#: ../src/gossip-group-chat.c:2239
 #, c-format
 msgid "Topic: %s"
-msgstr "Tema:: %s"
+msgstr "Tema: %s"
 
 #: ../src/gossip-hint.c:87
 msgid "Do not show this again"
@@ -1418,7 +1423,7 @@ msgstr "_Limpiar"
 
 #: ../ui/chat.glade.h:2
 msgid "Change Na_me..."
-msgstr ""
+msgstr "Cambiar no_mbre..."
 
 #: ../ui/chat.glade.h:3
 msgid "Change _Topic..."
@@ -1494,7 +1499,7 @@ msgstr "_Desacoplar solapa"
 
 #: ../ui/chat.glade.h:24
 msgid "_Kick..."
-msgstr ""
+msgstr "_Echar..."
 
 #: ../ui/chat.glade.h:25
 msgid "_Next Tab"
@@ -1542,7 +1547,7 @@ msgstr "Aún no soportado."
 
 #: ../ui/file-transfer.glade.h:7
 msgid "Open _Folder"
-msgstr ""
+msgstr "Abrir _carpeta"
 
 #: ../ui/file-transfer.glade.h:8
 msgid "Select A File"
@@ -1600,7 +1605,7 @@ msgstr "_Servidor:"
 
 #: ../ui/group-chat.glade.h:13
 msgid "Show more information about chatrooms found and make the window resizable."
-msgstr ""
+msgstr "Mostrar más información sobre las salas de chat encontradas y hacer la ventana redimensionable."
 
 #: ../ui/group-chat.glade.h:14
 msgid "This list represents all chat rooms hosted on the server you have entered."
@@ -1712,7 +1717,7 @@ msgstr "<span size=\"smaller\">Ejemplo: Miguel  o usuario@servidor.org</span>"
 msgid ""
 "<span size=\"smaller\">Note: You must select an account if the contact is "
 "unknown</span>"
-msgstr ""
+msgstr "<span size=\"smaller\">Nota: Si el contacto es desconocido debe seleccionar una cuenta</span>"
 
 #: ../ui/main.glade.h:23
 msgid "A unique name for this account to identify it personally to you."
@@ -1974,8 +1979,8 @@ msgid ""
 msgstr ""
 "Esto actúa como un filtro para la lista de contactos de abajo.\n"
 "\n"
-"Puede utilizar segmentos del nombre del contacto o del ID, por ejemplo, «jabber."
-"org» listará a todo el mundo usando ese servidor.\n"
+"Puede utilizar segmentos del nombre del contacto o del ID, por ejemplo, "
+"«jabber.org» listará a todo el mundo usando ese servidor.\n"
 "\n"
 "También puede usar el nombre de un grupo para mostrar sólo los contactos en "
 "un grupo específico."
@@ -2086,7 +2091,9 @@ msgstr "_Activar revisor ortográfico"
 
 #: ../ui/main.glade.h:126
 msgid "_Enter the name or contact ID of the person you want to chat to below:"
-msgstr "_Introduzca abajo el nombre o el ID de contacto de la persona con la que quiera hablar:"
+msgstr ""
+"_Introduzca abajo el nombre o el ID de contacto de la persona con la que "
+"quiera hablar:"
 
 #: ../ui/main.glade.h:127
 msgid "_For:"
