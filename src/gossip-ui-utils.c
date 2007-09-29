@@ -309,6 +309,7 @@ gossip_pixbuf_for_chatroom_status (GossipChatroom *chatroom,
  * address. This should work in most cases, and let us click on strings
  * like "www.gnome.org".
  */
+#if 0
 static gchar *
 fixup_url (const gchar *url)
 {
@@ -324,6 +325,7 @@ fixup_url (const gchar *url)
 
 	return real_url;
 }
+#endif
 
 #ifdef HAVE_PLATFORM_X11
 void
