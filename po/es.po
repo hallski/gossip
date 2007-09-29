@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: gossip.HEAD.es\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-09-22 11:51+0100\n"
-"PO-Revision-Date: 2007-09-26 12:05+0200\n"
+"PO-Revision-Date: 2007-09-29 14:22+0200\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Spanish <traductores@es.gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -308,7 +308,7 @@ msgstr "El apodo que ha elegido ya se está usando."
 
 #: ../libgossip/gossip-chatroom-provider.c:414
 msgid "The maximum number of users for this chatroom has been reached."
-msgstr ""
+msgstr "Se ha alcanzado el máximo número de usuarios para esta sala de chat."
 
 #: ../libgossip/gossip-chatroom-provider.c:418
 msgid "The remote conference server did not respond in a sensible time."
@@ -320,7 +320,7 @@ msgstr "Ocurrió un error desconocido, compruebe si sus detalles son correctos."
 
 #: ../libgossip/gossip-chatroom-provider.c:426
 msgid "Joining the chatroom was canceled."
-msgstr ""
+msgstr "Se canceló la entrada a esta sala de chat."
 
 #. i18n: The current state of the connection.
 #: ../libgossip/gossip-contact.c:965 ../libgossip/gossip-presence.c:242
@@ -351,23 +351,23 @@ msgstr "No disponible"
 
 #: ../libgossip/gossip-jabber-disco.c:286
 msgid "Service has gone and is no longer available"
-msgstr ""
+msgstr "El servicio ha desaparecido y no está disponible"
 
 #: ../libgossip/gossip-jabber-disco.c:289
 msgid "Bad or malformed request to this service"
-msgstr ""
+msgstr "Petición errónea o mal formada sobre este servicio"
 
 #: ../libgossip/gossip-jabber-disco.c:292
 msgid "Unauthorized request to this service"
-msgstr ""
+msgstr "Petición no autorizada sobre este servicio"
 
 #: ../libgossip/gossip-jabber-disco.c:295
 msgid "Payment is required for this service"
-msgstr ""
+msgstr "Se requiere pago para este servicio"
 
 #: ../libgossip/gossip-jabber-disco.c:299
 msgid "This service is forbidden"
-msgstr ""
+msgstr "Este servicio está prohibido"
 
 #: ../libgossip/gossip-jabber-disco.c:303
 msgid "This service is unavailable or not found"
@@ -375,19 +375,19 @@ msgstr "Este servicio no está disponible o no se encontró"
 
 #: ../libgossip/gossip-jabber-disco.c:306
 msgid "Unacceptable request sent to this services"
-msgstr ""
+msgstr "Petición de envío inaceptable para estos servicios"
 
 #: ../libgossip/gossip-jabber-disco.c:309
 msgid "Registration is required"
-msgstr ""
+msgstr "Se requiere registro"
 
 #: ../libgossip/gossip-jabber-disco.c:312
 msgid "There was a conflict of interest trying to use this service"
-msgstr ""
+msgstr "Hubo un conflicto de intereses al intentar usar este servicio"
 
 #: ../libgossip/gossip-jabber-disco.c:315
 msgid "There was an internal service error"
-msgstr ""
+msgstr "Hubo un error interno en el servicio"
 
 #: ../libgossip/gossip-jabber-disco.c:318
 msgid "This feature is not implemented"
@@ -395,7 +395,7 @@ msgstr "Esta característica no está implementada"
 
 #: ../libgossip/gossip-jabber-disco.c:321
 msgid "The remote service timed out"
-msgstr ""
+msgstr "Se agotó el tiempo de expiración del servicio remoto"
 
 #: ../libgossip/gossip-jabber.c:535
 msgid "new account"
@@ -455,7 +455,7 @@ msgstr "Ocurrió un error inesperado específico del protocolo."
 
 #: ../libloudermouth/lm-bs-receiver.c:90 ../libloudermouth/lm-bs-sender.c:251
 msgid "The other party disconnected"
-msgstr ""
+msgstr "La otra parte se desconectó"
 
 #: ../libloudermouth/lm-bs-receiver.c:116
 msgid "A protocol error occurred during the transfer"
@@ -463,7 +463,7 @@ msgstr "Ocurrió un error de protocolo durante la transferencia"
 
 #: ../libloudermouth/lm-bs-transfer.c:250
 msgid "Unable to connect to the other party"
-msgstr ""
+msgstr "No se pudo conectar con la otra parte"
 
 #: ../libloudermouth/lm-bs-transfer.c:316
 msgid "Permission denied"
@@ -471,16 +471,16 @@ msgstr "Permiso denegado"
 
 #: ../libloudermouth/lm-bs-transfer.c:318
 msgid "File name is too long"
-msgstr ""
+msgstr "El nombre de archivo es demasiado largo"
 
 #: ../libloudermouth/lm-bs-transfer.c:320
 msgid "File doesn't exist"
-msgstr ""
+msgstr "El archivo no existe"
 
 #: ../libloudermouth/lm-bs-transfer.c:322
 #: ../libloudermouth/lm-bs-transfer.c:353
 msgid "File is a directory"
-msgstr ""
+msgstr "El archivo es un directorio"
 
 #: ../libloudermouth/lm-bs-transfer.c:324
 msgid "Read only file system"
@@ -488,15 +488,15 @@ msgstr "El sistema de archivos sólo es de lectura"
 
 #: ../libloudermouth/lm-bs-transfer.c:326
 msgid "File is busy"
-msgstr ""
+msgstr "El archivo está ocupado"
 
 #: ../libloudermouth/lm-bs-transfer.c:328
 msgid "Bad memory"
-msgstr ""
+msgstr "Memoria errónea"
 
 #: ../libloudermouth/lm-bs-transfer.c:330
 msgid "Too many levels of symbolic links"
-msgstr ""
+msgstr "Demasiados niveles de enlaces simbólicos"
 
 #: ../libloudermouth/lm-bs-transfer.c:332
 #: ../libloudermouth/lm-bs-transfer.c:355
@@ -505,7 +505,7 @@ msgstr "No hay espacio disponible"
 
 #: ../libloudermouth/lm-bs-transfer.c:334
 msgid "Virtual memory exhausted"
-msgstr ""
+msgstr "Se agotó la memoria virtual"
 
 #: ../libloudermouth/lm-bs-transfer.c:336
 msgid "Too many open files"
@@ -514,12 +514,12 @@ msgstr "Hay demasiados archivos abiertos"
 #: ../libloudermouth/lm-bs-transfer.c:339
 #: ../libloudermouth/lm-bs-transfer.c:351
 msgid "Input/output error"
-msgstr ""
+msgstr "Error de entrada/salida"
 
 #: ../libloudermouth/lm-bs-transfer.c:342
 #: ../libloudermouth/lm-bs-transfer.c:357
 msgid "No such device"
-msgstr ""
+msgstr "No existe el dispositivo"
 
 #: ../libloudermouth/lm-bs-transfer.c:349
 msgid "File is too large"
@@ -854,19 +854,19 @@ msgstr[1] "Conversaciones (%d)"
 msgid "Typing a message."
 msgstr "Tecleando un mensaje."
 
-#: ../src/gossip-chatrooms-window.c:135
+#: ../src/gossip-chatrooms-window.c:137
 msgid "Name"
 msgstr "Nombre"
 
-#: ../src/gossip-chatrooms-window.c:157
+#: ../src/gossip-chatrooms-window.c:159
 msgid "Room"
 msgstr "Sala"
 
-#: ../src/gossip-chatrooms-window.c:166
+#: ../src/gossip-chatrooms-window.c:168
 msgid "Server"
 msgstr "Servidor"
 
-#: ../src/gossip-chatrooms-window.c:175
+#: ../src/gossip-chatrooms-window.c:195
 msgid "Auto Connect"
 msgstr "Autoconectar"
 
@@ -945,7 +945,7 @@ msgstr "Correo-_e..."
 
 #: ../src/gossip-contact-list.c:364
 msgid "Email contact"
-msgstr ""
+msgstr "Enviar un correo-e al contacto"
 
 #: ../src/gossip-contact-list.c:368 ../ui/chat.glade.h:31
 #: ../ui/main.glade.h:151
@@ -1007,11 +1007,11 @@ msgstr "El otro usuario decidió no continuar."
 
 #: ../src/gossip-ft-dialog.c:320
 msgid "Unable to complete the file transfer."
-msgstr ""
+msgstr "No se pudo completar la transferencia de archivos."
 
 #: ../src/gossip-ft-dialog.c:325
 msgid "Unable to start the file transfer."
-msgstr ""
+msgstr "No se pudo iniciar la transferencia de archivos."
 
 #: ../src/gossip-ft-dialog.c:330
 msgid "File transfer is not supported by both parties."
@@ -1076,7 +1076,7 @@ msgstr "Conectando..."
 #.
 #: ../src/gossip-group-chat.c:544
 msgid "Retry connection"
-msgstr ""
+msgstr "Reintentar la conexión"
 
 #. i18n: An event, as in "has now been connected".
 #: ../src/gossip-group-chat.c:572 ../src/gossip-private-chat.c:612
@@ -1605,7 +1605,9 @@ msgstr "_Servidor:"
 
 #: ../ui/group-chat.glade.h:13
 msgid "Show more information about chatrooms found and make the window resizable."
-msgstr "Mostrar más información sobre las salas de chat encontradas y hacer la ventana redimensionable."
+msgstr ""
+"Mostrar más información sobre las salas de chat encontradas y hacer la "
+"ventana redimensionable."
 
 #: ../ui/group-chat.glade.h:14
 msgid "This list represents all chat rooms hosted on the server you have entered."
@@ -1717,7 +1719,9 @@ msgstr "<span size=\"smaller\">Ejemplo: Miguel  o usuario@servidor.org</span>"
 msgid ""
 "<span size=\"smaller\">Note: You must select an account if the contact is "
 "unknown</span>"
-msgstr "<span size=\"smaller\">Nota: Si el contacto es desconocido debe seleccionar una cuenta</span>"
+msgstr ""
+"<span size=\"smaller\">Nota: Si el contacto es desconocido debe seleccionar "
+"una cuenta</span>"
 
 #: ../ui/main.glade.h:23
 msgid "A unique name for this account to identify it personally to you."
