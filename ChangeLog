@@ -1,3 +1,8 @@
+2007-10-02  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-ui-utils.c (fixup_url): Revert the previous change
+	here to fix the build.
+
 2007-09-23  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-ft-dialog.c: (ft_dialog_show): Get rid of platform
