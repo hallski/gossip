@@ -447,7 +447,7 @@ msgstr ""
 
 #: ../libloudermouth/lm-bs-transfer.c:322
 msgid "Too many open files"
-msgstr "Tròp de fichièrs duberts"
+msgstr "Tròp de fichièrs doberts"
 
 #: ../libloudermouth/lm-bs-transfer.c:325
 #: ../libloudermouth/lm-bs-transfer.c:337
@@ -497,8 +497,7 @@ msgstr ""
 #: ../src/gossip-about-dialog.c:105
 msgid "translator-credits"
 msgstr ""
-"La còla occitana de revirada d'Ubuntu, 2006 - ubuntu-l10n-"
-"oci@lists.ubuntu.com"
+msgstr "Yannig Marchegay (Kokoyaya) <yannig@marchegay.org>"
 
 #: ../src/gossip-accounts-dialog.c:342
 msgid "Stop"
