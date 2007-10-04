@@ -1,5 +1,6 @@
 2007-10-04  Stéphane Raimbault  <stephane.raimbault@gmail.com>
 
+	* POTFILES.in: Add encoding information.
 	* fr.po: Updated French translation.
 
 2007-10-03  Martyn Russell  <martyn@imendio.com>
