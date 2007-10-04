@@ -1,3 +1,23 @@
+2007-10-04  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-log.[ch]: Add a better API for getting links
+	from conversations. Also make it work for chatrooms and contacts
+	and save links in one file per account so we don't have to
+	traverse ALL log files. We support more than just http and ftp
+	links now too (i.e. anything we highlight normally).
+
+	* src/gossip-group-chat.c:
+	(group_chat_new_message_cb): Actually set the "incoming" variable
+	correctly so we know if chatroom messages are from us or someone
+	else, this way, we know to only save links from others, not
+	ourselves. 
+	
+	* src/gossip-log-window.c:
+	* ui/main.glade: Rework the links page in the log window, so we
+	show links from EVERY account by default and make it possible to
+	select the account we show logs from too. There is also now a
+	filter entry to filter by url, account name and contact name.
+
 2007-10-03  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-log.c:

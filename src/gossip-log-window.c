@@ -72,13 +72,14 @@ typedef struct {
 	GtkWidget        *scrolledwindow_chatrooms;
 	GossipChatView   *chatview_chatrooms;
 
-	GtkWidget        *vbox_links_find;
-	GtkWidget        *entry_links_find;
-	GtkWidget        *button_links_find;
+	GtkWidget        *vbox_links;
+	GtkWidget        *account_chooser_links;
+	GtkWidget        *entry_links;
 	GtkWidget        *button_links_open;
 	GtkWidget        *treeview_links;
+	GtkListStore     *treestore_links;
+	GtkTreeModel     *treemodel_links;
 
-	gchar            *last_links_find;
 	gchar            *last_find;
 
 	GossipLogManager *log_manager;
@@ -176,6 +177,22 @@ static void            log_window_entry_chatrooms_changed_cb          (GtkWidget
 								       GossipLogWindow  *window);
 static void            log_window_entry_chatrooms_activate_cb         (GtkWidget        *entry,
 								       GossipLogWindow  *window);
+
+/* Links */
+static void            log_window_links_changed_cb                    (GtkTreeSelection *selection,
+								       GossipLogWindow  *window);
+static void            log_window_links_populate                      (GossipLogWindow  *window);
+static void            log_window_links_setup                         (GossipLogWindow  *window);
+static gboolean        log_window_links_filter_func                   (GtkTreeModel     *model,
+								       GtkTreeIter      *iter,
+								       GossipLogWindow  *window);
+static void            log_window_links_accounts_changed_cb           (GtkWidget        *combobox,
+								       GossipLogWindow  *window);
+static void            log_window_entry_links_changed_cb              (GtkWidget        *entry,
+								       GossipLogWindow  *window);
+static void            log_window_button_links_open_clicked_cb        (GtkWidget        *widget,
+								       GossipLogWindow  *window);
+
 /* Window */
 static void            log_window_destroy_cb                          (GtkWidget        *widget,
 								       GossipLogWindow  *window);
@@ -183,6 +200,7 @@ static void            log_window_destroy_cb                          (GtkWidget
 enum {
 	COL_FIND_STATUS,
 	COL_FIND_ACCOUNT,
+	COL_FIND_ACCOUNT_NAME,
 	COL_FIND_CONTACT,
 	COL_FIND_CONTACT_NAME,
 	COL_FIND_DATE,
@@ -207,6 +225,7 @@ enum {
 enum {
 	COL_LINKS_STATUS,
 	COL_LINKS_ACCOUNT,
+	COL_LINKS_ACCOUNT_NAME,
 	COL_LINKS_CONTACT,
 	COL_LINKS_CONTACT_NAME,
 	COL_LINKS_DATE,
@@ -422,7 +441,7 @@ log_window_find_populate (GossipLogWindow *window,
 		account = gossip_log_search_hit_get_account (hit);
 		contact = gossip_log_search_hit_get_contact (hit);
 
-		/* Protect against invalid data (corrupt or old log files. */
+		/* Protect against invalid data (corrupt or old log files). */
 		if (!account || !contact) {
 			continue;
 		}
@@ -433,6 +452,7 @@ log_window_find_populate (GossipLogWindow *window,
 		gtk_list_store_append (store, &iter);
 		gtk_list_store_set (store, &iter,
 				    COL_FIND_ACCOUNT, account,
+				    COL_FIND_ACCOUNT_NAME, gossip_account_get_name (account),
 				    COL_FIND_CONTACT, contact,
 				    COL_FIND_CONTACT_NAME, gossip_contact_get_name (contact),
 				    COL_FIND_DATE, date,
@@ -466,8 +486,9 @@ log_window_find_setup (GossipLogWindow *window)
 	store = gtk_list_store_new (COL_FIND_COUNT,
 				    GDK_TYPE_PIXBUF,        /* account status */
 				    GOSSIP_TYPE_ACCOUNT,    /* account */
+				    G_TYPE_STRING,          /* account name */
 				    GOSSIP_TYPE_CONTACT,    /* contact */
-				    G_TYPE_STRING,          /* name */
+				    G_TYPE_STRING,          /* contact name */
 				    G_TYPE_STRING,          /* date */
 				    G_TYPE_STRING);         /* date_readable */
 
@@ -496,10 +517,10 @@ log_window_find_setup (GossipLogWindow *window)
 						 NULL);
 
 	gtk_tree_view_column_set_title (column, _("Account"));
-	gtk_tree_view_append_column (view, column);
-
+	gtk_tree_view_column_set_sort_column_id (column, COL_FIND_ACCOUNT_NAME);
 	gtk_tree_view_column_set_resizable (column, TRUE);
 	gtk_tree_view_column_set_clickable (column, TRUE);
+	gtk_tree_view_append_column (view, column);
 
 	cell = gtk_cell_renderer_text_new ();
 	offset = gtk_tree_view_insert_column_with_attributes (view, -1, _("Conversation With"),
@@ -523,9 +544,7 @@ log_window_find_setup (GossipLogWindow *window)
 
 	/* Set up treeview properties */
 	gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
-	gtk_tree_sortable_set_sort_column_id (sortable,
-					      COL_FIND_DATE,
-					      GTK_SORT_ASCENDING);
+	gtk_tree_sortable_set_sort_column_id (sortable, COL_FIND_DATE, GTK_SORT_ASCENDING);
 
 	/* Set up signals */
 	g_signal_connect (selection, "changed",
@@ -1801,60 +1820,66 @@ log_window_links_changed_cb (GtkTreeSelection *selection,
 }
 
 static void
-log_window_links_populate (GossipLogWindow *window,
-			   const gchar     *search_criteria)
+log_window_links_populate (GossipLogWindow *window)
 {
-	GossipAccount      *account;
-	GossipContact      *contact;
+	GossipAccountChooser *account_chooser;
+	GossipAccount        *account;
+	GossipContact        *contact;
 
-	GList              *hits;
-	GList              *l;
-	GossipLogSearchHit *hit;
+	GList                *hits;
+	GList                *l;
+	GossipLogLinkHit     *hit;
 
-	GtkTreeView        *view;
-	GtkTreeModel       *model;
-	GtkTreeSelection   *selection;
-	GtkListStore       *store;
-	GtkTreeIter         iter;
+	GtkTreeView          *view;
+	GtkTreeSelection     *selection;
+	GtkListStore         *store;
+	GtkTreeIter           iter;
 
 	gossip_debug (DEBUG_DOMAIN, "Clearing link results treeview");
-		
+
+	account_chooser = GOSSIP_ACCOUNT_CHOOSER (window->account_chooser_links);
+	account = gossip_account_chooser_get_account (account_chooser);
+
 	view = GTK_TREE_VIEW (window->treeview_links);
-	model = gtk_tree_view_get_model (view);
 	selection = gtk_tree_view_get_selection (view);
-	store = GTK_LIST_STORE (model);
+	store = GTK_LIST_STORE (window->treestore_links);
 
 	gtk_list_store_clear (store);
 
-	gossip_debug (DEBUG_DOMAIN, "Starting link search...");
-	hits = gossip_log_search_links_new (window->log_manager, 
-					    G_STR_EMPTY (search_criteria) ? NULL : search_criteria);
+	gossip_debug (DEBUG_DOMAIN, "Getting links for %s%s...", 
+		      account ? "account " : "ALL accounts ",
+		      account ? gossip_account_get_name (account) : "");
+
+	hits = gossip_log_get_links (window->log_manager, account);
 
 	gossip_debug (DEBUG_DOMAIN, "Adding %d hits", g_list_length (hits));
 	for (l = hits; l; l = l->next) {
 		const gchar *url;
 		const gchar *date;
 		gchar       *date_readable;
+		const gchar *contact_name;
 
 		hit = l->data;
 
-		account = gossip_log_search_hit_get_account (hit);
-		contact = gossip_log_search_hit_get_contact (hit);
+		account = gossip_log_link_hit_get_account (hit);
+		contact = gossip_log_link_hit_get_contact (hit);
 
-		/* Protect against invalid data (corrupt or old log files. */
-		if (!account || !contact) {
-			continue;
-		}
-
-		url = gossip_log_search_hit_get_link (hit);
-		date = gossip_log_search_hit_get_date (hit);
+		url = gossip_log_link_hit_get_url (hit);
+		date = gossip_log_link_hit_get_date (hit);
 		date_readable = gossip_log_get_date_readable (date);
-
+		
+		if (contact) {
+			contact_name = gossip_contact_get_name (contact);
+		} else {
+			contact_name = _("Unknown");
+		}
+		
 		gtk_list_store_append (store, &iter);
 		gtk_list_store_set (store, &iter,
 				    COL_LINKS_ACCOUNT, account,
+				    COL_LINKS_ACCOUNT_NAME, gossip_account_get_name (account),
 				    COL_LINKS_CONTACT, contact,
-				    COL_LINKS_CONTACT_NAME, gossip_contact_get_name (contact),
+				    COL_LINKS_CONTACT_NAME, contact_name,
 				    COL_LINKS_DATE, date,
 				    COL_LINKS_DATE_READABLE, date_readable,
 				    COL_LINKS_URL, url,
@@ -1864,7 +1889,7 @@ log_window_links_populate (GossipLogWindow *window,
 	}
 
 	if (hits) {
-		gossip_log_search_free (hits);
+		gossip_log_links_free (hits);
 	}
 }
 
@@ -1876,27 +1901,45 @@ log_window_links_setup (GossipLogWindow *window)
 	GtkTreeSelection  *selection;
 	GtkTreeSortable   *sortable;
 	GtkTreeViewColumn *column;
-	GtkListStore      *store;
 	GtkCellRenderer   *cell;
 	gint               offset;
+
+	if (window->treestore_links) {
+		g_object_unref (window->treestore_links);
+	}
+
+	if (window->treemodel_links) {
+		g_object_unref (window->treemodel_links);
+	}
 
 	view = GTK_TREE_VIEW (window->treeview_links);
 	selection = gtk_tree_view_get_selection (view);
 
 	/* New store */
-	store = gtk_list_store_new (COL_LINKS_COUNT,
-				    GDK_TYPE_PIXBUF,        /* account status */
-				    GOSSIP_TYPE_ACCOUNT,    /* account */
-				    GOSSIP_TYPE_CONTACT,    /* contact */
-				    G_TYPE_STRING,          /* name */
-				    G_TYPE_STRING,          /* date */
-				    G_TYPE_STRING,          /* date_readable */
-				    G_TYPE_STRING);         /* url */
+	window->treestore_links = gtk_list_store_new (COL_LINKS_COUNT,
+						      GDK_TYPE_PIXBUF,        /* account status */
+						      GOSSIP_TYPE_ACCOUNT,    /* account */
+						      G_TYPE_STRING,          /* account name */
+						      GOSSIP_TYPE_CONTACT,    /* contact */
+						      G_TYPE_STRING,          /* contact name */
+						      G_TYPE_STRING,          /* date */
+						      G_TYPE_STRING,          /* date_readable */
+						      G_TYPE_STRING);         /* url */
 
-	model = GTK_TREE_MODEL (store);
-	sortable = GTK_TREE_SORTABLE (store);
+	model = GTK_TREE_MODEL (window->treestore_links);
+	sortable = GTK_TREE_SORTABLE (window->treestore_links);
 
 	gtk_tree_view_set_model (view, model);
+
+	/* Create filter */
+	window->treemodel_links = gtk_tree_model_filter_new (model, NULL);
+
+	gtk_tree_model_filter_set_visible_func (GTK_TREE_MODEL_FILTER (window->treemodel_links),
+						(GtkTreeModelFilterVisibleFunc)
+						log_window_links_filter_func,
+						window, NULL);
+
+	gtk_tree_view_set_model (view, window->treemodel_links);
 
 	/* Account */
 	column = gtk_tree_view_column_new ();
@@ -1918,10 +1961,10 @@ log_window_links_setup (GossipLogWindow *window)
 						 NULL);
 
 	gtk_tree_view_column_set_title (column, _("Account"));
-	gtk_tree_view_append_column (view, column);
-
+	gtk_tree_view_column_set_sort_column_id (column, COL_LINKS_ACCOUNT_NAME);
 	gtk_tree_view_column_set_resizable (column, TRUE);
 	gtk_tree_view_column_set_clickable (column, TRUE);
+	gtk_tree_view_append_column (view, column);
 
 	/* Who */
 	cell = gtk_cell_renderer_text_new ();
@@ -1960,40 +2003,69 @@ log_window_links_setup (GossipLogWindow *window)
 
 	/* Set up treeview properties */
 	gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
-	gtk_tree_sortable_set_sort_column_id (sortable,
-					      COL_LINKS_DATE,
-					      GTK_SORT_ASCENDING);
+	gtk_tree_sortable_set_sort_column_id (sortable, COL_LINKS_DATE, GTK_SORT_ASCENDING);
 
 	/* Set up signals */
 	g_signal_connect (selection, "changed",
 			  G_CALLBACK (log_window_links_changed_cb),
 			  window);
+}
 
-	g_object_unref (store);
+static gboolean
+log_window_links_filter_func (GtkTreeModel    *model,
+			      GtkTreeIter     *iter,
+			      GossipLogWindow *window)
+{
+	const gchar *filter;
+	gchar       *filter_casefold;
+	gchar       *str;
+	gchar       *str_casefold;
+	gboolean     visible = FALSE;
+	gint         col;
+	gint         i;
+
+	filter = gtk_entry_get_text (GTK_ENTRY (window->entry_links));
+	if (G_STR_EMPTY (filter)) {
+		return TRUE;
+	}
+
+	filter_casefold = g_utf8_casefold (filter, -1);
+
+	for (i = 0, col = 0; i < 3 && !visible; i++) {
+		switch (i) {
+		case 0: col = COL_LINKS_ACCOUNT_NAME; break;
+		case 1: col = COL_LINKS_CONTACT_NAME; break;
+		case 2: col = COL_LINKS_URL;          break;
+		default:   			      continue;
+		}
+
+		gtk_tree_model_get (model, iter, col, &str, -1);
+		if (G_STR_EMPTY (str)) {
+			continue;
+		}
+		
+		str_casefold = g_utf8_casefold (str, -1);
+		visible |= strstr (str_casefold, filter_casefold) != NULL;
+		g_free (str_casefold);
+	}
+	
+	g_free (filter_casefold);
+
+	return visible;
 }
 
 static void
-log_window_button_links_find_clicked_cb (GtkWidget       *widget,
-					 GossipLogWindow *window)
+log_window_links_accounts_changed_cb (GtkWidget       *combobox,
+				      GossipLogWindow *window)
 {
-	const gchar *str;
+	log_window_links_populate (window);
+}
 
-	str = gtk_entry_get_text (GTK_ENTRY (window->entry_links_find));
-
-	/* Don't find the same crap again */
-	if (window->last_links_find && strcmp (window->last_links_find, str) == 0) {
-		gossip_debug (DEBUG_DOMAIN, 
-			      "Not searching for:'%s' in all links in all "
-			      "log files (same as last search)", 
-			      str);
-		return;
-	}
-
-	g_free (window->last_links_find);
-	window->last_links_find = g_strdup (str);
-
-	gossip_debug (DEBUG_DOMAIN, "Searching for:'%s' in links in all log files", str);
-	log_window_links_populate (window, str);
+static void
+log_window_entry_links_changed_cb (GtkWidget       *entry,
+				   GossipLogWindow *window)
+{
+	gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (window->treemodel_links));
 }
 
 static void
@@ -2027,8 +2099,10 @@ static void
 log_window_destroy_cb (GtkWidget       *widget,
 		       GossipLogWindow *window)
 {
-	g_free (window->last_links_find);
 	g_free (window->last_find);
+
+	g_object_unref (window->treestore_links);
+	g_object_unref (window->treemodel_links);
 
 	gossip_log_handler_remove
 		(window->log_manager,
@@ -2094,8 +2168,8 @@ gossip_log_window_show (GossipContact  *contact,
 				       "vbox_chatrooms", &window->vbox_chatrooms,
 				       "treeview_chatrooms", &window->treeview_chatrooms,
 				       "scrolledwindow_chatrooms", &window->scrolledwindow_chatrooms,
-				       "entry_links_find", &window->entry_links_find,
-				       "button_links_find", &window->button_links_find,
+				       "vbox_links", &window->vbox_links,
+				       "entry_links", &window->entry_links,
 				       "button_links_open", &window->button_links_open,
 				       "treeview_links", &window->treeview_links,
 				       NULL);
@@ -2110,7 +2184,7 @@ gossip_log_window_show (GossipContact  *contact,
 			      "entry_contacts", "activate", log_window_entry_contacts_activate_cb,
 			      "entry_chatrooms", "changed", log_window_entry_chatrooms_changed_cb,
 			      "entry_chatrooms", "activate", log_window_entry_chatrooms_activate_cb,
-			      "button_links_find", "clicked", log_window_button_links_find_clicked_cb,
+			      "entry_links", "changed", log_window_entry_links_changed_cb,
 			      "button_links_open", "clicked", log_window_button_links_open_clicked_cb,
 			      NULL);
 
@@ -2152,17 +2226,15 @@ gossip_log_window_show (GossipContact  *contact,
 			   GTK_WIDGET (window->chatview_chatrooms));
 	gtk_widget_show (GTK_WIDGET (window->chatview_chatrooms));
 
-	/* Account chooser for contacts & chat rooms */
+	/* Account chooser for contacts/chat rooms/links */
 	session = gossip_app_get_session ();
 
 	window->account_chooser_contacts = gossip_account_chooser_new (session);
 	account_chooser = GOSSIP_ACCOUNT_CHOOSER (window->account_chooser_contacts);
 	gossip_account_chooser_set_can_select_all (account_chooser, TRUE);
-
 	gtk_box_pack_start (GTK_BOX (window->vbox_contacts),
 			    window->account_chooser_contacts,
 			    FALSE, TRUE, 0);
-
 	g_signal_connect (window->account_chooser_contacts, "changed",
 			  G_CALLBACK (log_window_contacts_accounts_changed_cb),
 			  window);
@@ -2170,14 +2242,25 @@ gossip_log_window_show (GossipContact  *contact,
 	window->account_chooser_chatrooms = gossip_account_chooser_new (session);
 	account_chooser = GOSSIP_ACCOUNT_CHOOSER (window->account_chooser_chatrooms);
 	gossip_account_chooser_set_can_select_all (account_chooser, TRUE);
-
 	gtk_box_pack_start (GTK_BOX (window->vbox_chatrooms),
 			    window->account_chooser_chatrooms,
 			    FALSE, TRUE, 0);
-
 	g_signal_connect (window->account_chooser_chatrooms, "changed",
 			  G_CALLBACK (log_window_chatrooms_accounts_changed_cb),
 			  window);
+
+	window->account_chooser_links = gossip_account_chooser_new (session);
+	account_chooser = GOSSIP_ACCOUNT_CHOOSER (window->account_chooser_links);
+	gossip_account_chooser_set_has_all_option (account_chooser, TRUE);
+	gossip_account_chooser_set_can_select_all (account_chooser, TRUE);
+	gossip_account_chooser_set_account (account_chooser, NULL);
+	gtk_box_pack_start (GTK_BOX (window->vbox_links),
+			    window->account_chooser_links,
+			    FALSE, TRUE, 0);
+	g_signal_connect (window->account_chooser_links, "changed",
+			  G_CALLBACK (log_window_links_accounts_changed_cb),
+			  window);
+	
 	/* Populate */
 	accounts = gossip_session_get_accounts (session);
 	account_num = g_list_length (accounts);
@@ -2190,11 +2273,15 @@ gossip_log_window_show (GossipContact  *contact,
 		gtk_widget_show (window->account_chooser_contacts);
 		gtk_widget_show (window->vbox_chatrooms);
 		gtk_widget_show (window->account_chooser_chatrooms);
+		gtk_widget_show (window->vbox_links);
+		gtk_widget_show (window->account_chooser_links);
 	} else {
 		gtk_widget_hide (window->vbox_contacts);
 		gtk_widget_hide (window->account_chooser_contacts);
 		gtk_widget_hide (window->vbox_chatrooms);
 		gtk_widget_hide (window->account_chooser_chatrooms);
+		gtk_widget_hide (window->vbox_links);
+		gtk_widget_hide (window->account_chooser_links);
 	}
 
 	/* Search List */
@@ -2210,7 +2297,7 @@ gossip_log_window_show (GossipContact  *contact,
 
 	/* Links List */
 	log_window_links_setup (window);
-	log_window_links_populate (window, NULL);
+	log_window_links_populate (window);
 
 	/* Select contact or chatroom */
 	if (contact) {

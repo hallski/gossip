@@ -1105,8 +1105,10 @@ group_chat_new_message_cb (GossipChatroomProvider *provider,
 {
 	GossipGroupChatPriv  *priv;
 	GossipChatroomInvite *invite;
+	GossipContact        *sender;
 	GossipLogManager     *log_manager;
 	GossipTime            timestamp;
+	gboolean              is_incoming;
 	gboolean              is_backlog;
 
 	priv = GET_PRIV (chat);
@@ -1118,9 +1120,14 @@ group_chat_new_message_cb (GossipChatroomProvider *provider,
 	timestamp = gossip_message_get_timestamp (message);
 	is_backlog = timestamp < priv->time_joined;
 
+	sender = gossip_message_get_sender (message);
+	is_incoming = !gossip_contact_equal (sender, priv->own_contact);
+
 	gossip_debug (DEBUG_DOMAIN, 
-		      "[%d] New message with timestamp:%d, message %s backlog", 
-		      id, timestamp, is_backlog ? "IS" : "IS NOT");
+		      "[%d] New message with timestamp:%d, message %s backlog, %s incoming", 
+		      id, timestamp, 
+		      is_backlog ? "IS" : "IS NOT", 
+		      is_incoming ? "IS" : "IS NOT");
 
 	if (is_backlog) {
 		gossip_chat_view_allow_scroll (GOSSIP_CHAT (chat)->view, FALSE);
@@ -1131,17 +1138,14 @@ group_chat_new_message_cb (GossipChatroomProvider *provider,
 		gossip_chat_view_append_invite (GOSSIP_CHAT (chat)->view,
 						message);
 	} else {
-		GossipContact *sender;
-
-		sender = gossip_message_get_sender (message);
-		if (gossip_contact_equal (sender, priv->own_contact)) {
-			gossip_chat_view_append_message_from_self (
+		if (is_incoming) {
+			gossip_chat_view_append_message_from_other (
 				GOSSIP_CHAT (chat)->view,
 				message,
 				priv->own_contact,
 				NULL);
 		} else {
-			gossip_chat_view_append_message_from_other (
+			gossip_chat_view_append_message_from_self (
 				GOSSIP_CHAT (chat)->view,
 				message,
 				priv->own_contact,
@@ -1159,7 +1163,7 @@ group_chat_new_message_cb (GossipChatroomProvider *provider,
 	/* Log message? */
 	if (!is_backlog) {
 		log_manager = gossip_session_get_log_manager (gossip_app_get_session ());
-		gossip_log_message_for_chatroom (log_manager, priv->chatroom, message, FALSE);
+		gossip_log_message_for_chatroom (log_manager, priv->chatroom, message, is_incoming);
 	}
 
 	/* Re-enable scrolling? */

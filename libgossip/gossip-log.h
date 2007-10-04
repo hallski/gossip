@@ -41,6 +41,7 @@ G_BEGIN_DECLS
 typedef struct _GossipLogManager      GossipLogManager;
 typedef struct _GossipLogManagerClass GossipLogManagerClass;
 typedef struct _GossipLogSearchHit    GossipLogSearchHit;
+typedef struct _GossipLogLinkHit      GossipLogLinkHit;
 
 struct _GossipLogManager {
 	GObject parent;
@@ -105,15 +106,21 @@ gboolean          gossip_log_exists_for_chatroom       (GossipChatroom        *c
 /* Searching */
 GList *           gossip_log_search_new                (GossipLogManager      *manager,
 							const gchar           *text);
-GList *           gossip_log_search_links_new          (GossipLogManager      *manager,
-							const gchar           *text);
 void              gossip_log_search_free               (GList                 *hits);
 GossipAccount *   gossip_log_search_hit_get_account    (GossipLogSearchHit    *hit);
 GossipContact *   gossip_log_search_hit_get_contact    (GossipLogSearchHit    *hit);
 const gchar *     gossip_log_search_hit_get_date       (GossipLogSearchHit    *hit);
 const gchar *     gossip_log_search_hit_get_filename   (GossipLogSearchHit    *hit);
-const gchar *     gossip_log_search_hit_get_link       (GossipLogSearchHit    *hit);
 
+/* Links */
+GList *           gossip_log_get_links                 (GossipLogManager      *manager,
+							GossipAccount         *account);
+void              gossip_log_links_free                (GList                 *hits);
+GossipAccount *   gossip_log_link_hit_get_account      (GossipLogLinkHit      *hit);
+GossipContact *   gossip_log_link_hit_get_contact      (GossipLogLinkHit      *hit);
+const gchar *     gossip_log_link_hit_get_date         (GossipLogLinkHit      *hit);
+const gchar *     gossip_log_link_hit_get_url          (GossipLogLinkHit      *hit);
+						 	
 G_END_DECLS
 
 #endif /* __GOSSIP_LOG_H__ */

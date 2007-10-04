@@ -76,13 +76,20 @@
 
 #define LOG_PROTOCOL_VERSION   "2.0"
 
-#define LOG_HEADER \
+#define LOG_FILE_HEADER \
     "<?xml version='1.0' encoding='utf-8'?>\n" \
     "<?xml-stylesheet type=\"text/xsl\" href=\"gossip-log.xsl\"?>\n" \
     "<log>\n"
 
-#define LOG_FOOTER \
+#define LOG_FILE_FOOTER \
     "</log>\n"
+
+#define LOG_LINKS_FILE_HEADER \
+    "<?xml version='1.0' encoding='utf-8'?>\n" \
+    "<links>\n"
+
+#define LOG_LINKS_FILE_FOOTER \
+    "</links>\n"
 
 #define LOG_FILENAME_PREFIX       "file://"
 #define LOG_FILENAME_SUFFIX       ".log"
@@ -116,7 +123,13 @@ struct _GossipLogSearchHit {
 	GossipContact *contact;
 	gchar         *filename;
 	gchar         *date;
-	gchar         *link;
+};
+
+struct _GossipLogLinkHit {
+	GossipAccount *account;
+	GossipContact *contact;
+	gchar         *date;
+	gchar         *url;
 };
 
 typedef struct {
@@ -193,10 +206,17 @@ static gchar *         log_get_filename_by_date_for_contact    (GossipContact   
 								const gchar           *particular_date);
 static gchar *         log_get_filename_by_date_for_chatroom   (GossipChatroom        *chatroom,
 								const gchar           *particular_date);
+static gchar *         log_get_filename_for_links              (GossipAccount         *account);
 static gboolean        log_set_name                            (GossipLogManager      *manager,
 								GossipContact         *contact);
-static gchar *         log_get_contact_log_dir                 (GossipContact *contact);
-static gchar *         log_get_chatroom_log_dir                (GossipChatroom *chatroom);
+static gchar *         log_get_contact_log_dir                 (GossipContact         *contact);
+static gchar *         log_get_chatroom_log_dir                (GossipChatroom        *chatroom);
+static void            log_set_links_from_message              (GossipLogManager      *manager,
+								GossipContact         *sender, 
+								const gchar           *timestamp, 
+								const gchar           *body);
+static GList *         log_get_links                           (GossipLogManager      *manager, 
+								GossipAccount         *account);
 
 G_DEFINE_TYPE (GossipLogManager, gossip_log_manager, G_TYPE_OBJECT);
 
@@ -1186,6 +1206,37 @@ log_get_filename_by_date_for_chatroom (GossipChatroom *chatroom,
 	return filename;
 }
 
+static gchar *
+log_get_filename_for_links (GossipAccount *account)
+{
+	gchar *filename;
+	gchar *dirname;
+	gchar *directory;
+
+	directory = log_get_basedir (account);
+	if (!directory) {
+		return NULL;
+	}
+
+	filename = g_build_filename (directory, "links.xml", NULL);
+	
+	g_free (directory);
+
+	gossip_debug (DEBUG_DOMAIN, "Using file:'%s' for link on account:'%s'",
+		      filename,
+		      gossip_account_get_name (account));
+
+	dirname = g_path_get_dirname (filename);
+	if (!g_file_test (dirname, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
+		gossip_debug (DEBUG_DOMAIN, "Creating directory:'%s'", dirname);
+		g_mkdir_with_parents (dirname, LOG_DIR_CREATE_MODE);
+	}
+
+	g_free (dirname);
+
+	return filename;
+}
+
 static gboolean
 log_set_name (GossipLogManager *manager,
 	      GossipContact    *contact)
@@ -1566,6 +1617,198 @@ gossip_log_get_messages_for_contact (GossipLogManager *manager,
 	return messages;
 }
 
+static void
+log_set_links_from_message (GossipLogManager *manager,
+			    GossipContact    *sender, 
+			    const gchar      *timestamp, 
+			    const gchar      *body)
+{
+	GArray   *start, *end;
+	GSList   *urls = NULL;
+	GSList   *l;
+	gchar    *filename;
+	FILE     *file;
+	gboolean  new_file;
+	gint      num_matches;
+	gint      i;
+
+	start = g_array_new (FALSE, FALSE, sizeof (gint));
+	end = g_array_new (FALSE, FALSE, sizeof (gint));
+	
+	/* Use Regex to find links */
+	num_matches = gossip_regex_match (GOSSIP_REGEX_ALL,
+					  body, 
+					  start, end);
+	
+	for (i = 0; i < num_matches; i++) {
+		gchar *url;
+		gchar *url_escaped;
+		gint   s = 0;
+		gint   e = 0;
+		
+		s = g_array_index (start, gint, i);
+		e = g_array_index (end, gint, i);
+		
+		url = gossip_substring (body, s, e);
+		if (!G_STR_EMPTY (url)) {
+			url_escaped = g_markup_escape_text (url, -1);
+			urls = g_slist_prepend (urls, url_escaped);
+		}
+		
+		g_free (url);
+	}
+
+	g_array_free (start, TRUE);
+	g_array_free (end, TRUE);
+
+	if (!urls) {
+		return;
+	}
+
+	urls = g_slist_reverse (urls);
+
+	/* Get filename to open */
+	filename = log_get_filename_for_links (gossip_contact_get_account (sender));
+	new_file = FALSE;
+	
+	if (!g_file_test (filename, G_FILE_TEST_EXISTS)) {
+		file = g_fopen (filename, "w+");
+		if (file) {
+			g_fprintf (file, LOG_LINKS_FILE_HEADER);
+		}
+
+		new_file = TRUE;
+	} else {
+		file = g_fopen (filename, "r+");
+		if (file) {
+			fseek (file, - strlen (LOG_LINKS_FILE_FOOTER), SEEK_END);
+		}
+	}
+
+	for (l = urls; l; l = l->next) {
+		const gchar *url;
+
+		url = l->data;
+		
+		g_fprintf (file,
+			   "<link contact='%s' time='%s'>%s</link>\n"
+			   LOG_LINKS_FILE_FOOTER,
+			   gossip_contact_get_id (sender),
+			   timestamp,
+			   url);
+	}
+
+	fclose (file);
+
+	if (new_file) {
+		g_chmod (filename, LOG_FILE_CREATE_MODE);
+	}
+
+	/* Clean up */
+	g_slist_foreach (urls, (GFunc) g_free, NULL);
+	g_slist_free (urls);
+	g_free (filename);
+}
+
+static GList *         
+log_get_links (GossipLogManager *manager, 
+	       GossipAccount    *account)
+{
+	GossipLogManagerPriv *priv;
+	GossipContactManager *contact_manager;
+	GList                *links = NULL;
+	gchar                *filename;
+	xmlParserCtxtPtr      ctxt;
+	xmlDocPtr             doc;
+	xmlNodePtr            log_node;
+	xmlNodePtr            node;
+
+	priv = GET_PRIV (manager);
+
+	contact_manager = gossip_session_get_contact_manager (priv->session);
+
+	filename = log_get_filename_for_links (account);
+
+	gossip_debug (DEBUG_DOMAIN, "Attempting to parse filename:'%s'...", filename);
+
+	if (!g_file_test (filename, G_FILE_TEST_EXISTS)) {
+		gossip_debug (DEBUG_DOMAIN, "Filename:'%s' does not exist", filename);
+		g_free (filename);
+		return NULL;
+	}
+
+	/* Create parser. */
+	ctxt = xmlNewParserCtxt ();
+
+	/* Parse and validate the file. */
+	doc = xmlCtxtReadFile (ctxt, filename, NULL, 0);
+	if (!doc) {
+		g_warning ("Failed to parse file:'%s'", filename);
+		g_free (filename);
+		xmlFreeParserCtxt (ctxt);
+		return NULL;
+	}
+
+	/* The root node, presets. */
+	log_node = xmlDocGetRootElement (doc);
+	if (!log_node) {
+		g_free (filename);
+		xmlFreeDoc (doc);
+		xmlFreeParserCtxt (ctxt);
+		return NULL;
+	}
+
+	/* Now get the links. */
+	for (node = log_node->children; node; node = node->next) {
+		GossipLogLinkHit *hit;
+		GossipContact    *contact;
+		gchar            *contact_id;
+		gchar            *date;
+		gchar            *url;
+
+		if (strcmp (node->name, "link") != 0) {
+			continue;
+		}
+
+		contact_id = xmlGetProp (node, "contact");
+		contact = gossip_contact_manager_find (contact_manager, 
+						       account,
+						       contact_id);
+		xmlFree (contact_id);
+
+		date = xmlGetProp (node, "time");
+		url = xmlNodeGetContent (node);
+
+		hit = g_new0 (GossipLogLinkHit, 1);
+
+		hit->account = g_object_ref (account);
+
+		if (contact) {
+			hit->contact = g_object_ref (contact);
+		}
+
+		hit->date = g_strdup (date);
+		hit->url = g_strdup (url);
+		
+		links = g_list_prepend (links, hit);
+
+		xmlFree (date);
+		xmlFree (url);
+	}
+
+	if (links) {
+		links = g_list_reverse (links);
+	}
+
+	gossip_debug (DEBUG_DOMAIN, "Parsed %d links", g_list_length (links));
+
+	g_free (filename);
+	xmlFreeDoc (doc);
+	xmlFreeParserCtxt (ctxt);
+
+	return links;
+}
+
 void
 gossip_log_message_for_contact (GossipLogManager *manager,
 				GossipMessage    *message,
@@ -1617,6 +1860,7 @@ gossip_log_message_for_contact (GossipLogManager *manager,
 		own_contact = gossip_message_get_sender (message);
 	}
 
+	/* Continue */
 	account = gossip_contact_get_account (contact);
 	own_contact_saved = gossip_session_get_own_contact (priv->session, account);
 
@@ -1625,7 +1869,7 @@ gossip_log_message_for_contact (GossipLogManager *manager,
 	if (!g_file_test (filename, G_FILE_TEST_EXISTS)) {
 		file = g_fopen (filename, "w+");
 		if (file) {
-			g_fprintf (file, LOG_HEADER);
+			g_fprintf (file, LOG_FILE_HEADER);
 		}
 
 		/* ONLY save the name when we create new files, we are
@@ -1640,7 +1884,7 @@ gossip_log_message_for_contact (GossipLogManager *manager,
 
 		file = g_fopen (filename, "r+");
 		if (file) {
-			fseek (file, - strlen (LOG_FOOTER), SEEK_END);
+			fseek (file, - strlen (LOG_FILE_FOOTER), SEEK_END);
 		}
 
 		/* Check the message name and our name match, if not
@@ -1702,7 +1946,7 @@ gossip_log_message_for_contact (GossipLogManager *manager,
 		   "<message time='%s' %s='%s' resource='%s' nick='%s'>"
 		   "%s"
 		   "</message>\n"
-		   LOG_FOOTER,
+		   LOG_FILE_FOOTER,
 		   timestamp,
 		   to_or_from,
 		   contact_id,
@@ -1716,14 +1960,21 @@ gossip_log_message_for_contact (GossipLogManager *manager,
 		g_chmod (filename, LOG_FILE_CREATE_MODE);
 	}
 
+	/* See if we should remember a link in the body of the message */
+	if (incoming) {
+		log_set_links_from_message (manager, contact, timestamp, body_str);
+	}
+
+	/* Notify all listening for new log events */
+	log_handlers_notify_all (manager, own_contact, contact, NULL, message);
+
+	/* Clean up */
 	g_free (filename);
 	g_free (timestamp);
 	g_free (body);
 	g_free (resource);
 	g_free (name);
 	g_free (contact_id);
-
-	log_handlers_notify_all (manager, own_contact, contact, NULL, message);
 }
 
 gboolean
@@ -2000,7 +2251,7 @@ gossip_log_message_for_chatroom (GossipLogManager *manager,
 	if (!g_file_test (filename, G_FILE_TEST_EXISTS)) {
 		file = g_fopen (filename, "w+");
 		if (file) {
-			g_fprintf (file, LOG_HEADER);
+			g_fprintf (file, LOG_FILE_HEADER);
 		}
 
 		/* ONLY save the name when we create new files, we are
@@ -2011,7 +2262,7 @@ gossip_log_message_for_chatroom (GossipLogManager *manager,
 	} else {
 		file = g_fopen (filename, "r+");
 		if (file) {
-			fseek (file, - strlen (LOG_FOOTER), SEEK_END);
+			fseek (file, - strlen (LOG_FILE_FOOTER), SEEK_END);
 		}
 	}
 
@@ -2046,7 +2297,7 @@ gossip_log_message_for_chatroom (GossipLogManager *manager,
 		   "<message time='%s' from='%s' nick='%s'>"
 		   "%s"
 		   "</message>\n"
-		   LOG_FOOTER,
+		   LOG_FILE_FOOTER,
 		   timestamp,
 		   contact_id,
 		   name,
@@ -2058,13 +2309,20 @@ gossip_log_message_for_chatroom (GossipLogManager *manager,
 		g_chmod (filename, LOG_FILE_CREATE_MODE);
 	}
 
+	/* See if we should remember a link in the body of the message */
+	if (incoming) {
+		log_set_links_from_message (manager, contact, timestamp, body_str);
+	}
+
+	/* Notify all listening for new log events */
+	log_handlers_notify_all (manager, own_contact, NULL, chatroom, message);
+
+	/* Clean up */
 	g_free (timestamp);
 	g_free (body);
 	g_free (name);
 	g_free (contact_id);
 	g_free (filename);
-
-	log_handlers_notify_all (manager, own_contact, NULL, chatroom, message);
 }
 
 gboolean
@@ -2217,9 +2475,161 @@ gossip_log_search_new (GossipLogManager *manager,
 	return hits;
 }
 
+void
+gossip_log_search_free (GList *hits)
+{
+	GList              *l;
+	GossipLogSearchHit *hit;
+
+	g_return_if_fail (hits != NULL);
+
+	for (l = hits; l; l = l->next) {
+		hit = l->data;
+
+		if (hit->account) {
+			g_object_unref (hit->account);
+		}
+
+		if (hit->contact) {
+			g_object_unref (hit->contact);
+		}
+
+		g_free (hit->date);
+		g_free (hit->filename);
+
+		g_free (hit);
+	}
+
+	g_list_free (hits);
+}
+
+GossipAccount *
+gossip_log_search_hit_get_account (GossipLogSearchHit *hit)
+{
+	g_return_val_if_fail (hit != NULL, NULL);
+
+	return hit->account;
+}
+
+GossipContact *
+gossip_log_search_hit_get_contact (GossipLogSearchHit *hit)
+{
+	g_return_val_if_fail (hit != NULL, NULL);
+
+	return hit->contact;
+}
+
+const gchar *
+gossip_log_search_hit_get_date (GossipLogSearchHit *hit)
+{
+	g_return_val_if_fail (hit != NULL, NULL);
+
+	return hit->date;
+}
+
+const gchar *
+gossip_log_search_hit_get_filename (GossipLogSearchHit *hit)
+{
+	g_return_val_if_fail (hit != NULL, NULL);
+
+	return hit->filename;
+}
+
+/*
+ * Links
+ */
+
+void
+gossip_log_links_free (GList *hits)
+{
+	GList            *l;
+	GossipLogLinkHit *hit;
+
+	g_return_if_fail (hits != NULL);
+
+	for (l = hits; l; l = l->next) {
+		hit = l->data;
+
+		g_free (hit->url);
+		g_free (hit->date);
+
+		if (hit->contact) {
+			g_object_unref (hit->contact);
+		}
+
+		if (hit->account) {
+			g_object_unref (hit->account);
+		}
+
+		g_free (hit);
+	}
+
+	g_list_free (hits);
+}
+
 GList *
-gossip_log_search_links_new (GossipLogManager *manager,
-			     const gchar      *text)
+gossip_log_get_links (GossipLogManager *manager,
+		      GossipAccount    *account)
+{
+	GossipLogManagerPriv *priv;
+	GossipAccountManager *account_manager;
+	GList                *accounts;
+	GList                *links = NULL;
+	GList                *l;
+
+	if (account) {
+		return log_get_links (manager, account);
+	}
+
+	priv = GET_PRIV (manager);
+
+	account_manager = gossip_session_get_account_manager (priv->session);
+	accounts = gossip_account_manager_get_accounts (account_manager);
+	for (l = accounts; l; l = l->next) {
+		links = g_list_concat (links, log_get_links (manager, l->data));
+		g_object_unref (l->data);
+	}
+	g_list_free (accounts);
+
+	return links;
+}
+
+GossipAccount *
+gossip_log_link_hit_get_account (GossipLogLinkHit *hit)
+{
+	g_return_val_if_fail (hit != NULL, NULL);
+
+	return hit->account;
+}
+
+GossipContact *
+gossip_log_link_hit_get_contact (GossipLogLinkHit *hit)
+{
+	g_return_val_if_fail (hit != NULL, NULL);
+
+	return hit->contact;
+}
+
+const gchar *     
+gossip_log_link_hit_get_date (GossipLogLinkHit *hit)
+{
+	g_return_val_if_fail (hit != NULL, NULL);
+
+	return hit->date;
+}
+
+const gchar *     
+gossip_log_link_hit_get_url (GossipLogLinkHit *hit)
+{
+	g_return_val_if_fail (hit != NULL, NULL);
+
+	return hit->url;
+}
+
+#if 0
+/* Function to convert links into new file format */
+GList *
+log_links_convert_old_to_new (GossipLogManager *manager)
 {
 	GossipLogManagerPriv *priv;
 	GossipContactManager *contact_manager;
@@ -2332,13 +2742,13 @@ gossip_log_search_links_new (GossipLogManager *manager,
 				g_free (contact_id);
 				
 				if (!contact) {
-					/* FIXME: What do we do here, do we
-					 * create a new contact explicitly for
-					 * this log entry?
-					 */
 					g_free (link);
 					continue;
 				}
+				
+				/* FIXME: Add function call here to remember link 
+				 *
+				 */
 				
 				hit = g_new0 (GossipLogSearchHit, 1);
 				
@@ -2348,8 +2758,6 @@ gossip_log_search_links_new (GossipLogManager *manager,
 				hit->contact = g_object_ref (contact);
 				hit->link = link;
 
-				hits = g_list_append (hits, hit);
-				
 				gossip_debug (DEBUG_DOMAIN, 
 					      "Found link:'%s' in file:'%s' on date:'%s'...",
 					      link, hit->filename, hit->date);
@@ -2373,72 +2781,4 @@ gossip_log_search_links_new (GossipLogManager *manager,
 	return hits;
 }
 
-void
-gossip_log_search_free (GList *hits)
-{
-	GList              *l;
-	GossipLogSearchHit *hit;
-
-	g_return_if_fail (hits != NULL);
-
-	for (l = hits; l; l = l->next) {
-		hit = l->data;
-
-		if (hit->account) {
-			g_object_unref (hit->account);
-		}
-
-		if (hit->contact) {
-			g_object_unref (hit->contact);
-		}
-
-		g_free (hit->date);
-		g_free (hit->filename);
-		g_free (hit->link);
-
-		g_free (hit);
-	}
-
-	g_list_free (hits);
-}
-
-GossipAccount *
-gossip_log_search_hit_get_account (GossipLogSearchHit *hit)
-{
-	g_return_val_if_fail (hit != NULL, NULL);
-
-	return hit->account;
-}
-
-GossipContact *
-gossip_log_search_hit_get_contact (GossipLogSearchHit *hit)
-{
-	g_return_val_if_fail (hit != NULL, NULL);
-
-	return hit->contact;
-}
-
-const gchar *
-gossip_log_search_hit_get_date (GossipLogSearchHit *hit)
-{
-	g_return_val_if_fail (hit != NULL, NULL);
-
-	return hit->date;
-}
-
-const gchar *
-gossip_log_search_hit_get_filename (GossipLogSearchHit *hit)
-{
-	g_return_val_if_fail (hit != NULL, NULL);
-
-	return hit->filename;
-}
-
-const gchar *
-gossip_log_search_hit_get_link (GossipLogSearchHit *hit)
-{
-	g_return_val_if_fail (hit != NULL, NULL);
-
-	return hit->link;
-}
-
+#endif
