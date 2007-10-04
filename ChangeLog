@@ -1,3 +1,9 @@
+2007-10-03  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-log.c:
+	(gossip_log_get_contacts): Fixed a nasty reference leak which
+	caused a crash in the log window.
+
 2007-10-02  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-ui-utils.c (fixup_url): Revert the previous change

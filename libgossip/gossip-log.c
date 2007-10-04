@@ -1257,7 +1257,7 @@ gossip_log_get_contacts (GossipLogManager *manager, GossipAccount *account)
 			continue;
 		}
 
-		contacts = g_list_append (contacts, contact);
+		contacts = g_list_append (contacts, g_object_ref (contact));
 	}
 
 	g_free (directory);
