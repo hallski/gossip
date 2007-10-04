@@ -496,7 +496,6 @@ msgstr ""
 
 #: ../src/gossip-about-dialog.c:105
 msgid "translator-credits"
-msgstr ""
 msgstr "Yannig Marchegay (Kokoyaya) <yannig@marchegay.org>"
 
 #: ../src/gossip-accounts-dialog.c:342

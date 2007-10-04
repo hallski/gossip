@@ -1,3 +1,7 @@
+2007-10-03  Martyn Russell  <martyn@imendio.com>
+
+	* oc.po: Fixed build error.
+
 2007-09-29  Jorge Gonzalez  <jorgegonz@svn.gnome.org>
 
         * es.po: Updated Spanish translation
