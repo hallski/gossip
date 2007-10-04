@@ -1,10 +1,17 @@
 2007-10-04  Martyn Russell  <martyn@imendio.com>
 
+	* ui/chat.glade:
+	* ui/main.glade: Add translation contexts for a few menus, fixes
+	bug #473169 (Stephane Raimbault).
+
+2007-10-04  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-log.[ch]: Add a better API for getting links
 	from conversations. Also make it work for chatrooms and contacts
 	and save links in one file per account so we don't have to
 	traverse ALL log files. We support more than just http and ftp
-	links now too (i.e. anything we highlight normally).
+	links now too (i.e. anything we highlight normally). Added support
+	for sorting by account name in the find and links tabs too.
 
 	* src/gossip-group-chat.c:
 	(group_chat_new_message_cb): Actually set the "incoming" variable

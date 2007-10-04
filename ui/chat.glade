@@ -368,7 +368,8 @@
 	  <child>
 	    <widget class="GtkMenuItem" id="menu_edit">
 	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">_Edit</property>
+              <property name="label" translatable="yes" context="yes" comments="
+This is the text that should appear on a menu title. Don't include the prefix 'menu title|' in the translation.">menu title|_Edit</property>
 	      <property name="use_underline">True</property>
 
 	      <child>
