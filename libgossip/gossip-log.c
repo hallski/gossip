@@ -1691,12 +1691,13 @@ log_set_links_from_message (GossipLogManager *manager,
 		url = l->data;
 		
 		g_fprintf (file,
-			   "<link contact='%s' time='%s'>%s</link>\n"
-			   LOG_LINKS_FILE_FOOTER,
+			   "<link contact='%s' time='%s'>%s</link>\n",
 			   gossip_contact_get_id (sender),
 			   timestamp,
 			   url);
 	}
+	
+	g_fprintf (file, LOG_LINKS_FILE_FOOTER);
 
 	fclose (file);
 
