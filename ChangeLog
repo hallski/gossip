@@ -1,6 +1,12 @@
 2007-10-05  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-contact-list.c:
+	(contact_list_add_contact): Remove debug comments about potential
+	tree view warnings due to the new filter code we have in place.
+
+2007-10-05  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-contact-list.c:
 	(contact_list_drag_data_received): Make it possible to drag files
 	into the roster to send to contacts. Fixes bug #479630 (Alex Jones).
 

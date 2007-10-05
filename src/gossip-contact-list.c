@@ -1395,16 +1395,6 @@ contact_list_add_contact (GossipContactList *list,
 			show_avatar = TRUE;
 		}
 
-		gossip_debug (DEBUG_DOMAIN, "");
-		gossip_debug (DEBUG_DOMAIN, 
-			      "vvvvvvvvvvvvvvvv FIXME: Errors may follow below (since filter work) vvvvvvvvvvvvvvvv");
-
-		gossip_debug (DEBUG_DOMAIN, 
-			      "**** GossipContact:%p, is GObject:%s, is GossipContact:%s, ADDING CONTACT #1",
-			      contact,
-			      G_IS_OBJECT (contact) ? "yes" : "no",
-			      GOSSIP_IS_CONTACT (contact) ? "yes" : "no");
-
 		gtk_tree_store_append (priv->store, &iter, NULL);
 		gtk_tree_store_set (priv->store, &iter,
 				    COL_PIXBUF_STATUS, pixbuf_status,
@@ -1420,10 +1410,6 @@ contact_list_add_contact (GossipContactList *list,
 				    COL_IS_COMPOSING, FALSE,
 				    COL_IS_SEPARATOR, FALSE,
 				    -1);
-
-		gossip_debug (DEBUG_DOMAIN, 
-			      "^^^^^^^^^^^^^^^^ FIXME: Errors may occur above  (since filter work) ^^^^^^^^^^^^^^^^");
-		gossip_debug (DEBUG_DOMAIN, "");
 
 		if (pixbuf_avatar) {
 			g_object_unref (pixbuf_avatar);
@@ -1460,16 +1446,6 @@ contact_list_add_contact (GossipContactList *list,
 			show_avatar = TRUE;
 		}
 
-		gossip_debug (DEBUG_DOMAIN, "");
-		gossip_debug (DEBUG_DOMAIN, 
-			      "vvvvvvvvvvvvvvvv FIXME: Errors may follow below (since filter work) vvvvvvvvvvvvvvvv");
-
-		gossip_debug (DEBUG_DOMAIN, 
-			      "**** GossipContact:%p, is GObject:%s, is GossipContact:%s, ADDING CONTACT #2",
-			      contact,
-			      G_IS_OBJECT (contact) ? "yes" : "no",
-			      GOSSIP_IS_CONTACT (contact) ? "yes" : "no");
-
 		gtk_tree_store_insert_after (priv->store, &iter, &iter_group, NULL);
 		gtk_tree_store_set (priv->store, &iter,
 				    COL_PIXBUF_STATUS, pixbuf_status,
@@ -1485,10 +1461,6 @@ contact_list_add_contact (GossipContactList *list,
 				    COL_IS_COMPOSING, FALSE,
 				    COL_IS_SEPARATOR, FALSE,
 				    -1);
-
-		gossip_debug (DEBUG_DOMAIN, 
-			      "^^^^^^^^^^^^^^^^ FIXME: Errors may occur above  (since filter work) ^^^^^^^^^^^^^^^^");
-		gossip_debug (DEBUG_DOMAIN, "");
 
 		if (pixbuf_avatar) {
 			g_object_unref (pixbuf_avatar);
