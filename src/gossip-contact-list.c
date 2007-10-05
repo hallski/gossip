@@ -394,13 +394,13 @@ static const gchar *ui_info =
 
 enum DndDragType {
 	DND_DRAG_TYPE_CONTACT_ID,
-	DND_DRAG_TYPE_URL,
+	DND_DRAG_TYPE_URI_LIST,
 	DND_DRAG_TYPE_STRING,
 };
 
 static const GtkTargetEntry drag_types_dest[] = {
 	{ "text/contact-id", 0, DND_DRAG_TYPE_CONTACT_ID },
-	{ "text/uri-list",   0, DND_DRAG_TYPE_URL },
+	{ "text/uri-list",   0, DND_DRAG_TYPE_URI_LIST },
 	{ "text/plain",      0, DND_DRAG_TYPE_STRING },
 	{ "STRING",          0, DND_DRAG_TYPE_STRING },
 };
@@ -1782,33 +1782,19 @@ contact_list_drag_data_received (GtkWidget         *widget,
 				 guint              info,
 				 guint              time)
 {
-	GossipContactListPriv   *priv;
-	GtkTreeModel            *model;
-	GtkTreePath             *path;
-	GtkTreeViewDropPosition  position;
-	GossipContact           *contact;
-	GList                   *groups;
-	const gchar             *id;
-	gchar                   *old_group;
-	gboolean                 is_row;
-	gboolean                 drag_success = TRUE;
-	gboolean                 drag_del = FALSE;
-
-	priv = GET_PRIV (widget);
-
-	id = (const gchar*) selection->data;
-	gossip_debug (DEBUG_DOMAIN, "Received %s%s drag & drop contact from roster with id:'%s'",
-		      context->action == GDK_ACTION_MOVE ? "move" : "",
-		      context->action == GDK_ACTION_COPY ? "copy" : "",
-		      id);
-
-	contact = gossip_session_find_contact (priv->session, id);
-	if (!contact) {
-		gossip_debug (DEBUG_DOMAIN, "No contact found associated with drag & drop");
-		return;
-	}
-
-	groups = gossip_contact_get_groups (contact);
+	GossipContactListPriv    *priv;
+	GtkTreeModel             *model;
+	GtkTreePath              *path;
+	GtkTreeViewDropPosition   position;
+	GtkTreeIter 		  iter;
+	GossipContact            *contact;
+	GList                    *groups;
+	const gchar              *id;
+	gchar                    *old_group;
+	gboolean                  is_row;
+	gboolean                  drag_success = FALSE;
+	gboolean                  drag_del = FALSE;
+	gchar                   **uri_strv, **p;
 
 	is_row = gtk_tree_view_get_dest_row_at_pos (GTK_TREE_VIEW (widget),
 						    x,
@@ -1816,90 +1802,143 @@ contact_list_drag_data_received (GtkWidget         *widget,
 						    &path,
 						    &position);
 
-	if (!is_row) {
-		if (g_list_length (groups) != 1) {
-			/* if they have dragged a contact out of a
-			 * group then we would set the contact to have
-			 * NO groups but only if they were ONE group
-			 * to begin with - should we do this
-			 * regardless to how many groups they are in
-			 * already or not at all?
-			 */
-			return;
-		}
+	if (info == DND_DRAG_TYPE_URI_LIST) {
+		gossip_debug (DEBUG_DOMAIN, "URI list dropped");
 
-		gossip_contact_set_groups (contact, NULL);
-	} else {
-		GList    *l, *new_groups;
-		gchar    *name;
-		gboolean  is_group;
+		if (!is_row) {
+			gossip_debug (DEBUG_DOMAIN, "Dropped onto a non-row");
+			goto out;
+		}
 
 		model = gtk_tree_view_get_model (GTK_TREE_VIEW (widget));
-		name = contact_list_get_parent_group (model, path, &is_group);
-
-		if (groups && name &&
-		    g_list_find_custom (groups, name, (GCompareFunc)strcmp)) {
-			g_free (name);
-			return;
+		if (!gtk_tree_model_get_iter (model, &iter, path)) {
+			gossip_debug (DEBUG_DOMAIN, "Couldn't get an iterator for the path");
+			goto out;
+		}
+			
+		gtk_tree_model_get (model, &iter, COL_CONTACT, &contact, -1);
+		if (!GOSSIP_IS_CONTACT (contact)) {
+			gossip_debug (DEBUG_DOMAIN, "Dropped on a non-contact");
+			goto out;
 		}
 
-		/* Get source group information. */
+		uri_strv = gtk_selection_data_get_uris (selection);
+		for (p = uri_strv; *p; p++) {
+			gossip_debug (DEBUG_DOMAIN, "Initiating file transfer of:'%s'", *p);
+			gossip_ft_dialog_send_file_from_uri (contact, *p);
+			drag_success = TRUE;
+		}
+
+		g_strfreev (uri_strv);
+	} else if (info == DND_DRAG_TYPE_CONTACT_ID) {
 		priv = GET_PRIV (widget);
-		if (!priv->drag_row) {
-			g_free (name);
-			return;
+	
+		id = (const gchar*) selection->data;
+		gossip_debug (DEBUG_DOMAIN, "Received %s%s drag & drop contact from roster with id:'%s'",
+			      context->action == GDK_ACTION_MOVE ? "move" : "",
+			      context->action == GDK_ACTION_COPY ? "copy" : "",
+			      id);
+
+		contact = gossip_session_find_contact (priv->session, id);
+		if (!contact) {
+			gossip_debug (DEBUG_DOMAIN, "No contact found associated with drag & drop");
+			goto out;
 		}
 
-		path = gtk_tree_row_reference_get_path (priv->drag_row);
-		if (!path) {
-			g_free (name);
-			return;
-		}
+		groups = gossip_contact_get_groups (contact);
 
-		old_group = contact_list_get_parent_group (model, path, &is_group);
-		gtk_tree_path_free (path);
-
-		if (!name && old_group && GDK_ACTION_MOVE) {
-			drag_success = FALSE;
-		}
-
-		if (context->action == GDK_ACTION_MOVE) {
-			drag_del = TRUE;
-		}
-
-		/* Create new groups GList. */
-		for (l = groups, new_groups = NULL; l && drag_success; l = l->next) {
-			gchar *str;
-
-			str = l->data;
-			if (context->action == GDK_ACTION_MOVE &&
-			    old_group != NULL &&
-			    strcmp (str, old_group) == 0) {
-				continue;
+		if (!is_row) {
+			if (g_list_length (groups) != 1) {
+				/* if they have dragged a contact out of a
+				 * group then we would set the contact to have
+				 * NO groups but only if they were ONE group
+				 * to begin with - should we do this
+				 * regardless to how many groups they are in
+				 * already or not at all?
+				 */
+				goto out;
 			}
 
-			if (str == NULL) {
-				continue;
+			gossip_contact_set_groups (contact, NULL);
+		} else {
+			GList    *l, *new_groups;
+			gchar    *name;
+			gboolean  is_group;
+
+			model = gtk_tree_view_get_model (GTK_TREE_VIEW (widget));
+			name = contact_list_get_parent_group (model, path, &is_group);
+
+			if (groups && name &&
+			    g_list_find_custom (groups, name, (GCompareFunc) strcmp)) {
+				g_free (name);
+				goto out;
 			}
 
-			new_groups = g_list_append (new_groups, g_strdup (str));
+			/* Get source group information. */
+			priv = GET_PRIV (widget);
+			if (!priv->drag_row) {
+				g_free (name);
+				goto out;
+			}
+
+			path = gtk_tree_row_reference_get_path (priv->drag_row);
+			if (!path) {
+				g_free (name);
+				goto out;
+			}
+
+			old_group = contact_list_get_parent_group (model, path, &is_group);
+			gtk_tree_path_free (path);
+
+			if (!name && old_group && GDK_ACTION_MOVE) {
+				drag_success = FALSE;
+			} else {
+				drag_success = TRUE;
+			}
+
+			/* If a move action, we remove the old item */
+			if (context->action == GDK_ACTION_MOVE) {
+				drag_del = TRUE;
+			}
+
+			/* Create new groups GList. */
+			for (l = groups, new_groups = NULL; l && drag_success; l = l->next) {
+				gchar *str;
+
+				str = l->data;
+				if (context->action == GDK_ACTION_MOVE &&
+				    old_group != NULL &&
+				    strcmp (str, old_group) == 0) {
+					continue;
+				}
+
+				if (str == NULL) {
+					continue;
+				}
+
+				new_groups = g_list_append (new_groups, g_strdup (str));
+			}
+
+			if (drag_success) {
+				if (name) {
+					new_groups = g_list_append (new_groups, name);
+				}
+				gossip_contact_set_groups (contact, new_groups);
+			} else {
+				g_free (name);
+			}
 		}
 
 		if (drag_success) {
-			if (name) {
-				new_groups = g_list_append (new_groups, name);
-			}
-			gossip_contact_set_groups (contact, new_groups);
-		} else {
-			g_free (name);
+			gossip_session_update_contact (priv->session,
+						       contact);
 		}
+
+	} else {
+		gossip_debug (DEBUG_DOMAIN, "Don't know how to handle this drop");
 	}
 
-	if (drag_success) {
-		gossip_session_update_contact (priv->session,
-					       contact);
-	}
-
+out:
 	gtk_drag_finish (context, drag_success, drag_del, GDK_CURRENT_TIME);
 }
 
