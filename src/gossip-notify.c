@@ -541,9 +541,9 @@ notify_new_message (GossipEventManager *event_manager,
 		end = g_utf8_offset_to_pointer (body_stripped, NOTIFY_MESSAGE_MAX_LEN);
 		end[0] = '\0';
 
-		str = g_markup_printf_escaped ("“%s...”", body_stripped);
+		str = g_markup_printf_escaped (_("“%s...”"), body_stripped);
 	} else {
-		str = g_markup_printf_escaped ("“%s”", body_stripped);
+		str = g_markup_printf_escaped (_("“%s”"), body_stripped);
 	}
 
 	notify = notify_notification_new (title, str, NULL, NULL);
