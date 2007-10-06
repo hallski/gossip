@@ -4,8 +4,8 @@ AM_CPPFLAGS =                                           \
 	-DDATADIR=\""$(datadir)"\"              	\
 	-DLOCALEDIR=\""$(datadir)/locale"\"		\
 	-DLM_COMPILATION				\
-	$(LIBGOSSIP_CFLAGS) 				\
 	$(GOSSIP_JABBER_CFLAGS)                         \
+	$(LIBGOSSIP_CFLAGS) 				\
 	$(LIBLOUDERMOUTH_CFLAGS)			\
 	$(WARN_CFLAGS) 					\
 	$(PLATFORM_CFLAGS)

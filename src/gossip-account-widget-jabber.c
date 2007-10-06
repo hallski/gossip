@@ -65,6 +65,9 @@ typedef struct {
 } GossipAccountWidgetJabber;
 
 static void     account_widget_jabber_save                              (GossipAccountWidgetJabber *settings);
+static void     account_widget_jabber_password_changed_cb               (GossipAccount             *account,
+									 GParamSpec                *param,
+									 GossipAccountWidgetJabber *settings);
 static void     account_widget_jabber_protocol_connected_cb             (GossipSession             *session,
 									 GossipAccount             *account,
 									 GossipJabber              *jabber,
@@ -141,6 +144,17 @@ account_widget_jabber_save (GossipAccountWidgetJabber *settings)
 	gossip_account_manager_store (manager);
 
 	settings->account_changed = FALSE;
+}
+
+static void
+account_widget_jabber_password_changed_cb (GossipAccount             *account,
+					   GParamSpec                *param,
+					   GossipAccountWidgetJabber *settings)
+{
+	const gchar *password;
+
+	password = gossip_account_get_password (account);
+	gtk_entry_set_text (GTK_ENTRY (settings->entry_password), password ? password : "");
 }
 
 static void
@@ -666,6 +680,10 @@ account_widget_jabber_destroy_cb (GtkWidget                 *widget,
 
 	session = gossip_app_get_session ();
 
+	g_signal_handlers_disconnect_by_func (settings->account,
+					      account_widget_jabber_password_changed_cb,
+					      settings);
+
 	g_signal_handlers_disconnect_by_func (session,
 					      account_widget_jabber_protocol_connected_cb,
 					      settings);
@@ -728,6 +746,13 @@ account_widget_jabber_setup (GossipAccountWidgetJabber *settings)
 	gtk_widget_set_sensitive (settings->button_register, !is_connected);
 	gtk_widget_set_sensitive (settings->button_change_password, is_connected);
 
+	/* Make sure we update the password entry if the password
+	 * changes, while logging in for example.
+	 */
+	g_signal_connect (settings->account, "notify::password",
+			  G_CALLBACK (account_widget_jabber_password_changed_cb), 
+			  settings);
+	
 	/* Set up protocol signals */
 	g_signal_connect (session, "protocol-connected",
 			  G_CALLBACK (account_widget_jabber_protocol_connected_cb),

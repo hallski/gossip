@@ -1,5 +1,17 @@
 2007-10-06  Martyn Russell  <martyn@imendio.com>
 
+	* configure.ac:
+	* libgossip/Makefile.am:
+	* libgossip/gossip-account-manager.c:
+	* libgossip/gossip-account.c: Add support for GNOME Keyring, fixes
+	bug #343513 (Sam Morris, Martyn Russell).
+	
+	* src/gossip-account-widget-jabber.c: Update if the password entry
+	from "notify::password" on GossipAccount, this is needed when
+	clicking "Remember Password" while logging in.
+
+2007-10-06  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-add-contact-dialog.c:
 	* src/gossip-chatrooms-window.c:
 	* src/gossip-log-window.c:

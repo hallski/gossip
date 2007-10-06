@@ -30,15 +30,19 @@
 #include <gtk/gtkicontheme.h>
 #include <gtk/gtkstock.h>
 
-/* #include <gdk-pixbuf/gdk-pixbuf.h> */
-/* #include <gtk/gtkenums.h> */
-
 #include "gossip-account.h"
+#include "gossip-debug.h"
+#include "gossip-jid.h"
 #include "gossip-stock.h"
 #include "gossip-utils.h"
 
+#ifdef HAVE_GNOME_KEYRING
+#include <gnome-keyring.h>
+#endif
+
 #include "libgossip-marshal.h"
 
+#define DEBUG_DOMAIN "Account"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_ACCOUNT, GossipAccountPriv))
 
@@ -115,7 +119,7 @@ gossip_account_class_init (GossipAccountClass *klass)
 							      NULL,
 							      G_PARAM_READWRITE));
 
-	g_object_class_install_property (object_class,
+        g_object_class_install_property (object_class,
 					 PROP_PASSWORD,
 					 g_param_spec_string ("password",
 							      "Account Password",
@@ -232,7 +236,10 @@ account_get_property (GObject    *object,
 		g_value_set_string (value, priv->id);
 		break;
 	case PROP_PASSWORD:
-		g_value_set_string (value, priv->password);
+		/* We call the public function here so that Gnome
+		 * Keyring is called if we have support for it.
+		 */
+		g_value_set_string (value, gossip_account_get_password (GOSSIP_ACCOUNT (object)));
 		break;
 	case PROP_RESOURCE:
 		g_value_set_string (value, priv->resource);
@@ -255,7 +262,7 @@ account_get_property (GObject    *object,
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
 		break;
-	};
+	}
 }
 	
 static void
@@ -308,8 +315,30 @@ account_set_property (GObject      *object,
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
 		break;
-	};
+	}
 }
+
+#ifdef HAVE_GNOME_KEYRING 
+
+static const gchar *
+account_gnome_keyring_result_to_string (GnomeKeyringResult result)
+{
+	switch (result) {
+	case GNOME_KEYRING_RESULT_OK:                return "GNOME_KEYRING_RESULT_OK";
+	case GNOME_KEYRING_RESULT_DENIED:            return "GNOME_KEYRING_RESULT_DENIED";
+	case GNOME_KEYRING_RESULT_NO_KEYRING_DAEMON: return "GNOME_KEYRING_RESULT_NO_KEYRING_DAEMON";
+	case GNOME_KEYRING_RESULT_ALREADY_UNLOCKED:  return "GNOME_KEYRING_RESULT_ALREADY_UNLOCKED";
+	case GNOME_KEYRING_RESULT_NO_SUCH_KEYRING:   return "GNOME_KEYRING_RESULT_NO_SUCH_KEYRING";
+	case GNOME_KEYRING_RESULT_BAD_ARGUMENTS:     return "GNOME_KEYRING_RESULT_BAD_ARGUMENTS";
+	case GNOME_KEYRING_RESULT_IO_ERROR:          return "GNOME_KEYRING_RESULT_IO_ERROR";
+	case GNOME_KEYRING_RESULT_CANCELLED:         return "GNOME_KEYRING_RESULT_CANCELLED";
+	case GNOME_KEYRING_RESULT_ALREADY_EXISTS:    return "GNOME_KEYRING_RESULT_ALREADY_EXISTS";
+	}
+
+	return "";
+}
+
+#endif /* HAVE_GNOME_KEYRING */
 
 const gchar *
 gossip_account_get_name (GossipAccount *account)
@@ -333,6 +362,73 @@ gossip_account_get_id (GossipAccount *account)
 	return priv->id;
 }
 
+#ifdef HAVE_GNOME_KEYRING 
+
+const gchar *
+gossip_account_get_password (GossipAccount *account)
+{
+	GossipAccountPriv                *priv;
+	GnomeKeyringNetworkPasswordData  *data;
+	GnomeKeyringResult                result;
+	GList                            *passwords;
+	gchar                            *user;
+	gchar                            *server;
+
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
+
+	priv = GET_PRIV (account);
+
+	/* Note: We don't use the port because usually that just
+	 * defines a secure or insecure method of using the same
+	 * account. The password is highly unlikely to be different
+	 * across 2 different ports unless running more than one
+	 * Jabber server on the same machine. 
+	 *
+	 * Not sure if we should use the real server we connect to
+	 * here or the server part of the ID. Using the server part of
+	 * the ID for now because it is recognised better in the
+	 * keyring. 
+	 */ 
+	user = gossip_jid_string_get_part_name (priv->id);
+	server = gossip_jid_string_get_part_host (priv->id);
+
+	result = gnome_keyring_find_network_password_sync (user,          /* User */
+							   NULL,          /* Domain */
+							   server,        /* Server */
+							   NULL,          /* Object */
+							   "Jabber",      /* Protocol */
+							   PACKAGE_NAME,  /* Authentication Type */
+							   0,             /* Port */
+							   &passwords);   /* Result */
+
+	g_free (server);
+	g_free (user);
+	
+	if (result != GNOME_KEYRING_RESULT_OK) {
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Could not retrieve password from keyring, result:%d->'%s'", 
+			      result, account_gnome_keyring_result_to_string (result));
+		return NULL;
+	}
+
+	if (g_list_length (passwords) > 1) {
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Found %d matching passwords in the keyring, using first available", 
+			      g_list_length (passwords));
+	}
+	
+	data = passwords->data;
+	g_free (priv->password);
+	priv->password = g_strdup (data->password);
+	
+	g_list_foreach (passwords, (GFunc) g_free, NULL);
+	g_list_free (passwords);
+
+	return priv->password;
+}
+
+#else  /* HAVE_GNOME_KEYRING */
+
 const gchar *
 gossip_account_get_password (GossipAccount *account)
 {
@@ -341,8 +437,11 @@ gossip_account_get_password (GossipAccount *account)
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
 
 	priv = GET_PRIV (account);
+
 	return priv->password;
 }
+
+#endif /* HAVE_GNOME_KEYRING */
 
 const gchar *
 gossip_account_get_resource (GossipAccount *account)
@@ -444,6 +543,69 @@ gossip_account_set_id (GossipAccount *account,
 	g_object_notify (G_OBJECT (account), "id");
 }
 
+#ifdef HAVE_GNOME_KEYRING 
+
+void
+gossip_account_set_password (GossipAccount *account,
+			     const gchar   *password)
+{
+	GossipAccountPriv  *priv;
+	GnomeKeyringResult  result;
+	gchar              *user;
+	gchar              *server;
+	guint               id;
+
+	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
+	g_return_if_fail (password != NULL);
+
+	priv = GET_PRIV (account);
+
+	/* Note: We don't use the port because usually that just
+	 * defines a secure or insecure method of using the same
+	 * account. The password is highly unlikely to be different
+	 * across 2 different ports unless running more than one
+	 * Jabber server on the same machine. 
+	 *
+	 * Not sure if we should use the real server we connect to
+	 * here or the server part of the ID. Using the server part of
+	 * the ID for now because it is recognised better in the
+	 * keyring. 
+	 */ 
+	user = gossip_jid_string_get_part_name (priv->id);
+	server = gossip_jid_string_get_part_host (priv->id);
+
+	result = gnome_keyring_set_network_password_sync (NULL,         /* Keyring */
+							  user,         /* User */
+							  NULL,         /* Domain */
+							  server,       /* Server */
+							  NULL,         /* Object */
+							  "Jabber",     /* Protocol */
+							  PACKAGE_NAME, /* Authentication Type */
+							  0,            /* Port */
+							  password,     /* Password */
+							  &id);         /* Unique ID */
+
+	g_free (server);
+	g_free (user);
+
+	if (result != GNOME_KEYRING_RESULT_OK) {
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Could not retrieve password from keyring, result:%d->'%s'", 
+			      result, account_gnome_keyring_result_to_string (result));
+	}
+
+	/* We keep a record of it anyway, this is so the UI can
+	 * request the password we are trying to use and update
+	 * accordingly to the notification signals for changes here.
+	 */
+	g_free (priv->password);
+	priv->password = g_strdup (password);
+
+	g_object_notify (G_OBJECT (account), "password");
+}
+
+#else  /* HAVE_GNOME_KEYRING */
+
 void
 gossip_account_set_password (GossipAccount *account,
 			     const gchar   *password)
@@ -460,6 +622,8 @@ gossip_account_set_password (GossipAccount *account,
 
 	g_object_notify (G_OBJECT (account), "password");
 }
+
+#endif /* HAVE_GNOME_KEYRING */
 
 void
 gossip_account_set_resource (GossipAccount *account,

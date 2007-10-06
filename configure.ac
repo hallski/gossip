@@ -151,6 +151,33 @@ fi
 
 AM_CONDITIONAL(HAVE_LIBNOTIFY, test x$have_libnotify = xyes)
 
+dnl -----------------------------------------------------------
+dnl GNOME Keyring
+dnl -----------------------------------------------------------
+AC_ARG_ENABLE(gnome_keyring,
+	      AS_HELP_STRING([--enable-gnome-keyring=@<:@no/yes/auto@:>@],
+		             [compile with Gnome Keyring support]), ,
+              enable_gnome_keyring=auto)
+
+if test "x$enable_gnome_keyring" != "xno"; then
+	gnome_keyring_pkgconfig_tmp="gnome-keyring-1"
+	PKG_CHECK_MODULES(GNOME_KEYRING, $gnome_keyring_pkgconfig_tmp, have_gnome_keyring=yes, have_gnome_keyring=no)
+	if test x$have_gnome_keyring = xyes; then
+		AC_DEFINE(HAVE_GNOME_KEYRING, 1, [gnome keyring support])
+		gnome_keyring_pkgconfig=$gnome_keyring_pkgconfig_tmp
+	fi
+else
+	have_gnome_keyring=no
+	gnome_keyring_pkgconfig=
+fi
+
+if text "x$enable_gnome_keyring" = "xyes"; then
+	if test "x$have_gnome_keyring" != "xyes"; then
+		AC_MSG_ERROR([Couldn't find GNOME Keyring.])
+	fi
+fi
+
+AM_CONDITIONAL(HAVE_GNOME_KEYRING, test x$have_gnome_keyring = xyes)
 
 dnl -----------------------------------------------------------
 dnl ISO codes, used for aspell support
@@ -170,7 +197,6 @@ fi
 
 AC_DEFINE_UNQUOTED([ISO_CODES_PREFIX],["$iso_codes_prefix"],[ISO codes prefix])
 
-
 dnl -----------------------------------------------------------
 dnl Pkg-Config dependency checks
 dnl -----------------------------------------------------------
@@ -183,6 +209,7 @@ PKG_CHECK_MODULES(LIBGOSSIP,
    $gconf_pkgconfig
    $dbus_pkgconfig
    $gnome_vfs_pkgconfig
+   $gnome_keyring_pkgconfig
 ])
 
 PKG_CHECK_MODULES(LIBLOUDERMOUTH, 
@@ -337,13 +364,19 @@ AC_OUTPUT([
 ])
 
 echo
-echo "Prefix:    $prefix"
-echo "Platform:  $IGE_PLATFORM_NAME"
-echo "DBUS:      $have_dbus"
-echo "Galago:    $have_galago"
-echo "ASpell:    $have_aspell"
-echo "Notify:    $have_libnotify"
-echo "XSS:       $have_xss (only with GNOME)"
-echo "Peekaboo:  $have_peekaboo (only with DBUS)"
+echo "Configuration:"
+echo "  Prefix:        $prefix"
+echo "  Platform:      $IGE_PLATFORM_NAME"
+echo
+echo "Extras:"
+echo "  DBUS:          $have_dbus"
+echo "  Galago:        $have_galago"
+echo "  Notify:        $have_libnotify"
+echo "  GNOME Keyring: $have_gnome_keyring (only with GNOME)"
+echo "  XSS:           $have_xss (only with GNOME)"
+echo "  ASpell:        $have_aspell"
+echo
+echo "Build:"
+echo "  Peekaboo:      $have_peekaboo (only with DBUS)"
 echo
 

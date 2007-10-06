@@ -455,7 +455,23 @@ account_manager_parse_account (GossipAccountManager *manager, xmlNodePtr node)
 		} else if (strcmp (tag, "resource") == 0) {
 			gossip_account_set_resource (account, str);
 		} else if (strcmp (tag, "password") == 0) {
+#ifdef HAVE_GNOME_KEYRING
+			const gchar *current_password;
+
+			/* If the current password is empty, then we
+			 * see if there is a password saved on disk
+			 * and try that instead. 
+			 *
+			 * This helps with migrating to the gnome
+			 * keyring. 
+			 */
+			current_password = gossip_account_get_password (account);
+			if (G_STR_EMPTY (current_password) && !G_STR_EMPTY (str)) {
+				gossip_account_set_password (account, str);
+			}
+#else  /* HAVE_GNOME_KEYRING */
 			gossip_account_set_password (account, str);
+#endif /* HAVE_GNOME_KEYRING */
 		} else if (strcmp (tag, "server") == 0) {
 			gossip_account_set_server (account, str);
 		} else if (strcmp (tag, "port") == 0) {
@@ -622,7 +638,11 @@ account_manager_file_save (GossipAccountManager *manager)
 		xmlNewTextChild (node, NULL, "id", gossip_account_get_id (account));
 
 		xmlNewTextChild (node, NULL, "resource", gossip_account_get_resource (account));
+#ifdef HAVE_GNOME_KEYRING
+		xmlAddChild (node, xmlNewComment ("Password is stored in GNOME Keyring"));
+#else  /* HAVE_GNOME_KEYRING */
 		xmlNewTextChild (node, NULL, "password", gossip_account_get_password (account));
+#endif /* HAVE_GNOME_KEYRING */
 		xmlNewTextChild (node, NULL, "server", gossip_account_get_server (account));
 		xmlNewChild (node, NULL, "port", port);
 

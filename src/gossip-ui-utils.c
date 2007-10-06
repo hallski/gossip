@@ -91,8 +91,7 @@ gossip_password_dialog_run (GossipAccount *account,
 	entry = gtk_entry_new ();
 	gtk_entry_set_visibility (GTK_ENTRY (entry), FALSE);
 
-	g_signal_connect (entry,
-			  "activate",
+	g_signal_connect (entry, "activate",
 			  G_CALLBACK (password_dialog_activate_cb),
 			  dialog);
 
