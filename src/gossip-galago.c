@@ -101,18 +101,9 @@ galago_get_account (GossipAccount *account)
 	ga = g_hash_table_lookup (accounts, account);
 	if (!ga) {
 		static GalagoPerson *me = NULL;
-		const gchar         *account_param;
+		const gchar         *account_id;
 
-		if (gossip_account_has_param (account, "account")) {
-			gossip_account_get_param (account, 
-						  "account", &account_param, 
-						  NULL);
-		} else {
-			/* We don't support accounts without the
-			 * "account" parameter.
-			 */
-			return NULL;
-		}
+		account_id = gossip_account_get_id (account);
 
 		/* We could just have a person per account, but then
 		 * if those accounts exist on our roster, they are not
@@ -121,18 +112,16 @@ galago_get_account (GossipAccount *account)
 		if (!me) {
 			me = galago_create_person (NULL);
 			galago_person_set_me (me);
-		} else {
-
 		}
 
 		gs = gossip_galago_get_service (account);
-		ga = galago_service_create_account (gs, me, account_param);
+		ga = galago_service_create_account (gs, me, account_id);
 
 		g_hash_table_insert (accounts,
 				     g_object_ref (account),
 				     g_object_ref (ga));
 
-		gossip_debug (DEBUG_DOMAIN, "Added account:'%s'", account_param);
+		gossip_debug (DEBUG_DOMAIN, "Added account:'%s'", account_id);
 	}
 
 	return ga;

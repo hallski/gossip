@@ -1,5 +1,11 @@
 2007-10-06  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-galago.c:
+	(galago_get_account): Don't use old generic GossipAccount API,
+	fixes bug #470351.
+
+2007-10-06  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/Makefile.am:
 	* libgossip/gossip-session.c:
 	* libgossip/gossip-jabber-register.[ch]: Added to handle account
