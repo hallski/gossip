@@ -737,6 +737,33 @@ gossip_account_chooser_get_has_all_option (GossipAccountChooser *account_chooser
 	return priv->has_all_option;
 }
 
+guint
+gossip_account_chooser_get_count (GossipAccountChooser *account_chooser)
+{
+	GossipAccountChooserPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_CHOOSER (account_chooser), FALSE);
+
+	priv = GET_PRIV (account_chooser);
+
+	return gossip_account_manager_get_count (priv->account_manager);
+}
+
+guint
+gossip_account_chooser_get_connected (GossipAccountChooser *account_chooser)
+{
+	GossipAccountChooserPriv *priv;
+	guint                     connected;
+
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_CHOOSER (account_chooser), FALSE);
+
+	priv = GET_PRIV (account_chooser);
+
+	gossip_session_count_accounts (priv->session, &connected, NULL, NULL);
+
+	return connected;
+}
+
 void
 gossip_account_chooser_set_can_select_all (GossipAccountChooser *account_chooser,
 					   gboolean              can_select_all)

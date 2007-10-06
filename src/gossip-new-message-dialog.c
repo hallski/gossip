@@ -456,7 +456,6 @@ gossip_new_message_dialog_show (GtkWindow *parent)
 	static GossipNewMessageDialog *dialog = NULL;
 	GossipSession                 *session;
 	GossipAccountChooser          *account_chooser;
-	GList                         *accounts;
 	GladeXML                      *glade;
 
 	if (dialog) {
@@ -492,14 +491,13 @@ gossip_new_message_dialog_show (GtkWindow *parent)
 	session = gossip_app_get_session ();
 
 	dialog->account_chooser = gossip_account_chooser_new (session);
-	g_object_set (dialog->account_chooser, 
-		      "can-select-all", TRUE,
-		      "has-all-option", TRUE,
-		      NULL);
-
 	account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
-	gossip_account_chooser_set_account (account_chooser, NULL);
+	gossip_account_chooser_set_has_all_option (account_chooser, TRUE);
 	gossip_account_chooser_set_can_select_all (account_chooser, FALSE);
+
+	if (gossip_account_chooser_get_connected (account_chooser) > 1) {
+		gossip_account_chooser_set_account (account_chooser, NULL);
+	}
 
 	gtk_box_pack_start (GTK_BOX (dialog->account_chooser_vbox),
 			    dialog->account_chooser,
@@ -511,16 +509,12 @@ gossip_new_message_dialog_show (GtkWindow *parent)
 
 	gtk_widget_show (dialog->account_chooser);
 
-	accounts = gossip_session_get_accounts (session);
-	if (g_list_length (accounts) > 1) {
+	if (gossip_account_chooser_get_count (account_chooser) > 1) {
 		gtk_widget_show (dialog->account_vbox);
 	} else {
 		/* Show no accounts combo box */
 		gtk_widget_hide (dialog->account_vbox);
 	}
-
-	g_list_foreach (accounts, (GFunc) g_object_unref, NULL);
-	g_list_free (accounts);
 
 	/* Set up list of contacts */
 	new_message_dialog_setup_view (dialog);

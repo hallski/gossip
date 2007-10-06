@@ -1,5 +1,20 @@
 2007-10-06  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-account-chooser.[ch]:
+	(gossip_account_chooser_get_count):
+	(gossip_account_chooser_get_connected): Added these APIs as
+	convenience functions so we don't have to keep asking the
+	session, the chooser does this for us.
+
+	* src/gossip-new-message-dialog.c: 
+	(gossip_new_message_dialog_show): Only select the ALL option by
+	default when the dialog is loaded if we have > 1 account
+	connected, otherwise, if you want to send a message to someone NOT
+	on your roster, the "Send" button is disabled because you need to
+	select an account first (to send from). This fixes bug #442665.
+
+2007-10-06  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-galago.c:
 	(galago_get_account): Don't use old generic GossipAccount API,
 	fixes bug #470351.

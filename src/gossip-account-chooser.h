@@ -55,6 +55,9 @@ GossipAccount *gossip_account_chooser_get_account        (GossipAccountChooser *
 gboolean       gossip_account_chooser_get_can_select_all (GossipAccountChooser *account_chooser);
 gboolean       gossip_account_chooser_get_has_all_option (GossipAccountChooser *account_chooser);
 
+guint          gossip_account_chooser_get_count          (GossipAccountChooser *account_chooser);
+guint          gossip_account_chooser_get_connected      (GossipAccountChooser *account_chooser);
+
 gboolean       gossip_account_chooser_set_account        (GossipAccountChooser *account_chooser,
 							  GossipAccount        *account);
 void           gossip_account_chooser_set_can_select_all (GossipAccountChooser *account_chooser,
