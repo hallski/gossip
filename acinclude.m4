@@ -67,7 +67,7 @@ AC_DEFUN([IGE_PLATFORM_CHECK],[
     gdk_target=`$PKG_CONFIG --variable=target gtk+-2.0`
 
     if test "x$gdk_target" = "xquartz"; then
-        AC_MSG_CHECKING([checking for Mac OS X support])
+        AC_MSG_CHECKING([for Mac OS X support])
         carbon_ok=no
         AC_TRY_CPP([
         #include <Carbon/Carbon.h>
