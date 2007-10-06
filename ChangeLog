@@ -1,5 +1,14 @@
 2007-10-05  Martyn Russell  <martyn@imendio.com>
 
+	* ChangeLog:
+	* libgossip/gossip-jabber.c:
+	(jabber_register_connection_open_cb):
+	(jabber_register_message_handler): Fix a nasty bug where you can't
+	connect after registering a new account. This is because the
+	LmConnection is still open due to us not closing it.
+
+2007-10-05  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-contact-list.c:
 	(contact_list_drag_data_received): Improved drag and drop
 	debugging so it is clearer to see what is going on.
@@ -42,7 +51,7 @@
 	traverse ALL log files. We support more than just http and ftp
 	links now too (i.e. anything we highlight normally). Added support
 	for sorting by account name in the find and links tabs too.
-
+x
 	* src/gossip-group-chat.c:
 	(group_chat_new_message_cb): Actually set the "incoming" variable
 	correctly so we know if chatroom messages are from us or someone

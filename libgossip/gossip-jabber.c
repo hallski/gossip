@@ -1520,6 +1520,8 @@ jabber_register_connection_open_cb (LmConnection *connection,
 	if (!ok) {
 		GError *error;
 
+		lm_connection_close (connection, NULL);
+
 		error_message = _("Couldn't send message!");
 		error = jabber_error_create (GOSSIP_JABBER_SPECIFIC_ERROR,
 					     error_message);
@@ -1552,6 +1554,8 @@ jabber_register_message_handler (LmMessageHandler *handler,
 	GError           *error = NULL;
 
 	priv = GET_PRIV (ad->jabber);
+
+	lm_connection_close (connection, NULL);
 
 	if (priv->register_cancel) {
 		jabber_async_data_free (ad);
