@@ -24,13 +24,48 @@
 
 #include <string.h>
 
-#include <libgossip/gossip-presence.h>
-#include <libgossip/gossip-time.h>
-#include <libgossip/gossip-chatroom.h>
+#include <glib/gi18n.h>
 
+#include "gossip-debug.h"
+#include "gossip-presence.h"
+#include "gossip-time.h"
+#include "gossip-chatroom.h"
 #include "gossip-jabber.h"
 #include "gossip-jabber-utils.h"
 #include "gossip-jid.h"
+
+#define DEBUG_DOMAIN "JabberUtils"
+
+GossipJabberAsyncData *
+gossip_jabber_async_data_new (GossipJabber        *jabber,
+			      GossipErrorCallback  callback,
+			      gpointer             user_data)
+{
+	GossipJabberAsyncData *ad;
+
+	ad = g_new0 (GossipJabberAsyncData, 1);
+
+	ad->jabber = g_object_ref (jabber);
+
+	ad->callback = callback;
+	ad->user_data = user_data;
+
+	return ad;
+}
+
+void
+gossip_jabber_async_data_free (GossipJabberAsyncData *ad)
+{
+	if (!ad) {
+		return;
+	}
+
+	if (ad->jabber) {
+		g_object_unref (ad->jabber);
+	}
+
+	g_free (ad);
+}
 
 const gchar *
 gossip_jabber_presence_state_to_str (GossipPresence *presence)
@@ -225,4 +260,77 @@ gossip_jabber_get_name_to_use (const gchar *jid_str,
 	}
 
 	return "";
+}
+
+GError *
+gossip_jabber_error_create (GossipJabberError  code,
+			    const gchar       *reason)
+{
+	static GQuark  quark = 0;
+	GError        *error;
+
+	if (!quark) {
+		quark = g_quark_from_static_string ("gossip-jabber");
+	}
+
+	error = g_error_new_literal (quark, code, reason);
+	return error;
+}
+
+void
+gossip_jabber_error (GossipJabber      *jabber, 
+		     GossipJabberError  code)
+{
+	GossipAccount *account;
+	GError        *error;
+	const gchar   *message;
+
+	g_return_if_fail (GOSSIP_IS_JABBER (jabber));
+
+	account = gossip_jabber_get_account (jabber);
+
+	message = gossip_jabber_error_to_string (code);
+	gossip_debug (DEBUG_DOMAIN, "Error:%d->'%s'", code, message);
+
+	error = gossip_jabber_error_create (code, message);
+	g_signal_emit_by_name (jabber, "error", account, error);
+	g_error_free (error);
+}
+
+const gchar *
+gossip_jabber_error_to_string (GossipJabberError error)
+{
+	const gchar *str = _("An unknown error occurred.");
+
+	switch (error) {
+	case GOSSIP_JABBER_NO_CONNECTION:
+		str = _("Connection refused.");
+		break;
+	case GOSSIP_JABBER_NO_SUCH_HOST:
+		str = _("Server address could not be resolved.");
+		break;
+	case GOSSIP_JABBER_TIMED_OUT:
+		str = _("Connection timed out.");
+		break;
+	case GOSSIP_JABBER_AUTH_FAILED:
+		str = _("Authentication failed.");
+		break;
+	case GOSSIP_JABBER_DUPLICATE_USER:
+		str = _("The username you are trying already exists.");
+		break;
+	case GOSSIP_JABBER_INVALID_USER:
+		str = _("The username you are trying is not valid.");
+		break;
+	case GOSSIP_JABBER_UNAVAILABLE:
+		str = _("This feature is unavailable.");
+		break;
+	case GOSSIP_JABBER_UNAUTHORIZED:
+		str = _("This feature is unauthorized.");
+		break;
+	case GOSSIP_JABBER_SPECIFIC_ERROR:
+		str = _("A specific protocol error occurred that was unexpected.");
+		break;
+	}
+
+	return str;
 }

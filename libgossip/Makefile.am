@@ -98,6 +98,8 @@ libgossip_jabber_la_SOURCES =                  		\
 	gossip-jabber-private.h                 	\
 	gossip-jabber-vcard.c				\
 	gossip-jabber-vcard.h				\
+	gossip-jabber-register.c			\
+	gossip-jabber-register.h			\
 	gossip-jabber-services.c			\
 	gossip-jabber-services.h			\
 	gossip-jabber-utils.c				\

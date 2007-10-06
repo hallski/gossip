@@ -49,18 +49,6 @@ struct _GossipJabberClass {
 };
 
 typedef enum {
-	GOSSIP_JABBER_NO_CONNECTION,
-	GOSSIP_JABBER_NO_SUCH_HOST,
-	GOSSIP_JABBER_TIMED_OUT,
-	GOSSIP_JABBER_AUTH_FAILED,
-	GOSSIP_JABBER_DUPLICATE_USER,
-	GOSSIP_JABBER_INVALID_USER,
-	GOSSIP_JABBER_UNAVAILABLE,
-	GOSSIP_JABBER_UNAUTHORIZED,
-	GOSSIP_JABBER_SPECIFIC_ERROR
-} GossipJabberError;
-
-typedef enum {
 	GOSSIP_JABBER_DISCONNECT_ASKED,
 	GOSSIP_JABBER_DISCONNECT_ERROR
 } GossipJabberDisconnectReason;
@@ -142,12 +130,6 @@ gboolean        gossip_jabber_get_version              (GossipJabber        *jab
 							GossipVersionCallback   callback,
 							gpointer                user_data,
 							GError                **error);
-void            gossip_jabber_register_account         (GossipJabber        *jabber,
-							GossipAccount       *account,
-							GossipVCard         *vcard,
-							GossipErrorCallback  callback,
-							gpointer             user_data);
-void            gossip_jabber_register_cancel          (GossipJabber        *jabber);
 void            gossip_jabber_change_password          (GossipJabber        *jabber,
 							const gchar         *new_password,
 							GossipErrorCallback  callback,
@@ -160,8 +142,6 @@ void            gossip_jabber_get_avatar_requirements  (GossipJabber        *jab
 							guint               *max_height,
 							gsize               *max_size,
 							gchar             **format);
-
-const gchar *   gossip_jabber_error_to_string          (GossipJabberError   error);
 
 G_END_DECLS
 

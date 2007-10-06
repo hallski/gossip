@@ -1,3 +1,22 @@
+2007-10-06  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/Makefile.am:
+	* libgossip/gossip-session.c:
+	* libgossip/gossip-jabber-register.[ch]: Added to handle account
+	registrations. This code has simply been moved out of the
+	gossip-jabber module (since it was getting quite large).
+	
+	* libgossip/gossip-jabber-utils.[ch]: Moved the Jabber error
+	handling out to the utils module and also some generic glue used
+	in async calls.
+
+	* libgossip/gossip-jabber-private.h: Added two new functions for
+	creating a new LmConnection and for setting the details of an
+	LmConnection based on a GossipAccount. Needed for registering new
+	accounts since we use a completely separate connection for that.
+	
+	* libgossip/gossip-jabber.[ch]: Cleaned up the code a bit in places.
+
 2007-10-05  Martyn Russell  <martyn@imendio.com>
 
 	* ChangeLog:

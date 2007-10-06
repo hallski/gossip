@@ -24,6 +24,7 @@
 
 #include "gossip-chatroom.h"
 #include "gossip-jabber.h"
+#include "gossip-jabber-register.h"
 #include "gossip-debug.h"
 #include "gossip-private.h"
 #include "gossip-session.h"

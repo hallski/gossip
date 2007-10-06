@@ -29,18 +29,54 @@
 
 G_BEGIN_DECLS
 
-/* utils */
-const gchar *       gossip_jabber_presence_state_to_str    (GossipPresence  *presence);
-GossipPresenceState gossip_jabber_presence_state_from_str  (const gchar     *str);
-GossipTime          gossip_jabber_get_message_timestamp    (LmMessage       *m);
-GossipChatroomInvite *
-		    gossip_jabber_get_message_conference   (GossipJabber    *jabber,
-							    LmMessage       *m);
-gboolean            gossip_jabber_get_message_is_event     (LmMessage       *m);
-gboolean            gossip_jabber_get_message_is_composing (LmMessage       *m);
-gchar *             gossip_jabber_get_name_to_use          (const gchar     *jid_str,
-							    const gchar     *nickname,
-							    const gchar     *full_name);
+typedef enum {
+	GOSSIP_JABBER_NO_CONNECTION,
+	GOSSIP_JABBER_NO_SUCH_HOST,
+	GOSSIP_JABBER_TIMED_OUT,
+	GOSSIP_JABBER_AUTH_FAILED,
+	GOSSIP_JABBER_DUPLICATE_USER,
+	GOSSIP_JABBER_INVALID_USER,
+	GOSSIP_JABBER_UNAVAILABLE,
+	GOSSIP_JABBER_UNAUTHORIZED,
+	GOSSIP_JABBER_SPECIFIC_ERROR
+} GossipJabberError;
+
+typedef struct {
+	GossipJabber       *jabber;
+	LmMessageHandler   *message_handler;
+
+	GossipErrorCallback callback;
+	gpointer            user_data;
+} GossipJabberAsyncData;
+
+/* Data utils */
+GossipJabberAsyncData *gossip_jabber_async_data_new           (GossipJabber          *jabber,
+							       GossipErrorCallback    callback,
+							       gpointer               user_data);
+void                   gossip_jabber_async_data_free          (GossipJabberAsyncData *ad);
+
+/* Presence utils */
+const gchar *          gossip_jabber_presence_state_to_str    (GossipPresence        *presence);
+GossipPresenceState    gossip_jabber_presence_state_from_str  (const gchar           *str);
+
+/* Message utils */
+GossipTime             gossip_jabber_get_message_timestamp    (LmMessage             *m);
+GossipChatroomInvite * gossip_jabber_get_message_conference   (GossipJabber          *jabber,
+							       LmMessage             *m);
+gboolean               gossip_jabber_get_message_is_event     (LmMessage             *m);
+gboolean               gossip_jabber_get_message_is_composing (LmMessage             *m);
+
+/* Contact utils */
+gchar *                gossip_jabber_get_name_to_use          (const gchar           *jid_str,
+							       const gchar           *nickname,
+							       const gchar           *full_name);
+
+/* Error utils */
+GError *               gossip_jabber_error_create             (GossipJabberError      code,
+							       const gchar           *reason);
+void                   gossip_jabber_error                    (GossipJabber          *jabber,
+							       GossipJabberError      code);
+const gchar *          gossip_jabber_error_to_string          (GossipJabberError      error);
 
 G_END_DECLS
 

@@ -48,6 +48,7 @@
 #include "gossip-jabber-ft.h"
 #include "gossip-jabber-vcard.h"
 #include "gossip-jabber-disco.h"
+#include "gossip-jabber-register.h"
 #include "gossip-jabber-services.h"
 #include "gossip-jabber-utils.h"
 #include "libgossip-marshal.h"
@@ -119,14 +120,6 @@ struct _GossipJabberPriv {
 };
 
 typedef struct {
-	GossipJabber       *jabber;
-	LmMessageHandler   *message_handler;
-
-	GossipErrorCallback callback;
-	gpointer            user_data;
-} AsyncData;
-
-typedef struct {
 	GossipJabber     *jabber;
 	gchar            *group;
 	gchar            *new_name;
@@ -141,39 +134,23 @@ typedef struct {
 static void             gossip_jabber_class_init            (GossipJabberClass          *klass);
 static void             gossip_jabber_init                  (GossipJabber               *jabber);
 static void             jabber_finalize                     (GObject                    *object);
-static void             jabber_setup_connection             (GossipJabber               *jabber);
 static gboolean         jabber_login_timeout_cb             (GossipJabber               *jabber);
 static gboolean         jabber_logout_contact_foreach       (gpointer                    key,
 							     GossipContact              *contact,
 							     GossipJabber               *jabber);
-static GError *         jabber_error_create                 (GossipJabberError         code,
-							     const gchar                *reason);
-static void             jabber_error                        (GossipJabber               *jabber,
-							     GossipJabberError         code);
-static void             jabber_connection_open_cb           (LmConnection               *connection,
+static void             jabber_connected_cb                 (LmConnection               *connection,
+							     gboolean                    result,
+						 	     GossipJabber               *jabber);
+static void             jabber_auth_cb                      (LmConnection               *connection,
 							     gboolean                    result,
 							     GossipJabber               *jabber);
-static void             jabber_connection_auth_cb           (LmConnection               *connection,
-							     gboolean                    result,
-							     GossipJabber               *jabber);
-static void             jabber_disconnect_cb                (LmConnection               *connection,
+static void             jabber_disconnected_cb              (LmConnection               *connection,
 							     LmDisconnectReason          reason,
 							     GossipJabber               *jabber);
 static LmSSLResponse    jabber_ssl_status_cb                (LmConnection               *connection,
 							     LmSSLStatus                 status,
 							     GossipJabber               *jabber);
-static AsyncData *      jabber_async_data_new               (GossipJabber               *jabber,
-							     GossipErrorCallback         callback,
-							     gpointer                    user_data);
-static void             jabber_async_data_free              (AsyncData                  *ad);
-static void             jabber_register_connection_open_cb  (LmConnection               *connection,
-							     gboolean                    result,
-							     AsyncData                  *ad);
 static gboolean         jabber_composing_timeout_cb         (JabberData                 *data);
-static LmHandlerResult  jabber_register_message_handler     (LmMessageHandler           *handler,
-							     LmConnection               *conn,
-							     LmMessage                  *m,
-							     AsyncData                  *ad);
 static void             jabber_contact_is_avatar_latest_cb  (GossipResult                result,
 							     GossipVCard                *vcard,
 							     JabberData                 *data);
@@ -193,7 +170,6 @@ static GossipPresence * jabber_get_presence                 (LmMessage          
 static void             jabber_get_groups_foreach_cb        (const gchar                *jid,
 							     GossipContact              *contact,
 							     GList                     **list);
-static void             jabber_set_proxy                    (LmConnection               *conn);
 static LmHandlerResult  jabber_message_handler              (LmMessageHandler           *handler,
 							     LmConnection               *conn,
 							     LmMessage                  *message,
@@ -515,6 +491,10 @@ jabber_finalize (GObject *object)
 	gossip_transport_account_list_free (priv->account_list);
 #endif
 
+	if (priv->connection) {
+		lm_connection_unref (priv->connection);
+	}
+
 	(G_OBJECT_CLASS (gossip_jabber_parent_class)->finalize) (object);
 }
 
@@ -567,7 +547,8 @@ gossip_jabber_new_contact (GossipJabber *jabber,
 }
 
 void
-gossip_jabber_setup (GossipJabber *jabber, GossipAccount *account)
+gossip_jabber_setup (GossipJabber  *jabber,
+		     GossipAccount *account)
 {
 	GossipJabberPriv *priv;
 	LmMessageHandler *handler;
@@ -583,13 +564,14 @@ gossip_jabber_setup (GossipJabber *jabber, GossipAccount *account)
 					    priv->account);
 
 	server = gossip_account_get_server (priv->account);
-	priv->connection = lm_connection_new (server);
+
+	priv->connection = gossip_jabber_new_connection (account);
 
 	/* setup the connection to send keep alive messages every 30 seconds */
 	lm_connection_set_keep_alive_rate (priv->connection, 30);
 
 	lm_connection_set_disconnect_function (priv->connection,
-					       (LmDisconnectFunction) jabber_disconnect_cb,
+					       (LmDisconnectFunction) jabber_disconnected_cb,
 					       jabber, NULL);
 
 	handler = lm_message_handler_new ((LmHandleMessageFunction) jabber_message_handler,
@@ -628,53 +610,11 @@ gossip_jabber_setup (GossipJabber *jabber, GossipAccount *account)
 #endif
 }
 
-static void
-jabber_setup_connection (GossipJabber *jabber)
-{
-	GossipJabberPriv *priv;
-	gboolean          use_ssl;
-	guint             port;
-
-	priv = GET_PRIV (jabber);
-
-	priv->disconnect_request = FALSE;
-
-	g_object_get (priv->account,
-		      "use_ssl", &use_ssl,
-		      "port", &port,
-		      NULL);
-
-	if (use_ssl) {
-		LmSSL *ssl;
-
-		gossip_debug (DEBUG_DOMAIN, "Using SSL");
-
-		ssl = lm_ssl_new (NULL,
-				  (LmSSLFunction) jabber_ssl_status_cb,
-				  jabber, NULL);
-
-		lm_connection_set_ssl (priv->connection, ssl);
-		lm_connection_set_port (priv->connection, port);
-
-		lm_ssl_unref (ssl);
-	}
-
-	if (gossip_account_get_use_proxy (priv->account)) {
-		gossip_debug (DEBUG_DOMAIN, "Using proxy");
-		jabber_set_proxy (priv->connection);
-	} else {
-		lm_connection_set_proxy (priv->connection, NULL);
-	}
-}
-
 void
 gossip_jabber_login (GossipJabber *jabber)
 {
 	GossipJabberPriv *priv;
-	GossipJID        *jid;
 	const gchar      *id;
-	const gchar      *server;
-	guint16           port;
 	GError           *error = NULL;
 	gboolean          result;
 
@@ -684,24 +624,25 @@ gossip_jabber_login (GossipJabber *jabber)
 
 	gossip_debug (DEBUG_DOMAIN, "Refreshing connection details");
 
-	id = gossip_account_get_id (priv->account);
-	server = gossip_account_get_server (priv->account);
-	port = gossip_account_get_port (priv->account);
-
-	jid = gossip_jid_new (id);
+	gossip_jabber_set_connection (priv->connection, 
+				      priv->account);
 
 	/* Update connection details and own contact information */
+	id = gossip_account_get_id (priv->account);
 	gossip_contact_set_id (priv->contact, id);
 
-	lm_connection_set_server (priv->connection, server);
-	lm_connection_set_port (priv->connection, port);
-	lm_connection_set_jid (priv->connection, gossip_jid_get_without_resource (jid));
-	
-	gossip_jid_unref (jid);
-	
 	gossip_debug (DEBUG_DOMAIN, "Connecting...");
 	g_signal_emit_by_name (jabber, "connecting", priv->account);
 
+	/* This is important. If we have just disconnected, this will
+	 * be set to TRUE and it means that when we try to
+	 * re-authenticate, we immediately will disconnect because we
+	 * think we have asked to disconnect due to a long connecting
+	 * time.
+	 */
+	priv->disconnect_request = FALSE;
+
+	/* Set up new presence information */
 	if (priv->presence) {
 		g_object_unref (priv->presence);
 	}
@@ -711,8 +652,6 @@ gossip_jabber_login (GossipJabber *jabber)
 				   GOSSIP_PRESENCE_STATE_AVAILABLE);
 	gossip_jabber_chatrooms_set_presence (priv->chatrooms, priv->presence);
 
-	jabber_setup_connection (jabber);
-
 	if (!priv->connection) {
 		/* Should we emit these or just call jabber_logout()
 		 * with the risk of not getting the disconnected
@@ -721,12 +660,12 @@ gossip_jabber_login (GossipJabber *jabber)
 		g_signal_emit_by_name (jabber, "disconnecting", priv->account);
 		g_signal_emit_by_name (jabber, "disconnected", priv->account);
 
-		jabber_error (jabber, GOSSIP_JABBER_NO_CONNECTION);
+		gossip_jabber_error (jabber, GOSSIP_JABBER_NO_CONNECTION);
 		return;
 	}
 
 	result = lm_connection_open (priv->connection,
-				     (LmResultFunction) jabber_connection_open_cb,
+				     (LmResultFunction) jabber_connected_cb,
 				     jabber, NULL, &error);
 
 	if (result && !error) {
@@ -746,7 +685,7 @@ gossip_jabber_login (GossipJabber *jabber)
 	if (error->code == 1 &&
 	    strcmp (error->message, "getaddrinfo() failed") == 0) {
 		gossip_jabber_logout (jabber);
-		jabber_error (jabber, GOSSIP_JABBER_NO_SUCH_HOST);
+		gossip_jabber_error (jabber, GOSSIP_JABBER_NO_SUCH_HOST);
 	}
 
 	g_error_free (error);
@@ -761,7 +700,7 @@ jabber_login_timeout_cb (GossipJabber *jabber)
 
 	priv->connection_timeout_id = 0;
 
-	jabber_error (jabber, GOSSIP_JABBER_TIMED_OUT);
+	gossip_jabber_error (jabber, GOSSIP_JABBER_TIMED_OUT);
 
 	return FALSE;
 }
@@ -827,44 +766,10 @@ jabber_logout_contact_foreach (gpointer       key,
 	return TRUE;
 }
 
-static GError *
-jabber_error_create (GossipJabberError  code,
-		     const gchar         *reason)
-{
-	static GQuark  quark = 0;
-	GError        *error;
-
-	if (!quark) {
-		quark = g_quark_from_static_string ("gossip-jabber");
-	}
-
-	error = g_error_new_literal (quark, code, reason);
-	return error;
-}
-
 static void
-jabber_error (GossipJabber *jabber, GossipJabberError code)
-{
-	GossipJabberPriv *priv;
-	GError           *error;
-	const gchar      *message;
-
-	g_return_if_fail (GOSSIP_IS_JABBER (jabber));
-
-	priv = GET_PRIV (jabber);
-
-	message = gossip_jabber_error_to_string (code);
-	gossip_debug (DEBUG_DOMAIN, "Error:%d->'%s'", code, message);
-
-	error = jabber_error_create (code, message);
-	g_signal_emit (jabber, signals[ERROR], 0, priv->account, error);
-	g_error_free (error);
-}
-
-static void
-jabber_connection_open_cb (LmConnection *connection,
-			   gboolean      result,
-			   GossipJabber *jabber)
+jabber_connected_cb (LmConnection *connection,
+		     gboolean      result,
+		     GossipJabber *jabber)
 {
 	GossipJabberPriv *priv;
 	GossipAccount    *account;
@@ -886,13 +791,15 @@ jabber_connection_open_cb (LmConnection *connection,
 		/* This is so we go no further that way we don't issue
 		 * warnings for connections we stopped ourselves.
 		 */
+		gossip_debug (DEBUG_DOMAIN, "Stopping connecting, disconnecting...");
 		gossip_jabber_logout (jabber);
 		return;
 	}
 
 	if (result == FALSE) {
+		gossip_debug (DEBUG_DOMAIN, "Cleaning up connection, disconnecting...");
 		gossip_jabber_logout (jabber);
-		jabber_error (jabber, GOSSIP_JABBER_NO_CONNECTION);
+		gossip_jabber_error (jabber, GOSSIP_JABBER_NO_CONNECTION);
 		return;
 	}
 
@@ -918,9 +825,7 @@ jabber_connection_open_cb (LmConnection *connection,
 				       account, &password);
 
 		if (!password) {
-			gossip_debug (DEBUG_DOMAIN, "Cancelled password request for:'%s'",
-				      id);
-
+			gossip_debug (DEBUG_DOMAIN, "Cancelled password request for:'%s'", id);
 			gossip_jabber_logout (jabber);
 			return;
 		}
@@ -935,10 +840,9 @@ jabber_connection_open_cb (LmConnection *connection,
 	id_name = gossip_jid_string_get_part_name (jid_str);
 
 	if (!account_resource) {
-		gossip_debug (DEBUG_DOMAIN, "JabberID:'%s' is invalid, there is no resource.", jid_str);
-
+		gossip_debug (DEBUG_DOMAIN, "JID:'%s' is invalid, there is no resource.", jid_str);
 		gossip_jabber_logout (jabber);
-		jabber_error (jabber, GOSSIP_JABBER_INVALID_USER);
+		gossip_jabber_error (jabber, GOSSIP_JABBER_INVALID_USER);
 		return;
 	}
 
@@ -958,7 +862,7 @@ jabber_connection_open_cb (LmConnection *connection,
 				    id_name,
 				    password,
 				    resource_rand,
-				    (LmResultFunction) jabber_connection_auth_cb,
+				    (LmResultFunction) jabber_auth_cb,
 				    jabber, NULL, NULL);
 
 	g_free (resource_rand);
@@ -967,7 +871,7 @@ jabber_connection_open_cb (LmConnection *connection,
 				    id_name,
 				    password,
 				    account_resource,
-				    (LmResultFunction) jabber_connection_auth_cb,
+				    (LmResultFunction) jabber_auth_cb,
 				    jabber, NULL, NULL);
 #endif
 
@@ -976,9 +880,9 @@ jabber_connection_open_cb (LmConnection *connection,
 }
 
 static void
-jabber_connection_auth_cb (LmConnection *connection,
-			   gboolean      result,
-			   GossipJabber *jabber)
+jabber_auth_cb (LmConnection *connection,
+		gboolean      result,
+		GossipJabber *jabber)
 {
 	GossipJabberPriv *priv;
 	LmMessage        *m;
@@ -988,7 +892,7 @@ jabber_connection_auth_cb (LmConnection *connection,
 
 	if (result == FALSE) {
 		gossip_jabber_logout (jabber);
-		jabber_error (jabber, GOSSIP_JABBER_AUTH_FAILED);
+		gossip_jabber_error (jabber, GOSSIP_JABBER_AUTH_FAILED);
 		return;
 	}
 
@@ -1043,9 +947,9 @@ jabber_connection_auth_cb (LmConnection *connection,
 }
 
 static void
-jabber_disconnect_cb (LmConnection       *connection,
-		      LmDisconnectReason  reason,
-		      GossipJabber       *jabber)
+jabber_disconnected_cb (LmConnection       *connection,
+			LmDisconnectReason  reason,
+			GossipJabber       *jabber)
 {
 	GossipJabberPriv             *priv;
 	GossipJabberDisconnectReason  gossip_reason;
@@ -1124,120 +1028,11 @@ jabber_ssl_status_cb (LmConnection *connection,
 	return LM_SSL_RESPONSE_CONTINUE;
 }
 
-static AsyncData *
-jabber_async_data_new (GossipJabber        *jabber,
-		       GossipErrorCallback  callback,
-		       gpointer             user_data)
-{
-	AsyncData *ad;
-
-	ad = g_new0 (AsyncData, 1);
-
-	ad->jabber = g_object_ref (jabber);
-
-	ad->callback = callback;
-	ad->user_data = user_data;
-
-	return ad;
-}
-
-static void
-jabber_async_data_free (AsyncData *ad)
-{
-	if (!ad) {
-		return;
-	}
-
-	if (ad->jabber) {
-		g_object_unref (ad->jabber);
-	}
-
-	/* FIXME: should we clean up the message handler or does
-	 * closing the connection do this for us?
-	 */
-
-	g_free (ad);
-}
-
-void
-gossip_jabber_register_account (GossipJabber        *jabber,
-				GossipAccount       *account,
-				GossipVCard         *vcard,
-				GossipErrorCallback  callback,
-				gpointer             user_data)
-{
-	GossipJabberPriv    *priv;
-	AsyncData           *ad = NULL;
-	gboolean             result;
-	GossipJabberError  error_code;
-	const gchar         *error_message;
-	GError              *error;
-
-	g_return_if_fail (GOSSIP_IS_JABBER (jabber));
-	g_return_if_fail (callback != NULL);
-
-	gossip_debug (DEBUG_DOMAIN, "Registering with Jabber server...");
-
-	priv = GET_PRIV (jabber);
-
-	/* Save vcard information so the next time we connect we can
-	 * set it, this could be done better */
-	priv->vcard = g_object_ref (vcard);
-
-	priv->register_cancel = FALSE;
-
-	/* Make sure we connect using the account settings */
-	jabber_setup_connection (jabber);
-	if (!priv->connection) {
-		goto error;
-	}
-
-	ad = jabber_async_data_new (jabber, callback, user_data);
-	result = lm_connection_open (priv->connection,
-				     (LmResultFunction) jabber_register_connection_open_cb,
-				     ad, NULL, NULL);
-	if (result) {
-		return;
-	}
-
-error:
-	error_code = GOSSIP_JABBER_NO_CONNECTION;
-	error_message = gossip_jabber_error_to_string (error_code);
-	error = jabber_error_create (error_code, error_message);
-
-	gossip_debug (DEBUG_DOMAIN, "%s", error_message);
-
-	if (callback) {
-		(callback) (GOSSIP_RESULT_ERROR_FAILED,
-			    error,
-			    user_data);
-	}
-
-	g_error_free (error);
-	jabber_async_data_free (ad);
-}
-
-void
-gossip_jabber_register_cancel (GossipJabber *jabber)
-{
-	GossipJabberPriv *priv;
-
-	g_return_if_fail (GOSSIP_IS_JABBER (jabber));
-
-	gossip_debug (DEBUG_DOMAIN, "Canceling registration with Jabber server...");
-
-	priv = GET_PRIV (jabber);
-
-	priv->register_cancel = TRUE;
-
-	gossip_jabber_logout (jabber);
-}
-
 static LmHandlerResult
-jabber_change_password_message_handler (LmMessageHandler *handler,
-					LmConnection     *connection,
-					LmMessage        *m,
-					AsyncData        *ad)
+jabber_change_password_message_handler (LmMessageHandler      *handler,
+					LmConnection          *connection,
+					LmMessage             *m,
+					GossipJabberAsyncData *ad)
 {
 	GossipJabberPriv *priv;
 	LmMessageNode    *node;
@@ -1247,7 +1042,7 @@ jabber_change_password_message_handler (LmMessageHandler *handler,
 	priv = GET_PRIV (ad->jabber);
 
 	if (priv->change_password_cancel) {
-		jabber_async_data_free (ad);
+		gossip_jabber_async_data_free (ad);
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 	}
 
@@ -1296,8 +1091,7 @@ jabber_change_password_message_handler (LmMessageHandler *handler,
 		};
 
 		error_message = gossip_jabber_error_to_string (error_code);
-		error = jabber_error_create (error_code,
-					     error_message);
+		error = gossip_jabber_error_create (error_code, error_message);
 
 		gossip_debug (DEBUG_DOMAIN, "Registration failed with error:%s->'%s'",
 			      error_code_str, error_message);
@@ -1316,7 +1110,7 @@ jabber_change_password_message_handler (LmMessageHandler *handler,
 		g_error_free (error);
 	}
 
-	jabber_async_data_free (ad);
+	gossip_jabber_async_data_free (ad);
 
 	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
@@ -1327,15 +1121,15 @@ gossip_jabber_change_password (GossipJabber        *jabber,
 			       GossipErrorCallback  callback,
 			       gpointer             user_data)
 {
-	GossipJabberPriv *priv;
-	GossipJID        *jid;
-	const gchar      *id;
-	const gchar      *server;
-	const gchar      *error_message;
-	gboolean          ok;
-	AsyncData        *ad = NULL;
-	LmMessage        *m;
-	LmMessageNode    *node;
+	GossipJabberPriv      *priv;
+	GossipJID             *jid;
+	const gchar           *id;
+	const gchar           *server;
+	const gchar           *error_message;
+	gboolean               ok;
+	GossipJabberAsyncData *ad = NULL;
+	LmMessage             *m;
+	LmMessageNode         *node;
 
 	g_return_if_fail (GOSSIP_IS_JABBER (jabber));
 	g_return_if_fail (new_password != NULL);
@@ -1367,7 +1161,7 @@ gossip_jabber_change_password (GossipJabber        *jabber,
 
 	gossip_jid_unref (jid);
 
-	ad = jabber_async_data_new (jabber, callback, user_data);
+	ad = gossip_jabber_async_data_new (jabber, callback, user_data);
 	ad->message_handler = lm_message_handler_new ((LmHandleMessageFunction)
 						      jabber_change_password_message_handler,
 						      ad,
@@ -1382,8 +1176,8 @@ gossip_jabber_change_password (GossipJabber        *jabber,
 		GError *error;
 
 		error_message = _("Couldn't send message!");
-		error = jabber_error_create (GOSSIP_JABBER_SPECIFIC_ERROR,
-					     error_message);
+		error = gossip_jabber_error_create (GOSSIP_JABBER_SPECIFIC_ERROR,
+						    error_message);
 
 		gossip_debug (DEBUG_DOMAIN, "%s", error_message);
 
@@ -1394,7 +1188,7 @@ gossip_jabber_change_password (GossipJabber        *jabber,
 		}
 
 		g_error_free (error);
-		jabber_async_data_free (ad);
+		gossip_jabber_async_data_free (ad);
 		return;
 	}
 }
@@ -1440,196 +1234,6 @@ gossip_jabber_get_avatar_requirements (GossipJabber  *jabber,
 	if (format) {
 		*format = g_strdup ("image/png");
 	}
-}
-
-static void
-jabber_register_connection_open_cb (LmConnection *connection,
-				    gboolean      result,
-				    AsyncData    *ad)
-{
-	GossipJabberPriv *priv;
-	LmMessage        *m;
-	LmMessageNode    *node;
-	const gchar      *error_message = NULL;
-	const gchar      *id;
-	const gchar      *server;
-	const gchar      *password;
-	gchar            *username;
-	gboolean          ok = FALSE;
-
-	priv = GET_PRIV (ad->jabber);
-
-	if (priv->register_cancel) {
-		jabber_async_data_free (ad);
-		return;
-	}
-
-	if (result == FALSE) {
-		GError *error;
-
-		error_message = _("Connection could not be opened");
-		error = jabber_error_create (GOSSIP_JABBER_NO_CONNECTION,
-					     error_message);
-
-		gossip_debug (DEBUG_DOMAIN, "%s", error_message);
-
-		if (ad->callback) {
-			(ad->callback) (GOSSIP_RESULT_ERROR_FAILED,
-					error,
-					ad->user_data);
-		}
-
-		g_error_free (error);
-		jabber_async_data_free (ad);
-		return;
-	}
-
-	gossip_debug (DEBUG_DOMAIN, "Connection open!");
-
-	ad->message_handler = lm_message_handler_new ((LmHandleMessageFunction)
-						      jabber_register_message_handler,
-						      ad,
-						      NULL);
-
-	g_object_get (priv->account,
-		      "id", &id,
-		      "server", &server,
-		      "password", &password,
-		      NULL);
-
-	m = lm_message_new_with_sub_type (server,
-					  LM_MESSAGE_TYPE_IQ,
-					  LM_MESSAGE_SUB_TYPE_SET);
-
-	lm_message_node_add_child (m->node, "query", NULL);
-	node = lm_message_node_get_child (m->node, "query");
-
-	lm_message_node_set_attribute (node, "xmlns", XMPP_REGISTER_XMLNS);
-
-	username = gossip_jid_string_get_part_name (id);
-	lm_message_node_add_child (node, "username", username);
-	g_free (username);
-
-	lm_message_node_add_child (node, "password", password);
-
-	ok = lm_connection_send_with_reply (connection, m,
-					    ad->message_handler,
-					    NULL);
-	lm_message_unref (m);
-
-	if (!ok) {
-		GError *error;
-
-		lm_connection_close (connection, NULL);
-
-		error_message = _("Couldn't send message!");
-		error = jabber_error_create (GOSSIP_JABBER_SPECIFIC_ERROR,
-					     error_message);
-
-		gossip_debug (DEBUG_DOMAIN, "%s", error_message);
-
-		if (ad->callback) {
-			(ad->callback) (GOSSIP_RESULT_ERROR_FAILED,
-					error,
-					ad->user_data);
-		}
-
-		g_error_free (error);
-		jabber_async_data_free (ad);
-		return;
-	}
-
-	gossip_debug (DEBUG_DOMAIN, "Sent registration details");
-}
-
-static LmHandlerResult
-jabber_register_message_handler (LmMessageHandler *handler,
-				 LmConnection     *connection,
-				 LmMessage        *m,
-				 AsyncData        *ad)
-{
-	GossipJabberPriv *priv;
-	LmMessageNode    *node;
-	GossipResult      result = GOSSIP_RESULT_OK;
-	GError           *error = NULL;
-
-	priv = GET_PRIV (ad->jabber);
-
-	lm_connection_close (connection, NULL);
-
-	if (priv->register_cancel) {
-		jabber_async_data_free (ad);
-		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
-	}
-
-	node = lm_message_node_get_child (m->node, "error");
-	if (node) {
-		GossipJabberError  error_code;
-		const gchar         *error_code_str;
-		const gchar         *error_message;
-
-		result = GOSSIP_RESULT_ERROR_FAILED;
-		error_code_str = lm_message_node_get_attribute (node, "code");
-
-		switch (atoi (error_code_str)) {
-		case 401: /* Not Authorized */
-		case 407: /* Registration Required */
-			error_code = GOSSIP_JABBER_UNAUTHORIZED;
-			break;
-
-		case 501: /* Not Implemented */
-		case 503: /* Service Unavailable */
-			error_code = GOSSIP_JABBER_UNAVAILABLE;
-			break;
-
-		case 409: /* Conflict */
-			error_code = GOSSIP_JABBER_DUPLICATE_USER;
-			break;
-
-		case 408: /* Request Timeout */
-		case 504: /* Remote Server Timeout */
-			error_code = GOSSIP_JABBER_TIMED_OUT;
-			break;
-
-		case 302: /* Redirect */
-		case 400: /* Bad Request */
-		case 402: /* Payment Required */
-		case 403: /* Forbidden */
-		case 404: /* Not Found */
-		case 405: /* Not Allowed */
-		case 406: /* Not Acceptable */
-		case 500: /* Internal Server Error */
-		case 502: /* Remote Server Error */
-		case 510: /* Disconnected */
-		default:
-			error_code = GOSSIP_JABBER_SPECIFIC_ERROR;
-			break;
-		};
-
-		error_message = gossip_jabber_error_to_string (error_code);
-		error = jabber_error_create (error_code,
-					     error_message);
-
-		gossip_debug (DEBUG_DOMAIN, "Registration failed with error:%s->'%s'",
-			      error_code_str, error_message);
-	} else {
-		gossip_debug (DEBUG_DOMAIN, "Registration success");
-	}
-
-	if (ad->callback) {
-		(ad->callback) (result,
-				error,
-				ad->user_data);
-	}
-
-	/* Clean up */
-	if (error) {
-		g_error_free (error);
-	}
-
-	jabber_async_data_free (ad);
-
-	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
 
 gboolean
@@ -2507,47 +2111,6 @@ gossip_jabber_get_version (GossipJabber           *jabber,
 						   contact,
 						   callback, user_data,
 						   error);
-}
-
-//koko
-void
-jabber_set_proxy (LmConnection *conn)
-{
-	gboolean  use_http_proxy;
-	gchar    *host;
-	gint      port;
-	gboolean  use_auth;
-	gchar    *username;
-	gchar    *password;
-
-	gossip_conf_get_http_proxy (gossip_conf_get (),
-				    &use_http_proxy,
-				    &host,
-				    &port,
-				    &use_auth,
-				    &username,
-				    &password);
-
-	if (use_http_proxy) {
-		LmProxy  *proxy;
-
-		proxy = lm_proxy_new_with_server (LM_PROXY_TYPE_HTTP,
-						  host, (guint) port);
-		lm_connection_set_proxy (conn, proxy);
-
-		if (use_auth) {
-			lm_proxy_set_username (proxy, username);
-			lm_proxy_set_password (proxy, password);
-		}
-
-		lm_proxy_unref (proxy);
-	} else {
-		lm_connection_set_proxy (conn, NULL);
-	}
-
-	g_free (host);
-	g_free (username);
-	g_free (password);
 }
 
 static gboolean
@@ -3859,6 +3422,107 @@ gossip_jabber_subscription_disallow_all (GossipJabber *jabber)
  * Private functions
  */
 
+gboolean
+gossip_jabber_set_connection (LmConnection  *connection, 
+			      GossipAccount *account)
+{
+	GossipJID    *jid;
+	const gchar  *id;
+	const gchar  *server;
+	guint16       port;
+	gboolean      use_proxy = FALSE;
+
+	g_return_val_if_fail (connection != NULL, FALSE);
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), FALSE);
+
+	id = gossip_account_get_id (account);
+	server = gossip_account_get_server (account);
+	port = gossip_account_get_port (account);
+
+	jid = gossip_jid_new (id);
+
+	lm_connection_set_server (connection, server);
+	lm_connection_set_port (connection, port);
+	lm_connection_set_jid (connection, gossip_jid_get_without_resource (jid));
+
+	gossip_jid_unref (jid);
+
+	if (gossip_account_get_use_ssl (account)) {
+		LmSSL *ssl;
+
+		gossip_debug (DEBUG_DOMAIN, "Using SSL");
+
+		ssl = lm_ssl_new (NULL,
+				  (LmSSLFunction) jabber_ssl_status_cb,
+				  NULL, NULL);
+
+		lm_connection_set_ssl (connection, ssl);
+		lm_connection_set_port (connection, port);
+
+		lm_ssl_unref (ssl);
+	}
+
+	if (gossip_account_get_use_proxy (account)) {
+		gchar    *host;
+		gint      port;
+		gchar    *username;
+		gchar    *password;
+		gboolean  use_auth;
+
+		gossip_debug (DEBUG_DOMAIN, "Using proxy");
+
+		gossip_conf_get_http_proxy (gossip_conf_get (),
+					    &use_proxy,
+					    &host,
+					    &port,
+					    &use_auth,
+					    &username,
+					    &password);
+
+		if (use_proxy) {
+			LmProxy  *proxy;
+			
+			proxy = lm_proxy_new_with_server (LM_PROXY_TYPE_HTTP,
+							  host, 
+							  (guint) port);
+			lm_connection_set_proxy (connection, proxy);
+			
+			if (use_auth) {
+				lm_proxy_set_username (proxy, username);
+				lm_proxy_set_password (proxy, password);
+			}
+			
+			lm_proxy_unref (proxy);
+		}
+
+		g_free (host);
+		g_free (username);
+		g_free (password);
+	}
+
+	/* Make sure we reset this even if we aren't using one */
+	if (!use_proxy) {
+		lm_connection_set_proxy (connection, NULL);
+	}
+
+	return TRUE;
+}
+
+LmConnection *
+gossip_jabber_new_connection (GossipAccount *account)
+{
+	LmConnection *connection;
+	const gchar  *server;
+
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
+
+	server = gossip_account_get_server (account);
+	connection = lm_connection_new (server);
+	gossip_jabber_set_connection (connection, account);
+
+	return connection;
+}
+
 LmConnection *
 gossip_jabber_get_connection (GossipJabber *jabber)
 {
@@ -3883,40 +3547,3 @@ gossip_jabber_get_fts (GossipJabber *jabber)
 	return priv->fts;
 }
 
-const gchar *
-gossip_jabber_error_to_string (GossipJabberError error)
-{
-	const gchar *str = _("An unknown error occurred.");
-
-	switch (error) {
-	case GOSSIP_JABBER_NO_CONNECTION:
-		str = _("Connection refused.");
-		break;
-	case GOSSIP_JABBER_NO_SUCH_HOST:
-		str = _("Server address could not be resolved.");
-		break;
-	case GOSSIP_JABBER_TIMED_OUT:
-		str = _("Connection timed out.");
-		break;
-	case GOSSIP_JABBER_AUTH_FAILED:
-		str = _("Authentication failed.");
-		break;
-	case GOSSIP_JABBER_DUPLICATE_USER:
-		str = _("The username you are trying already exists.");
-		break;
-	case GOSSIP_JABBER_INVALID_USER:
-		str = _("The username you are trying is not valid.");
-		break;
-	case GOSSIP_JABBER_UNAVAILABLE:
-		str = _("This feature is unavailable.");
-		break;
-	case GOSSIP_JABBER_UNAUTHORIZED:
-		str = _("This feature is unauthorized.");
-		break;
-	case GOSSIP_JABBER_SPECIFIC_ERROR:
-		str = _("A specific protocol error occurred that was unexpected.");
-		break;
-	}
-
-	return str;
-}
