@@ -1821,13 +1821,14 @@ contact_list_drag_data_received (GtkWidget         *widget,
 
 		if (!is_row) {
 			if (g_list_length (groups) != 1) {
-				/* if they have dragged a contact out of a
+				/* If we have dragged a contact out of a
 				 * group then we would set the contact to have
 				 * NO groups but only if they were ONE group
 				 * to begin with - should we do this
 				 * regardless to how many groups they are in
 				 * already or not at all?
 				 */
+				gossip_debug (DEBUG_DOMAIN, "No row drag destination, doesn't just belong to ONE group");
 				goto out;
 			}
 
@@ -1842,6 +1843,7 @@ contact_list_drag_data_received (GtkWidget         *widget,
 
 			if (groups && name &&
 			    g_list_find_custom (groups, name, (GCompareFunc) strcmp)) {
+				gossip_debug (DEBUG_DOMAIN, "Contact already in group with name:'%s'", name);
 				g_free (name);
 				goto out;
 			}
@@ -1849,12 +1851,14 @@ contact_list_drag_data_received (GtkWidget         *widget,
 			/* Get source group information. */
 			priv = GET_PRIV (widget);
 			if (!priv->drag_row) {
+				gossip_debug (DEBUG_DOMAIN, "No drag row saved");
 				g_free (name);
 				goto out;
 			}
 
 			path = gtk_tree_row_reference_get_path (priv->drag_row);
 			if (!path) {
+				gossip_debug (DEBUG_DOMAIN, "No path row reference created for drag row");
 				g_free (name);
 				goto out;
 			}
@@ -1895,8 +1899,11 @@ contact_list_drag_data_received (GtkWidget         *widget,
 				if (name) {
 					new_groups = g_list_append (new_groups, name);
 				}
+
+				gossip_debug (DEBUG_DOMAIN, "Setting contact to be in new group:'%s'", name);
 				gossip_contact_set_groups (contact, new_groups);
 			} else {
+				gossip_debug (DEBUG_DOMAIN, "Doing nothing with drag and drop");
 				g_free (name);
 			}
 		}

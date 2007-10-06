@@ -1,6 +1,12 @@
 2007-10-05  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-contact-list.c:
+	(contact_list_drag_data_received): Improved drag and drop
+	debugging so it is clearer to see what is going on.
+
+2007-10-05  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-contact-list.c:
 	(contact_list_add_contact): Remove debug comments about potential
 	tree view warnings due to the new filter code we have in place.
 
