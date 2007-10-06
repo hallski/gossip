@@ -2124,8 +2124,6 @@ gossip_log_window_show (GossipContact  *contact,
 	GossipSession          *session;
 	GossipLogManager       *log_manager;
 	GossipAccountChooser   *account_chooser;
-	GList                  *accounts;
-	gint                    account_num;
 	GladeXML               *glade;
 
 	if (window) {
@@ -2262,13 +2260,7 @@ gossip_log_window_show (GossipContact  *contact,
 			  window);
 	
 	/* Populate */
-	accounts = gossip_session_get_accounts (session);
-	account_num = g_list_length (accounts);
-
-	g_list_foreach (accounts, (GFunc)g_object_unref, NULL);
-	g_list_free (accounts);
-
-	if (account_num > 1) {
+	if (gossip_account_chooser_get_count (account_chooser) > 1) {
 		gtk_widget_show (window->vbox_contacts);
 		gtk_widget_show (window->account_chooser_contacts);
 		gtk_widget_show (window->vbox_chatrooms);

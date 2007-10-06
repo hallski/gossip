@@ -700,8 +700,7 @@ gossip_chatrooms_window_show (GtkWindow *parent,
 	GladeXML                     *glade;
 	GossipSession                *session;
 	GossipChatroomManager        *manager;
-	GList                        *accounts;
-	guint                         connected;
+	GossipAccountChooser         *account_chooser;
 
 	if (window) {
 		gtk_window_present (GTK_WINDOW (window->window));
@@ -745,43 +744,32 @@ gossip_chatrooms_window_show (GtkWindow *parent,
 
 	/* Account chooser for chat rooms */
 	window->account_chooser = gossip_account_chooser_new (session);
-	g_object_set (window->account_chooser, 
-		      "can-select-all", TRUE,
-		      "has-all-option", TRUE,
-		      NULL);
+	account_chooser = GOSSIP_ACCOUNT_CHOOSER (window->account_chooser);
+	gossip_account_chooser_set_can_select_all (account_chooser, TRUE);
+	gossip_account_chooser_set_has_all_option (account_chooser, TRUE);
 
-	gtk_box_pack_start (GTK_BOX (window->hbox_account),
-			    window->account_chooser,
-			    TRUE, TRUE, 0);
+	if (gossip_account_chooser_get_connected (account_chooser) > 1) {
+		gossip_account_chooser_set_account (account_chooser, NULL);
+	}
 
 	g_signal_connect (window->account_chooser, "changed",
 			  G_CALLBACK (chatrooms_window_account_changed_cb),
 			  window);
 
+	gtk_box_pack_start (GTK_BOX (window->hbox_account),
+			    window->account_chooser,
+			    TRUE, TRUE, 0);
 	gtk_widget_show (window->account_chooser);
 
 	/* Set up chatrooms */
 	chatrooms_window_model_setup (window);
 
 	/* Populate */
-	accounts = gossip_session_get_accounts (session);
-
-	if (g_list_length (accounts) > 1) {
+	if (gossip_account_chooser_get_count (account_chooser) > 1) {
 		gtk_widget_show (window->hbox_account);
 	} else {
 		/* Show no accounts combo box */
 		gtk_widget_hide (window->hbox_account);
-	}
-
-	g_list_foreach (accounts, (GFunc) g_object_unref, NULL);
-	g_list_free (accounts);
-
-        gossip_session_count_accounts (session, &connected, NULL, NULL);
-	if (connected != 1) {
-		GossipAccountChooser *account_chooser;
-
-		account_chooser = GOSSIP_ACCOUNT_CHOOSER (window->account_chooser);
-		gossip_account_chooser_set_account (account_chooser, NULL);
 	}
 
 	/* Set focus */

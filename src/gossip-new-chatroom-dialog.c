@@ -1022,8 +1022,6 @@ gossip_new_chatroom_dialog_show (GtkWindow *parent)
 	GossipNewChatroomDialog *dialog;
 	GladeXML                *glade;
 	GossipSession           *session;
-	GList                   *accounts;
-	gint                     account_num;
 	GossipChatroomManager   *manager;
 	GtkSizeGroup            *size_group;
 
@@ -1095,23 +1093,16 @@ gossip_new_chatroom_dialog_show (GtkWindow *parent)
 
 	/* Account chooser for custom */
 	dialog->account_chooser = gossip_account_chooser_new (session);
+	g_signal_connect (GTK_COMBO_BOX (dialog->account_chooser), "changed",
+			  G_CALLBACK (new_chatroom_dialog_account_changed_cb),
+			  dialog);
 	gtk_box_pack_start (GTK_BOX (dialog->hbox_account),
 			    dialog->account_chooser,
 			    TRUE, TRUE, 0);
 	gtk_widget_show (dialog->account_chooser);
 
-	g_signal_connect (GTK_COMBO_BOX (dialog->account_chooser), "changed",
-			  G_CALLBACK (new_chatroom_dialog_account_changed_cb),
-			  dialog);
-
 	/* Populate */
-	accounts = gossip_session_get_accounts (session);
-	account_num = g_list_length (accounts);
-
-	g_list_foreach (accounts, (GFunc)g_object_unref, NULL);
-	g_list_free (accounts);
-
-	if (account_num > 1) {
+	if (gossip_account_chooser_get_count (GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser)) > 1) {
 		gtk_widget_show (dialog->hbox_account);
 	} else {
 		/* Show no accounts combo box */

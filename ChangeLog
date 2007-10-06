@@ -1,5 +1,15 @@
 2007-10-06  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-add-contact-dialog.c:
+	* src/gossip-chatrooms-window.c:
+	* src/gossip-log-window.c:
+	* src/gossip-new-chatroom-dialog.c:
+	* src/gossip-new-message-dialog.c:
+	* src/gossip-vcard-dialog.c: Use the GossipAccountChooser to find
+	out how many accounts we have instead of the GossipSession API.
+
+2007-10-06  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-account-chooser.[ch]:
 	(gossip_account_chooser_get_count):
 	(gossip_account_chooser_get_connected): Added these APIs as

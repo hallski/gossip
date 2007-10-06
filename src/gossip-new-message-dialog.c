@@ -499,14 +499,13 @@ gossip_new_message_dialog_show (GtkWindow *parent)
 		gossip_account_chooser_set_account (account_chooser, NULL);
 	}
 
-	gtk_box_pack_start (GTK_BOX (dialog->account_chooser_vbox),
-			    dialog->account_chooser,
-			    TRUE, TRUE, 0);
-
 	g_signal_connect (GTK_COMBO_BOX (dialog->account_chooser), "changed",
 			  G_CALLBACK (new_message_dialog_account_chooser_changed_cb),
 			  dialog);
 
+	gtk_box_pack_start (GTK_BOX (dialog->account_chooser_vbox),
+			    dialog->account_chooser,
+			    TRUE, TRUE, 0);
 	gtk_widget_show (dialog->account_chooser);
 
 	if (gossip_account_chooser_get_count (account_chooser) > 1) {

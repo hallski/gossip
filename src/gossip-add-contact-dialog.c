@@ -364,7 +364,6 @@ gossip_add_contact_dialog_show (GtkWindow     *parent,
 	GossipAddContactDialog *dialog;
 	GossipSession          *session;
 	GladeXML               *glade;
-	GList                  *accounts;
 	GList                  *all_groups;
 	GtkSizeGroup           *size_group;
 
@@ -436,22 +435,18 @@ gossip_add_contact_dialog_show (GtkWindow     *parent,
 
 	/* Add our own customary widgets */
 	dialog->account_chooser = gossip_account_chooser_new (session);
-	gtk_table_attach_defaults (GTK_TABLE (dialog->table_who),
-				   dialog->account_chooser,
-				   1, 2, 0, 1);
 	g_signal_connect (dialog->account_chooser, "changed",
 			  G_CALLBACK (add_contact_dialog_account_chooser_changed_cb),
 			  dialog);
+	gtk_table_attach_defaults (GTK_TABLE (dialog->table_who),
+				   dialog->account_chooser,
+				   1, 2, 0, 1);
 
-	accounts = gossip_session_get_accounts (session);
-	if (g_list_length (accounts) > 1) {
+	if (gossip_account_chooser_get_count (GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser)) > 1) {
 		gtk_widget_show (dialog->account_chooser);
 	} else {
 		gtk_widget_hide (dialog->label_account);
 	}
-
-	g_list_foreach (accounts, (GFunc)g_object_unref, NULL);
-	g_list_free (accounts);
 
 	dialog->avatar_image = gossip_avatar_image_new (NULL);
 	gtk_box_pack_end (GTK_BOX (dialog->hbox_information),

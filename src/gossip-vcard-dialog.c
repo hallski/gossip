@@ -796,7 +796,6 @@ gossip_vcard_dialog_show (GtkWindow *parent)
 {
 	GossipSession *session;
 	GladeXML      *glade;
-	GList         *accounts;
 	GtkWidget     *birthday_placeholder;
 
 	if (dialog) {
@@ -872,30 +871,25 @@ gossip_vcard_dialog_show (GtkWindow *parent)
 	session = gossip_app_get_session ();
 
 	dialog->account_chooser = gossip_account_chooser_new (session);
-	gtk_box_pack_start (GTK_BOX (dialog->hbox_account),
-			    dialog->account_chooser,
-			    TRUE, TRUE, 0);
 
 	g_signal_connect (dialog->account_chooser, "changed",
 			  G_CALLBACK (vcard_dialog_account_changed_cb),
 			  dialog);
 
+	gtk_box_pack_start (GTK_BOX (dialog->hbox_account),
+			    dialog->account_chooser,
+			    TRUE, TRUE, 0);
 	gtk_widget_show (dialog->account_chooser);
 
-	/* Create the avatar chooser */
-	vcard_dialog_create_avatar_chooser (dialog);
-
-	/* Select first */
-	accounts = gossip_session_get_accounts (session);
-	if (g_list_length (accounts) > 1) {
+	/* Show or hide accounts chooser */
+	if (gossip_account_chooser_get_count (GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser)) > 1) {
 		gtk_widget_show (dialog->hbox_account);
 	} else {
-		/* Show no accounts combo box */
 		gtk_widget_hide (dialog->hbox_account);
 	}
 
-	g_list_foreach (accounts, (GFunc) g_object_unref, NULL);
-	g_list_free (accounts);
+	/* Create the avatar chooser */
+	vcard_dialog_create_avatar_chooser (dialog);
 
 	/* Set up transient parent */
 	if (parent) {
