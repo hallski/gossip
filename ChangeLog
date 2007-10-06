@@ -24,7 +24,8 @@
 	(jabber_register_connection_open_cb):
 	(jabber_register_message_handler): Fix a nasty bug where you can't
 	connect after registering a new account. This is because the
-	LmConnection is still open due to us not closing it.
+	LmConnection is still open due to us not closing it. Fixed bug
+	#371927. 
 
 2007-10-05  Martyn Russell  <martyn@imendio.com>
 
