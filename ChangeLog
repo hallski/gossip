@@ -1,5 +1,12 @@
 2007-10-07  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-app.c:
+	* ui/main.glade: Move the context sensitive menu for contacts and
+	groups to the "Chat" menu. Clicking Edit->Contact->Chat doesn't
+	really make sense to me.
+
+2007-10-07  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-chatroom.[ch]: Code reorganisation.
 
 	* src/gossip-app.c: Update in real time if the chatroom menu if

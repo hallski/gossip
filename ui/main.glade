@@ -3429,6 +3429,20 @@ This is the text that should appear on a menu title. Don't include the prefix 'm
 		  </child>
 
 		  <child>
+		    <widget class="GtkSeparatorMenuItem" id="chat_context_separator">
+		      <property name="visible">True</property>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkMenuItem" id="chat_context">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Context</property>
+		      <property name="use_underline">True</property>
+		    </widget>
+		  </child>
+
+		  <child>
 		    <widget class="GtkSeparatorMenuItem" id="separator3">
 		      <property name="visible">True</property>
 		    </widget>
@@ -3557,20 +3571,6 @@ This is the text that should appear on a menu title. Don't include the prefix 'm
 
 	      <child>
 		<widget class="GtkMenu" id="edit_menu">
-
-		  <child>
-		    <widget class="GtkMenuItem" id="edit_context">
-		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Context</property>
-		      <property name="use_underline">True</property>
-		    </widget>
-		  </child>
-
-		  <child>
-		    <widget class="GtkSeparatorMenuItem" id="edit_context_separator">
-		      <property name="visible">True</property>
-		    </widget>
-		  </child>
 
 		  <child>
 		    <widget class="GtkMenuItem" id="edit_accounts">

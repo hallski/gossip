@@ -125,12 +125,12 @@ struct _GossipAppPriv {
 	GtkWidget             *chat_connect;
 	GtkWidget             *chat_disconnect;
 	GtkWidget             *chat_search;
+	GtkWidget             *chat_context;
+	GtkWidget             *chat_context_separator;
 	GtkWidget             *room;
 	GtkWidget             *room_menu;
 	GtkWidget             *room_sep;
 	GtkWidget             *room_join_favorites;
-	GtkWidget             *edit_context;
-	GtkWidget             *edit_context_separator;
 
 	/* Status Icon */
 	GtkStatusIcon         *status_icon;
@@ -225,7 +225,7 @@ static void     app_chat_add_contact_cb      (GtkWidget             *widget,
 static void     app_chat_show_offline_cb     (GtkCheckMenuItem      *item,
 					      GossipApp             *app);
 static gboolean 
-app_edit_button_press_event_cb               (GtkWidget             *widget,
+app_chat_button_press_event_cb               (GtkWidget             *widget,
 					      GdkEventButton        *event,
 					      GossipApp             *app);
 static void     app_edit_accounts_cb         (GtkWidget             *widget,
@@ -782,12 +782,12 @@ app_setup (GossipSession *session)
 				       "chat_connect", &priv->chat_connect,
 				       "chat_disconnect", &priv->chat_disconnect,
 				       "chat_search", &priv->chat_search,
+				       "chat_context", &priv->chat_context,
+				       "chat_context_separator", &priv->chat_context_separator,
 				       "chat_show_offline", &show_offline_widget,
 				       "room", &priv->room,
 				       "room_sep", &priv->room_sep,
 				       "room_join_favorites", &priv->room_join_favorites,
-				       "edit_context", &priv->edit_context,
-				       "edit_context_separator", &priv->edit_context_separator,
 				       "presence_toolbar", &priv->presence_toolbar,
 				       "roster_scrolledwindow", &sw,
 				       NULL);
@@ -799,6 +799,7 @@ app_setup (GossipSession *session)
 			      "main_window", "configure_event", app_window_configure_event_cb,
 			      "main_window", "key_press_event", app_main_window_key_press_event_cb,
 			      "filter_entry", "changed", app_filter_entry_changed_cb, 
+			      "chat", "button-press-event", app_chat_button_press_event_cb,
 			      "chat_quit", "activate", app_chat_quit_cb,
 			      "chat_connect", "activate", app_chat_connect_cb,
 			      "chat_disconnect", "activate", app_chat_disconnect_cb,
@@ -810,7 +811,6 @@ app_setup (GossipSession *session)
 			      "room_manage_favorites", "activate", app_room_manage_favorites_cb,
 			      "chat_add_contact", "activate", app_chat_add_contact_cb,
 			      "chat_show_offline", "toggled", app_chat_show_offline_cb,
-			      "edit", "button-press-event", app_edit_button_press_event_cb,
 			      "edit_accounts", "activate", app_edit_accounts_cb,
 			      "edit_personal_information", "activate", app_edit_personal_information_cb,
 			      "edit_preferences", "activate", app_edit_preferences_cb,
@@ -821,8 +821,8 @@ app_setup (GossipSession *session)
 	/* Set up menu */
 	app_favorite_chatroom_menu_setup ();
 
-	gtk_widget_hide (priv->edit_context);
-	gtk_widget_hide (priv->edit_context_separator);
+	gtk_widget_hide (priv->chat_context);
+	gtk_widget_hide (priv->chat_context_separator);
 
 	/* Set up connection related widgets. */
 	app_connection_items_setup (glade);
@@ -1408,7 +1408,7 @@ app_chat_show_offline_cb (GtkCheckMenuItem *item,
 }
 
 static gboolean
-app_edit_button_press_event_cb (GtkWidget      *widget,
+app_chat_button_press_event_cb (GtkWidget      *widget,
 				GdkEventButton *event,
 				GossipApp      *app)
 {
@@ -1428,12 +1428,12 @@ app_edit_button_press_event_cb (GtkWidget      *widget,
 		GtkWidget   *label;
 		GtkWidget   *submenu;
 
-		item = GTK_MENU_ITEM (priv->edit_context);
+		item = GTK_MENU_ITEM (priv->chat_context);
 		label = gtk_bin_get_child (GTK_BIN (item));
 		gtk_label_set_text (GTK_LABEL (label), _("Group"));
 
-		gtk_widget_show (priv->edit_context);
-		gtk_widget_show (priv->edit_context_separator);
+		gtk_widget_show (priv->chat_context);
+		gtk_widget_show (priv->chat_context_separator);
 
 		submenu = gossip_contact_list_get_group_menu (priv->contact_list);
 		gtk_menu_item_set_submenu (item, submenu);
@@ -1449,12 +1449,12 @@ app_edit_button_press_event_cb (GtkWidget      *widget,
 		GtkWidget   *label;
 		GtkWidget   *submenu;
 
-		item = GTK_MENU_ITEM (priv->edit_context);
+		item = GTK_MENU_ITEM (priv->chat_context);
 		label = gtk_bin_get_child (GTK_BIN (item));
 		gtk_label_set_text (GTK_LABEL (label), _("Contact"));
 
-		gtk_widget_show (priv->edit_context);
-		gtk_widget_show (priv->edit_context_separator);
+		gtk_widget_show (priv->chat_context);
+		gtk_widget_show (priv->chat_context_separator);
 
 		submenu = gossip_contact_list_get_contact_menu (priv->contact_list,
 								contact);
@@ -1465,8 +1465,8 @@ app_edit_button_press_event_cb (GtkWidget      *widget,
 		return FALSE;
 	}
 
-	gtk_widget_hide (priv->edit_context);
-	gtk_widget_hide (priv->edit_context_separator);
+	gtk_widget_hide (priv->chat_context);
+	gtk_widget_hide (priv->chat_context_separator);
 
 	return FALSE;
 }
