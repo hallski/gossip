@@ -947,7 +947,6 @@ log_get_chatroom_from_filename (GossipLogManager *manager,
 
 	if (!found) {
 		chatroom = g_object_new (GOSSIP_TYPE_CHATROOM,
-					 "type", GOSSIP_CHATROOM_TYPE_NORMAL,
 					 "account", account,
 					 "name", room,
 					 "server", server,

@@ -203,15 +203,12 @@ gossip_chatroom_manager_add (GossipChatroomManager *manager,
 
 	/* don't add more than once */
 	if (!gossip_chatroom_manager_find (manager, gossip_chatroom_get_id (chatroom))) {
-		const gchar        *name;
-		GossipChatroomType  type;
+		const gchar *name;
 
-		type = gossip_chatroom_get_type (chatroom);
 		name = gossip_chatroom_get_name (chatroom);
 
-		gossip_debug (DEBUG_DOMAIN, "Adding %s%s chatroom with name:'%s'",
+		gossip_debug (DEBUG_DOMAIN, "Adding %s chatroom with name:'%s'",
 			      gossip_chatroom_get_auto_connect (chatroom) ? "connecting on startup " : "",
-			      gossip_chatroom_type_to_string (type),
 			      name);
 
 		g_signal_connect (chatroom, "notify::enabled",
@@ -537,15 +534,13 @@ chatroom_manager_parse_chatroom (GossipChatroomManager *manager,
 	GossipChatroom            *chatroom;
 	xmlNodePtr                 child;
 	gchar                     *str;
-	GossipChatroomType         type;
 	gchar                     *name, *nick, *server;
 	gchar                     *room, *password, *account_name;
 	gboolean                   auto_connect, favourite;
 
 	priv = GET_PRIV (manager);
 
-	/* default values. */
-	type = GOSSIP_CHATROOM_TYPE_NORMAL;
+	/* Default values. */
 	name = NULL;
 	nick = NULL;
 	server = NULL;
@@ -611,7 +606,6 @@ chatroom_manager_parse_chatroom (GossipChatroomManager *manager,
 
 	if (name && server && room) {
 		chatroom = g_object_new (GOSSIP_TYPE_CHATROOM,
-					 "type", type,
 					 "name", name,
 					 "server", server,
 					 "room", room,
@@ -761,20 +755,12 @@ chatroom_manager_file_save (GossipChatroomManager *manager)
 	for (l = chatrooms; l; l = l->next) {
 		GossipChatroom *chatroom;
 		GossipAccount  *account;
-		gchar          *type;
 		xmlNodePtr      node;
 
 		chatroom = l->data;
 
-		switch (gossip_chatroom_get_type (chatroom)) {
-		case GOSSIP_CHATROOM_TYPE_NORMAL:
-		default:
-			type = g_strdup_printf ("normal");
-			break;
-		}
-
 		node = xmlNewChild (root, NULL, "chatroom", NULL);
-		xmlNewChild (node, NULL, "type", type);
+		xmlNewChild (node, NULL, "type", "normal"); /* We should remove this */
 		xmlNewTextChild (node, NULL, "name", gossip_chatroom_get_name (chatroom));
 		xmlNewTextChild (node, NULL, "nick", gossip_chatroom_get_nick (chatroom));
 
@@ -789,8 +775,6 @@ chatroom_manager_file_save (GossipChatroomManager *manager)
 		if (account) {
 			xmlNewTextChild (node, NULL, "account", gossip_account_get_name (account));
 		}
-
-		g_free (type);
 	}
 
 	/* Make sure the XML is indented properly */

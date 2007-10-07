@@ -26,6 +26,7 @@
 
 #include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-chatroom.h>
+#include <libgossip/gossip-chatroom-invite.h>
 #include <libgossip/gossip-ft.h>
 #include <libgossip/gossip-ft-provider.h>
 #include <libgossip/gossip-message.h>
@@ -1455,7 +1456,6 @@ gossip_jabber_chatrooms_invite_accept (GossipJabberChatrooms *chatrooms,
 	account = gossip_contact_get_account (contact);
 
 	chatroom = g_object_new (GOSSIP_TYPE_CHATROOM,
-				 "type", GOSSIP_CHATROOM_TYPE_NORMAL,
 				 "account", account,
 				 "server", server,
 				 "name", room,
@@ -1579,7 +1579,6 @@ jabber_chatrooms_browse_rooms_cb (GossipJabberDisco     *disco,
 
 		/* Create new chatroom */
 		chatroom = g_object_new (GOSSIP_TYPE_CHATROOM,
-					 "type", GOSSIP_CHATROOM_TYPE_NORMAL,
 					 "account", account,
 					 "server", server,
 					 "room", room,

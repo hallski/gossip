@@ -1,3 +1,22 @@
+2007-10-07  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/Makefile.am: 
+	* libgossip/gossip-chatroom-invite.[ch]:
+	* libgossip/gossip-message.h: Added, split out from the
+	GossipChatroom code. 
+	
+	* libgossip/gossip-account.c: Removed signal enum since it is
+	unused and must have been left in the code. 
+	
+	* libgossip/gossip-chatroom-manager.c:
+	* libgossip/gossip-chatroom-provider.h:
+	* libgossip/gossip-chatroom.[ch]:
+	* libgossip/gossip-jabber-chatrooms.c:
+	* libgossip/gossip-log.c: Removed the GossipChatroomType, it was
+	completely redundant, also use G_DEFINE_TYPE and clean up the
+	object creation so it is more inline with other modern objects
+	like GossipAccount.
+
 2007-10-06  Martyn Russell  <martyn@imendio.com>
 
 	* configure.ac:

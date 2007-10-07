@@ -26,6 +26,7 @@
 #include "gossip-contact.h"
 #include "gossip-time.h"
 #include "gossip-chatroom.h"
+#include "gossip-chatroom-invite.h"
 
 G_BEGIN_DECLS
 

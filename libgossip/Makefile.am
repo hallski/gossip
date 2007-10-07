@@ -35,6 +35,8 @@ libgossip_la_SOURCES =             			\
 	gossip-avatar.h           			\
 	gossip-chatroom.c				\
 	gossip-chatroom.h				\
+	gossip-chatroom-invite.c			\
+	gossip-chatroom-invite.h			\
 	gossip-chatroom-manager.c 			\
 	gossip-chatroom-manager.h 			\
 	gossip-chatroom-provider.c 			\

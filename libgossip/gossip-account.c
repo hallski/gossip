@@ -85,11 +85,6 @@ enum {
 	PROP_USE_PROXY
 };
 
-enum {
-	CHANGED,
-	LAST_SIGNAL
-};
-
 G_DEFINE_TYPE (GossipAccount, gossip_account, G_TYPE_OBJECT);
 
 static void

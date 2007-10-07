@@ -28,19 +28,16 @@
 
 G_BEGIN_DECLS
 
-#define GOSSIP_TYPE_CHATROOM             (gossip_chatroom_get_gtype ())
+#define GOSSIP_TYPE_CHATROOM             (gossip_chatroom_get_type ())
 #define GOSSIP_CHATROOM(o)               (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_CHATROOM, GossipChatroom))
 #define GOSSIP_CHATROOM_CLASS(k)         (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_CHATROOM, GossipChatroomClass))
 #define GOSSIP_IS_CHATROOM(o)            (G_TYPE_CHECK_INSTANCE_TYPE ((o), GOSSIP_TYPE_CHATROOM))
 #define GOSSIP_IS_CHATROOM_CLASS(k)      (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_CHATROOM))
 #define GOSSIP_CHATROOM_GET_CLASS(o)     (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_CHATROOM, GossipChatroomClass))
 
-#define GOSSIP_TYPE_CHATROOM_INVITE       (gossip_chatroom_invite_get_gtype ())
-
 typedef struct _GossipChatroom            GossipChatroom;
 typedef struct _GossipChatroomClass       GossipChatroomClass;
 typedef struct _GossipChatroomContactInfo GossipChatroomContactInfo;
-typedef struct _GossipChatroomInvite      GossipChatroomInvite;
 typedef gint                              GossipChatroomId;
 
 /*
@@ -64,7 +61,7 @@ typedef gint                              GossipChatroomId;
  */
 
 struct _GossipChatroom {
-	GObject parent;
+	GObject      parent;
 };
 
 struct _GossipChatroomClass {
@@ -109,21 +106,14 @@ typedef enum {
 	GOSSIP_CHATROOM_FEATURE_UNSECURED            = 1 << 11
 } GossipChatroomFeature;
 
-typedef enum {
-	GOSSIP_CHATROOM_TYPE_NORMAL,
-} GossipChatroomType;
-
 struct _GossipChatroomContactInfo {
 	GossipChatroomRole        role;
 	GossipChatroomAffiliation affiliation;
 };
 
-GType             gossip_chatroom_get_gtype            (void) G_GNUC_CONST;
-GType             gossip_chatroom_invite_get_gtype     (void) G_GNUC_CONST;
+/* Chatroom */
+GType             gossip_chatroom_get_type             (void) G_GNUC_CONST;
 
-/* Gets */
-GossipChatroomType
-                  gossip_chatroom_get_type             (GossipChatroom  *chatroom);
 GossipChatroomId  gossip_chatroom_get_id               (GossipChatroom  *chatroom);
 const gchar *     gossip_chatroom_get_id_str           (GossipChatroom  *chatroom);
 const gchar *     gossip_chatroom_get_name             (GossipChatroom  *chatroom);
@@ -146,9 +136,6 @@ GossipChatroomContactInfo *
                   gossip_chatroom_get_contact_info     (GossipChatroom  *chatroom,
 							GossipContact   *contact);
 
-/* Sets */
-void              gossip_chatroom_set_type             (GossipChatroom  *chatroom,
-							GossipChatroomType type);
 void              gossip_chatroom_set_name             (GossipChatroom  *chatroom,
 							const gchar     *name);
 void              gossip_chatroom_set_description      (GossipChatroom  *chatroom,
@@ -187,7 +174,6 @@ gboolean          gossip_chatroom_equal                 (gconstpointer   v1,
 							 gconstpointer   v2);
 gboolean          gossip_chatroom_equal_full            (gconstpointer   v1,
 							 gconstpointer   v2);
-const gchar *     gossip_chatroom_type_to_string        (GossipChatroomType type);
 const gchar *     gossip_chatroom_status_to_string      (GossipChatroomStatus status);
 const gchar *     gossip_chatroom_role_to_string        (GossipChatroomRole role,
 							 gint               nr);
@@ -199,20 +185,6 @@ void              gossip_chatroom_contact_joined        (GossipChatroom  *chatro
 							 GossipChatroomContactInfo *info);
 void              gossip_chatroom_contact_left          (GossipChatroom  *chatroom,
 							 GossipContact   *contact);
-/* Invite functions */
-GType             gossip_chatroom_invite_get_type       (void) G_GNUC_CONST;
-GossipChatroomInvite *
-                  gossip_chatroom_invite_new            (GossipContact   *invitor,
-							 const gchar     *id,
-							 const gchar     *reason);
-GossipChatroomInvite *
-                  gossip_chatroom_invite_ref            (GossipChatroomInvite *invite);
-
-void              gossip_chatroom_invite_unref          (GossipChatroomInvite *invite);
-
-GossipContact *   gossip_chatroom_invite_get_invitor    (GossipChatroomInvite *invite);
-const gchar *     gossip_chatroom_invite_get_id         (GossipChatroomInvite *invite);
-const gchar *     gossip_chatroom_invite_get_reason     (GossipChatroomInvite *invite);
 
 G_BEGIN_DECLS
 

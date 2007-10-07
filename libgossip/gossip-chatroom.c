@@ -36,7 +36,6 @@ typedef struct _GossipChatroomPriv GossipChatroomPriv;
 struct _GossipChatroomPriv {
 	GossipAccount         *account;
 
-	GossipChatroomType     type;
 	GossipChatroomId       id;
 	gchar                 *id_str;
 
@@ -60,31 +59,22 @@ struct _GossipChatroomPriv {
 	GHashTable            *contacts;
 };
 
-struct _GossipChatroomInvite {
-	guint          ref_count;
-
-	GossipContact *invitor;
-	gchar         *id;
-	gchar         *reason;
-};
-
-static void chatroom_class_init   (GossipChatroomClass *class);
-static void chatroom_init         (GossipChatroom      *chatroom);
-static void chatroom_finalize     (GObject             *object);
-static void chatroom_get_property (GObject             *object,
-				   guint                param_id,
-				   GValue              *value,
-				   GParamSpec          *pspec);
-static void chatroom_set_property (GObject             *object,
-				   guint                param_id,
-				   const GValue        *value,
-				   GParamSpec          *pspec);
+static void gossip_chatroom_class_init (GossipChatroomClass *klass);
+static void gossip_chatroom_init       (GossipChatroom      *chatroom);
+static void chatroom_finalize          (GObject             *object);
+static void chatroom_get_property      (GObject             *object,
+					guint                param_id,
+					GValue              *value,
+					GParamSpec          *pspec);
+static void chatroom_set_property      (GObject             *object,
+					guint                param_id,
+					const GValue        *value,
+					GParamSpec          *pspec);
 
 enum {
 	PROP_0,
 	PROP_ID,
 	PROP_ID_STR,
-	PROP_TYPE,
 	PROP_NAME,
 	PROP_DESCRIPTION,
 	PROP_SUBJECT,
@@ -108,65 +98,20 @@ enum {
 	LAST_SIGNAL
 };
 
-static guint    signals[LAST_SIGNAL] = {0};
+static guint signals[LAST_SIGNAL] = {0};
 
-static gpointer parent_class = NULL;
-
-GType
-gossip_chatroom_get_gtype (void)
-{
-	static GType type = 0;
-
-	if (!type) {
-		static const GTypeInfo info = {
-			sizeof (GossipChatroomClass),
-			NULL, /* base_init */
-			NULL, /* base_finalize */
-			(GClassInitFunc) chatroom_class_init,
-			NULL, /* class_finalize */
-			NULL, /* class_data */
-			sizeof (GossipChatroom),
-			0,    /* n_preallocs */
-			(GInstanceInitFunc) chatroom_init
-		};
-
-		type = g_type_register_static (G_TYPE_OBJECT,
-					       "GossipChatroom",
-					       &info, 0);
-	}
-
-	return type;
-}
-
-GType
-gossip_chatroom_invite_get_gtype (void)
-{
-	static GType type_id = 0;
-
-	if (!type_id) {
-		type_id = g_boxed_type_register_static ("GossipChatroomInvite",
-							(GBoxedCopyFunc) gossip_chatroom_invite_ref,
-							(GBoxedFreeFunc) gossip_chatroom_invite_unref);
-	}
-
-	return type_id;
-}
+G_DEFINE_TYPE (GossipChatroom, gossip_chatroom, G_TYPE_OBJECT);
 
 static void
-chatroom_class_init (GossipChatroomClass *class)
+gossip_chatroom_class_init (GossipChatroomClass *klass)
 {
 	GObjectClass *object_class;
 
-	object_class = G_OBJECT_CLASS (class);
-	parent_class = g_type_class_peek_parent (class);
+	object_class = G_OBJECT_CLASS (klass);
 
 	object_class->finalize     = chatroom_finalize;
 	object_class->get_property = chatroom_get_property;
 	object_class->set_property = chatroom_set_property;
-
-	/*
-	 * properties
-	 */
 
 	g_object_class_install_property (object_class,
 					 PROP_ID,
@@ -185,16 +130,6 @@ chatroom_class_init (GossipChatroomClass *class)
 							      "Chatroom represented as 'room@server'",
 							      NULL,
 							      G_PARAM_READABLE));
-
-	g_object_class_install_property (object_class,
-					 PROP_TYPE,
-					 g_param_spec_int ("type",
-							   "Chatroom Type",
-							   "The chatroom type, e.g. normal",
-							   G_MININT,
-							   G_MAXINT,
-							   GOSSIP_CHATROOM_TYPE_NORMAL,
-							   G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class,
 					 PROP_NAME,
@@ -314,10 +249,6 @@ chatroom_class_init (GossipChatroomClass *class)
 							      GOSSIP_TYPE_ACCOUNT,
 							      G_PARAM_READWRITE));
 
-	/*
-	 * signals
-	 */
-
 	signals[CONTACT_JOINED] =
 		g_signal_new ("contact-joined",
 			      G_TYPE_FROM_CLASS (object_class),
@@ -350,7 +281,7 @@ chatroom_class_init (GossipChatroomClass *class)
 }
 
 static void
-chatroom_init (GossipChatroom *chatroom)
+gossip_chatroom_init (GossipChatroom *chatroom)
 {
 	GossipChatroomPriv *priv;
 	static guint        id = 1;
@@ -358,8 +289,6 @@ chatroom_init (GossipChatroom *chatroom)
 	priv = GET_PRIV (chatroom);
 
 	priv->id           = id++;
-
-	priv->type         = 0;
 
 	priv->auto_connect = FALSE;
 	priv->favourite    = FALSE;
@@ -395,7 +324,7 @@ chatroom_finalize (GObject *object)
 
 	g_hash_table_destroy (priv->contacts);
 
-	(G_OBJECT_CLASS (parent_class)->finalize) (object);
+	(G_OBJECT_CLASS (gossip_chatroom_parent_class)->finalize) (object);
 }
 
 static void
@@ -414,9 +343,6 @@ chatroom_get_property (GObject    *object,
 		break;
 	case PROP_ID_STR:
 		g_value_set_string (value, priv->id_str);
-		break;
-	case PROP_TYPE:
-		g_value_set_int (value, priv->type);
 		break;
 	case PROP_NAME:
 		g_value_set_string (value, priv->name);
@@ -477,9 +403,6 @@ chatroom_set_property (GObject      *object,
 	priv = GET_PRIV (object);
 
 	switch (param_id) {
-	case PROP_TYPE:
-		priv->type = g_value_get_int (value);
-		break;
 	case PROP_NAME:
 		gossip_chatroom_set_name (GOSSIP_CHATROOM (object),
 					  g_value_get_string (value));
@@ -551,17 +474,6 @@ gossip_chatroom_get_id (GossipChatroom *chatroom)
 
 	priv = GET_PRIV (chatroom);
 	return priv->id;
-}
-
-GossipChatroomType
-gossip_chatroom_get_type (GossipChatroom *chatroom)
-{
-	GossipChatroomPriv *priv;
-
-	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), 0);
-
-	priv = GET_PRIV (chatroom);
-	return priv->type;
 }
 
 const gchar *
@@ -1121,16 +1033,6 @@ gossip_chatroom_equal_full (gconstpointer a,
 }
 
 const gchar *
-gossip_chatroom_type_to_string (GossipChatroomType type)
-{
-	switch (type) {
-	case GOSSIP_CHATROOM_TYPE_NORMAL: return _("Normal");
-	}
-
-	return "";
-}
-
-const gchar *
 gossip_chatroom_status_to_string (GossipChatroomStatus status)
 {
 	switch (status) {
@@ -1238,103 +1140,5 @@ gossip_chatroom_contact_left (GossipChatroom *chatroom,
 		g_signal_emit (chatroom, signals[CONTACT_LEFT], 0, contact);
 		g_hash_table_remove (priv->contacts, contact);
 	}
-}
-
-/*
- * Chatroom invite functions
- */
-
-GossipChatroomInvite *
-gossip_chatroom_invite_ref (GossipChatroomInvite *invite)
-{
-	g_return_val_if_fail (invite != NULL, NULL);
-	g_return_val_if_fail (invite->ref_count > 0, NULL);
-
-	invite->ref_count++;
-
-	return invite;
-}
-
-void
-gossip_chatroom_invite_unref (GossipChatroomInvite *invite)
-{
-	g_return_if_fail (invite != NULL);
-	g_return_if_fail (invite->ref_count > 0);
-
-	invite->ref_count--;
-
-	if (invite->ref_count > 0) {
-		return;
-	}
-
-	if (invite->invitor) {
-		g_object_unref (invite->invitor);
-	}
-
-	g_free (invite->id);
-	g_free (invite->reason);
-}
-
-GType
-gossip_chatroom_invite_get_type (void)
-{
-	static GType type = 0;
-
-	if (type == 0) {
-		type = g_boxed_type_register_static
-			("GossipChatroomInvite",
-			 (GBoxedCopyFunc) gossip_chatroom_invite_ref,
-			 (GBoxedFreeFunc) gossip_chatroom_invite_unref);
-	}
-
-	return type;
-}
-
-GossipChatroomInvite *
-gossip_chatroom_invite_new (GossipContact *invitor,
-			    const gchar   *id,
-			    const gchar   *reason)
-{
-	GossipChatroomInvite *invite;
-
-	g_return_val_if_fail (GOSSIP_IS_CONTACT (invitor), NULL);
-	g_return_val_if_fail (id != NULL, NULL);
-
-	invite = g_new0 (GossipChatroomInvite, 1);
-
-	invite->ref_count = 1;
-
-	invite->invitor = g_object_ref (invitor);
-	invite->id = g_strdup (id);
-
-	if (reason) {
-		invite->reason = g_strdup (reason);
-	}
-
-	return invite;
-}
-
-GossipContact *
-gossip_chatroom_invite_get_invitor (GossipChatroomInvite *invite)
-{
-	g_return_val_if_fail (invite != NULL, NULL);
-
-	return invite->invitor;
-}
-
-const gchar *
-gossip_chatroom_invite_get_id (GossipChatroomInvite *invite)
-{
-	g_return_val_if_fail (invite != NULL, NULL);
-
-	return invite->id;
-}
-
-const gchar *
-gossip_chatroom_invite_get_reason (GossipChatroomInvite *invite)
-{
-	g_return_val_if_fail (invite != NULL, NULL);
-
-	return invite->reason;
 }
 
