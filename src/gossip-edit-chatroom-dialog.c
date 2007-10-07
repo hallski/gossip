@@ -69,23 +69,23 @@ edit_chatroom_dialog_set (GossipEditChatroomDialog *dialog)
 
 	/* Set chatroom information */
 	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_name));
-	g_object_set (dialog->chatroom, "name", str, NULL);
+	gossip_chatroom_set_name (dialog->chatroom, str);
 
 	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_nickname));
-	g_object_set (dialog->chatroom, "nick", str, NULL);
+	gossip_chatroom_set_nick (dialog->chatroom, str);
 
 	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_server));
-	g_object_set (dialog->chatroom, "server", str, NULL);
+	gossip_chatroom_set_server (dialog->chatroom, str);
 
 	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_room));
-	g_object_set (dialog->chatroom, "room", str, NULL);
+	gossip_chatroom_set_room (dialog->chatroom, str);
 
 	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_password));
-	g_object_set (dialog->chatroom, "password", str, NULL);
+	gossip_chatroom_set_password (dialog->chatroom, str);
 
 	togglebutton = GTK_TOGGLE_BUTTON (dialog->checkbutton_auto_connect);
-	g_object_set (dialog->chatroom, "auto_connect",
-		      gtk_toggle_button_get_active (togglebutton), NULL);
+	gossip_chatroom_set_auto_connect (dialog->chatroom, 
+					  gtk_toggle_button_get_active (togglebutton));
 
 	gossip_chatroom_manager_store (manager);
 }

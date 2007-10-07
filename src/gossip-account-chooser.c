@@ -353,7 +353,7 @@ account_chooser_account_add_foreach (GossipAccount        *account,
 
 	g_object_unref (pixbuf);
 
-	/* set first connected account as active account */
+	/* Set first connected account as active account */
 	if (priv->set_active_item == FALSE &&
 	    ((priv->can_select_all == TRUE) ||
 	     (priv->can_select_all == FALSE && is_connected == TRUE))) {

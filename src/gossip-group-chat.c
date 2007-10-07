@@ -76,8 +76,6 @@ struct _GossipGroupChatPriv {
 
 	GtkWidget              *treeview;
 
-	gchar                  *name;
-
 	GCompletion            *completion;
 
 	GList                  *private_chats;
@@ -147,6 +145,9 @@ static gint            group_chat_contacts_completion_func    (const gchar      
 							       const gchar                  *s2,
 							       gsize                         n);
 static void            group_chat_create_ui                   (GossipGroupChat              *chat);
+static void            group_chat_chatroom_name_cb            (GossipChatroom               *chatroom,
+							       GParamSpec                   *spec,
+							       GossipGroupChat              *chat);
 static void            group_chat_kicked_cb                   (GossipChatroomProvider       *provider,
 							       gint                          id,
 							       GossipGroupChat              *chat);
@@ -378,6 +379,9 @@ group_chat_finalize (GObject *object)
 		g_object_unref (priv->chatroom);
 	}
 
+	g_signal_handlers_disconnect_by_func (priv->chatroom, 
+					      G_CALLBACK (group_chat_chatroom_name_cb),
+					      chat);
 	g_signal_handlers_disconnect_by_func (priv->chatroom_provider,
 					      group_chat_kicked_cb, 
 					      chat);
@@ -405,7 +409,6 @@ group_chat_finalize (GObject *object)
 	
 	g_object_unref (priv->chatroom_provider);
 
-	g_free (priv->name);
 	g_free (priv->topic);
 
 	g_list_foreach (priv->private_chats,
@@ -1066,6 +1069,14 @@ group_chat_scroll_down_when_idle (GossipGroupChat *chat)
 	priv->scroll_idle_id = g_idle_add ((GSourceFunc) 
 					   group_chat_scroll_down_when_idle_func, 
 					   chat);
+}
+
+static void
+group_chat_chatroom_name_cb (GossipChatroom  *chatroom,
+			     GParamSpec      *spec,
+			     GossipGroupChat *chat)
+{
+	g_signal_emit_by_name (chat, "name_changed", gossip_chatroom_get_name (chatroom));
 }
 
 static void
@@ -2223,7 +2234,7 @@ group_chat_get_name (GossipChat *chat)
 	group_chat = GOSSIP_GROUP_CHAT (chat);
 	priv = GET_PRIV (group_chat);
 
-	return priv->name;
+	return gossip_chatroom_get_name (priv->chatroom);
 }
 
 static gchar *
@@ -2238,16 +2249,19 @@ group_chat_get_tooltip (GossipChat *chat)
 	priv = GET_PRIV (group_chat);
 
 	if (priv->topic) {
-		gchar *topic, *tmp;
+		gchar *topic;
+		gchar *tooltip;
 
 		topic = g_strdup_printf (_("Topic: %s"), priv->topic);
-		tmp = g_strdup_printf ("%s\n%s", priv->name, topic);
+		tooltip = g_strdup_printf ("%s\n%s", 
+					   gossip_chatroom_get_name (priv->chatroom), 
+					   topic);
 		g_free (topic);
 
-		return tmp;
+		return tooltip;
 	}
 
-	return g_strdup (priv->name);
+	return g_strdup (gossip_chatroom_get_name (priv->chatroom));
 }
 
 static GdkPixbuf *
@@ -2511,12 +2525,13 @@ gossip_group_chat_new (GossipChatroomProvider *provider,
 	priv->chatroom = g_object_ref (chatroom);
 	priv->chatroom_provider = g_object_ref (provider);
 
-	priv->name = g_strdup (gossip_chatroom_get_name (chatroom));
-
 	priv->private_chats = NULL;
 
  	g_hash_table_insert (group_chats, GINT_TO_POINTER (id), chat);
 
+	g_signal_connect (chatroom, "notify::name",
+			  G_CALLBACK (group_chat_chatroom_name_cb),
+			  chat);
 	g_signal_connect (provider, "chatroom-kicked",
 			  G_CALLBACK (group_chat_kicked_cb),
 			  chat);

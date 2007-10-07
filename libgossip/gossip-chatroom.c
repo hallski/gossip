@@ -73,6 +73,7 @@ static void chatroom_set_property      (GObject             *object,
 
 enum {
 	PROP_0,
+	PROP_ACCOUNT,
 	PROP_ID,
 	PROP_ID_STR,
 	PROP_NAME,
@@ -88,7 +89,6 @@ enum {
 	PROP_STATUS,
 	PROP_OCCUPANTS,
 	PROP_LAST_ERROR,
-	PROP_ACCOUNT,
 };
 
 enum {
@@ -338,6 +338,9 @@ chatroom_get_property (GObject    *object,
 	priv = GET_PRIV (object);
 
 	switch (param_id) {
+	case PROP_ACCOUNT:
+		g_value_set_object (value, priv->account);
+		break;
 	case PROP_ID:
 		g_value_set_int (value, priv->id);
 		break;
@@ -383,9 +386,6 @@ chatroom_get_property (GObject    *object,
 	case PROP_LAST_ERROR:
 		g_value_set_string (value, priv->last_error);
 		break;
-	case PROP_ACCOUNT:
-		g_value_set_object (value, priv->account);
-		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
 		break;
@@ -403,6 +403,10 @@ chatroom_set_property (GObject      *object,
 	priv = GET_PRIV (object);
 
 	switch (param_id) {
+	case PROP_ACCOUNT:
+		gossip_chatroom_set_account (GOSSIP_CHATROOM (object),
+					     g_value_get_object (value));
+		break;
 	case PROP_NAME:
 		gossip_chatroom_set_name (GOSSIP_CHATROOM (object),
 					  g_value_get_string (value));
@@ -455,14 +459,26 @@ chatroom_set_property (GObject      *object,
 		gossip_chatroom_set_last_error (GOSSIP_CHATROOM (object),
 						g_value_get_string (value));
 		break;
-	case PROP_ACCOUNT:
-		gossip_chatroom_set_account (GOSSIP_CHATROOM (object),
-					     g_value_get_object (value));
-		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
 		break;
 	};
+}
+
+GossipAccount *
+gossip_chatroom_get_account (GossipChatroom *chatroom)
+{
+	GossipChatroomPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
+
+	priv = GET_PRIV (chatroom);
+
+	if (!priv->account) {
+		return NULL;
+	}
+
+	return priv->account;
 }
 
 GossipChatroomId
@@ -640,22 +656,6 @@ gossip_chatroom_get_last_error (GossipChatroom *chatroom)
 	return priv->last_error;
 }
 
-GossipAccount *
-gossip_chatroom_get_account (GossipChatroom *chatroom)
-{
-	GossipChatroomPriv *priv;
-
-	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
-
-	priv = GET_PRIV (chatroom);
-
-	if (!priv->account) {
-		return NULL;
-	}
-
-	return priv->account;
-}
-
 GossipChatroomContactInfo *
 gossip_chatroom_get_contact_info (GossipChatroom *chatroom,
 				  GossipContact  *contact)
@@ -668,6 +668,25 @@ gossip_chatroom_get_contact_info (GossipChatroom *chatroom,
 	priv = GET_PRIV (chatroom);
 
 	return g_hash_table_lookup (priv->contacts, contact);
+}
+
+void
+gossip_chatroom_set_account (GossipChatroom *chatroom,
+			     GossipAccount  *account)
+{
+	GossipChatroomPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
+	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
+
+	priv = GET_PRIV (chatroom);
+	if (priv->account) {
+		g_object_unref (priv->account);
+	}
+
+	priv->account = g_object_ref (account);
+
+	g_object_notify (G_OBJECT (chatroom), "account");
 }
 
 void
@@ -904,25 +923,6 @@ gossip_chatroom_set_last_error (GossipChatroom *chatroom,
 	}
 
 	g_object_notify (G_OBJECT (chatroom), "last_error");
-}
-
-void
-gossip_chatroom_set_account (GossipChatroom *chatroom,
-			     GossipAccount  *account)
-{
-	GossipChatroomPriv *priv;
-
-	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
-	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
-
-	priv = GET_PRIV (chatroom);
-	if (priv->account) {
-		g_object_unref (priv->account);
-	}
-
-	priv->account = g_object_ref (account);
-
-	g_object_notify (G_OBJECT (chatroom), "account");
 }
 
 void

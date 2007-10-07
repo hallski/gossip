@@ -55,15 +55,9 @@ typedef struct {
 	GtkWidget *button_remove;
 	GtkWidget *button_edit;
 	GtkWidget *button_close;
-
-	gint       server_column;
-	gint       room_column;
 } GossipChatroomsWindow;
 
 static void            chatrooms_window_model_add_columns               (GossipChatroomsWindow *window);
-static void            chatrooms_window_model_cell_auto_connect_toggled (GtkCellRendererToggle *cell,
-									 gchar                 *path_string,
-									 GossipChatroomsWindow *window);
 static void            chatrooms_window_model_pixbuf_cell_data_func     (GtkTreeViewColumn     *tree_column,
 									 GtkCellRenderer       *cell,
 									 GtkTreeModel          *model,
@@ -122,6 +116,7 @@ chatrooms_window_model_add_columns (GossipChatroomsWindow *window)
 	GtkTreeModel      *model;
 	GtkTreeViewColumn *column;
 	GtkCellRenderer   *cell;
+	GtkWidget         *image;
 	gint               count;
 
 	view = GTK_TREE_VIEW (window->treeview);
@@ -132,11 +127,6 @@ chatrooms_window_model_add_columns (GossipChatroomsWindow *window)
 
 	/* Name & Status */
 	column = gtk_tree_view_column_new ();
-	count = gtk_tree_view_append_column (view, column);
-
-	gtk_tree_view_column_set_title (column, _("Name"));
-	gtk_tree_view_column_set_expand (column, TRUE);
-	gtk_tree_view_column_set_sort_column_id (column, count - 1);
 
 	cell = gtk_cell_renderer_pixbuf_new ();
 	gtk_tree_view_column_pack_start (column, cell, FALSE);
@@ -154,97 +144,68 @@ chatrooms_window_model_add_columns (GossipChatroomsWindow *window)
 	gtk_tree_view_column_pack_start (column, cell, TRUE);
 	gtk_tree_view_column_add_attribute (column, cell, "text", COL_NAME);
 
+	gtk_tree_view_column_set_title (column, _("Name"));
+	gtk_tree_view_column_set_expand (column, TRUE);
+	gtk_tree_view_column_set_sort_column_id (column, COL_NAME);
+	gtk_tree_view_append_column (view, column);
+
 	/* Room */
 	cell = gtk_cell_renderer_text_new ();
 	column = gtk_tree_view_column_new_with_attributes (_("Room"), cell, 
 							   "text", COL_ROOM, 
 							   NULL);
-	count = gtk_tree_view_append_column (view, column);
-	gtk_tree_view_column_set_sort_column_id (column, count - 1);
-	window->room_column = count - 1;
+	gtk_tree_view_append_column (view, column);
+	gtk_tree_view_column_set_sort_column_id (column, COL_ROOM);
 
 	/* Server */
 	cell = gtk_cell_renderer_text_new ();
 	column = gtk_tree_view_column_new_with_attributes (_("Server"), cell, 
 							   "text", COL_SERVER, 
 							   NULL);
-	count = gtk_tree_view_append_column (view, column);
-	gtk_tree_view_column_set_sort_column_id (column, count - 1);
-	window->server_column = count - 1;
+	gtk_tree_view_append_column (view, column);
+	gtk_tree_view_column_set_sort_column_id (column, COL_SERVER);
 
 	/* Password Protected */
-	cell = gtk_cell_renderer_pixbuf_new ();
+	cell = gtk_cell_renderer_toggle_new ();
 	g_object_set (cell,
-		      "xalign", 0.5, 
 		      "xpad", (guint) 4,
 		      "ypad", (guint) 1,
-		      "stock-size", GTK_ICON_SIZE_SMALL_TOOLBAR,
 		      NULL);
 
 	column = gtk_tree_view_column_new_with_attributes ("*", cell, 
-							   "stock-id", COL_PASSWORD_PROTECTED, 
+							   "active", COL_PASSWORD_PROTECTED, 
 							   NULL);
-	count = gtk_tree_view_append_column (view, column);
+
+	image = gtk_image_new_from_stock (GTK_STOCK_DIALOG_AUTHENTICATION, GTK_ICON_SIZE_MENU);
+	gtk_widget_show (image);
+
+	gtk_tree_view_column_set_widget (column, image);
 	gtk_tree_view_column_set_alignment (column, 0.5);
 	gtk_tree_view_column_set_expand (column, FALSE);
 	gtk_tree_view_column_set_resizable (column, FALSE);
-	gtk_tree_view_column_set_visible (column, TRUE);
+	gtk_tree_view_column_set_sort_column_id (column, COL_PASSWORD_PROTECTED);
+	count = gtk_tree_view_append_column (view, column);
 
 	/* Chatroom auto connect */
 	cell = gtk_cell_renderer_toggle_new ();
+	g_object_set (cell,
+		      "xpad", (guint) 4,
+		      "ypad", (guint) 1,
+		      NULL);
+
 	column = gtk_tree_view_column_new_with_attributes (_("Auto Connect"), cell,
 							   "active", COL_AUTO_CONNECT,
 							   NULL);
-	count = gtk_tree_view_append_column (view, column);
-	gtk_tree_view_column_set_sort_column_id (column, count - 1);
-
-	g_signal_connect (cell, "toggled",
-			  G_CALLBACK (chatrooms_window_model_cell_auto_connect_toggled),
-			  window);
+	gtk_tree_view_column_set_alignment (column, 0.5);
+	gtk_tree_view_column_set_expand (column, FALSE);
+	gtk_tree_view_column_set_resizable (column, FALSE);
+	gtk_tree_view_column_set_sort_column_id (column, COL_AUTO_CONNECT);
+	gtk_tree_view_append_column (view, column);
 
 	/* Sort model */
-	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (model), 0, 
+	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (model), 
+					      COL_NAME, 
 					      GTK_SORT_ASCENDING);
-}
-
-static void
-chatrooms_window_model_cell_auto_connect_toggled (GtkCellRendererToggle  *cell,
-						  gchar                  *path_string,
-						  GossipChatroomsWindow  *window)
-{
-	GossipChatroomManager *manager;
-	GossipChatroom        *chatroom;
-	gboolean               enabled;
-	GtkTreeView           *view;
-	GtkTreeModel          *model;
-	GtkListStore          *store;
-	GtkTreePath           *path;
-	GtkTreeIter            iter;
-
-	view = GTK_TREE_VIEW (window->treeview);
-	model = gtk_tree_view_get_model (view);
-	store = GTK_LIST_STORE (model);
-
-	path = gtk_tree_path_new_from_string (path_string);
-
-	gtk_tree_model_get_iter (model, &iter, path);
-	gtk_tree_model_get (model, &iter,
-			    COL_AUTO_CONNECT, &enabled,
-			    COL_POINTER, &chatroom,
-			    -1);
-
-	enabled = !enabled;
-
-	/* Store */
-	gossip_chatroom_set_auto_connect (chatroom, enabled);
-
-	manager = gossip_app_get_chatroom_manager ();
-	gossip_chatroom_manager_store (manager);
-
-	gtk_list_store_set (store, &iter, COL_AUTO_CONNECT, enabled, -1);
-	gtk_tree_path_free (path);
-
-	g_object_unref (chatroom);
 }
 
 static void
@@ -377,7 +338,6 @@ chatrooms_window_model_refresh_data (GossipChatroomsWindow *window,
 	GossipAccountChooser  *account_chooser;
 	GossipAccount         *account;
 	GossipChatroomManager *manager;
-	GtkTreeViewColumn     *column;
 	GList                 *chatrooms, *l;
 
 	view = GTK_TREE_VIEW (window->treeview);
@@ -393,12 +353,6 @@ chatrooms_window_model_refresh_data (GossipChatroomsWindow *window,
 
 	manager = gossip_app_get_chatroom_manager ();
 	chatrooms = gossip_chatroom_manager_get_chatrooms (manager, account);
-
-	column = gtk_tree_view_get_column (view, window->room_column);
-	gtk_tree_view_column_set_visible (column, TRUE);
-	
-	column = gtk_tree_view_get_column (view, window->server_column);
-	gtk_tree_view_column_set_visible (column, TRUE);
 
 	/* Clean out the store */
 	gtk_list_store_clear (store);
@@ -432,29 +386,32 @@ chatrooms_window_model_add (GossipChatroomsWindow *window,
 	GtkTreeSelection *selection;
 	GtkListStore     *store;
 	GtkTreeIter       iter;
-	const gchar      *stock_id = NULL;
-	const gchar      *password;
+	gboolean          password_protected = FALSE;
+	gboolean          auto_connect = FALSE;
 
 	view = GTK_TREE_VIEW (window->treeview);
 	selection = gtk_tree_view_get_selection (view);
 	model = gtk_tree_view_get_model (view);
 	store = GTK_LIST_STORE (model);
-
-	password = gossip_chatroom_get_password (chatroom);
-	if (!G_STR_EMPTY (password)) {
-		stock_id = GTK_STOCK_DIALOG_AUTHENTICATION;
+	
+	if (!G_STR_EMPTY (gossip_chatroom_get_password (chatroom))) {
+		password_protected = TRUE;
 	}
-
+	
+	if (gossip_chatroom_get_auto_connect (chatroom)) {
+		auto_connect = TRUE;
+	}
+	
 	gtk_list_store_append (store, &iter);
 	gtk_list_store_set (store, &iter,
 			    COL_NAME, gossip_chatroom_get_name (chatroom),
 			    COL_ROOM, gossip_chatroom_get_room (chatroom),
 			    COL_SERVER, gossip_chatroom_get_server (chatroom),
-			    COL_PASSWORD_PROTECTED, stock_id,
-			    COL_AUTO_CONNECT, gossip_chatroom_get_auto_connect (chatroom),
+			    COL_PASSWORD_PROTECTED, password_protected,
+			    COL_AUTO_CONNECT, auto_connect,
 			    COL_POINTER, chatroom,
 			    -1);
-
+	
 	if (set_active) {
 		gtk_tree_selection_select_iter (selection, &iter);
 	}
@@ -497,8 +454,8 @@ chatrooms_window_model_setup (GossipChatroomsWindow *window)
 				    G_TYPE_STRING,         /* Name */
 				    G_TYPE_STRING,         /* Room */
 				    G_TYPE_STRING,         /* Server */
-				    G_TYPE_STRING,         /* Password protected */
-				    G_TYPE_BOOLEAN,         /* Auto start */
+				    G_TYPE_BOOLEAN,        /* Password protected */
+				    G_TYPE_BOOLEAN,        /* Auto start */
 				    GOSSIP_TYPE_CHATROOM); /* Chatroom */
 
 	gtk_tree_view_set_model (view, GTK_TREE_MODEL (store));
@@ -527,21 +484,11 @@ chatrooms_window_update_buttons (GossipChatroomsWindow *window)
 	GossipChatroom *chatroom;
 
 	chatroom = chatrooms_window_model_get_selected (window);
+	gtk_widget_set_sensitive (window->button_remove, chatroom != NULL);
+	gtk_widget_set_sensitive (window->button_edit, chatroom != NULL);
+
 	if (chatroom) {
-		GossipChatroomStatus status;
-		gboolean             sensitive = TRUE;
-
-		status = gossip_chatroom_get_status (chatroom);
-		sensitive &= status != GOSSIP_CHATROOM_STATUS_JOINING;
-		sensitive &= status != GOSSIP_CHATROOM_STATUS_ACTIVE;
-
-		gtk_widget_set_sensitive (window->button_remove, sensitive);
-		gtk_widget_set_sensitive (window->button_edit, sensitive);
-		
 		g_object_unref (chatroom);
-	} else {
-		gtk_widget_set_sensitive (window->button_remove, FALSE);
-		gtk_widget_set_sensitive (window->button_edit, FALSE);
 	}
 }
 
@@ -618,22 +565,24 @@ chatrooms_window_chatroom_changed_foreach (GtkTreeModel   *model,
 		 * information because we don't use cell data
 		 * functions to work it out on update.
 		 */
-		const gchar *stock_id = NULL;
-		const gchar *password;
+		gboolean password_protected = FALSE;
+		gboolean auto_connect = FALSE;
 		
-		password = gossip_chatroom_get_password (chatroom);
-		if (!G_STR_EMPTY (password)) {
-			stock_id = GTK_STOCK_DIALOG_AUTHENTICATION;
+		if (!G_STR_EMPTY (gossip_chatroom_get_password (chatroom))) {
+			password_protected = TRUE;
+		}
+		
+		if (gossip_chatroom_get_auto_connect (chatroom)) {
+			auto_connect = TRUE;
 		}
 
 		gtk_list_store_set (GTK_LIST_STORE (model), iter,
 				    COL_NAME, gossip_chatroom_get_name (chatroom),
 				    COL_ROOM, gossip_chatroom_get_room (chatroom),
 				    COL_SERVER, gossip_chatroom_get_server (chatroom),
-				    COL_PASSWORD_PROTECTED, stock_id,
-				    COL_AUTO_CONNECT, gossip_chatroom_get_auto_connect (chatroom),
+				    COL_PASSWORD_PROTECTED, password_protected,
+				    COL_AUTO_CONNECT, auto_connect,
 				    -1);
-
 
 		gtk_tree_model_row_changed (model, path, iter);
 	}
@@ -747,10 +696,7 @@ gossip_chatrooms_window_show (GtkWindow *parent,
 	account_chooser = GOSSIP_ACCOUNT_CHOOSER (window->account_chooser);
 	gossip_account_chooser_set_can_select_all (account_chooser, TRUE);
 	gossip_account_chooser_set_has_all_option (account_chooser, TRUE);
-
-	if (gossip_account_chooser_get_connected (account_chooser) > 1) {
-		gossip_account_chooser_set_account (account_chooser, NULL);
-	}
+	gossip_account_chooser_set_account (account_chooser, NULL);
 
 	g_signal_connect (window->account_chooser, "changed",
 			  G_CALLBACK (chatrooms_window_account_changed_cb),

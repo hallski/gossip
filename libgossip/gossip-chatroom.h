@@ -114,6 +114,7 @@ struct _GossipChatroomContactInfo {
 /* Chatroom */
 GType             gossip_chatroom_get_type             (void) G_GNUC_CONST;
 
+GossipAccount *   gossip_chatroom_get_account          (GossipChatroom  *chatroom);
 GossipChatroomId  gossip_chatroom_get_id               (GossipChatroom  *chatroom);
 const gchar *     gossip_chatroom_get_id_str           (GossipChatroom  *chatroom);
 const gchar *     gossip_chatroom_get_name             (GossipChatroom  *chatroom);
@@ -131,11 +132,12 @@ GossipChatroomStatus
                   gossip_chatroom_get_status           (GossipChatroom  *chatroom);
 guint             gossip_chatroom_get_occupants        (GossipChatroom  *chatroom);
 const gchar *     gossip_chatroom_get_last_error       (GossipChatroom  *chatroom);
-GossipAccount *   gossip_chatroom_get_account          (GossipChatroom  *chatroom);
 GossipChatroomContactInfo *
                   gossip_chatroom_get_contact_info     (GossipChatroom  *chatroom,
 							GossipContact   *contact);
 
+void              gossip_chatroom_set_account          (GossipChatroom  *chatroom,
+							GossipAccount   *account);
 void              gossip_chatroom_set_name             (GossipChatroom  *chatroom,
 							const gchar     *name);
 void              gossip_chatroom_set_description      (GossipChatroom  *chatroom,
@@ -162,8 +164,6 @@ void              gossip_chatroom_set_occupants        (GossipChatroom  *chatroo
 							guint            occupants);
 void              gossip_chatroom_set_last_error       (GossipChatroom  *chatroom,
 							const gchar     *last_error);
-void              gossip_chatroom_set_account          (GossipChatroom  *chatroom,
-							GossipAccount   *account);
 void              gossip_chatroom_set_contact_info     (GossipChatroom  *chatroom,
 							GossipContact   *contact,
 							GossipChatroomContactInfo *info);

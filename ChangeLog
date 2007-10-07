@@ -1,5 +1,30 @@
 2007-10-07  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-chatroom.[ch]: Code reorganisation.
+
+	* src/gossip-app.c: Update in real time if the chatroom menu if
+	the name of a chatroom changes.
+	
+	* src/gossip-chatrooms-window.c: 
+	* ui/group-chat.glade: Make it possible to remove and edit
+	chatrooms in real time instead of waiting for them to be in a
+	disconnected state. Also make columns sortable and use the
+	authentication icon in the column header using a simple toggle
+	cell renderer for the rows. The "auto-connect" setting is now not
+	configurable in this list, you have to use the edit chatroom
+	dialog instead. Default the account to ALL and allow others to be
+	selected by the account chooser, fixes bug #346291.
+
+	* src/gossip-edit-chatroom-dialog.c: Use proper gossip_chatroom_
+	functions instead of g_object_set().
+
+	* src/gossip-group-chat.c: Update in real time the name on
+	the tab of the chatroom if it changes and don't store the name of
+	the room since it is likely to change and we have the
+	GossipChatroom referenced anyway.
+
+2007-10-07  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/Makefile.am: 
 	* libgossip/gossip-chatroom-invite.[ch]:
 	* libgossip/gossip-message.h: Added, split out from the

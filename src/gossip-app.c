@@ -188,6 +188,10 @@ static void
 app_favorite_chatroom_menu_update_cb         (GossipChatroomManager *manager,
 					      GossipChatroom        *chatroom,
 					      gpointer               user_data);
+static void
+app_favorite_chatroom_menu_name_cb           (GossipChatroom        *chatroom,
+					      GParamSpec            *spec,
+					      GtkWidget             *menu_item);
 static void     
 app_favorite_chatroom_menu_added_cb          (GossipChatroomManager *manager,
 					      GossipChatroom        *chatroom,
@@ -1164,6 +1168,9 @@ app_favorite_chatroom_menu_add (GossipChatroom *chatroom)
 	g_signal_connect (menu_item, "activate",
 			  G_CALLBACK (app_favorite_chatroom_menu_activate_cb),
 			  chatroom);
+	g_signal_connect (chatroom, "notify::name",
+			  G_CALLBACK (app_favorite_chatroom_menu_name_cb),
+			  menu_item);
 
 	gtk_menu_shell_insert (GTK_MENU_SHELL (priv->room_menu),
 			       menu_item, 3);
@@ -1181,6 +1188,17 @@ app_favorite_chatroom_menu_update_cb (GossipChatroomManager *manager,
 				      gpointer               user_data)
 {
 	app_favorite_chatroom_menu_update ();
+}
+
+static void
+app_favorite_chatroom_menu_name_cb (GossipChatroom *chatroom,
+				    GParamSpec     *spec,
+				    GtkWidget      *menu_item)
+{
+	GtkWidget *label;
+
+	label = gtk_bin_get_child (GTK_BIN (menu_item));
+	gtk_label_set_text (GTK_LABEL (label), gossip_chatroom_get_name (chatroom));
 }
 
 static void
@@ -1215,6 +1233,10 @@ app_favorite_chatroom_menu_removed_cb (GossipChatroomManager *manager,
 
 	visible = gossip_chatroom_get_favourite (chatroom);
 	visible &= gossip_session_is_connected (priv->session, account);
+
+	g_signal_handlers_disconnect_by_func (chatroom, 
+					      G_CALLBACK (app_favorite_chatroom_menu_name_cb),
+					      menu_item);
 
 	g_object_set_data (G_OBJECT (chatroom), "menu_item", NULL);
 	gtk_widget_destroy (menu_item);
