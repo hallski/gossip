@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip.HEAD.es\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-10-04 20:39+0100\n"
-"PO-Revision-Date: 2007-10-07 15:49+0200\n"
+"POT-Creation-Date: 2007-10-07 14:50+0100\n"
+"PO-Revision-Date: 2007-10-07 16:00+0200\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Spanish <traductores@es.gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -117,9 +117,10 @@ msgid ""
 "the file to so that the last location used to save file transfers can be "
 "used without prompting the user each time."
 msgstr ""
-"Esto se actualiza cada vez que el usuario cambia la ubicación en la que quiere guardar "
-"el archivo de tal forma que se puede usar la última ubicación que se usó para guardar las "
-"transferencias de archivo por última vez sin preguntar al usuario."
+"Esto se actualiza cada vez que el usuario cambia la ubicación en la que "
+"quiere guardar el archivo de tal forma que se puede usar la última ubicación "
+"que se usó para guardar las transferencias de archivo por última vez sin "
+"preguntar al usuario."
 
 #: ../gossip.schemas.in.h:22
 msgid "Use graphical smileys"
@@ -205,77 +206,73 @@ msgstr ""
 "predeterminado es ordenar por el nombre del contacto con el valor «nombre». "
 "Un valor «estado» ordenará la lista por el estado."
 
-#: ../libgossip/gossip-chatroom.c:1127
-msgid "Normal"
-msgstr "Normal"
-
-#: ../libgossip/gossip-chatroom.c:1138
+#: ../libgossip/gossip-chatroom.c:1040
 msgid "Joining"
 msgstr "Uniéndose"
 
-#: ../libgossip/gossip-chatroom.c:1140
+#: ../libgossip/gossip-chatroom.c:1042
 msgid "Active"
 msgstr "Activo"
 
-#: ../libgossip/gossip-chatroom.c:1142
+#: ../libgossip/gossip-chatroom.c:1044
 msgid "Inactive"
 msgstr "Inactivo"
 
-#: ../libgossip/gossip-chatroom.c:1144 ../src/gossip-log-window.c:1874
+#: ../libgossip/gossip-chatroom.c:1046 ../src/gossip-log-window.c:1874
 msgid "Unknown"
 msgstr "Desconocido"
 
-#: ../libgossip/gossip-chatroom.c:1146
+#: ../libgossip/gossip-chatroom.c:1048
 msgid "Error"
 msgstr "Error"
 
-#: ../libgossip/gossip-chatroom.c:1160
+#: ../libgossip/gossip-chatroom.c:1062
 msgid "Moderator"
 msgid_plural "Moderators"
 msgstr[0] "Moderador"
 msgstr[1] "Moderadores"
 
-#: ../libgossip/gossip-chatroom.c:1162
+#: ../libgossip/gossip-chatroom.c:1064
 msgid "Participant"
 msgid_plural "Participants"
 msgstr[0] "Participante"
 msgstr[1] "Participantes"
 
-#: ../libgossip/gossip-chatroom.c:1164
+#: ../libgossip/gossip-chatroom.c:1066
 msgid "Visitor"
 msgid_plural "Visitors"
 msgstr[0] "Visitante"
 msgstr[1] "Visitantes"
 
-#: ../libgossip/gossip-chatroom.c:1166
+#: ../libgossip/gossip-chatroom.c:1068
 msgid "No role"
 msgstr "Sin rol"
 
-#: ../libgossip/gossip-chatroom.c:1180
+#: ../libgossip/gossip-chatroom.c:1082
 msgid "Owner"
 msgid_plural "Owners"
 msgstr[0] "Dueño"
 msgstr[1] "Dueños"
 
-#: ../libgossip/gossip-chatroom.c:1182
+#: ../libgossip/gossip-chatroom.c:1084
 msgid "Administrator"
 msgid_plural "Administrators"
 msgstr[0] "Administrador"
 msgstr[1] "Administradores"
 
-#: ../libgossip/gossip-chatroom.c:1184
+#: ../libgossip/gossip-chatroom.c:1086
 msgid "Member"
 msgid_plural "Members"
 msgstr[0] "Miembro"
 msgstr[1] "Miembros"
 
-#: ../libgossip/gossip-chatroom.c:1186
+#: ../libgossip/gossip-chatroom.c:1088
 msgid "Outcast"
 msgid_plural "Outcasts"
 msgstr[0] "Paria"
 msgstr[1] "Parias"
 
-#: ../libgossip/gossip-chatroom.c:1188
+#: ../libgossip/gossip-chatroom.c:1090
 msgid "No affiliation"
 msgstr "Sin afiliación"
 
@@ -284,8 +281,8 @@ msgid ""
 "The chat room you tried to join requires a password. You either failed to "
 "supply a password or the password you tried was incorrect."
 msgstr ""
-"La sala de chat a la que intentó entrar requiere contraseña. O bien no proporcionó "
-"una contraseña o la contraseña proporcionada es incorrecta."
+"La sala de chat a la que intentó entrar requiere contraseña. O bien no "
+"proporcionó una contraseña o la contraseña proporcionada es incorrecta."
 
 #: ../libgossip/gossip-chatroom-provider.c:390
 msgid "You have been banned from this chatroom."
@@ -329,8 +326,8 @@ msgstr "Se canceló la entrada a esta sala de chat."
 
 #. i18n: The current state of the connection.
 #: ../libgossip/gossip-contact.c:965 ../libgossip/gossip-presence.c:242
-#: ../src/gossip-app.c:2430 ../src/gossip-contact-info-dialog.c:156
-#: ../src/gossip-galago.c:197 ../src/gossip-status-icon.c:372
+#: ../src/gossip-app.c:2452 ../src/gossip-contact-info-dialog.c:156
+#: ../src/gossip-galago.c:186 ../src/gossip-status-icon.c:372
 msgid "Offline"
 msgstr "Desconectado"
 
@@ -402,61 +399,17 @@ msgstr "Esta característica no está implementada"
 msgid "The remote service timed out"
 msgstr "Se agotó el tiempo de expiración del servicio remoto"
 
-#: ../libgossip/gossip-jabber.c:535
+#: ../libgossip/gossip-jabber.c:515
 msgid "new account"
 msgstr "Cuenta nueva"
 
-#: ../libgossip/gossip-jabber.c:536
+#: ../libgossip/gossip-jabber.c:516
 msgid "Home"
 msgstr "Inicio"
 
-#: ../libgossip/gossip-jabber.c:1384 ../libgossip/gossip-jabber.c:1523
+#: ../libgossip/gossip-jabber.c:1178
 msgid "Couldn't send message!"
 msgstr "No se pudo enviar el mensaje."
-
-#: ../libgossip/gossip-jabber.c:1470
-msgid "Connection could not be opened"
-msgstr "La conexión no se pudo abrir"
-
-#: ../libgossip/gossip-jabber.c:3885
-msgid "An unknown error occurred."
-msgstr "Ha ocurrido un error desconocido."
-
-#: ../libgossip/gossip-jabber.c:3889
-msgid "Connection refused."
-msgstr "Conexión rechazada."
-
-#: ../libgossip/gossip-jabber.c:3892
-msgid "Server address could not be resolved."
-msgstr "La dirección del servidor no se ha podido resolver."
-
-#: ../libgossip/gossip-jabber.c:3895
-msgid "Connection timed out."
-msgstr "La conexión expiró."
-
-#: ../libgossip/gossip-jabber.c:3898
-msgid "Authentication failed."
-msgstr "Falló la autenticación."
-
-#: ../libgossip/gossip-jabber.c:3901
-msgid "The username you are trying already exists."
-msgstr "El usuario que ha elegido ya existe."
-
-#: ../libgossip/gossip-jabber.c:3904
-msgid "The username you are trying is not valid."
-msgstr "El usuario que ha elegido no es válido."
-
-#: ../libgossip/gossip-jabber.c:3907
-msgid "This feature is unavailable."
-msgstr "Esta característica no está disponible."
-
-#: ../libgossip/gossip-jabber.c:3910
-msgid "This feature is unauthorized."
-msgstr "Esta característica no está autorizada."
-
-#: ../libgossip/gossip-jabber.c:3913
-msgid "A specific protocol error occurred that was unexpected."
-msgstr "Ocurrió un error inesperado específico del protocolo."
 
 #: ../libloudermouth/lm-bs-receiver.c:90 ../libloudermouth/lm-bs-sender.c:251
 msgid "The other party disconnected"
@@ -648,35 +601,35 @@ msgstr ""
 "\n"
 "Si decidiera volver a añadir la cuenta más tarde, estarán aún disponibles."
 
-#: ../src/gossip-account-chooser.c:812
+#: ../src/gossip-account-chooser.c:839
 msgid "All"
 msgstr "Todo"
 
-#: ../src/gossip-account-widget-jabber.c:409
+#: ../src/gossip-account-widget-jabber.c:423
 msgid "Successfully registered your new account settings."
 msgstr "Se ha registrado con éxito la configuración de su cuenta nueva."
 
-#: ../src/gossip-account-widget-jabber.c:416
+#: ../src/gossip-account-widget-jabber.c:430
 msgid "You should now be able to connect to your new account."
 msgstr "Ahora debería poder conectarse a su cuenta nueva."
 
-#: ../src/gossip-account-widget-jabber.c:419
+#: ../src/gossip-account-widget-jabber.c:433
 msgid "Failed to register your new account settings."
 msgstr "Falló al registrar la configuración de su cuenta nueva"
 
-#: ../src/gossip-account-widget-jabber.c:538
+#: ../src/gossip-account-widget-jabber.c:552
 msgid "Successfully changed your account password."
 msgstr "La contraseña de su cuenta se ha cambiado con éxito."
 
-#: ../src/gossip-account-widget-jabber.c:545
+#: ../src/gossip-account-widget-jabber.c:559
 msgid "You should now be able to connect with your new password."
 msgstr "Ahora debería poder conectarse usando su nueva contraseña."
 
-#: ../src/gossip-account-widget-jabber.c:548
+#: ../src/gossip-account-widget-jabber.c:562
 msgid "Failed to change your account password."
 msgstr "Falló al cambiar la contraseña de su cuenta."
 
-#: ../src/gossip-account-widget-jabber.c:628
+#: ../src/gossip-account-widget-jabber.c:642
 #, c-format
 msgid ""
 "Please enter a new password for this account:\n"
@@ -699,66 +652,66 @@ msgstr "Información solicitada, espere por favor…"
 msgid "I would like to add you to my contact list."
 msgstr "Quisiera añadirle a mi lista de contactos."
 
-#: ../src/gossip-app.c:510
+#: ../src/gossip-app.c:514
 msgid "Show and edit accounts"
 msgstr "Mostrar y editar cuentas"
 
-#: ../src/gossip-app.c:876
+#: ../src/gossip-app.c:880
 msgid "To summarize:"
 msgstr "Para resumir:"
 
-#: ../src/gossip-app.c:903
+#: ../src/gossip-app.c:907
 #, c-format
 msgid "%d new message"
 msgid_plural "%d new messages"
 msgstr[0] "%d mensaje nuevo"
 msgstr[1] "%d mensajes nuevos"
 
-#: ../src/gossip-app.c:908
+#: ../src/gossip-app.c:912
 #, c-format
 msgid "%d subscription request"
 msgid_plural "%d subscription requests"
 msgstr[0] "%d solicitud de subscripción"
 msgstr[1] "%d solicitudes de subscripción"
 
-#: ../src/gossip-app.c:913
+#: ../src/gossip-app.c:917
 #, c-format
 msgid "%d file transfer request"
 msgid_plural "%d file transfer requests"
 msgstr[0] "%d solicitud de transferencia de archivo"
 msgstr[1] "%d solicitudes de transferencia de archivo"
 
-#: ../src/gossip-app.c:918
+#: ../src/gossip-app.c:922
 #, c-format
 msgid "%d server message"
 msgid_plural "%d server messages"
 msgstr[0] "%d mensaje del servidor"
 msgstr[1] "%d mensajes del servidor"
 
-#: ../src/gossip-app.c:923
+#: ../src/gossip-app.c:927
 #, c-format
 msgid "%d error"
 msgid_plural "%d errors"
 msgstr[0] "%d error"
 msgstr[1] "%d errores"
 
-#: ../src/gossip-app.c:948
+#: ../src/gossip-app.c:952
 msgid "If you quit, you will lose all unread information."
 msgstr "Si sale, usted perderá toda la información no leída."
 
-#: ../src/gossip-app.c:1013
+#: ../src/gossip-app.c:1017
 msgid "Gossip is still running, it is just hidden."
 msgstr "Gossip todavía se está ejecutando, sólo está oculto."
 
-#: ../src/gossip-app.c:1014
+#: ../src/gossip-app.c:1018
 msgid "Click on the notification area icon to show Gossip."
 msgstr "Pulse en el icono del área de notificación para mostrar Gossip."
 
-#: ../src/gossip-app.c:1029
+#: ../src/gossip-app.c:1033
 msgid "You were about to quit!"
 msgstr "¡Ibas a cerrarlo!"
 
-#: ../src/gossip-app.c:1030
+#: ../src/gossip-app.c:1034
 msgid ""
 "Since no system or notification tray has been found, this action would "
 "normally quit Gossip.\n"
@@ -772,15 +725,15 @@ msgstr ""
 "Esto es solo un recordatoria, desde ahora, Gossip terminará al realizar esta "
 "acción a menos que desmarque la opción de abajo."
 
-#: ../src/gossip-app.c:1411 ../src/gossip-edit-contact-dialog.c:231
+#: ../src/gossip-app.c:1433 ../src/gossip-edit-contact-dialog.c:231
 msgid "Group"
 msgstr "Grupo"
 
-#: ../src/gossip-app.c:1432
+#: ../src/gossip-app.c:1454
 msgid "Contact"
 msgstr "Contacto"
 
-#: ../src/gossip-app.c:2355
+#: ../src/gossip-app.c:2377
 msgid "Edit Account _Details"
 msgstr "Editar _detalles de la cuenta"
 
@@ -859,19 +812,19 @@ msgstr[1] "Conversaciones (%d)"
 msgid "Typing a message."
 msgstr "Tecleando un mensaje."
 
-#: ../src/gossip-chatrooms-window.c:137
+#: ../src/gossip-chatrooms-window.c:147
 msgid "Name"
 msgstr "Nombre"
 
-#: ../src/gossip-chatrooms-window.c:159
+#: ../src/gossip-chatrooms-window.c:154
 msgid "Room"
 msgstr "Sala"
 
-#: ../src/gossip-chatrooms-window.c:168
+#: ../src/gossip-chatrooms-window.c:162
 msgid "Server"
 msgstr "Servidor"
 
-#: ../src/gossip-chatrooms-window.c:195
+#: ../src/gossip-chatrooms-window.c:196
 msgid "Auto Connect"
 msgstr "Autoconectar"
 
@@ -907,7 +860,7 @@ msgstr "Ver información del contacto"
 msgid "Re_name"
 msgstr "Re_nombrar"
 
-#: ../src/gossip-contact-list.c:344 ../src/gossip-contact-list.c:3023
+#: ../src/gossip-contact-list.c:344 ../src/gossip-contact-list.c:3041
 msgid "Rename"
 msgstr "Renombrar"
 
@@ -960,11 +913,11 @@ msgstr "_Ver conversaciones previas"
 msgid "View previous conversations with this contact"
 msgstr "Ver conversaciones anteriores con este contacto"
 
-#: ../src/gossip-contact-list.c:2934
+#: ../src/gossip-contact-list.c:2952
 msgid "Do you want to remove this contact from your roster?"
 msgstr "¿Quiere quitar este contacto de su lista de contactos?"
 
-#: ../src/gossip-contact-list.c:3019
+#: ../src/gossip-contact-list.c:3037
 #, c-format
 msgid ""
 "Please enter a new name for the group:\n"
@@ -1071,77 +1024,77 @@ msgstr "Espere a que el otro participante responda"
 msgid "Select a file"
 msgstr "Seleccione un archivo"
 
-#: ../src/gossip-group-chat.c:477
+#: ../src/gossip-group-chat.c:480
 msgid "Connecting..."
 msgstr "Conectando..."
 
 #. FIXME: Need special case for nickname to put an
 #. * entry in the chat view and to request a new nick.
 #.
-#: ../src/gossip-group-chat.c:544
+#: ../src/gossip-group-chat.c:547
 msgid "Retry connection"
 msgstr "Reintentar la conexión"
 
 #. i18n: An event, as in "has now been connected".
-#: ../src/gossip-group-chat.c:572 ../src/gossip-private-chat.c:612
+#: ../src/gossip-group-chat.c:575 ../src/gossip-private-chat.c:612
 msgid "Connected"
 msgstr "Conectado"
 
-#: ../src/gossip-group-chat.c:626 ../src/gossip-private-chat.c:638
+#: ../src/gossip-group-chat.c:629 ../src/gossip-private-chat.c:638
 msgid "Disconnected"
 msgstr "Desconectado"
 
 #. Send event to chat window
-#: ../src/gossip-group-chat.c:829
+#: ../src/gossip-group-chat.c:832
 #, c-format
 msgid "Invited %s to join this chat conference."
 msgstr "Invitó a %s a unirse en esta conferencia por chat."
 
-#: ../src/gossip-group-chat.c:907
+#: ../src/gossip-group-chat.c:910
 msgid "<b>Topic:</b>"
 msgstr "<b>Tema:</b>"
 
-#: ../src/gossip-group-chat.c:1094
+#: ../src/gossip-group-chat.c:1105
 msgid "You have been kicked from this room"
 msgstr "Se le ha echado de esta sala"
 
-#: ../src/gossip-group-chat.c:1223
+#: ../src/gossip-group-chat.c:1234
 #, c-format
 msgid "%s has set the topic: %s"
 msgstr "%s ha puesto el tema: %s"
 
-#: ../src/gossip-group-chat.c:1402
+#: ../src/gossip-group-chat.c:1413
 msgid "Enter the new topic you want to set for this room:"
 msgstr "Introduzca el nuevo tema que quiere establecer para esta sala:"
 
-#: ../src/gossip-group-chat.c:1418
+#: ../src/gossip-group-chat.c:1429
 msgid "Enter the new nickname you want to be know by:"
 msgstr "Introduzca el nuevo apodo por el que quiere que se le conozca:"
 
-#: ../src/gossip-group-chat.c:1442
+#: ../src/gossip-group-chat.c:1453
 #, c-format
 msgid "Kicking %s"
 msgstr "Echando a %s"
 
-#: ../src/gossip-group-chat.c:1450
+#: ../src/gossip-group-chat.c:1461
 msgid "You have been removed from the room by an administrator."
 msgstr "Ha sido expulsado de la sala por un administrador."
 
-#: ../src/gossip-group-chat.c:1822
+#: ../src/gossip-group-chat.c:1833
 #, c-format
 msgid "%s has joined the room"
 msgstr "%s se ha unido a la sala"
 
-#: ../src/gossip-group-chat.c:1859
+#: ../src/gossip-group-chat.c:1870
 #, c-format
 msgid "%s has left the room"
 msgstr "%s ha dejado la sala"
 
-#: ../src/gossip-group-chat.c:2122
+#: ../src/gossip-group-chat.c:2133
 msgid "Nick was not recogized"
 msgstr "No se reconoció el apodo"
 
-#: ../src/gossip-group-chat.c:2243
+#: ../src/gossip-group-chat.c:2255
 #, c-format
 msgid "Topic: %s"
 msgstr "Tema: %s"
@@ -1303,6 +1256,16 @@ msgstr "Transferencia de archivos"
 msgid "New Message from %s"
 msgstr "Mensaje nuevo de %s"
 
+#: ../src/gossip-notify.c:544
+#, c-format
+msgid "“%s...”"
+msgstr "«%s…»"
+
+#: ../src/gossip-notify.c:546
+#, c-format
+msgid "“%s”"
+msgstr "«%s»"
+
 #: ../src/gossip-notify.c:566
 msgid "Show"
 msgstr "Mostrar"
@@ -1411,7 +1374,7 @@ msgstr "Iniciando sesión en la cuenta «%s»"
 msgid "Remember Password?"
 msgstr "¿Desea recordar su contraseña?"
 
-#: ../src/gossip-ui-utils.c:386
+#: ../src/gossip-ui-utils.c:385
 msgid "Could not display the help contents."
 msgstr "No se pudo mostrar el contenido de la ayuda."
 
@@ -1452,7 +1415,7 @@ msgid "Try again later."
 msgstr "Inténtelo otra vez más tarde."
 
 #. Birthday chooser
-#: ../src/gossip-vcard-dialog.c:857
+#: ../src/gossip-vcard-dialog.c:856
 msgid "Change"
 msgstr "Cambiar"
 
@@ -1958,7 +1921,9 @@ msgstr "Buscar"
 
 #: ../ui/main.glade.h:74
 msgid "Search the log and press enter to continue on to the next item found"
-msgstr "Buscar en el registro y pulsar intro para continuar con el siguiente elemento encontrado"
+msgstr ""
+"Buscar en el registro y pulsar intro para continuar con el siguiente "
+"elemento encontrado"
 
 #: ../ui/main.glade.h:75
 msgid ""
