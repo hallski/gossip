@@ -43,7 +43,6 @@ dnl -----------------------------------------------------------
 dnl Platform (GTK+ X11 or GTK OS X)
 dnl -----------------------------------------------------------
 IGE_PLATFORM_CHECK
-echo "Platform: $IGE_PLATFORM, $IGE_PLATFORM_NAME"
 if test "x$IGE_PLATFORM" = xx11; then
    gconf_pkgconfig=gconf-2.0
    gnome_vfs_pkgconfig=gnome-vfs-2.0
