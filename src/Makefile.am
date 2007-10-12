@@ -29,6 +29,7 @@ if HAVE_LIBNOTIFY
 libnotify_sources = gossip-notify.c gossip-notify.h
 endif
 
+# Main application 
 bin_PROGRAMS = gossip
 
 gossip_SOURCES = 				                        	\
@@ -97,6 +98,10 @@ gossip_LDADD = \
 	$(top_builddir)/libgossip/libgossip.la				   	\
 	$(GOSSIP_LIBS)							   	\
 	$(XSS_LIBS)
+
+if HAVE_PLATFORM_WIN32
+gossip_LDADD += $(top_builddir)/ui/icons/resource.o
+endif
 
 gossip_LDFLAGS = $(PLATFORM_LDFLAGS)
 

@@ -388,10 +388,23 @@ AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",[Gettext package name])
 AM_GLIB_GNU_GETTEXT
 
 
+dnl -----------------------------------------------------------
+dnl Platform specific details
+dnl -----------------------------------------------------------
+if test $IGE_PLATFORM = win32; then
+   # Check for windres - which sets the icon for apps
+   AC_ARG_VAR(WINDRES, [Windows Resource compiler tool path])
+   AC_PATH_TOOL(WINDRES,windres,
+	        [AC_MSG_WARN(You must have windres in your patch to compile)])
+   AC_SUBST(WINDRES)
+fi
+
+
 AC_OUTPUT([
   Makefile
   ui/Makefile
   ui/pixmaps/Makefile
+  ui/icons/Makefile
   libgossip/Makefile
   libloudermouth/Makefile
   src/Makefile

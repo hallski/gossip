@@ -1,5 +1,15 @@
 2007-10-12  Martyn Russell  <martyn@imendio.com>
 
+	* configure.ac:
+	* src/Makefile.am:
+	* ui/Makefile.am:
+	* ui/icons/Makefile.am: 
+	* ui/icons/gossip.ico: 
+	* ui/icons/resource.rc: Set the default icon to be the Gossip icon
+	on Windows instead of the GTK+ icon.
+
+2007-10-12  Martyn Russell  <martyn@imendio.com>
+
 	* Makefile.am: Don't make the help directory if we don't have
 	GNOME Doc support available.
 	
