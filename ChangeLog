@@ -1,5 +1,11 @@
 2007-10-12  Martyn Russell  <martyn@imendio.com>
 
+	* ui/icons/Makefile.am:
+	* ui/icons/resource.rc: Fixed files which had patch applied more
+	than once to them.
+
+2007-10-12  Martyn Russell  <martyn@imendio.com>
+
 	* configure.ac:
 	* src/Makefile.am:
 	* ui/Makefile.am:
