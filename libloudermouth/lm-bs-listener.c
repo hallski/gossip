@@ -23,9 +23,13 @@
 
 #include <string.h>
 #include <fcntl.h>
-#include <sys/socket.h>
-#include <netinet/tcp.h>
+
 #include <glib.h>
+
+#ifndef G_OS_WIN32
+#include <sys/socket.h> 
+#include <netinet/tcp.h> 
+#endif /* G_OS_WIN32 */
 
 #include <loudmouth/lm-connection.h>
 #include <loudmouth/lm-utils.h>
@@ -186,14 +190,22 @@ bs_listener_create (LmBsListener *listener)
 	setsockopt (listener->fd,
 		    SOL_SOCKET,
 		    SO_REUSEADDR,
+#ifndef G_OS_WIN32
 		    &flag,
+#else  /* G_OS_WIN32 */
+		    (char*) &flag,
+#endif /* G_OS_WIN32 */
 		    sizeof (int));
 
 	/* Remove the Nagle algorhytm */
 	setsockopt (listener->fd,
 		    IPPROTO_TCP,
 		    TCP_NODELAY,
+#ifndef G_OS_WIN32
 		    &flag,
+#else  /* G_OS_WIN32 */
+		    (char*) &flag,
+#endif /* G_OS_WIN32 */
 		    sizeof (int));
 }
 

@@ -23,7 +23,11 @@
 
 #include "config.h"
 
+#include <glib.h>
+
+#ifndef G_OS_WIN32
 #include <sys/utsname.h>
+#endif /* G_OS_WIN32 */
 
 #include "gossip-version-info.h"
 
@@ -262,14 +266,23 @@ gossip_version_info_get_own (void)
 	static GossipVersionInfo *info = NULL;
 
 	if (!info) {
-		struct utsname osinfo;
+		gchar          *os_name = NULL;
 
+#ifndef G_OS_WIN32 
+		struct utsname  osinfo;
 		uname (&osinfo);
+		os_name = g_strdup (osinfo.sysname);
+#else  /* G_OS_WIN32 */
+		os_name = g_strdup_printf ("Windows");
+#endif /* G_OS_WIN32 */
+		
 		info = g_object_new (GOSSIP_TYPE_VERSION_INFO,
-				     "name", "Imendio Gossip",
+				     "name", "Gossip",
 				     "version", PACKAGE_VERSION,
-				     "os", osinfo.sysname,
+				     "os", os_name,
 				     NULL);
+
+		g_free (os_name);
 	}
 
 	return info;

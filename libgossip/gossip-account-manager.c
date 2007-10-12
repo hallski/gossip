@@ -580,7 +580,9 @@ account_manager_file_save (GossipAccountManager *manager)
 	GList                    *l;
 	gchar                    *xml_dir;
 	gchar                    *xml_file;
+#ifndef G_OS_WIN32
 	mode_t                    old_mask;
+#endif /* G_OS_WIN32 */
 
 	priv = GET_PRIV (manager);
 
@@ -655,11 +657,14 @@ account_manager_file_save (GossipAccountManager *manager)
 
 	gossip_debug (DEBUG_DOMAIN, "Saving file:'%s'", xml_file);
 
+#ifndef G_OS_WIN32
 	/* Set the umask to get the proper permissions when libxml saves the
 	 * file, but also change the permissions expiicitly in case the file
 	 * already exists.
 	 */
 	old_mask = umask (077);
+#endif /* G_OS_WIN32 */
+
 	chmod (xml_file, 0600);
 
 	/* Make sure the XML is indented properly */
@@ -667,8 +672,10 @@ account_manager_file_save (GossipAccountManager *manager)
 
 	xmlSaveFormatFileEnc (xml_file, doc, "utf-8", 1);
 
+#ifndef G_OS_WIN32
 	/* Reset the umask */
 	umask (old_mask);
+#endif /* G_OS_WIN32 */
 
 	xmlFreeDoc (doc);
 	xmlCleanupParser ();

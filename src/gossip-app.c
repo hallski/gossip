@@ -700,6 +700,7 @@ app_setup (GossipSession *session)
 	GladeXML      *glade;
 	GtkWidget     *sw;
 	GtkWidget     *show_offline_widget;
+	GtkWidget     *help_contents;
 
 	gossip_debug (DEBUG_DOMAIN_SETUP, "Beginning...");
 
@@ -788,6 +789,7 @@ app_setup (GossipSession *session)
 				       "room", &priv->room,
 				       "room_sep", &priv->room_sep,
 				       "room_join_favorites", &priv->room_join_favorites,
+				       "help_contents", &help_contents,
 				       "presence_toolbar", &priv->presence_toolbar,
 				       "roster_scrolledwindow", &sw,
 				       NULL);
@@ -823,6 +825,10 @@ app_setup (GossipSession *session)
 
 	gtk_widget_hide (priv->chat_context);
 	gtk_widget_hide (priv->chat_context_separator);
+
+#ifndef HAVE_HELP
+	gtk_widget_hide (help_contents);
+#endif
 
 	/* Set up connection related widgets. */
 	app_connection_items_setup (glade);

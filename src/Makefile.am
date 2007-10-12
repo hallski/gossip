@@ -1,10 +1,11 @@
 SUBDIRS = sounds
 
+# We don't use DATADIR here because it conflicts on Windows.
 AM_CPPFLAGS =	                                 	\
 	-I$(top_srcdir)                          	\
 	-DPREFIX="\"$(prefix)"\"			\
 	-DSYSCONFDIR=\""$(sysconfdir)"\"		\
-	-DDATADIR=\""$(datadir)"\"              	\
+	-DSHAREDIR=\""$(datadir)"\"              	\
 	-DLIBDIR=\""$(libdir)"\"			\
 	-DDBUS_API_SUBJECT_TO_CHANGE			\
 	$(GOSSIP_CFLAGS) $(WARN_CFLAGS) $(PLATFORM_CFLAGS)

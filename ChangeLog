@@ -1,3 +1,38 @@
+2007-10-12  Martyn Russell  <martyn@imendio.com>
+
+	* Makefile.am: Don't make the help directory if we don't have
+	GNOME Doc support available.
+	
+	* acinclude.m4: 
+	* autogen.sh: 	
+	* configure.ac: Fix up to build on Windows.
+	
+	* libgossip/gossip-account-manager.c:	
+	* libgossip/gossip-contact-manager.c: Don't use umask when
+	building on Windows, since it doesn't exist.
+
+	* libgossip/Makefile.am:
+	* libgossip/gossip-conf-windows.c:
+	* libgossip/gossip-paths-windows.c: 
+	* src/gossip-ui-utils.c: Add specific implementations for Windows
+	(still not finished, but it builds). 
+
+	* src/Makefile.am:
+	* src/gossip-main.c: 
+	* src/gossip-sound.c:
+	* libgossip/gossip-paths-gnome.c: Change DATADIR for SHAREDIR,
+	this is a problem on Windows, there are WIN32 definitions which
+	use DATADIR already, so we can't use that variable.
+	
+	* libloudermouth/Makefile.am:
+	* libloudermouth/lm-bs-client.c:
+	* libloudermouth/lm-bs-listener.c: 
+	* libloudermouth/lm-bs-transfer.c: 
+	* libgossip/gossip-version-info.c: Fix build errors for Windows.
+
+	* src/gossip-app.c: Don't show the help menu item if we don't have
+	help support.
+
 2007-10-07  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-app.c:

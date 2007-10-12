@@ -1,7 +1,8 @@
+# We don't use DATADIR here because it conflicts on Windows.
 AM_CPPFLAGS =                                           \
 	-I.                                             \
 	-I$(top_srcdir)                                 \
-	-DDATADIR=\""$(datadir)"\"              	\
+	-DSHAREDIR=\""$(datadir)"\"              	\
 	-DLOCALEDIR=\""$(datadir)/locale"\"		\
 	-DLM_COMPILATION				\
 	$(GOSSIP_JABBER_CFLAGS)                         \
@@ -23,6 +24,13 @@ if HAVE_PLATFORM_OSX
 platform_impl = 					\
 	gossip-conf-cocoa.c				\
 	gossip-paths-cocoa.c
+endif
+if HAVE_PLATFORM_WIN32
+platform_impl = 					\
+	gossip-conf-windows.c				\
+	gossip-paths-windows.c
+
+libgossip_la_LDFLAGS = -lregex
 endif
 
 libgossip_la_SOURCES =             			\

@@ -22,12 +22,16 @@
 #include <config.h>
 
 #include <string.h>
+
 #include <sys/stat.h> 
 #include <sys/types.h>
 #include <fcntl.h>
-#include <sys/socket.h>
-#include <netinet/tcp.h>
-#include <arpa/inet.h> 
+
+#if 0
+/*#include <sys/socket.h>*/
+/*#include <netinet/tcp.h>*/
+/*#include <arpa/inet.h> */
+#endif
 
 #include <glib.h>
 #include <glib/gi18n.h>
@@ -36,10 +40,9 @@
 #include <loudmouth/lm-connection.h>
 #include <loudmouth/lm-utils.h>
 
-#include "lm-sock.h"
 #include "lm-debug.h"
 #include "lm-internals.h"
-
+#include "lm-sock.h"
 #include "lm-bs-session.h"
 #include "lm-bs-client.h"
 

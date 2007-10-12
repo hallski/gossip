@@ -72,14 +72,14 @@ typedef struct {
 } StreamHostData;
 
 enum {
-	INITIATED,
-	COMPLETE,
-	PROGRESS,
-	ERROR,
-	LAST_SIGNAL
+	TRANSFER_INITIATED,
+	TRANSFER_COMPLETE,
+	TRANSFER_PROGRESS,
+	TRANSFER_ERROR,
+	TRANSFER_LAST_SIGNAL
 };
 
-static guint signals[LAST_SIGNAL] = { 0 };
+static guint signals[TRANSFER_LAST_SIGNAL] = { 0 };
 
 static void     bs_transfer_finalize               (GObject         *object);
 static void     bs_transfer_free_streamhost_data   (gpointer         data);
@@ -111,7 +111,7 @@ lm_bs_transfer_class_init (LmBsTransferClass *klass)
 
 	object_class->finalize = bs_transfer_finalize;
 	
-	signals[INITIATED] =
+	signals[TRANSFER_INITIATED] =
 		g_signal_new ("initiated",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
@@ -121,7 +121,7 @@ lm_bs_transfer_class_init (LmBsTransferClass *klass)
 			      G_TYPE_NONE,
 			      0);
 
-	signals[COMPLETE] =
+	signals[TRANSFER_COMPLETE] =
 		g_signal_new ("complete",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
@@ -131,7 +131,7 @@ lm_bs_transfer_class_init (LmBsTransferClass *klass)
 			      G_TYPE_NONE,
 			      0);
 
-	signals[PROGRESS] =
+	signals[TRANSFER_PROGRESS] =
 		g_signal_new ("progress",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
@@ -141,7 +141,7 @@ lm_bs_transfer_class_init (LmBsTransferClass *klass)
 			      G_TYPE_NONE,
 			      1, G_TYPE_DOUBLE);
 
-	signals[ERROR] =
+	signals[TRANSFER_ERROR] =
 		g_signal_new ("error",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
@@ -372,7 +372,7 @@ bs_transfer_initiated (LmBsTransfer *transfer)
 
 	priv->status = LM_BS_TRANSFER_STATUS_INITIAL;
 
-	g_signal_emit (transfer, signals[INITIATED], 0);
+	g_signal_emit (transfer, signals[TRANSFER_INITIATED], 0);
 }
 
 static void
@@ -386,7 +386,7 @@ bs_transfer_complete (LmBsTransfer *transfer)
 
 	lm_bs_transfer_close_file (transfer);
 
-	g_signal_emit (transfer, signals[COMPLETE], 0);
+	g_signal_emit (transfer, signals[TRANSFER_COMPLETE], 0);
 }
 
 static void
@@ -415,7 +415,7 @@ bs_transfer_progress (LmBsTransfer *transfer)
 	/* Throttle the signalling so we don't enter a tight loop */
 	if (current_time.tv_sec - interval_time.tv_sec > 0 ||
 	    current_time.tv_usec - interval_time.tv_usec > 0) {
-		g_signal_emit (transfer, signals[PROGRESS], 0, progress);
+		g_signal_emit (transfer, signals[TRANSFER_PROGRESS], 0, progress);
 		last_time = current_time;
 	}
 }
@@ -518,7 +518,7 @@ lm_bs_transfer_error (LmBsTransfer *transfer,
 
 	lm_bs_transfer_close_file (transfer);
 
-	g_signal_emit (transfer, signals[ERROR], 0, error);
+	g_signal_emit (transfer, signals[TRANSFER_ERROR], 0, error);
 }
 
 gboolean

@@ -309,7 +309,7 @@ gossip_pixbuf_for_chatroom_status (GossipChatroom *chatroom,
  * like "www.gnome.org".
  */
 static gchar *
-fixup_url (const gchar *url)
+url_fixup (const gchar *url)
 {
 	gchar *real_url;
 
@@ -331,7 +331,7 @@ gossip_url_show (const char *url)
 	gchar  *real_url;
 	GError *error = NULL;
 
-	real_url = fixup_url (url);
+	real_url = url_fixup (url);
 	gnome_url_show (real_url, &error);
 	if (error) {
 		g_warning ("Couldn't show URL:'%s'", real_url);
@@ -348,7 +348,7 @@ gossip_url_show (const char *url)
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	NSString          *string;
 
-	real_url = fixup_url (url);
+	real_url = url_fixup (url);
 
 	string = [NSString stringWithUTF8String: real_url];
 	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:string]];
@@ -361,6 +361,9 @@ gossip_url_show (const char *url)
 void
 gossip_url_show (const char *url)
 {
+	gchar *real_url;
+	real_url = url_fixup (url);
+	g_free (real_url);
 }
 #endif
 

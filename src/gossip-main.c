@@ -107,6 +107,14 @@ main (int argc, char *argv[])
 	g_set_application_name (PACKAGE_NAME);
 
 #ifdef HAVE_PLATFORM_X11
+	/* This is really crap! On Windows, we can't use DATADIR because it
+	 * conflicts with a definition in the win32 header files meaning
+	 * Gossip won't compile. Here, we need it defined for
+	 * GNOME_PROGRAM_STANDARD_PROPERTIES which needs it. So we simply add
+	 * this hack below to keep everyone happy.
+	 */
+#define DATADIR SHAREDIR
+
 	program = gnome_program_init (PACKAGE_TARNAME, 
 				      PACKAGE_VERSION,
 				      LIBGNOMEUI_MODULE,

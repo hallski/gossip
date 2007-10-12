@@ -1,7 +1,8 @@
+# We don't use DATADIR here because it conflicts on Windows.
 AM_CPPFLAGS =                                           \
 	-I.                                             \
 	-I$(top_srcdir)                                 \
-	-DDATADIR=\""$(datadir)"\"              	\
+	-DSHAREDIR=\""$(datadir)"\"              	\
 	-DLOCALEDIR=\""$(datadir)/locale"\"		\
 	-DLM_COMPILATION		                \
 	$(LIBLOUDERMOUTH_CFLAGS)			\

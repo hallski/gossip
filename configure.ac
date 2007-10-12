@@ -19,7 +19,6 @@ AC_PATH_XTRA
 AC_PATH_PROG(GCONFTOOL, gconftool-2)
 AM_GCONF_SOURCE_2
 
-GNOME_DOC_INIT
 IT_PROG_INTLTOOL([0.35.0])
 
 AC_PATH_PROG(DBUSBINDINGTOOL, dbus-binding-tool)
@@ -40,7 +39,7 @@ DBUS_REQUIRED=0.61
 
 
 dnl -----------------------------------------------------------
-dnl Platform (GTK+ X11 or GTK OS X)
+dnl GTK+ Platform (X11, OS X or WIN32)
 dnl -----------------------------------------------------------
 IGE_PLATFORM_CHECK
 if test "x$IGE_PLATFORM" = xx11; then
@@ -49,16 +48,59 @@ if test "x$IGE_PLATFORM" = xx11; then
    libgnomeui_pkgconfig=libgnomeui-2.0
    PLATFORM_CFLAGS=
    PLATFORM_LDFLAGS=
-else
+elif text "x$IGE_PLATFORM" = xosx; then
    gconf_pkgconfig=
    gnome_vfs_pkgconfig=
    libgnomeui_pkgconfig=
    PLATFORM_CFLAGS="-xobjective-c"
    PLATFORM_LDFLAGS="-framework Carbon -framework AppKit -framework IOKit -lobjc"
+elif text "x$IGE_PLATFORM" = xwin32; then
+   gconf_pkgconfig=
+   gnome_vfs_pkgconfig=
+   libgnomeui_pkgconfig=
+   PLATFORM_CFLAGS="-mms-bitfields"
+   PLATFORM_LDFLAGS="-no-undefined -mwindows"
+else
+   gconf_pkgconfig=
+   gnome_vfs_pkgconfig=
+   libgnomeui_pkgconfig=
+   PLATFORM_CFLAGS=
+   PLATFORM_LDFLAGS=
 fi
 AM_CONDITIONAL(GCONF_SCHEMAS_INSTALL, test "x$IGE_PLATFORM" = xx11)
 AC_SUBST(PLATFORM_CFLAGS)
 AC_SUBST(PLATFORM_LDFLAGS)
+
+dnl -----------------------------------------------------------
+dnl Help
+dnl -----------------------------------------------------------
+AC_ARG_ENABLE(help,
+              AS_HELP_STRING([--enable-help=@<:@no/yes/auto@:>@],
+                             [compile with GNOME Help support]), ,
+              enable_help=auto)
+
+if test "x$enable_help" != "xno"; then
+   if test $IGE_PLATFORM = x11; then
+      GNOME_DOC_INIT
+      have_help=yes
+   else
+      have_help=no
+   fi
+
+   if test x$have_dbus = xyes; then
+      AC_DEFINE(HAVE_HELP, 1, [GNOME Help support])
+   fi
+else
+   have_help=no
+fi
+
+if test "x$enable_help" = "xyes"; then
+   if test "x$have_help" != "xyes"; then
+      AC_MSG_ERROR([GNOME Help is not available on this platform.])
+   fi
+fi
+
+AM_CONDITIONAL(HAVE_HELP, test x$have_help = xyes)
 
 
 dnl -----------------------------------------------------------
@@ -373,6 +415,7 @@ echo "  Galago:        $have_galago"
 echo "  Notify:        $have_libnotify"
 echo "  GNOME Keyring: $have_gnome_keyring (only with GNOME)"
 echo "  XSS:           $have_xss (only with GNOME)"
+echo "  Help           $have_help (only with GNOME Doc)"
 echo "  ASpell:        $have_aspell"
 echo
 echo "Build:"

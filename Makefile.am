@@ -1,4 +1,8 @@
-SUBDIRS = ui libloudermouth libgossip src po help peekaboo
+SUBDIRS = ui libloudermouth libgossip src po peekaboo
+
+if HAVE_HELP
+SUBDIRS += help
+endif
 
 desktop_in_files=gossip.desktop.in
 desktop_files=$(desktop_in_files:.desktop.in=.desktop)
