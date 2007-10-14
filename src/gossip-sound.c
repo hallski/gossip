@@ -286,6 +286,8 @@ gossip_sound_play (GossipSound sound)
 	}
 	
 	g_free (filename);
+#else
+	success = TRUE;
 #endif
 
 	return success;

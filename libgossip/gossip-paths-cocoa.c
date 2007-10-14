@@ -43,7 +43,7 @@ paths_get_root_dir (void)
 		if (env) {
 			root = g_strdup (env);
 		} else {
-			root = g_strdup (DATADIR);
+			root = g_strdup (SHAREDIR);
 		}
 	}
 
@@ -53,25 +53,25 @@ paths_get_root_dir (void)
 gchar *
 gossip_paths_get_glade_path (const gchar *filename)
 {
-	return g_build_filename (paths_get_root_dir (), PACKAGE_TARNAME, filename, NULL);
+	return g_build_filename (paths_get_root_dir (), "gossip", filename, NULL);
 }
 
 gchar *
 gossip_paths_get_image_path (const gchar *filename)
 {
-	return g_build_filename (paths_get_root_dir (), PACKAGE_TARNAME, filename, NULL);
+	return g_build_filename (paths_get_root_dir (), "gossip", filename, NULL);
 }
 
 gchar *
 gossip_paths_get_dtd_path (const gchar *filename)
 {
-	return g_build_filename (paths_get_root_dir (), PACKAGE_TARNAME, filename, NULL);
+	return g_build_filename (paths_get_root_dir (), "gossip", filename, NULL);
 }
 
 gchar *
 gossip_paths_get_sound_path (const gchar *filename)
 {
-	return g_build_filename (paths_get_root_dir (), "sounds", PACKAGE_TARNAME, filename, NULL);
+	return g_build_filename (paths_get_root_dir (), "sounds", "gossip", filename, NULL);
 }
 
 gchar *
@@ -79,4 +79,3 @@ gossip_paths_get_locale_path (void)
 {
 	return g_build_filename (paths_get_root_dir (), "locale", NULL);
 }
-

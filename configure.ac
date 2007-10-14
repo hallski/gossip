@@ -19,6 +19,7 @@ AC_PATH_XTRA
 AC_PATH_PROG(GCONFTOOL, gconftool-2)
 AM_GCONF_SOURCE_2
 
+GNOME_DOC_INIT
 IT_PROG_INTLTOOL([0.35.0])
 
 AC_PATH_PROG(DBUSBINDINGTOOL, dbus-binding-tool)
@@ -48,13 +49,13 @@ if test "x$IGE_PLATFORM" = xx11; then
    libgnomeui_pkgconfig=libgnomeui-2.0
    PLATFORM_CFLAGS=
    PLATFORM_LDFLAGS=
-elif text "x$IGE_PLATFORM" = xosx; then
+elif test "x$IGE_PLATFORM" = xosx; then
    gconf_pkgconfig=
    gnome_vfs_pkgconfig=
    libgnomeui_pkgconfig=
    PLATFORM_CFLAGS="-xobjective-c"
    PLATFORM_LDFLAGS="-framework Carbon -framework AppKit -framework IOKit -lobjc"
-elif text "x$IGE_PLATFORM" = xwin32; then
+elif test "x$IGE_PLATFORM" = xwin32; then
    gconf_pkgconfig=
    gnome_vfs_pkgconfig=
    libgnomeui_pkgconfig=
@@ -70,38 +71,6 @@ fi
 AM_CONDITIONAL(GCONF_SCHEMAS_INSTALL, test "x$IGE_PLATFORM" = xx11)
 AC_SUBST(PLATFORM_CFLAGS)
 AC_SUBST(PLATFORM_LDFLAGS)
-
-dnl -----------------------------------------------------------
-dnl Help
-dnl -----------------------------------------------------------
-AC_ARG_ENABLE(help,
-              AS_HELP_STRING([--enable-help=@<:@no/yes/auto@:>@],
-                             [compile with GNOME Help support]), ,
-              enable_help=auto)
-
-if test "x$enable_help" != "xno"; then
-   if test $IGE_PLATFORM = x11; then
-      GNOME_DOC_INIT
-      have_help=yes
-   else
-      have_help=no
-   fi
-
-   if test x$have_dbus = xyes; then
-      AC_DEFINE(HAVE_HELP, 1, [GNOME Help support])
-   fi
-else
-   have_help=no
-fi
-
-if test "x$enable_help" = "xyes"; then
-   if test "x$have_help" != "xyes"; then
-      AC_MSG_ERROR([GNOME Help is not available on this platform.])
-   fi
-fi
-
-AM_CONDITIONAL(HAVE_HELP, test x$have_help = xyes)
-
 
 dnl -----------------------------------------------------------
 dnl D-BUS
@@ -212,7 +181,7 @@ else
 	gnome_keyring_pkgconfig=
 fi
 
-if text "x$enable_gnome_keyring" = "xyes"; then
+if test "x$enable_gnome_keyring" = "xyes"; then
 	if test "x$have_gnome_keyring" != "xyes"; then
 		AC_MSG_ERROR([Couldn't find GNOME Keyring.])
 	fi
@@ -395,7 +364,7 @@ if test $IGE_PLATFORM = win32; then
    # Check for windres - which sets the icon for apps
    AC_ARG_VAR(WINDRES, [Windows Resource compiler tool path])
    AC_PATH_TOOL(WINDRES,windres,
-	        [AC_MSG_WARN(You must have windres in your patch to compile)])
+	        [AC_MSG_WARN(You must have windres in your path to compile)])
    AC_SUBST(WINDRES)
 
    AC_CHECK_HEADERS([windows.h])
@@ -445,7 +414,6 @@ echo "  Galago:        $have_galago"
 echo "  Notify:        $have_libnotify"
 echo "  GNOME Keyring: $have_gnome_keyring (only with GNOME)"
 echo "  XSS:           $have_xss (only with GNOME)"
-echo "  Help           $have_help (only with GNOME Doc)"
 echo "  ASpell:        $have_aspell"
 echo
 echo "Build:"

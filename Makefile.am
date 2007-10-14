@@ -1,6 +1,6 @@
 SUBDIRS = ui libloudermouth libgossip src po peekaboo
 
-if HAVE_HELP
+if ENABLE_SK
 SUBDIRS += help
 endif
 

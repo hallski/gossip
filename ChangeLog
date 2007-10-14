@@ -1,3 +1,17 @@
+2007-10-14  Richard Hult  <richard@imendio.com>
+
+	* Makefile.am: Use ENABLE_SK for the help conditional.
+
+	* configure.ac: Fix typos (s/text/test/), and remove the help
+	option added below, since there is already --disable-scrollkeeper.
+	Move GNOME_DOC_INIT back to fix build with scrollkeeper.
+
+	* libgossip/gossip-paths-cocoa.c: (paths_get_root_dir): Fix build
+	on OS X and revert the PACKAGE_TARNAME change because the data is
+	always installed into $datadir/gossip.
+
+	* src/gossip-sound.c: (gossip_sound_play): Fix build on OS X.
+
 2007-10-14  Martyn Russell  <martyn@imendio.com>
 
 	* configure.ac:
