@@ -1,3 +1,14 @@
+2007-10-14  Martyn Russell  <martyn@imendio.com>
+
+	* configure.ac:
+	* libgossip/gossip-conf-windows.c:
+	* libgossip/gossip-paths-cocoa.c:
+	* libgossip/gossip-paths-gnome.c:
+	* libgossip/gossip-paths-windows.c:
+	* src/gossip-sound.[ch]:
+	* src/gossip-ui-utils.[ch]: Fixed up the sound, opening links,
+	configuration (i.e. use the registry) and path setup on Windows.
+
 2007-10-12  Martyn Russell  <martyn@imendio.com>
 
 	* ui/icons/Makefile.am:

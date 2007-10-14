@@ -53,7 +53,7 @@ void       gossip_window_present                    (GtkWindow           *window
 						     gboolean             steal_focus);
 void       gossip_window_set_default_icon_name      (const gchar         *name);
 
-void       gossip_url_show                          (const char          *url);
+gboolean   gossip_url_show                          (const char          *url);
 void       gossip_help_show                         (void);
 
 void       gossip_toggle_button_set_state_quietly   (GtkWidget           *widget,

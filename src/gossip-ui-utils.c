@@ -36,11 +36,19 @@
 #include <libgnomeui/libgnomeui.h>
 #elif defined (HAVE_PLATFORM_OSX)
 #include <Cocoa/Cocoa.h>
+#elif defined (HAVE_PLATFORM_WIN32)
+#ifdef HAVE_WINDOWS_H
+#include <windows.h>
+#endif /* HAVE_WINDOWS_H */
+#ifdef HAVE_SHELLAPI_H
+#include <shellapi.h>
+#endif /* HAVE_SHELLAPI_H */
 #endif
 
 #include <libgossip/gossip-session.h>
 #include <libgossip/gossip-account-manager.h>
 #include <libgossip/gossip-conf.h>
+#include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-paths.h>
 #include <libgossip/gossip-stock.h>
 
@@ -50,6 +58,8 @@
 
 #include "gossip-app.h"
 #include "gossip-ui-utils.h"
+
+#define DEBUG_DOMAIN "UiUtils"
 
 static void
 password_dialog_activate_cb (GtkWidget *entry, GtkDialog *dialog)
@@ -325,28 +335,38 @@ url_fixup (const gchar *url)
 }
 
 #ifdef HAVE_PLATFORM_X11
-void
+gboolean
 gossip_url_show (const char *url)
 {
 	gchar  *real_url;
 	GError *error = NULL;
 
+	gossip_debug (DEBUG_DOMAIN, "Opening URL:'%s'...", url);
+
 	real_url = url_fixup (url);
 	gnome_url_show (real_url, &error);
+
 	if (error) {
 		g_warning ("Couldn't show URL:'%s'", real_url);
 		g_error_free (error);
+		g_free (real_url);
+
+		return FALSE;
 	}
 
 	g_free (real_url);
+
+	return TRUE;
 }
 #elif defined(HAVE_PLATFORM_OSX)
-void
+gboolean
 gossip_url_show (const char *url)
 {
 	gchar             *real_url;
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	NSString          *string;
+
+	gossip_debug (DEBUG_DOMAIN, "Opening URL:'%s'...", url);
 
 	real_url = url_fixup (url);
 
@@ -356,6 +376,95 @@ gossip_url_show (const char *url)
 	[pool release];
 
 	g_free (real_url);
+
+	return TRUE;
+}
+#elif defined(HAVE_PLATFORM_WIN32)
+#ifdef HAVE_SHELLAPI_H
+static const char *
+url_show_error_string (gint error)
+{
+#ifdef HAVE_WINDOWS_H
+	switch (error) {
+	case 0:                      
+		return "The operating system is out of memory or resources.";
+	case ERROR_FILE_NOT_FOUND:   
+		return "The specified file was not found.";
+	case ERROR_PATH_NOT_FOUND:   
+		return "The specified path was not found."; 
+	case ERROR_BAD_FORMAT:       
+		return "The .exe file is invalid (non-Microsoft Win32® .exe "
+		       "or error in .exe image).";
+	case SE_ERR_ACCESSDENIED:    
+		return "The operating system denied access to the specified file."; 
+	case SE_ERR_ASSOCINCOMPLETE: 
+		return "The file name association is incomplete or invalid."; 
+	case SE_ERR_DDEBUSY:         
+		return "The Dynamic Data Exchange (DDE) transaction could "
+		       "not be completed because other DDE transactions were "
+		       "being processed.";
+	case SE_ERR_DDEFAIL:         
+		return "The DDE transaction failed.";
+	case SE_ERR_DDETIMEOUT:      
+		return "The DDE transaction could not be completed because "
+		       "the request timed out.";
+	case SE_ERR_DLLNOTFOUND:     
+		return "The specified dynamic-link library (DLL) was not found.";
+		/*     case SE_ERR_FNF: return "The specified file was not found."; */
+	case SE_ERR_NOASSOC:         
+		return "There is no application associated with the given file "
+		       "name extension. This error will also be returned if you "
+		       "attempt to print a file that is not printable.";
+	case SE_ERR_OOM:             
+		return "There was not enough memory to complete the operation.";
+		/*     case SE_ERR_PNF: return "The specified path was not found."; */
+	case SE_ERR_SHARE:           
+		return "A sharing violation occurred.";
+	}
+#endif /* HAVE_WINDOWS_H */
+
+	return "";
+}
+#endif /* HAVE_SHELLAPI_H */
+
+gboolean 
+gossip_url_show (const gchar *url)
+{
+	gchar     *real_url;
+	gboolean   success = TRUE;
+	HINSTANCE  error;
+
+	g_return_val_if_fail (url != NULL, FALSE);
+
+	real_url = url_fixup (url);
+
+#ifdef HAVE_SHELLAPI_H    
+	gossip_debug (DEBUG_DOMAIN, "Opening URL:'%s'...", real_url);
+
+	error = ShellExecute ((HWND)NULL, /* parent window */
+			      "open",     /* verb */
+			      real_url,   /* file */
+			      NULL,       /* parameters */
+			      NULL,       /* path */
+			      SW_SHOWNORMAL);
+  
+	if ((gint)error <= 32) {
+		g_warning ("Failed to open URL:'%s', error:%d->'%s'", 
+			   real_url, 
+			   (gint) error, 
+			   url_show_error_string ((gint) error));
+		success = FALSE;
+	}
+
+#else  /* HAVE_SHELLAPI_H */
+	g_warning ("Failed to open url:'%s', operation not supported on this platform", 
+		   real_url);
+	success = FALSE;
+#endif /* HAVE_SHELLAPI_H */
+
+	g_free (real_url);
+
+	return success;
 }
 #else
 void

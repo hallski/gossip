@@ -27,13 +27,21 @@
 #ifdef HAVE_PLATFORM_X11
 #include <libgnome/gnome-sound.h>
 #include <libgnome/gnome-triggers.h>
-#endif
+#elif  HAVE_PLATFORM_WIN32
+#ifdef HAVE_WINDOWS_H
+#include <windows.h>
+#endif /* HAVE_WINDOWS_H */
+#ifdef HAVE_MMSYSTEM_H
+#include <mmsystem.h>
+#endif /* HAVE_MMSYSTEM_H */
+#endif /* HAVE_PLATFORM_X11 */
 
 #include <libgossip/gossip-account.h>
 #include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-presence.h>
 #include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-conf.h>
+#include <libgossip/gossip-paths.h>
 
 #include "gossip-preferences.h"
 #include "gossip-app.h"
@@ -198,7 +206,7 @@ sound_contact_removed_cb (GossipSession *session,
 	g_hash_table_remove (contact_states, contact);
 }
 
-void
+gboolean
 gossip_sound_play (GossipSound sound)
 {
 	GossipSession       *session;
@@ -207,69 +215,107 @@ gossip_sound_play (GossipSound sound)
 	gboolean             enabled;
 	gboolean             sounds_when_busy;
 	gboolean             sounds_when_away;
+	gboolean             success;
+#ifdef HAVE_PLATFORM_WIN32
+	gchar               *filename = NULL;
+#endif /* HAVE_PLATFORM_WIN32 */
 
 	session = gossip_app_get_session ();
 
 	gossip_conf_get_bool (gossip_conf_get (),
-			       GOSSIP_PREFS_SOUNDS_FOR_MESSAGES,
-			       &enabled);
+			      GOSSIP_PREFS_SOUNDS_FOR_MESSAGES,
+			      &enabled);
 	if (!enabled) {
 		gossip_debug (DEBUG_DOMAIN, "Preferences have sound disabled.");
-		return;
+		return FALSE;
 	}
 
 	gossip_conf_get_bool (gossip_conf_get (),
-			       GOSSIP_PREFS_SOUNDS_WHEN_BUSY,
-			       &sounds_when_busy);
+			      GOSSIP_PREFS_SOUNDS_WHEN_BUSY,
+			      &sounds_when_busy);
 	gossip_conf_get_bool (gossip_conf_get (),
-			       GOSSIP_PREFS_SOUNDS_WHEN_AWAY,
-			       &sounds_when_away);
-
+			      GOSSIP_PREFS_SOUNDS_WHEN_AWAY,
+			      &sounds_when_away);
+	
 	p = gossip_session_get_presence (gossip_app_get_session ());
 	state = gossip_presence_get_state (p);
 
 	if (!sounds_when_busy && state == GOSSIP_PRESENCE_STATE_BUSY) {
-		return;
+		return FALSE;
 	}
 
 	if (!sounds_when_away && (state == GOSSIP_PRESENCE_STATE_AWAY ||
 				  state == GOSSIP_PRESENCE_STATE_EXT_AWAY)) {
-		return;
+		return FALSE;
 	}
 
 #ifdef HAVE_PLATFORM_X11
 	switch (sound) {
 	case GOSSIP_SOUND_CHAT:
-		gossip_debug (DEBUG_DOMAIN, "Triggering 'Chat' event.");
+		gossip_debug (DEBUG_DOMAIN, "Triggering 'Chat' sound.");
 		gnome_triggers_do (NULL, NULL, PACKAGE_TARNAME, "Chat", NULL);
 		break;
 	case GOSSIP_SOUND_ONLINE:
-		gossip_debug (DEBUG_DOMAIN, "Triggering 'Online' event.");
+		gossip_debug (DEBUG_DOMAIN, "Triggering 'Online' sound.");
 		gnome_triggers_do (NULL, NULL, PACKAGE_TARNAME, "Online", NULL);
 		break;
 	case GOSSIP_SOUND_OFFLINE:
-		gossip_debug (DEBUG_DOMAIN, "Triggering 'Offline' event.");
+		gossip_debug (DEBUG_DOMAIN, "Triggering 'Offline' sound.");
 		gnome_triggers_do (NULL, NULL, PACKAGE_TARNAME, "Offline", NULL);
 		break;
-	default:
-		gossip_debug (DEBUG_DOMAIN, "Unknown sound type.");
-		return;
 	}
+
+	success = TRUE;
+#elif HAVE_PLATFORM_WIN32
+	switch (sound) {
+	case GOSSIP_SOUND_CHAT:
+		gossip_debug (DEBUG_DOMAIN, "Triggering 'Chat' sound.");
+		filename = gossip_paths_get_sound_path ("chat1.wav");
+		success = PlaySound (filename, NULL, SND_ASYNC);
+		break;
+	case GOSSIP_SOUND_ONLINE:
+		gossip_debug (DEBUG_DOMAIN, "Triggering 'Online' sound.");
+		filename = gossip_paths_get_sound_path ("online.wav");
+		success = PlaySound (filename, NULL, SND_ASYNC);
+		break;
+	case GOSSIP_SOUND_OFFLINE:
+		gossip_debug (DEBUG_DOMAIN, "Triggering 'Offline' sound.");
+		filename = gossip_paths_get_sound_path ("offline.wav");
+		success = PlaySound (filename, NULL, SND_ASYNC);
+		break;
+	}
+	
+	g_free (filename);
 #endif
+
+	return success;
 }
 
 void
 gossip_sound_init (GossipSession *session)
 {
+#ifdef HAVE_PLATFORM_X11
+	gchar *filename;
+#endif /* HAVE_PLATFORM_X11 */
+
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 
 	g_assert (saved_session == NULL);
 
 #ifdef HAVE_PLATFORM_X11
 	gnome_sound_init (NULL);
-	gnome_sound_sample_load ("gossip/Chat", SHAREDIR "/sounds/gossip/chat1.wav");
-	gnome_sound_sample_load ("gossip/Online", SHAREDIR "/sounds/gossip/online.wav");
-	gnome_sound_sample_load ("gossip/Offline", SHAREDIR "/sounds/gossip/offline.wav");
+
+	filename = gossip_paths_get_sound_path ("chat1.wav");
+	gnome_sound_sample_load ("gossip/Chat", filename);
+	g_free (filename);
+
+	filename = gossip_paths_get_sound_path ("online.wav");
+	gnome_sound_sample_load ("gossip/Online", filename);
+	g_free (filename);
+
+	filename = gossip_paths_get_sound_path ("offline.wav");
+	gnome_sound_sample_load ("gossip/Offline", filename);
+	g_free (filename);
 #endif
 
 	saved_session = g_object_ref (session);

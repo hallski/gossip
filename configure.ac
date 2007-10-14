@@ -397,6 +397,23 @@ if test $IGE_PLATFORM = win32; then
    AC_PATH_TOOL(WINDRES,windres,
 	        [AC_MSG_WARN(You must have windres in your patch to compile)])
    AC_SUBST(WINDRES)
+
+   AC_CHECK_HEADERS([windows.h])
+   if test "$ac_cv_header_windows_h" = "yes"; then
+      AC_DEFINE([WINDOWS_H], 1, [Define to 1 if you have windows.h])
+   fi
+
+   AC_CHECK_HEADERS([mmsystem.h])
+   if test "$ac_cv_header_mmsystem_h" = "yes"; then
+      LIBS="$LIBS -lwinmm"
+      AC_DEFINE([MMSYSTEM_H], 1, [Define to 1 if you have mmsystem.h])
+   fi
+
+   AC_CHECK_HEADERS([shellapi.h])
+   if test "$ac_cv_header_shellapi_h" = "yes"; then
+      LIBS="$LIBS -lshell32"
+      AC_DEFINE([SHELLAPI_H], 1, [Define to 1 if you have shellapi.h])
+   fi
 fi
 
 

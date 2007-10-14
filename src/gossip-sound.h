@@ -35,10 +35,10 @@ typedef enum {
 	GOSSIP_SOUND_ONLINE
 } GossipSound;
 
-void gossip_sound_init        (GossipSession *session);
-void gossip_sound_finalize    (void);
-void gossip_sound_play        (GossipSound sound);
-void gossip_sound_set_enabled (gboolean    enabled);
+void     gossip_sound_init        (GossipSession *session);
+void     gossip_sound_finalize    (void);
+gboolean gossip_sound_play        (GossipSound    sound);
+void     gossip_sound_set_enabled (gboolean       enabled);
 
 G_END_DECLS
 
