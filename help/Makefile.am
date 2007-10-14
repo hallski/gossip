@@ -13,4 +13,4 @@ DOC_FIGURES = 					\
 	figures/gossip-extended-away.png	\
 	figures/gossip-offline.png
 
-DOC_LINGUAS = es fr sv
+DOC_LINGUAS = es fr oc sv
