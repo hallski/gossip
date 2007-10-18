@@ -383,7 +383,13 @@ gossip_account_get_password (GossipAccount *account)
 	 * here or the server part of the ID. Using the server part of
 	 * the ID for now because it is recognised better in the
 	 * keyring. 
-	 */ 
+	 */
+	if (!priv->id) {
+		gossip_debug (DEBUG_DOMAIN, 
+			      "No ID yet, so no password exists for this new account"); 
+		return NULL;
+	}
+ 
 	user = gossip_jid_string_get_part_name (priv->id);
 	server = gossip_jid_string_get_part_host (priv->id);
 
@@ -566,6 +572,12 @@ gossip_account_set_password (GossipAccount *account,
 	 * the ID for now because it is recognised better in the
 	 * keyring. 
 	 */ 
+	if (!priv->id) {
+		gossip_debug (DEBUG_DOMAIN, 
+			      "No ID yet, not setting password for this new account"); 
+		return;
+	}
+
 	user = gossip_jid_string_get_part_name (priv->id);
 	server = gossip_jid_string_get_part_host (priv->id);
 

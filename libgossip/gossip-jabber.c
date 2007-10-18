@@ -3436,16 +3436,19 @@ gossip_jabber_set_connection (LmConnection  *connection,
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), FALSE);
 
 	id = gossip_account_get_id (account);
+	if (id) {
+		jid = gossip_jid_new (id);
+		lm_connection_set_jid (connection, gossip_jid_get_without_resource (jid));
+		gossip_jid_unref (jid);
+	}
+
 	server = gossip_account_get_server (account);
+	if (server) {
+		lm_connection_set_server (connection, server);
+	}
+
 	port = gossip_account_get_port (account);
-
-	jid = gossip_jid_new (id);
-
-	lm_connection_set_server (connection, server);
 	lm_connection_set_port (connection, port);
-	lm_connection_set_jid (connection, gossip_jid_get_without_resource (jid));
-
-	gossip_jid_unref (jid);
 
 	if (gossip_account_get_use_ssl (account)) {
 		LmSSL *ssl;

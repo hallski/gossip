@@ -1,3 +1,10 @@
+2007-10-18  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-account.c:
+	* libgossip/gossip-jabber.c: Fixed a crasher which occurred when
+	setting up accounts for the first time. This regression was caused by
+	the gnome-keyring patches we committed.
+
 2007-10-14  Richard Hult  <richard@imendio.com>
 
 	* Makefile.am: Use ENABLE_SK for the help conditional.
@@ -73,6 +80,12 @@
 
 	* src/gossip-app.c: Don't show the help menu item if we don't have
 	help support.
+=======
+	* libgossip/gossip-account.c:
+	* libgossip/gossip-jabber.c: Don't crash when setting up accounts
+	for the first time. This is a regression caused by the new
+	gnome-keyring patch we added recently.
+>>>>>>> Fixed a crash when creating accounts for the first time:ChangeLog
 
 2007-10-07  Martyn Russell  <martyn@imendio.com>
 
