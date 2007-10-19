@@ -131,11 +131,11 @@ BUILT_SOURCES = 			\
 
 CLEANFILES = $(BUILT_SOURCES)
 
-EXTRA_DIST =				\
-	gossip-marshal.list             \
-	$(dtd_DATA)			\
-	$(dbus_sources)			\
-	$(dbus_binding_sources)		\
-	$(galago_sources)		\
+EXTRA_DIST =					\
+	gossip-marshal.list			\
+	$(dtd_DATA)				\
+	$(dbus_sources)				\
+	$(dbus_binding_sources)			\
+	$(galago_sources)			\
 	$(libnotify_sources)
 

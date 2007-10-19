@@ -9,8 +9,6 @@
 : ${INTLTOOLIZE=intltoolize}
 : ${LIBTOOL=libtool}
 : ${GNOME_DOC_PREPARE=gnome-doc-prepare}
-: ${UNAME=uname}
-: ${TOUCH=touch}
 
 srcdir=`dirname $0`
 test -z "$srcdir" && srcdir=.
@@ -23,11 +21,6 @@ FILE=src/gossip-main.c
 CONFIGURE=configure.ac
 
 DIE=0
-
-($UNAME | grep "^MINGW32" > /dev/null 2>&1) && { 
-	echo Running on Windows, creating fake GNOME Doc files.
-	$TOUCH ./gnome-doc-utils.make
-}
 
 ($AUTOCONF --version) < /dev/null > /dev/null 2>&1 || {
 	echo

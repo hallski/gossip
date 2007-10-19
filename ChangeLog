@@ -1,3 +1,12 @@
+2007-10-19  Martyn Russell  <martyn@imendio.com>
+
+	* autogen.sh: Removed Windows specifics here, we can use Richard's
+	fake GNOME DOC package to get around the issues we were having.
+
+	* gossip.iss: Added to create Windows setup package.
+	* license.txt: Added for use in the setup (GPL of course).
+	* setup-small.bmp: Added for use in the setup (Gossip logo).
+
 2007-10-18  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-account.c:
