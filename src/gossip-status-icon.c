@@ -42,20 +42,18 @@ struct _GossipStatusIconPriv {
 	guint     heartbeat_id;
 };
 
-static void     status_icon_finalize           (GObject          *object);
-static void     status_icon_activate           (GtkStatusIcon    *status_icon);
-
-static void     status_icon_event_added_cb     (GossipEventManager *manager,
-						GossipEvent        *event,
-						GossipStatusIcon   *status_icon);
-static void     status_icon_event_removed_cb   (GossipEventManager *manager,
-						GossipEvent        *event,
-						GossipStatusIcon   *status_icon);
-
-static void     status_icon_flash_start_cb     (GossipSelfPresence *self_presence,
-						GossipStatusIcon   *status_icon);
-static void     status_icon_flash_stop_cb      (GossipSelfPresence *self_presence,
-						GossipStatusIcon   *status_icon);
+static void status_icon_finalize         (GObject            *object);
+static void status_icon_activate         (GtkStatusIcon      *status_icon);
+static void status_icon_event_added_cb   (GossipEventManager *manager,
+					  GossipEvent        *event,
+					  GossipStatusIcon   *status_icon);
+static void status_icon_event_removed_cb (GossipEventManager *manager,
+					  GossipEvent        *event,
+					  GossipStatusIcon   *status_icon);
+static void status_icon_flash_start_cb   (GossipSelfPresence *self_presence,
+					  GossipStatusIcon   *status_icon);
+static void status_icon_flash_stop_cb    (GossipSelfPresence *self_presence,
+					  GossipStatusIcon   *status_icon);
 
 G_DEFINE_TYPE (GossipStatusIcon, gossip_status_icon, GTK_TYPE_STATUS_ICON);
 
@@ -75,14 +73,8 @@ gossip_status_icon_class_init (GossipStatusIconClass *klass)
 static void
 gossip_status_icon_init (GossipStatusIcon *status_icon)
 {
-	GdkPixbuf *pixbuf;
-
-	pixbuf = gossip_stock_create_pixbuf (gossip_app_get_window (),
-					     GOSSIP_STOCK_OFFLINE,
-					     GTK_ICON_SIZE_MENU);
-
-	gtk_status_icon_set_from_pixbuf (GTK_STATUS_ICON (status_icon), pixbuf);
-	g_object_unref (pixbuf);
+	gtk_status_icon_set_from_stock (GTK_STATUS_ICON (status_icon), 
+					GOSSIP_STOCK_OFFLINE);
 
 	g_signal_connect (gossip_app_get_event_manager (), "event-added",
 			  G_CALLBACK (status_icon_event_added_cb),
@@ -178,7 +170,6 @@ status_icon_remove_event (GossipStatusIcon *status_icon,  GossipEvent *event)
 	priv = GET_PRIV (status_icon);
 
 	l = g_list_find_custom (priv->events, event, gossip_event_compare);
-
 	if (!l) {
 		/* Not flashing this event */
 		return;
@@ -203,7 +194,6 @@ status_icon_get_event_pixbuf (GossipStatusIcon *status_icon)
 	}
 
 	stock_id = gossip_event_get_stock_id (status_icon_get_next_event (status_icon));
-
 	if (stock_id) {
 		return gossip_stock_create_pixbuf (gossip_app_get_window (),
 						   stock_id, 
@@ -287,7 +277,8 @@ status_icon_maybe_stop_flash (GossipStatusIcon *status_icon)
 
 	priv = GET_PRIV (status_icon);
 	
-	if (priv->events != NULL || gossip_self_presence_get_leave_time (gossip_app_get_self_presence ()) > 0) {
+	if (priv->events != NULL || 
+	    gossip_self_presence_get_leave_time (gossip_app_get_self_presence ()) > 0) {
 		return;
 	}
 

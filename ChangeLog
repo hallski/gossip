@@ -1,5 +1,15 @@
 2007-10-20  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-status-icon.c: Use gtk_status_icon_set_from_stock()
+	instead of getting the pixbuf for GOSSIP_STOCK_OFFLINE and using
+	that when creating the GtkStatusIcon. Fixes warnings when starting
+	up about gdk_pixbuf_scale_simple() use.
+	
+	* libgossip/gossip-utils.h:
+	* src/gossip-status-icon.h: Small clean ups.
+
+2007-10-20  Martyn Russell  <martyn@imendio.com>
+
 	* license.txt: Fix the license, use GPLv2 not GPLv3.
 
 2007-10-19  Martyn Russell  <martyn@imendio.com>

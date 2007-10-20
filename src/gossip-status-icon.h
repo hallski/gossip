@@ -28,11 +28,11 @@
 
 G_BEGIN_DECLS
 
-#define GOSSIP_TYPE_STATUS_ICON                (gossip_status_icon_get_type ())
+#define GOSSIP_TYPE_STATUS_ICON         (gossip_status_icon_get_type ())
 #define GOSSIP_STATUS_ICON(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_STATUS_ICON, GossipStatusIcon))
 #define GOSSIP_STATUS_ICON_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_STATUS_ICON, GossipStatusIconClass))
-#define GOSSIP_IS_STATUS_ICON(o)               (G_TYPE_CHECK_INSTANCE_TYPE ((o), GOSSIP_TYPE_STATUS_ICON))
-#define GOSSIP_IS_STATUS_ICON_CLASS(k)         (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_STATUS_ICON))
+#define GOSSIP_IS_STATUS_ICON(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), GOSSIP_TYPE_STATUS_ICON))
+#define GOSSIP_IS_STATUS_ICON_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_STATUS_ICON))
 #define GOSSIP_STATUS_ICON_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_STATUS_ICON, GossipStatusIconClass))
 
 typedef struct _GossipStatusIcon      GossipStatusIcon;
@@ -46,11 +46,9 @@ struct _GossipStatusIconClass {
 	GtkStatusIconClass parent_class;
 };
 
-GType           gossip_status_icon_get_type     (void) G_GNUC_CONST;
-GtkStatusIcon *
-gossip_status_icon_get                          (void);
-
-void          gossip_status_icon_update_tooltip (GossipStatusIcon *status_icon);
+GType          gossip_status_icon_get_type       (void) G_GNUC_CONST;
+GtkStatusIcon *gossip_status_icon_get            (void);
+void           gossip_status_icon_update_tooltip (GossipStatusIcon *status_icon);
 
 G_END_DECLS
 
