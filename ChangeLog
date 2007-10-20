@@ -1,3 +1,7 @@
+2007-10-20  Martyn Russell  <martyn@imendio.com>
+
+	* license.txt: Fix the license, use GPLv2 not GPLv3.
+
 2007-10-19  Martyn Russell  <martyn@imendio.com>
 
 	* autogen.sh: Removed Windows specifics here, we can use Richard's
