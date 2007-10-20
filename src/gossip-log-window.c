@@ -76,6 +76,7 @@ typedef struct {
 	GtkWidget        *account_chooser_links;
 	GtkWidget        *entry_links;
 	GtkWidget        *button_links_open;
+	GtkWidget        *button_links_copy;
 	GtkWidget        *treeview_links;
 	GtkListStore     *treestore_links;
 	GtkTreeModel     *treemodel_links;
@@ -191,6 +192,8 @@ static void            log_window_links_accounts_changed_cb           (GtkWidget
 static void            log_window_entry_links_changed_cb              (GtkWidget        *entry,
 								       GossipLogWindow  *window);
 static void            log_window_button_links_open_clicked_cb        (GtkWidget        *widget,
+								       GossipLogWindow  *window);
+static void            log_window_button_links_copy_clicked_cb        (GtkWidget        *widget,
 								       GossipLogWindow  *window);
 
 /* Window */
@@ -1813,10 +1816,12 @@ log_window_links_changed_cb (GtkTreeSelection *selection,
 
 	if (!gtk_tree_selection_get_selected (selection, NULL, &iter)) {
 		gtk_widget_set_sensitive (window->button_links_open, FALSE);
+		gtk_widget_set_sensitive (window->button_links_copy, FALSE);
 		return;
 	}
 
 	gtk_widget_set_sensitive (window->button_links_open, TRUE);
+	gtk_widget_set_sensitive (window->button_links_copy, TRUE);
 }
 
 static void
@@ -2092,6 +2097,32 @@ log_window_button_links_open_clicked_cb (GtkWidget       *widget,
 	g_free (url);
 }
 
+static void
+log_window_button_links_copy_clicked_cb (GtkWidget       *widget,
+					 GossipLogWindow *window)
+{
+	GtkTreeView      *view;
+	GtkTreeModel     *model;
+	GtkTreeSelection *selection;
+	GtkTreeIter       iter;
+	GtkClipboard     *clipboard;
+	gchar            *url;
+
+	/* Get selected information */
+	view = GTK_TREE_VIEW (window->treeview_links);
+	model = gtk_tree_view_get_model (view);
+	selection = gtk_tree_view_get_selection (view);
+
+	if (!gtk_tree_selection_get_selected (selection, NULL, &iter)) {
+		return;
+	}
+	
+	gtk_tree_model_get (model, &iter, COL_LINKS_URL, &url, -1);
+	clipboard = gtk_clipboard_get (GDK_SELECTION_CLIPBOARD);
+	gtk_clipboard_set_text (clipboard, url, -1);
+	g_free (url);
+}
+
 /*
  * Other window callbacks
  */
@@ -2169,6 +2200,7 @@ gossip_log_window_show (GossipContact  *contact,
 				       "vbox_links", &window->vbox_links,
 				       "entry_links", &window->entry_links,
 				       "button_links_open", &window->button_links_open,
+				       "button_links_copy", &window->button_links_copy,
 				       "treeview_links", &window->treeview_links,
 				       NULL);
 	gossip_glade_connect (glade,
@@ -2184,6 +2216,7 @@ gossip_log_window_show (GossipContact  *contact,
 			      "entry_chatrooms", "activate", log_window_entry_chatrooms_activate_cb,
 			      "entry_links", "changed", log_window_entry_links_changed_cb,
 			      "button_links_open", "clicked", log_window_button_links_open_clicked_cb,
+			      "button_links_copy", "clicked", log_window_button_links_copy_clicked_cb,
 			      NULL);
 
 	g_object_unref (glade);

@@ -1,5 +1,15 @@
 2007-10-20  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-log-window.c:
+	(log_window_links_changed_cb):
+	(log_window_button_links_copy_clicked_cb):
+	(gossip_log_window_show):
+	* ui/main.glade: Make it possible to copy the selected link on to
+	the clipboard. We should add a feature to send it to a user too
+	really. 
+
+2007-10-20  Martyn Russell  <martyn@imendio.com>
+
 	* ui/chat.glade:
 	* ui/file-transfer.glade:
 	* ui/group-chat.glade:
