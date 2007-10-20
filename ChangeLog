@@ -1,5 +1,12 @@
 2007-10-20  Martyn Russell  <martyn@imendio.com>
 
+	* ui/chat.glade:
+	* ui/file-transfer.glade:
+	* ui/group-chat.glade:
+	* ui/main.glade: Use glade-3 format.
+
+2007-10-20  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-status-icon.c: Use gtk_status_icon_set_from_stock()
 	instead of getting the pixbuf for GOSSIP_STOCK_OFFLINE and using
 	that when creating the GtkStatusIcon. Fixes warnings when starting
