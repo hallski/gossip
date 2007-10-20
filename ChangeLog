@@ -120,12 +120,13 @@
 
 	* src/gossip-app.c: Don't show the help menu item if we don't have
 	help support.
-=======
+
+2007-10-07  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-account.c:
 	* libgossip/gossip-jabber.c: Don't crash when setting up accounts
 	for the first time. This is a regression caused by the new
 	gnome-keyring patch we added recently.
->>>>>>> Fixed a crash when creating accounts for the first time:ChangeLog
 
 2007-10-07  Martyn Russell  <martyn@imendio.com>
 
@@ -294,7 +295,7 @@
 	traverse ALL log files. We support more than just http and ftp
 	links now too (i.e. anything we highlight normally). Added support
 	for sorting by account name in the find and links tabs too.
-x
+
 	* src/gossip-group-chat.c:
 	(group_chat_new_message_cb): Actually set the "incoming" variable
 	correctly so we know if chatroom messages are from us or someone
