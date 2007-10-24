@@ -1,3 +1,26 @@
+2007-10-24  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-account.[ch]: Added a "password-tmp" property
+	which we use during the life time of ONE connect only to the
+	server, it is reset by the session when we get "disconnected".
+	
+	* libgossip/gossip-jabber-utils.[ch]: Add a new error
+	GOSSIP_JABBER_NO_PASSWORD.
+
+	* libgossip/gossip-jabber.c: 
+	* libgossip/gossip-session.c: Fix a nasty scenario where we don't
+	send the disconnection reason in the signal emission and as a
+	result, we try to reconnect even when we shouldn't be. This is
+	apparent with the old password dialog if you leave it for more
+	than 20 seconds. Fixes bug #488455. 
+	
+	* src/gossip-app.c:
+	* src/gossip-ui-utils.[ch]: Don't use the blocking
+	gtk_dialog_run() function we had to get the password for an
+	account WHILE connecting. Instead, check for the password before
+	connecting, signal it back to the UI, show the password dialog and
+	asynchronously reconnect when the user responds.
+
 2007-10-20  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-log-window.c:

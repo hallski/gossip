@@ -60,6 +60,7 @@ GType             gossip_account_get_type             (void) G_GNUC_CONST;
 const gchar *     gossip_account_get_name             (GossipAccount     *account);
 const gchar *     gossip_account_get_id               (GossipAccount     *account);
 const gchar *     gossip_account_get_password         (GossipAccount     *account);
+const gchar *     gossip_account_get_password_tmp     (GossipAccount     *account);
 const gchar *     gossip_account_get_resource         (GossipAccount     *account);
 const gchar *     gossip_account_get_server           (GossipAccount     *account);
 guint16           gossip_account_get_port             (GossipAccount     *account);
@@ -72,6 +73,8 @@ void              gossip_account_set_id               (GossipAccount     *accoun
 void              gossip_account_set_name             (GossipAccount     *account,
 						       const gchar       *name);
 void              gossip_account_set_password         (GossipAccount     *account,
+						       const gchar       *password);
+void              gossip_account_set_password_tmp     (GossipAccount     *account,
 						       const gchar       *password);
 void              gossip_account_set_resource         (GossipAccount     *account,
 						       const gchar       *resource);

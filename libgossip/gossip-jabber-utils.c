@@ -309,6 +309,9 @@ gossip_jabber_error_to_string (GossipJabberError error)
 	case GOSSIP_JABBER_NO_SUCH_HOST:
 		str = _("Server address could not be resolved.");
 		break;
+	case GOSSIP_JABBER_NO_PASSWORD:
+		str = _("Account requires a password to authenticate and none was given.");
+		break;
 	case GOSSIP_JABBER_TIMED_OUT:
 		str = _("Connection timed out.");
 		break;

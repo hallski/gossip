@@ -36,9 +36,6 @@
 
 G_BEGIN_DECLS
 
-/* Dialogs */
-gchar *    gossip_password_dialog_run               (GossipAccount       *account,
-						     GtkWindow           *parent);
 /* Pixbufs */
 GdkPixbuf *gossip_pixbuf_for_presence_state         (GossipPresenceState  state);
 GdkPixbuf *gossip_pixbuf_for_presence               (GossipPresence      *presence);

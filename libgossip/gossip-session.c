@@ -521,6 +521,9 @@ session_jabber_disconnected (GossipJabber  *jabber,
 
 	priv = GET_PRIV (session);
 
+	/* Reset the temporary password, it is only valid per connect */
+	gossip_account_set_password_tmp (account, NULL);
+
 	/* Remove timer */
 	g_hash_table_remove (priv->timers, account);
 

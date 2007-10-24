@@ -563,6 +563,8 @@ gossip_jabber_setup (GossipJabber  *jabber,
 	priv->contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_USER,
 					    priv->account);
 
+	/* Store the password for the next connection */
+
 	server = gossip_account_get_server (priv->account);
 
 	priv->connection = gossip_jabber_new_connection (account);
@@ -615,6 +617,7 @@ gossip_jabber_login (GossipJabber *jabber)
 {
 	GossipJabberPriv *priv;
 	const gchar      *id;
+	const gchar      *password;
 	GError           *error = NULL;
 	gboolean          result;
 
@@ -631,6 +634,24 @@ gossip_jabber_login (GossipJabber *jabber)
 	id = gossip_account_get_id (priv->account);
 	gossip_contact_set_id (priv->contact, id);
 
+	/* Check the saved password */
+	password = gossip_account_get_password (priv->account);
+	if (G_STR_EMPTY (password)) {
+		/* Last, check the temporary password (not saved to disk) */
+		password = gossip_account_get_password_tmp (priv->account);
+	}
+
+	/* If no password, signal an error */
+	if (G_STR_EMPTY (password)) {
+		g_signal_emit_by_name (jabber, "disconnecting", priv->account);
+		g_signal_emit_by_name (jabber, "disconnected", priv->account, 
+				       GOSSIP_JABBER_DISCONNECT_ASKED);
+
+		gossip_debug (DEBUG_DOMAIN, "No password specified, not logging in");
+		gossip_jabber_error (jabber, GOSSIP_JABBER_NO_PASSWORD);
+		return;
+	}
+	
 	gossip_debug (DEBUG_DOMAIN, "Connecting...");
 	g_signal_emit_by_name (jabber, "connecting", priv->account);
 
@@ -658,8 +679,10 @@ gossip_jabber_login (GossipJabber *jabber)
 		 * signal from Loudmouth? 
 		 */
 		g_signal_emit_by_name (jabber, "disconnecting", priv->account);
-		g_signal_emit_by_name (jabber, "disconnected", priv->account);
+		g_signal_emit_by_name (jabber, "disconnected", priv->account, 
+				       GOSSIP_JABBER_DISCONNECT_ASKED);
 
+		gossip_debug (DEBUG_DOMAIN, "No connection, not logging in");
 		gossip_jabber_error (jabber, GOSSIP_JABBER_NO_CONNECTION);
 		return;
 	}
@@ -772,12 +795,10 @@ jabber_connected_cb (LmConnection *connection,
 		     GossipJabber *jabber)
 {
 	GossipJabberPriv *priv;
-	GossipAccount    *account;
-	const gchar      *account_password;
 	const gchar      *id;
-	const gchar      *account_resource;
+	const gchar      *resource;
 	const gchar      *jid_str;
-	gchar            *password = NULL;
+	const gchar      *password;
 	gchar            *id_name;
 #ifdef USE_RAND_RESOURCE
 	gchar            *resource_rand;
@@ -810,27 +831,14 @@ jabber_connected_cb (LmConnection *connection,
 		priv->connection_timeout_id = 0;
 	}
 
-	account = priv->account;
-	g_object_get (account,
-		      "id", &id,
-		      "password", &account_password,
-		      "resource", &account_resource,
-		      NULL);
+	id = gossip_account_get_id (priv->account);
+	resource = gossip_account_get_resource (priv->account);
 
-	if (!account_password || g_utf8_strlen (account_password, -1) < 1) {
-		gossip_debug (DEBUG_DOMAIN, "Requesting password for:'%s'",
-			      id);
-
-		g_signal_emit_by_name (jabber, "get-password",
-				       account, &password);
-
-		if (!password) {
-			gossip_debug (DEBUG_DOMAIN, "Cancelled password request for:'%s'", id);
-			gossip_jabber_logout (jabber);
-			return;
-		}
-	} else {
-		password = g_strdup (account_password);
+	/* Check the saved password */
+	password = gossip_account_get_password (priv->account);
+	if (G_STR_EMPTY (password)) {
+		/* Last, check the temporary password (not saved to disk) */
+		password = gossip_account_get_password_tmp (priv->account);
 	}
 
 	/* FIXME: Decide on Resource */
@@ -839,7 +847,7 @@ jabber_connected_cb (LmConnection *connection,
 
 	id_name = gossip_jid_string_get_part_name (jid_str);
 
-	if (!account_resource) {
+	if (!resource) {
 		gossip_debug (DEBUG_DOMAIN, "JID:'%s' is invalid, there is no resource.", jid_str);
 		gossip_jabber_logout (jabber);
 		gossip_jabber_error (jabber, GOSSIP_JABBER_INVALID_USER);
@@ -856,7 +864,7 @@ jabber_connected_cb (LmConnection *connection,
 		}
 	}
 	rand_str[N_RAND_CHAR] = '\0';
-	resource_rand = g_strdup_printf ("%s.%s", account_resource, rand_str);
+	resource_rand = g_strdup_printf ("%s.%s", resource, rand_str);
 
 	lm_connection_authenticate (priv->connection,
 				    id_name,
@@ -870,13 +878,12 @@ jabber_connected_cb (LmConnection *connection,
 	lm_connection_authenticate (priv->connection,
 				    id_name,
 				    password,
-				    account_resource,
+				    resource,
 				    (LmResultFunction) jabber_auth_cb,
 				    jabber, NULL, NULL);
 #endif
 
 	g_free (id_name);
-	g_free (password);
 }
 
 static void

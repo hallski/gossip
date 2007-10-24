@@ -52,6 +52,7 @@ struct _GossipAccountPriv {
 	gchar             *name;
 	gchar             *id;
 	gchar             *password;
+	gchar             *password_tmp;
 	gchar             *resource;
 	gchar             *server;
 	guint16            port;
@@ -77,6 +78,7 @@ enum {
 	PROP_NAME,
 	PROP_ID,
 	PROP_PASSWORD,
+	PROP_PASSWORD_TMP,
 	PROP_RESOURCE,
 	PROP_SERVER,
 	PROP_PORT,
@@ -119,6 +121,15 @@ gossip_account_class_init (GossipAccountClass *klass)
 					 g_param_spec_string ("password",
 							      "Account Password",
 							      "Authentication token",
+							      NULL,
+							      G_PARAM_READWRITE));
+
+        g_object_class_install_property (object_class,
+					 PROP_PASSWORD_TMP,
+					 g_param_spec_string ("password-tmp",
+							      "Account Temporary Password",
+							      "This is the same as password, "
+							      "except not stored on disk",
 							      NULL,
 							      G_PARAM_READWRITE));
 
@@ -186,6 +197,7 @@ gossip_account_init (GossipAccount *account)
 
 	priv->id           = NULL;
 	priv->password     = NULL;
+	priv->password_tmp = NULL;
 	priv->resource     = NULL;
 	priv->server       = NULL;
 	priv->port         = 0;
@@ -207,6 +219,7 @@ account_finalize (GObject *object)
 
 	g_free (priv->id);
 	g_free (priv->password);
+	g_free (priv->password_tmp);
 	g_free (priv->resource);
 	g_free (priv->server);
 	
@@ -238,6 +251,9 @@ account_get_property (GObject    *object,
 		break;
 	case PROP_RESOURCE:
 		g_value_set_string (value, priv->resource);
+		break;
+	case PROP_PASSWORD_TMP:
+		g_value_set_string (value, priv->password_tmp);
 		break;
 	case PROP_SERVER:
 		g_value_set_string (value, priv->server);
@@ -282,6 +298,10 @@ account_set_property (GObject      *object,
 	case PROP_PASSWORD:
 		gossip_account_set_password (GOSSIP_ACCOUNT (object),
 					     g_value_get_string (value));
+		break;
+	case PROP_PASSWORD_TMP:
+		gossip_account_set_password_tmp (GOSSIP_ACCOUNT (object),
+						 g_value_get_string (value));
 		break;
 	case PROP_RESOURCE:
 		gossip_account_set_resource (GOSSIP_ACCOUNT (object),
@@ -443,6 +463,18 @@ gossip_account_get_password (GossipAccount *account)
 }
 
 #endif /* HAVE_GNOME_KEYRING */
+
+const gchar *
+gossip_account_get_password_tmp (GossipAccount *account)
+{
+	GossipAccountPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
+
+	priv = GET_PRIV (account);
+
+	return priv->password_tmp;
+}
 
 const gchar *
 gossip_account_get_resource (GossipAccount *account)
@@ -631,6 +663,27 @@ gossip_account_set_password (GossipAccount *account,
 }
 
 #endif /* HAVE_GNOME_KEYRING */
+
+void
+gossip_account_set_password_tmp (GossipAccount *account,
+				 const gchar   *password)
+{
+	GossipAccountPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
+	
+	priv = GET_PRIV (account);
+	
+	g_free (priv->password_tmp);
+
+	if (password) {
+		priv->password_tmp = g_strdup (password);
+	} else {
+		priv->password_tmp = NULL;
+	}
+
+	g_object_notify (G_OBJECT (account), "password-tmp");
+}
 
 void
 gossip_account_set_resource (GossipAccount *account,

@@ -39,6 +39,8 @@
 #include <libgossip/gossip-conf.h>
 #include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-stock.h>
+#include <libgossip/gossip-jabber.h>
+#include <libgossip/gossip-jabber-utils.h>
 
 #include "gossip-about-dialog.h"
 #include "gossip-accounts-dialog.h"
@@ -267,9 +269,7 @@ app_session_protocol_error_cb                (GossipSession         *session,
 					      GossipAccount         *account,
 					      GError                *error,
 					      gpointer               user_data);
-static gchar *  app_session_get_password_cb  (GossipSession         *session,
-					      GossipAccount         *account,
-					      gpointer               user_data);
+static void app_account_password_dialog_show (GossipAccount         *account);
 static void     app_restore_user_accels      (void);
 static void     app_save_user_accels         (void);
 static void     app_show_hide_list_cb        (GtkWidget             *widget,
@@ -435,9 +435,6 @@ app_finalize (GObject *object)
 					      NULL);
 	g_signal_handlers_disconnect_by_func (priv->session,
 					      app_session_protocol_error_cb,
-					      NULL);
-	g_signal_handlers_disconnect_by_func (priv->session,
-					      app_session_get_password_cb,
 					      NULL);
 	g_signal_handlers_disconnect_by_func (priv->session,
 					      app_session_chatroom_auto_connect_cb,
@@ -757,10 +754,6 @@ app_setup (GossipSession *session)
 
 	g_signal_connect (priv->session, "protocol-error",
 			  G_CALLBACK (app_session_protocol_error_cb),
-			  NULL);
-
-	g_signal_connect (priv->session, "get-password",
-			  G_CALLBACK (app_session_get_password_cb),
 			  NULL);
 
 	g_signal_connect (priv->session, "chatroom-auto-connect",
@@ -1704,23 +1697,116 @@ app_session_protocol_error_cb (GossipSession  *session,
 		ephy_spinner_stop (EPHY_SPINNER (priv->throbber));
 	}
 
+	if (error && error->code == GOSSIP_JABBER_NO_PASSWORD) {
+		/* Handle this less generally. */
+		app_account_password_dialog_show (account);
+		return;
+	}
+
 	app_accounts_error_display (account, error);
 }
 
-static gchar *
-app_session_get_password_cb (GossipSession *session,
-			     GossipAccount *account,
-			     gpointer       user_data)
+static void
+app_account_password_dialog_activate_cb (GtkWidget *entry, 
+					 GtkDialog *dialog)
 {
-	GossipAppPriv *priv;
-	gchar         *password;
+	gtk_dialog_response (dialog, GTK_RESPONSE_OK);
+}
 
-	priv = GET_PRIV (app);
+static void
+app_account_password_dialog_response_cb (GtkWidget *dialog,
+					 gint       response,
+					 gpointer   user_data)
+{
+	if (response == GTK_RESPONSE_OK) {
+		GossipSession *session;
+		GossipAccount *account;
+		GtkWidget     *checkbutton;
+		GtkWidget     *entry;
+		const gchar   *password;
 
-	password = gossip_password_dialog_run (account,
-					       GTK_WINDOW (priv->window));
+		session = gossip_app_get_session ();
+		account = g_object_get_data (G_OBJECT (dialog), "account");
 
-	return password;
+		checkbutton = g_object_get_data (G_OBJECT (dialog), "checkbutton");
+		entry = g_object_get_data (G_OBJECT (dialog), "entry");
+
+		password = gtk_entry_get_text (GTK_ENTRY (entry));
+
+		if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (checkbutton))) {
+			GossipAccountManager *manager;
+
+			manager = gossip_session_get_account_manager (session);
+
+			gossip_account_set_password (account, password);
+			gossip_account_manager_store (manager);
+		} else {
+			gossip_account_set_password_tmp (account, password);
+		}
+
+		/* Retry the connect */
+		gossip_session_connect (session, account, FALSE);
+	}
+
+	gtk_widget_destroy (dialog);
+}
+
+static void
+app_account_password_dialog_show (GossipAccount *account)
+{
+	GtkWidget   *dialog;
+	GtkWidget   *checkbutton;
+	GtkWidget   *entry;
+	GtkWidget   *vbox;
+	gchar       *str;
+	const gchar *name;
+
+	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
+
+	str = g_strdup_printf (_("Please enter your %s account password"),
+			       gossip_account_get_name (account));
+	dialog = gtk_message_dialog_new_with_markup (GTK_WINDOW (gossip_app_get_window ()),
+						     GTK_DIALOG_DESTROY_WITH_PARENT,
+						     GTK_MESSAGE_QUESTION,
+						     GTK_BUTTONS_OK_CANCEL,
+						     "<b>%s</b>",
+						     str);
+	g_free (str);
+
+	name = gossip_account_get_name (account);
+	str = g_strdup_printf (_("Logging in to account '%s'"), name);
+	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", str);
+	g_free (str);
+
+	checkbutton = gtk_check_button_new_with_label (_("Remember Password?"));
+
+	entry = gtk_entry_new ();
+	gtk_entry_set_visibility (GTK_ENTRY (entry), FALSE);
+
+	g_signal_connect (entry, "activate",
+			  G_CALLBACK (app_account_password_dialog_activate_cb),
+			  dialog);
+
+	vbox = gtk_vbox_new (FALSE, 6);
+
+	gtk_container_set_border_width  (GTK_CONTAINER (vbox), 6);
+
+	gtk_box_pack_start (GTK_BOX (vbox), entry, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (vbox), checkbutton, FALSE, FALSE, 0);
+
+	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), vbox, FALSE, FALSE, 0);
+
+	g_object_set_data (G_OBJECT (dialog), "entry", entry);
+	g_object_set_data (G_OBJECT (dialog), "checkbutton", checkbutton);
+	g_object_set_data_full (G_OBJECT (dialog), "account", 
+				g_object_ref (account), 
+				g_object_unref);
+
+	g_signal_connect (dialog, "response", 
+			  G_CALLBACK (app_account_password_dialog_response_cb),
+			  NULL);
+
+	gtk_widget_show_all (dialog);
 }
 
 /*
@@ -2107,7 +2193,6 @@ gossip_app_connect (GossipAccount *account, gboolean startup)
 		/* Don't try to automatically connect if we have Network
 		 * Manager state and we are NOT connected.
 		 */
-
 		if (gossip_dbus_nm_get_state (&connected) && !connected) {
 			return;
 		}
