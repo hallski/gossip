@@ -29,6 +29,12 @@
 
 2007-10-21  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-contact-list.c: Reworked the filtering so we actually
+	show groups and contacts correctly according to state, events
+	pending AND the search filter entry the user can use.
+
+2007-10-21  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-contact-list.c: Rework the way we do offline
 	contacts. Now we only remove contacts from the roster when they
 	are removed from the server contact list. To show/hide contacts

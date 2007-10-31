@@ -70,6 +70,7 @@ struct _GossipContactListPriv {
 	GHashTable            *groups;
 	GHashTable            *flash_table;
 	GHashTable            *active_contacts;
+	GHashTable            *set_group_state;
 
 	GtkUIManager          *ui;
 
@@ -113,6 +114,14 @@ typedef struct {
 	GossipContact     *contact;
 	guint              timeout_id;
 } ActiveContactData;
+
+typedef struct {
+	GossipContactList *list;
+	GtkTreeModel      *model;
+	GtkTreeIter       *iter;
+	gchar             *group;
+	guint              timeout_id;
+} SetGroupStateData;
 
 static void     gossip_contact_list_class_init               (GossipContactListClass *klass);
 static void     gossip_contact_list_init                     (GossipContactList      *list);
@@ -167,6 +176,12 @@ static gboolean contact_list_get_group_foreach               (GtkTreeModel      
 							      GtkTreePath            *path,
 							      GtkTreeIter            *iter,
 							      FindGroup              *fg);
+static void     contact_list_set_group_state_destroy_cb      (SetGroupStateData      *data);
+static gboolean contact_list_set_group_state_cb              (SetGroupStateData      *data);
+static void     contact_list_set_group_state                 (GossipContactList      *list,
+							      GtkTreeModel           *model,
+							      GtkTreeIter            *iter,
+							      const gchar            *name);
 static void     contact_list_add_contact                     (GossipContactList      *list,
 							      GossipContact          *contact);
 static void     contact_list_remove_contact                  (GossipContactList      *list,
@@ -542,6 +557,12 @@ gossip_contact_list_init (GossipContactList *list)
 						       (GDestroyNotify) 
 						       contact_list_contact_set_active_destroy_cb);
 
+	priv->set_group_state = g_hash_table_new_full (g_str_hash,
+						       g_str_equal,
+						       (GDestroyNotify) g_free,
+						       (GDestroyNotify) 
+						       contact_list_set_group_state_destroy_cb);
+
 	contact_list_create_model (list);
 	contact_list_setup_view (list);
 
@@ -635,6 +656,7 @@ contact_list_finalize (GObject *object)
 	g_hash_table_destroy (priv->flash_table);
 	/* FIXME: Shouldn't we free the groups hash table? */
 	g_hash_table_destroy (priv->active_contacts);
+	g_hash_table_destroy (priv->set_group_state);
 
 	g_free (priv->filter_text);
 
@@ -1272,6 +1294,79 @@ contact_list_get_group (GossipContactList *list,
 }
 
 static void
+contact_list_set_group_state_destroy_cb (SetGroupStateData *data)
+{
+	g_source_remove (data->timeout_id);
+	g_free (data->group);
+	gtk_tree_iter_free (data->iter);
+	g_object_unref (data->model);
+	g_object_unref (data->list);
+	g_free (data);
+}
+
+static gboolean
+contact_list_set_group_state_cb (SetGroupStateData *data)
+{
+	GossipContactListPriv *priv;
+
+	priv = GET_PRIV (data->list);
+
+	contact_list_set_group_state (data->list, 
+				      data->model, 
+				      data->iter, 
+				      data->group);
+
+	g_hash_table_remove (priv->set_group_state, data->group); 
+
+	return FALSE;
+}
+
+static void
+contact_list_set_group_state (GossipContactList *list,
+			      GtkTreeModel      *model,
+			      GtkTreeIter       *iter,
+			      const gchar       *name)
+{
+	GtkTreePath  *path;
+
+	path = gtk_tree_model_get_path (model, iter);
+	if (!path) {
+		gossip_debug (DEBUG_DOMAIN,
+			      "No setting group:'%s' state, path for iter was NULL",
+			      name); 
+		return;
+	}
+
+	if (gossip_contact_group_get_expanded (name)) {
+		gossip_debug (DEBUG_DOMAIN,
+			      "Set group:'%s', state:'expanded'",
+			      name); 
+
+		g_signal_handlers_block_by_func (list,
+						 contact_list_row_expand_or_collapse_cb,
+						 GINT_TO_POINTER (TRUE));
+		gtk_tree_view_expand_row (GTK_TREE_VIEW (list), path, TRUE);
+		g_signal_handlers_unblock_by_func (list,
+						   contact_list_row_expand_or_collapse_cb,
+						   GINT_TO_POINTER (TRUE));
+	} else {
+		gossip_debug (DEBUG_DOMAIN,
+			      "Set group:'%s', state:'collapsed'",
+			      name);
+
+		g_signal_handlers_block_by_func (list,
+						 contact_list_row_expand_or_collapse_cb,
+						 GINT_TO_POINTER (FALSE));
+		gtk_tree_view_collapse_row (GTK_TREE_VIEW (list), path);
+		g_signal_handlers_unblock_by_func (list,
+						   contact_list_row_expand_or_collapse_cb,
+						   GINT_TO_POINTER (FALSE));
+	}
+	
+	gtk_tree_path_free (path);
+}
+
+static void
 contact_list_add_contact (GossipContactList *list,
 			  GossipContact     *contact)
 {
@@ -1326,7 +1421,6 @@ contact_list_add_contact (GossipContactList *list,
 
 	/* Else add to each group. */
 	for (l = groups; l; l = l->next) {
-		GtkTreePath *path;
 		GtkTreeIter  model_iter_group;
 		GdkPixbuf   *pixbuf_status;
 		GdkPixbuf   *pixbuf_avatar;
@@ -1385,30 +1479,7 @@ contact_list_add_contact (GossipContactList *list,
 			continue;
 		}
 		
-		path = gtk_tree_model_get_path (model, &model_iter_group);
-		if (!path) {
-			continue;
-		}
-
-		if (gossip_contact_group_get_expanded (name)) {
-			g_signal_handlers_block_by_func (list,
-							 contact_list_row_expand_or_collapse_cb,
-							 GINT_TO_POINTER (TRUE));
-			gtk_tree_view_expand_row (GTK_TREE_VIEW (list), path, TRUE);
-			g_signal_handlers_unblock_by_func (list,
-							   contact_list_row_expand_or_collapse_cb,
-							   GINT_TO_POINTER (TRUE));
-		} else {
-			g_signal_handlers_block_by_func (list,
-							 contact_list_row_expand_or_collapse_cb,
-							 GINT_TO_POINTER (FALSE));
-			gtk_tree_view_collapse_row (GTK_TREE_VIEW (list), path);
-			g_signal_handlers_unblock_by_func (list,
-							   contact_list_row_expand_or_collapse_cb,
-							   GINT_TO_POINTER (FALSE));
-		}
-
-		gtk_tree_path_free (path);
+		contact_list_set_group_state (list, model, &model_iter_group, name);
 	}
 }
 
@@ -2501,13 +2572,11 @@ contact_list_name_sort_func (GtkTreeModel *model,
 }
 
 static gboolean 
-contact_list_filter_show_contact (GossipContactList *list,
-				  GossipContact     *contact,
-				  const gchar       *filter)
+contact_list_filter_show_contact_for_events (GossipContactList *list,
+					     GossipContact     *contact)
 {
 	GossipContactListPriv *priv;
 	GossipSubscription     subscription;
-	gchar                 *str;
 	gboolean               visible = FALSE;
 	gboolean               has_events;
 	gboolean               has_activity;
@@ -2527,30 +2596,95 @@ contact_list_filter_show_contact (GossipContactList *list,
 	 */
 	if (has_events || has_activity || has_no_subscription || 
 	    priv->show_offline || gossip_contact_is_online (contact)) {
-		if (G_STR_EMPTY (filter)) {
-			return TRUE;
-		}
-
-		/* Check contact id */
-		str = g_utf8_casefold (gossip_contact_get_id (contact), -1);
-		visible = G_STR_EMPTY (str) || strstr (str, filter);
-		g_free (str);
-		
-		if (!visible) {
-			/* Check contact name */
-			str = g_utf8_casefold (gossip_contact_get_name (contact), -1);
-			visible = G_STR_EMPTY (str) || strstr (str, filter);
-			g_free (str);
-		}
+		visible = TRUE;
 	}
+
+	gossip_debug (DEBUG_DOMAIN, 
+		      "---- Filter func: contact:'%s' %s, "
+		      "has_events:%d, has_activity:%d, has_no_subscripton:%d, "
+		      "show_offline:%d, online:%d",
+		      gossip_contact_get_name (contact),
+		      visible ? "matched" : "didn't match",
+		      has_events, 
+		      has_activity,
+		      has_no_subscription,
+		      priv->show_offline,
+		      gossip_contact_is_online (contact));
+	
+	return visible;
+}
+
+static gboolean 
+contact_list_filter_show_contact_for_match (GossipContactList *list,
+					    GossipContact     *contact)
+{
+	GossipContactListPriv *priv;
+	gchar                 *str;
+	gboolean               visible = FALSE;
+
+	priv = GET_PRIV (list);
+
+	if (G_STR_EMPTY (priv->filter_text)) {
+		gossip_debug (DEBUG_DOMAIN, 
+			      "---- Filter func: contact:'%s' match, filter empty",
+			      gossip_contact_get_name (contact));
+		return TRUE;
+	}
+	
+	/* Check contact id */
+	str = g_utf8_casefold (gossip_contact_get_id (contact), -1);
+	visible = G_STR_EMPTY (str) || strstr (str, priv->filter_text);
+	g_free (str);
+	
+	if (!visible) {
+		/* Check contact name */
+		str = g_utf8_casefold (gossip_contact_get_name (contact), -1);
+		visible = G_STR_EMPTY (str) || strstr (str, priv->filter_text);
+		g_free (str);
+	}
+
+	gossip_debug (DEBUG_DOMAIN, 
+		      "---- Filter func: contact:'%s' %s, filter:'%s'",
+		      gossip_contact_get_name (contact),
+		      visible ? "matched" : "didn't match",
+		      priv->filter_text);
 	
 	return visible;
 }
 
 static gboolean
-contact_list_filter_show_group (GossipContactList *list,
-				const gchar       *group,
-				const gchar       *filter)
+contact_list_filter_show_group_for_match (GossipContactList *list,
+					  const gchar       *group)
+{
+	GossipContactListPriv *priv;
+	gchar                 *str;
+	gboolean               visible = FALSE;
+
+	priv = GET_PRIV (list);
+
+	if (G_STR_EMPTY (priv->filter_text)) {
+		gossip_debug (DEBUG_DOMAIN, 
+			      "---- Filter func: group:'%s' match, filter empty",
+			      group);
+		return FALSE;
+	}
+
+	str = g_utf8_casefold (group, -1);
+	visible = G_STR_EMPTY (str) || strstr (str, priv->filter_text);
+	g_free (str);
+
+	gossip_debug (DEBUG_DOMAIN, 
+		      "---- Filter func: group:'%s' %s, filter:'%s'",
+		      group,
+		      visible ? "matched" : "didn't match",
+		      priv->filter_text);
+	
+	return visible;
+}
+
+static gboolean
+contact_list_filter_show_group_for_contacts (GossipContactList *list,
+					     const gchar       *group)
 {
 	GossipContactListPriv *priv;
 	const GList           *contacts;
@@ -2558,25 +2692,6 @@ contact_list_filter_show_group (GossipContactList *list,
 	gboolean               show_group = FALSE;
 
 	priv = GET_PRIV (list);
-
-	if (!G_STR_EMPTY (filter)) {
-		gchar *str;
-
-		str = g_utf8_casefold (group, -1);
-		if (!str) {
-			return FALSE;
-		}
-
-		/* If the filter is the partially the group name, we show the
-		 * whole group.
-		 */
-		if (strstr (str, filter)) {
-			g_free (str);
-			return TRUE;
-		}
-
-		g_free (str);
-	}
 
 	/* At this point, we need to check in advance if this
 	 * group should be shown because a contact we want to
@@ -2588,12 +2703,85 @@ contact_list_filter_show_group (GossipContactList *list,
 			continue;
 		}
 
-		if (contact_list_filter_show_contact (list, l->data, filter)) {
+		if (contact_list_filter_show_contact_for_events (list, l->data) &&
+		    contact_list_filter_show_contact_for_match (list, l->data)) {
+			gossip_debug (DEBUG_DOMAIN, 
+				      "---- Filter func: group:'%s' contacts have match/events, showing...",
+				      group);
 			show_group = TRUE;
 		}
 	}
 
 	return show_group;
+}
+
+static gboolean
+contact_list_filter_func_show_contact (GtkTreeModel      *model,
+				       GtkTreeIter       *iter,
+				       GossipContactList *list)
+{
+	GossipContact *contact;
+	gboolean       visible = FALSE;
+
+	gtk_tree_model_get (model, iter, COL_CONTACT, &contact, -1);
+	if (contact) {
+		if (contact_list_filter_show_contact_for_events (list, contact) && 
+		    contact_list_filter_show_contact_for_match (list, contact)) {
+			visible = TRUE;
+		}
+
+		g_object_unref (contact);
+	}
+
+	gossip_debug (DEBUG_DOMAIN, 
+		      "---> Filter func: contact:'%s', visible:'%s'\n", 
+		      contact ? gossip_contact_get_name (contact) : "NO CONTACT",
+		      visible ? "true" : "false");
+	
+	return visible;
+}
+
+static gboolean
+contact_list_filter_func_show_group (GtkTreeModel      *model,
+				     GtkTreeIter       *iter,
+				     GossipContactList *list)
+{
+	gchar    *group;
+	gboolean  visible = FALSE;
+
+	gtk_tree_model_get (model, iter, COL_NAME, &group, -1);
+
+	if (contact_list_filter_show_group_for_match (list, group) || 
+	    contact_list_filter_show_group_for_contacts (list, group)) {
+		GossipContactListPriv *priv;
+		SetGroupStateData     *data;
+
+		priv = GET_PRIV (list);
+
+		visible = TRUE;
+
+		g_hash_table_remove (priv->set_group_state, group); 
+
+		data = g_new0 (SetGroupStateData, 1);
+		data->list = g_object_ref (list);
+		data->model = g_object_ref (model);
+		data->iter = gtk_tree_iter_copy (iter);
+		data->group = g_strdup (group);
+		data->timeout_id = g_idle_add ((GSourceFunc) 
+					       contact_list_set_group_state_cb,
+					       data);
+		
+		g_hash_table_insert (priv->set_group_state, g_strdup (group), data);
+	}
+
+	gossip_debug (DEBUG_DOMAIN,
+		      "---> Filter func: group:'%s', visible:'%s'\n", 
+		      group,
+		      visible ? "true" : "false");
+	
+	g_free (group);
+
+	return visible;
 }
 
 static gboolean
@@ -2604,7 +2792,8 @@ contact_list_filter_func (GtkTreeModel      *model,
 	GossipContactListPriv *priv;
 	gboolean               is_group;
 	gboolean               is_separator;
-	gboolean               visible = TRUE;
+
+	gossip_debug (DEBUG_DOMAIN, "<--- Filter func");
 
 	priv = GET_PRIV (list);
 
@@ -2613,29 +2802,19 @@ contact_list_filter_func (GtkTreeModel      *model,
 			    COL_IS_SEPARATOR, &is_separator,
 			    -1);
 
-	if (is_group) {
-		gchar *name;
-
-		gtk_tree_model_get (model, iter, COL_NAME, &name, -1);
-		visible &= contact_list_filter_show_group (list, 
-							   name, 
-							   priv->filter_text);
-		g_free (name);
-	} else if (is_separator) {
-		/* Do nothing here */
-	} else {
-		GossipContact *contact;
-
-		gtk_tree_model_get (model, iter, COL_CONTACT, &contact, -1);
-		if (contact) {
-			visible &= contact_list_filter_show_contact (list, 
-								     contact, 
-								     priv->filter_text);
-			g_object_unref (contact);
-		}
+	if (is_separator) {
+		gossip_debug (DEBUG_DOMAIN, 
+			      "---> Filter func: separator, returning TRUE\n");
+		return TRUE;
 	}
 
-	return visible;
+	if (is_group) { 
+		return contact_list_filter_func_show_group (model, iter, list);
+	} else {
+		return contact_list_filter_func_show_contact (model, iter, list);
+	}
+
+	return FALSE;
 }
 
 static gboolean
