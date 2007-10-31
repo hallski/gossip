@@ -117,8 +117,6 @@ typedef struct {
 
 typedef struct {
 	GossipContactList *list;
-	GtkTreeModel      *model;
-	GtkTreeIter       *iter;
 	gchar             *group;
 	guint              timeout_id;
 } SetGroupStateData;
@@ -1341,8 +1339,6 @@ contact_list_set_group_state_destroy_cb (SetGroupStateData *data)
 {
 	g_source_remove (data->timeout_id);
 	g_free (data->group);
-	gtk_tree_iter_free (data->iter);
-	g_object_unref (data->model);
 	g_object_unref (data->list);
 	g_free (data);
 }
@@ -1351,13 +1347,27 @@ static gboolean
 contact_list_set_group_state_cb (SetGroupStateData *data)
 {
 	GossipContactListPriv *priv;
+	FindGroup              fg;
 
 	priv = GET_PRIV (data->list);
+	
+	memset (&fg, 0, sizeof (fg));
 
-	contact_list_set_group_state (data->list, 
-				      data->model, 
-				      data->iter, 
-				      data->group);
+	fg.name = data->group;
+
+	gtk_tree_model_foreach (priv->filter,
+				(GtkTreeModelForeachFunc) contact_list_get_group_foreach,
+				&fg);
+
+	if (fg.found) {
+		GtkTreeIter iter;
+
+		iter = fg.iter;
+		contact_list_set_group_state (data->list, 
+					      priv->filter, 
+					      &iter, 
+					      data->group);
+	}
 
 	g_hash_table_remove (priv->set_group_state, data->group); 
 
@@ -1370,10 +1380,10 @@ contact_list_set_group_state (GossipContactList *list,
 			      GtkTreeIter       *iter,
 			      const gchar       *name)
 {
-	GtkTreePath *path;
-	gboolean     saved_expanded;
-	gboolean     is_expanded;
-
+	GtkTreePath  *path;
+	gboolean      saved_expanded;
+	gboolean      is_expanded;
+	
 	path = gtk_tree_model_get_path (model, iter);
 	if (!path) {
 		gossip_debug (DEBUG_DOMAIN,
@@ -2824,8 +2834,6 @@ contact_list_filter_func_show_group (GtkTreeModel      *model,
 
 		data = g_new0 (SetGroupStateData, 1);
 		data->list = g_object_ref (list);
-		data->model = g_object_ref (model);
-		data->iter = gtk_tree_iter_copy (iter);
 		data->group = g_strdup (group);
 		data->timeout_id = g_idle_add ((GSourceFunc) 
 					       contact_list_set_group_state_cb,
