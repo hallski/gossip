@@ -1,3 +1,9 @@
+2007-10-31  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-account.c:
+	(gossip_account_get_password): Don't crash when no keyrings are
+	available, fixes bug 490745 (Richard).
+
 2007-10-24  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-account.[ch]: Added a "password-tmp" property
