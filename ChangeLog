@@ -27,6 +27,17 @@
 	connecting, signal it back to the UI, show the password dialog and
 	asynchronously reconnect when the user responds.
 
+2007-10-21  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-contact-list.c: Rework the way we do offline
+	contacts. Now we only remove contacts from the roster when they
+	are removed from the server contact list. To show/hide contacts
+	based on their online or offline state, we use filtering. We also
+	use a hash table for active users so we always show active uses as
+	active for the 15 seconds after the last event without getting
+	confused when contacts quickly come online and offline or visa
+	versa. 
+
 2007-10-20  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-log-window.c:

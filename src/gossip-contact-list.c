@@ -69,6 +69,7 @@ struct _GossipContactListPriv {
 
 	GHashTable            *groups;
 	GHashTable            *flash_table;
+	GHashTable            *active_contacts;
 
 	GtkUIManager          *ui;
 
@@ -86,7 +87,7 @@ struct _GossipContactListPriv {
 	gboolean               flash_on;
 	guint                  flash_heartbeat_id;
 
-	GossipContactListSort sort_criterium;
+	GossipContactListSort  sort_criterium;
 };
 
 typedef struct {
@@ -110,8 +111,8 @@ typedef struct {
 typedef struct {
 	GossipContactList *list;
 	GossipContact     *contact;
-	gboolean           remove;
-} ShowActiveData;
+	guint              timeout_id;
+} ActiveContactData;
 
 static void     gossip_contact_list_class_init               (GossipContactListClass *klass);
 static void     gossip_contact_list_init                     (GossipContactList      *list);
@@ -148,16 +149,12 @@ static void     contact_list_contact_composing_cb            (GossipSession     
 							      GossipContact          *contact,
 							      gboolean                composing,
 							      GossipContactList      *list);
+static void     contact_list_contact_set_active_destroy_cb   (ActiveContactData      *data);
+static gboolean contact_list_contact_set_active_cb           (ActiveContactData      *data);
 static void     contact_list_contact_set_active              (GossipContactList      *list,
 							      GossipContact          *contact,
 							      gboolean                active,
 							      gboolean                set_changed);
-static ShowActiveData *
-		contact_list_contact_active_new              (GossipContactList      *list,
-							      GossipContact          *contact,
-							      gboolean                remove);
-static void     contact_list_contact_active_free             (ShowActiveData         *data);
-static gboolean contact_list_contact_active_cb               (ShowActiveData         *data);
 static gchar *  contact_list_get_parent_group                (GtkTreeModel           *model,
 							      GtkTreePath            *path,
 							      gboolean               *path_is_group);
@@ -451,6 +448,7 @@ gossip_contact_list_class_init (GossipContactListClass *klass)
 	widget_class->drag_begin         = contact_list_drag_begin;
 	widget_class->drag_data_get      = contact_list_drag_data_get;
 	widget_class->drag_end           = contact_list_drag_end;
+
 	/* FIXME: noticed but when you drag the row over the treeview
 	 * fast, it seems to stop redrawing itself, if we don't
 	 * connect this signal, all is fine.
@@ -537,6 +535,12 @@ gossip_contact_list_init (GossipContactList *list)
 						   gossip_contact_equal,
 						   (GDestroyNotify) g_object_unref,
 						   (GDestroyNotify) g_object_unref);
+
+	priv->active_contacts = g_hash_table_new_full (gossip_contact_hash,
+						       gossip_contact_equal,
+						       (GDestroyNotify) g_object_unref,
+						       (GDestroyNotify) 
+						       contact_list_contact_set_active_destroy_cb);
 
 	contact_list_create_model (list);
 	contact_list_setup_view (list);
@@ -629,6 +633,8 @@ contact_list_finalize (GObject *object)
 	g_object_unref (priv->session);
 
 	g_hash_table_destroy (priv->flash_table);
+	/* FIXME: Shouldn't we free the groups hash table? */
+	g_hash_table_destroy (priv->active_contacts);
 
 	g_free (priv->filter_text);
 
@@ -751,20 +757,14 @@ contact_list_contact_update (GossipContactList *list,
 {
 	GossipContactListPriv *priv;
 	GossipContactType      type;
-	ShowActiveData        *data;
 	GtkTreeModel          *model;
 	GList                 *iters, *l;
 	gboolean               in_list;
-	gboolean               should_be_in_list;
-	gboolean               was_online = TRUE;
+	gboolean               was_online = FALSE;
 	gboolean               now_online = FALSE;
 	gboolean               set_model = FALSE;
-	gboolean               has_events = FALSE;
-	gboolean               do_remove = FALSE;
+	gboolean               do_refilter = FALSE;
 	gboolean               do_set_active = FALSE;
-	gboolean               do_set_refresh = FALSE;
-	GossipAccount         *account;
-	gdouble                seconds = 0;
 	gboolean               is_composing;
 	const GdkPixbuf       *pixbuf;
 	GdkPixbuf             *pixbuf_composing;
@@ -789,71 +789,20 @@ contact_list_contact_update (GossipContactList *list,
 		in_list = TRUE;
 	}
 
-	/* Find out if we have any events waiting */
-	has_events = g_hash_table_lookup (priv->flash_table, contact) != NULL;
-
-	if (has_events || priv->show_offline || gossip_contact_is_online (contact)) {
-		should_be_in_list = TRUE;
-	} else {
-		should_be_in_list = FALSE;
-	}
-
 	/* Get online state now. */
 	now_online = gossip_contact_is_online (contact);
 
-	if (!in_list && !should_be_in_list) {
-		/* Nothing to do. */
-		gossip_debug (DEBUG_DOMAIN,
-			      "Contact:'%s' in list:NO, should be:NO",
-			      gossip_contact_get_name (contact));
-
-		g_list_foreach (iters, (GFunc)gtk_tree_iter_free, NULL);
-		g_list_free (iters);
-		return;
-	}
-	else if (in_list && !should_be_in_list) {
-		gossip_debug (DEBUG_DOMAIN,
-			      "Contact:'%s' in list:YES, should be:NO",
-			      gossip_contact_get_name (contact));
-
-		account = gossip_session_find_account (priv->session, contact);
-		if (account) {
-			seconds = gossip_session_get_connected_time (priv->session,
-								     account);
-			g_object_unref (account);
-		}
-
-		if (priv->show_active) {
-			do_remove = TRUE;
-			do_set_active = TRUE;
-			do_set_refresh = TRUE;
-
-			set_model = TRUE;
-			gossip_debug (DEBUG_DOMAIN, "Remove item (after timeout)");
-		} else {
-			gossip_debug (DEBUG_DOMAIN, "Remove item (now)!");
-			contact_list_remove_contact (list, contact, FALSE);
-		}
-	}
-	else if (!in_list && should_be_in_list) {
+	if (!in_list) {
 		gossip_debug (DEBUG_DOMAIN,
 			      "Contact:'%s' in list:NO, should be:YES",
 			      gossip_contact_get_name (contact));
-
-		account = gossip_session_find_account (priv->session, contact);
-		if (account) {
-			seconds = gossip_session_get_connected_time (priv->session,
-								     account);
-			g_object_unref (account);
-		}
-
+		
 		contact_list_add_contact (list, contact);
 
-		if (priv->show_active) {
-			do_set_active = TRUE;
-
-			gossip_debug (DEBUG_DOMAIN, "Set active (contact added)");
-		}
+		gossip_debug (DEBUG_DOMAIN,
+			      "Contact:'%s' adding contact, setting active",
+			      gossip_contact_get_name (contact));
+		do_set_active = TRUE;
 	} else {
 		gossip_debug (DEBUG_DOMAIN,
 			      "Contact:'%s' in list:YES, should be:YES",
@@ -864,28 +813,18 @@ contact_list_contact_update (GossipContactList *list,
 			gtk_tree_model_get (model, iters->data, COL_IS_ONLINE, &was_online, -1);
 		}
 
-		/* Is this really an update or an online/offline. */
-		if (priv->show_active) {
-			if (was_online != now_online) {
-				gchar *str;
-
-				do_set_active = TRUE;
-				do_set_refresh = TRUE;
-
-				if (was_online) {
-					str = "online  -> offline";
-				} else {
-					str = "offline -> online";
-				}
-
-				gossip_debug (DEBUG_DOMAIN, "Set active (contact updated %s)", str);
-			} else {
-				/* Was TRUE for presence updates. */
-				/* do_set_active = FALSE;  */
-				do_set_refresh = TRUE;
-
-				gossip_debug (DEBUG_DOMAIN, "Set active (contact updated)");
-			}
+		/* If the online state has changed, we want to
+		 * refilter in case we don't show offline contacts
+		 * and also we want to show them as active (if the
+		 * preference is set of course).
+		 */
+		if (was_online != now_online) {
+			gossip_debug (DEBUG_DOMAIN,
+				      "Contact:'%s' online state change, refiltering/setting active",
+				      gossip_contact_get_name (contact));
+			
+			do_refilter = TRUE;
+			do_set_active = TRUE;
 		}
 
 		set_model = TRUE;
@@ -922,28 +861,21 @@ contact_list_contact_update (GossipContactList *list,
 
 	g_object_unref (pixbuf_presence);
 	g_object_unref (pixbuf_composing);
+
 	if (pixbuf_avatar) {
 		g_object_unref (pixbuf_avatar);
 	}
 
-	if (priv->show_active && do_set_active) {
-		contact_list_contact_set_active (list, contact, do_set_active, do_set_refresh);
+	g_list_foreach (iters, (GFunc) gtk_tree_iter_free, NULL);
+	g_list_free (iters);
 
-		if (do_set_active) {
-			data = contact_list_contact_active_new (list, contact, do_remove);
-			g_timeout_add (ACTIVE_USER_SHOW_TIME,
-				       (GSourceFunc) contact_list_contact_active_cb,
-				       data);
-		}
+	if (do_set_active) {
+		contact_list_contact_set_active (list, contact, do_set_active, TRUE);
 	}
 
-	/* FIXME: when someone goes online then offline quickly, the
-	 * first timeout sets the user to be inactive and the second
-	 * timeout removes the user from the contact list, really we
-	 * should remove the first timeout.
-	 */
-	g_list_foreach (iters, (GFunc)gtk_tree_iter_free, NULL);
-	g_list_free (iters);
+	if (do_refilter) {
+		gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (priv->filter));
+	}
 }
 
 static void
@@ -951,12 +883,6 @@ contact_list_contact_added_cb (GossipSession     *session,
 			       GossipContact     *contact,
 			       GossipContactList *list)
 {
-	GossipContactListPriv *priv;
-	GtkTreeModel          *model;
-	gboolean               has_events;
-
-	priv = GET_PRIV (list);
-
 	gossip_debug (DEBUG_DOMAIN, 
 		      "Contact:'%s' added",
 		      gossip_contact_get_name (contact));
@@ -976,16 +902,6 @@ contact_list_contact_added_cb (GossipSession     *session,
 	g_signal_connect (contact, "notify::type",
 			  G_CALLBACK (contact_list_contact_updated_cb),
 			  list);
-
-	has_events = g_hash_table_lookup (priv->flash_table, contact) != NULL;
-
-	if (!has_events &&
-	    !priv->show_offline &&
-	    !gossip_contact_is_online (contact)) {
-		return;
-	}
-
-	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 
 	contact_list_add_contact (list, contact);
 }
@@ -1110,6 +1026,40 @@ contact_list_contact_composing_cb (GossipSession     *session,
 }
 
 static void
+contact_list_contact_set_active_destroy_cb (ActiveContactData *data)
+{
+	g_source_remove (data->timeout_id);
+	g_object_unref (data->contact);
+	g_object_unref (data->list);
+	g_free (data);
+}
+
+static gboolean
+contact_list_contact_set_active_cb (ActiveContactData *data)
+{
+	GossipContactListPriv *priv;
+
+	g_return_val_if_fail (data != NULL, FALSE);
+
+	priv = GET_PRIV (data->list);
+
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Contact:'%s' no longer active",
+		      gossip_contact_get_name (data->contact));
+
+	contact_list_contact_set_active (data->list,
+					 data->contact,
+					 FALSE,
+					 TRUE);
+
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Refiltering model, active contact state changed");
+	gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (priv->filter));
+
+	return FALSE;
+}
+
+static void
 contact_list_contact_set_active (GossipContactList *list,
 				 GossipContact     *contact,
 				 gboolean           active,
@@ -1121,9 +1071,21 @@ contact_list_contact_set_active (GossipContactList *list,
 
 	priv = GET_PRIV (list);
 
-	model = GTK_TREE_MODEL (priv->store);
+	/* If the preference is disabled, do nothing here */
+	if (!priv->show_active) {
+		return;
+	}
 
+	/* We remove the GSource doing this, which means we can
+	 * create a new one at the end of this function meaning the
+	 * contact always active for as long as the last event +
+	 * active time.
+	 */
+	g_hash_table_remove (priv->active_contacts, contact);
+
+	model = GTK_TREE_MODEL (priv->store);
 	iters = contact_list_find_contact (list, contact);
+
 	for (l = iters; l; l = l->next) {
 		GtkTreePath *path;
 
@@ -1140,77 +1102,21 @@ contact_list_contact_set_active (GossipContactList *list,
 		}
 	}
 
-	g_list_foreach (iters, (GFunc)gtk_tree_iter_free, NULL);
+	g_list_foreach (iters, (GFunc) gtk_tree_iter_free, NULL);
 	g_list_free (iters);
-}
 
-static ShowActiveData *
-contact_list_contact_active_new (GossipContactList *list,
-				 GossipContact     *contact,
-				 gboolean           remove)
-{
-	ShowActiveData *data;
+	if (active) {
+		ActiveContactData *data;
 
-	g_return_val_if_fail (list != NULL, NULL);
-	g_return_val_if_fail (contact != NULL, NULL);
-
-	gossip_debug (DEBUG_DOMAIN, 
-		      "Contact:'%s' now active, and %s be removed",
-		      gossip_contact_get_name (contact), 
-		      remove ? "WILL" : "WILL NOT");
-	
-	data = g_slice_new0 (ShowActiveData);
-
-	data->list = g_object_ref (list);
-	data->contact = g_object_ref (contact);
-
-	data->remove = remove;
-
-	return data;
-}
-
-static void
-contact_list_contact_active_free (ShowActiveData *data)
-{
-	g_return_if_fail (data != NULL);
-
-	g_object_unref (data->contact);
-	g_object_unref (data->list);
-
-	g_slice_free (ShowActiveData, data);
-}
-
-static gboolean
-contact_list_contact_active_cb (ShowActiveData *data)
-{
-	GossipContactListPriv *priv;
-
-	g_return_val_if_fail (data != NULL, FALSE);
-
-	priv = GET_PRIV (data->list);
-
-	if (data->remove &&
-	    !priv->show_offline &&
-	    !gossip_contact_is_online (data->contact)) {
-		gossip_debug (DEBUG_DOMAIN, 
-			      "Contact:'%s' active timeout, removing item",
-			      gossip_contact_get_name (data->contact));
-		contact_list_remove_contact (data->list,
-					     data->contact,
-					     FALSE);
+		data = g_new0 (ActiveContactData, 1);
+		data->list = g_object_ref (list);
+		data->contact = g_object_ref (contact);
+		data->timeout_id = g_timeout_add (ACTIVE_USER_SHOW_TIME,
+						  (GSourceFunc) contact_list_contact_set_active_cb,
+						  data);
+		
+		g_hash_table_insert (priv->active_contacts, g_object_ref (contact), data);
 	}
-
-	gossip_debug (DEBUG_DOMAIN, 
-		      "Contact:'%s' no longer active",
-		      gossip_contact_get_name (data->contact));
-	contact_list_contact_set_active (data->list,
-					 data->contact,
-					 FALSE,
-					 TRUE);
-
-	contact_list_contact_active_free (data);
-
-	return FALSE;
 }
 
 static gchar *
@@ -2595,25 +2501,48 @@ contact_list_name_sort_func (GtkTreeModel *model,
 }
 
 static gboolean 
-contact_list_filter_show_contact (GossipContact *contact,
-				  const gchar   *filter)
+contact_list_filter_show_contact (GossipContactList *list,
+				  GossipContact     *contact,
+				  const gchar       *filter)
 {
-	gchar    *str;
-	gboolean  visible;
+	GossipContactListPriv *priv;
+	GossipSubscription     subscription;
+	gchar                 *str;
+	gboolean               visible = FALSE;
+	gboolean               has_events;
+	gboolean               has_activity;
+	gboolean               has_no_subscription;
 
-	/* Check contact id */
-	str = g_utf8_casefold (gossip_contact_get_id (contact), -1);
-	visible = G_STR_EMPTY (str) || strstr (str, filter);
-	g_free (str);
+	priv = GET_PRIV (list);
 
-	if (visible) {
-		return TRUE;
+	has_events = g_hash_table_lookup (priv->flash_table, contact) != NULL;
+	has_activity = g_hash_table_lookup (priv->active_contacts, contact) != NULL;
+
+	subscription = gossip_contact_get_subscription (contact);
+	has_no_subscription = subscription != GOSSIP_SUBSCRIPTION_BOTH;
+
+	/* If we have a reason to remain visible in the roster, then
+	 * set visible TRUE (i.e we have events pending, we are
+	 * active, we show offline contacts, etc).
+	 */
+	if (has_events || has_activity || has_no_subscription || 
+	    priv->show_offline || gossip_contact_is_online (contact)) {
+		if (G_STR_EMPTY (filter)) {
+			return TRUE;
+		}
+
+		/* Check contact id */
+		str = g_utf8_casefold (gossip_contact_get_id (contact), -1);
+		visible = G_STR_EMPTY (str) || strstr (str, filter);
+		g_free (str);
+		
+		if (!visible) {
+			/* Check contact name */
+			str = g_utf8_casefold (gossip_contact_get_name (contact), -1);
+			visible = G_STR_EMPTY (str) || strstr (str, filter);
+			g_free (str);
+		}
 	}
-
-	/* Check contact name */
-	str = g_utf8_casefold (gossip_contact_get_name (contact), -1);
-	visible = G_STR_EMPTY (str) || strstr (str, filter);
-	g_free (str);
 	
 	return visible;
 }
@@ -2626,22 +2555,27 @@ contact_list_filter_show_group (GossipContactList *list,
 	GossipContactListPriv *priv;
 	const GList           *contacts;
 	const GList           *l;
-	gchar                 *str;
 	gboolean               show_group = FALSE;
 
 	priv = GET_PRIV (list);
-	
-	str = g_utf8_casefold (group, -1);
-	if (!str) {
-		return FALSE;
-	}
 
-	/* If the filter is the partially the group name, we show the
-	 * whole group.
-	 */
-	if (strstr (str, filter)) {
+	if (!G_STR_EMPTY (filter)) {
+		gchar *str;
+
+		str = g_utf8_casefold (group, -1);
+		if (!str) {
+			return FALSE;
+		}
+
+		/* If the filter is the partially the group name, we show the
+		 * whole group.
+		 */
+		if (strstr (str, filter)) {
+			g_free (str);
+			return TRUE;
+		}
+
 		g_free (str);
-		return TRUE;
 	}
 
 	/* At this point, we need to check in advance if this
@@ -2654,12 +2588,10 @@ contact_list_filter_show_group (GossipContactList *list,
 			continue;
 		}
 
-		if (contact_list_filter_show_contact (l->data, filter)) {
+		if (contact_list_filter_show_contact (list, l->data, filter)) {
 			show_group = TRUE;
 		}
 	}
-
-	g_free (str);
 
 	return show_group;
 }
@@ -2676,11 +2608,6 @@ contact_list_filter_func (GtkTreeModel      *model,
 
 	priv = GET_PRIV (list);
 
-	if (G_STR_EMPTY (priv->filter_text)) {
-		return TRUE;
-	}
-	
-	/* Check to see if iter matches any group names */
 	gtk_tree_model_get (model, iter,
 			    COL_IS_GROUP, &is_group,
 			    COL_IS_SEPARATOR, &is_separator,
@@ -2699,11 +2626,13 @@ contact_list_filter_func (GtkTreeModel      *model,
 	} else {
 		GossipContact *contact;
 
-		/* Check contact id */
 		gtk_tree_model_get (model, iter, COL_CONTACT, &contact, -1);
-		visible &= contact_list_filter_show_contact (contact, 
-							     priv->filter_text);
-		g_object_unref (contact);
+		if (contact) {
+			visible &= contact_list_filter_show_contact (list, 
+								     contact, 
+								     priv->filter_text);
+			g_object_unref (contact);
+		}
 	}
 
 	return visible;
@@ -3082,9 +3011,8 @@ contact_list_foreach_contact_flash (GossipContact     *contact,
 	iters = contact_list_find_contact (list, contact);
 	if (!iters) {
 		gossip_debug (DEBUG_DOMAIN,
-			      "Contact:'%s' not found in treeview?",
+			      "Contact:'%s' not found in treeview, adding...",
 			      gossip_contact_get_name (contact));
-
 		return;
 	}
 
@@ -3113,72 +3041,6 @@ contact_list_foreach_contact_flash (GossipContact     *contact,
 	g_list_foreach (iters, (GFunc) gtk_tree_iter_free, NULL);
 	g_list_free (iters);
 }
-
-#if 0
-static gboolean
-contact_list_flash (FlashTimeoutData *timeout_data)
-{
-	GossipContactList     *list;
-	GossipContactListPriv *priv;
-	GossipContact         *contact;
-	GList                 *l, *iters;
-	GtkTreeModel          *model;
-	GdkPixbuf             *pixbuf = NULL;
-	FlashData             *data;
-	gboolean               retval = FALSE;
-	const gchar           *stock_id = NULL;
-
-	list = timeout_data->list;
-	priv = GET_PRIV (list);
-
-	contact = timeout_data->contact;
-
-	iters = contact_list_find_contact (list, contact);
-	if (!iters) {
-		gossip_debug (DEBUG_DOMAIN,
-			      "Contact:'%s' not found in treeview?",
-			      gossip_contact_get_name (contact));
-
-		return FALSE;
-	}
-
-	data = g_hash_table_lookup (priv->flash_table, contact);
-	if (data) {
-		data->flash_on = !data->flash_on;
-		retval = TRUE;
-
-		if (data->flash_on) {
-			stock_id = gossip_event_get_stock_id (data->event);
-		}
-	} else {
-		gossip_debug (DEBUG_DOMAIN,
-			      "Contact:'%s' not found in flashing event table",
-			      gossip_contact_get_name (contact));
-	}
-
-	if (stock_id) {
-		pixbuf = gossip_pixbuf_from_stock (stock_id, GTK_ICON_SIZE_MENU);
-	} else {
-		pixbuf = gossip_pixbuf_for_contact (contact);
-	}
-
-	model = GTK_TREE_MODEL (priv->store);
-
-	for (l = iters; l; l = l->next) {
-		gtk_tree_store_set (priv->store, l->data,
-				    COL_PIXBUF_STATUS, pixbuf,
-				    -1);
-	}
-
-	g_object_unref (pixbuf);
-
-	g_list_foreach (iters, (GFunc) gtk_tree_iter_free, NULL);
-	g_list_free (iters);
-
-	return retval;
-
-}
-#endif
 
 static gboolean
 contact_list_flash_heartbeat_func (GossipHeartbeat  *heartbeat,
@@ -3487,8 +3349,6 @@ gossip_contact_list_set_show_offline (GossipContactList *list,
 				      gboolean           show_offline)
 {
 	GossipContactListPriv *priv;
-	const GList           *contacts;
-	const GList           *l;
 	gboolean               show_active;
 
 	g_return_if_fail (GOSSIP_IS_CONTACT_LIST (list));
@@ -3501,10 +3361,11 @@ gossip_contact_list_set_show_offline (GossipContactList *list,
 	/* Disable temporarily. */
 	priv->show_active = FALSE;
 
-	contacts = gossip_session_get_contacts (priv->session);
-	for (l = contacts; l; l = l->next) {
-		contact_list_contact_update (list, l->data);
-	}
+	/* Simply refilter the model */
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Refiltering %s offline contacts", 
+		      show_offline ? "showing" : "not showing");
+	gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (priv->filter));
 
 	/* Restore to original setting. */
 	priv->show_active = show_active;
@@ -3596,6 +3457,8 @@ gossip_contact_list_set_filter (GossipContactList *list,
 		priv->filter_text = NULL;
 	}
 
-	gossip_debug (DEBUG_DOMAIN, "Refiltering with filter:'%s' (case folded)", filter);
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Refiltering showing contacts matching name/id/group:'%s' (insensitively)",
+		      filter);
 	gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (priv->filter));
 }
