@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-06-12 03:41+0100\n"
-"PO-Revision-Date: 2007-06-21 00:39+0200\n"
+"POT-Creation-Date: 2007-10-20 16:15+0100\n"
+"PO-Revision-Date: 2007-11-01 00:33+0100\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <gnome@gnome.hu>\n"
 "MIME-Version: 1.0\n"
@@ -96,52 +96,63 @@ msgid "Spell checking languages"
 msgstr "Helyesírás-ellenőrző nyelvei"
 
 #: ../gossip.schemas.in.h:18
+msgid "The default location for file transfers to be saved to"
+msgstr "A fájlátvitelek alapértelmezett mentési helye"
+
+#: ../gossip.schemas.in.h:19
 msgid "The last directory that an avatar image was chosen from."
 msgstr "Az utolsó könyvtár, amelyből egy avatar kép kiválasztásra került."
 
-#: ../gossip.schemas.in.h:19
+#: ../gossip.schemas.in.h:20
 msgid "The theme that is used to display the conversation in chat windows."
 msgstr "A beszélgetés megjelenítésére használt téma a csevegőablakokban."
 
-#: ../gossip.schemas.in.h:20
+#: ../gossip.schemas.in.h:21
+msgid ""
+"This is updated each time the user changes the location they wish to save "
+"the file to so that the last location used to save file transfers can be "
+"used without prompting the user each time."
+msgstr "Ez minden alkalommal frissítésre kerül, amikor a felhasználó megváltoztatja a fájl mentési helyét, így mindig az utoljára használt helyet tartalmazza, amely alapértelmezésben felhasználásra kerül."
+
+#: ../gossip.schemas.in.h:22
 msgid "Use graphical smileys"
 msgstr "Grafikus hangulatjelek használata"
 
-#: ../gossip.schemas.in.h:21
+#: ../gossip.schemas.in.h:23
 msgid "Use notification sounds"
 msgstr "Értesítő hangok használata"
 
-#: ../gossip.schemas.in.h:22
+#: ../gossip.schemas.in.h:24
 msgid "Use theme for chat rooms"
 msgstr "Téma használata a csevegőszobákhoz"
 
-#: ../gossip.schemas.in.h:23
+#: ../gossip.schemas.in.h:25
 msgid ""
 "Whether or not to check words typed against the languages you want to check "
 "with."
 msgstr "A beírt szavak ellenőrzése az ellenőrizni kívánt nyelveken."
 
-#: ../gossip.schemas.in.h:24
+#: ../gossip.schemas.in.h:26
 msgid "Whether or not to convert smileys into graphical images in conversations."
 msgstr "Hangulatjelek képekké alakítása társalgások közben."
 
-#: ../gossip.schemas.in.h:25
+#: ../gossip.schemas.in.h:27
 msgid "Whether or not to play a sound when messages arrive."
 msgstr "Lejátsszon-e hangot üzenetek érkezésekor?"
 
-#: ../gossip.schemas.in.h:26
+#: ../gossip.schemas.in.h:28
 msgid "Whether or not to play sounds when away."
 msgstr "Lejátsszon-e hangot ha Ön távol van?"
 
-#: ../gossip.schemas.in.h:27
+#: ../gossip.schemas.in.h:29
 msgid "Whether or not to play sounds when busy."
 msgstr "Lejátsszon-e hangot ha Ön elfoglalt?"
 
-#: ../gossip.schemas.in.h:28
+#: ../gossip.schemas.in.h:30
 msgid "Whether or not to show a popup when a contact becomes available."
 msgstr "Megjelenjen-e egy felugró ablak egy partner elérhetővé válásakor?"
 
-#: ../gossip.schemas.in.h:29
+#: ../gossip.schemas.in.h:31
 msgid ""
 "Whether or not to show avatars for contacts in the contact list and chat "
 "windows."
@@ -149,149 +160,169 @@ msgstr ""
 "Megjelenjenek-e az avatarok a partnerekhez a partnerlistában és "
 "csevegőablakokban?"
 
-#: ../gossip.schemas.in.h:30
+#: ../gossip.schemas.in.h:32
 msgid "Whether or not to show contacts that are offline in the contact list."
 msgstr "Kilépett partnerek mutatása a partnerlistában."
 
-#: ../gossip.schemas.in.h:31
+#: ../gossip.schemas.in.h:33
 msgid ""
 "Whether or not to show the message dialog about closing the main window with "
 "the 'x' button in the title bar."
 msgstr "Megjelenjen-e párbeszédablak a főablak bezárásakor a címsor X gombjával."
 
-#: ../gossip.schemas.in.h:32
+#: ../gossip.schemas.in.h:34
 msgid "Whether to show the contact list in compact mode or not."
 msgstr "Megjelenjen-e a partnerlista tömör módban."
 
-#: ../gossip.schemas.in.h:33
+#: ../gossip.schemas.in.h:35
 msgid "Whether to use the theme for chat rooms or not."
 msgstr "A téma használata csevegőszobákhoz."
 
-#: ../gossip.schemas.in.h:34
+#: ../gossip.schemas.in.h:36
 msgid ""
 "Which criterium to use when sorting the contact list. Default is to use sort "
 "by the contact's name with the value \"name\". A value of \"state\" will "
 "sort the contact list by state."
-msgstr "A partnerlista rendezéséhez használandó feltétel. A lehetséges értékek: \"name\" (név, ez az alapértelmezett) és \"state\" (állapot)."
+msgstr ""
+"A partnerlista rendezéséhez használandó feltétel. A lehetséges értékek: "
+"\"name\" (név, ez az alapértelmezett) és \"state\" (állapot)."
 
-#: ../libgossip/gossip-chatroom.c:944
-msgid "Normal"
-msgstr "Normál"
-
-#: ../libgossip/gossip-chatroom.c:955
+#: ../libgossip/gossip-chatroom.c:1040
 msgid "Joining"
 msgstr "Csatlakozik"
 
-#: ../libgossip/gossip-chatroom.c:957
+#: ../libgossip/gossip-chatroom.c:1042
 msgid "Active"
 msgstr "Aktív"
 
-#: ../libgossip/gossip-chatroom.c:959
+#: ../libgossip/gossip-chatroom.c:1044
 msgid "Inactive"
 msgstr "Inaktív"
 
-#: ../libgossip/gossip-chatroom.c:961
+#: ../libgossip/gossip-chatroom.c:1046 ../src/gossip-log-window.c:1879
 msgid "Unknown"
 msgstr "Ismeretlen"
 
-#: ../libgossip/gossip-chatroom.c:963
+#: ../libgossip/gossip-chatroom.c:1048
 msgid "Error"
 msgstr "Hiba"
 
-#: ../libgossip/gossip-chatroom.c:977
+#: ../libgossip/gossip-chatroom.c:1062
 msgid "Moderator"
 msgid_plural "Moderators"
 msgstr[0] "Moderátor"
 msgstr[1] "Moderátorok"
 
-#: ../libgossip/gossip-chatroom.c:979
+#: ../libgossip/gossip-chatroom.c:1064
 msgid "Participant"
 msgid_plural "Participants"
 msgstr[0] "Résztvevő"
 msgstr[1] "Résztvevők"
 
-#: ../libgossip/gossip-chatroom.c:981
+#: ../libgossip/gossip-chatroom.c:1066
 msgid "Visitor"
 msgid_plural "Visitors"
 msgstr[0] "Látogató"
 msgstr[1] "Látogatók"
 
-#: ../libgossip/gossip-chatroom.c:983
+#: ../libgossip/gossip-chatroom.c:1068
 msgid "No role"
 msgstr "Nincs szerep"
 
-#: ../libgossip/gossip-chatroom.c:997
+#: ../libgossip/gossip-chatroom.c:1082
 msgid "Owner"
 msgid_plural "Owners"
 msgstr[0] "Tulajdonos"
 msgstr[1] "Tulajdonosok"
 
-#: ../libgossip/gossip-chatroom.c:999
+#: ../libgossip/gossip-chatroom.c:1084
 msgid "Administrator"
 msgid_plural "Administrators"
 msgstr[0] "Adminisztrátor"
 msgstr[1] "Adminisztrátorok"
 
-#: ../libgossip/gossip-chatroom.c:1001
+#: ../libgossip/gossip-chatroom.c:1086
 msgid "Member"
 msgid_plural "Members"
 msgstr[0] "Tag"
 msgstr[1] "Tagok"
 
-#: ../libgossip/gossip-chatroom.c:1003
+#: ../libgossip/gossip-chatroom.c:1088
 msgid "Outcast"
 msgid_plural "Outcasts"
 msgstr[0] "Száműzött"
 msgstr[1] "Száműzöttek"
 
-#: ../libgossip/gossip-chatroom.c:1005
+#: ../libgossip/gossip-chatroom.c:1090
 msgid "No affiliation"
 msgstr "Nincs kapcsolat"
 
-#: ../libgossip/gossip-chatroom-provider.c:331
+#: ../libgossip/gossip-chatroom-provider.c:385
+msgid ""
+"The chat room you tried to join requires a password. You either failed to "
+"supply a password or the password you tried was incorrect."
+msgstr "A csevegőszoba, amelyhez csatlakozni próbált, jelszót igényel. Vagy nem adott meg jelszót, vagy a jelszó hibás volt."
+
+#: ../libgossip/gossip-chatroom-provider.c:390
+msgid "You have been banned from this chatroom."
+msgstr "Kitiltották ebből a csevegőszobából."
+
+#: ../libgossip/gossip-chatroom-provider.c:394
+msgid "The conference room you tried to join could not be found."
+msgstr "A konferenciaszoba, amelyhez csatlakozni próbált, nem található."
+
+#: ../libgossip/gossip-chatroom-provider.c:398
+msgid "Chatroom creation is restricted on this server."
+msgstr "A csevegőszobák létrehozása korlátozva van ezen a kiszolgálón."
+
+#: ../libgossip/gossip-chatroom-provider.c:402
+msgid "Chatroom reserved nick names must be used on this server."
+msgstr "Ezen a kiszolgálón csevegőszobákhoz fenntartott neveket kell használni."
+
+#: ../libgossip/gossip-chatroom-provider.c:406
+msgid "You are not on the chatroom's members list."
+msgstr "Nincs rajta a csevegőszoba taglistáján."
+
+#: ../libgossip/gossip-chatroom-provider.c:410
 msgid "The nickname you have chosen is already in use."
 msgstr "A választott becenév már használatban van."
 
-#: ../libgossip/gossip-chatroom-provider.c:335
-msgid "The chat room you tried to join requires a password."
-msgstr "A csevegőszoba, amelyhez csatlakozni próbált, jelszót igényel."
+#: ../libgossip/gossip-chatroom-provider.c:414
+msgid "The maximum number of users for this chatroom has been reached."
+msgstr "A csevegőszoba felhasználóinak száma elérte a maximálisat."
 
-#: ../libgossip/gossip-chatroom-provider.c:339
+#: ../libgossip/gossip-chatroom-provider.c:418
 msgid "The remote conference server did not respond in a sensible time."
 msgstr "A távoli konferenciakiszolgáló nem válaszolt elfogadható időn belül."
 
-#: ../libgossip/gossip-chatroom-provider.c:343
-msgid "The conference server you tried to join could not be found."
-msgstr "A konferenciakiszolgáló, amelyhez csatlakozni próbált, nem található."
-
-#: ../libgossip/gossip-chatroom-provider.c:347
+#: ../libgossip/gossip-chatroom-provider.c:422
 msgid "An unknown error occurred, check your details are correct."
 msgstr "Ismeretlen hiba történt, ellenőrizze adatai helyességét."
 
-#: ../libgossip/gossip-chatroom-provider.c:351
+#: ../libgossip/gossip-chatroom-provider.c:426
 msgid "Joining the chatroom was canceled."
 msgstr "A csevegőszobához csatlakozás megszakítva."
 
 #. i18n: The current state of the connection.
 #: ../libgossip/gossip-contact.c:965 ../libgossip/gossip-presence.c:242
-#: ../src/gossip-app.c:2429 ../src/gossip-contact-info-dialog.c:156
-#: ../src/gossip-galago.c:197 ../src/gossip-status-icon.c:372
+#: ../src/gossip-app.c:2458 ../src/gossip-contact-info-dialog.c:156
+#: ../src/gossip-galago.c:186 ../src/gossip-status-icon.c:363
 msgid "Offline"
 msgstr "Kilépett"
 
 #: ../libgossip/gossip-presence.c:423 ../libgossip/gossip-presence.c:440
-#: ../src/gossip-presence-chooser.c:739 ../src/gossip-presence-chooser.c:939
-#: ../src/gossip-presence-chooser.c:969
+#: ../src/gossip-presence-chooser.c:760 ../src/gossip-presence-chooser.c:959
+#: ../src/gossip-presence-chooser.c:1008
 msgid "Available"
 msgstr "Elérhető"
 
-#: ../libgossip/gossip-presence.c:427 ../src/gossip-presence-chooser.c:751
-#: ../src/gossip-presence-chooser.c:997
+#: ../libgossip/gossip-presence.c:427 ../src/gossip-presence-chooser.c:772
+#: ../src/gossip-presence-chooser.c:1036
 msgid "Busy"
 msgstr "Elfoglalt"
 
-#: ../libgossip/gossip-presence.c:432 ../src/gossip-presence-chooser.c:763
-#: ../src/gossip-presence-chooser.c:1025
+#: ../libgossip/gossip-presence.c:432 ../src/gossip-presence-chooser.c:784
+#: ../src/gossip-presence-chooser.c:1064
 msgid "Away"
 msgstr "Távol"
 
@@ -299,109 +330,65 @@ msgstr "Távol"
 msgid "Unavailable"
 msgstr "Nem érhető el"
 
-#: ../libgossip/gossip-jabber-disco.c:285
+#: ../libgossip/gossip-jabber-disco.c:286
 msgid "Service has gone and is no longer available"
 msgstr "A szolgáltatás eltűnt és már nem érhető el"
 
-#: ../libgossip/gossip-jabber-disco.c:288
+#: ../libgossip/gossip-jabber-disco.c:289
 msgid "Bad or malformed request to this service"
 msgstr "Hibás vagy rosszul formált kérés a szolgáltatáshoz"
 
-#: ../libgossip/gossip-jabber-disco.c:291
+#: ../libgossip/gossip-jabber-disco.c:292
 msgid "Unauthorized request to this service"
 msgstr "Jogosulatlan kérés a szolgáltatáshoz"
 
-#: ../libgossip/gossip-jabber-disco.c:294
+#: ../libgossip/gossip-jabber-disco.c:295
 msgid "Payment is required for this service"
 msgstr "A szolgáltatás eléréséhez fizetés szükséges"
 
-#: ../libgossip/gossip-jabber-disco.c:298
+#: ../libgossip/gossip-jabber-disco.c:299
 msgid "This service is forbidden"
 msgstr "A szolgáltatás tiltott"
 
-#: ../libgossip/gossip-jabber-disco.c:302
+#: ../libgossip/gossip-jabber-disco.c:303
 msgid "This service is unavailable or not found"
 msgstr "Ez a szolgáltatás nem áll rendelkezésre vagy nem található"
 
-#: ../libgossip/gossip-jabber-disco.c:305
+#: ../libgossip/gossip-jabber-disco.c:306
 msgid "Unacceptable request sent to this services"
 msgstr "Elfogadhatatlan kérés lett küldve a szolgáltatásnak"
 
-#: ../libgossip/gossip-jabber-disco.c:308
+#: ../libgossip/gossip-jabber-disco.c:309
 msgid "Registration is required"
 msgstr "Regisztráció szükséges"
 
-#: ../libgossip/gossip-jabber-disco.c:311
+#: ../libgossip/gossip-jabber-disco.c:312
 msgid "There was a conflict of interest trying to use this service"
 msgstr "Érdekellentét lépett fel a szolgáltatás használatára tett kísérlet során"
 
-#: ../libgossip/gossip-jabber-disco.c:314
+#: ../libgossip/gossip-jabber-disco.c:315
 msgid "There was an internal service error"
 msgstr "Belső szolgáltatáshiba történt"
 
-#: ../libgossip/gossip-jabber-disco.c:317
+#: ../libgossip/gossip-jabber-disco.c:318
 msgid "This feature is not implemented"
 msgstr "Ez a szolgáltatás nincs megvalósítva"
 
-#: ../libgossip/gossip-jabber-disco.c:320
+#: ../libgossip/gossip-jabber-disco.c:321
 msgid "The remote service timed out"
 msgstr "A távoli szolgáltatás túllépte az időkorlátot"
 
-#: ../libgossip/gossip-jabber.c:535
+#: ../libgossip/gossip-jabber.c:515
 msgid "new account"
 msgstr "új fiók"
 
-#: ../libgossip/gossip-jabber.c:536
+#: ../libgossip/gossip-jabber.c:516
 msgid "Home"
 msgstr "Saját mappa"
 
-#: ../libgossip/gossip-jabber.c:1381 ../libgossip/gossip-jabber.c:1520
+#: ../libgossip/gossip-jabber.c:1178
 msgid "Couldn't send message!"
 msgstr "Nem lehet üzenetet küldeni!"
-
-#: ../libgossip/gossip-jabber.c:1467
-msgid "Connection could not be opened"
-msgstr "A kapcsolat nem nyitható meg"
-
-#: ../libgossip/gossip-jabber.c:3808
-msgid "An unknown error occurred."
-msgstr "Ismeretlen hiba történt."
-
-#: ../libgossip/gossip-jabber.c:3812
-msgid "Connection refused."
-msgstr "Kapcsolat visszautasítva."
-
-#: ../libgossip/gossip-jabber.c:3815
-msgid "Server address could not be resolved."
-msgstr "A kiszolgáló címe nem oldható fel."
-
-#: ../libgossip/gossip-jabber.c:3818
-msgid "Connection timed out."
-msgstr "A kapcsolódás időtúllépés miatt sikertelen."
-
-#: ../libgossip/gossip-jabber.c:3821
-msgid "Authentication failed."
-msgstr "Hitelesítés sikertelen."
-
-#: ../libgossip/gossip-jabber.c:3824
-msgid "The username you are trying already exists."
-msgstr "A választott becenév már létezik."
-
-#: ../libgossip/gossip-jabber.c:3827
-msgid "The username you are trying is not valid."
-msgstr "A választott becenév nem érvényes."
-
-#: ../libgossip/gossip-jabber.c:3830
-msgid "This feature is unavailable."
-msgstr "Ez a szolgáltatás nem áll rendelkezésre."
-
-#: ../libgossip/gossip-jabber.c:3833
-msgid "This feature is unauthorized."
-msgstr "Ez a szolgáltatás nincs felhatalmazva."
-
-#: ../libgossip/gossip-jabber.c:3836
-msgid "A specific protocol error occurred that was unexpected."
-msgstr "Egy adott váratlan protokollhiba történt."
 
 #: ../libloudermouth/lm-bs-receiver.c:90 ../libloudermouth/lm-bs-sender.c:251
 msgid "The other party disconnected"
@@ -411,71 +398,71 @@ msgstr "A másik fél bontotta a kapcsolatot"
 msgid "A protocol error occurred during the transfer"
 msgstr "Protokollhiba lépett fel az átvitel közben"
 
-#: ../libloudermouth/lm-bs-transfer.c:236
+#: ../libloudermouth/lm-bs-transfer.c:250
 msgid "Unable to connect to the other party"
 msgstr "Nem lehet csatlakozni a másik félhez"
 
-#: ../libloudermouth/lm-bs-transfer.c:302
+#: ../libloudermouth/lm-bs-transfer.c:316
 msgid "Permission denied"
 msgstr "Hozzáférés megtagadva"
 
-#: ../libloudermouth/lm-bs-transfer.c:304
+#: ../libloudermouth/lm-bs-transfer.c:318
 msgid "File name is too long"
 msgstr "A fájlnév túl hosszú"
 
-#: ../libloudermouth/lm-bs-transfer.c:306
+#: ../libloudermouth/lm-bs-transfer.c:320
 msgid "File doesn't exist"
 msgstr "A fájl nem létezik"
 
-#: ../libloudermouth/lm-bs-transfer.c:308
-#: ../libloudermouth/lm-bs-transfer.c:339
+#: ../libloudermouth/lm-bs-transfer.c:322
+#: ../libloudermouth/lm-bs-transfer.c:353
 msgid "File is a directory"
 msgstr "A fájl egy könyvtár"
 
-#: ../libloudermouth/lm-bs-transfer.c:310
+#: ../libloudermouth/lm-bs-transfer.c:324
 msgid "Read only file system"
 msgstr "Csak olvasható fájlrendszer"
 
-#: ../libloudermouth/lm-bs-transfer.c:312
+#: ../libloudermouth/lm-bs-transfer.c:326
 msgid "File is busy"
 msgstr "A fájl foglalt"
 
-#: ../libloudermouth/lm-bs-transfer.c:314
+#: ../libloudermouth/lm-bs-transfer.c:328
 msgid "Bad memory"
 msgstr "Hibás memória"
 
-#: ../libloudermouth/lm-bs-transfer.c:316
+#: ../libloudermouth/lm-bs-transfer.c:330
 msgid "Too many levels of symbolic links"
 msgstr "A szimbolikus linkek szintje túl mély"
 
-#: ../libloudermouth/lm-bs-transfer.c:318
-#: ../libloudermouth/lm-bs-transfer.c:341
+#: ../libloudermouth/lm-bs-transfer.c:332
+#: ../libloudermouth/lm-bs-transfer.c:355
 msgid "No space is available"
 msgstr "Nem érhető el terület"
 
-#: ../libloudermouth/lm-bs-transfer.c:320
+#: ../libloudermouth/lm-bs-transfer.c:334
 msgid "Virtual memory exhausted"
 msgstr "A virtuális memória elfogyott"
 
-#: ../libloudermouth/lm-bs-transfer.c:322
+#: ../libloudermouth/lm-bs-transfer.c:336
 msgid "Too many open files"
 msgstr "Túl sok nyitott fájl"
 
-#: ../libloudermouth/lm-bs-transfer.c:325
-#: ../libloudermouth/lm-bs-transfer.c:337
+#: ../libloudermouth/lm-bs-transfer.c:339
+#: ../libloudermouth/lm-bs-transfer.c:351
 msgid "Input/output error"
 msgstr "Bemeneti/kimeneti hiba"
 
-#: ../libloudermouth/lm-bs-transfer.c:328
-#: ../libloudermouth/lm-bs-transfer.c:343
+#: ../libloudermouth/lm-bs-transfer.c:342
+#: ../libloudermouth/lm-bs-transfer.c:357
 msgid "No such device"
 msgstr "Nincs ilyen eszköz"
 
-#: ../libloudermouth/lm-bs-transfer.c:335
+#: ../libloudermouth/lm-bs-transfer.c:349
 msgid "File is too large"
 msgstr "A fájl túl nagy"
 
-#: ../libloudermouth/lm-bs-transfer.c:349
+#: ../libloudermouth/lm-bs-transfer.c:363
 msgid "Unknown error"
 msgstr "Ismeretlen hiba"
 
@@ -536,7 +523,7 @@ msgstr "Kapcsolódás"
 msgid "<b>No Account Selected</b>"
 msgstr "<b>Nincs kiválasztva fiók</b>"
 
-#: ../src/gossip-accounts-dialog.c:386
+#: ../src/gossip-accounts-dialog.c:386 ../ui/main.glade.h:102
 msgid ""
 "To add a new account, you can click on the 'Add' button and a new entry will "
 "be created for you to start configuring.\n"
@@ -588,35 +575,35 @@ msgstr ""
 "\n"
 "Ha később a fiók visszaállítása mellett dönt, akkor ezek elérhetővé válnak."
 
-#: ../src/gossip-account-chooser.c:812
+#: ../src/gossip-account-chooser.c:839
 msgid "All"
 msgstr "Minden"
 
-#: ../src/gossip-account-widget-jabber.c:409
+#: ../src/gossip-account-widget-jabber.c:423
 msgid "Successfully registered your new account settings."
 msgstr "Az új fiókbeállítások sikeresen regisztrálva."
 
-#: ../src/gossip-account-widget-jabber.c:416
+#: ../src/gossip-account-widget-jabber.c:430
 msgid "You should now be able to connect to your new account."
 msgstr "Mostantól kapcsolódhat az új fiókjához."
 
-#: ../src/gossip-account-widget-jabber.c:419
+#: ../src/gossip-account-widget-jabber.c:433
 msgid "Failed to register your new account settings."
 msgstr "Az új fiók beállításainak regisztrálása meghiúsult"
 
-#: ../src/gossip-account-widget-jabber.c:538
+#: ../src/gossip-account-widget-jabber.c:552
 msgid "Successfully changed your account password."
 msgstr "A fiók jelszava sikeresen módosítva."
 
-#: ../src/gossip-account-widget-jabber.c:545
+#: ../src/gossip-account-widget-jabber.c:559
 msgid "You should now be able to connect with your new password."
 msgstr "Mostantól kapcsolódhat az új jelszavával."
 
-#: ../src/gossip-account-widget-jabber.c:548
+#: ../src/gossip-account-widget-jabber.c:562
 msgid "Failed to change your account password."
 msgstr "A fiók jelszavának módosítása meghiúsult."
 
-#: ../src/gossip-account-widget-jabber.c:628
+#: ../src/gossip-account-widget-jabber.c:642
 #, c-format
 msgid ""
 "Please enter a new password for this account:\n"
@@ -639,66 +626,66 @@ msgstr "Információk lekérve, kérem várjon..."
 msgid "I would like to add you to my contact list."
 msgstr "Szeretném hozzáadni Önt a partnerlistámhoz."
 
-#: ../src/gossip-app.c:513
+#: ../src/gossip-app.c:514
 msgid "Show and edit accounts"
 msgstr "Fiókok megjelenítése és szerkesztése"
 
-#: ../src/gossip-app.c:877
+#: ../src/gossip-app.c:886
 msgid "To summarize:"
 msgstr "Összegzendő:"
 
-#: ../src/gossip-app.c:904
+#: ../src/gossip-app.c:913
 #, c-format
 msgid "%d new message"
 msgid_plural "%d new messages"
 msgstr[0] "%d új üzenet"
 msgstr[1] "%d új üzenet"
 
-#: ../src/gossip-app.c:909
+#: ../src/gossip-app.c:918
 #, c-format
 msgid "%d subscription request"
 msgid_plural "%d subscription requests"
 msgstr[0] "%d feliratkozási kérés"
 msgstr[1] "%d feliratkozási kérés"
 
-#: ../src/gossip-app.c:914
+#: ../src/gossip-app.c:923
 #, c-format
 msgid "%d file transfer request"
 msgid_plural "%d file transfer requests"
 msgstr[0] "%d fájlátviteli kérés"
 msgstr[1] "%d fájlátviteli kérés"
 
-#: ../src/gossip-app.c:919
+#: ../src/gossip-app.c:928
 #, c-format
 msgid "%d server message"
 msgid_plural "%d server messages"
 msgstr[0] "%d kiszolgálóüzenet"
 msgstr[1] "%d kiszolgálóüzenet"
 
-#: ../src/gossip-app.c:924
+#: ../src/gossip-app.c:933
 #, c-format
 msgid "%d error"
 msgid_plural "%d errors"
 msgstr[0] "%d hiba"
 msgstr[1] "%d hiba"
 
-#: ../src/gossip-app.c:949
+#: ../src/gossip-app.c:958
 msgid "If you quit, you will lose all unread information."
 msgstr "Ha kilép, minden olvasatlan információt elveszít."
 
-#: ../src/gossip-app.c:1014
+#: ../src/gossip-app.c:1023
 msgid "Gossip is still running, it is just hidden."
 msgstr "A Gossip még fut, csak el van rejtve."
 
-#: ../src/gossip-app.c:1015
+#: ../src/gossip-app.c:1024
 msgid "Click on the notification area icon to show Gossip."
 msgstr "A Gossip megjelenítéséhez kattintson az értesítési terület ikonra."
 
-#: ../src/gossip-app.c:1030
+#: ../src/gossip-app.c:1039
 msgid "You were about to quit!"
 msgstr "Megpróbált kilépni"
 
-#: ../src/gossip-app.c:1031
+#: ../src/gossip-app.c:1040
 msgid ""
 "Since no system or notification tray has been found, this action would "
 "normally quit Gossip.\n"
@@ -712,15 +699,15 @@ msgstr ""
 "Ez csak egy emlékeztető, mostantól a Gossip ezen művelet végrehajtásakor "
 "kilép, hacsak nem jelöli be az alábbi lehetőséget."
 
-#: ../src/gossip-app.c:1412 ../src/gossip-edit-contact-dialog.c:231
+#: ../src/gossip-app.c:1439 ../src/gossip-edit-contact-dialog.c:231
 msgid "Group"
 msgstr "Csoport"
 
-#: ../src/gossip-app.c:1433
+#: ../src/gossip-app.c:1460
 msgid "Contact"
 msgstr "Partner"
 
-#: ../src/gossip-app.c:2354
+#: ../src/gossip-app.c:2383
 msgid "Edit Account _Details"
 msgstr "A _fiók részleteinek szerkesztése"
 
@@ -748,7 +735,7 @@ msgstr "Válassza ki, hogy kit szeretne meghívni a szobába:"
 msgid "Select which room you would like to invite:"
 msgstr "Válassza ki, hogy melyik szobát szeretné meghívni:"
 
-#: ../src/gossip-chat-manager.c:158 ../src/gossip-notify.c:508
+#: ../src/gossip-chat-manager.c:158
 #, c-format
 msgid "New message from %s"
 msgstr "Új üzenet a következőtől: %s"
@@ -765,53 +752,53 @@ msgstr "_Hivatkozás megnyitása"
 msgid "Your invitation has been declined"
 msgstr "A meghívását elutasították"
 
-#: ../src/gossip-chat-view.c:885 ../ui/chat.glade.h:15
+#: ../src/gossip-chat-view.c:884 ../ui/chat.glade.h:16
 msgid "You have been invited to join a chat conference."
 msgstr "Meghívást kapott egy konferenciacsevegésre."
 
-#: ../src/gossip-chat-view.c:908
+#: ../src/gossip-chat-view.c:907
 msgid "Accept"
 msgstr "Elfogadás"
 
-#: ../src/gossip-chat-view.c:924
+#: ../src/gossip-chat-view.c:923
 msgid "Decline"
 msgstr "Elutasítás"
 
-#: ../src/gossip-chat-window.c:736 ../src/gossip-chat-window.c:766
-#: ../ui/main.glade.h:64
+#: ../src/gossip-chat-window.c:748 ../src/gossip-chat-window.c:778
+#: ../ui/main.glade.h:65
 msgid "New Message"
 msgid_plural "New Messages"
 msgstr[0] "Új üzenet"
 msgstr[1] "Új üzenetek"
 
-#: ../src/gossip-chat-window.c:742
+#: ../src/gossip-chat-window.c:754
 msgid "Chat Room"
 msgstr "Csevegőszoba"
 
-#: ../src/gossip-chat-window.c:747 ../src/gossip-chat-window.c:770
+#: ../src/gossip-chat-window.c:759 ../src/gossip-chat-window.c:782
 #, c-format
 msgid "Conversation"
 msgid_plural "Conversations (%d)"
 msgstr[0] "Társalgás"
 msgstr[1] "Társalgások (%d)"
 
-#: ../src/gossip-chat-window.c:1372
+#: ../src/gossip-chat-window.c:1448
 msgid "Typing a message."
 msgstr "Üzenet írása."
 
-#: ../src/gossip-chatrooms-window.c:135
+#: ../src/gossip-chatrooms-window.c:147
 msgid "Name"
 msgstr "Név"
 
-#: ../src/gossip-chatrooms-window.c:157
+#: ../src/gossip-chatrooms-window.c:154
 msgid "Room"
 msgstr "Szoba"
 
-#: ../src/gossip-chatrooms-window.c:166
+#: ../src/gossip-chatrooms-window.c:162
 msgid "Server"
 msgstr "Kiszolgáló"
 
-#: ../src/gossip-chatrooms-window.c:175
+#: ../src/gossip-chatrooms-window.c:196
 msgid "Auto Connect"
 msgstr "Automatikus kapcsolódás"
 
@@ -827,7 +814,7 @@ msgstr "_Partner"
 msgid "_Group"
 msgstr "_Csoport"
 
-#: ../src/gossip-contact-list.c:336 ../ui/main.glade.h:117
+#: ../src/gossip-contact-list.c:336
 msgid "_Chat"
 msgstr "_Csevegés"
 
@@ -847,12 +834,11 @@ msgstr "Partnerinformációk megjelenítése"
 msgid "Re_name"
 msgstr "Át_nevezés"
 
-#: ../src/gossip-contact-list.c:344 ../src/gossip-contact-list.c:3023
+#: ../src/gossip-contact-list.c:344 ../src/gossip-contact-list.c:3041
 msgid "Rename"
 msgstr "Átnevezés"
 
-#: ../src/gossip-contact-list.c:348 ../ui/chat.glade.h:22
-#: ../ui/main.glade.h:123
+#: ../src/gossip-contact-list.c:348
 msgid "_Edit"
 msgstr "S_zerkesztés"
 
@@ -892,8 +878,8 @@ msgstr "E-_mail..."
 msgid "Email contact"
 msgstr "E-mail a partnernek"
 
-#: ../src/gossip-contact-list.c:368 ../ui/chat.glade.h:29
-#: ../ui/main.glade.h:151
+#: ../src/gossip-contact-list.c:368 ../ui/chat.glade.h:30
+#: ../ui/main.glade.h:153
 msgid "_View Previous Conversations"
 msgstr "K_orábbi társalgások megjelenítése"
 
@@ -902,11 +888,11 @@ msgid "View previous conversations with this contact"
 msgstr "A partnerrel folytatott korábbi társalgások megjelenítése"
 
 # fixme: wtf is a "roster"?
-#: ../src/gossip-contact-list.c:2934
+#: ../src/gossip-contact-list.c:2952
 msgid "Do you want to remove this contact from your roster?"
 msgstr "El szeretné távolítani ezt a partnert a névsorból?"
 
-#: ../src/gossip-contact-list.c:3019
+#: ../src/gossip-contact-list.c:3037
 #, c-format
 msgid ""
 "Please enter a new name for the group:\n"
@@ -938,111 +924,152 @@ msgstr ""
 "\n"
 "A kiszolgálóról lekérheti a partnerinformációkat."
 
-#: ../src/gossip-ft-window.c:189
+#: ../src/gossip-ft-dialog.c:223
 #, c-format
 msgid "New file transfer request from %s"
 msgstr "Új fájlküldési kérés a következőtől: %s"
 
-#: ../src/gossip-ft-window.c:212
-#, c-format
-msgid "The file \"%s\" has been transfered successfully."
-msgstr "A(z) \"%s\" fájl átvitele sikeresen befejeződött."
-
-#: ../src/gossip-ft-window.c:220
-msgid "File transfer complete"
-msgstr "A fájlátvitel befejeződött"
-
-#: ../src/gossip-ft-window.c:257
+#: ../src/gossip-ft-dialog.c:308
 msgid "Your file transfer offer declined."
 msgstr "A fájl átvitelét visszautasították."
 
-#: ../src/gossip-ft-window.c:258
+#: ../src/gossip-ft-dialog.c:309
 msgid "The other user decided not to continue."
 msgstr "A másik felhasználó a megszakítást választotta."
 
-#: ../src/gossip-ft-window.c:263
+#: ../src/gossip-ft-dialog.c:314
 msgid "Unable to complete the file transfer."
 msgstr "A fájlátvitel nem fejezhető be."
 
-#: ../src/gossip-ft-window.c:268
+#: ../src/gossip-ft-dialog.c:319
 msgid "Unable to start the file transfer."
 msgstr "A fájlátvitel nem indítható el."
 
-#: ../src/gossip-ft-window.c:273
+#: ../src/gossip-ft-dialog.c:324
 msgid "File transfer is not supported by both parties."
 msgstr "A fájlátvitelt nem támogatja mindkét fél."
 
-#: ../src/gossip-ft-window.c:277
+#: ../src/gossip-ft-dialog.c:328
 msgid "An unknown error occurred during file transfer."
 msgstr "Ismeretlen hiba lépett fel a fájlátvitel közben."
 
-#: ../src/gossip-ft-window.c:366
+#: ../src/gossip-ft-dialog.c:492
+msgid "Transfer complete"
+msgstr "A fájlátvitel befejeződött"
+
+#: ../src/gossip-ft-dialog.c:498
+msgid "The file has been transfered successfully."
+msgstr "A fájl átvitele sikeresen befejeződött."
+
+#: ../src/gossip-ft-dialog.c:533
+msgid "Transferring file"
+msgstr "Fájl átvitele"
+
+#: ../src/gossip-ft-dialog.c:539
+msgid "Please wait while the file is transferred"
+msgstr "Kis türelmet a fájlátvitel befejezéséig"
+
+#: ../src/gossip-ft-dialog.c:609
 #, c-format
-msgid "%s would like to send you a file."
-msgstr "%s szeretne egy fájlt küldeni Önnek."
+msgid "%s would like to send you a file"
+msgstr "%s egy fájlt szeretne küldeni Önnek"
 
-#: ../src/gossip-ft-window.c:369
-msgid "Someone would like to send you a file."
-msgstr "Valaki szeretne egy fájlt küldeni Önnek."
+#: ../src/gossip-ft-dialog.c:611
+msgid "Someone would like to send you a file"
+msgstr "Valaki szeretne egy fájlt küldeni Önnek"
 
-#: ../src/gossip-ft-window.c:470
-msgid "Save file as..."
-msgstr "Fájl mentése másként..."
+#: ../src/gossip-ft-dialog.c:614 ../ui/file-transfer.glade.h:2
+msgid "Do you want to accept this file?"
+msgstr "Szeretné elfogadni ezt a fájlt?"
 
-#: ../src/gossip-ft-window.c:573
+#: ../src/gossip-ft-dialog.c:617
+#, c-format
+msgid "Attempting to send file to %s"
+msgstr "Kísérlet fájlküldésre a következőnek: %s"
+
+#: ../src/gossip-ft-dialog.c:619
+msgid "Attempting to send file"
+msgstr "Kísérlet fájlküldésre"
+
+#: ../src/gossip-ft-dialog.c:622
+msgid "Please wait while the other participant responds"
+msgstr "Kis türelmet, amíg a másik résztvevő válaszol"
+
+#: ../src/gossip-ft-dialog.c:745
 msgid "Select a file"
 msgstr "Válasszon ki egy fájlt"
 
-#: ../src/gossip-group-chat.c:428
+#: ../src/gossip-group-chat.c:480
 msgid "Connecting..."
 msgstr "Kapcsolódás..."
 
 #. FIXME: Need special case for nickname to put an
 #. * entry in the chat view and to request a new nick.
 #.
-#: ../src/gossip-group-chat.c:482
+#: ../src/gossip-group-chat.c:547
 msgid "Retry connection"
 msgstr "Kapcsolódás újrapróbálása"
 
 #. i18n: An event, as in "has now been connected".
-#: ../src/gossip-group-chat.c:507 ../src/gossip-private-chat.c:612
+#: ../src/gossip-group-chat.c:575 ../src/gossip-private-chat.c:612
 msgid "Connected"
 msgstr "Kapcsolódva"
 
-#: ../src/gossip-group-chat.c:560 ../src/gossip-private-chat.c:638
+#: ../src/gossip-group-chat.c:629 ../src/gossip-private-chat.c:638
 msgid "Disconnected"
 msgstr "Kapcsolat bontva"
 
 #. Send event to chat window
-#: ../src/gossip-group-chat.c:762
+#: ../src/gossip-group-chat.c:832
 #, c-format
 msgid "Invited %s to join this chat conference."
 msgstr "%s meghívva erre a konferenciacsevegésre."
 
-#: ../src/gossip-group-chat.c:1050
+#: ../src/gossip-group-chat.c:910
 msgid "<b>Topic:</b>"
 msgstr "<b>Téma:</b>"
 
-#: ../src/gossip-group-chat.c:1289
+#: ../src/gossip-group-chat.c:1105
+msgid "You have been kicked from this room"
+msgstr "Kirúgták ebből a szobából"
+
+#: ../src/gossip-group-chat.c:1234
 #, c-format
 msgid "%s has set the topic: %s"
 msgstr "%s beállította a témát: %s"
 
-#: ../src/gossip-group-chat.c:1352
+#: ../src/gossip-group-chat.c:1413
 msgid "Enter the new topic you want to set for this room:"
 msgstr "Adja meg a szoba új témáját:"
 
-#: ../src/gossip-group-chat.c:1537
+#: ../src/gossip-group-chat.c:1429
+msgid "Enter the new nickname you want to be know by:"
+msgstr "Adja meg az új becenevét:"
+
+#: ../src/gossip-group-chat.c:1453
+#, c-format
+msgid "Kicking %s"
+msgstr "%s kirúgása"
+
+#: ../src/gossip-group-chat.c:1461
+msgid "You have been removed from the room by an administrator."
+msgstr "Egy adminisztrátor eltávolította a szobából."
+
+#: ../src/gossip-group-chat.c:1833
 #, c-format
 msgid "%s has joined the room"
 msgstr "%s belépett a szobába"
 
-#: ../src/gossip-group-chat.c:1572
+#: ../src/gossip-group-chat.c:1870
 #, c-format
 msgid "%s has left the room"
 msgstr "%s elhagyta a szobát"
 
-#: ../src/gossip-group-chat.c:1916
+#: ../src/gossip-group-chat.c:2133
+msgid "Nick was not recogized"
+msgstr "A becenév nem ismert"
+
+#: ../src/gossip-group-chat.c:2255
 #, c-format
 msgid "Topic: %s"
 msgstr "Téma: %s"
@@ -1051,17 +1078,21 @@ msgstr "Téma: %s"
 msgid "Do not show this again"
 msgstr "Ne mutassa ezt újra"
 
-#: ../src/gossip-log-window.c:474
+#: ../src/gossip-log-window.c:522 ../src/gossip-log-window.c:1968
 msgid "Account"
 msgstr "Fiók"
 
-#: ../src/gossip-log-window.c:481
+#: ../src/gossip-log-window.c:529 ../src/gossip-log-window.c:1977
 msgid "Conversation With"
 msgstr "Társalgás a következővel:"
 
-#: ../src/gossip-log-window.c:491
+#: ../src/gossip-log-window.c:539 ../src/gossip-log-window.c:1988
 msgid "Date"
 msgstr "Dátum"
+
+#: ../src/gossip-log-window.c:2000
+msgid "Link"
+msgstr "Hivatkozás"
 
 #: ../src/gossip-main.c:81
 msgid "Don't connect on startup"
@@ -1083,99 +1114,138 @@ msgstr "Melyik fiókhoz kapcsolódjon indításkor"
 msgid "ACCOUNT-NAME"
 msgstr "FIÓKNÉV"
 
-#: ../src/gossip-main.c:104 ../src/gossip-main.c:119
+#: ../src/gossip-main.c:104 ../src/gossip-main.c:128
 msgid "- Gossip Instant Messenger"
 msgstr "- Gossip azonnali üzenetküldő"
 
-#: ../src/gossip-main.c:135
+#: ../src/gossip-main.c:144
 msgid "You can not use --no-connect together with --account"
 msgstr "Nem használhatja a --no-connect és a --account kapcsolókat"
 
-#: ../src/gossip-main.c:147
+#: ../src/gossip-main.c:156
 msgid "No accounts available."
 msgstr "Nem állnak rendelkezésre fiókok."
 
-#: ../src/gossip-main.c:152
+#: ../src/gossip-main.c:161
 msgid "Available accounts:"
 msgstr "Rendelkezésre álló fiókok:"
 
-#: ../src/gossip-main.c:162
+#: ../src/gossip-main.c:171
 msgid "[default]"
 msgstr "[alapértelmezett]"
 
-#: ../src/gossip-main.c:178
+#: ../src/gossip-main.c:187
 #, c-format
 msgid "There is no account with the name '%s'."
 msgstr "\"%s\" nevű fiók nem létezik."
 
-#: ../src/gossip-new-chatroom-dialog.c:194
-#: ../src/gossip-new-chatroom-dialog.c:207 ../ui/group-chat.glade.h:5
+#: ../src/gossip-new-chatroom-dialog.c:206
+#: ../src/gossip-new-chatroom-dialog.c:219 ../ui/group-chat.glade.h:5
 msgid "Join"
 msgstr "Csatlakozás"
 
-#: ../src/gossip-new-chatroom-dialog.c:201
+#: ../src/gossip-new-chatroom-dialog.c:213
 msgid "Create"
 msgstr "Létrehozás"
 
-#: ../src/gossip-new-chatroom-dialog.c:548 ../ui/main.glade.h:34
-msgid "Chat Rooms"
-msgstr "Csevegőszobák"
+#: ../src/gossip-new-chatroom-dialog.c:497
+msgid "Rooms"
+msgstr "Szobák"
 
-#: ../src/gossip-new-chatroom-dialog.c:789
+#: ../src/gossip-new-chatroom-dialog.c:536
+msgid "Users"
+msgstr "Felhasználók"
+
+#: ../src/gossip-new-chatroom-dialog.c:570
+msgid "Description"
+msgstr "Leírás"
+
+#: ../src/gossip-new-chatroom-dialog.c:821
 #, c-format
-msgid "Found %d conference rooms"
-msgstr "%d konferenciaszoba található"
+msgid "Found %d conference room"
+msgid_plural "Found %d conference rooms"
+msgstr[0] "%d konferenciaszoba található"
+msgstr[1] "%d konferenciaszoba található"
 
-#: ../src/gossip-new-chatroom-dialog.c:825
+#: ../src/gossip-new-chatroom-dialog.c:860
 msgid "Browsing for conference rooms, please wait..."
 msgstr "Konferenciaszobák keresése, kérem várjon..."
 
-#: ../src/gossip-new-chatroom-dialog.c:866
+#: ../src/gossip-new-chatroom-dialog.c:904
 msgid "Browsing cancelled!"
 msgstr "A keresés megszakítva"
 
-#: ../src/gossip-notify.c:229 ../src/gossip-private-chat.c:508
+#: ../src/gossip-notify.c:224
 #, c-format
-msgid "%s has come online"
-msgstr "%s elérhetővé vált"
+msgid "%s is %s"
+msgstr "%s a következő: %s"
 
-#: ../src/gossip-notify.c:246 ../src/gossip-notify.c:354
-#: ../src/gossip-notify.c:536
+#: ../src/gossip-notify.c:228
+msgid "Contact Online"
+msgstr "A partner elérhető"
+
+#: ../src/gossip-notify.c:241 ../src/gossip-notify.c:349
+#: ../src/gossip-notify.c:563
 msgid "Default"
 msgstr "Alapértelmezett"
 
-#: ../src/gossip-notify.c:249
+#: ../src/gossip-notify.c:244
 msgid "Chat!"
 msgstr "Csevegés!"
 
-#: ../src/gossip-notify.c:301 ../src/gossip-subscription-dialog.c:369
+#: ../src/gossip-notify.c:296
 #, c-format
-msgid "%s wants to be added to your contact list for your '%s' account."
-msgstr "%s szeretne felkerülni az Ön partnerlistájára a(z) \"%s\" fiókhoz."
+msgid "%s wants to be added to your contact list for your “%s” account"
+msgstr "%s szeretne felkerülni az Ön \"%s\" fiókjának partnerlistájára"
 
-#: ../src/gossip-notify.c:305 ../src/gossip-subscription-dialog.c:287
+#: ../src/gossip-notify.c:300
 #, c-format
-msgid "Someone wants to be added to your contact list for your '%s' account."
-msgstr "Valaki szeretne felkerülni az Ön partnerlistájára a(z) \"%s\" fiókhoz."
+msgid "Someone wants to be added to your contact list for your “%s” account"
+msgstr "Valaki szeretne felkerülni az Ön \"%s\" fiókjának partnerlistájára"
 
-#: ../src/gossip-notify.c:311 ../src/gossip-subscription-dialog.c:373
+#: ../src/gossip-notify.c:306
 #, c-format
-msgid "%s wants to be added to your contact list."
-msgstr "%s szeretne felkerülni az Ön partnerlistájára."
+msgid "%s wants to be added to your contact list"
+msgstr "%s szeretne felkerülni az Ön partnerlistájára"
 
-#: ../src/gossip-notify.c:315 ../src/gossip-subscription-dialog.c:291
-msgid "Someone wants to be added to your contact list."
-msgstr "Valaki szeretne felkerülni az Ön partnerlistájára."
+#: ../src/gossip-notify.c:310
+msgid "Someone wants to be added to your contact list"
+msgstr "Valaki szeretne felkerülni az Ön partnerlistájára"
 
-#: ../src/gossip-notify.c:336
-msgid "Subscription request"
+#: ../src/gossip-notify.c:331 ../ui/main.glade.h:90
+msgid "Subscription Request"
 msgstr "Feliratkozási kérés"
 
-#: ../src/gossip-notify.c:539
+#. These messages copy (more-or-less) the ones found in the file transfer dialogue.
+#: ../src/gossip-notify.c:375
+#, c-format
+msgid "%s would like to send you “%s”"
+msgstr "%s a következőt szeretné küldeni Önnek: \"%s\""
+
+#: ../src/gossip-notify.c:378 ../ui/file-transfer.glade.h:3
+msgid "File Transfer"
+msgstr "Fájlátvitel"
+
+#: ../src/gossip-notify.c:535
+#, c-format
+msgid "New Message from %s"
+msgstr "Új üzenet a következőtől: %s"
+
+#: ../src/gossip-notify.c:544
+#, c-format
+msgid "“%s...”"
+msgstr "\"%s...\""
+
+#: ../src/gossip-notify.c:546
+#, c-format
+msgid "“%s”"
+msgstr "\"%s\""
+
+#: ../src/gossip-notify.c:566
 msgid "Show"
 msgstr "Megjelenítés"
 
-#: ../src/gossip-notify.c:545
+#: ../src/gossip-notify.c:572
 msgid "Contact Information"
 msgstr "Partnerinformációk"
 
@@ -1183,11 +1253,11 @@ msgstr "Partnerinformációk"
 msgid "Language"
 msgstr "Nyelv"
 
-#: ../src/gossip-presence-chooser.c:481
+#: ../src/gossip-presence-chooser.c:502
 msgid "Are you sure you want to clear the list?"
 msgstr "Ki kívánja üríteni a listát?"
 
-#: ../src/gossip-presence-chooser.c:485
+#: ../src/gossip-presence-chooser.c:506
 msgid ""
 "This will remove any custom messages you have added to the list of preset "
 "status messages."
@@ -1195,16 +1265,16 @@ msgstr ""
 "Ez eltávolít minden egyéni üzenetet, amit az előre beállított "
 "állapotüzenetek listájához adott."
 
-#: ../src/gossip-presence-chooser.c:490
+#: ../src/gossip-presence-chooser.c:511
 msgid "Clear List"
 msgstr "Lista törlése"
 
-#: ../src/gossip-presence-chooser.c:986 ../src/gossip-presence-chooser.c:1014
-#: ../src/gossip-presence-chooser.c:1042
+#: ../src/gossip-presence-chooser.c:1025 ../src/gossip-presence-chooser.c:1053
+#: ../src/gossip-presence-chooser.c:1081
 msgid "Custom message..."
 msgstr "Egyéni üzenet..."
 
-#: ../src/gossip-presence-chooser.c:1051
+#: ../src/gossip-presence-chooser.c:1090
 msgid "Clear List..."
 msgstr "Lista törlése..."
 
@@ -1212,6 +1282,11 @@ msgstr "Lista törlése..."
 #, c-format
 msgid "%s went offline"
 msgstr "%s kilépett"
+
+#: ../src/gossip-private-chat.c:508
+#, c-format
+msgid "%s has come online"
+msgstr "%s elérhetővé vált"
 
 #. i18n: An event, as in "has now been connected".
 #: ../src/gossip-private-chat.c:589
@@ -1232,34 +1307,53 @@ msgstr "Javaslat a szóra"
 msgid "New subscription request from %s"
 msgstr "Új feliratkozási kérés a következőtől: %s"
 
+#: ../src/gossip-subscription-dialog.c:287
+#, c-format
+msgid "Someone wants to be added to your contact list for your '%s' account."
+msgstr "Valaki szeretne felkerülni az Ön partnerlistájára a(z) \"%s\" fiókhoz."
+
+#: ../src/gossip-subscription-dialog.c:291
+msgid "Someone wants to be added to your contact list."
+msgstr "Valaki szeretne felkerülni az Ön partnerlistájára."
+
 #: ../src/gossip-subscription-dialog.c:294
 msgid "Do you want to add this person to your contact list?"
 msgstr "Szeretné ezt a személyt felvenni a partnerlistájára?"
+
+#: ../src/gossip-subscription-dialog.c:369
+#, c-format
+msgid "%s wants to be added to your contact list for your '%s' account."
+msgstr "%s szeretne felkerülni az Ön partnerlistájára a(z) \"%s\" fiókhoz."
+
+#: ../src/gossip-subscription-dialog.c:373
+#, c-format
+msgid "%s wants to be added to your contact list."
+msgstr "%s szeretne felkerülni az Ön partnerlistájára."
 
 #: ../src/gossip-subscription-dialog.c:379
 #, c-format
 msgid "Do you want to add %s to your contact list?"
 msgstr "Szeretné felvenni a következőt: %s a partnerlistájára?"
 
-#: ../src/gossip-ui-utils.c:74
+#: ../src/gossip-ui-utils.c:84
 #, c-format
 msgid "Please enter your %s account password"
 msgstr "Kérem adja meg a(z) %s fiókjának jelszavát"
 
-#: ../src/gossip-ui-utils.c:85
+#: ../src/gossip-ui-utils.c:95
 #, c-format
 msgid "Logging in to account '%s'"
 msgstr "Bejelentkezés a(z) \"%s\" fiókkal"
 
-#: ../src/gossip-ui-utils.c:89
+#: ../src/gossip-ui-utils.c:99
 msgid "Remember Password?"
 msgstr "Jelszó megjegyzése?"
 
-#: ../src/gossip-ui-utils.c:386
+#: ../src/gossip-ui-utils.c:497
 msgid "Could not display the help contents."
 msgstr "Nem lehet megjeleníteni a súgótartalmat."
 
-#: ../src/gossip-theme-boxes.c:882 ../src/gossip-theme-irc.c:456
+#: ../src/gossip-theme-boxes.c:888 ../src/gossip-theme-irc.c:456
 msgid "%A %d %B %Y"
 msgstr "%y. %B %e %A"
 
@@ -1287,14 +1381,6 @@ msgstr "Válassza ki az avatarját"
 msgid "No Image"
 msgstr "Nincs kép"
 
-#: ../src/gossip-vcard-dialog.c:479
-msgid "Cancel"
-msgstr "Mégsem"
-
-#: ../src/gossip-vcard-dialog.c:486
-msgid "OK"
-msgstr "OK"
-
 #: ../src/gossip-vcard-dialog.c:739
 msgid "The server does not seem to be responding."
 msgstr "Úgy tűnik, a kiszolgáló nem válaszol."
@@ -1304,11 +1390,11 @@ msgid "Try again later."
 msgstr "Próbálja újra később."
 
 #. Birthday chooser
-#: ../src/gossip-vcard-dialog.c:857
+#: ../src/gossip-vcard-dialog.c:856
 msgid "Change"
 msgstr "Módosítás"
 
-#: ../src/sounds/gossip.soundlist.in.h:1 ../ui/chat.glade.h:3
+#: ../src/sounds/gossip.soundlist.in.h:1 ../ui/chat.glade.h:4
 msgid "Chat"
 msgstr "Csevegés"
 
@@ -1325,140 +1411,137 @@ msgid "C_lear"
 msgstr "_Törlés"
 
 #: ../ui/chat.glade.h:2
+msgid "Change Na_me..."
+msgstr "_Név módosítása..."
+
+#: ../ui/chat.glade.h:3
 msgid "Change _Topic..."
 msgstr "_Téma módosítása..."
 
-#: ../ui/chat.glade.h:4
+#: ../ui/chat.glade.h:5
 msgid "Contact Infor_mation"
 msgstr "_Partnerinformációk"
 
-#: ../ui/chat.glade.h:5
+#: ../ui/chat.glade.h:6
 msgid "Cu_t"
 msgstr "_Kivágás"
 
-#: ../ui/chat.glade.h:6
+#: ../ui/chat.glade.h:7
 msgid "In_vite..."
 msgstr "_Meghívás..."
 
-#: ../ui/chat.glade.h:7
+#: ../ui/chat.glade.h:8
 msgid "Insert _Smiley"
 msgstr "Ha_ngulatjel beszúrása"
 
-#: ../ui/chat.glade.h:8
+#: ../ui/chat.glade.h:9
 msgid "Invitation _message:"
 msgstr "Meghívó ü_zenetet:"
 
-#: ../ui/chat.glade.h:9
+#: ../ui/chat.glade.h:10
 msgid "Invite"
 msgstr "Meghívás"
 
-#: ../ui/chat.glade.h:10 ../ui/main.glade.h:59
+#: ../ui/chat.glade.h:11 ../ui/main.glade.h:59
 msgid "Join _New..."
 msgstr "Csatlakozás ú_jhoz..."
 
-#: ../ui/chat.glade.h:11
+#: ../ui/chat.glade.h:12
 msgid "Move Tab _Left"
 msgstr "Lap _balra"
 
-#: ../ui/chat.glade.h:12
+#: ../ui/chat.glade.h:13
 msgid "Move Tab _Right"
 msgstr "Lap j_obbra"
 
-#: ../ui/chat.glade.h:13
+#: ../ui/chat.glade.h:14
 msgid "Select who would you like to invite:"
 msgstr "Válassza ki, hogy kit szeretne meghívni:"
 
-#: ../ui/chat.glade.h:14
+#: ../ui/chat.glade.h:15
 msgid "Send _Email..."
 msgstr "_E-mail küldése..."
 
-#: ../ui/chat.glade.h:16 ../ui/main.glade.h:114
+#: ../ui/chat.glade.h:17 ../ui/main.glade.h:117
 msgid "_Add Contact..."
 msgstr "Partner _felvétele..."
 
-#: ../ui/chat.glade.h:17
+#: ../ui/chat.glade.h:18
 msgid "_Add To Favorites"
 msgstr "_Hozzáadás a kedvencekhez"
 
-#: ../ui/chat.glade.h:18
+#: ../ui/chat.glade.h:19
 msgid "_Close"
 msgstr "_Bezárás"
 
-#: ../ui/chat.glade.h:19
+#: ../ui/chat.glade.h:20
 msgid "_Conversation"
 msgstr "_Társalgás"
 
-#: ../ui/chat.glade.h:20
+#: ../ui/chat.glade.h:21
 msgid "_Copy"
 msgstr "_Másolás"
 
-#: ../ui/chat.glade.h:21
+#: ../ui/chat.glade.h:22
 msgid "_Detach Tab"
 msgstr "_Lap leválasztása"
 
 #: ../ui/chat.glade.h:23
+msgid "_Kick..."
+msgstr "_Kirúgás..."
+
+#: ../ui/chat.glade.h:24
 msgid "_Next Tab"
 msgstr "_Következő lap"
 
-#: ../ui/chat.glade.h:24
+#: ../ui/chat.glade.h:25
 msgid "_Paste"
 msgstr "_Beillesztés"
 
-#: ../ui/chat.glade.h:25
+#: ../ui/chat.glade.h:26
 msgid "_Previous Tab"
 msgstr "_Előző lap"
 
-#: ../ui/chat.glade.h:26 ../ui/main.glade.h:144
+#: ../ui/chat.glade.h:27 ../ui/main.glade.h:146
 msgid "_Room"
 msgstr "Sz_oba"
 
-#: ../ui/chat.glade.h:27
+#: ../ui/chat.glade.h:28
 msgid "_Show Contacts"
 msgstr "Partnerek _mutatása"
 
-#: ../ui/chat.glade.h:28
+#: ../ui/chat.glade.h:29
 msgid "_Tabs"
 msgstr "_Lapok"
+
+#. This is the text that should appear on a menu title. Don't include the prefix 'menu title|' in the translation.
+#: ../ui/chat.glade.h:32 ../ui/main.glade.h:161
+msgid "menu title|_Edit"
+msgstr "S_zerkesztés"
 
 #: ../ui/file-transfer.glade.h:1
 msgid "Contact ID:"
 msgstr "Partnerazonosító:"
 
-#: ../ui/file-transfer.glade.h:2
-msgid "Do you want to accept this file?"
-msgstr "Szeretné elfogadni ezt a fájlt?"
-
-#: ../ui/file-transfer.glade.h:3
-msgid "File Transfer Request"
-msgstr "Fájlátviteli kérés"
-
 #: ../ui/file-transfer.glade.h:4
-msgid "File name:"
-msgstr "Fájlnév:"
+msgid "Location:"
+msgstr "Hely:"
 
-#: ../ui/file-transfer.glade.h:5
-msgid "File size:"
-msgstr "Fájl mérete:"
+#: ../ui/file-transfer.glade.h:5 ../ui/main.glade.h:64
+msgid "Name:"
+msgstr "Név:"
 
 #: ../ui/file-transfer.glade.h:6
 msgid "Not supported yet"
 msgstr "Még nem támogatott"
 
 #: ../ui/file-transfer.glade.h:7
-msgid "This person wishes to send you this file:"
-msgstr "Ez a személy a következő fájlt kívánja Önnek küldeni:"
+msgid "Open _Folder"
+msgstr "_Mappa megnyitása"
 
-#: ../ui/file-transfer.glade.h:8 ../ui/main.glade.h:108
-msgid "Web site:"
-msgstr "Weboldal:"
-
-#: ../ui/file-transfer.glade.h:9 ../ui/main.glade.h:112
-msgid "_Accept"
-msgstr "Elfog_adás"
-
-#: ../ui/file-transfer.glade.h:10 ../ui/main.glade.h:120
-msgid "_Deny"
-msgstr "_Megtagad"
+#: ../ui/file-transfer.glade.h:8
+msgid "Size:"
+msgstr "Méret:"
 
 #: ../ui/group-chat.glade.h:1 ../ui/main.glade.h:25
 msgid "Account:"
@@ -1494,7 +1577,7 @@ msgstr "Csatlakozás ehhez a csevegőszobához a Gossip indításakor"
 msgid "Manage Favorite Rooms"
 msgstr "Kedvenc szobák kezelése"
 
-#: ../ui/group-chat.glade.h:10 ../ui/main.glade.h:62
+#: ../ui/group-chat.glade.h:10 ../ui/main.glade.h:63
 msgid "N_ame:"
 msgstr "Né_v:"
 
@@ -1507,18 +1590,26 @@ msgid "S_erver:"
 msgstr "_Kiszolgáló:"
 
 #: ../ui/group-chat.glade.h:13
+msgid "Show more information about chatrooms found and make the window resizable."
+msgstr "További információk megjelenítése a talált csevegőszobákról és az ablak átméretezhetővé tétele."
+
+#: ../ui/group-chat.glade.h:14
 msgid "This list represents all chat rooms hosted on the server you have entered."
 msgstr "A lista a kiszolgálón található összes csevegőszobát képviseli."
 
-#: ../ui/group-chat.glade.h:14 ../ui/main.glade.h:134
+#: ../ui/group-chat.glade.h:15 ../ui/main.glade.h:135
 msgid "_Nickname:"
 msgstr "_Becenév:"
 
-#: ../ui/group-chat.glade.h:15
+#: ../ui/group-chat.glade.h:16
+msgid "_Password"
+msgstr "_Jelszó"
+
+#: ../ui/group-chat.glade.h:17
 msgid "_Room:"
 msgstr "Sz_oba:"
 
-#: ../ui/group-chat.glade.h:16 ../ui/main.glade.h:146
+#: ../ui/group-chat.glade.h:18 ../ui/main.glade.h:148
 msgid "_Server:"
 msgstr "_Kiszolgáló:"
 
@@ -1610,7 +1701,9 @@ msgstr "<span size=\"smaller\">Például: Gábor vagy felhasználó@jabber.org</
 msgid ""
 "<span size=\"smaller\">Note: You must select an account if the contact is "
 "unknown</span>"
-msgstr "<span size=\"smaller\">Megjegyzés: ki kell választania egy fiókot, ha a partner ismeretlen</span>"
+msgstr ""
+"<span size=\"smaller\">Megjegyzés: ki kell választania egy fiókot, ha a "
+"partner ismeretlen</span>"
 
 #: ../ui/main.glade.h:23
 msgid "A unique name for this account to identify it personally to you."
@@ -1649,6 +1742,10 @@ msgstr "_Változtatás"
 #: ../ui/main.glade.h:33
 msgid "Ch_at"
 msgstr "_Csevegés"
+
+#: ../ui/main.glade.h:34
+msgid "Chat Rooms"
+msgstr "Csevegőszobák"
 
 #: ../ui/main.glade.h:35
 msgid "Chat Th_eme:"
@@ -1745,50 +1842,54 @@ msgid "Join _Favorites"
 msgstr "_Csatlakozás a kedvencekhez"
 
 #: ../ui/main.glade.h:60
+msgid "Links"
+msgstr "Hivatkozások"
+
+#: ../ui/main.glade.h:61
 msgid "Login I_D:"
 msgstr "Bejelentkezési a_zonosító:"
 
-#: ../ui/main.glade.h:61
+#: ../ui/main.glade.h:62
 msgid "Manage Favorites..."
 msgstr "Kedvencek kezelése..."
 
-#: ../ui/main.glade.h:63
-msgid "Name:"
-msgstr "Név:"
-
-#: ../ui/main.glade.h:65
+#: ../ui/main.glade.h:66
 msgid "Notifications"
 msgstr "Értesítések"
 
-#: ../ui/main.glade.h:66
+#: ../ui/main.glade.h:67
 msgid "OS:"
 msgstr "OS:"
 
-#: ../ui/main.glade.h:67
+#: ../ui/main.glade.h:68
 msgid "Pass_word:"
 msgstr "_Jelszó:"
 
-#: ../ui/main.glade.h:68
+#: ../ui/main.glade.h:69
 msgid "Personal Details"
 msgstr "Személyes adatok"
 
-#: ../ui/main.glade.h:69
+#: ../ui/main.glade.h:70
 msgid "Preferences"
 msgstr "Beállítások"
 
-#: ../ui/main.glade.h:70
+#: ../ui/main.glade.h:71
 msgid "R_egister"
 msgstr "_Regisztráció"
 
-#: ../ui/main.glade.h:71
+#: ../ui/main.glade.h:72
 msgid "Reso_urce:"
 msgstr "_Erőforrás:"
 
-#: ../ui/main.glade.h:72
+#: ../ui/main.glade.h:73
 msgid "Search"
 msgstr "Keresés"
 
-#: ../ui/main.glade.h:73
+#: ../ui/main.glade.h:74
+msgid "Search the log and press enter to continue on to the next item found"
+msgstr "Keresés a naplóban; a következő találatra az Enter megnyomásával léphet"
+
+#: ../ui/main.glade.h:75
 msgid ""
 "Select the groups you want this contact to appear in, you can select more "
 "than one group or no groups."
@@ -1796,7 +1897,7 @@ msgstr ""
 "Válassza ki azokat a csoportokat, amelyekben a partner megjelenjen, "
 "kiválaszthat nulla vagy több csoportot is."
 
-#: ../ui/main.glade.h:74
+#: ../ui/main.glade.h:76
 msgid ""
 "Set the alias you want to use for:\n"
 "<b>foo@bar.baz</b>\n"
@@ -1808,59 +1909,55 @@ msgstr ""
 "\n"
 "A kiszolgálóról lekérheti a partnerinformációkat."
 
-#: ../ui/main.glade.h:78
+#: ../ui/main.glade.h:80
 msgid "Show _Offline Contacts"
 msgstr "Kilé_pett partnerek mutatása"
 
-#: ../ui/main.glade.h:79
+#: ../ui/main.glade.h:81
 msgid "Show _avatars"
 msgstr "_Avatarok megjelenítése"
 
-#: ../ui/main.glade.h:80
+#: ../ui/main.glade.h:82
 msgid "Show _smileys as images"
 msgstr "Hang_ulatjelek képekké alakítása"
 
-#: ../ui/main.glade.h:81
+#: ../ui/main.glade.h:83
 msgid "Show co_mpact contact list"
 msgstr "_Tömör partnerlista mutatása"
 
-#: ../ui/main.glade.h:82
+#: ../ui/main.glade.h:84
 msgid "Sort by _name"
 msgstr "Rendezés _név szerint"
 
-#: ../ui/main.glade.h:83
+#: ../ui/main.glade.h:85
 msgid "Sort by s_tate"
 msgstr "Rendezés áll_apot szerint"
 
-#: ../ui/main.glade.h:84
+#: ../ui/main.glade.h:86
 msgid "Spell Checker"
 msgstr "Helyesírás-ellenőrző"
 
-#: ../ui/main.glade.h:85
+#: ../ui/main.glade.h:87
 msgid "Spell Checking"
 msgstr "Helyesírás-ellenőrzés"
 
-#: ../ui/main.glade.h:86
+#: ../ui/main.glade.h:88
 msgid "Status"
 msgstr "Állapot"
 
-#: ../ui/main.glade.h:87
+#: ../ui/main.glade.h:89
 msgid "Status Message Presets"
 msgstr "Állapotüzenetek listája"
 
-#: ../ui/main.glade.h:88
-msgid "Subscription Request"
-msgstr "Feliratkozási kérés"
-
-#: ../ui/main.glade.h:89
+#: ../ui/main.glade.h:91
 msgid "Suggestions for the word:"
 msgstr "Javaslatok a szóhoz:"
 
-#: ../ui/main.glade.h:90
+#: ../ui/main.glade.h:92
 msgid "Themes"
 msgstr "Témák"
 
-#: ../ui/main.glade.h:91
+#: ../ui/main.glade.h:93
 msgid ""
 "This acts as a filter to the contact list below.\n"
 "\n"
@@ -1872,11 +1969,13 @@ msgid ""
 msgstr ""
 "Ez a lenti partnerlista szűrőjeként működik.\n"
 "\n"
-"A partnerek neveinek vagy azonosítójának darabjait használhatja, például a \"jabber.hu\" mindenkit felsorol, aki ezt a kiszolgálót használja.\n"
+"A partnerek neveinek vagy azonosítójának darabjait használhatja, például a "
+"\"jabber.hu\" mindenkit felsorol, aki ezt a kiszolgálót használja.\n"
 "\n"
-"A csoport nevét használhatja csak egy adott csoporthoz tartozó partnerek megjelenítésére."
+"A csoport nevét használhatja csak egy adott csoporthoz tartozó partnerek "
+"megjelenítésére."
 
-#: ../ui/main.glade.h:96
+#: ../ui/main.glade.h:98
 msgid ""
 "This acts as a filter to the contact list below. You can use segments of "
 "contact's name or ID, for example, \"jabber.org\" will list everyone using "
@@ -1886,205 +1985,220 @@ msgstr ""
 "azonosítójának darabjait használhatja, például a \"jabber.hu\" mindenkit "
 "felsorol, aki ezt a kiszolgálót használja"
 
-#: ../ui/main.glade.h:97
+#: ../ui/main.glade.h:99
 msgid "This is the name that will be used on your roster for this contact"
 msgstr "A partnerhez a névsorban ez a név kerül felhasználásra"
 
-#: ../ui/main.glade.h:98
+#: ../ui/main.glade.h:100
 msgid "This name will be used to identify you in chat windows"
 msgstr "Ön ezzel a névvel lesz azonosítva a csevegőablakokban"
 
-#: ../ui/main.glade.h:99
+#: ../ui/main.glade.h:101
 msgid "This name will be used to identify you when new contacts lookup your details"
 msgstr ""
 "Ön ezzel a névvel lesz azonosítva amikor az új partnerek kikeresik a "
 "részleteit"
 
-#: ../ui/main.glade.h:100
-msgid ""
-"To add a new account, you can click on the 'Add' button and a new entry will "
-"be created for you to started configuring.\n"
-"\n"
-"If you do not want to add an account, simply click on the account you want "
-"to configure in the list on the left."
-msgstr ""
-"Új fiók hozzáadásához kattintson a Hozzáadás gombra és létrejön egy új "
-"bejegyzés a beállítás elkezdéséhez.\n"
-"\n"
-"Ha nem kíván fiókot hozzáadni, akkor kattintson a beállítani kívánt fiókra a "
-"bal oldali listában."
-
-#: ../ui/main.glade.h:103
+#: ../ui/main.glade.h:105
 msgid "Use default name here from the contact's VCard."
 msgstr "Az alapértelmezett név használata a partner VCard-jából."
 
-#: ../ui/main.glade.h:104
+#: ../ui/main.glade.h:106
 msgid "Use encryption (SS_L)"
 msgstr "_Titkosítás használata (SSL)"
 
-#: ../ui/main.glade.h:105
+#: ../ui/main.glade.h:107
 msgid "Use system pro_xy"
 msgstr "Ren_dszerproxy használata"
 
-#: ../ui/main.glade.h:106
+#: ../ui/main.glade.h:108
+msgid "Use this to filter the links found"
+msgstr "Ennek segítségével szűrheti a talált hivatkozásokat"
+
+#: ../ui/main.glade.h:109
 msgid "Version:"
 msgstr "Verzió:"
 
-#: ../ui/main.glade.h:107
+#: ../ui/main.glade.h:110
 msgid "View Previous Conversations"
 msgstr "Korábbi társalgások megjelenítése"
 
-#: ../ui/main.glade.h:109
+#: ../ui/main.glade.h:111
+msgid "Web site:"
+msgstr "Weboldal:"
+
+#: ../ui/main.glade.h:112
 msgid "Which account do you want to use?"
 msgstr "Melyik fiókot szeretné használni?"
 
-#: ../ui/main.glade.h:110
+#: ../ui/main.glade.h:113
 msgid "You are not subscribed to this contact."
 msgstr "Nincs feliratkozva erre a partnerre."
 
-#: ../ui/main.glade.h:111
+#: ../ui/main.glade.h:114
 msgid "_About"
 msgstr "_Névjegy"
 
-#: ../ui/main.glade.h:113
+#: ../ui/main.glade.h:115
+msgid "_Accept"
+msgstr "Elfog_adás"
+
+#: ../ui/main.glade.h:116
 msgid "_Accounts"
 msgstr "_Fiókok"
 
-#: ../ui/main.glade.h:115
+#: ../ui/main.glade.h:118
 msgid "_Add to status message list"
 msgstr "H_ozzáadás az állapotüzenetek listájához"
 
-#: ../ui/main.glade.h:116
+#: ../ui/main.glade.h:119
 msgid "_Birthday:"
 msgstr "S_zületésnap:"
 
-#: ../ui/main.glade.h:118
+#: ../ui/main.glade.h:120
 msgid "_Connect"
 msgstr "Kapcs_olódás"
 
-#: ../ui/main.glade.h:119
+#: ../ui/main.glade.h:121
 msgid "_Contents"
 msgstr "_Tartalom"
 
-#: ../ui/main.glade.h:121
+#: ../ui/main.glade.h:122
+msgid "_Deny"
+msgstr "_Megtagad"
+
+#: ../ui/main.glade.h:123
 msgid "_Description:"
 msgstr "_Leírás:"
 
-#: ../ui/main.glade.h:122
+#: ../ui/main.glade.h:124
 msgid "_Disconnect"
 msgstr "_Bontás"
 
-#: ../ui/main.glade.h:124
+#: ../ui/main.glade.h:125
 msgid "_Email:"
 msgstr "_E-mail:"
 
-#: ../ui/main.glade.h:125
+#: ../ui/main.glade.h:126
 msgid "_Enable spell checking"
 msgstr "_Helyesírás-ellenőrzés bekapcsolása"
 
-#: ../ui/main.glade.h:126
+#: ../ui/main.glade.h:127
 msgid "_Enter the name or contact ID of the person you want to chat to below:"
 msgstr ""
 "A_dja meg a felhasználó nevét vagy partnerazonosítóját, akivel csevegni "
 "szeretne:"
 
-#: ../ui/main.glade.h:127
-msgid "_For:"
-msgstr "_Ehhez:"
-
 #: ../ui/main.glade.h:128
+msgid "_For"
+msgstr "_Ehhez"
+
+#: ../ui/main.glade.h:129
 msgid "_Full Name:"
 msgstr "_Teljes név:"
 
-#: ../ui/main.glade.h:129
+#: ../ui/main.glade.h:130
 msgid "_Group:"
 msgstr "_Csoport:"
 
-#: ../ui/main.glade.h:130
+#: ../ui/main.glade.h:131
 msgid "_Help"
 msgstr "_Súgó"
 
-#: ../ui/main.glade.h:131
+#: ../ui/main.glade.h:132
 msgid "_Name:"
 msgstr "_Név:"
 
-#: ../ui/main.glade.h:132
+#: ../ui/main.glade.h:133
 msgid "_New Message..."
 msgstr "Ú_j üzenet..."
 
-#: ../ui/main.glade.h:133
+#: ../ui/main.glade.h:134
 msgid "_Nick Name:"
 msgstr "_Becenév:"
 
-#: ../ui/main.glade.h:135
+#: ../ui/main.glade.h:136
+msgid "_Open"
+msgstr "_Megnyitás"
+
+#: ../ui/main.glade.h:137
 msgid "_Open new chats in separate windows"
 msgstr "Új csevegések megnyitása _külön ablakokban"
 
-#: ../ui/main.glade.h:136
+#: ../ui/main.glade.h:138
 msgid "_Password:"
 msgstr "_Jelszó:"
 
-#: ../ui/main.glade.h:137
+#: ../ui/main.glade.h:139
 msgid "_Personal Information"
 msgstr "S_zemélyes információk"
 
-#: ../ui/main.glade.h:138
+#: ../ui/main.glade.h:140
 msgid "_Play sound when messages arrive"
 msgstr "_Hang lejátszása üzenetek érkezésekor"
 
-#: ../ui/main.glade.h:139
+#: ../ui/main.glade.h:141
 msgid "_Port:"
 msgstr "_Port:"
 
-#: ../ui/main.glade.h:140
+#: ../ui/main.glade.h:142
 msgid "_Preferences"
 msgstr "_Beállítások"
 
-#: ../ui/main.glade.h:141
+#: ../ui/main.glade.h:143
 msgid "_Quit"
 msgstr "_Kilépés"
 
-#: ../ui/main.glade.h:142
+#: ../ui/main.glade.h:144
 msgid "_Quit Message:"
 msgstr "_Kilépési üzenet:"
 
-#: ../ui/main.glade.h:143
+#: ../ui/main.glade.h:145
 msgid "_Retrieve"
 msgstr "_Lekérés"
 
-#: ../ui/main.glade.h:145
+#: ../ui/main.glade.h:147
 msgid "_Search"
 msgstr "_Keresés"
 
-#: ../ui/main.glade.h:147
+#: ../ui/main.glade.h:149
 msgid "_Show Contact List"
 msgstr "Partnerlista m_utatása"
 
-#: ../ui/main.glade.h:148
+#: ../ui/main.glade.h:150
 msgid "_Subscribe"
 msgstr "_Feliratkozás"
 
-#: ../ui/main.glade.h:149
+#: ../ui/main.glade.h:151
 msgid "_Type:"
 msgstr "_Típus:"
 
-#: ../ui/main.glade.h:150
+#: ../ui/main.glade.h:152
 msgid "_Use for chat rooms"
 msgstr "Használat _csevegőszobákhoz"
 
-#: ../ui/main.glade.h:152
+#: ../ui/main.glade.h:154
 msgid "_Web site:"
 msgstr "_Weboldal:"
 
-#: ../ui/main.glade.h:153
+#: ../ui/main.glade.h:155
+msgid "gtk-copy"
+msgstr ""
+
+#: ../ui/main.glade.h:156
 msgid "irc account settings"
 msgstr "irc fiókbeállítások"
 
-#: ../ui/main.glade.h:154
+#: ../ui/main.glade.h:157
 msgid "jabber account settings"
 msgstr "jabber fiókbeállítások"
 
-#: ../ui/main.glade.h:155
+#. This is the text that should appear on a menu title. Don't include the prefix 'menu title|' in the translation.
+#: ../ui/main.glade.h:159
+msgid "menu title|_Chat"
+msgstr "_Csevegés"
+
+#: ../ui/main.glade.h:162
 msgid "msn account settings"
 msgstr "msn fiókbeállítások"
 
