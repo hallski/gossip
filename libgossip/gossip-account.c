@@ -432,12 +432,18 @@ gossip_account_get_password (GossipAccount *account)
 		return NULL;
 	}
 
-	if (!passwords || g_list_length (passwords) > 1) {
+	if (!passwords) {
+		gossip_debug (DEBUG_DOMAIN, 
+			      "No matching passwords in the keyring");
+		return NULL;
+	}
+
+	if (g_list_length (passwords) > 1) {
 		gossip_debug (DEBUG_DOMAIN, 
 			      "Found %d matching passwords in the keyring, using first available", 
 			      g_list_length (passwords));
 	}
-	
+
 	data = passwords->data;
 	g_free (priv->password);
 	priv->password = g_strdup (data->password);
