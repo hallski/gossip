@@ -237,6 +237,10 @@ chat_view_finalize (GObject *object)
 		g_object_unref (priv->theme);
 	}
 
+	if (priv->scroll_timeout) {
+		g_source_remove (priv->scroll_timeout);
+	}
+	
 	G_OBJECT_CLASS (gossip_chat_view_parent_class)->finalize (object);
 }
 
@@ -1082,11 +1086,9 @@ chat_view_scroll_cb (GossipChatView *view)
 		return FALSE;
 	}
 
-	/* Scroll by 1/3rd of the remaining distance */
 	move_val = left_val;
-
 	if (left_val > 1.5) {
-		move_val /= 3;
+		move_val /= 2.0;
 	}
 
 	gtk_adjustment_set_value (adj, adj->value + move_val);
