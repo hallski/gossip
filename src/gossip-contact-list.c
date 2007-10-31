@@ -782,11 +782,10 @@ contact_list_contact_update (GossipContactList *list,
 	GtkTreeModel          *model;
 	GList                 *iters, *l;
 	gboolean               in_list;
-	gboolean               was_online = FALSE;
-	gboolean               now_online = FALSE;
 	gboolean               set_model = FALSE;
-	gboolean               do_refilter = FALSE;
-	gboolean               do_set_active = FALSE;
+	gboolean               set_active = FALSE;
+	gboolean               was_online = FALSE;
+ 	gboolean               is_online = FALSE;
 	gboolean               is_composing;
 	const GdkPixbuf       *pixbuf;
 	GdkPixbuf             *pixbuf_composing;
@@ -812,7 +811,7 @@ contact_list_contact_update (GossipContactList *list,
 	}
 
 	/* Get online state now. */
-	now_online = gossip_contact_is_online (contact);
+	is_online = gossip_contact_is_online (contact);
 
 	if (!in_list) {
 		gossip_debug (DEBUG_DOMAIN,
@@ -824,7 +823,7 @@ contact_list_contact_update (GossipContactList *list,
 		gossip_debug (DEBUG_DOMAIN,
 			      "Contact:'%s' adding contact, setting active",
 			      gossip_contact_get_name (contact));
-		do_set_active = TRUE;
+		set_active = TRUE;
 	} else {
 		gossip_debug (DEBUG_DOMAIN,
 			      "Contact:'%s' in list:YES, should be:YES",
@@ -840,18 +839,25 @@ contact_list_contact_update (GossipContactList *list,
 		 * and also we want to show them as active (if the
 		 * preference is set of course).
 		 */
-		if (was_online != now_online) {
+		if (was_online != is_online) {
 			gossip_debug (DEBUG_DOMAIN,
 				      "Contact:'%s' online state change, refiltering/setting active",
 				      gossip_contact_get_name (contact));
-			
-			do_refilter = TRUE;
-			do_set_active = TRUE;
+			set_active = TRUE;
 		}
 
 		set_model = TRUE;
 	}
 
+	/* We set this first because otherwise, the update below will
+	 * hide offline contacts since the set-active state will be
+	 * done AFTER the presence update.
+	 */
+	if (set_active) {
+		contact_list_contact_set_active (list, contact, TRUE, TRUE);
+	}
+
+	/* Get all necessary pixbufs */
 	pixbuf_presence = gossip_pixbuf_for_contact (contact);
 	pixbuf_composing = gossip_stock_create_pixbuf (gossip_app_get_window (),
 						       GOSSIP_STOCK_TYPING,
@@ -864,9 +870,16 @@ contact_list_contact_update (GossipContactList *list,
 	pixbuf = pixbuf_presence;
 
 	for (l = iters; l && set_model; l = l->next) {
+		GtkTreePath *parent_path = NULL;
+		GtkTreeIter  parent_iter;
+
 		gtk_tree_model_get (model, l->data,
 				    COL_IS_COMPOSING, &is_composing,
 				    -1);
+
+		if (gtk_tree_model_iter_parent (model, &parent_iter, l->data)) {
+			parent_path = gtk_tree_model_get_path (model, &parent_iter);
+		}
 
 		if (is_composing) {
 			pixbuf = pixbuf_composing;
@@ -875,10 +888,19 @@ contact_list_contact_update (GossipContactList *list,
 		gtk_tree_store_set (priv->store, l->data,
 				    COL_PIXBUF_STATUS, pixbuf,
 				    COL_STATUS, gossip_contact_get_status (contact),
-				    COL_IS_ONLINE, now_online,
+				    COL_IS_ONLINE, is_online,
 				    COL_NAME, gossip_contact_get_name (contact),
 				    COL_PIXBUF_AVATAR, pixbuf_avatar,
 				    -1);
+
+		/* To make sure the parent is shown correctly, we emit
+		 * the row-changed signal on the parent so it prompts
+		 * it to be refreshed by the filter func. 
+		 */
+		if (parent_path) {
+			gtk_tree_model_row_changed (model, parent_path, &parent_iter);
+			gtk_tree_path_free (parent_path);
+		}
 	}
 
 	g_object_unref (pixbuf_presence);
@@ -890,14 +912,6 @@ contact_list_contact_update (GossipContactList *list,
 
 	g_list_foreach (iters, (GFunc) gtk_tree_iter_free, NULL);
 	g_list_free (iters);
-
-	if (do_set_active) {
-		contact_list_contact_set_active (list, contact, do_set_active, TRUE);
-	}
-
-	if (do_refilter) {
-		gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (priv->filter));
-	}
 }
 
 static void
@@ -1022,7 +1036,12 @@ contact_list_contact_composing_cb (GossipSession     *session,
 
 	iters = contact_list_find_contact (list, contact);
 	for (l = iters; l; l = l->next) {
-		GtkTreePath *path;
+		GtkTreePath *parent_path = NULL;
+		GtkTreeIter  parent_iter;
+
+		if (gtk_tree_model_iter_parent (model, &parent_iter, l->data)) {
+			parent_path = gtk_tree_model_get_path (model, &parent_iter);
+		}
 
 		gtk_tree_store_set (priv->store, l->data,
 				    COL_IS_COMPOSING, composing,
@@ -1034,9 +1053,14 @@ contact_list_contact_composing_cb (GossipSession     *session,
 					    -1);
 		}
 
-		path = gtk_tree_model_get_path (model, l->data);
-		gtk_tree_model_row_changed (model, path, l->data);
-		gtk_tree_path_free (path);
+		/* To make sure the parent is shown correctly, we emit
+		 * the row-changed signal on the parent so it prompts
+		 * it to be refreshed by the filter func. 
+		 */
+		if (parent_path) {
+			gtk_tree_model_row_changed (model, parent_path, &parent_iter);
+			gtk_tree_path_free (parent_path);
+		}
 	}
 
 	if (pixbuf) {
@@ -1109,15 +1133,34 @@ contact_list_contact_set_active (GossipContactList *list,
 	iters = contact_list_find_contact (list, contact);
 
 	for (l = iters; l; l = l->next) {
-		GtkTreePath *path;
+		GtkTreePath *parent_path = NULL;
+		GtkTreeIter  parent_iter;
+
+		if (gtk_tree_model_iter_parent (model, &parent_iter, l->data)) {
+			parent_path = gtk_tree_model_get_path (model, &parent_iter);
+		}
 
 		gtk_tree_store_set (priv->store, l->data,
 				    COL_IS_ACTIVE, active,
 				    -1);
 
-		gossip_debug (DEBUG_DOMAIN, "Set item %s", active ? "active" : "inactive");
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Contact:'%s' is now %s", 
+			      gossip_contact_get_name (contact),
+			      active ? "active" : "inactive");
+
+		/* To make sure the parent is shown correctly, we emit
+		 * the row-changed signal on the parent so it prompts
+		 * it to be refreshed by the filter func. 
+		 */
+		if (parent_path) {
+			gtk_tree_model_row_changed (model, parent_path, &parent_iter);
+			gtk_tree_path_free (parent_path);
+		}
 
 		if (set_changed) {
+			GtkTreePath *path;
+
 			path = gtk_tree_model_get_path (model, l->data);
 			gtk_tree_model_row_changed (model, path, l->data);
 			gtk_tree_path_free (path);
@@ -1327,7 +1370,9 @@ contact_list_set_group_state (GossipContactList *list,
 			      GtkTreeIter       *iter,
 			      const gchar       *name)
 {
-	GtkTreePath  *path;
+	GtkTreePath *path;
+	gboolean     saved_expanded;
+	gboolean     is_expanded;
 
 	path = gtk_tree_model_get_path (model, iter);
 	if (!path) {
@@ -1337,7 +1382,18 @@ contact_list_set_group_state (GossipContactList *list,
 		return;
 	}
 
-	if (gossip_contact_group_get_expanded (name)) {
+	saved_expanded = gossip_contact_group_get_expanded (name);
+	is_expanded = gtk_tree_view_row_expanded (GTK_TREE_VIEW (list), path);
+
+	if (saved_expanded == is_expanded) {
+		/* Don't unnecessarily do work, the values are the
+		 * same do nothing to avoid extra work.
+		 */
+		gtk_tree_path_free (path);
+		return;
+	}
+
+	if (saved_expanded) {
 		gossip_debug (DEBUG_DOMAIN,
 			      "Set group:'%s', state:'expanded'",
 			      name); 
@@ -2604,7 +2660,7 @@ contact_list_filter_show_contact_for_events (GossipContactList *list,
 		      "has_events:%d, has_activity:%d, has_no_subscripton:%d, "
 		      "show_offline:%d, online:%d",
 		      gossip_contact_get_name (contact),
-		      visible ? "matched" : "didn't match",
+		      visible ? "match" : "didn't match",
 		      has_events, 
 		      has_activity,
 		      has_no_subscription,
@@ -2646,7 +2702,7 @@ contact_list_filter_show_contact_for_match (GossipContactList *list,
 	gossip_debug (DEBUG_DOMAIN, 
 		      "---- Filter func: contact:'%s' %s, filter:'%s'",
 		      gossip_contact_get_name (contact),
-		      visible ? "matched" : "didn't match",
+		      visible ? "match" : "didn't match",
 		      priv->filter_text);
 	
 	return visible;
@@ -2664,7 +2720,7 @@ contact_list_filter_show_group_for_match (GossipContactList *list,
 
 	if (G_STR_EMPTY (priv->filter_text)) {
 		gossip_debug (DEBUG_DOMAIN, 
-			      "---- Filter func: group:'%s' match, filter empty",
+			      "---- Filter func:   group:'%s' match, filter empty",
 			      group);
 		return FALSE;
 	}
@@ -2674,9 +2730,9 @@ contact_list_filter_show_group_for_match (GossipContactList *list,
 	g_free (str);
 
 	gossip_debug (DEBUG_DOMAIN, 
-		      "---- Filter func: group:'%s' %s, filter:'%s'",
+		      "---- Filter func:   group:'%s' %s, filter:'%s'",
 		      group,
-		      visible ? "matched" : "didn't match",
+		      visible ? "match" : "didn't match",
 		      priv->filter_text);
 	
 	return visible;
@@ -2706,7 +2762,7 @@ contact_list_filter_show_group_for_contacts (GossipContactList *list,
 		if (contact_list_filter_show_contact_for_events (list, l->data) &&
 		    contact_list_filter_show_contact_for_match (list, l->data)) {
 			gossip_debug (DEBUG_DOMAIN, 
-				      "---- Filter func: group:'%s' contacts have match/events, showing...",
+				      "---- Filter func:   group:'%s' match, contacts have match/events",
 				      group);
 			show_group = TRUE;
 		}
@@ -2720,8 +2776,11 @@ contact_list_filter_func_show_contact (GtkTreeModel      *model,
 				       GtkTreeIter       *iter,
 				       GossipContactList *list)
 {
-	GossipContact *contact;
-	gboolean       visible = FALSE;
+	GossipContactListPriv *priv;
+	GossipContact         *contact;
+	gboolean               visible = FALSE;
+
+	priv = GET_PRIV (list);
 
 	gtk_tree_model_get (model, iter, COL_CONTACT, &contact, -1);
 	if (contact) {
@@ -2734,9 +2793,10 @@ contact_list_filter_func_show_contact (GtkTreeModel      *model,
 	}
 
 	gossip_debug (DEBUG_DOMAIN, 
-		      "---> Filter func: contact:'%s', visible:'%s'\n", 
+		      "---> Filter func: contact:'%s' %s, filter:'%s'\n", 
 		      contact ? gossip_contact_get_name (contact) : "NO CONTACT",
-		      visible ? "true" : "false");
+		      visible ? "match" : "didn't match",
+		      priv->filter_text);
 	
 	return visible;
 }
@@ -2775,9 +2835,9 @@ contact_list_filter_func_show_group (GtkTreeModel      *model,
 	}
 
 	gossip_debug (DEBUG_DOMAIN,
-		      "---> Filter func: group:'%s', visible:'%s'\n", 
+		      "---> Filter func:   group:'%s' %s\n", 
 		      group,
-		      visible ? "true" : "false");
+		      visible ? "match" : "didn't match");
 	
 	g_free (group);
 
@@ -3210,9 +3270,25 @@ contact_list_foreach_contact_flash (GossipContact     *contact,
 	model = GTK_TREE_MODEL (priv->store);
 
 	for (l = iters; l; l = l->next) {
+		GtkTreePath *parent_path = NULL;
+		GtkTreeIter  parent_iter;
+
+		if (gtk_tree_model_iter_parent (model, &parent_iter, l->data)) {
+			parent_path = gtk_tree_model_get_path (model, &parent_iter);
+		}
+
 		gtk_tree_store_set (priv->store, l->data,
 				    COL_PIXBUF_STATUS, pixbuf,
 				    -1);
+
+		/* To make sure the parent is shown correctly, we emit
+		 * the row-changed signal on the parent so it prompts
+		 * it to be refreshed by the filter func. 
+		 */
+		if (parent_path) {
+			gtk_tree_model_row_changed (model, parent_path, &parent_iter);
+			gtk_tree_path_free (parent_path);
+		}
 	}
 
 	g_object_unref (pixbuf);
@@ -3273,9 +3349,9 @@ contact_list_event_added_cb (GossipEventManager *manager,
 		      "Contact:'%s' added to the flashing event table",
 		      gossip_contact_get_name (contact));
 
-	/* Update contact on roster to show him if there are events
-	 * are waiting, regardless to preferences as to whether we
-	 * show offline contacts.
+	/* Update the contact and force a refilter of the roster, this
+	 * is so we show contacts if there are events pending and a
+	 * reason to show them on the roster. 
 	 */
 	contact_list_contact_update (list, contact);
 }
@@ -3310,46 +3386,11 @@ contact_list_event_removed_cb (GossipEventManager *manager,
 		      "Contact:'%s' removed from flashing event table",
 		      gossip_contact_get_name (contact));
 
-	/* Update contact on roster to show him if there are events
-	 * are waiting, regardless to preferences as to whether we
-	 * show offline contacts.
+	/* Update the contact and force a refilter of the roster, this
+	 * is so we hide contacts if there are no events pending and
+	 * no reason to show them on the roster.
 	 */
 	contact_list_contact_update (list, contact);
-
-#if 0
-	iters = contact_list_find_contact (list, contact);
-	if (!iters) {
-		return;
-	}
-
-	pixbuf_presence = gossip_pixbuf_for_contact (contact);
-	pixbuf_composing = gossip_pixbuf_from_stock (GOSSIP_STOCK_TYPING,
-						     GTK_ICON_SIZE_MENU);
-
-	pixbuf = pixbuf_presence;
-
-	model = GTK_TREE_MODEL (priv->store);
-
-	for (l = iters; l; l = l->next) {
-		gtk_tree_model_get (model, l->data,
-				    COL_IS_COMPOSING, &is_composing,
-				    -1);
-
-		if (is_composing) {
-			pixbuf = pixbuf_composing;
-		}
-
-		gtk_tree_store_set (priv->store, l->data,
-				    COL_PIXBUF_STATUS, pixbuf,
-				    -1);
-	}
-
-	g_object_unref (pixbuf_presence);
-	g_object_unref (pixbuf_composing);
-
-	g_list_foreach (iters, (GFunc) gtk_tree_iter_free, NULL);
-	g_list_free (iters);
-#endif
 }
 
 static gboolean

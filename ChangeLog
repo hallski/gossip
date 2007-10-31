@@ -29,6 +29,15 @@
 
 2007-10-21  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-contact-list.c: Make sure we only refilter rows which
+	we update instead of the whole contact list. Only change the
+	expanded state of rows if it is different to the saved state. Fix
+	a bug where new events wouldn't show hidden contacts because the
+	group wasn't visible. Now we refilter the parent of any child
+	which changes to make sure it is shown.
+
+2007-10-24  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-contact-list.c: Reworked the filtering so we actually
 	show groups and contacts correctly according to state, events
 	pending AND the search filter entry the user can use.
