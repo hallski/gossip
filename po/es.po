@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip.HEAD.es\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-10-07 14:50+0100\n"
-"PO-Revision-Date: 2007-10-07 16:00+0200\n"
+"POT-Creation-Date: 2007-10-20 16:15+0100\n"
+"PO-Revision-Date: 2007-11-01 19:13+0100\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Spanish <traductores@es.gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -218,7 +218,7 @@ msgstr "Activo"
 msgid "Inactive"
 msgstr "Inactivo"
 
-#: ../libgossip/gossip-chatroom.c:1046 ../src/gossip-log-window.c:1874
+#: ../libgossip/gossip-chatroom.c:1046 ../src/gossip-log-window.c:1879
 msgid "Unknown"
 msgstr "Desconocido"
 
@@ -326,8 +326,8 @@ msgstr "Se canceló la entrada a esta sala de chat."
 
 #. i18n: The current state of the connection.
 #: ../libgossip/gossip-contact.c:965 ../libgossip/gossip-presence.c:242
-#: ../src/gossip-app.c:2452 ../src/gossip-contact-info-dialog.c:156
-#: ../src/gossip-galago.c:186 ../src/gossip-status-icon.c:372
+#: ../src/gossip-app.c:2458 ../src/gossip-contact-info-dialog.c:156
+#: ../src/gossip-galago.c:186 ../src/gossip-status-icon.c:363
 msgid "Offline"
 msgstr "Desconectado"
 
@@ -656,62 +656,62 @@ msgstr "Quisiera añadirle a mi lista de contactos."
 msgid "Show and edit accounts"
 msgstr "Mostrar y editar cuentas"
 
-#: ../src/gossip-app.c:880
+#: ../src/gossip-app.c:886
 msgid "To summarize:"
 msgstr "Para resumir:"
 
-#: ../src/gossip-app.c:907
+#: ../src/gossip-app.c:913
 #, c-format
 msgid "%d new message"
 msgid_plural "%d new messages"
 msgstr[0] "%d mensaje nuevo"
 msgstr[1] "%d mensajes nuevos"
 
-#: ../src/gossip-app.c:912
+#: ../src/gossip-app.c:918
 #, c-format
 msgid "%d subscription request"
 msgid_plural "%d subscription requests"
 msgstr[0] "%d solicitud de subscripción"
 msgstr[1] "%d solicitudes de subscripción"
 
-#: ../src/gossip-app.c:917
+#: ../src/gossip-app.c:923
 #, c-format
 msgid "%d file transfer request"
 msgid_plural "%d file transfer requests"
 msgstr[0] "%d solicitud de transferencia de archivo"
 msgstr[1] "%d solicitudes de transferencia de archivo"
 
-#: ../src/gossip-app.c:922
+#: ../src/gossip-app.c:928
 #, c-format
 msgid "%d server message"
 msgid_plural "%d server messages"
 msgstr[0] "%d mensaje del servidor"
 msgstr[1] "%d mensajes del servidor"
 
-#: ../src/gossip-app.c:927
+#: ../src/gossip-app.c:933
 #, c-format
 msgid "%d error"
 msgid_plural "%d errors"
 msgstr[0] "%d error"
 msgstr[1] "%d errores"
 
-#: ../src/gossip-app.c:952
+#: ../src/gossip-app.c:958
 msgid "If you quit, you will lose all unread information."
 msgstr "Si sale, usted perderá toda la información no leída."
 
-#: ../src/gossip-app.c:1017
+#: ../src/gossip-app.c:1023
 msgid "Gossip is still running, it is just hidden."
 msgstr "Gossip todavía se está ejecutando, sólo está oculto."
 
-#: ../src/gossip-app.c:1018
+#: ../src/gossip-app.c:1024
 msgid "Click on the notification area icon to show Gossip."
 msgstr "Pulse en el icono del área de notificación para mostrar Gossip."
 
-#: ../src/gossip-app.c:1033
+#: ../src/gossip-app.c:1039
 msgid "You were about to quit!"
 msgstr "¡Ibas a cerrarlo!"
 
-#: ../src/gossip-app.c:1034
+#: ../src/gossip-app.c:1040
 msgid ""
 "Since no system or notification tray has been found, this action would "
 "normally quit Gossip.\n"
@@ -725,15 +725,15 @@ msgstr ""
 "Esto es solo un recordatoria, desde ahora, Gossip terminará al realizar esta "
 "acción a menos que desmarque la opción de abajo."
 
-#: ../src/gossip-app.c:1433 ../src/gossip-edit-contact-dialog.c:231
+#: ../src/gossip-app.c:1439 ../src/gossip-edit-contact-dialog.c:231
 msgid "Group"
 msgstr "Grupo"
 
-#: ../src/gossip-app.c:1454
+#: ../src/gossip-app.c:1460
 msgid "Contact"
 msgstr "Contacto"
 
-#: ../src/gossip-app.c:2377
+#: ../src/gossip-app.c:2383
 msgid "Edit Account _Details"
 msgstr "Editar _detalles de la cuenta"
 
@@ -1103,19 +1103,19 @@ msgstr "Tema: %s"
 msgid "Do not show this again"
 msgstr "No mostrar esto otra vez"
 
-#: ../src/gossip-log-window.c:519 ../src/gossip-log-window.c:1963
+#: ../src/gossip-log-window.c:522 ../src/gossip-log-window.c:1968
 msgid "Account"
 msgstr "Cuenta"
 
-#: ../src/gossip-log-window.c:526 ../src/gossip-log-window.c:1972
+#: ../src/gossip-log-window.c:529 ../src/gossip-log-window.c:1977
 msgid "Conversation With"
 msgstr "Conversación con"
 
-#: ../src/gossip-log-window.c:536 ../src/gossip-log-window.c:1983
+#: ../src/gossip-log-window.c:539 ../src/gossip-log-window.c:1988
 msgid "Date"
 msgstr "Fecha"
 
-#: ../src/gossip-log-window.c:1995
+#: ../src/gossip-log-window.c:2000
 msgid "Link"
 msgstr "Enlace"
 
@@ -1139,27 +1139,27 @@ msgstr "Cuenta a la cual conectarse al inicio"
 msgid "ACCOUNT-NAME"
 msgstr "NOMBRE-DE-CUENTA"
 
-#: ../src/gossip-main.c:104 ../src/gossip-main.c:120
+#: ../src/gossip-main.c:104 ../src/gossip-main.c:128
 msgid "- Gossip Instant Messenger"
 msgstr "- Mensajería instantánea Gossip"
 
-#: ../src/gossip-main.c:136
+#: ../src/gossip-main.c:144
 msgid "You can not use --no-connect together with --account"
 msgstr "No puede usar --no-connect junto con --account"
 
-#: ../src/gossip-main.c:148
+#: ../src/gossip-main.c:156
 msgid "No accounts available."
 msgstr "Ninguna cuenta está disponible."
 
-#: ../src/gossip-main.c:153
+#: ../src/gossip-main.c:161
 msgid "Available accounts:"
 msgstr "Cuentas disponibles:"
 
-#: ../src/gossip-main.c:163
+#: ../src/gossip-main.c:171
 msgid "[default]"
 msgstr "[predeterminada]"
 
-#: ../src/gossip-main.c:179
+#: ../src/gossip-main.c:187
 #, c-format
 msgid "There is no account with the name '%s'."
 msgstr "No hay ninguna cuenta llamada «%s»."
@@ -1360,21 +1360,21 @@ msgstr "%s quiere que le añada a su lista de contactos."
 msgid "Do you want to add %s to your contact list?"
 msgstr "¿Quiere añadir a %s a su lista de contactos?"
 
-#: ../src/gossip-ui-utils.c:74
+#: ../src/gossip-ui-utils.c:84
 #, c-format
 msgid "Please enter your %s account password"
 msgstr "Introduzca la contraseña de su cuenta %s:"
 
-#: ../src/gossip-ui-utils.c:85
+#: ../src/gossip-ui-utils.c:95
 #, c-format
 msgid "Logging in to account '%s'"
 msgstr "Iniciando sesión en la cuenta «%s»"
 
-#: ../src/gossip-ui-utils.c:89
+#: ../src/gossip-ui-utils.c:99
 msgid "Remember Password?"
 msgstr "¿Desea recordar su contraseña?"
 
-#: ../src/gossip-ui-utils.c:385
+#: ../src/gossip-ui-utils.c:497
 msgid "Could not display the help contents."
 msgstr "No se pudo mostrar el contenido de la ayuda."
 
@@ -1539,9 +1539,8 @@ msgstr "_Mostrar contactos"
 msgid "_Tabs"
 msgstr "_Solapas"
 
-#.
 #. This is the text that should appear on a menu title. Don't include the prefix 'menu title|' in the translation.
-#: ../ui/chat.glade.h:33 ../ui/main.glade.h:162
+#: ../ui/chat.glade.h:32 ../ui/main.glade.h:161
 msgid "menu title|_Edit"
 msgstr "_Editar"
 
@@ -1566,10 +1565,6 @@ msgid "Open _Folder"
 msgstr "Abrir _carpeta"
 
 #: ../ui/file-transfer.glade.h:8
-msgid "Select A File"
-msgstr "Seleccione un archivo"
-
-#: ../ui/file-transfer.glade.h:9
 msgid "Size:"
 msgstr "Tamaño:"
 
@@ -2218,20 +2213,23 @@ msgid "_Web site:"
 msgstr "Página _web:"
 
 #: ../ui/main.glade.h:155
+msgid "gtk-copy"
+msgstr "gtk-copy"
+
+#: ../ui/main.glade.h:156
 msgid "irc account settings"
 msgstr "ajustes de la cuenta IRC"
 
-#: ../ui/main.glade.h:156
+#: ../ui/main.glade.h:157
 msgid "jabber account settings"
 msgstr "ajustes de la cuenta Jabber"
 
-#.
 #. This is the text that should appear on a menu title. Don't include the prefix 'menu title|' in the translation.
 #: ../ui/main.glade.h:159
 msgid "menu title|_Chat"
 msgstr "_Chat"
 
-#: ../ui/main.glade.h:163
+#: ../ui/main.glade.h:162
 msgid "msn account settings"
 msgstr "ajustes de la cuenta MSN"
 
