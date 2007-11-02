@@ -1,3 +1,9 @@
+2007-11-02  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-contact-list.c:
+	(contact_list_filter_show_group_for_match): If there is no filter
+	string, everything is a match.
+
 2007-10-31  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-chat-view.c (chat_view_finalize): Remove the

@@ -2732,7 +2732,7 @@ contact_list_filter_show_group_for_match (GossipContactList *list,
 		gossip_debug (DEBUG_DOMAIN, 
 			      "---- Filter func:   group:'%s' match, filter empty",
 			      group);
-		return FALSE;
+		return TRUE;
 	}
 
 	str = g_utf8_casefold (group, -1);
