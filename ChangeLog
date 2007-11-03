@@ -10,6 +10,24 @@
 	* data/:
 	* ui/: Reorganize the data a bit in preparation for some late
 	spring cleaning.
+	
+2007-11-03  Martyn Russell  <martyn@imendio.com>
+
+	* ChangeLog:
+	* src/gossip-contact-list.c: Remove the redundant variable used in
+	_get_parent_group(). Adds a new debug domain just for filtering
+	(there is so much of it). Force "row-changed" signal on parents
+	for groups that already exist. Make sure the flash hash table
+	removes items for contacts even if contacts are not found in the
+	roster. Revert Richard's change for the "row-changed" fix so we
+	don't show empty groups.
+	
+2007-11-03  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-contact-list.c: Add more debugging for filtering and
+	use a different domain for filtering debug messages since there is
+	so much of it. Also fixed a redundant variable in the
+	_get_parent_group() function.
 
 2007-11-02  Richard Hult  <richard@imendio.com>
 

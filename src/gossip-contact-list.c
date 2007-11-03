@@ -50,7 +50,8 @@
 #include "gossip-sound.h"
 #include "gossip-ui-utils.h"
 
-#define DEBUG_DOMAIN "ContactList"
+#define DEBUG_DOMAIN        "ContactList"
+#define DEBUG_DOMAIN_FILTER "ContactListFilter"
 
 /* Active users are those which have recently changed state
  * (e.g. online, offline or from normal to a busy state).
@@ -163,8 +164,7 @@ static void     contact_list_contact_set_active              (GossipContactList 
 							      gboolean                active,
 							      gboolean                set_changed);
 static gchar *  contact_list_get_parent_group                (GtkTreeModel           *model,
-							      GtkTreePath            *path,
-							      gboolean               *path_is_group);
+							      GtkTreePath            *path);
 static void     contact_list_get_group                       (GossipContactList      *list,
 							      const gchar            *name,
 							      GtkTreeIter            *iter_group_to_set,
@@ -1184,8 +1184,7 @@ contact_list_contact_set_active (GossipContactList *list,
 
 static gchar *
 contact_list_get_parent_group (GtkTreeModel *model,
-			       GtkTreePath  *path,
-			       gboolean     *path_is_group)
+			       GtkTreePath  *path)
 {
 	GtkTreeIter  parent_iter, iter;
 	gchar       *name;
@@ -1193,7 +1192,6 @@ contact_list_get_parent_group (GtkTreeModel *model,
 
 	g_return_val_if_fail (model != NULL, NULL);
 	g_return_val_if_fail (path != NULL, NULL);
-	g_return_val_if_fail (path_is_group != NULL, NULL);
 
 	if (!gtk_tree_model_get_iter (model, &iter, path)) {
 		return NULL;
@@ -1217,8 +1215,6 @@ contact_list_get_parent_group (GtkTreeModel *model,
 		if (!is_group) {
 			return NULL;
 		}
-
-		*path_is_group = TRUE;
 	}
 
 	gtk_tree_model_get (model, &iter,
@@ -1281,6 +1277,8 @@ contact_list_get_group (GossipContactList *list,
 				&fg);
 
 	if (!fg.found) {
+		gossip_debug (DEBUG_DOMAIN, " - Adding group:'%s' to model", name);
+
 		if (created) {
 			*created = TRUE;
 		}
@@ -1310,6 +1308,8 @@ contact_list_get_group (GossipContactList *list,
 			*iter_separator_to_set = iter_separator;
 		}
 	} else {
+		gossip_debug (DEBUG_DOMAIN, " - Using existing group:'%s' from model", name);
+
 		if (created) {
 			*created = FALSE;
 		}
@@ -1452,6 +1452,8 @@ contact_list_add_contact (GossipContactList *list,
 		GdkPixbuf *pixbuf_avatar;
 		gboolean   show_avatar = FALSE;
 
+		gossip_debug (DEBUG_DOMAIN, " - No groups");
+
 		pixbuf_status = gossip_pixbuf_for_contact (contact);
 		pixbuf_avatar = gossip_contact_get_avatar_pixbuf (contact);
 		if (pixbuf_avatar) {
@@ -1487,6 +1489,7 @@ contact_list_add_contact (GossipContactList *list,
 
 	/* Else add to each group. */
 	for (l = groups; l; l = l->next) {
+		GtkTreePath *path_group;
 		GtkTreeIter  model_iter_group;
 		GdkPixbuf   *pixbuf_status;
 		GdkPixbuf   *pixbuf_avatar;
@@ -1494,6 +1497,8 @@ contact_list_add_contact (GossipContactList *list,
 		gboolean     created;
 		gboolean     found;
 		gboolean     show_avatar = FALSE;
+
+		gossip_debug (DEBUG_DOMAIN, " - Checking we have group:'%s'", l->data);
 
 		name = l->data;
 		if (!name) {
@@ -1511,6 +1516,28 @@ contact_list_add_contact (GossipContactList *list,
 		if (priv->show_avatars && !priv->is_compact) {
 			show_avatar = TRUE;
 		}
+
+		/* To make sure the parent is shown correctly, we emit
+		 * the row-changed signal on the parent so it prompts
+		 * it to be refreshed by the filter func and doesn't
+		 * give us warnings about nodes inserted with parents
+		 * not in the tree.
+		 */
+		if (!created) {
+			GtkTreeModel *model;
+
+			model = GTK_TREE_MODEL (priv->store);
+			path_group = gtk_tree_model_get_path (model, &iter_group);
+
+			if (path_group) {
+				gossip_debug (DEBUG_DOMAIN, " - Sending row changed on group");
+				
+				gtk_tree_model_row_changed (model, path_group, &iter_group);
+				gtk_tree_path_free (path_group);
+			}
+		}
+
+		gossip_debug (DEBUG_DOMAIN, " - Inserting...");
 
 		gtk_tree_store_insert_after (priv->store, &iter, &iter_group, NULL);
 		gtk_tree_store_set (priv->store, &iter,
@@ -1561,30 +1588,32 @@ contact_list_remove_contact (GossipContactList *list,
 	priv = GET_PRIV (list);
 
 	iters = contact_list_find_contact (list, contact);
-	if (!iters) {
-		return;
-	}
-
-	/* Clean up model */
-	model = GTK_TREE_MODEL (priv->store);
-
-	for (l = iters; l; l = l->next) {
-		GtkTreeIter parent;
-
-		/* NOTE: it is only <= 2 here because we have
-		 * separators after the group name, otherwise it
-		 * should be 1. 
-		 */
-		if (gtk_tree_model_iter_parent (model, &parent, l->data) &&
-		    gtk_tree_model_iter_n_children (model, &parent) <= 2) {
-			gtk_tree_store_remove (priv->store, &parent);
-		} else {
-			gtk_tree_store_remove (priv->store, l->data);
+	if (iters) {
+		/* Clean up model */
+		model = GTK_TREE_MODEL (priv->store);
+		
+		for (l = iters; l; l = l->next) {
+			GtkTreeIter parent;
+			
+			/* NOTE: it is only <= 2 here because we have
+			 * separators after the group name, otherwise it
+			 * should be 1. 
+			 */
+			if (gtk_tree_model_iter_parent (model, &parent, l->data) &&
+			    gtk_tree_model_iter_n_children (model, &parent) <= 2) {
+				gtk_tree_store_remove (priv->store, &parent);
+			} else {
+				gtk_tree_store_remove (priv->store, l->data);
+			}
 		}
+		
+		g_list_foreach (iters, (GFunc) gtk_tree_iter_free, NULL);
+		g_list_free (iters);
+		
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Now %d top level nodes remaining in the tree\n",
+			      gtk_tree_model_iter_n_children (model, NULL));
 	}
-
-	g_list_foreach (iters, (GFunc) gtk_tree_iter_free, NULL);
-	g_list_free (iters);
 
 	if (remove_flash) {
 		g_hash_table_remove (priv->flash_table, contact);
@@ -1879,10 +1908,9 @@ contact_list_drag_data_received (GtkWidget         *widget,
 		} else {
 			GList    *l, *new_groups;
 			gchar    *name;
-			gboolean  is_group;
 
 			model = gtk_tree_view_get_model (GTK_TREE_VIEW (widget));
-			name = contact_list_get_parent_group (model, path, &is_group);
+			name = contact_list_get_parent_group (model, path);
 
 			if (groups && name &&
 			    g_list_find_custom (groups, name, (GCompareFunc) strcmp)) {
@@ -1906,7 +1934,7 @@ contact_list_drag_data_received (GtkWidget         *widget,
 				goto out;
 			}
 
-			old_group = contact_list_get_parent_group (model, path, &is_group);
+			old_group = contact_list_get_parent_group (model, path);
 			gtk_tree_path_free (path);
 
 			if (!name && old_group && GDK_ACTION_MOVE) {
@@ -2665,7 +2693,7 @@ contact_list_filter_show_contact_for_events (GossipContactList *list,
 		visible = TRUE;
 	}
 
-	gossip_debug (DEBUG_DOMAIN, 
+	gossip_debug (DEBUG_DOMAIN_FILTER, 
 		      "---- Filter func: contact:'%s' %s, "
 		      "has_events:%d, has_activity:%d, has_no_subscripton:%d, "
 		      "show_offline:%d, online:%d",
@@ -2691,7 +2719,7 @@ contact_list_filter_show_contact_for_match (GossipContactList *list,
 	priv = GET_PRIV (list);
 
 	if (G_STR_EMPTY (priv->filter_text)) {
-		gossip_debug (DEBUG_DOMAIN, 
+		gossip_debug (DEBUG_DOMAIN_FILTER, 
 			      "---- Filter func: contact:'%s' match, filter empty",
 			      gossip_contact_get_name (contact));
 		return TRUE;
@@ -2709,7 +2737,7 @@ contact_list_filter_show_contact_for_match (GossipContactList *list,
 		g_free (str);
 	}
 
-	gossip_debug (DEBUG_DOMAIN, 
+	gossip_debug (DEBUG_DOMAIN_FILTER, 
 		      "---- Filter func: contact:'%s' %s, filter:'%s'",
 		      gossip_contact_get_name (contact),
 		      visible ? "match" : "didn't match",
@@ -2729,17 +2757,18 @@ contact_list_filter_show_group_for_match (GossipContactList *list,
 	priv = GET_PRIV (list);
 
 	if (G_STR_EMPTY (priv->filter_text)) {
-		gossip_debug (DEBUG_DOMAIN, 
+		/* We normally would return TRUE here but we don't want to see empty groups */
+		gossip_debug (DEBUG_DOMAIN_FILTER, 
 			      "---- Filter func:   group:'%s' match, filter empty",
 			      group);
-		return TRUE;
+		return FALSE;
 	}
 
 	str = g_utf8_casefold (group, -1);
 	visible = G_STR_EMPTY (str) || strstr (str, priv->filter_text);
 	g_free (str);
 
-	gossip_debug (DEBUG_DOMAIN, 
+	gossip_debug (DEBUG_DOMAIN_FILTER, 
 		      "---- Filter func:   group:'%s' %s, filter:'%s'",
 		      group,
 		      visible ? "match" : "didn't match",
@@ -2771,7 +2800,7 @@ contact_list_filter_show_group_for_contacts (GossipContactList *list,
 
 		if (contact_list_filter_show_contact_for_events (list, l->data) &&
 		    contact_list_filter_show_contact_for_match (list, l->data)) {
-			gossip_debug (DEBUG_DOMAIN, 
+			gossip_debug (DEBUG_DOMAIN_FILTER, 
 				      "---- Filter func:   group:'%s' match, contacts have match/events",
 				      group);
 			show_group = TRUE;
@@ -2802,7 +2831,7 @@ contact_list_filter_func_show_contact (GtkTreeModel      *model,
 		g_object_unref (contact);
 	}
 
-	gossip_debug (DEBUG_DOMAIN, 
+	gossip_debug (DEBUG_DOMAIN_FILTER, 
 		      "---> Filter func: contact:'%s' %s, filter:'%s'\n", 
 		      contact ? gossip_contact_get_name (contact) : "NO CONTACT",
 		      visible ? "match" : "didn't match",
@@ -2842,7 +2871,7 @@ contact_list_filter_func_show_group (GtkTreeModel      *model,
 		g_hash_table_insert (priv->set_group_state, g_strdup (group), data);
 	}
 
-	gossip_debug (DEBUG_DOMAIN,
+	gossip_debug (DEBUG_DOMAIN_FILTER,
 		      "---> Filter func:   group:'%s' %s\n", 
 		      group,
 		      visible ? "match" : "didn't match");
@@ -2860,25 +2889,34 @@ contact_list_filter_func (GtkTreeModel      *model,
 	GossipContactListPriv *priv;
 	gboolean               is_group;
 	gboolean               is_separator;
-
-	gossip_debug (DEBUG_DOMAIN, "<--- Filter func");
+	gchar                 *name;
 
 	priv = GET_PRIV (list);
 
 	gtk_tree_model_get (model, iter,
 			    COL_IS_GROUP, &is_group,
 			    COL_IS_SEPARATOR, &is_separator,
+			    COL_NAME, &name,
 			    -1);
 
 	if (is_separator) {
-		gossip_debug (DEBUG_DOMAIN, 
-			      "---> Filter func: separator, returning TRUE\n");
+		gossip_debug (DEBUG_DOMAIN_FILTER, 
+			      "<--- Filter func: ** SEPARATOR **");
+		gossip_debug (DEBUG_DOMAIN_FILTER, 
+			      "---> Filter func: returning TRUE\n");
+		g_free (name);
 		return TRUE;
 	}
 
 	if (is_group) { 
+		gossip_debug (DEBUG_DOMAIN_FILTER, 
+			      "<--- Filter func: ** GROUP = '%s' **", name);
+		g_free (name);
 		return contact_list_filter_func_show_group (model, iter, list);
 	} else {
+		gossip_debug (DEBUG_DOMAIN_FILTER, 
+			      "<--- Filter func: ** CONTACT = '%s' **", name);
+		g_free (name);
 		return contact_list_filter_func_show_contact (model, iter, list);
 	}
 
