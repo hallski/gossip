@@ -388,9 +388,10 @@ fi
 
 AC_OUTPUT([
   Makefile
-  ui/Makefile
-  ui/pixmaps/Makefile
-  ui/icons/Makefile
+  data/Makefile
+  data/pixmaps/Makefile
+  data/icons/Makefile
+  data/glade/Makefile
   libgossip/Makefile
   libloudermouth/Makefile
   src/Makefile

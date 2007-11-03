@@ -1,4 +1,4 @@
-SUBDIRS = ui libloudermouth libgossip src po peekaboo
+SUBDIRS = data libloudermouth libgossip src po peekaboo
 
 if ENABLE_SK
 SUBDIRS += help
