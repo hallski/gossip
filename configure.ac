@@ -390,7 +390,7 @@ AC_OUTPUT([
   Makefile
   data/Makefile
   data/pixmaps/Makefile
-  data/icons/Makefile
+  data/win32/Makefile
   data/glade/Makefile
   libgossip/Makefile
   libloudermouth/Makefile

@@ -1,5 +1,5 @@
-icon = $(top_builddir)/ui/icons/gossip.ico
-resource_file = $(top_builddir)/ui/icons/resource.rc
+icon = gossip.ico
+resource_file = resource.rc
 resource_object = resource.o
 
 noinst_DATA = $(resource_file) $(icon)
