@@ -13,7 +13,9 @@ Applications_DATA = $(desktop_files)
 
 schemasdir	 = $(GCONF_SCHEMA_FILE_DIR)
 schemas_in_files = gossip.schemas.in
+if HAVE_PLATFORM_X11
 schemas_DATA 	 = $(schemas_in_files:.schemas.in=.schemas)
+endif
 @INTLTOOL_SCHEMAS_RULE@
 
 INTLTOOL = 			\

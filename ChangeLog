@@ -1,5 +1,9 @@
 2007-11-03  Richard Hult  <richard@imendio.com>
 
+	* Makefile.am: Only install the schema file if we're using gconf.
+
+2007-11-03  Richard Hult  <richard@imendio.com>
+
 	* data/win32: Rename from icons, and put all the win32 data in
 	here.
 
