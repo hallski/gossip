@@ -186,11 +186,6 @@ static void     contact_list_remove_contact                  (GossipContactList 
 							      GossipContact          *contact,
 							      gboolean                remove_flash);
 static void     contact_list_create_model                    (GossipContactList      *list);
-static gboolean contact_list_search_equal_func               (GtkTreeModel           *model,
-							      gint                    column,
-							      const gchar            *key,
-							      GtkTreeIter            *iter,
-							      gpointer                search_data);
 static void     contact_list_setup_view                      (GossipContactList      *list);
 static void     contact_list_drag_data_received              (GtkWidget              *widget,
 							      GdkDragContext         *context,
@@ -1676,44 +1671,6 @@ contact_list_create_model (GossipContactList *list)
 	gtk_tree_view_set_model (GTK_TREE_VIEW (list), priv->filter);
 }
 
-static gboolean
-contact_list_search_equal_func (GtkTreeModel *model,
-				gint          column,
-				const gchar  *key,
-				GtkTreeIter  *iter,
-				gpointer      search_data)
-{
-	gchar    *name, *name_folded;
-	gchar    *key_folded;
-	gboolean  ret;
-
-	if (!key) {
-		return FALSE;
-	}
-
-	gtk_tree_model_get (model, iter, COL_NAME, &name, -1);
-
-	if (!name) {
-		return FALSE;
-	}
-
-	name_folded = g_utf8_casefold (name, -1);
-	key_folded = g_utf8_casefold (key, -1);
-
-	if (name_folded && key_folded && 
-	    strstr (name_folded, key_folded)) {
-		ret = FALSE;
-	} else {
-		ret = TRUE;
-	}
-
-	g_free (name);
-	g_free (name_folded);
-	g_free (key_folded);
-
-	return ret;
-}
-
 static void
 contact_list_setup_view (GossipContactList *list)
 {
@@ -1721,15 +1678,11 @@ contact_list_setup_view (GossipContactList *list)
 	GtkTreeViewColumn *col;
 	gint               i;
 
-	gtk_tree_view_set_search_equal_func (GTK_TREE_VIEW (list),
-					     contact_list_search_equal_func,
-					     list,
-					     NULL);
-
 	g_object_set (list,
 		      "headers-visible", FALSE,
 		      "reorderable", TRUE,
 		      "show-expanders", FALSE,
+		      "search-column", -1,
 		      NULL);
 
 	col = gtk_tree_view_column_new ();
