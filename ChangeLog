@@ -1,3 +1,8 @@
+2007-11-04  Martyn Russell  <martyn@imendio.com>
+
+	* ui/Makefile.am: 
+	* ui/.cvsignore: Removed, since they are no longer used.
+
 2007-11-03  Richard Hult  <richard@imendio.com>
 
 	* Makefile.am: Only install the schema file if we're using gconf.
