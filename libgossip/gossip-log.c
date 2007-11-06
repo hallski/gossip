@@ -870,7 +870,7 @@ log_get_contact_id_from_filename (const gchar *filename)
 		i++;
 	}
 
-	contact_id = g_strdup (strv[i - 2]);
+	contact_id = log_unescape (strv[i - 2]);
 	g_strfreev (strv);
 
 	return contact_id;
@@ -2433,6 +2433,7 @@ gossip_log_search_new (GossipLogManager *manager,
 				 * here which are not account
 				 * directories, so we just ignore them.
 				 */
+				g_warning ("No account for '%s', ignoring", filename);
 				continue;
 			}
 
@@ -2440,15 +2441,19 @@ gossip_log_search_new (GossipLogManager *manager,
 			contact = gossip_contact_manager_find (contact_manager, 
 							       account, 
 							       contact_id);
-			g_free (contact_id);
-
 			if (!contact) {
 				/* FIXME: What do we do here, do we
 				 * create a new contact explicitly for
 				 * this log entry?
 				 */
+				g_warning ("No contact for '%s' (escaping contact id to '%s'), ignoring", 
+					   filename, contact_id);
+				g_free (contact_id);
+
 				continue;
 			}
+
+			g_free (contact_id);
 
 			hit = g_new0 (GossipLogSearchHit, 1);
 

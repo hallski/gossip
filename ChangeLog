@@ -1,3 +1,12 @@
+2007-11-06  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-log.c:
+	(log_get_contact_id_from_filename):
+	(gossip_log_search_new): Unescape filenames before trying to find
+	contacts by ID. This meant effectively all contact from any
+	transport would not be found when searching logs. Fixes bug
+	#493894 (Sam Morris).	
+
 2007-11-04  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-contact-list.c: (contact_list_setup_view): Disable
