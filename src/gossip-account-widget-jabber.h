@@ -24,10 +24,30 @@
 #define __GOSSIP_ACCOUNT_WIDGET_JABBER_H__
 
 #include <libgossip/gossip-account.h>
+#include <gtk/gtkwidget.h>
 
 G_BEGIN_DECLS
 
-GtkWidget *gossip_account_widget_jabber_new (GossipAccount *account);
+#define GOSSIP_TYPE_ACCOUNT_WIDGET_JABBER         (gossip_account_widget_jabber_get_type ())
+#define GOSSIP_ACCOUNT_WIDGET_JABBER(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_ACCOUNT_WIDGET_JABBER, GossipAccountWidgetJabber))
+#define GOSSIP_ACCOUNT_WIDGET_JABBER_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), GOSSIP_TYPE_ACCOUNT_WIDGET_JABBER, GossipAccountWidgetJabberClass))
+#define GOSSIP_IS_ACCOUNT_WIDGET_JABBER(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), GOSSIP_TYPE_ACCOUNT_WIDGET_JABBER))
+#define GOSSIP_IS_ACCOUNT_WIDGET_JABBER_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_ACCOUNT_WIDGET_JABBER))
+#define GOSSIP_ACCOUNT_WIDGET_JABBER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_ACCOUNT_WIDGET_JABBER, GossipAccountWidgetJabberClass))
+
+typedef struct _GossipAccountWidgetJabber      GossipAccountWidgetJabber;
+typedef struct _GossipAccountWidgetJabberClass GossipAccountWidgetJabberClass;
+
+struct _GossipAccountWidgetJabber {
+	GtkVBox      parent;
+};
+
+struct _GossipAccountWidgetJabberClass {
+	GtkVBoxClass parent_class;
+};
+
+GType      gossip_account_widget_jabber_get_type   (void) G_GNUC_CONST;
+GtkWidget *gossip_account_widget_jabber_new        (GossipAccount *account);
 
 G_END_DECLS
 

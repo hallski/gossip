@@ -60,7 +60,6 @@ typedef struct {
 	GtkWidget *button_connect;
 
 	GtkWidget *frame_new_account;
-	GtkWidget *combobox_type;
 	GtkWidget *entry_name;
 	GtkWidget *button_create;
 	GtkWidget *button_back;
@@ -404,19 +403,24 @@ accounts_dialog_update_account (GossipAccountsDialog *dialog,
 
 		dialog->settings_widget = 
 			gossip_account_widget_jabber_new (account);
-
-		gtk_widget_grab_focus (dialog->settings_widget);
 	}
 
 	if (dialog->settings_widget) {
 		gtk_container_add (GTK_CONTAINER (dialog->alignment_settings),
 				   dialog->settings_widget);
+
+		gtk_widget_show (dialog->settings_widget);
+
+		/* Set default again, this seems to get changed after
+		 * resetting the settings widget.
+		 */
+		g_object_set (dialog->button_create, 
+			      "can-default", TRUE,
+			      "has-default", TRUE,
+			      NULL);
 	}
 
 	if (account) {
-		const gchar *account_type_str;
-
-		account_type_str = gossip_account_type_to_string (GOSSIP_ACCOUNT_TYPE_JABBER);
 		gtk_label_set_text (GTK_LABEL (dialog->label_name), 
 				    gossip_account_get_name (account));
 
@@ -1063,32 +1067,12 @@ accounts_dialog_button_create_clicked_cb (GtkWidget             *button,
 	GossipSession        *session;
 	GossipAccountManager *manager;
 	GossipAccount        *account;
-	GossipAccountType     account_type;
-	gchar                *account_type_str;
 	const gchar          *str;
 
 	/* Update widgets */
 	gtk_widget_show (dialog->vbox_details);
 	gtk_widget_hide (dialog->frame_no_account);
 	gtk_widget_hide (dialog->frame_new_account);
-
-	/* Get account type */
-	account_type_str = gtk_combo_box_get_active_text (GTK_COMBO_BOX (dialog->combobox_type));
-	if (!account_type_str) {
-		return;
-	}
-
-	account_type = GOSSIP_ACCOUNT_TYPE_UNKNOWN;
-
-	str = gossip_account_type_to_string (GOSSIP_ACCOUNT_TYPE_JABBER);
-	if (strcmp (account_type_str, str) == 0) {
-		account_type = GOSSIP_ACCOUNT_TYPE_JABBER;
-	} 
-
-	if (account_type == GOSSIP_ACCOUNT_TYPE_UNKNOWN) {
-		g_warning ("We have an unknown account type selected in the GtkComboBox");
-		return;
-	}
 
 	/* Create account */
 	session = gossip_app_get_session ();
@@ -1181,7 +1165,6 @@ accounts_dialog_button_add_clicked_cb (GtkWidget            *button,
 	gtk_widget_hide (dialog->frame_no_account);
 	gtk_widget_show (dialog->frame_new_account);
 
-	gtk_combo_box_set_active (GTK_COMBO_BOX (dialog->combobox_type), 0);
 	gtk_entry_set_text (GTK_ENTRY (dialog->entry_name), "");
 	gtk_widget_grab_focus (dialog->entry_name);
 }
@@ -1382,7 +1365,6 @@ gossip_accounts_dialog_show (GossipAccount *account)
 	GladeXML                    *glade;
 	GtkWidget                   *bbox;
 	GtkWidget                   *button_close;
-	const gchar                 *str;
 
 	if (dialog) {
 		gtk_window_present (GTK_WINDOW (dialog->window));
@@ -1403,7 +1385,6 @@ gossip_accounts_dialog_show (GossipAccount *account)
 				       "dialog-action_area", &bbox,
 				       "treeview", &dialog->treeview,
 				       "frame_new_account", &dialog->frame_new_account,
-				       "combobox_type", &dialog->combobox_type,
 				       "entry_name", &dialog->entry_name,
 				       "button_create", &dialog->button_create,
 				       "button_back", &dialog->button_back,
@@ -1433,10 +1414,6 @@ gossip_accounts_dialog_show (GossipAccount *account)
 	g_object_add_weak_pointer (G_OBJECT (dialog->window), (gpointer) &dialog);
 
 	g_object_unref (glade);
-
-	/* Set up combo */
-	str = gossip_account_type_to_string (GOSSIP_ACCOUNT_TYPE_JABBER);
-	gtk_combo_box_append_text (GTK_COMBO_BOX (dialog->combobox_type), str);
 
 	/* Set up signalling */
 	session = gossip_app_get_session ();

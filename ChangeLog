@@ -1,5 +1,22 @@
 2007-11-07  Martyn Russell  <martyn@imendio.com>
 
+	* data/glade/main.glade:
+	* src/gossip-account-widget-jabber.[ch]: Rework the code here to
+	make its parent GtkVBox so we can easily call widget functions on
+	it. This widget now sets focus on the account ID entry when it is
+	realised so when adding a new account, that is the first entry
+	selected. Don't try to set the account ID entry if the text is
+	empty (was causing a warning in the console). Don't save the account
+	information when setting up the widgets (due to 'changed' signals
+	and such being emitted). Removed the account type combo box since
+	it is no longer useful here.
+
+	* src/gossip-accounts-dialog.c: Fixed the can-default and
+	has-default status on the "Create" button so is the activated
+	default after entering the new account name.
+
+2007-11-07  Martyn Russell  <martyn@imendio.com>
+
 	* data/glade/chat.glade:
 	* data/glade/file-transfer.glade:
 	* data/glade/group-chat.glade:
