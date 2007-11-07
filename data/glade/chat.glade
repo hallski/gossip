@@ -94,7 +94,7 @@
       <property name="spacing">0</property>
 
       <child>
-	<widget class="GtkMenuBar" id="chats_menubar">
+	<widget class="GtkMenuBar" id="chat_menubar">
 	  <property name="visible">True</property>
 	  <property name="pack_direction">GTK_PACK_DIRECTION_LTR</property>
 	  <property name="child_pack_direction">GTK_PACK_DIRECTION_LTR</property>

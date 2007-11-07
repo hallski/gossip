@@ -1,3 +1,8 @@
+2007-11-07  Richard Hult  <richard@imendio.com>
+
+	* data/glade/chat.glade: Rename the chat menubar, I will need
+	access to it soon.
+
 2007-11-07  Martyn Russell  <martyn@imendio.com>
 
 	* data/glade/main.glade:
