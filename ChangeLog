@@ -1,3 +1,13 @@
+2007-11-07  Martyn Russell  <martyn@imendio.com>
+
+	* data/glade/chat.glade:
+	* data/glade/file-transfer.glade:
+	* data/glade/group-chat.glade:
+	* data/glade/main.glade: Reverted the glade-3 changes we committed
+	here. Things generally work, but there are many warnings in the
+	terminal and I don't think glade-3 is really ready for us yet.
+	Fixes bug #492285.
+
 2007-11-06  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-log.c:
