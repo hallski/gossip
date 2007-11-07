@@ -1,3 +1,21 @@
+2007-11-07  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-app.c: 
+	* data/glade/main.glade: Use stock items for "Connect" and
+	"Disconnect" on the main menu. Include a nice Find icon to the
+	left of the filter entry with some spacing so it looks better.
+	Change the shortcut for showing offline contacts to 'H' (was
+	conflicting with the default for the "Connect" stock item). Remove
+	the 'gtk-justify-left' stock icon use from the View Previous
+	Conversations item and window. The "Search" item now has been
+	changed on the menu for the "Find" stock item (with the Ctrl+F
+	shortcut too).
+	
+	* src/gossip-accounts-dialog.c: Use stock icons for the "Connect",
+	"Disconnect" and "Stop" button states (we didn't have any
+	mnemonics here before). Use a different mnemonic for the server
+	and login ID labels that don't conflict.
+
 2007-11-07  Richard Hult  <richard@imendio.com>
 
 	* data/glade/chat.glade: Rename the chat menubar, I will need

@@ -115,7 +115,8 @@ struct _GossipAppPriv {
 	/* Main widgets */
 	GtkWidget             *window;
 	GtkWidget             *main_vbox;
-	GtkWidget             *filter_entry;
+	GtkWidget             *find_hbox;
+	GtkWidget             *find_entry;
 	GtkWidget             *errors_vbox;
 	GHashTable            *errors;
 	GHashTable            *reconnects;
@@ -177,7 +178,7 @@ static gboolean
 app_main_window_key_press_event_cb           (GtkWidget             *window,
 					      GdkEventKey           *event,
 					      GossipApp             *app);
-static void     app_filter_entry_changed_cb  (GtkEditable           *editable,
+static void     app_find_entry_changed_cb    (GtkEditable           *editable,
 					      GossipApp             *app);
 static void     
 app_favorite_chatroom_menu_activate_cb       (GtkMenuItem           *menu_item,
@@ -771,7 +772,8 @@ app_setup (GossipSession *session)
 				       NULL,
 				       "main_window", &priv->window,
 				       "main_vbox", &priv->main_vbox,
-				       "filter_entry", &priv->filter_entry,
+				       "find_hbox", &priv->find_hbox,
+				       "find_entry", &priv->find_entry,
 				       "errors_vbox", &priv->errors_vbox,
 				       "chat_connect", &priv->chat_connect,
 				       "chat_disconnect", &priv->chat_disconnect,
@@ -793,7 +795,7 @@ app_setup (GossipSession *session)
 			      "main_window", "delete_event", app_main_window_delete_event_cb,
 			      "main_window", "configure_event", app_window_configure_event_cb,
 			      "main_window", "key_press_event", app_main_window_key_press_event_cb,
-			      "filter_entry", "changed", app_filter_entry_changed_cb, 
+			      "find_entry", "changed", app_find_entry_changed_cb, 
 			      "chat", "button-press-event", app_chat_button_press_event_cb,
 			      "chat_quit", "activate", app_chat_quit_cb,
 			      "chat_connect", "activate", app_chat_connect_cb,
@@ -1069,15 +1071,15 @@ app_main_window_key_press_event_cb (GtkWidget   *window,
 }
 
 static void
-app_filter_entry_changed_cb (GtkEditable *editable,
-			     GossipApp   *app)
+app_find_entry_changed_cb (GtkEditable *editable,
+		     	   GossipApp   *app)
 {
 	GossipAppPriv *priv;
 	const gchar   *filter;
 
 	priv = GET_PRIV (app);
 
-	filter = gtk_entry_get_text (GTK_ENTRY (priv->filter_entry));
+	filter = gtk_entry_get_text (GTK_ENTRY (priv->find_entry));
 	gossip_contact_list_set_filter (priv->contact_list, filter);
 }
 
@@ -1318,11 +1320,11 @@ app_chat_search_cb (GtkWidget *window,
 
 	priv = GET_PRIV (app);
 	
-	if (GTK_WIDGET_VISIBLE (priv->filter_entry)) {
-		gtk_widget_hide (priv->filter_entry);
+	if (GTK_WIDGET_VISIBLE (priv->find_hbox)) {
+		gtk_widget_hide (priv->find_hbox);
 	} else {
-		gtk_widget_show (priv->filter_entry);
-		gtk_widget_grab_focus (priv->filter_entry);
+		gtk_widget_show (priv->find_hbox);
+		gtk_widget_grab_focus (priv->find_entry);
 	}
 }
 

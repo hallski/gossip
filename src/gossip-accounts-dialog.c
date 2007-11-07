@@ -318,9 +318,7 @@ accounts_dialog_update_connect_button (GossipAccountsDialog *dialog)
 	GtkTreeModel     *model;
 	GtkTreeSelection *selection;
 	GtkTreeIter       iter;
-	GtkWidget        *image;
 	const gchar      *stock_id;
-	const gchar      *label;
 	gboolean          is_connected;
 	gboolean          is_connecting;
 
@@ -338,22 +336,17 @@ accounts_dialog_update_connect_button (GossipAccountsDialog *dialog)
 			    -1);
 
 	if (is_connecting) {
-		label = _("Stop");
 		stock_id = GTK_STOCK_STOP;
 	} else {
 		if (is_connected) {
-			label = _("Disconnect");
 			stock_id = GTK_STOCK_DISCONNECT;
 		} else {
-			label = _("Connect");
 			stock_id = GTK_STOCK_CONNECT;
 		}
 	}
 
-	image = gtk_image_new_from_stock (stock_id, GTK_ICON_SIZE_BUTTON);
-
-	gtk_button_set_label (GTK_BUTTON (dialog->button_connect), label);
-	gtk_button_set_image (GTK_BUTTON (dialog->button_connect), image);
+	gtk_button_set_label (GTK_BUTTON (dialog->button_connect), stock_id);
+	gtk_button_set_use_stock (GTK_BUTTON (dialog->button_connect), TRUE);
 }
 
 static void
