@@ -12,6 +12,8 @@ libgossip/gossip-log.c
 libgossip/gossip-presence.c
 libgossip/gossip-jabber-disco.c
 libgossip/gossip-jabber.c
+libgossip/gossip-jabber-register.c
+libgossip/gossip-jabber-utils.c
 
 libloudermouth/lm-bs-receiver.c
 libloudermouth/lm-bs-sender.c
@@ -58,7 +60,7 @@ src/gossip-theme-manager.c
 src/gossip-vcard-dialog.c
 src/sounds/gossip.soundlist.in
 
-ui/chat.glade
-ui/file-transfer.glade
-ui/group-chat.glade
-ui/main.glade
+data/glade/chat.glade
+data/glade/file-transfer.glade
+data/glade/group-chat.glade
+data/glade/main.glade

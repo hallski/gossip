@@ -1,3 +1,9 @@
+2007-11-10  Martyn Russell  <martyn@imendio.com>
+
+	* POTFILES.in: Fixed new location of the glade files and added
+	some missing files from libgossip/ discovered running make
+	distcheck.
+
 2007-11-01  Jorge Gonzalez  <jorgegonz@svn.gnome.org>
 
         * es.po: Updated Spanish translation
