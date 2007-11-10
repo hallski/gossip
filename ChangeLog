@@ -1,3 +1,8 @@
+2007-11-10  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-contact-list.c: Remove the use of the
+	'gtk-justify-left' icon from the context menu too.
+
 2007-11-07  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-app.c: 

@@ -369,7 +369,7 @@ static const GtkActionEntry entries[] = {
 	  N_("Emai_l..."), NULL, N_("Email contact"),
 	  G_CALLBACK (contact_list_action_cb)
 	},
-	{ "Log", GTK_STOCK_JUSTIFY_LEFT,
+	{ "Log", NULL,
 	  N_("_View Previous Conversations"), NULL, N_("View previous conversations with this contact"),
 	  G_CALLBACK (contact_list_action_cb)
 	},
