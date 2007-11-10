@@ -1,5 +1,9 @@
 2007-11-10  Martyn Russell  <martyn@imendio.com>
 
+	* NEWS: Add changes to the NEWS in preparation for release.
+
+2007-11-10  Martyn Russell  <martyn@imendio.com>
+
 	* configure.ac: Bumped version.
 	
 2007-11-10  Martyn Russell  <martyn@imendio.com>
@@ -121,7 +125,8 @@
 
 	* src/gossip-chat-view.c (chat_view_finalize): Remove the
 	scrolling timeout, fixes bug #471316.
-	(chat_view_scroll_cb): Scroll a bit faster.
+
+	* src/gossip-chat-view.c (chat_view_scroll_cb): Scroll a bit faster.
 
 2007-10-31  Martyn Russell  <martyn@imendio.com>
 

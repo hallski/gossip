@@ -1,3 +1,33 @@
+NEW in 0.28:
+==============
+- Fixed #371927, crash in Gossip Instant Messenger: Log in after registration (Martyn Russell)
+- Fixed #488455, crash in Gossip Instant Messenger: (Martyn Russell)
+- Fixed #492285, Adding a contact doesn't work (Martyn Russell)
+- Fixed #343513, Store password in gnome-keyring (Sam Morris, Martyn Russell)
+- Fixed #346291, Show all chatrooms in the chatroom window and support filtering after (Martyn Russell)
+- Fixed #470351, gossip 0.27 with galago (Martyn Russell)
+- Fixed #471316, Crash in smooth scrolling code (Richard Hult)
+- Fixed #473169, Translation contexts (Chat and Edit) (Stephane Raimbault)
+- Fixed #475061, Log searching is broken (Martyn Russell)
+- Fixed #475143, Add feature to kick users from group chats (Martyn Russell)
+- Fixed #475882, Change "contact online" notifications (Alex Jones)
+- Fixed #479630, Implement Drag & Drop on contact list for files (Alex Jones)
+- Fixed #493894, log search doesn't find things that it should (Sam Morris)
+
+Translations:
+- Updated fr: Stéphane Raimbault
+- Updated ca: Jordi Mallach
+- Updated oc: Martyn Russell
+- Updated sv: Daniel Nylander
+- Updated hu: Gabor Kelemen
+- Updated lt: Gintautas Miliauskas
+- Updated eu: Inaki Larranaga Murgoitio
+- Updated es: Jorge Gonzalez
+
+Help Manual Translations:
+None
+
+
 NEW in 0.27:
 ==============
 - Fixed #136828, Support for password protected group chats (Martyn Russell)
