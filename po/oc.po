@@ -1,21 +1,25 @@
+# Translation of oc.po to Occitan
+# translation of oc.po to Occitan
 # Occitan translation of gossip.
 # Copyright (C) 2003-2007 The Free Software Foundation, Inc.
 # This file is distributed under the same license as the gossip package.
 #
 # Yannig MARCHEGAY (yannig@marchegay.org) - 2006-2007
 #
+# Yannig Marchegay (Kokoyaya) <yannig@marchegay.org>, 2007.
 msgid ""
 msgstr ""
-"Project-Id-Version: gossip 0.7.8\n"
+"Project-Id-Version: oc\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-10-13 17:49+0200\n"
-"PO-Revision-Date: 2007-08-19 21:41+0200\n"
-"Last-Translator: Yannig MARCHEGAY (Kokoyaya) <yannig@marchegay.org>\n"
-"Language-Team: Occitan (post 1500) <ubuntu-l10n-oci@lists.ubuntu.com>\n"
+"PO-Revision-Date: 2007-11-20 15:02+0100\n"
+"Last-Translator: Yannig Marchegay (Kokoyaya) <yannig@marchegay.org>\n"
+"Language-Team: Occitan <ubuntu-l10n-oci@lists.ubuntu.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: KBabel 1.11.4\n"
 
 #: ../gossip.desktop.in.in.h:1
 msgid "Gossip Instant Messenger"
@@ -34,8 +38,7 @@ msgid "Chat window theme"
 msgstr ""
 
 #: ../gossip.schemas.in.h:3
-msgid ""
-"Comma separated list of spell checker languages to use (e.g. en, fr, nl)."
+msgid "Comma separated list of spell checker languages to use (e.g. en, fr, nl)."
 msgstr ""
 
 #: ../gossip.schemas.in.h:4
@@ -132,8 +135,7 @@ msgid ""
 msgstr ""
 
 #: ../gossip.schemas.in.h:26
-msgid ""
-"Whether or not to convert smileys into graphical images in conversations."
+msgid "Whether or not to convert smileys into graphical images in conversations."
 msgstr ""
 
 #: ../gossip.schemas.in.h:27
@@ -229,7 +231,7 @@ msgstr ""
 msgid "Owner"
 msgid_plural "Owners"
 msgstr[0] "Propietari"
-msgstr[1] "Propietaris"
+msgstr[1] "Propietari"
 
 #: ../libgossip/gossip-chatroom.c:1084
 msgid "Administrator"
@@ -241,7 +243,7 @@ msgstr[1] ""
 msgid "Member"
 msgid_plural "Members"
 msgstr[0] "Sòci"
-msgstr[1] "Sòcis"
+msgstr[1] "Sòci"
 
 #: ../libgossip/gossip-chatroom.c:1088
 msgid "Outcast"
@@ -493,11 +495,11 @@ msgstr ""
 
 #: ../src/gossip-about-dialog.c:105
 msgid "translator-credits"
-msgstr "Yannig Marchegay (Kokoyaya) <yannig@marchegay.org>"
+msgstr "Yannig Marchegay (Kokoyaya) <yannig@marchegay.org)"
 
 #: ../src/gossip-accounts-dialog.c:342
 msgid "Stop"
-msgstr "Arrèst"
+msgstr "Arrestar"
 
 #: ../src/gossip-accounts-dialog.c:346
 msgid "Disconnect"
@@ -505,7 +507,7 @@ msgstr "Desconnectar"
 
 #: ../src/gossip-accounts-dialog.c:349
 msgid "Connect"
-msgstr "Connectar"
+msgstr "Se connectar"
 
 #: ../src/gossip-accounts-dialog.c:384 ../ui/main.glade.h:13
 msgid "<b>No Account Selected</b>"
@@ -737,7 +739,7 @@ msgstr "~Refusar"
 msgid "New Message"
 msgid_plural "New Messages"
 msgstr[0] "Messatge novèl"
-msgstr[1] "Messatges novèls"
+msgstr[1] "Messatge novèl"
 
 #: ../src/gossip-chat-window.c:754
 msgid "Chat Room"
@@ -915,9 +917,8 @@ msgid "An unknown error occurred during file transfer."
 msgstr ""
 
 #: ../src/gossip-ft-dialog.c:492
-#, fuzzy
 msgid "Transfer complete"
-msgstr "Transferéncia de fichièr terminada"
+msgstr ""
 
 #: ../src/gossip-ft-dialog.c:498
 msgid "The file has been transfered successfully."
@@ -1054,7 +1055,7 @@ msgstr "Data"
 
 #: ../src/gossip-log-window.c:1995
 msgid "Link"
-msgstr ""
+msgstr "Ligam"
 
 #: ../src/gossip-main.c:81
 msgid "Don't connect on startup"
@@ -1120,12 +1121,11 @@ msgstr ""
 
 #: ../src/gossip-new-chatroom-dialog.c:536
 msgid "Users"
-msgstr ""
+msgstr "Utilizaires"
 
 #: ../src/gossip-new-chatroom-dialog.c:570
-#, fuzzy
 msgid "Description"
-msgstr "_Descripcion :"
+msgstr "Descripcion"
 
 #: ../src/gossip-new-chatroom-dialog.c:821
 #, c-format
@@ -1148,9 +1148,8 @@ msgid "%s is %s"
 msgstr ""
 
 #: ../src/gossip-notify.c:228
-#, fuzzy
 msgid "Contact Online"
-msgstr "Contacte"
+msgstr "Contacte en linha"
 
 #: ../src/gossip-notify.c:241 ../src/gossip-notify.c:349
 #: ../src/gossip-notify.c:563
@@ -1192,28 +1191,27 @@ msgid "%s would like to send you “%s”"
 msgstr ""
 
 #: ../src/gossip-notify.c:378 ../ui/file-transfer.glade.h:3
-#, fuzzy
 msgid "File Transfer"
-msgstr "Transferéncia de fichièr terminada"
+msgstr "Transferiment de fichièr"
 
 #: ../src/gossip-notify.c:535
-#, fuzzy, c-format
+#, c-format
 msgid "New Message from %s"
-msgstr "Messatge novèl"
+msgstr "Messatge novèl de %s"
 
 #: ../src/gossip-notify.c:544
 #, c-format
 msgid "“%s...”"
-msgstr ""
+msgstr "“%s...”"
 
 #: ../src/gossip-notify.c:546
 #, c-format
 msgid "“%s”"
-msgstr ""
+msgstr "“%s”"
 
 #: ../src/gossip-notify.c:566
 msgid "Show"
-msgstr "Visualizacion"
+msgstr "Mostrar"
 
 #: ../src/gossip-notify.c:572
 msgid "Contact Information"
@@ -1365,7 +1363,7 @@ msgstr "Cambiar"
 
 #: ../src/sounds/gossip.soundlist.in.h:1 ../ui/chat.glade.h:4
 msgid "Chat"
-msgstr ""
+msgstr "Chad"
 
 #: ../src/sounds/gossip.soundlist.in.h:2
 msgid "Contact goes offline"
@@ -1437,7 +1435,7 @@ msgstr "_Apondre un contacte..."
 
 #: ../ui/chat.glade.h:18
 msgid "_Add To Favorites"
-msgstr ""
+msgstr "_Apondre als favorits"
 
 #: ../ui/chat.glade.h:19
 msgid "_Close"
@@ -1481,7 +1479,7 @@ msgstr ""
 
 #: ../ui/chat.glade.h:29
 msgid "_Tabs"
-msgstr ""
+msgstr "_Onglets"
 
 #.
 #. This is the text that should appear on a menu title. Don't include the prefix 'menu title|' in the translation.
@@ -1495,7 +1493,7 @@ msgstr ""
 
 #: ../ui/file-transfer.glade.h:4
 msgid "Location:"
-msgstr ""
+msgstr "Emplaçament :"
 
 #: ../ui/file-transfer.glade.h:5 ../ui/main.glade.h:64
 msgid "Name:"
@@ -1510,13 +1508,12 @@ msgid "Open _Folder"
 msgstr ""
 
 #: ../ui/file-transfer.glade.h:8
-#, fuzzy
 msgid "Select A File"
-msgstr "Seleccionar un fichièr"
+msgstr "Causissètz un fichièr"
 
 #: ../ui/file-transfer.glade.h:9
 msgid "Size:"
-msgstr ""
+msgstr "Talha&nbsp;:"
 
 #: ../ui/group-chat.glade.h:1 ../ui/main.glade.h:25
 msgid "Account:"
@@ -1531,8 +1528,7 @@ msgid "Edit Favorite Room"
 msgstr ""
 
 #: ../ui/group-chat.glade.h:4
-msgid ""
-"Enter the room name to join here or click on one or more rooms in the list."
+msgid "Enter the room name to join here or click on one or more rooms in the list."
 msgstr ""
 
 #: ../ui/group-chat.glade.h:6
@@ -1561,16 +1557,14 @@ msgstr ""
 
 #: ../ui/group-chat.glade.h:12
 msgid "S_erver:"
-msgstr ""
+msgstr "S_ervidor :"
 
 #: ../ui/group-chat.glade.h:13
-msgid ""
-"Show more information about chatrooms found and make the window resizable."
+msgid "Show more information about chatrooms found and make the window resizable."
 msgstr ""
 
 #: ../ui/group-chat.glade.h:14
-msgid ""
-"This list represents all chat rooms hosted on the server you have entered."
+msgid "This list represents all chat rooms hosted on the server you have entered."
 msgstr ""
 
 #: ../ui/group-chat.glade.h:15 ../ui/main.glade.h:135
@@ -1578,9 +1572,8 @@ msgid "_Nickname:"
 msgstr ""
 
 #: ../ui/group-chat.glade.h:16
-#, fuzzy
 msgid "_Password"
-msgstr "Mot de _pas :"
+msgstr "Mot de _pas&nbsp;:"
 
 #: ../ui/group-chat.glade.h:17
 msgid "_Room:"
@@ -1708,7 +1701,7 @@ msgstr ""
 
 #: ../ui/main.glade.h:32
 msgid "C_hange"
-msgstr ""
+msgstr "Cambiar"
 
 #: ../ui/main.glade.h:33
 msgid "Ch_at"
@@ -1799,8 +1792,7 @@ msgid "ID:"
 msgstr ""
 
 #: ../ui/main.glade.h:55
-msgid ""
-"If you chose to decide later you will be asked the next time you log on."
+msgid "If you chose to decide later you will be asked the next time you log on."
 msgstr ""
 
 #: ../ui/main.glade.h:56
@@ -1813,7 +1805,7 @@ msgstr ""
 
 #: ../ui/main.glade.h:60
 msgid "Links"
-msgstr ""
+msgstr "Ligams"
 
 #: ../ui/main.glade.h:61
 msgid "Login I_D:"
@@ -1948,8 +1940,7 @@ msgid "This name will be used to identify you in chat windows"
 msgstr ""
 
 #: ../ui/main.glade.h:101
-msgid ""
-"This name will be used to identify you when new contacts lookup your details"
+msgid "This name will be used to identify you when new contacts lookup your details"
 msgstr ""
 
 #: ../ui/main.glade.h:105
@@ -2041,9 +2032,8 @@ msgid "_Enter the name or contact ID of the person you want to chat to below:"
 msgstr ""
 
 #: ../ui/main.glade.h:128
-#, fuzzy
 msgid "_For"
-msgstr "_Pòrt :"
+msgstr ""
 
 #: ../ui/main.glade.h:129
 msgid "_Full Name:"
@@ -2070,9 +2060,8 @@ msgid "_Nick Name:"
 msgstr ""
 
 #: ../ui/main.glade.h:136
-#, fuzzy
 msgid "_Open"
-msgstr "_Dobrir lo ligam"
+msgstr "_Dobrir"
 
 #: ../ui/main.glade.h:137
 msgid "_Open new chats in separate windows"
@@ -2152,23 +2141,3 @@ msgstr ""
 msgid "msn account settings"
 msgstr ""
 
-#~ msgid "Normal"
-#~ msgstr "Normal"
-
-#~ msgid "An unknown error occurred."
-#~ msgstr "I a agut una error desconeguda."
-
-#~ msgid "Save file as..."
-#~ msgstr "Enregistrar lo fichièr"
-
-#~ msgid "Cancel"
-#~ msgstr "Anullar"
-
-#~ msgid "OK"
-#~ msgstr "Validar"
-
-#~ msgid "File name:"
-#~ msgstr "Nom de fichièrs :"
-
-#~ msgid "File size:"
-#~ msgstr "Talha del fichièr"

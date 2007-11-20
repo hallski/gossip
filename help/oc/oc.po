@@ -1,21 +1,24 @@
+# translation of oc.po to Occitan
 # Occitan translation of gossip documentation.
 # Copyright (C) 2007 Free Software Foundation, Inc.
 # This file is distributed under the same license as the gossip
 # documentation package.
-# 
+#
 # Yannig MARCHEGAY (Kokoyaya) <yannig@marchegay>.
 #
+# Yannig Marchegay (Kokoyaya) <yannig@marchegay.org>, 2007.
 msgid ""
 msgstr ""
-"Project-Id-Version: gossip doc fr\n"
+"Project-Id-Version: oc\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-05-16 22:51+0200\n"
-"PO-Revision-Date: 2007-10-14 15:43+0200\n"
-"Last-Translator: Yannig MARCHEGAY (Kokoyaya) <yannig@marchegay>\n"
-"Language-Team: Occitan (post 1500) <ubuntu-l10n-oci@lists.ubuntu.com>\n"
+"PO-Revision-Date: 2007-11-20 14:31+0100\n"
+"Last-Translator: Yannig Marchegay (Kokoyaya) <yannig@marchegay.org>\n"
+"Language-Team: Occitan <ubuntu-l10n-oci@lists.ubuntu.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.4\n"
 
 # Mentions légales
 #: ../C/legal.xml:2(para) ../C/gossip.xml:2(para)
@@ -84,8 +87,7 @@ msgstr ""
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: ../C/gossip.xml:338(None)
-msgid ""
-"@@image: 'figures/gossip-roster.png'; md5=a1f1cd0f7e9263cc0d2f39271f32fd27"
+msgid "@@image: 'figures/gossip-roster.png'; md5=a1f1cd0f7e9263cc0d2f39271f32fd27"
 msgstr ""
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
@@ -99,22 +101,19 @@ msgstr ""
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: ../C/gossip.xml:803(None)
-msgid ""
-"@@image: 'figures/gossip-available.png'; md5=e5242ca2eaafc3fa131308a2dc11a796"
+msgid "@@image: 'figures/gossip-available.png'; md5=e5242ca2eaafc3fa131308a2dc11a796"
 msgstr ""
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: ../C/gossip.xml:818(None)
-msgid ""
-"@@image: 'figures/gossip-busy.png'; md5=9fa99b5e46e4f2b9a04f44569a6f3cd0"
+msgid "@@image: 'figures/gossip-busy.png'; md5=9fa99b5e46e4f2b9a04f44569a6f3cd0"
 msgstr ""
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: ../C/gossip.xml:833(None)
-msgid ""
-"@@image: 'figures/gossip-away.png'; md5=33e81e2227fdb79c56fadb022b2e10bc"
+msgid "@@image: 'figures/gossip-away.png'; md5=33e81e2227fdb79c56fadb022b2e10bc"
 msgstr ""
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
@@ -128,8 +127,7 @@ msgstr ""
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: ../C/gossip.xml:863(None)
-msgid ""
-"@@image: 'figures/gossip-offline.png'; md5=de3339a395ece40fdbfcabab2ce09bc9"
+msgid "@@image: 'figures/gossip-offline.png'; md5=de3339a395ece40fdbfcabab2ce09bc9"
 msgstr ""
 
 #: ../C/gossip.xml:22(title) ../C/gossip.xml:114(revnumber)
@@ -165,7 +163,7 @@ msgstr "Brian Pepple"
 #: ../C/gossip.xml:130(para) ../C/gossip.xml:143(para)
 #: ../C/gossip.xml:153(para) ../C/gossip.xml:164(para)
 msgid "GNOME Documentation Project"
-msgstr ""
+msgstr "Projècte de documentacion de GNOME"
 
 #: ../C/gossip.xml:59(firstname)
 msgid "Daniel"
@@ -197,7 +195,7 @@ msgstr "Brian"
 
 #: ../C/gossip.xml:76(surname)
 msgid "Pepple"
-msgstr ""
+msgstr "Pepple"
 
 #: ../C/gossip.xml:78(orgname)
 msgid "Fedora Project"
@@ -209,7 +207,7 @@ msgstr "bpepple@fedoraproject.org"
 
 #: ../C/gossip.xml:115(date)
 msgid "December 2006"
-msgstr ""
+msgstr "Decembre de 2006"
 
 #: ../C/gossip.xml:117(para) ../C/gossip.xml:127(para)
 #: ../C/gossip.xml:137(para) ../C/gossip.xml:150(para)
@@ -283,7 +281,7 @@ msgstr ""
 
 #: ../C/gossip.xml:195(title)
 msgid "Introduction"
-msgstr ""
+msgstr "Introduccion"
 
 #: ../C/gossip.xml:198(title)
 msgid "What is Gossip"
@@ -335,7 +333,7 @@ msgstr ""
 
 #: ../C/gossip.xml:243(title)
 msgid "Getting Started"
-msgstr ""
+msgstr "Per començar"
 
 #: ../C/gossip.xml:246(title)
 msgid "To Start Gossip"
@@ -347,7 +345,7 @@ msgstr ""
 
 #: ../C/gossip.xml:251(term)
 msgid "<guimenu>Applications</guimenu> menu"
-msgstr ""
+msgstr "Menut <guimenu>Applications</guimenu>"
 
 #: ../C/gossip.xml:253(para)
 msgid ""
@@ -357,7 +355,7 @@ msgstr ""
 
 #: ../C/gossip.xml:262(term)
 msgid "Command line"
-msgstr ""
+msgstr "Linha de comanda"
 
 #: ../C/gossip.xml:264(para)
 msgid ""
@@ -382,8 +380,7 @@ msgid ""
 msgstr ""
 
 #: ../C/gossip.xml:282(para)
-msgid ""
-"Give the account the <guilabel>Name</guilabel> you wish to be displayed."
+msgid "Give the account the <guilabel>Name</guilabel> you wish to be displayed."
 msgstr ""
 
 #: ../C/gossip.xml:285(para)
@@ -464,15 +461,15 @@ msgstr ""
 
 #: ../C/gossip.xml:370(para)
 msgid "Component"
-msgstr ""
+msgstr "Component"
 
 #: ../C/gossip.xml:373(para) ../C/gossip.xml:795(para)
 msgid "Description"
-msgstr ""
+msgstr "Descripcion"
 
 #: ../C/gossip.xml:380(para)
 msgid "Menubar"
-msgstr ""
+msgstr "Barra de menuts"
 
 #: ../C/gossip.xml:383(para)
 msgid "Contains menus that are used to perform tasks in Gossip."
@@ -496,7 +493,7 @@ msgstr ""
 
 #: ../C/gossip.xml:404(para)
 msgid "Contact List"
-msgstr ""
+msgstr "Tièra de contactes"
 
 #: ../C/gossip.xml:407(para)
 msgid "Shows all available contacts and their associated statuses."
@@ -506,7 +503,7 @@ msgstr ""
 msgid "Basic Usage"
 msgstr ""
 
-#. TODO: Maybe the next sentence is obsolete, because usage is splitted in 
+#. TODO: Maybe the next sentence is obsolete, because usage is splitted in
 #.       different sections
 #: ../C/gossip.xml:422(para)
 msgid "You can use the Gossip application to perform the following tasks:"
@@ -714,8 +711,7 @@ msgid "Enter the <guilabel>Contact</guilabel> identity."
 msgstr ""
 
 #: ../C/gossip.xml:650(para)
-msgid ""
-"The Contact identity looks like an email-address. Example: user@jabber.org"
+msgid "The Contact identity looks like an email-address. Example: user@jabber.org"
 msgstr ""
 
 #: ../C/gossip.xml:656(para)
@@ -854,7 +850,7 @@ msgstr ""
 
 #: ../C/gossip.xml:826(para)
 msgid "Busy"
-msgstr ""
+msgstr "Ocupat"
 
 #: ../C/gossip.xml:836(phrase)
 msgid "Shows a red triangle."
@@ -862,7 +858,7 @@ msgstr ""
 
 #: ../C/gossip.xml:841(para)
 msgid "Away"
-msgstr ""
+msgstr "Absent(a)"
 
 #: ../C/gossip.xml:851(phrase)
 msgid "Shows a red triangle with a question mark."
@@ -878,7 +874,7 @@ msgstr ""
 
 #: ../C/gossip.xml:871(para)
 msgid "Offline"
-msgstr ""
+msgstr "Desconnectat"
 
 #: ../C/gossip.xml:784(para)
 msgid ""
@@ -962,8 +958,7 @@ msgid "Using Group Chats"
 msgstr ""
 
 #: ../C/gossip.xml:956(para)
-msgid ""
-"Group chat can be used to have a conversation with more than one person."
+msgid "Group chat can be used to have a conversation with more than one person."
 msgstr ""
 
 #: ../C/gossip.xml:961(title)
@@ -1048,7 +1043,7 @@ msgstr ""
 
 #: ../C/gossip.xml:1062(title)
 msgid "Settings"
-msgstr ""
+msgstr "Paramètres"
 
 #: ../C/gossip.xml:1063(para)
 msgid ""
@@ -1060,11 +1055,11 @@ msgstr ""
 
 #: ../C/gossip.xml:1097(title)
 msgid "General"
-msgstr ""
+msgstr "General"
 
 #: ../C/gossip.xml:1100(guilabel) ../C/gossip.xml:1223(guilabel)
 msgid "Appearance"
-msgstr ""
+msgstr "Aparéncia"
 
 #: ../C/gossip.xml:1104(para)
 msgid ""
@@ -1087,7 +1082,7 @@ msgstr ""
 
 #: ../C/gossip.xml:1125(guilabel)
 msgid "Behavior"
-msgstr ""
+msgstr "Compòrtament"
 
 #: ../C/gossip.xml:1129(para)
 msgid ""
@@ -1102,7 +1097,7 @@ msgstr ""
 
 #: ../C/gossip.xml:1145(guilabel)
 msgid "Audio"
-msgstr ""
+msgstr "Audio"
 
 #: ../C/gossip.xml:1149(para)
 msgid ""
@@ -1144,7 +1139,7 @@ msgstr ""
 
 #: ../C/gossip.xml:1189(guilabel)
 msgid "Languages"
-msgstr ""
+msgstr "Lengas"
 
 #: ../C/gossip.xml:1193(para)
 msgid "Select the languages you wish to enable for spell checking"
@@ -1158,7 +1153,7 @@ msgstr ""
 
 #: ../C/gossip.xml:1204(guilabel) ../C/gossip.xml:1236(guilabel)
 msgid "Options"
-msgstr ""
+msgstr "Opcions"
 
 #: ../C/gossip.xml:1208(para)
 msgid "Select <guilabel>Enable spell checking</guilabel>, if desired."
@@ -1166,11 +1161,10 @@ msgstr ""
 
 #: ../C/gossip.xml:1220(title)
 msgid "Themes"
-msgstr ""
+msgstr "Tèmas"
 
 #: ../C/gossip.xml:1227(para)
-msgid ""
-"Select the desired <guilabel>Chat Theme</guilabel> from the drop-down list."
+msgid "Select the desired <guilabel>Chat Theme</guilabel> from the drop-down list."
 msgstr ""
 
 #: ../C/gossip.xml:1240(para)
@@ -1209,5 +1203,5 @@ msgstr ""
 #. Put one translator per line, in the form of NAME <EMAIL>, YEAR1, YEAR2.
 #: ../C/gossip.xml:0(None)
 msgid "translator-credits"
-msgstr ""
+msgstr "Yannig Marchegay (Kokoyaya) <yannig@marchegay.org)"
 
