@@ -80,7 +80,8 @@ typedef struct {
 	GtkWidget        *throbber;
 	GtkWidget        *treeview;
 	GtkTreeModel     *model;
-	GtkTreeModel     *filter;
+	GtkTreeModel     *filter_model;
+	GtkTreeModel     *sort_model;
 
 	GtkWidget        *button_join;
 	GtkWidget        *button_close;
@@ -121,7 +122,6 @@ static void     new_chatroom_dialog_model_text_cell_data_func       (GtkTreeView
 								     GtkTreeModel            *model,
 								     GtkTreeIter             *iter,
 								     GossipNewChatroomDialog *dialog);
-static void     new_chatroom_dialog_model_add_columns               (GossipNewChatroomDialog *dialog);
 static void     new_chatroom_dialog_model_setup                     (GossipNewChatroomDialog *dialog);
 static void     new_chatroom_dialog_set_defaults                    (GossipNewChatroomDialog *dialog);
 static void     new_chatroom_dialog_join                            (GossipNewChatroomDialog *window);
@@ -482,17 +482,81 @@ new_chatroom_dialog_model_text_cell_data_func (GtkTreeViewColumn       *tree_col
 }
 
 static void
-new_chatroom_dialog_model_add_columns (GossipNewChatroomDialog *dialog)
+new_chatroom_dialog_model_setup (GossipNewChatroomDialog *dialog)
 {
 	GtkTreeView       *view;
+	GtkListStore      *store;
+	GtkTreeModel      *model;
+	GtkTreeModel      *sort_model;
+	GtkTreeModel      *filter_model;
+	GtkTreeSortable   *sortable;
+	GtkTreeSelection  *selection;
 	GtkTreeViewColumn *column;
 	GtkCellRenderer   *cell;
-	gint               count;
 
+	if (dialog->filter_model) {
+		g_object_unref (dialog->filter_model);
+	}
+
+	if (dialog->sort_model) {
+		g_object_unref (dialog->sort_model);
+	}
+
+	/* View */
 	view = GTK_TREE_VIEW (dialog->treeview);
+
+	g_signal_connect (view, "row-activated",
+			  G_CALLBACK (new_chatroom_dialog_model_row_activated_cb),
+			  dialog);
+	/* Create store */
+	store = gtk_list_store_new (COL_COUNT,
+				    GDK_TYPE_PIXBUF,       /* Image */
+				    G_TYPE_STRING,         /* Name */
+				    G_TYPE_UINT,           /* Occupants */
+				    G_TYPE_STRING,         /* Password Protected */
+				    G_TYPE_STRING,         /* Description */
+				    GOSSIP_TYPE_CHATROOM); /* Chatroom */
+
+	model = GTK_TREE_MODEL (store);
+	dialog->model = model;
+
+	/* Create filter model */
+	filter_model = gtk_tree_model_filter_new (model, NULL);
+	gtk_tree_model_filter_set_visible_func (GTK_TREE_MODEL_FILTER (filter_model),
+						(GtkTreeModelFilterVisibleFunc)
+						new_chatroom_dialog_model_filter_func,
+						dialog,
+						NULL);
+	g_signal_connect (filter_model, "row-inserted",
+			  G_CALLBACK (new_chatroom_dialog_model_row_inserted_cb),
+			  dialog);
+	g_signal_connect (filter_model, "row-deleted",
+			  G_CALLBACK (new_chatroom_dialog_model_row_deleted_cb),
+			  dialog);
+
+	dialog->filter_model = filter_model;
+
+	/* Create sort model */
+	sort_model = gtk_tree_model_sort_new_with_model (filter_model);
+	dialog->sort_model = sort_model;
+
+	sortable = GTK_TREE_SORTABLE (sort_model);
+
+	/* Set model to use in tree view */
+	gtk_tree_view_set_model (view, sort_model);
+
+	/* Selection */
+	selection = gtk_tree_view_get_selection (view);
+	gtk_tree_selection_set_mode (selection, GTK_SELECTION_MULTIPLE);
+
+	g_signal_connect (selection, "changed",
+			  G_CALLBACK (new_chatroom_dialog_model_selection_changed), 
+			  dialog);
+
+	/* Columns */
 	gtk_tree_view_set_headers_visible (view, FALSE);
 
-	/* Name & Status */
+	/* Columns: Rooms */
 	column = gtk_tree_view_column_new ();
 	gtk_tree_view_column_set_title (column, _("Rooms"));
 
@@ -518,14 +582,15 @@ new_chatroom_dialog_model_add_columns (GossipNewChatroomDialog *dialog)
 						 dialog,
 						 NULL);
 
-	count = gtk_tree_view_append_column (view, column);
   	gtk_tree_view_column_set_sizing (column, GTK_TREE_VIEW_COLUMN_AUTOSIZE);  
 	gtk_tree_view_column_set_expand (column, TRUE);
 	gtk_tree_view_column_set_resizable (column, TRUE);
  	gtk_tree_view_column_set_min_width (column, 120); 
 	gtk_tree_view_column_set_visible (column, TRUE);
+	gtk_tree_view_column_set_sort_column_id (column, COL_NAME);
+	gtk_tree_view_append_column (view, column);
 
-	/* Occupants */
+	/* Columns: Occupants */
 	cell = gtk_cell_renderer_text_new ();
 	g_object_set (cell,
 		      "xalign", 0.5, 
@@ -536,12 +601,13 @@ new_chatroom_dialog_model_add_columns (GossipNewChatroomDialog *dialog)
 	column = gtk_tree_view_column_new_with_attributes (_("Users"), cell, 
 							   "text", COL_OCCUPANTS, 
 							   NULL);
-	count = gtk_tree_view_append_column (view, column);
 	gtk_tree_view_column_set_expand (column, FALSE);
 	gtk_tree_view_column_set_resizable (column, FALSE);
 	gtk_tree_view_column_set_visible (column, FALSE);
+	gtk_tree_view_column_set_sort_column_id (column, COL_OCCUPANTS);
+	gtk_tree_view_append_column (view, column);
 
-	/* Password Protected */
+	/* Columns: Password Protected */
 	cell = gtk_cell_renderer_pixbuf_new ();
 	g_object_set (cell,
 		      "xalign", 0.5, 
@@ -553,13 +619,14 @@ new_chatroom_dialog_model_add_columns (GossipNewChatroomDialog *dialog)
 	column = gtk_tree_view_column_new_with_attributes ("*", cell, 
 							   "stock-id", COL_PASSWORD_PROTECTED, 
 							   NULL);
-	count = gtk_tree_view_append_column (view, column);
 	gtk_tree_view_column_set_alignment (column, 0.5);
 	gtk_tree_view_column_set_expand (column, FALSE);
 	gtk_tree_view_column_set_resizable (column, FALSE);
 	gtk_tree_view_column_set_visible (column, TRUE);
+	gtk_tree_view_column_set_sort_column_id (column, COL_PASSWORD_PROTECTED);
+	gtk_tree_view_append_column (view, column);
 
-	/* Description */
+	/* Columns: Description */
 	cell = gtk_cell_renderer_text_new ();
 	g_object_set (cell,
 		      "xpad", (guint) 4,
@@ -570,70 +637,15 @@ new_chatroom_dialog_model_add_columns (GossipNewChatroomDialog *dialog)
 	column = gtk_tree_view_column_new_with_attributes (_("Description"), cell, 
 							   "text", COL_DESCRIPTION, 
 							   NULL);
-	count = gtk_tree_view_append_column (view, column);
 	gtk_tree_view_column_set_expand (column, TRUE);
 	gtk_tree_view_column_set_resizable (column, FALSE);
 	gtk_tree_view_column_set_sizing (column, GTK_TREE_VIEW_COLUMN_FIXED);
 	gtk_tree_view_column_set_visible (column, FALSE);
-}
+	gtk_tree_view_column_set_sort_column_id (column, COL_DESCRIPTION);
+	gtk_tree_view_append_column (view, column);
 
-static void
-new_chatroom_dialog_model_setup (GossipNewChatroomDialog *dialog)
-{
-	GtkTreeView      *view;
-	GtkListStore     *store;
-	GtkTreeSelection *selection;
-
-	/* View */
-	view = GTK_TREE_VIEW (dialog->treeview);
-
-	g_signal_connect (view, "row-activated",
-			  G_CALLBACK (new_chatroom_dialog_model_row_activated_cb),
-			  dialog);
-
-#if 0
-				    GDK_TYPE_PIXBUF,       /* Password Protected */
-#endif
-
-	/* Store/Model */
-	store = gtk_list_store_new (COL_COUNT,
-				    GDK_TYPE_PIXBUF,       /* Image */
-				    G_TYPE_STRING,         /* Name */
-				    G_TYPE_UINT,           /* Occupants */
-				    G_TYPE_STRING,         /* Password Protected */
-				    G_TYPE_STRING,         /* Description */
-				    GOSSIP_TYPE_CHATROOM); /* Chatroom */
-
-	dialog->model = GTK_TREE_MODEL (store);
-
-	/* Filter */
-	dialog->filter = gtk_tree_model_filter_new (dialog->model, NULL);
-
-	gtk_tree_model_filter_set_visible_func (GTK_TREE_MODEL_FILTER (dialog->filter),
-						(GtkTreeModelFilterVisibleFunc)
-						new_chatroom_dialog_model_filter_func,
-						dialog,
-						NULL);
-
-	gtk_tree_view_set_model (view, dialog->filter);
-
-	g_signal_connect (dialog->filter, "row-inserted",
-			  G_CALLBACK (new_chatroom_dialog_model_row_inserted_cb),
-			  dialog);
-	g_signal_connect (dialog->filter, "row-deleted",
-			  G_CALLBACK (new_chatroom_dialog_model_row_deleted_cb),
-			  dialog);
-
-	/* Selection */
-	selection = gtk_tree_view_get_selection (view);
-	gtk_tree_selection_set_mode (selection, GTK_SELECTION_MULTIPLE);
-
-	g_signal_connect (selection, "changed",
-			  G_CALLBACK (new_chatroom_dialog_model_selection_changed), 
-			  dialog);
-
-	/* Columns */
-	new_chatroom_dialog_model_add_columns (dialog);
+	/* Set default sorting */
+	gtk_tree_sortable_set_sort_column_id (sortable, COL_NAME, GTK_SORT_ASCENDING);
 }
 
 static void
@@ -771,7 +783,7 @@ new_chatroom_dialog_entry_changed_cb (GtkWidget               *entry,
 				      GossipNewChatroomDialog *dialog)
 {
 	if (entry == dialog->entry_room) {
-		gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (dialog->filter));
+		gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (dialog->filter_model));
 	} 
 
 	new_chatroom_dialog_update_buttons (dialog);
@@ -1010,9 +1022,10 @@ static void
 new_chatroom_dialog_destroy_cb (GtkWidget               *widget,
 				GossipNewChatroomDialog *dialog)
 {
-  	g_object_unref (dialog->model);  
- 	g_object_unref (dialog->filter); 
-
+	g_object_unref (dialog->model);
+	g_object_unref (dialog->filter_model);
+	g_object_unref (dialog->sort_model);
+	
 	g_free (dialog);
 }
 
