@@ -1,7 +1,26 @@
+2007-11-30  Martyn Russell  <martyn@imendio.com>
+
+	* ChangeLog:
+	* src/gossip-log-window.c:
+	(log_window_entry_find_activate_cb):
+	(log_window_links_setup):
+	(log_window_entry_links_changed_cb):
+	(log_window_destroy_cb):
+	(gossip_log_window_show): Fix sorting the links tree view so it
+	actually works now along side filtering.
+
+2007-11-26  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-log-window.c:
+	(log_window_entry_find_activate_cb):
+	(gossip_log_window_show): Make searching logs work when pressing
+	enter instead of having to switch focus manually to the Find
+	button. 
+
 2007-11-10  Martyn Russell  <martyn@imendio.com>
 
 	* Release 0.28.
-	
+
 2007-11-10  Martyn Russell  <martyn@imendio.com>
 
 	* NEWS: Add changes to the NEWS in preparation for release.

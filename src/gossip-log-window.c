@@ -79,7 +79,8 @@ typedef struct {
 	GtkWidget        *button_links_copy;
 	GtkWidget        *treeview_links;
 	GtkListStore     *treestore_links;
-	GtkTreeModel     *treemodel_links;
+	GtkTreeModel     *treemodel_links_sort;
+	GtkTreeModel     *treemodel_links_filter;
 
 	gchar            *last_find;
 
@@ -297,6 +298,13 @@ log_window_entry_find_changed_cb (GtkWidget       *entry,
 		(window->last_find && strcmp (window->last_find, str) != 0);
 
 	gtk_widget_set_sensitive (window->button_find, is_sensitive);
+}
+
+static void
+log_window_entry_find_activate_cb (GtkWidget       *entry,
+				   GossipLogWindow *window)
+{
+	gtk_widget_grab_focus (window->entry_find);
 }
 
 static void
@@ -1903,6 +1911,8 @@ log_window_links_setup (GossipLogWindow *window)
 {
 	GtkTreeView       *view;
 	GtkTreeModel      *model;
+	GtkTreeModel      *sort_model;
+	GtkTreeModel      *filter_model;
 	GtkTreeSelection  *selection;
 	GtkTreeSortable   *sortable;
 	GtkTreeViewColumn *column;
@@ -1913,8 +1923,12 @@ log_window_links_setup (GossipLogWindow *window)
 		g_object_unref (window->treestore_links);
 	}
 
-	if (window->treemodel_links) {
-		g_object_unref (window->treemodel_links);
+	if (window->treemodel_links_sort) {
+		g_object_unref (window->treemodel_links_sort);
+	}
+
+	if (window->treemodel_links_filter) {
+		g_object_unref (window->treemodel_links_filter);
 	}
 
 	view = GTK_TREE_VIEW (window->treeview_links);
@@ -1932,19 +1946,23 @@ log_window_links_setup (GossipLogWindow *window)
 						      G_TYPE_STRING);         /* url */
 
 	model = GTK_TREE_MODEL (window->treestore_links);
-	sortable = GTK_TREE_SORTABLE (window->treestore_links);
 
-	gtk_tree_view_set_model (view, model);
-
-	/* Create filter */
-	window->treemodel_links = gtk_tree_model_filter_new (model, NULL);
-
-	gtk_tree_model_filter_set_visible_func (GTK_TREE_MODEL_FILTER (window->treemodel_links),
+	/* Create filter model */
+	filter_model = gtk_tree_model_filter_new (model, NULL);
+	gtk_tree_model_filter_set_visible_func (GTK_TREE_MODEL_FILTER (filter_model),
 						(GtkTreeModelFilterVisibleFunc)
 						log_window_links_filter_func,
 						window, NULL);
+	window->treemodel_links_filter = filter_model;
 
-	gtk_tree_view_set_model (view, window->treemodel_links);
+	/* Create sort model */
+	sort_model = gtk_tree_model_sort_new_with_model (filter_model);
+	window->treemodel_links_sort = sort_model;
+
+	sortable = GTK_TREE_SORTABLE (sort_model);
+
+	/* Set model to use in tree view */
+	gtk_tree_view_set_model (view, sort_model);
 
 	/* Account */
 	column = gtk_tree_view_column_new ();
@@ -2070,7 +2088,7 @@ static void
 log_window_entry_links_changed_cb (GtkWidget       *entry,
 				   GossipLogWindow *window)
 {
-	gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (window->treemodel_links));
+	gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (window->treemodel_links_filter));
 }
 
 static void
@@ -2132,8 +2150,9 @@ log_window_destroy_cb (GtkWidget       *widget,
 {
 	g_free (window->last_find);
 
+	g_object_unref (window->treemodel_links_filter);
+	g_object_unref (window->treemodel_links_sort);
 	g_object_unref (window->treestore_links);
-	g_object_unref (window->treemodel_links);
 
 	gossip_log_handler_remove
 		(window->log_manager,
@@ -2207,6 +2226,7 @@ gossip_log_window_show (GossipContact  *contact,
 			      window,
 			      "log_window", "destroy", log_window_destroy_cb,
 			      "entry_find", "changed", log_window_entry_find_changed_cb,
+			      "entry_find", "activate", log_window_entry_find_activate_cb,
 			      "button_previous", "clicked", log_window_button_previous_clicked_cb,
 			      "button_next", "clicked", log_window_button_next_clicked_cb,
 			      "button_find", "clicked", log_window_button_find_clicked_cb,
