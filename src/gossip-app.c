@@ -82,6 +82,10 @@
 #include "gossip-notify.h"
 #endif
 
+#ifdef GDK_WINDOWING_QUARTZ
+#include "ige-mac-menu.h"
+#endif
+
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_APP, GossipAppPriv))
 
 #define DEBUG_DOMAIN_SETUP     "AppSetup"
@@ -123,6 +127,8 @@ struct _GossipAppPriv {
 
 	/* Tooltips for all widgets */
 	GtkTooltips           *tooltips;
+
+	GtkWidget             *menu_bar;
 
 	/* Menu widgets */
 	GtkWidget             *chat_connect;
@@ -177,6 +183,10 @@ app_main_window_delete_event_cb              (GtkWidget             *window,
 static gboolean 
 app_main_window_key_press_event_cb           (GtkWidget             *window,
 					      GdkEventKey           *event,
+					      GossipApp             *app);
+static gboolean
+app_main_window_focus_in_event_cb            (GtkWidget             *widget,
+					      GdkEvent              *event,
 					      GossipApp             *app);
 static void     app_find_entry_changed_cb    (GtkEditable           *editable,
 					      GossipApp             *app);
@@ -772,6 +782,7 @@ app_setup (GossipSession *session)
 				       NULL,
 				       "main_window", &priv->window,
 				       "main_vbox", &priv->main_vbox,
+				       "main_menubar", &priv->menu_bar,
 				       "find_hbox", &priv->find_hbox,
 				       "find_entry", &priv->find_entry,
 				       "errors_vbox", &priv->errors_vbox,
@@ -795,6 +806,7 @@ app_setup (GossipSession *session)
 			      "main_window", "delete_event", app_main_window_delete_event_cb,
 			      "main_window", "configure_event", app_window_configure_event_cb,
 			      "main_window", "key_press_event", app_main_window_key_press_event_cb,
+			      "main_window", "focus-in-event", app_main_window_focus_in_event_cb,
 			      "find_entry", "changed", app_find_entry_changed_cb, 
 			      "chat", "button-press-event", app_chat_button_press_event_cb,
 			      "chat_quit", "activate", app_chat_quit_cb,
@@ -818,6 +830,31 @@ app_setup (GossipSession *session)
 	/* Set up menu */
 	app_favorite_chatroom_menu_setup ();
 
+#ifdef GDK_WINDOWING_QUARTZ
+	{
+		GtkWidget       *item;
+		IgeMacMenuGroup *group;
+
+		gtk_widget_set_name (priv->window, "small-font");
+
+		ige_mac_menu_set_menu_bar (GTK_MENU_SHELL (priv->menu_bar));
+
+		item = glade_xml_get_widget (glade, "chat_quit");
+		ige_mac_menu_set_quit_menu_item (GTK_MENU_ITEM (item));
+
+		group =  ige_mac_menu_add_app_menu_group ();
+		item = glade_xml_get_widget (glade, "help_about");
+		ige_mac_menu_add_app_menu_item (group, GTK_MENU_ITEM (item),
+						_("About Gossip"));
+
+		item = glade_xml_get_widget (glade, "edit_preferences");
+		ige_mac_menu_add_app_menu_item (group, GTK_MENU_ITEM (item),
+						_("Preferences..."));
+
+		gtk_widget_hide (priv->menu_bar);
+	}
+#endif
+
 	gtk_widget_hide (priv->chat_context);
 	gtk_widget_hide (priv->chat_context_separator);
 
@@ -835,7 +872,6 @@ app_setup (GossipSession *session)
 	app_setup_presence_chooser ();
 	
 	app_setup_throbber ();
-
 
 	/* Set up notification area / tray. */
 	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring notification area widgets");
@@ -1066,6 +1102,22 @@ app_main_window_key_press_event_cb (GtkWidget   *window,
 	if (event->keyval == GDK_Escape) {
 		gossip_app_toggle_visibility ();
 	}
+
+	return FALSE;
+}
+
+static gboolean
+app_main_window_focus_in_event_cb (GtkWidget *window,
+				   GdkEvent  *event,
+				   GossipApp *app)
+{
+	GossipAppPriv *priv;
+
+	priv = GET_PRIV (app);
+
+#ifdef GDK_WINDOWING_QUARTZ
+	ige_mac_menu_set_menu_bar (GTK_MENU_SHELL (priv->menu_bar));
+#endif
 
 	return FALSE;
 }

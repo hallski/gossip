@@ -29,10 +29,15 @@ if HAVE_LIBNOTIFY
 libnotify_sources = gossip-notify.c gossip-notify.h
 endif
 
+if HAVE_PLATFORM_OSX
+platform_sources = ige-mac-menu.c ige-mac menu.h
+endif
+
 # Main application 
 bin_PROGRAMS = gossip
 
 gossip_SOURCES = 				                        	\
+	$(platform_sources)		     	                           	\
 	$(dbus_sources)			     	                           	\
 	$(galago_sources)		     	                           	\
 	$(libnotify_sources)		     	                           	\

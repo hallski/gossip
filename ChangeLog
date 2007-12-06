@@ -1,5 +1,11 @@
 2007-12-06  Richard Hult  <richard@imendio.com>
 
+	* src/Makefile.am:
+	* src/gossip-app.c:
+	* src/gossip-chat-window.c: Hook up mac menu bar.
+
+2007-12-06  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-account-widget-jabber.c:
 	(gossip_account_widget_jabber_init),
 	(account_widget_jabber_dispose): Fix crash when switching accounts

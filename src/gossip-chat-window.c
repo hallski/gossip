@@ -50,6 +50,10 @@
 #include "gossip-sound.h"
 #include "gossip-ui-utils.h"
 
+#ifdef GDK_WINDOWING_QUARTZ
+#include "ige-mac-menu.h"
+#endif
+
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHAT_WINDOW, GossipChatWindowPriv))
 
 #define DEBUG_DOMAIN "ChatWindow"
@@ -72,6 +76,8 @@ struct _GossipChatWindowPriv {
 	GtkWidget   *notebook;
 
 	GtkTooltips *tooltips;
+
+	GtkWidget   *menu_bar;
 
 	/* Menu items. */
 	GtkWidget   *menu_conv_clear;
@@ -295,6 +301,7 @@ gossip_chat_window_init (GossipChatWindow *window)
 				       NULL,
 				       "chat_window", &priv->dialog,
 				       "chat_vbox", &chat_vbox,
+				       "chat_menubar", &priv->menu_bar,
 				       "menu_conv", &menu_conv,
 				       "menu_conv_clear", &priv->menu_conv_clear,
 				       "menu_conv_insert_smiley", &priv->menu_conv_insert_smiley,
@@ -1773,6 +1780,11 @@ chat_window_focus_in_event_cb (GtkWidget        *widget,
 	
 	/* Update the title, since we now mark all unread messages as read. */
 	chat_window_update_status (window, priv->current_chat);
+
+#ifdef GDK_WINDOWING_QUARTZ
+	ige_mac_menu_set_menu_bar (GTK_MENU_SHELL (priv->menu_bar));
+	gtk_widget_hide (priv->menu_bar);
+#endif
 
 	return FALSE;
 }
