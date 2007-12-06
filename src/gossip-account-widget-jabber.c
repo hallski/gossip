@@ -69,6 +69,8 @@ struct _GossipAccountWidgetJabberPriv {
 
 	gboolean       registering;
 	gboolean       changing_password;
+
+	gboolean       disposed;
 };
 
 static void     gossip_account_widget_jabber_class_init                 (GossipAccountWidgetJabberClass *klass);
@@ -194,9 +196,6 @@ gossip_account_widget_jabber_init (GossipAccountWidgetJabber *settings)
 	g_signal_connect (priv->entry_password, "changed", 
 			  G_CALLBACK (account_widget_jabber_entry_changed_cb),
 			  settings);
-	g_signal_connect (priv->entry_password, "changed", 
-			  G_CALLBACK (account_widget_jabber_entry_changed_cb),
-			  settings);
 	g_signal_connect (priv->entry_resource, "changed", 
 			  G_CALLBACK (account_widget_jabber_entry_changed_cb),
 			  settings);
@@ -237,34 +236,52 @@ account_widget_jabber_dispose (GObject *object)
 	settings = GOSSIP_ACCOUNT_WIDGET_JABBER (object);
 	priv = GET_PRIV (settings);
 
-	account_widget_jabber_register_cancel (settings);
-	account_widget_jabber_change_password_cancel (settings);
+	if (!priv->disposed) {
+		priv->disposed = TRUE;
 
-	if (priv->account_changed) {
-		gossip_debug (DEBUG_DOMAIN, "Disposing of this widget and accounts changed, saving accounts...");
- 		account_widget_jabber_save (settings); 
+		account_widget_jabber_register_cancel (settings);
+		account_widget_jabber_change_password_cancel (settings);
+
+		if (priv->account_changed) {
+			gossip_debug (DEBUG_DOMAIN, "Disposing of this widget and accounts changed, saving accounts...");
+			account_widget_jabber_save (settings); 
+		}
+
+		session = gossip_app_get_session ();
+
+		g_signal_handlers_disconnect_by_func (session,
+						      account_widget_jabber_protocol_connected_cb,
+						      settings);
+		g_signal_handlers_disconnect_by_func (session,
+						      account_widget_jabber_protocol_disconnected_cb,
+						      settings);
+		g_signal_handlers_disconnect_by_func (session,
+						      account_widget_jabber_protocol_error_cb,
+						      settings);
+
+		g_signal_handlers_disconnect_by_func (priv->entry_id,
+						      account_widget_jabber_entry_focus_cb,
+						      settings);
+		g_signal_handlers_disconnect_by_func (priv->entry_password,
+						      account_widget_jabber_entry_focus_cb,
+						      settings);
+		g_signal_handlers_disconnect_by_func (priv->entry_resource,
+						      account_widget_jabber_entry_focus_cb,
+						      settings);
+		g_signal_handlers_disconnect_by_func (priv->entry_server,
+						      account_widget_jabber_entry_focus_cb,
+						      settings);
+		g_signal_handlers_disconnect_by_func (priv->entry_port,
+						      account_widget_jabber_entry_focus_cb,
+						      settings);
+
+		g_signal_handlers_disconnect_by_func (priv->account,
+						      account_widget_jabber_password_changed_cb,
+						      settings);
+
+		g_object_unref (priv->account);
 	}
 
-	session = gossip_app_get_session ();
-
-	g_signal_handlers_disconnect_by_func (priv->account,
-					      account_widget_jabber_password_changed_cb,
-					      settings);
-
-	g_signal_handlers_disconnect_by_func (session,
-					      account_widget_jabber_protocol_connected_cb,
-					      settings);
-
-	g_signal_handlers_disconnect_by_func (session,
-					      account_widget_jabber_protocol_disconnected_cb,
-					      settings);
-
-	g_signal_handlers_disconnect_by_func (session,
-					      account_widget_jabber_protocol_error_cb,
-					      settings);
-
-	g_object_unref (priv->account);
-	
 	G_OBJECT_CLASS (gossip_account_widget_jabber_parent_class)->dispose (object);
 }
 

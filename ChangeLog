@@ -1,3 +1,11 @@
+2007-12-06  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-account-widget-jabber.c:
+	(gossip_account_widget_jabber_init),
+	(account_widget_jabber_dispose): Fix crash when switching accounts
+	in the account editor (dispose can be called more than once). Also
+	remove duplicate signal connection to password entry changed.
+
 2007-12-01  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-new-chatroom-dialog.c:
