@@ -1,3 +1,7 @@
+2007-12-09  Kjartan Maraas  <kmaraas@gnome.org>
+
+	* POTFILES.skip: Correct path to transports.glade.
+
 2007-12-03  Jordi Mallach  <jordi@sindominio.net>
 
 	* ca.po: Updated Catalan translation.

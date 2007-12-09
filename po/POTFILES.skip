@@ -1,7 +1,7 @@
 # Please keep this file sorted alphabetically.
 
 gossip.desktop.in
-ui/transports.glade
+data/glade/transports.glade
 
 src/gossip-account-button.c
 src/gossip-tray.c
