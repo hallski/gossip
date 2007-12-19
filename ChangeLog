@@ -1,5 +1,10 @@
 2007-12-20  Richard Hult  <richard@imendio.com>
 
+	* gossip.schemas.in: Correct the path for showing offline
+	contacts, fixes bug #429529.
+
+2007-12-20  Richard Hult  <richard@imendio.com>
+
 	* libgossip/Makefile.am: Fix linking order, fixes bug
 	#495672 (Fryderyk Dziarmagowski).
 

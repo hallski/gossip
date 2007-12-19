@@ -2,8 +2,8 @@
   <schemalist>
 
     <schema>
-      <key>/schemas/apps/gossip/ui/show_offline</key>
-      <applyto>/apps/gossip/ui/show_offline</applyto>
+      <key>/schemas/apps/gossip/contacts/show_offline</key>
+      <applyto>/apps/gossip/contacts/show_offline</applyto>
       <owner>gossip</owner>
       <type>bool</type>
       <default>false</default>
