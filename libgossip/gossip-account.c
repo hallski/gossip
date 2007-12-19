@@ -348,6 +348,7 @@ account_gnome_keyring_result_to_string (GnomeKeyringResult result)
 	case GNOME_KEYRING_RESULT_IO_ERROR:          return "GNOME_KEYRING_RESULT_IO_ERROR";
 	case GNOME_KEYRING_RESULT_CANCELLED:         return "GNOME_KEYRING_RESULT_CANCELLED";
 	case GNOME_KEYRING_RESULT_ALREADY_EXISTS:    return "GNOME_KEYRING_RESULT_ALREADY_EXISTS";
+	default:                                     return "unknown keyring result";
 	}
 
 	return "";

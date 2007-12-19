@@ -1,3 +1,8 @@
+2007-12-19  Richard Hult  <richard@imendio.com>
+
+	* libgossip/gossip-account.c (account_gnome_keyring_result_to_string):
+	Fix build with newer keyrings, fixes bug #499119).
+
 2007-12-06  Richard Hult  <richard@imendio.com>
 
 	* src/Makefile.am:
