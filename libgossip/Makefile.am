@@ -88,8 +88,8 @@ libgossip_la_SOURCES =             			\
 	$(platform_impl)
 
 libgossip_la_LIBADD =              			\
-	$(LIBGOSSIP_LIBS)          			\
-	libgossip-jabber.la
+	libgossip-jabber.la				\
+	$(LIBGOSSIP_LIBS)
 
 libgossipincludedir = $(includedir)/gossip/
 
@@ -120,8 +120,8 @@ libgossip_jabber_la_SOURCES =                  		\
 	gossip-sha.h
 
 libgossip_jabber_la_LIBADD = 				\
-	$(GOSSIP_JABBER_LIBS) 				\
-	$(top_builddir)/libloudermouth/libloudermouth.la
+	$(top_builddir)/libloudermouth/libloudermouth.la	\
+	$(GOSSIP_JABBER_LIBS)
 
 dtddir = $(datadir)/gossip
 dtd_DATA = 						\
