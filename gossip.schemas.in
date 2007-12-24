@@ -202,6 +202,36 @@
     </schema>
 
     <schema>
+      <key>/schemas/apps/gossip/conversation/theme_use_system_font</key>
+      <applyto>/apps/gossip/conversation/theme_use_system_font</applyto>
+      <owner>gossip</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+         <short>Use system terminal font</short>
+         <long>
+           Whether to use the system terminal font theme or our
+      specific theme.
+         </long>
+      </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gossip/conversation/theme_font_name</key>
+      <applyto>/apps/gossip/conversation/theme_font_name</applyto>
+      <owner>gossip</owner>
+      <type>string</type>
+      <default></default>
+      <locale name="C">
+         <short>Font name to use</short>
+         <long>
+           Font name to use instead of the system terminal font. Only
+      applied when NOT using the system terminal font.
+         </long>
+      </locale>
+    </schema>
+
+    <schema>
       <key>/schemas/apps/gossip/conversation/spell_checker_languages</key>
       <applyto>/apps/gossip/conversation/spell_checker_languages</applyto>
       <owner>gossip</owner>

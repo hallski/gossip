@@ -36,6 +36,9 @@ G_BEGIN_DECLS
 #define GOSSIP_PREFS_CHAT_SHOW_SMILEYS            GOSSIP_PREFS_PATH "/conversation/graphical_smileys"
 #define GOSSIP_PREFS_CHAT_THEME                   GOSSIP_PREFS_PATH "/conversation/theme"
 #define GOSSIP_PREFS_CHAT_THEME_CHAT_ROOM         GOSSIP_PREFS_PATH "/conversation/theme_chat_room"
+#define GOSSIP_PREFS_CHAT_THEME_USE_SYSTEM_FONT   GOSSIP_PREFS_PATH "/conversation/theme_use_system_font"
+#define GOSSIP_PREFS_CHAT_THEME_FONT_NAME         GOSSIP_PREFS_PATH "/conversation/theme_font_name"
+
 #define GOSSIP_PREFS_CHAT_SPELL_CHECKER_LANGUAGES GOSSIP_PREFS_PATH "/conversation/spell_checker_languages"
 #define GOSSIP_PREFS_CHAT_SPELL_CHECKER_ENABLED   GOSSIP_PREFS_PATH "/conversation/spell_checker_enabled"
 #define GOSSIP_PREFS_UI_SEPARATE_CHAT_WINDOWS     GOSSIP_PREFS_PATH "/ui/separate_chat_windows"

@@ -219,7 +219,7 @@ gossip_chat_init (GossipChat *chat)
 			  G_CALLBACK (chat_text_populate_popup_cb),
 			  chat);
 
-	/* create misspelt words identification tag */
+	/* Create misspelt words identification tag */
 	gtk_text_buffer_create_tag (buffer,
 				    "misspelled",
 				    "underline", PANGO_UNDERLINE_ERROR,

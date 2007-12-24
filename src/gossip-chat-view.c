@@ -47,6 +47,7 @@
 #include "gossip-preferences.h"
 #include "gossip-smiley.h"
 #include "gossip-theme-manager.h"
+#include "gossip-theme-utils.h"
 #include "gossip-text-iter.h"
 #include "gossip-ui-utils.h"
 #include "gossip-chat-view.h"
@@ -97,6 +98,9 @@ static gboolean chat_view_drag_motion                (GtkWidget                *
 						      guint                     time);
 static void     chat_view_size_allocate              (GtkWidget                *widget,
 						      GtkAllocation            *alloc);
+static void     chat_view_theme_font_name_changed_cb (GossipConf               *conf,
+						      const gchar              *key,
+						      GossipChatView           *view);
 static void     chat_view_setup_tags                 (GossipChatView           *view);
 static void     chat_view_system_font_update         (GossipChatView           *view);
 static void     chat_view_notify_system_font_cb      (GossipConf               *conf,
@@ -208,6 +212,18 @@ gossip_chat_view_init (GossipChatView *view)
 				 G_CALLBACK (chat_view_theme_changed_cb),
 				 view,
 				 0);
+
+	/* Watch for chat theme changes */
+	gossip_conf_notify_add (gossip_conf_get (),
+				GOSSIP_PREFS_CHAT_THEME_USE_SYSTEM_FONT,
+				(GossipConfNotifyFunc) 
+				chat_view_theme_font_name_changed_cb,
+				view);
+	gossip_conf_notify_add (gossip_conf_get (),
+				GOSSIP_PREFS_CHAT_THEME_FONT_NAME,
+				(GossipConfNotifyFunc) 
+				chat_view_theme_font_name_changed_cb,
+				view);
 }
 
 static void
@@ -278,6 +294,62 @@ chat_view_size_allocate (GtkWidget     *widget,
 }
 
 static void
+chat_view_theme_font_name_set (GossipChatView *view)
+{
+	gchar    *font_name;
+	gboolean  use_system_font;
+
+	if (!gossip_conf_get_bool (gossip_conf_get (), 
+				   GOSSIP_PREFS_CHAT_THEME_USE_SYSTEM_FONT, 
+				   &use_system_font)) {
+		gtk_widget_modify_font (GTK_WIDGET (view), NULL);
+		return;
+	}
+	
+	if (use_system_font) {
+		if (gossip_conf_get_string (gossip_conf_get (),
+					     "/desktop/gnome/interface/document_font_name",
+					     &font_name)) {
+			PangoFontDescription *font_description = NULL;
+
+			font_description = pango_font_description_from_string (font_name);
+			gtk_widget_modify_font (GTK_WIDGET (view), font_description);
+
+			if (font_description) {
+				pango_font_description_free (font_description);
+			}
+		} else {
+			gtk_widget_modify_font (GTK_WIDGET (view), NULL);
+		}
+	} else {
+		if (gossip_conf_get_string (gossip_conf_get (), 
+					    GOSSIP_PREFS_CHAT_THEME_FONT_NAME, 
+					    &font_name)) {
+			PangoFontDescription *font_description = NULL;
+
+			font_description = pango_font_description_from_string (font_name);
+			gtk_widget_modify_font (GTK_WIDGET (view), font_description);
+
+			if (font_description) {
+				pango_font_description_free (font_description);
+			}
+		} else {
+			gtk_widget_modify_font (GTK_WIDGET (view), NULL);
+		}		
+	}
+
+	g_free (font_name);
+}
+
+static void
+chat_view_theme_font_name_changed_cb (GossipConf     *conf,
+				      const gchar    *key,
+				      GossipChatView *view)
+{
+	chat_view_theme_font_name_set (view);
+}
+
+static void
 chat_view_setup_tags (GossipChatView *view)
 {
 	GossipChatViewPriv *priv;
@@ -314,6 +386,9 @@ chat_view_setup_tags (GossipChatView *view)
 			  "motion-notify-event",
 			  G_CALLBACK (chat_view_event_cb),
 			  tag);
+
+	/* Set font name */
+	chat_view_theme_font_name_set (view);
 }
 
 static void

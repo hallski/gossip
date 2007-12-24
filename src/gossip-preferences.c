@@ -49,8 +49,6 @@ typedef struct {
 	GtkWidget *checkbutton_show_avatars;
 	GtkWidget *checkbutton_compact_contact_list;
 	GtkWidget *checkbutton_show_smileys;
-	GtkWidget *combobox_chat_theme;
-	GtkWidget *checkbutton_theme_chat_room;
 	GtkWidget *checkbutton_separate_chat_windows;
 	GtkWidget *radiobutton_contact_list_sort_by_name;
 	GtkWidget *radiobutton_contact_list_sort_by_state;
@@ -62,6 +60,12 @@ typedef struct {
 
 	GtkWidget *treeview_spell_checker;
 	GtkWidget *checkbutton_spell_checker;
+
+	GtkWidget *combobox_theme_chat;
+	GtkWidget *checkbutton_theme_chat_rooms;
+	GtkWidget *radiobutton_theme_chat_use_system_font;
+	GtkWidget *radiobutton_theme_chat_use_other_font;
+	GtkWidget *fontbutton_theme_chat;
 
 	GList     *notify_ids;
 } GossipPreferences;
@@ -118,6 +122,9 @@ static void     preferences_hookup_toggle_button         (GossipPreferences     
 static void     preferences_hookup_radio_button          (GossipPreferences      *preferences,
 							  const gchar            *key,
 							  GtkWidget              *widget);
+static void     preferences_hookup_font_button           (GossipPreferences      *preferences,
+							  const gchar            *key,
+							  GtkWidget              *widget);
 static void     preferences_hookup_string_combo          (GossipPreferences      *preferences,
 							  const gchar            *key,
 							  GtkWidget              *widget);
@@ -132,7 +139,9 @@ static void     preferences_toggle_button_toggled_cb     (GtkWidget             
 							  gpointer                user_data);
 static void     preferences_radio_button_toggled_cb      (GtkWidget              *button,
 							  gpointer                user_data);
-static void     preferences_string_combo_changed_cb      (GtkWidget *button,
+static void     preferences_font_button_changed_cb       (GtkWidget              *button,
+							  gpointer                user_data);
+static void     preferences_string_combo_changed_cb      (GtkWidget              *button,
 							  gpointer                user_data);
 static void     preferences_destroy_cb                   (GtkWidget              *widget,
 							  GossipPreferences      *preferences);
@@ -179,26 +188,31 @@ preferences_setup_widgets (GossipPreferences *preferences)
 	preferences_hookup_toggle_button (preferences,
 					  GOSSIP_PREFS_UI_SEPARATE_CHAT_WINDOWS,
 					  preferences->checkbutton_separate_chat_windows);
-
 	preferences_hookup_toggle_button (preferences,
 					  GOSSIP_PREFS_UI_SHOW_AVATARS,
 					  preferences->checkbutton_show_avatars);
-
 	preferences_hookup_toggle_button (preferences,
 					  GOSSIP_PREFS_UI_COMPACT_CONTACT_LIST,
 					  preferences->checkbutton_compact_contact_list);
-
 	preferences_hookup_toggle_button (preferences,
 					  GOSSIP_PREFS_CHAT_SHOW_SMILEYS,
 					  preferences->checkbutton_show_smileys);
+	preferences_hookup_radio_button (preferences,
+					 GOSSIP_PREFS_CONTACTS_SORT_CRITERIUM,
+					 preferences->radiobutton_contact_list_sort_by_name);
 
 	preferences_hookup_string_combo (preferences,
 					 GOSSIP_PREFS_CHAT_THEME,
-					 preferences->combobox_chat_theme);
-
+					 preferences->combobox_theme_chat);
 	preferences_hookup_toggle_button (preferences,
 					  GOSSIP_PREFS_CHAT_THEME_CHAT_ROOM,
-					  preferences->checkbutton_theme_chat_room);
+					  preferences->checkbutton_theme_chat_rooms);
+	preferences_hookup_toggle_button (preferences,
+					  GOSSIP_PREFS_CHAT_THEME_USE_SYSTEM_FONT,
+					  preferences->radiobutton_theme_chat_use_system_font);
+	preferences_hookup_font_button (preferences,
+					GOSSIP_PREFS_CHAT_THEME_FONT_NAME,
+					preferences->fontbutton_theme_chat);
 
 	preferences_hookup_toggle_button (preferences,
 					  GOSSIP_PREFS_CHAT_SPELL_CHECKER_ENABLED,
@@ -206,10 +220,6 @@ preferences_setup_widgets (GossipPreferences *preferences)
 	preferences_hookup_sensitivity (preferences,
 					GOSSIP_PREFS_CHAT_SPELL_CHECKER_ENABLED,
 					preferences->treeview_spell_checker);
-
-	preferences_hookup_radio_button (preferences,
-					 GOSSIP_PREFS_CONTACTS_SORT_CRITERIUM,
-					 preferences->radiobutton_contact_list_sort_by_name);
 }
 
 static void
@@ -456,7 +466,7 @@ preferences_themes_setup (GossipPreferences *preferences)
 	const gchar  **themes;
 	gint           i;
 
-	combo = GTK_COMBO_BOX (preferences->combobox_chat_theme);
+	combo = GTK_COMBO_BOX (preferences->combobox_theme_chat);
 
 	model = gtk_list_store_new (COL_COMBO_COUNT,
 				    G_TYPE_STRING,
@@ -481,7 +491,33 @@ preferences_widget_sync_bool (const gchar *key, GtkWidget *widget)
 	gboolean value;
 
 	if (gossip_conf_get_bool (gossip_conf_get (), key, &value)) {
-		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (widget), value);
+		if (GTK_IS_RADIO_BUTTON (widget)) {
+			if (strcmp (key, GOSSIP_PREFS_CHAT_THEME_USE_SYSTEM_FONT) == 0) {
+				GtkToggleButton *togglebutton;
+				
+				if (!value) {
+					GSList *l;
+					
+					l = gtk_radio_button_get_group (GTK_RADIO_BUTTON (widget));
+
+					for (togglebutton = NULL; l && !togglebutton; l = l->next) {
+						if (GTK_WIDGET (l->data) == widget) {
+							continue;
+						} 
+
+						togglebutton = GTK_TOGGLE_BUTTON (l->data);
+					}
+				} else {
+					togglebutton = GTK_TOGGLE_BUTTON (widget);
+				}
+
+				gtk_toggle_button_set_active (togglebutton, TRUE);
+			}
+		} else if (GTK_IS_TOGGLE_BUTTON (widget)) {
+			gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (widget), value);
+		} else {
+			g_warning ("Unhandled key:'%s' just had string change", key);
+		}
 	}
 }
 
@@ -505,6 +541,10 @@ preferences_widget_sync_string (const gchar *key, GtkWidget *widget)
 	if (gossip_conf_get_string (gossip_conf_get (), key, &value) && value) {
 		if (GTK_IS_ENTRY (widget)) {
 			gtk_entry_set_text (GTK_ENTRY (widget), value);
+		} else if (GTK_IS_FONT_BUTTON (widget)) {
+			if (strcmp (key, GOSSIP_PREFS_CHAT_THEME_FONT_NAME) == 0) {
+				gtk_font_button_set_font_name (GTK_FONT_BUTTON (widget), value);
+			}
 		} else if (GTK_IS_RADIO_BUTTON (widget)) {
 			if (strcmp (key, GOSSIP_PREFS_CONTACTS_SORT_CRITERIUM) == 0) {
 				GType        type;
@@ -772,6 +812,32 @@ preferences_hookup_string_combo (GossipPreferences *preferences,
 }
 
 static void
+preferences_hookup_font_button (GossipPreferences *preferences,
+				const gchar       *key,
+				GtkWidget         *widget)
+{
+	guint id;
+
+	preferences_widget_sync_string (key, widget);
+
+	g_signal_connect (widget,
+			  "font-set",
+			  G_CALLBACK (preferences_font_button_changed_cb),
+			  NULL);
+
+	g_object_set_data_full (G_OBJECT (widget), "key",
+				g_strdup (key), g_free);
+
+	id = gossip_conf_notify_add (gossip_conf_get (),
+				     key,
+				     preferences_notify_string_cb,
+				     widget);
+	if (id) {
+		preferences_add_id (preferences, id);
+	}
+}
+
+static void
 preferences_hookup_sensitivity (GossipPreferences *preferences,
 				const gchar       *key,
 				GtkWidget         *widget)
@@ -838,35 +904,52 @@ preferences_radio_button_toggled_cb (GtkWidget *button,
 	const gchar *key;
 	const gchar *value = NULL;
 
-	if (!gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button))) {
-		return;
-	}
-
 	key = g_object_get_data (G_OBJECT (button), "key");
+	if (key) {
+		if (strcmp (key, GOSSIP_PREFS_CONTACTS_SORT_CRITERIUM) == 0) {
+			GSList      *group;
+			GType        type;
+			GEnumClass  *enum_class;
+			GEnumValue  *enum_value;
+	
+			group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (button));
+			
+			/* Get string from index */
+			type = gossip_contact_list_sort_get_type ();
+			enum_class = G_ENUM_CLASS (g_type_class_peek (type));
+			enum_value = g_enum_get_value (enum_class, g_slist_index (group, button));
+			
+			if (!enum_value) {
+				g_warning ("No GEnumValue for GossipContactListSort with GtkRadioButton index:%d", 
+					   g_slist_index (group, button));
+				return;
+			}
 
-	if (key && strcmp (key, GOSSIP_PREFS_CONTACTS_SORT_CRITERIUM) == 0) {
-		GSList      *group;
-		GType        type;
-		GEnumClass  *enum_class;
-		GEnumValue  *enum_value;
-		
-		group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (button));
-		
-		/* Get string from index */
-		type = gossip_contact_list_sort_get_type ();
-		enum_class = G_ENUM_CLASS (g_type_class_peek (type));
-		enum_value = g_enum_get_value (enum_class, g_slist_index (group, button));
-		
-		if (!enum_value) {
-			g_warning ("No GEnumValue for GossipContactListSort with GtkRadioButton index:%d", 
-				   g_slist_index (group, button));
-			return;
+			if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button))) {
+				value = enum_value->value_nick;
+			}
+		} else if (strcmp (key, GOSSIP_PREFS_CHAT_THEME_USE_SYSTEM_FONT) == 0) {
+			if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button))) {
+				value = "TRUE";
+			} else {
+				value = "FALSE";
+			}
 		}
-
-		value = enum_value->value_nick;
 	}
 
 	gossip_conf_set_string (gossip_conf_get (), key, value);
+}
+
+static void
+preferences_font_button_changed_cb (GtkWidget *button,
+				    gpointer   user_data)
+{
+	const gchar *key;
+	const gchar *font_name;
+	
+	key = g_object_get_data (G_OBJECT (button), "key");
+	font_name = gtk_font_button_get_font_name (GTK_FONT_BUTTON (button));
+	gossip_conf_set_string (gossip_conf_get (), key, font_name);
 }
 
 static void
@@ -938,8 +1021,6 @@ gossip_preferences_show (void)
 		"checkbutton_show_avatars", &preferences->checkbutton_show_avatars,
 		"checkbutton_compact_contact_list", &preferences->checkbutton_compact_contact_list,
 		"checkbutton_show_smileys", &preferences->checkbutton_show_smileys,
-		"combobox_chat_theme", &preferences->combobox_chat_theme,
-		"checkbutton_theme_chat_room", &preferences->checkbutton_theme_chat_room,
 		"checkbutton_separate_chat_windows", &preferences->checkbutton_separate_chat_windows,
 		"radiobutton_contact_list_sort_by_name", &preferences->radiobutton_contact_list_sort_by_name,
 		"radiobutton_contact_list_sort_by_state", &preferences->radiobutton_contact_list_sort_by_state,
@@ -949,6 +1030,11 @@ gossip_preferences_show (void)
 		"checkbutton_popups_when_available", &preferences->checkbutton_popups_when_available,
 		"treeview_spell_checker", &preferences->treeview_spell_checker,
 		"checkbutton_spell_checker", &preferences->checkbutton_spell_checker,
+		"combobox_theme_chat", &preferences->combobox_theme_chat,
+		"checkbutton_theme_chat_rooms", &preferences->checkbutton_theme_chat_rooms,
+		"radiobutton_theme_chat_use_system_font", &preferences->radiobutton_theme_chat_use_system_font,
+		"radiobutton_theme_chat_use_other_font", &preferences->radiobutton_theme_chat_use_other_font,
+		"fontbutton_theme_chat", &preferences->fontbutton_theme_chat,
 		NULL);
 
 	gossip_glade_connect (glade,
