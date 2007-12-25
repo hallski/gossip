@@ -1,3 +1,11 @@
+2007-12-25  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chat-view.c:
+	* src/gossip-chat.c: Make sure we remove notification callbacks
+	when closing the GossipChatView and set the font for the input
+	textview too, so we see how it will look before the message is
+	sent. 
+
 2007-12-24  Martyn Russell  <martyn@imendio.com>
 
 	* data/glade/main.glade:

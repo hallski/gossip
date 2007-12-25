@@ -71,6 +71,10 @@ struct _GossipChatPriv {
 	gint              default_window_height;
 	gint              last_input_height;
 	gboolean          vscroll_visible;
+
+	guint             notify_system_font_id;
+	guint             notify_use_system_font_id;
+	guint             notify_font_name_id;
 };
 
 typedef struct {
@@ -84,6 +88,13 @@ typedef struct {
 static void             gossip_chat_class_init            (GossipChatClass *klass);
 static void             gossip_chat_init                  (GossipChat      *chat);
 static void             chat_finalize                     (GObject         *object);
+static void             chat_input_set_font_name          (GtkWidget       *view);
+static void             chat_input_notify_font_name_cb    (GossipConf      *conf,
+							   const gchar     *key,
+							   GossipChat      *chat);
+static void             chat_input_notify_system_font_cb  (GossipConf      *conf,
+							   const gchar     *key,
+							   GossipChat      *chat);
 static void             chat_input_text_buffer_changed_cb (GtkTextBuffer   *buffer,
 							   GossipChat      *chat);
 static void             chat_text_view_scroll_hide_cb     (GtkWidget       *widget,
@@ -219,6 +230,28 @@ gossip_chat_init (GossipChat *chat)
 			  G_CALLBACK (chat_text_populate_popup_cb),
 			  chat);
 
+	priv->notify_system_font_id =
+		gossip_conf_notify_add (gossip_conf_get (),
+					"/desktop/gnome/interface/document_font_name",
+					(GossipConfNotifyFunc)
+					chat_input_notify_system_font_cb,
+					chat);
+	
+	priv->notify_use_system_font_id =
+		gossip_conf_notify_add (gossip_conf_get (),
+					GOSSIP_PREFS_CHAT_THEME_USE_SYSTEM_FONT,
+					(GossipConfNotifyFunc) 
+					chat_input_notify_font_name_cb,
+					chat);
+	priv->notify_font_name_id =
+		gossip_conf_notify_add (gossip_conf_get (),
+					GOSSIP_PREFS_CHAT_THEME_FONT_NAME,
+					(GossipConfNotifyFunc) 
+					chat_input_notify_font_name_cb,
+					chat);
+
+	chat_input_set_font_name (chat->input_text_view);
+
 	/* Create misspelt words identification tag */
 	gtk_text_buffer_create_tag (buffer,
 				    "misspelled",
@@ -235,10 +268,81 @@ chat_finalize (GObject *object)
 	chat = GOSSIP_CHAT (object);
 	priv = GET_PRIV (chat);
 
+	gossip_conf_notify_remove (gossip_conf_get (), 
+				   priv->notify_system_font_id);
+	gossip_conf_notify_remove (gossip_conf_get (), 
+				   priv->notify_use_system_font_id);
+	gossip_conf_notify_remove (gossip_conf_get (), 
+				   priv->notify_font_name_id);
+
 	g_slist_foreach (priv->sent_messages, (GFunc) g_free, NULL);
 	g_slist_free (priv->sent_messages);
 	
 	G_OBJECT_CLASS (gossip_chat_parent_class)->finalize (object);
+}
+
+static void
+chat_input_set_font_name (GtkWidget *view)
+{
+	gchar    *font_name;
+	gboolean  use_system_font;
+
+	if (!gossip_conf_get_bool (gossip_conf_get (), 
+				   GOSSIP_PREFS_CHAT_THEME_USE_SYSTEM_FONT, 
+				   &use_system_font)) {
+		gtk_widget_modify_font (view, NULL);
+		return;
+	}
+	
+	if (use_system_font) {
+		if (gossip_conf_get_string (gossip_conf_get (),
+					    "/desktop/gnome/interface/document_font_name",
+					    &font_name)) {
+			PangoFontDescription *font_description = NULL;
+
+			font_description = pango_font_description_from_string (font_name);
+			gtk_widget_modify_font (view, font_description);
+
+			if (font_description) {
+				pango_font_description_free (font_description);
+			}
+		} else {
+			gtk_widget_modify_font (view, NULL);
+		}
+	} else {
+		if (gossip_conf_get_string (gossip_conf_get (), 
+					    GOSSIP_PREFS_CHAT_THEME_FONT_NAME, 
+					    &font_name)) {
+			PangoFontDescription *font_description = NULL;
+
+			font_description = pango_font_description_from_string (font_name);
+			gtk_widget_modify_font (view, font_description);
+
+			if (font_description) {
+				pango_font_description_free (font_description);
+			}
+		} else {
+			gtk_widget_modify_font (view, NULL);
+		}		
+	}
+
+	g_free (font_name);
+}
+
+static void
+chat_input_notify_font_name_cb (GossipConf  *conf,
+				const gchar *key,
+				GossipChat  *chat)
+{
+	chat_input_set_font_name (chat->input_text_view);
+}
+
+static void
+chat_input_notify_system_font_cb (GossipConf  *conf,
+				  const gchar *key,
+				  GossipChat  *chat)
+{
+	chat_input_set_font_name (chat->input_text_view);
 }
 
 static void

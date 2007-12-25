@@ -84,8 +84,10 @@ struct _GossipChatViewPriv {
 	 */
 	GossipContact *last_contact;
 
-	guint          notify_system_fonts_id;
+	guint          notify_system_font_id;
 	guint          notify_show_avatars_id;
+	guint          notify_use_system_font_id;
+	guint          notify_font_name_id;
 };
 
 static void     gossip_chat_view_class_init          (GossipChatViewClass      *klass);
@@ -98,17 +100,17 @@ static gboolean chat_view_drag_motion                (GtkWidget                *
 						      guint                     time);
 static void     chat_view_size_allocate              (GtkWidget                *widget,
 						      GtkAllocation            *alloc);
-static void     chat_view_theme_font_name_changed_cb (GossipConf               *conf,
+static void     chat_view_set_tags                   (GossipChatView           *view);
+static void     chat_view_set_font_name              (GtkWidget                *view);
+static void     chat_view_notify_font_name_cb        (GossipConf               *conf,
 						      const gchar              *key,
 						      GossipChatView           *view);
-static void     chat_view_setup_tags                 (GossipChatView           *view);
-static void     chat_view_system_font_update         (GossipChatView           *view);
 static void     chat_view_notify_system_font_cb      (GossipConf               *conf,
 						      const gchar              *key,
-						      gpointer                  user_data);
+						      GossipChatView           *view);
 static void     chat_view_notify_show_avatars_cb     (GossipConf               *conf,
 						      const gchar              *key,
-						      gpointer                  user_data);
+						      GossipChatView           *view);
 static void     chat_view_populate_popup             (GossipChatView           *view,
 						      GtkMenu                  *menu,
 						      gpointer                  user_data);
@@ -178,20 +180,35 @@ gossip_chat_view_init (GossipChatView *view)
 		      "cursor-visible", FALSE,
 		      NULL);
 
-	priv->notify_system_fonts_id =
+	priv->notify_system_font_id =
 		gossip_conf_notify_add (gossip_conf_get (),
-					 "/desktop/gnome/interface/document_font_name",
-					 chat_view_notify_system_font_cb,
-					 view);
-	chat_view_system_font_update (view);
+					"/desktop/gnome/interface/document_font_name",
+					(GossipConfNotifyFunc) 
+					chat_view_notify_system_font_cb,
+					view);
 
 	priv->notify_show_avatars_id =
 		gossip_conf_notify_add (gossip_conf_get (),
-					 GOSSIP_PREFS_UI_SHOW_AVATARS,
-					 chat_view_notify_show_avatars_cb,
-					 view);
+					GOSSIP_PREFS_UI_SHOW_AVATARS,
+					(GossipConfNotifyFunc)
+					chat_view_notify_show_avatars_cb,
+					view);
 
-	chat_view_setup_tags (view);
+	priv->notify_use_system_font_id =
+		gossip_conf_notify_add (gossip_conf_get (),
+					GOSSIP_PREFS_CHAT_THEME_USE_SYSTEM_FONT,
+					(GossipConfNotifyFunc) 
+					chat_view_notify_font_name_cb,
+					view);
+	priv->notify_font_name_id =
+		gossip_conf_notify_add (gossip_conf_get (),
+					GOSSIP_PREFS_CHAT_THEME_FONT_NAME,
+					(GossipConfNotifyFunc) 
+					chat_view_notify_font_name_cb,
+					view);
+
+	chat_view_set_tags (view);
+	chat_view_set_font_name (GTK_WIDGET (view));
 
 	gossip_theme_manager_apply_saved (gossip_theme_manager_get (), view);
 
@@ -212,18 +229,6 @@ gossip_chat_view_init (GossipChatView *view)
 				 G_CALLBACK (chat_view_theme_changed_cb),
 				 view,
 				 0);
-
-	/* Watch for chat theme changes */
-	gossip_conf_notify_add (gossip_conf_get (),
-				GOSSIP_PREFS_CHAT_THEME_USE_SYSTEM_FONT,
-				(GossipConfNotifyFunc) 
-				chat_view_theme_font_name_changed_cb,
-				view);
-	gossip_conf_notify_add (gossip_conf_get (),
-				GOSSIP_PREFS_CHAT_THEME_FONT_NAME,
-				(GossipConfNotifyFunc) 
-				chat_view_theme_font_name_changed_cb,
-				view);
 }
 
 static void
@@ -235,8 +240,14 @@ chat_view_finalize (GObject *object)
 	view = GOSSIP_CHAT_VIEW (object);
 	priv = GET_PRIV (view);
 
-	gossip_conf_notify_remove (gossip_conf_get (), priv->notify_system_fonts_id);
-	gossip_conf_notify_remove (gossip_conf_get (), priv->notify_show_avatars_id);
+	gossip_conf_notify_remove (gossip_conf_get (), 
+				   priv->notify_system_font_id);
+	gossip_conf_notify_remove (gossip_conf_get (), 
+				   priv->notify_show_avatars_id);
+	gossip_conf_notify_remove (gossip_conf_get (), 
+				   priv->notify_use_system_font_id);
+	gossip_conf_notify_remove (gossip_conf_get (), 
+				   priv->notify_font_name_id);
 
 	if (priv->last_contact) {
 		g_object_unref (priv->last_contact);
@@ -294,63 +305,7 @@ chat_view_size_allocate (GtkWidget     *widget,
 }
 
 static void
-chat_view_theme_font_name_set (GossipChatView *view)
-{
-	gchar    *font_name;
-	gboolean  use_system_font;
-
-	if (!gossip_conf_get_bool (gossip_conf_get (), 
-				   GOSSIP_PREFS_CHAT_THEME_USE_SYSTEM_FONT, 
-				   &use_system_font)) {
-		gtk_widget_modify_font (GTK_WIDGET (view), NULL);
-		return;
-	}
-	
-	if (use_system_font) {
-		if (gossip_conf_get_string (gossip_conf_get (),
-					     "/desktop/gnome/interface/document_font_name",
-					     &font_name)) {
-			PangoFontDescription *font_description = NULL;
-
-			font_description = pango_font_description_from_string (font_name);
-			gtk_widget_modify_font (GTK_WIDGET (view), font_description);
-
-			if (font_description) {
-				pango_font_description_free (font_description);
-			}
-		} else {
-			gtk_widget_modify_font (GTK_WIDGET (view), NULL);
-		}
-	} else {
-		if (gossip_conf_get_string (gossip_conf_get (), 
-					    GOSSIP_PREFS_CHAT_THEME_FONT_NAME, 
-					    &font_name)) {
-			PangoFontDescription *font_description = NULL;
-
-			font_description = pango_font_description_from_string (font_name);
-			gtk_widget_modify_font (GTK_WIDGET (view), font_description);
-
-			if (font_description) {
-				pango_font_description_free (font_description);
-			}
-		} else {
-			gtk_widget_modify_font (GTK_WIDGET (view), NULL);
-		}		
-	}
-
-	g_free (font_name);
-}
-
-static void
-chat_view_theme_font_name_changed_cb (GossipConf     *conf,
-				      const gchar    *key,
-				      GossipChatView *view)
-{
-	chat_view_theme_font_name_set (view);
-}
-
-static void
-chat_view_setup_tags (GossipChatView *view)
+chat_view_set_tags (GossipChatView *view)
 {
 	GossipChatViewPriv *priv;
 	GtkTextTag         *tag;
@@ -386,46 +341,75 @@ chat_view_setup_tags (GossipChatView *view)
 			  "motion-notify-event",
 			  G_CALLBACK (chat_view_event_cb),
 			  tag);
-
-	/* Set font name */
-	chat_view_theme_font_name_set (view);
 }
 
 static void
-chat_view_system_font_update (GossipChatView *view)
+chat_view_set_font_name (GtkWidget *view)
 {
-	PangoFontDescription *font_description = NULL;
-	gchar                *font_name;
+	gchar    *font_name;
+	gboolean  use_system_font;
 
-	if (gossip_conf_get_string (gossip_conf_get (),
-				     "/desktop/gnome/interface/document_font_name",
-				     &font_name) && font_name) {
-		font_description = pango_font_description_from_string (font_name);
-		g_free (font_name);
+	if (!gossip_conf_get_bool (gossip_conf_get (), 
+				   GOSSIP_PREFS_CHAT_THEME_USE_SYSTEM_FONT, 
+				   &use_system_font)) {
+		gtk_widget_modify_font (view, NULL);
+		return;
+	}
+	
+	if (use_system_font) {
+		if (gossip_conf_get_string (gossip_conf_get (),
+					    "/desktop/gnome/interface/document_font_name",
+					    &font_name)) {
+			PangoFontDescription *font_description = NULL;
+
+			font_description = pango_font_description_from_string (font_name);
+			gtk_widget_modify_font (view, font_description);
+
+			if (font_description) {
+				pango_font_description_free (font_description);
+			}
+		} else {
+			gtk_widget_modify_font (view, NULL);
+		}
 	} else {
-		font_description = NULL;
+		if (gossip_conf_get_string (gossip_conf_get (), 
+					    GOSSIP_PREFS_CHAT_THEME_FONT_NAME, 
+					    &font_name)) {
+			PangoFontDescription *font_description = NULL;
+
+			font_description = pango_font_description_from_string (font_name);
+			gtk_widget_modify_font (view, font_description);
+
+			if (font_description) {
+				pango_font_description_free (font_description);
+			}
+		} else {
+			gtk_widget_modify_font (view, NULL);
+		}		
 	}
 
-	gtk_widget_modify_font (GTK_WIDGET (view), font_description);
-
-	if (font_description) {
-		pango_font_description_free (font_description);
-	}
+	g_free (font_name);
 }
 
 static void
-chat_view_notify_system_font_cb (GossipConf  *conf,
-				 const gchar *key,
-				 gpointer     user_data)
+chat_view_notify_font_name_cb (GossipConf     *conf,
+			       const gchar    *key,
+			       GossipChatView *view)
 {
-	GossipChatView     *view;
+	chat_view_set_font_name (GTK_WIDGET (view));
+}
+
+static void
+chat_view_notify_system_font_cb (GossipConf     *conf,
+				 const gchar    *key,
+				 GossipChatView *view)
+{
 	GossipChatViewPriv *priv;
 	gboolean            show_avatars = FALSE;
 
-	view = user_data;
 	priv = GET_PRIV (view);
 
-	chat_view_system_font_update (view);
+	chat_view_set_font_name (GTK_WIDGET (view));
 
 	/* Ugly, again, to adjust the vertical position of the nick... Will fix
 	 * this when reworking the theme manager so that view register
@@ -439,15 +423,13 @@ chat_view_notify_system_font_cb (GossipConf  *conf,
 }
 
 static void
-chat_view_notify_show_avatars_cb (GossipConf  *conf,
-				  const gchar *key,
-				  gpointer     user_data)
+chat_view_notify_show_avatars_cb (GossipConf     *conf,
+				  const gchar    *key,
+				  GossipChatView *view)
 {
-	GossipChatView     *view;
 	GossipChatViewPriv *priv;
 	gboolean            show_avatars = FALSE;
 
-	view = user_data;
 	priv = GET_PRIV (view);
 
 	gossip_conf_get_bool (conf, key, &show_avatars);
