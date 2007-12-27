@@ -327,7 +327,7 @@ theme_irc_append_message (GossipTheme        *theme,
 
 	gossip_debug (DEBUG_DOMAIN, "Add IRC message");
 
-	gossip_theme_maybe_append_date_and_time (theme, context, view, message);
+	gossip_theme_append_time_maybe (theme, context, view, message);
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
 
@@ -379,7 +379,7 @@ theme_irc_append_action (GossipTheme        *theme,
 	const gchar   *tag;
 	GossipContact *contact;
 
-	gossip_theme_maybe_append_date_and_time (theme, context, view, message);
+	gossip_theme_append_time_maybe (theme, context, view, message);
 
 	contact = gossip_message_get_sender (message);
 	name = gossip_contact_get_name (contact);
@@ -410,7 +410,7 @@ theme_irc_append_event (GossipTheme        *theme,
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
 	
-	gossip_theme_maybe_append_date_and_time (theme, context, view, NULL);
+	gossip_theme_append_time_maybe (theme, context, view, NULL);
 
 	gtk_text_buffer_get_end_iter (buffer, &iter);
 

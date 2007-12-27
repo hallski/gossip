@@ -1,3 +1,14 @@
+2007-12-27  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-theme-boxes.c:
+	* src/gossip-theme-irc.c: Use gossip_theme_append_time_maybe()
+	instead of gossip_theme_maybe_append_date_and_time().
+	
+	* src/gossip-theme.[ch]: Small refactorisation here to make some
+	functions a little easier to read. Make sure we check if all the
+	virtual functions exist before using them and make sure we check
+	for the right ones too. Fixes bug #505196 (Xavier Claessens).
+
 2007-12-25  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-chat-view.c:

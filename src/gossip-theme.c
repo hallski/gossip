@@ -48,16 +48,15 @@ struct _GossipThemePriv {
 	gboolean show_avatars;
 };
 
-static void         theme_finalize            (GObject            *object);
-static void         theme_get_property        (GObject            *object,
-					       guint               param_id,
-					       GValue             *value,
-					       GParamSpec         *pspec);
-static void         theme_set_property        (GObject            *object,
-					       guint               param_id,
-					       const GValue       *value,
-					       GParamSpec         *pspec);
-
+static void theme_finalize     (GObject      *object);
+static void theme_get_property (GObject      *object,
+				guint         param_id,
+				GValue       *value,
+				GParamSpec   *pspec);
+static void theme_set_property (GObject      *object,
+				guint         param_id,
+				const GValue *value,
+				GParamSpec   *pspec);
 
 G_DEFINE_TYPE (GossipTheme, gossip_theme, G_TYPE_OBJECT);
 
@@ -115,18 +114,11 @@ gossip_theme_class_init (GossipThemeClass *class)
 static void
 gossip_theme_init (GossipTheme *presence)
 {
-	GossipThemePriv *priv;
-
-	priv = GET_PRIV (presence);
 }
 
 static void
 theme_finalize (GObject *object)
 {
-	GossipThemePriv *priv;
-
-	priv = GET_PRIV (object);
-
 	(G_OBJECT_CLASS (gossip_theme_parent_class)->finalize) (object);
 }
 
@@ -171,14 +163,16 @@ theme_set_property (GObject      *object,
 }
 
 void
-gossip_theme_maybe_append_date_and_time (GossipTheme        *theme,
-					 GossipThemeContext *context,
-					 GossipChatView     *view,
-					 GossipMessage      *message)
+gossip_theme_append_time_maybe (GossipTheme        *theme,
+				GossipThemeContext *context,
+				GossipChatView     *view,
+				GossipMessage      *message)
 {
 	time_t    timestamp;
 	GDate    *date, *last_date;
 	gboolean  append_date, append_time;
+
+	g_return_if_fail (GOSSIP_IS_THEME (theme));
 
 	date = gossip_message_get_date_and_time (message, &timestamp);
 
@@ -210,17 +204,16 @@ gossip_theme_maybe_append_date_and_time (GossipTheme        *theme,
 GossipTheme *
 gossip_theme_new (void)
 {
-	GossipTheme     *theme;
-
-	theme = g_object_new (GOSSIP_TYPE_THEME, NULL);
-
-	return theme;
+	return g_object_new (GOSSIP_TYPE_THEME, NULL);
 }
 
 GossipThemeContext *
 gossip_theme_setup_with_view (GossipTheme    *theme,
 			      GossipChatView *view)
 {
+	g_return_val_if_fail (GOSSIP_IS_THEME (theme), NULL);
+	g_return_val_if_fail (GOSSIP_IS_CHAT_VIEW (view), NULL);
+
 	if (!GOSSIP_THEME_GET_CLASS(theme)->setup_with_view) {
 		g_error ("Theme must override setup_with_view");
 	}
@@ -233,6 +226,9 @@ gossip_theme_detach_from_view (GossipTheme        *theme,
 			       GossipThemeContext *context,
 			       GossipChatView     *view)
 {
+	g_return_if_fail (GOSSIP_IS_THEME (theme));
+	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
+
 	if (!GOSSIP_THEME_GET_CLASS(theme)->detach_from_view) {
 		g_error ("Theme must override detach_from_view");
 	}
@@ -246,6 +242,9 @@ gossip_theme_view_cleared (GossipTheme        *theme,
 			   GossipThemeContext *context,
 			   GossipChatView     *view)
 {
+	g_return_if_fail (GOSSIP_IS_THEME (theme));
+	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
+
 	if (!GOSSIP_THEME_GET_CLASS(theme)->view_cleared) {
 		return;
 	}
@@ -260,6 +259,10 @@ gossip_theme_append_message (GossipTheme        *theme,
 			     GossipMessage      *message,
 			     gboolean            from_self)
 {
+	g_return_if_fail (GOSSIP_IS_THEME (theme));
+	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
+	g_return_if_fail (GOSSIP_IS_MESSAGE (message));
+
 	if (!GOSSIP_THEME_GET_CLASS(theme)->append_message) {
 		g_warning ("Theme should override append_message");
 		return;
@@ -276,6 +279,10 @@ gossip_theme_append_action (GossipTheme        *theme,
 			    GossipMessage      *message,
 			    gboolean            from_self)
 {
+	g_return_if_fail (GOSSIP_IS_THEME (theme));
+	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
+	g_return_if_fail (GOSSIP_IS_MESSAGE (message));
+
 	if (!GOSSIP_THEME_GET_CLASS(theme)->append_action) {
 		g_warning ("Theme should override append_message");
 		return;
@@ -307,10 +314,10 @@ theme_insert_text_with_emoticons (GtkTextBuffer *buf,
 	}
 
 	while (*str) {
-		gint         smileys_index[G_N_ELEMENTS (smileys)];
 		GdkPixbuf   *pixbuf;
-		gint         len;
 		const gchar *start;
+		gint         len;
+		gint         smileys_index[G_N_ELEMENTS (smileys)];
 
 		memset (smileys_index, 0, sizeof (smileys_index));
 
@@ -328,22 +335,39 @@ theme_insert_text_with_emoticons (GtkTextBuffer *buf,
 				match = -1;
 			}
 
-			if (submatch != -1 || prev_c == 0 || g_unichar_isspace (prev_c)) {
+			if (submatch != -1 || 
+			    prev_c == 0 || 
+			    g_unichar_isspace (prev_c)) {
 				submatch = -1;
 
 				for (i = 0; i < G_N_ELEMENTS (smileys); i++) {
+					gboolean is_start;
+					gboolean is_middle;
+					gboolean is_match_for_next_char;
+					gint     s;
+
 					/* Only try to match if we already have
 					 * a beginning match for the pattern, or
 					 * if it's the first character in the
 					 * pattern, if it's not in the middle of
 					 * a word.
 					 */
-					if (((smileys_index[i] == 0 && (prev_c == 0 || g_unichar_isspace (prev_c))) ||
-					     smileys_index[i] > 0) &&
-					    smileys[i].pattern[smileys_index[i]] == c) {
-						submatch = i;
+					s = smileys_index[i];
 
-						smileys_index[i]++;
+					is_start = \
+						s == 0 && 
+						(prev_c == 0 || 
+						 g_unichar_isspace (prev_c));
+					is_middle = \
+						s > 0;
+					is_match_for_next_char = \
+						smileys[i].pattern[s] == c;
+
+					if ((is_start || is_middle) && 
+					    (is_match_for_next_char)) {
+						submatch = i;
+						s = smileys_index[i]++;
+
 						if (!smileys[i].pattern[smileys_index[i]]) {
 							match = i;
 						}
@@ -394,7 +418,11 @@ gossip_theme_append_text (GossipTheme        *theme,
 	gint             num_matches, i;
 	GArray          *start, *end;
 
+	g_return_if_fail (GOSSIP_IS_THEME (theme));
+	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
+
 	priv = GET_PRIV (theme);
+
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
 
 	gtk_text_buffer_get_end_iter (buffer, &start_iter);
@@ -433,15 +461,15 @@ gossip_theme_append_text (GossipTheme        *theme,
 			if (!link_tag) {
 				gtk_text_buffer_insert (buffer, &iter,
 							tmp, -1);
-			} {
-				gtk_text_buffer_insert_with_tags_by_name (buffer,
-									  &iter,
-									  tmp,
-									  -1,
-									  link_tag,
-									  "link",
-									  NULL);
-			}
+			} 
+
+			gtk_text_buffer_insert_with_tags_by_name (buffer,
+								  &iter,
+								  tmp,
+								  -1,
+								  link_tag,
+								  "link",
+								  NULL);
 
 			g_free (tmp);
 
@@ -483,6 +511,13 @@ gossip_theme_append_event (GossipTheme        *theme,
 			   GossipChatView     *view,
 			   const gchar        *str)
 {
+	g_return_if_fail (GOSSIP_IS_THEME (theme));
+	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
+
+	if (!GOSSIP_THEME_GET_CLASS(theme)->append_event) {
+		return;
+	}
+
 	GOSSIP_THEME_GET_CLASS(theme)->append_event (theme, context, view, str);
 }
 
@@ -491,13 +526,15 @@ gossip_theme_append_spacing (GossipTheme        *theme,
 			     GossipThemeContext *context,
 			     GossipChatView     *view)
 {
-	if (!GOSSIP_THEME_GET_CLASS(theme)->append_action) {
+	g_return_if_fail (GOSSIP_IS_THEME (theme));
+	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
+
+	if (!GOSSIP_THEME_GET_CLASS(theme)->append_spacing) {
 		return;
 	}
 
 	GOSSIP_THEME_GET_CLASS(theme)->append_spacing (theme, context, view);
 }
-
 
 void 
 gossip_theme_append_timestamp (GossipTheme        *theme,
@@ -507,7 +544,11 @@ gossip_theme_append_timestamp (GossipTheme        *theme,
 			       gboolean            show_date,
 			       gboolean            show_time)
 {
-	if (!GOSSIP_THEME_GET_CLASS(theme)->append_action) {
+	g_return_if_fail (GOSSIP_IS_THEME (theme));
+	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
+	g_return_if_fail (GOSSIP_IS_MESSAGE (message));
+
+	if (!GOSSIP_THEME_GET_CLASS(theme)->append_timestamp) {
 		return;
 	}
 
@@ -529,7 +570,8 @@ gossip_theme_get_show_avatars (GossipTheme *theme)
 }
 
 void
-gossip_theme_set_show_avatars (GossipTheme *theme, gboolean show)
+gossip_theme_set_show_avatars (GossipTheme *theme, 
+			       gboolean     show)
 {
 	GossipThemePriv *priv;
 

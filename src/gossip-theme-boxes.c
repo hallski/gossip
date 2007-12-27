@@ -766,10 +766,9 @@ theme_boxes_append_message (GossipTheme        *theme,
 			    GossipMessage      *message,
 			    gboolean            from_self)
 {
-	gossip_theme_maybe_append_date_and_time (theme, context, view, message);
+	gossip_theme_append_time_maybe (theme, context, view, message);
 
-	theme_boxes_maybe_append_header (theme, context, view, message,
-					 from_self);
+	theme_boxes_maybe_append_header (theme, context, view, message, from_self);
 
 	gossip_theme_append_text (theme, context, view, 
 				  gossip_message_get_body (message),
@@ -798,7 +797,7 @@ theme_boxes_append_action (GossipTheme        *theme,
 
 	gossip_debug (DEBUG_DOMAIN, "Add fancy action");
 
-	gossip_theme_maybe_append_date_and_time (theme, context, view, message);
+	gossip_theme_append_time_maybe (theme, context, view, message);
 
 	contact = gossip_message_get_sender (message);
 	
@@ -835,7 +834,7 @@ theme_boxes_append_event (GossipTheme        *theme,
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
 
-	gossip_theme_maybe_append_date_and_time (theme, context, view, NULL);
+	gossip_theme_append_time_maybe (theme, context, view, NULL);
 
 	gtk_text_buffer_get_end_iter (buffer, &iter);
 

@@ -85,12 +85,12 @@ struct _GossipThemeClass {
 						     gboolean         show);
 };
 
-GType         gossip_theme_get_type             (void) G_GNUC_CONST;
+GType        gossip_theme_get_type              (void) G_GNUC_CONST;
 
-GossipTheme * gossip_theme_new                  (void);
+GossipTheme *gossip_theme_new                   (void);
 
 GossipThemeContext *
-gossip_theme_setup_with_view                    (GossipTheme        *theme,
+             gossip_theme_setup_with_view       (GossipTheme        *theme,
 						 GossipChatView     *view);
 void         gossip_theme_detach_from_view      (GossipTheme        *theme,
 						 GossipThemeContext *context,
@@ -98,7 +98,6 @@ void         gossip_theme_detach_from_view      (GossipTheme        *theme,
 void         gossip_theme_view_cleared          (GossipTheme        *theme,
 						 GossipThemeContext *context,
 						 GossipChatView     *view);
-
 void         gossip_theme_append_message        (GossipTheme        *theme,
 						 GossipThemeContext *context,
 						 GossipChatView     *view,
@@ -128,9 +127,7 @@ void         gossip_theme_append_timestamp      (GossipTheme        *theme,
 						 GossipMessage      *message,
 						 gboolean            show_date,
 						 gboolean            show_time);
-
-void      
-gossip_theme_maybe_append_date_and_time         (GossipTheme        *theme,
+void         gossip_theme_append_time_maybe     (GossipTheme        *theme,
 						 GossipThemeContext *context,
 						 GossipChatView     *view,
 						 GossipMessage      *message);
