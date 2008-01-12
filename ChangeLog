@@ -1,3 +1,10 @@
+2008-01-12  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-account-widget-jabber.c:
+	(account_widget_jabber_setup): Fixed redundant code when not
+	building with libebook and which was not actually used with
+	libebook either.
+
 2007-12-28  Martyn Russell  <martyn@imendio.com>
 
 	* configure.ac:

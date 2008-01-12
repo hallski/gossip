@@ -957,7 +957,6 @@ account_widget_jabber_setup (GossipAccountWidgetJabber *settings,
 	const gchar                   *resource;
 	const gchar                   *server;
 	const gchar                   *password;
-	gchar                         *ebook_id = NULL;
 	gboolean                       use_ssl;
 	gboolean                       is_connected;
 
@@ -983,12 +982,6 @@ account_widget_jabber_setup (GossipAccountWidgetJabber *settings,
 	} else {
 		gtk_widget_set_sensitive (priv->checkbutton_ssl, FALSE);
 	}
-
-#ifdef HAVE_EBOOK
-	if (G_STR_EMPTY (id)) {
-		ebook_id = gossip_ebook_get_jabber_id ();
-	}
-#endif
 
 	g_signal_handlers_block_by_func (priv->entry_id, 
 					 account_widget_jabber_entry_changed_cb, 
