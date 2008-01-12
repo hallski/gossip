@@ -36,6 +36,10 @@
 #include <libgossip/gossip-account-manager.h>
 #include <libgossip/gossip-debug.h>
 
+#ifdef HAVE_EBOOK
+#include <libgossip/gossip-ebook.h>
+#endif
+
 #include "gossip-account-widget-jabber.h"
 #include "gossip-app.h"
 #include "gossip-glade.h"
@@ -54,6 +58,7 @@ struct _GossipAccountWidgetJabberPriv {
 
 	GtkWidget     *vbox_settings;
 
+	GtkWidget     *button_ebook_retrieve;
 	GtkWidget     *button_register;
 
 	GtkWidget     *button_forget;
@@ -115,6 +120,10 @@ static void     account_widget_jabber_register_cb                       (GossipR
 									 GossipAccountWidgetJabber      *settings);
 static void     account_widget_jabber_button_register_clicked_cb        (GtkWidget                      *button,
 									 GossipAccountWidgetJabber      *settings);
+static void
+                account_widget_jabber_button_ebook_retrieve_clicked_cb  (GtkWidget                      *button,
+									 GossipAccountWidgetJabber      *settings);
+
 static void     account_widget_jabber_button_forget_clicked_cb          (GtkWidget                      *button,
 									 GossipAccountWidgetJabber      *settings);
 static void     account_widget_jabber_cp_entry_activate_cb              (GtkWidget                      *entry,
@@ -154,6 +163,7 @@ gossip_account_widget_jabber_init (GossipAccountWidgetJabber *settings)
 				       "vbox_jabber_settings",
 				       NULL,
 				       "vbox_jabber_settings", &priv->vbox_settings,
+				       "button_ebook_retrieve", &priv->button_ebook_retrieve,
 				       "button_register", &priv->button_register,
 				       "button_forget", &priv->button_forget,
 				       "button_change_password", &priv->button_change_password,
@@ -172,6 +182,7 @@ gossip_account_widget_jabber_init (GossipAccountWidgetJabber *settings)
 
 	gossip_glade_connect (glade, 
 			      settings,
+			      "button_ebook_retrieve", "clicked", account_widget_jabber_button_ebook_retrieve_clicked_cb,
 			      "button_register", "clicked", account_widget_jabber_button_register_clicked_cb,
 			      "button_forget", "clicked", account_widget_jabber_button_forget_clicked_cb,
 			      "button_change_password", "clicked", account_widget_jabber_button_change_password_clicked_cb,
@@ -184,6 +195,10 @@ gossip_account_widget_jabber_init (GossipAccountWidgetJabber *settings)
 			      NULL);
 
 	g_object_unref (glade);
+
+#ifdef HAVE_EBOOK
+	gtk_widget_show (priv->button_ebook_retrieve);
+#endif
 
 	/* We do this manually so we can block it. */
 	g_signal_connect (priv->checkbutton_ssl, "toggled", 
@@ -680,6 +695,24 @@ account_widget_jabber_register_cb (GossipResult               result,
 }
 
 static void
+account_widget_jabber_button_ebook_retrieve_clicked_cb (GtkWidget                 *button,
+							GossipAccountWidgetJabber *settings)
+{
+#ifdef HAVE_EBOOK
+	GossipAccountWidgetJabberPriv *priv;
+	gchar                         *str;
+
+	priv = GET_PRIV (settings);
+
+	str = gossip_ebook_get_jabber_id ();
+	if (!G_STR_EMPTY (str)) {
+		gtk_entry_set_text (GTK_ENTRY (priv->entry_id), str);
+	}
+	g_free (str);
+#endif
+}
+
+static void
 account_widget_jabber_button_register_clicked_cb (GtkWidget                 *button,
 						  GossipAccountWidgetJabber *settings)
 {
@@ -924,6 +957,7 @@ account_widget_jabber_setup (GossipAccountWidgetJabber *settings,
 	const gchar                   *resource;
 	const gchar                   *server;
 	const gchar                   *password;
+	gchar                         *ebook_id = NULL;
 	gboolean                       use_ssl;
 	gboolean                       is_connected;
 
@@ -949,6 +983,12 @@ account_widget_jabber_setup (GossipAccountWidgetJabber *settings,
 	} else {
 		gtk_widget_set_sensitive (priv->checkbutton_ssl, FALSE);
 	}
+
+#ifdef HAVE_EBOOK
+	if (G_STR_EMPTY (id)) {
+		ebook_id = gossip_ebook_get_jabber_id ();
+	}
+#endif
 
 	g_signal_handlers_block_by_func (priv->entry_id, 
 					 account_widget_jabber_entry_changed_cb, 

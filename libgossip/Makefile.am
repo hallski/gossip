@@ -33,7 +33,14 @@ platform_impl = 					\
 libgossip_la_LDFLAGS = -lregex
 endif
 
+if HAVE_EBOOK
+ebook_sources =						\
+	gossip-ebook.h					\
+	gossip-ebook.c
+endif
+
 libgossip_la_SOURCES =             			\
+	$(ebook_sources)				\
 	gossip-account.c           			\
 	gossip-account.h           			\
 	gossip-account-manager.c   			\

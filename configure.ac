@@ -183,11 +183,39 @@ fi
 
 if test "x$enable_gnome_keyring" = "xyes"; then
 	if test "x$have_gnome_keyring" != "xyes"; then
-		AC_MSG_ERROR([Couldn't find GNOME Keyring.])
+		AC_MSG_ERROR([Could not find GNOME Keyring.])
 	fi
 fi
 
 AM_CONDITIONAL(HAVE_GNOME_KEYRING, test x$have_gnome_keyring = xyes)
+
+dnl -----------------------------------------------------------
+dnl EBook (Evolution and GNOME about me)
+dnl -----------------------------------------------------------
+AC_ARG_ENABLE(ebook,
+              AS_HELP_STRING([--enable-ebook=@<:@no/yes/auto@:>@],
+                             [compile with ebook support]), ,
+              enable_ebook=auto)
+
+if test "x$enable_ebook" != "xno"; then
+        ebook_pkgconfig_tmp="libebook-1.2"
+   	PKG_CHECK_MODULES(EBOOK, $ebook_pkgconfig_tmp, have_ebook=yes, have_ebook=no)
+   	if test "x$have_ebook" = "xyes"; then
+      	   	AC_DEFINE(HAVE_EBOOK, 1, [libebook support])
+      		ebook_pkgconfig=$ebook_pkgconfig_tmp
+	fi
+else
+	have_ebook=no
+	ebook_pkgconfig=
+fi
+
+if test "x$enable_ebook" = "xyes"; then
+   	if test "x$have_ebook" != "xyes"; then
+      	   	AC_MSG_ERROR([Couldn't find libebook.])
+   	fi
+fi
+
+AM_CONDITIONAL(HAVE_EBOOK, test x$have_ebook = xyes)
 
 dnl -----------------------------------------------------------
 dnl ISO codes, used for aspell support
@@ -220,6 +248,7 @@ PKG_CHECK_MODULES(LIBGOSSIP,
    $dbus_pkgconfig
    $gnome_vfs_pkgconfig
    $gnome_keyring_pkgconfig
+   $ebook_pkgconfig
 ])
 
 PKG_CHECK_MODULES(LIBLOUDERMOUTH, 
@@ -414,6 +443,7 @@ echo "  DBUS:          $have_dbus"
 echo "  Galago:        $have_galago"
 echo "  Notify:        $have_libnotify"
 echo "  GNOME Keyring: $have_gnome_keyring (only with GNOME)"
+echo "  EBook:         $have_ebook (only with GNOME)"
 echo "  XSS:           $have_xss (only with GNOME)"
 echo "  ASpell:        $have_aspell"
 echo

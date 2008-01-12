@@ -1,3 +1,14 @@
+2007-12-28  Martyn Russell  <martyn@imendio.com>
+
+	* configure.ac:
+	* data/glade/main.glade:
+	* libgossip/Makefile.am:
+	* src/gossip-account-widget-jabber.c:
+	* src/gossip-vcard-dialog.c: Support for libebook to get and set
+	personal information when setting up a new account and setting
+	your personal information on the Jabber server. Fixes bug #400132
+	(Wade Mealing, Brian Pepple, Martyn Russell).
+
 2007-12-27  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-theme-boxes.c:
