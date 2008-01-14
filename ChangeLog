@@ -1,3 +1,8 @@
+2008-01-14  Martyn Russell  <martyn@imendio.com>
+
+	* data/glade/main.glade: Make the libebook widgets in the VCard
+	dialog hidden by default.
+
 2008-01-12  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-account-widget-jabber.c:
