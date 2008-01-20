@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-12 20:28+0000\n"
-"PO-Revision-Date: 2008-01-12 22:13+0100\n"
+"POT-Creation-Date: 2008-01-12 21:14+0000\n"
+"PO-Revision-Date: 2008-01-20 18:07+0100\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <<gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -957,11 +957,11 @@ msgstr "Editar grupos y nombre para este contacto"
 
 #: ../src/gossip-contact-list.c:357
 msgid "_Remove"
-msgstr "_Quitar"
+msgstr "_Eliminar"
 
 #: ../src/gossip-contact-list.c:357
 msgid "Remove contact"
-msgstr "Quita el contacto"
+msgstr "Elimina el contacto"
 
 #: ../src/gossip-contact-list.c:361
 msgid "_Invite to Chat Room"
@@ -1993,8 +1993,8 @@ msgid ""
 "Populate from your desktop personal details (set in the Evolution email "
 "client or the About Me application)."
 msgstr ""
-"Rellenar con los datos personales del escritorio (ajustados en el cliente de correo-e "
-"Evolution o la miniaplicación Acerca de mi)."
+"Rellenar con los datos personales del escritorio (ajustados en el cliente de "
+"correo-e Evolution o la miniaplicación Acerca de mi)."
 
 #: ../data/glade/main.glade.h:74
 msgid "Preferences"
@@ -2009,8 +2009,8 @@ msgid ""
 "Register this account with the Jabber server. If this is a new account, you "
 "will need to click on this first before connecting."
 msgstr ""
-"Registrar esta cuenta en el servidor Jabber. Si esta es una cuenta nueva deberá "
-"pulsar aquí antes de conectarse."
+"Registrar esta cuenta en el servidor Jabber. Si esta es una cuenta nueva "
+"deberá pulsar aquí antes de conectarse."
 
 #: ../data/glade/main.glade.h:77
 msgid "Reso_urce:"
@@ -2200,8 +2200,8 @@ msgid ""
 "email \n"
 "client and other desktop applications. "
 msgstr ""
-"La información personal en su escritorio se puede usar aquí para rellenar los "
-"detalles de abajo.\n"
+"La información personal en su escritorio se puede usar aquí para rellenar "
+"los detalles de abajo.\n"
 "De forma similar, puede elegir rellenar esta información que también se usa "
 "para el cliente de \n"
 "correo-e y otras aplicaciones del escritorio."
@@ -2334,7 +2334,7 @@ msgstr "_Suscribirse"
 
 #: ../data/glade/main.glade.h:162
 msgid "_Use for chat rooms"
-msgstr "_Usar para sala de chat"
+msgstr "_Usar para salas de chat"
 
 #: ../data/glade/main.glade.h:164
 msgid "_Web site:"
