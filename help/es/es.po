@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pan2\n"
 "POT-Creation-Date: 2007-01-07 03:23+0000\n"
-"PO-Revision-Date: 2008-01-10 18:04+0100\n"
+"PO-Revision-Date: 2008-01-16 17:23+0100\n"
 "Last-Translator: Francisco Javier F. Serrador <serrador@cvs.gnome.org>\n"
 "Language-Team: Spanish <traductores@es.gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -258,7 +258,6 @@ msgid "bpepple@fedoraproject.org"
 msgstr "bpepple@fedoraproject.org"
 
 #: C/gossip.xml:115(date)
-#, fuzzy
 msgid "December 2006"
 msgstr "Diciembre de 2006"
 
@@ -327,8 +326,9 @@ msgid ""
 "\"help\">GNOME User Guide</ulink>."
 msgstr ""
 "Para informar de un error o hacer una sugerencia respecto a la aplicación "
-"Gossip o este manual, siga las indicaciones en la página de comentarios de la <ulink url=\"ghelp:gnome-"
-"feedback\" type=\"help\">Guía del usuario de GNOME</ulink>."
+"Gossip o este manual, siga las indicaciones en la página de comentarios de "
+"la <ulink url=\"ghelp:gnome-feedback\" type=\"help\">Guía del usuario de "
+"GNOME</ulink>."
 
 #: C/gossip.xml:187(primary)
 msgid "Gossip"
@@ -349,14 +349,15 @@ msgid ""
 "as simple to use as possible and to allow users of the GNOME Desktop to keep "
 "in touch with friends."
 msgstr ""
-"Gossip es un programa de mensajería instantánea para el escritorio GNOME. Permite "
-"comunicaciones instantáneas a través de la red utilizando Jabber. Gossip está diseñado para ser "
-"tan sencillo de utilizar como sea posible y para permitir a los usuarios del escritorio GNOME mantenerse "
-"en contacto con sus amigos."
+"Gossip es un programa de mensajería instantánea para el escritorio GNOME. "
+"Permite comunicaciones instantáneas a través de la red utilizando Jabber. "
+"Gossip está diseñado para ser tan sencillo de utilizar como sea posible y "
+"para permitir a los usuarios del escritorio GNOME mantenerse en contacto con "
+"sus amigos."
 
 #: C/gossip.xml:207(title)
 msgid "What is Instant Messaging"
-msgstr "Qué es la mensajería instantánea"
+msgstr "Qué es Mensajería Instantánea"
 
 #: C/gossip.xml:208(para)
 msgid ""
@@ -364,9 +365,10 @@ msgid ""
 "network, such as the Internet. They can add each other to a list, to see if "
 "their <emphasis>contacts</emphasis> are available."
 msgstr ""
-"La mensajería instantánea permite a las personas enviar mensajes de texto a otros a lo largo de "
-"una red, como puede ser Internet. Pueden añadir a los demás a una lista para ver si "
-"sus <emphasis>contactos</emphasis> están disponibles."
+"La mensajería instantánea permite a las personas enviar mensajes de texto a "
+"otros a lo largo de una red, como puede ser Internet. Pueden añadir a los "
+"demás a una lista para ver si sus <emphasis>contactos</emphasis> están "
+"disponibles."
 
 #: C/gossip.xml:215(title)
 msgid "What is Jabber"
@@ -378,18 +380,19 @@ msgid ""
 "interconnected servers to pass messages to one another in a similar fashion "
 "to email."
 msgstr ""
-"Jabber es un sistema de mensajería instantánea abierto que permite que un grupo de "
-"servidores interconectados pasen los mensajes de unos a otros de manera similar "
-"al correo-e."
+"Jabber es un sistema de mensajería instantánea abierto que permite que un "
+"grupo de servidores interconectados pasen los mensajes de unos a otros de "
+"manera similar al correo-e."
 
 #: C/gossip.xml:220(para)
 msgid ""
 "The Jabber protocol is an open, free and public standard, which was accepted "
 "by Internet Engineering Task Force (IETF) under the name XMPP in 2004. It's "
 "decentralized and extensible with custom functionality."
-msgstr "El protocolo Jabber es un estándar abierto, libre y público, aceptado "
-"por la Internet Engineering Task Force (IETF) bajo el nombre de XMPP en 2004. Es"
-"descentralizado y extensible con nuevas funcionalidades personalizables."
+msgstr ""
+"El protocolo Jabber es un estándar abierto, libre y público, aceptado por la "
+"Internet Engineering Task Force (IETF) bajo el nombre de XMPP en 2004. "
+"Es descentralizado y extensible con nuevas funcionalidades personalizables."
 
 #: C/gossip.xml:225(para)
 msgid ""
@@ -397,8 +400,8 @@ msgid ""
 "<ulink url=\"http://www.jabber.org\">Jabber Software Foundation</ulink> and "
 "in the <ulink url=\"http://en.wikipedia.org/wiki/Jabber\">Wikipedia</ulink>."
 msgstr ""
-"Puede encontrar más información sobre el protocolo Jabber en el sitio web de la "
-"<ulink url=\"http://www.jabber.org\">Jabber Software Foundation</ulink> y "
+"Puede encontrar más información sobre el protocolo Jabber en el sitio web de "
+"la <ulink url=\"http://www.jabber.org\">Jabber Software Foundation</ulink> y "
 "en la <ulink url=\"http://es.wikipedia.org/wiki/Jabber\">Wikipedia</ulink>."
 
 #: C/gossip.xml:243(title)
@@ -411,7 +414,8 @@ msgstr "Iniciar Gossip"
 
 #: C/gossip.xml:247(para)
 msgid "You can start <application>Gossip</application> in the following ways:"
-msgstr "Puede iniciar <application>Gossip</application> de las siguientes maneras:"
+msgstr ""
+"Puede iniciar <application>Gossip</application> de las siguientes maneras:"
 
 #: C/gossip.xml:251(term)
 msgid "<guimenu>Applications</guimenu> menu"
@@ -422,8 +426,9 @@ msgid ""
 "Choose <menuchoice><guisubmenu>Internet</guisubmenu><guimenuitem>Gossip "
 "Instant Messenger</guimenuitem></menuchoice>."
 msgstr ""
-"Seleccione <menuchoice><guisubmenu>Internet</guisubmenu><guimenuitem>Mensajería "
-"instantánea Gossip</guimenuitem></menuchoice>."
+"Seleccione <menuchoice><guisubmenu>Internet</"
+"guisubmenu><guimenuitem>Mensajería instantánea Gossip</guimenuitem></"
+"menuchoice>."
 
 #: C/gossip.xml:262(term)
 msgid "Command line"
@@ -434,8 +439,8 @@ msgid ""
 "To start <application>Gossip</application> from a command line, type "
 "<command>gossip</command> and then press <keycap>Return</keycap>."
 msgstr ""
-"Para iniciar <application>Gossip</application> desde la línea de comandos, escriba "
-"<command>gossip</command> y pulse la tecla <keycap>Intro</keycap>."
+"Para iniciar <application>Gossip</application> desde la línea de comandos, "
+"escriba <command>gossip</command> y pulse la tecla <keycap>Intro</keycap>."
 
 #: C/gossip.xml:271(title)
 msgid "When You Start Gossip the First Time"
@@ -446,8 +451,8 @@ msgid ""
 "When you start <application>Gossip</application> the first time, you will be "
 "prompted to configure a Jabber account."
 msgstr ""
-"La primera vez que inicie <application>Gossip</application> se le "
-"pedirá que configure una cuenta de Jabber."
+"La primera vez que inicie <application>Gossip</application> se le pedirá que "
+"configure una cuenta de Jabber."
 
 #: C/gossip.xml:276(para)
 msgid ""
@@ -468,16 +473,16 @@ msgid ""
 "Select <guilabel>Connect on Startup</guilabel>, if you wish to have the "
 "account automatically connect when Gossip starts."
 msgstr ""
-"Seleccione <guilabel>Conectar al inicio</guilabel> si quiere que la cuenta se "
-"conecte automáticamente cuando inicie Gossip."
+"Seleccione <guilabel>Conectar al inicio</guilabel> si quiere que la cuenta "
+"se conecte automáticamente cuando inicie Gossip."
 
 #: C/gossip.xml:291(para)
 msgid ""
 "Select <guilabel>Use system proxy</guilabel> if you wish to connect using a "
 "system proxy."
 msgstr ""
-"Seleccione <guilabel>Utilizar proxy del sistema</guilabel> si quiere conectarse utilizanzo el "
-"proxy del sistema."
+"Seleccione <guilabel>Utilizar proxy del sistema</guilabel> si quiere "
+"conectarse utilizanzo el proxy del sistema."
 
 #: C/gossip.xml:297(para)
 msgid "Enter the <guilabel>Login ID</guilabel>."
@@ -504,16 +509,16 @@ msgid ""
 "Select <guilabel>Use encryption (SSL)</guilabel> if your server supports "
 "encryption."
 msgstr ""
-"Seleccione <guilabel>Utilizar cifrado (SSL)</guilabel> si su servidor soporta"
-"cifradp."
+"Seleccione <guilabel>Utilizar cifrado (SSL)</guilabel> si su servidor "
+"soportacifradp."
 
 #: C/gossip.xml:320(para)
 msgid ""
 "If this is a new Jabber account, then press <guibutton>Register</guibutton>. "
 "Otherwise, press <guibutton>Connect</guibutton>."
 msgstr ""
-"Si ésta es una cuenta nueva de Jabber, pulse <guibutton>Registrar</guibutton>. "
-"En otro caso, pulse <guibutton>Conectar</guibutton>."
+"Si ésta es una cuenta nueva de Jabber, pulse <guibutton>Registrar</"
+"guibutton>. En otro caso, pulse <guibutton>Conectar</guibutton>."
 
 #: C/gossip.xml:329(title)
 msgid "When You Start Gossip"
@@ -537,8 +542,9 @@ msgid ""
 "icon and status arrow button list. Menubar contains Chat, Edit and Help "
 "menus."
 msgstr ""
-"Muestra la ventana principal de Gossip. Contiene barra de título, barra de menú, lista de contactos, icono "
-"de estado y la lista de botones de estado. La barra de menú contiene los menús Chat, Editar y Ayuda."
+"Muestra la ventana principal de Gossip. Contiene barra de título, barra de "
+"menú, lista de contactos, icono de estado y la lista de botones de estado. "
+"La barra de menú contiene los menús Chat, Editar y Ayuda."
 
 #. for example, the items on the menubar and on the toolbar. This section is optional.
 #: C/gossip.xml:359(para)
@@ -546,8 +552,8 @@ msgid ""
 "<xref linkend=\"gossip-TBL-1\"/> describes the components of a browser "
 "window."
 msgstr ""
-"La <xref linkend=\"gossip-TBL-1\"/> describe los componentes de una ventana"
-"del navegador."
+"La <xref linkend=\"gossip-TBL-1\"/> describe los componentes de una "
+"ventanadel navegador."
 
 #: C/gossip.xml:363(title)
 msgid "Gossip Main Components"
@@ -601,7 +607,8 @@ msgstr "Uso básico"
 #.       different sections
 #: C/gossip.xml:422(para)
 msgid "You can use the Gossip application to perform the following tasks:"
-msgstr "Puede usar la aplicación Gossip para llevar a cabo las siguientes tareas:"
+msgstr ""
+"Puede usar la aplicación Gossip para llevar a cabo las siguientes tareas:"
 
 #: C/gossip.xml:425(title)
 msgid "Connect to a Jabber Server"
@@ -623,8 +630,10 @@ msgstr "Desconectarse de un servidor Jabber"
 msgid ""
 "To disconnect from a Jabber server, choose <menuchoice><guimenu>Chat</"
 "guimenu><guimenuitem>Disconnect</guimenuitem></menuchoice> from the Menubar."
-msgstr "Para desconectarse de un servidor Jabber, seleccione <menuchoice><guimenu>Chat</"
-"guimenu><guimenuitem>Desconectar</guimenuitem></menuchoice> en la barra de menú."
+msgstr ""
+"Para desconectarse de un servidor Jabber, seleccione "
+"<menuchoice><guimenu>Chat</guimenu><guimenuitem>Desconectar</guimenuitem></"
+"menuchoice> en la barra de menú."
 
 #: C/gossip.xml:447(title)
 msgid "Sending An Instant Message"
@@ -632,14 +641,16 @@ msgstr "Enviar un mensaje instantáneo"
 
 #: C/gossip.xml:448(para)
 msgid "You can send instant messages to a contact, in the following ways:"
-msgstr "Puede enviar mensajes instantáneos a un contacto de las siguientes maneras:"
+msgstr ""
+"Puede enviar mensajes instantáneos a un contacto de las siguientes maneras:"
 
 #: C/gossip.xml:451(para)
 msgid ""
 "Double click on the contact's nickname in the Contact List, to open the chat "
 "window."
 msgstr ""
-"Para abrir la ventana de chat, pulse dos veces en el apodo del contacto en la Lista de contactos."
+"Para abrir la ventana de chat, pulse dos veces en el apodo del contacto en "
+"la Lista de contactos."
 
 #: C/gossip.xml:454(para)
 msgid ""
@@ -650,14 +661,20 @@ msgid ""
 "to send an instant message to. Type in the name or the contact ID and click "
 "<guibutton>Chat</guibutton>. You can also choose the name from the list."
 msgstr ""
+"Seleccione <menuchoice><shortcut><keycombo><keycap>Ctrl</keycap><keycap>N</"
+"keycap></keycombo></shortcut><guimenu>Chat</guimenu><guimenuitem>Mensaje "
+"nuevo</guimenuitem></menuchoice>. Se mostrará un cuadro de diálogo "
+"<interface>pregunta</interface>, solicitando el ID de usuario o de la persona a la "
+"que quiere envir un mensaje instantáneo. Escriba el nombre o el ID de contacto y pulse "
+"<guibutton>Chat</guibutton>. También puede seleccionar el nombre de la lista."
 
 #: C/gossip.xml:471(para)
 msgid ""
 "If you are online with more than one account, you can also choose from which "
 "of your accounts you want send the message."
 msgstr ""
-"Si está conectado con más de una cuenta. puede elegir desde cuál "
-"de sus cuentas quiere enviar el mensaje."
+"Si está conectado con más de una cuenta. puede elegir desde cuál de sus "
+"cuentas quiere enviar el mensaje."
 
 #: C/gossip.xml:478(para)
 msgid ""
@@ -667,6 +684,11 @@ msgid ""
 "instant message to. Type in the name or the contact ID and click "
 "<guibutton>Chat</guibutton>. You can also choose the name from the list."
 msgstr ""
+"Pulse con el botón derecho en el Área de notificación de Gossip y seleccione "
+"<guilabel>Mensaje nuevo</guilabel>. Se mostrará un cuadro de diálogo "
+"<interface>pregunta</interface> solicitando el ID de usuario o de la persona a la que quiere "
+"enviar un mensaje instantáneo. Escriba el nombre o el ID de contacto y pulse "
+"<guibutton>Chat</guibutton>. También puede seleccionar el nombre de la lista."
 
 #: C/gossip.xml:489(title)
 msgid "Receiving An Instant Message"
@@ -678,21 +700,25 @@ msgid ""
 "balloon icon in the Notification Area and beside the nickname in the Contact "
 "List. You can read the message, in the following ways:"
 msgstr ""
+"Cuando reciba un mensaje instantáneo Gossip se lo notificará con un "
+"icono parpadeante en el Área de notificación y junto al apodo en la Lista "
+"de contactos. Puede leer el mensaje de las siguientes maneras:"
 
 #: C/gossip.xml:497(para)
 msgid ""
 "Double click on the contact's nickname in the <interface>Contact List</"
 "interface>, to open the chat window with the new message."
 msgstr ""
-"Pulse dos veces en el apodo del contacto en la <interface>Lista de contactos</"
-"interface> para abrir la ventana de chat con el mensaje nuevo."
+"Pulse dos veces en el apodo del contacto en la <interface>Lista de "
+"contactos</interface> para abrir la ventana de chat con el mensaje nuevo."
 
 #: C/gossip.xml:504(para)
 msgid ""
 "Click on the Gossip icon in the Notification Area. A chat window with the "
 "new message will open."
-msgstr "Pulse dos veces en el icono de Gossip en el Área de notificación. Se abrirá una nueva "
-"ventana de chat con el mensaje nuevo."
+msgstr ""
+"Pulse dos veces en el icono de Gossip en el Área de notificación. Se abrirá "
+"una nueva ventana de chat con el mensaje nuevo."
 
 #: C/gossip.xml:513(title)
 msgid "Edit Account Personal Information"
@@ -704,9 +730,9 @@ msgid ""
 "guimenu><guimenuitem>Personal Information</guimenuitem></menuchoice> from "
 "the Menubar."
 msgstr ""
-"Para editar la información personal de las cuentas, seleccione <menuchoice><guimenu>Editar</"
-"guimenu><guimenuitem>Información personal</guimenuitem></menuchoice> en la "
-"barra de menú."
+"Para editar la información personal de las cuentas, seleccione "
+"<menuchoice><guimenu>Editar</guimenu><guimenuitem>Información personal</"
+"guimenuitem></menuchoice> en la barra de menú."
 
 #: C/gossip.xml:524(title)
 msgid "Gossip Personal Details Window"
@@ -717,8 +743,8 @@ msgid ""
 "Shows Gossips Personal Details window, where the user can edit his personal "
 "information."
 msgstr ""
-"Muestra la ventana de Detalles personales de Gossip, donde el usuario puede editar su información "
-"personal."
+"Muestra la ventana de Detalles personales de Gossip, donde el usuario puede "
+"editar su información personal."
 
 #. ==== End of Figure ====
 #: C/gossip.xml:545(para)
@@ -726,8 +752,8 @@ msgid ""
 "This will open the <interface>Personal Details</interface> dialog, which "
 "will allow you to provide the following information:"
 msgstr ""
-"Esto abrirá el cuadro de diálogo <interface>Detalles personales</interface> que"
-"le permitirá proporcionar la siguiente información:"
+"Esto abrirá el cuadro de diálogo <interface>Detalles personales</interface> "
+"que le permitirá proporcionar la siguiente información:"
 
 #: C/gossip.xml:551(para)
 msgid ""
@@ -741,7 +767,8 @@ msgstr ""
 msgid ""
 "This drop-down box will only be shown if you have more than one account set-"
 "up in Gossip."
-msgstr "Esta lista desplegable sólo se mostrará si tiene más de una cuenta "
+msgstr ""
+"Esta lista desplegable sólo se mostrará si tiene más de una cuenta "
 "configurada en Gossip."
 
 #: C/gossip.xml:562(para)
@@ -749,44 +776,48 @@ msgid ""
 "To add your name, edit the contents of the <guilabel>Name</guilabel> text "
 "box."
 msgstr ""
-"Para añadir su nombre, edite el contenido de la caja de texto <guilabel>Nombre</guilabel>."
+"Para añadir su nombre, edite el contenido de la caja de texto "
+"<guilabel>Nombre</guilabel>."
 
 #: C/gossip.xml:567(para)
 msgid ""
 "To add your nickname, edit the contents of the <guilabel>Nickname</guilabel> "
 "text box."
 msgstr ""
-"Para añadir su apodo, edite el contenido de la caja de texto <guilabel>Apodo</guilabel>."
+"Para añadir su apodo, edite el contenido de la caja de texto "
+"<guilabel>Apodo</guilabel>."
 
 #: C/gossip.xml:573(para)
 msgid ""
 "To add your e-mail address, edit the contents of the <guilabel>Email</"
 "guilabel> text box."
 msgstr ""
-"Para añadir su dirección de correo-e, edite el contenido de la caja de texto  <guilabel>Correo-e</"
-"guilabel>."
+"Para añadir su dirección de correo-e, edite el contenido de la caja de "
+"texto  <guilabel>Correo-e</guilabel>."
 
 #: C/gossip.xml:579(para)
 msgid ""
 "To add your web address, edit the contents of the <guilabel>Web site</"
 "guilabel> text box."
 msgstr ""
-"Para añadir su dirección web, edite el contenido de la caja de texto <guilabel>Sitio web</"
-"guilabel>."
+"Para añadir su dirección web, edite el contenido de la caja de texto "
+"<guilabel>Sitio web</guilabel>."
 
 #: C/gossip.xml:585(para)
 msgid ""
 "To add an avatar, click the <guibutton>Avatar</guibutton> image chooser "
 "button and select the image you wish to use."
 msgstr ""
-"Para añadir un avatar pulse en el botón de selección de imagen <guibutton>Avatar</guibutton> "
-"y seleccione la imagen que desea utilizar."
+"Para añadir un avatar pulse en el botón de selección de imagen "
+"<guibutton>Avatar</guibutton> y seleccione la imagen que desea utilizar."
 
 #: C/gossip.xml:591(para)
 msgid ""
 "To add a description about you, edit the contents of the "
 "<guilabel>Description</guilabel> text box."
 msgstr ""
+"Para añadir una descripción acerca de si mismo, edite el contenido de "
+"la caja de texto <guilabel>Descripción</guilabel>."
 
 #: C/gossip.xml:597(para)
 msgid ""
@@ -794,14 +825,17 @@ msgid ""
 "in the <guilabel>Birthday</guilabel> section, and use the calendar to set "
 "your birthday."
 msgstr ""
+"Para añadir su cumpleaños, desmarque la casilla <guilabel>No guardar</guilabel> "
+"en la sección <guilabel>Cumpleaños</guilabel>, y use el calendario para establecer "
+"su cumpleaños."
 
 #: C/gossip.xml:603(para)
 msgid ""
 "After reviewing the information, click <guibutton>Save</guibutton> to "
 "publish your information."
 msgstr ""
-"Después de revisar la información, pulse en <guibutton>Guardar</guibutton> para "
-"publicar su información."
+"Después de revisar la información, pulse <guibutton>Guardar</guibutton> "
+"para publicar su información."
 
 #: C/gossip.xml:612(title)
 msgid "Working With Contacts"
@@ -816,6 +850,8 @@ msgid ""
 "If you add a contact to your contact list, you can see when this person is "
 "online. To add a contact, perform the following steps:"
 msgstr ""
+"Si añade un contacto a su lista de contactos, podrá ver si esta persona "
+"está conectada. Para añadir un contacto siga los siguientes pasos:"
 
 #: C/gossip.xml:626(para)
 msgid ""
@@ -823,10 +859,15 @@ msgid ""
 "guimenuitem></menuchoice> from the Menubar, to open the <interface>Add "
 "Contact</interface> dialog."
 msgstr ""
+"Seleccione <menuchoice><guimenu>Chat</guimenu><guimenuitem>Añadir contacto...</"
+"guimenuitem></menuchoice> de la barra de menú, para abrir el cuadro de diálogo <interface>Añadir "
+"contacto...</interface>."
 
 #: C/gossip.xml:636(para)
 msgid "Select the <guilabel>Account</guilabel> you wish to add the contact to."
-msgstr "Introduzca la <guilabel>Cuenta</guilabel> en la que quiere añadir el contacto."
+msgstr ""
+"Introduzca la <guilabel>Cuenta</guilabel> en la que quiere añadir el "
+"contacto."
 
 #: C/gossip.xml:646(para)
 msgid "Enter the <guilabel>Contact</guilabel> identity."
@@ -836,25 +877,28 @@ msgstr "Introduzca la identidad del <guilabel>Contacto</guilabel>."
 msgid ""
 "The Contact identity looks like an email-address. Example: user@jabber.org"
 msgstr ""
-"La identidad de los contactos es similar a una dirección de correo-e. Ejemplo: usuario@jabber.org"
+"La identidad de los contactos es similar a una dirección de correo-e. "
+"Ejemplo: usuario@jabber.org"
 
 #: C/gossip.xml:656(para)
 msgid ""
 "Enter the <guilabel>Alias</guilabel>, you wish to display in the Contact "
 "List."
 msgstr ""
-"Introduzca el <guilabel>Apodo</guilabel> que desea que se muestre en la Lista "
-"de contactos"
+"Introduzca el <guilabel>Apodo</guilabel> que desea que se muestre en la "
+"Lista de contactos"
 
 #: C/gossip.xml:661(para)
 msgid ""
 "Select the <guilabel>Group</guilabel> to associate with this contact from "
 "the drop-down list."
 msgstr ""
+"Seleccione de la lista deesplegable el <guilabel>Grupo</guilabel> para asociar con este contacto."
 
 #: C/gossip.xml:667(para)
 msgid "Review the information displayed and click <guibutton>Add</guibutton>."
-msgstr "Revise la información mostrada y pulse en <guibutton>Añadir</guibutton>."
+msgstr ""
+"Revise la información mostrada y pulse <guibutton>Añadir</guibutton>."
 
 #: C/gossip.xml:671(para)
 msgid ""
@@ -882,15 +926,16 @@ msgstr "Acceder a la información de un contacto"
 
 #: C/gossip.xml:700(para)
 msgid "A contact's information can be accessed with the following methods:"
-msgstr "La información de un contacto puede consultarse de las siguientes maneras:"
+msgstr ""
+"La información de un contacto puede consultarse de las siguientes maneras:"
 
 #: C/gossip.xml:703(para)
 msgid ""
 "Right click a contact's alias in the Contact List and select "
 "<guimenuitem>Information</guimenuitem>."
 msgstr ""
-"Pulse con el botón derecho en el apodo de un contacto en la Lista de contactos y seleccione"
-"<guimenuitem>Información</guimenuitem>."
+"Pulse con el botón derecho en el apodo de un contacto en la Lista de "
+"contactos y seleccione<guimenuitem>Información</guimenuitem>."
 
 #: C/gossip.xml:709(para)
 msgid ""
@@ -908,12 +953,16 @@ msgid ""
 "The <interface>Edit Contact</interface> dialog can be open with the "
 "following methods:"
 msgstr ""
+"El cuadro de diálogo <interface>Editar contacto</interface> se puede abrir "
+"de las siguientes maneras:"
 
 #: C/gossip.xml:727(para)
 msgid ""
 "Right click a contact's alias in the Contact List and select "
 "<guimenuitem>Edit</guimenuitem>."
 msgstr ""
+"Pulse con el botón derecho en el apodo de un contacto de la Lista de contactos "
+"y seleccione <guimenuitem>Editar</guimenuitem>."
 
 #: C/gossip.xml:733(para)
 msgid ""
@@ -935,6 +984,8 @@ msgid ""
 "Right click a contact's alias in the Contact List and select "
 "<guimenuitem>Remove</guimenuitem>."
 msgstr ""
+"Pulse con el botón derecho en el apodo de un contacto de la Lista de contactos "
+"y seleccione <guimenuitem>Eliminar</guimenuitem>."
 
 #: C/gossip.xml:758(para)
 msgid ""
@@ -1011,10 +1062,10 @@ msgid ""
 "\"/><colspec colname=\"DESCRIPTION\" colwidth=\"50*\"/><placeholder-1/"
 "><placeholder-2/></tgroup></informaltable>"
 msgstr ""
-"Gossip reconoce los siguientes estados en línea: <informaltable frame=\"all\"><tgroup "
-"cols=\"2\" colsep=\"1\" rowsep=\"1\"><colspec colname=\"ICON\" colwidth=\"50*"
-"\"/><colspec colname=\"DESCRIPTION\" colwidth=\"50*\"/><placeholder-1/"
-"><placeholder-2/></tgroup></informaltable>"
+"Gossip reconoce los siguientes estados en línea: <informaltable frame=\"all"
+"\"><tgroup cols=\"2\" colsep=\"1\" rowsep=\"1\"><colspec colname=\"ICON\" "
+"colwidth=\"50*\"/><colspec colname=\"DESCRIPTION\" colwidth=\"50*\"/"
+"><placeholder-1/><placeholder-2/></tgroup></informaltable>"
 
 #: C/gossip.xml:882(title)
 msgid "Change Online Status"
@@ -1048,6 +1099,10 @@ msgid ""
 "guilabel>. If your computer remains inactive for 30 minutes, Gossip will "
 "switch from <guilabel>Away</guilabel> to <guilabel>Extended away</guilabel>."
 msgstr ""
+"Si su equipo está inactivo durante cinco minutos, Gossip cambiará su estado "
+"de <guilabel>Disponible</guilabel> a <guilabel>Ausente</"
+"guilabel>. Si el equipo permanece inactivo 30 minutos, Gossip "
+"cambiará su estado de <guilabel>Ausente</guilabel> a <guilabel>Ausencia extendida</guilabel>."
 
 #: C/gossip.xml:914(para)
 msgid ""
@@ -1070,7 +1125,8 @@ msgstr ""
 
 #: C/gossip.xml:935(para)
 msgid "All your saved status messages will irrevocable be deleted."
-msgstr "Todos sus mensajes de estado guardados serán borrados irrevocablemente."
+msgstr ""
+"Todos sus mensajes de estado guardados serán borrados irrevocablemente."
 
 #: C/gossip.xml:941(para)
 msgid ""
@@ -1084,8 +1140,8 @@ msgid ""
 "You can delete all saved customized status messages, in the following ways: "
 "<placeholder-1/>"
 msgstr ""
-"Puede borrar todos los mensajes de estados personalizados de las siguientes maneras:"
-"<placeholder-1/>"
+"Puede borrar todos los mensajes de estados personalizados de las siguientes "
+"maneras: <placeholder-1/>"
 
 #: C/gossip.xml:955(title)
 msgid "Using Group Chats"
@@ -1095,7 +1151,8 @@ msgstr "Uso de los grupos de chat"
 msgid ""
 "Group chat can be used to have a conversation with more than one person."
 msgstr ""
-"Los grupos de chat pueden usasrse para tener una conversación con más de una persona."
+"Los grupos de chat pueden usasrse para tener una conversación con más de una "
+"persona."
 
 #: C/gossip.xml:961(title)
 msgid "Joining A New Group Chat Room"
@@ -1106,23 +1163,25 @@ msgid ""
 "To join a new Group Chat Room, choose <menuchoice><guimenu>Room</"
 "guimenu><guimenuitem>Join New</guimenuitem></menuchoice> from the MenuBar."
 msgstr ""
-"Para unirse a un nuevo Grupo de salas de chat, seleccione <menuchoice><guimenu>Sala</"
-"guimenu><guimenuitem>Unirse a nuevo...</guimenuitem></menuchoice> en la barra de menú."
+"Para unirse a un nuevo Grupo de salas de chat, seleccione "
+"<menuchoice><guimenu>Sala</guimenu><guimenuitem>Unirse a nuevo...</"
+"guimenuitem></menuchoice> en la barra de menú."
 
 #: C/gossip.xml:968(para)
 msgid ""
 "This will open the <interface>Join New</interface> dialog, in which the "
 "following information will need to be completed:"
 msgstr ""
-"Esto abrirá el cuadro de diálogo <interface>Unirse a nuevo...</interface> en el que "
-"deberá completar la siguiente información."
+"Esto abrirá el cuadro de diálogo <interface>Unirse a nuevo...</interface> en "
+"el que deberá completar la siguiente información."
 
 #: C/gossip.xml:974(para)
 msgid ""
 "Select the Jabber account to use from the <guilabel>Account</guilabel> drop-"
 "down box."
 msgstr ""
-"Seleccione la cuenta Jabber para utilizar en la lista desplegable <guilabel>Cuenta</guilabel>."
+"Seleccione la cuenta Jabber para utilizar en la lista desplegable "
+"<guilabel>Cuenta</guilabel>."
 
 #: C/gossip.xml:984(para)
 msgid "Enter the <guilabel>Server</guilabel> to connect to."
@@ -1213,6 +1272,8 @@ msgid ""
 "Select <guilabel>Show compact contact list</guilabel> option, to not show "
 "the contact's presence status message in the Contact List."
 msgstr ""
+"Seleccione la opción <guilabel>Mostrar lista de contactos compacta</guilabel>, para no "
+"mostrar el mensaje de estado de los contactos en la Lista de contactos."
 
 #: C/gossip.xml:1116(para)
 msgid ""
@@ -1245,6 +1306,8 @@ msgid ""
 "Select the <guilabel>Play sound when messages arrive</guilabel> option to "
 "enable sounds."
 msgstr ""
+"Seleccione la opción <guilabel>Reproducir sonido cuando lleguen mensajes</guilabel> "
+"para activar los sonidos."
 
 #: C/gossip.xml:1153(para)
 msgid ""
@@ -1267,6 +1330,8 @@ msgid ""
 "Select <guilabel>Display notifications when contact come online</guilabel> "
 "to get visual cues when contacts come online."
 msgstr ""
+"Seleccione <guilabel>Mostrar notificaciones cuando los contactos se conecten</guilabel> "
+"para obtener pistas visuales cuando se conecta un contacto."
 
 #: C/gossip.xml:1180(title)
 msgid "Spell Checking"
@@ -1277,6 +1342,8 @@ msgid ""
 "These setting might not be available if spell checking capabilities were not "
 "compiled into Gossip."
 msgstr ""
+"Estos ajustes pueden no estar disponibles si las opciones de corrección "
+"ortográfica no están incluidas en Gossip."
 
 #: C/gossip.xml:1189(guilabel)
 msgid "Languages"
@@ -1284,7 +1351,8 @@ msgstr "Idiomas"
 
 #: C/gossip.xml:1193(para)
 msgid "Select the languages you wish to enable for spell checking"
-msgstr "Seleccione los idiomas que quiere habilitar para la corrección ortográfica"
+msgstr ""
+"Seleccione los idiomas que quiere habilitar para la corrección ortográfica"
 
 #: C/gossip.xml:1197(para)
 msgid ""
@@ -1300,7 +1368,7 @@ msgstr "Opciones"
 
 #: C/gossip.xml:1208(para)
 msgid "Select <guilabel>Enable spell checking</guilabel>, if desired."
-msgstr ""
+msgstr "Seleccione <guilabel>Activar revisor ortográfico</guilabel>, si lo desea."
 
 #: C/gossip.xml:1220(title)
 msgid "Themes"
@@ -1310,10 +1378,11 @@ msgstr "Temas"
 msgid ""
 "Select the desired <guilabel>Chat Theme</guilabel> from the drop-down list."
 msgstr ""
+"Seleccione el <guilabel>Tema de chat</guilabel> deseado de la lista desplegable."
 
 #: C/gossip.xml:1240(para)
 msgid "Select <guilabel>Use for chat rooms</guilabel>, if desired."
-msgstr ""
+msgstr "Seleccione <guilabel>Usar para salas de chat</guilabel>, si lo desea."
 
 #: C/gossip.xml:1279(title)
 msgid "About Gossip"
@@ -1326,10 +1395,10 @@ msgid ""
 "Gossip, please visit the <ulink url=\"http://developer.imendio.com/wiki/"
 "Gossip\" type=\"http\">Gossip Developer Page</ulink>."
 msgstr ""
-"Mikael Hallendal, Richard Hult, Martyn Russell, Geert-Jan Van den Bogaerde, y "
-"Kevin Dougherty escribieron Gossip. Para obtener más información sobre "
-"Gossip visite la <ulink url=\"http://developer.imendio.com/wiki/"
-"Gossip\" type=\"http\">página del desarrollador de Gossip</ulink>."
+"Mikael Hallendal, Richard Hult, Martyn Russell, Geert-Jan Van den Bogaerde, "
+"y Kevin Dougherty escribieron Gossip. Para obtener más información sobre "
+"Gossip visite la <ulink url=\"http://developer.imendio.com/wiki/Gossip\" "
+"type=\"http\">página del desarrollador de Gossip</ulink>."
 
 #: C/gossip.xml:1287(para)
 msgid ""
@@ -1337,9 +1406,9 @@ msgid ""
 "manual, see the Feedback section of the <ulink url=\"ghelp:user-guide?"
 "feedback-bugs\" type=\"help\">GNOME User Guide</ulink>."
 msgstr ""
-"Para informar de un error o hacer una sugerencia respecto a la aplicación "
-"o sobre este manual, lea la página de comentarios de la<ulink url=\"ghelp:gnome-"
-"feedback\" type=\"help\">Guía de usuario de GNOME</ulink>."
+"Para informar de un error o hacer una sugerencia respecto a la aplicación o "
+"sobre este manual, lea la página de comentarios de la <ulink url=\"ghelp:"
+"gnome-feedback\" type=\"help\">Guía de usuario de GNOME</ulink>."
 
 #: C/gossip.xml:1293(para)
 msgid ""
