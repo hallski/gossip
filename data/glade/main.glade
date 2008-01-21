@@ -3712,7 +3712,7 @@ client and other desktop applications. </property>
 		  </child>
 
 		  <child>
-		    <widget class="GtkSeparatorMenuItem" id="separator6">
+		    <widget class="GtkSeparatorMenuItem" id="quit_separator">
 		      <property name="visible">True</property>
 		    </widget>
 		  </child>
@@ -3842,7 +3842,7 @@ client and other desktop applications. </property>
 		  </child>
 
 		  <child>
-		    <widget class="GtkSeparatorMenuItem" id="separator2">
+		    <widget class="GtkSeparatorMenuItem" id="preferences_separator">
 		      <property name="visible">True</property>
 		    </widget>
 		  </child>

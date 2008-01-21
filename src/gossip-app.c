@@ -847,9 +847,17 @@ app_setup (GossipSession *session)
 		ige_mac_menu_add_app_menu_item (group, GTK_MENU_ITEM (item),
 						_("About Gossip"));
 
+		group =  ige_mac_menu_add_app_menu_group ();
 		item = glade_xml_get_widget (glade, "edit_preferences");
 		ige_mac_menu_add_app_menu_item (group, GTK_MENU_ITEM (item),
 						_("Preferences..."));
+
+		/* Hide the left over separators. */
+		item = glade_xml_get_widget (glade, "quit_separator");
+		gtk_widget_hide (item);
+
+		item = glade_xml_get_widget (glade, "preferences_separator");
+		gtk_widget_hide (item);
 
 		gtk_widget_hide (priv->menu_bar);
 	}

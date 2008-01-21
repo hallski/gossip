@@ -1,3 +1,10 @@
+2008-01-21  Richard Hult  <richard@imendio.com>
+
+	* data/glade/main.glade:
+	* src/gossip-app.c: (app_setup): Hide the separators that are left
+	after moving some items and put preferences in a separate
+	group.
+
 2008-01-14  Martyn Russell  <martyn@imendio.com>
 
 	* data/glade/main.glade: Make the libebook widgets in the VCard
