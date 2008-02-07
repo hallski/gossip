@@ -1,0 +1,16 @@
+gtk-icon-theme-name = "Tango"
+gtk-font-name = "Lucida Grande 11"
+gtk-enable-mnemonics = 0
+gtk-theme-name = "Clearlooks"
+
+#include "$bundle_data/themes/Clearlooks/gtk-2.0/gtkrc"
+
+style "my-clearlooks" = "clearlooks-default"
+{
+  engine "clearlooks"
+  {
+    style = CLASSIC
+  }
+}
+class "*" style "my-clearlooks"
+          

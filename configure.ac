@@ -425,6 +425,9 @@ AC_OUTPUT([
   data/pixmaps/Makefile
   data/win32/Makefile
   data/glade/Makefile
+  data/packaging/Makefile
+  data/packaging/mac/Makefile
+  data/packaging/mac/Info.plist
   libgossip/Makefile
   libloudermouth/Makefile
   src/Makefile

@@ -1,5 +1,8 @@
 2008-02-07  Richard Hult  <richard@imendio.com>
 
+	* data/packaging/mac: Add mac bundle data.
+
+2008-02-07  Richard Hult  <richard@imendio.com>
 	* configure.ac:
 	* src/Makefile.am:
 	* src/gossip-app.c:
