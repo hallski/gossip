@@ -30,6 +30,10 @@
 #include <glade/glade.h>
 #include <glib/gi18n.h>
 
+#ifdef GDK_WINDOWING_QUARTZ
+#include <ige-mac-menu.h>
+#endif
+
 #include <libgossip/gossip-chatroom.h>
 #include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-event.h>
@@ -80,10 +84,6 @@
 
 #ifdef HAVE_LIBNOTIFY
 #include "gossip-notify.h"
-#endif
-
-#ifdef GDK_WINDOWING_QUARTZ
-#include "ige-mac-menu.h"
 #endif
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_APP, GossipAppPriv))

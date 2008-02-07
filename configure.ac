@@ -47,18 +47,21 @@ if test "x$IGE_PLATFORM" = xx11; then
    gconf_pkgconfig=gconf-2.0
    gnome_vfs_pkgconfig=gnome-vfs-2.0
    libgnomeui_pkgconfig=libgnomeui-2.0
+   platform_pkgconfig=
    PLATFORM_CFLAGS=
    PLATFORM_LDFLAGS=
 elif test "x$IGE_PLATFORM" = xosx; then
    gconf_pkgconfig=
    gnome_vfs_pkgconfig=
    libgnomeui_pkgconfig=
+   platform_pkgconfig=ige-mac-integration
    PLATFORM_CFLAGS="-xobjective-c"
    PLATFORM_LDFLAGS="-framework Carbon -framework AppKit -framework IOKit -lobjc"
 elif test "x$IGE_PLATFORM" = xwin32; then
    gconf_pkgconfig=
    gnome_vfs_pkgconfig=
    libgnomeui_pkgconfig=
+   platform_pkgconfig=
    PLATFORM_CFLAGS="-mms-bitfields"
    PLATFORM_LDFLAGS="-no-undefined -mwindows"
 else
@@ -273,6 +276,7 @@ PKG_CHECK_MODULES(GOSSIP,
    $libnotify_pkgconfig
    $libgnomeui_pkgconfig
    $gnome_vfs_pkgconfig
+   $platform_pkgconfig
 ])
 
 PKG_CHECK_MODULES(GOSSIP_JABBER,

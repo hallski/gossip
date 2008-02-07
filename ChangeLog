@@ -1,3 +1,11 @@
+2008-02-07  Richard Hult  <richard@imendio.com>
+
+	* configure.ac:
+	* src/Makefile.am:
+	* src/gossip-app.c:
+	* src/gossip-chat-window.c: Use installed mac integration library
+	instead of an internal copy.
+
 2008-01-21  Richard Hult  <richard@imendio.com>
 
 	* data/glade/main.glade:
