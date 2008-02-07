@@ -1,5 +1,9 @@
 2008-02-07  Richard Hult  <richard@imendio.com>
 
+	* gossip.schemas.in: Fix typo, s/terminal font/document font/.
+
+2008-02-07  Richard Hult  <richard@imendio.com>
+
 	* data/packaging/mac: Add mac bundle data.
 
 2008-02-07  Richard Hult  <richard@imendio.com>

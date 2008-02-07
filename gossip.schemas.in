@@ -208,10 +208,9 @@
       <type>bool</type>
       <default>true</default>
       <locale name="C">
-         <short>Use system terminal font</short>
+         <short>Use system document font</short>
          <long>
-           Whether to use the system terminal font theme or our
-      specific theme.
+           Whether to use the system document font theme or a user specified font.
          </long>
       </locale>
     </schema>
@@ -225,8 +224,8 @@
       <locale name="C">
          <short>Font name to use</short>
          <long>
-           Font name to use instead of the system terminal font. Only
-      applied when NOT using the system terminal font.
+           Font name to use instead of the system document font. Only
+      applied when NOT using the system document font.
          </long>
       </locale>
     </schema>
