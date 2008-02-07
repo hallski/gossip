@@ -22,10 +22,8 @@
 
 /* TODO: notifications, string list, org.gnome.gossip domain. */
 
-#include "config.h"
-
+#include <config.h>
 #include <string.h>
-
 #include <Cocoa/Cocoa.h>
 
 #include "gossip-conf.h"
@@ -89,14 +87,23 @@ gossip_conf_init (GossipConf *conf)
 #define GOSSIP_PREFS_CHAT_SHOW_SMILEYS            GOSSIP_PREFS_PATH "/conversation/graphical_smileys"
 #define GOSSIP_PREFS_CHAT_THEME                   GOSSIP_PREFS_PATH "/conversation/theme"
 #define GOSSIP_PREFS_CHAT_THEME_CHAT_ROOM         GOSSIP_PREFS_PATH "/conversation/theme_chat_room"
+#define GOSSIP_PREFS_CHAT_THEME_USE_SYSTEM_FONT   GOSSIP_PREFS_PATH "/conversation/theme_use_system_font"
+#define GOSSIP_PREFS_CHAT_THEME_FONT_NAME         GOSSIP_PREFS_PATH "/conversation/theme_font_name"
+
 #define GOSSIP_PREFS_CHAT_SPELL_CHECKER_LANGUAGES GOSSIP_PREFS_PATH "/conversation/spell_checker_languages"
 #define GOSSIP_PREFS_CHAT_SPELL_CHECKER_ENABLED   GOSSIP_PREFS_PATH "/conversation/spell_checker_enabled"
 #define GOSSIP_PREFS_UI_SEPARATE_CHAT_WINDOWS     GOSSIP_PREFS_PATH "/ui/separate_chat_windows"
 #define GOSSIP_PREFS_UI_MAIN_WINDOW_HIDDEN        GOSSIP_PREFS_PATH "/ui/main_window_hidden"
 #define GOSSIP_PREFS_UI_AVATAR_DIRECTORY          GOSSIP_PREFS_PATH "/ui/avatar_directory"
 #define GOSSIP_PREFS_UI_SHOW_AVATARS              GOSSIP_PREFS_PATH "/ui/show_avatars"
+#define GOSSIP_PREFS_UI_COMPACT_CONTACT_LIST      GOSSIP_PREFS_PATH "/ui/compact_contact_list"
+
 #define GOSSIP_PREFS_CONTACTS_SHOW_OFFLINE        GOSSIP_PREFS_PATH "/contacts/show_offline"
+#define GOSSIP_PREFS_CONTACTS_SORT_CRITERIUM      GOSSIP_PREFS_PATH "/contacts/sort_criterium"
+
 #define GOSSIP_PREFS_HINTS_CLOSE_MAIN_WINDOW      GOSSIP_PREFS_PATH "/hints/close_main_window"
+
+#define GOSSIP_PREFS_FILE_TRANSFER_DEFAULT_FOLDER GOSSIP_PREFS_PATH "/file_transfer/default_folder"
 
 	dict = [NSDictionary dictionaryWithObjectsAndKeys:
 		@"YES", @GOSSIP_PREFS_SOUNDS_FOR_MESSAGES,
@@ -106,14 +113,19 @@ gossip_conf_init (GossipConf *conf)
 		@"YES", @GOSSIP_PREFS_CHAT_SHOW_SMILEYS,
 		@"clean", @GOSSIP_PREFS_CHAT_THEME,
 		@"YES", @GOSSIP_PREFS_CHAT_THEME_CHAT_ROOM,
+		@"YES", @GOSSIP_PREFS_CHAT_THEME_USE_SYSTEM_FONT,
+		@"Lucida Grande 11", @GOSSIP_PREFS_CHAT_THEME_FONT_NAME,
 		@"", @GOSSIP_PREFS_CHAT_SPELL_CHECKER_LANGUAGES,
 		@"NO", @GOSSIP_PREFS_CHAT_SPELL_CHECKER_ENABLED,
 		@"NO", @GOSSIP_PREFS_UI_SEPARATE_CHAT_WINDOWS,
 		@"NO", @GOSSIP_PREFS_UI_MAIN_WINDOW_HIDDEN,
 		@"", @GOSSIP_PREFS_UI_AVATAR_DIRECTORY,
 		@"YES", @GOSSIP_PREFS_UI_SHOW_AVATARS,
+		@"NO", @GOSSIP_PREFS_UI_COMPACT_CONTACT_LIST,
 		@"NO", @GOSSIP_PREFS_CONTACTS_SHOW_OFFLINE,
+		@"name", @GOSSIP_PREFS_CONTACTS_SORT_CRITERIUM,
 		@"YES", @GOSSIP_PREFS_HINTS_CLOSE_MAIN_WINDOW,
+		@"", @GOSSIP_PREFS_FILE_TRANSFER_DEFAULT_FOLDER,
 		nil];
 
 	/* Setup defaults. FIXME: Can we do this only when needed? */

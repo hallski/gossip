@@ -1,5 +1,10 @@
 2008-02-07  Richard Hult  <richard@imendio.com>
 
+	* libgossip/gossip-conf-cocoa.c: (gossip_conf_init): Sync
+	configuration keys with the main port.
+
+2008-02-07  Richard Hult  <richard@imendio.com>
+
 	* data/glade/main.glade: One more s/terminal/document/ fix.
 
 2008-02-07  Richard Hult  <richard@imendio.com>
