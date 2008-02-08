@@ -1,3 +1,10 @@
+2008-02-08  Carlos Garnacho  <carlos@imendio.com>
+
+	* src/gossip-app.c (app_reconnect_remove)
+	(app_session_protocol_disconnected_cb): store/retrieve correctly the
+	timeout IDs in the hashtable. So it doesn't leave timeout functions
+	running when the wrong source ID is removed.
+
 2008-02-07  Richard Hult  <richard@imendio.com>
 
 	* libgossip/gossip-conf-cocoa.c: (gossip_conf_init): Sync

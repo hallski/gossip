@@ -1656,10 +1656,10 @@ app_session_protocol_connected_cb (GossipSession *session,
 static void
 app_reconnect_remove (gpointer data)
 {
-	guint *id;
+	guint id;
 
-	id = (guint*) data;
-	g_source_remove (*id);
+	id = GPOINTER_TO_UINT (data);
+	g_source_remove (id);
 }
 
 static gboolean
@@ -1730,7 +1730,7 @@ app_session_protocol_disconnected_cb (GossipSession *session,
 				    account);
 		g_hash_table_insert (priv->reconnects,
 				     g_object_ref (account),
-				     &id);
+				     GUINT_TO_POINTER (id));
 	}
 }
 
