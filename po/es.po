@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-20 17:09+0000\n"
-"PO-Revision-Date: 2008-01-27 13:40+0100\n"
+"POT-Creation-Date: 2008-02-07 18:19+0000\n"
+"PO-Revision-Date: 2008-02-11 12:00+0100\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -77,12 +77,11 @@ msgstr "Nombre de la tipografía que usar"
 
 #: ../gossip.schemas.in.h:12
 msgid ""
-"Font name to use instead of the system terminal font. Only applied when NOT "
-"using the system terminal font."
+"Font name to use instead of the system document font. Only applied when NOT "
+"using the system document font."
 msgstr ""
-"Nombre de la tipografía que usar en lugar de la tipografía del terminal del "
-"sistema. Sólo se aplica cuando NO se está usando la tipografía del terminal "
-"del sistema."
+"Nombre de la tipografía que usar en lugar de la tipografía de documentos del sistema. "
+"Sólo se aplica cuando NO se está usando la tipografía de documentos del sistema."
 
 #: ../gossip.schemas.in.h:13
 msgid "Hide main window"
@@ -144,8 +143,8 @@ msgid "Use notification sounds"
 msgstr "Usar sonidos de notificación"
 
 #: ../gossip.schemas.in.h:26
-msgid "Use system terminal font"
-msgstr "Usar la tipografía del terminal del sistema"
+msgid "Use system document font"
+msgstr "Usar la tipografía de documentos del sistema"
 
 #: ../gossip.schemas.in.h:27
 msgid "Use theme for chat rooms"
@@ -210,10 +209,10 @@ msgid "Whether to show the contact list in compact mode or not."
 msgstr "Indica si debe o no mostrar la lista de contactos en modo compacto."
 
 #: ../gossip.schemas.in.h:38
-msgid "Whether to use the system terminal font theme or our specific theme."
+msgid "Whether to use the system document font theme or a user specified font."
 msgstr ""
-"Indica si se debe usar la tipografía del terminal del sistema o del tema "
-"especificado."
+"Indica si se debe usar la tipografía de documentos del tema del sistema o una tipografía "
+"especificada por el usuario."
 
 #: ../gossip.schemas.in.h:39
 msgid "Whether to use the theme for chat rooms or not."
@@ -349,7 +348,7 @@ msgstr "Se canceló la entrada a esta sala de chat."
 
 #. i18n: The current state of the connection.
 #: ../libgossip/gossip-contact.c:965 ../libgossip/gossip-presence.c:242
-#: ../src/gossip-app.c:2597 ../src/gossip-contact-info-dialog.c:156
+#: ../src/gossip-app.c:2605 ../src/gossip-contact-info-dialog.c:156
 #: ../src/gossip-galago.c:186 ../src/gossip-status-icon.c:363
 msgid "Offline"
 msgstr "Desconectado"
@@ -721,66 +720,66 @@ msgstr "Mostrar y editar cuentas"
 msgid "About Gossip"
 msgstr "Acerca de Gossip"
 
-#: ../src/gossip-app.c:852
+#: ../src/gossip-app.c:853
 msgid "Preferences..."
 msgstr "Preferencias…"
 
-#: ../src/gossip-app.c:917
+#: ../src/gossip-app.c:925
 msgid "To summarize:"
 msgstr "Para resumir:"
 
-#: ../src/gossip-app.c:944
+#: ../src/gossip-app.c:952
 #, c-format
 msgid "%d new message"
 msgid_plural "%d new messages"
 msgstr[0] "%d mensaje nuevo"
 msgstr[1] "%d mensajes nuevos"
 
-#: ../src/gossip-app.c:949
+#: ../src/gossip-app.c:957
 #, c-format
 msgid "%d subscription request"
 msgid_plural "%d subscription requests"
 msgstr[0] "%d solicitud de subscripción"
 msgstr[1] "%d solicitudes de subscripción"
 
-#: ../src/gossip-app.c:954
+#: ../src/gossip-app.c:962
 #, c-format
 msgid "%d file transfer request"
 msgid_plural "%d file transfer requests"
 msgstr[0] "%d solicitud de transferencia de archivo"
 msgstr[1] "%d solicitudes de transferencia de archivo"
 
-#: ../src/gossip-app.c:959
+#: ../src/gossip-app.c:967
 #, c-format
 msgid "%d server message"
 msgid_plural "%d server messages"
 msgstr[0] "%d mensaje del servidor"
 msgstr[1] "%d mensajes del servidor"
 
-#: ../src/gossip-app.c:964
+#: ../src/gossip-app.c:972
 #, c-format
 msgid "%d error"
 msgid_plural "%d errors"
 msgstr[0] "%d error"
 msgstr[1] "%d errores"
 
-#: ../src/gossip-app.c:989
+#: ../src/gossip-app.c:997
 msgid "If you quit, you will lose all unread information."
 msgstr "Si sale, usted perderá toda la información no leída."
 
-#: ../src/gossip-app.c:1054
+#: ../src/gossip-app.c:1062
 msgid "Gossip is still running, it is just hidden."
 msgstr "Gossip todavía se está ejecutando, sólo está oculto."
 
-#: ../src/gossip-app.c:1055
+#: ../src/gossip-app.c:1063
 msgid "Click on the notification area icon to show Gossip."
 msgstr "Pulse en el icono del área de notificación para mostrar Gossip."
 
-#: ../src/gossip-app.c:1070
+#: ../src/gossip-app.c:1078
 msgid "You were about to quit!"
 msgstr "¡Ibas a cerrarlo!"
 
-#: ../src/gossip-app.c:1071
+#: ../src/gossip-app.c:1079
 msgid ""
 "Since no system or notification tray has been found, this action would "
 "normally quit Gossip.\n"
@@ -794,29 +793,29 @@ msgstr ""
 "Esto es solo un recordatoria, desde ahora, Gossip terminará al realizar esta "
 "acción a menos que desmarque la opción de abajo."
 
-#: ../src/gossip-app.c:1486 ../src/gossip-edit-contact-dialog.c:231
+#: ../src/gossip-app.c:1494 ../src/gossip-edit-contact-dialog.c:231
 msgid "Group"
 msgstr "Grupo"
 
-#: ../src/gossip-app.c:1507
+#: ../src/gossip-app.c:1515
 msgid "Contact"
 msgstr "Contacto"
 
-#: ../src/gossip-app.c:1820
+#: ../src/gossip-app.c:1828
 #, c-format
 msgid "Please enter your %s account password"
 msgstr "Introduzca la contraseña de su cuenta %s:"
 
-#: ../src/gossip-app.c:1831
+#: ../src/gossip-app.c:1839
 #, c-format
 msgid "Logging in to account '%s'"
 msgstr "Iniciando sesión en la cuenta «%s»"
 
-#: ../src/gossip-app.c:1835
+#: ../src/gossip-app.c:1843
 msgid "Remember Password?"
 msgstr "¿Desea recordar su contraseña?"
 
-#: ../src/gossip-app.c:2522
+#: ../src/gossip-app.c:2530
 msgid "Edit Account _Details"
 msgstr "Editar _detalles de la cuenta"
 
@@ -2149,8 +2148,8 @@ msgstr ""
 "sus detalles"
 
 #: ../data/glade/main.glade.h:113
-msgid "Use _system terminal font"
-msgstr "Usar la tipografía de la terminal del _sistema"
+msgid "Use _system document font"
+msgstr "Usar la tipografía de documentos del _sistema"
 
 #: ../data/glade/main.glade.h:114
 msgid "Use default name here from the contact's VCard."
