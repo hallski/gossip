@@ -1,3 +1,12 @@
+2008-02-14  Richard Hult  <richard@imendio.com>
+
+	* data/packaging/mac/gossip.bundle: Clean up bundle definition.
+	
+	* data/pixmaps: New icons from Andreas, woho!
+
+	* src/gossip-ui-utils.c: Use GDK_WINDOWING defines instead of our
+	own.
+
 2008-02-08  Carlos Garnacho  <carlos@imendio.com>
 
 	* src/gossip-app.c (app_reconnect_remove)

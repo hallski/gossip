@@ -458,9 +458,9 @@ gossip_link_button_new (const gchar *url,
 void
 gossip_window_set_default_icon_name (const gchar *name)
 {
-#ifdef HAVE_PLATFORM_X11
+#ifndef GDK_WINDOWING_QUARTZ
 	gtk_window_set_default_icon_name (name);
-#elif defined(HAVE_PLATFORM_OSX)
+#else
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	gchar             *path;
 	NSString          *tmp;

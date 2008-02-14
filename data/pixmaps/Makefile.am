@@ -21,6 +21,9 @@ icon16_DATA = 16x16/gossip.png
 icon22dir = $(datadir)/icons/hicolor/22x22/apps
 icon22_DATA = 22x22/gossip.png
 
+icon24dir = $(datadir)/icons/hicolor/24x24/apps
+icon24_DATA = 24x24/gossip.png
+
 icon32dir = $(datadir)/icons/hicolor/32x32/apps
 icon32_DATA = 32x32/gossip.png
 
@@ -46,9 +49,8 @@ update-icon-cache:
 EXTRA_DIST = 		\
 	$(icon16_DATA)  \
 	$(icon22_DATA)  \
+	$(icon24_DATA)  \
 	$(icon32_DATA)  \
 	$(icon48_DATA)  \
 	$(svgicon_DATA) \
 	$(image_DATA)
-
-
