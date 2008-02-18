@@ -1,419 +1,517 @@
 # translation of gossip.HEAD.ne.po to Nepali
-# translation of gossip.HEAD.po to Nepali
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
+#
 # Pawan Chitrakar <pawan@mpp.org.np>, 2005.
 # Jaydeep Bhusal <zaydeep@hotmail.com>, 2005.
 # Mahesh subedi <submanesh@hotmail.com>, 2006.
-#
+# Shyam Krishna Bal <balshyam24@yahoo.com>, 2007.
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip.HEAD.ne\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-03-26 18:22+0100\n"
-"PO-Revision-Date: 2006-06-13 12:37+0545\n"
-"Last-Translator: Mahesh subedi <submanesh@hotmail.com>\n"
+"POT-Creation-Date: 2007-09-22 11:51+0100\n"
+"PO-Revision-Date: 2007-11-21 16:36+0545\n"
+"Last-Translator: Shyam Krishna Bal <balshyam24@yahoo.com>\n"
 "Language-Team: Nepali <info@mpp.org.np>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 1.10.2\n"
-"Plural-Forms: nplurals=2;plural=(n!=1)\n"
+"X-Generator: KBabel 1.11.4\n"
+"Plural-Forms: nplurals=2; plural=n !=1\n"
 
 #: ../gossip.desktop.in.in.h:1
 msgid "Gossip Instant Messenger"
-msgstr "गोसिप तयारि मेसेन्जर"
+msgstr "गोसिप शीघ्र मेसेन्जर"
 
 #: ../gossip.desktop.in.in.h:2
 msgid "Instant Messenger"
-msgstr "तयारि मेसेन्जर"
+msgstr "शीघ्र मेसेन्जर"
 
 #: ../gossip.schemas.in.h:1
 msgid "Always open a separate chat window for new chats."
-msgstr "सधै नयाँ कुराकानीका लागि एउटा छुट्टै कुराकानी सञ्झ्याल खोल्नुहोस्"
+msgstr "सधै नयाँ कुराकानीका लागि एउटा छुट्टै कुराकानी सञ्झ्याल खोल्नुहोस् ।"
 
 #: ../gossip.schemas.in.h:2
 msgid "Chat window theme"
 msgstr "कुराकानी सञ्झ्याल विषयवस्तु"
 
 #: ../gossip.schemas.in.h:3
-msgid ""
-"Comma separated list of spell checker languages to use (e.g. en, fr, nl)."
+msgid "Comma separated list of spell checker languages to use (e.g. en, fr, nl)."
 msgstr ""
 "अल्पविरामले हिज्जे परीक्षण गर्ने भाषाको सूची प्रयोग गर्नलाई सूची छुट्टाउदछ (e.g. en, fr, "
 "nl)."
 
 #: ../gossip.schemas.in.h:4
-#, fuzzy
 msgid "Compact contact list"
-msgstr "सम्पर्क सूची देखाउनुहोस्"
+msgstr "सम्पर्क सूची सङ्कुचन गर्नुहोस्"
 
 #: ../gossip.schemas.in.h:5
-msgid "Default directory to select an avatar image from"
-msgstr ""
+msgid "Contact list sort criterium"
+msgstr "सम्पर्क सूची क्रमबद्ध मापदण्ड"
 
 #: ../gossip.schemas.in.h:6
-msgid "Enable popup when contact is available"
-msgstr ""
+msgid "Default directory to select an avatar image from"
+msgstr "यसबाट एउटा अवतार छवि चयन गर्न पूर्वनिर्धारित डाइरेक्टरी"
 
 #: ../gossip.schemas.in.h:7
-#, fuzzy
-msgid "Enable sound when away"
-msgstr "टाढा हुँदा ध्वनिहरू अक्षम पार्नुहोस्"
+msgid "Enable popup when contact is available"
+msgstr "सम्पर्क उपलब्ध हुँदा पपअप सक्षम पार्नुहोस्"
 
 #: ../gossip.schemas.in.h:8
-#, fuzzy
-msgid "Enable sound when busy"
-msgstr "व्यस्त हुँदा ध्वनिहरू अक्षम पार्दछ"
+msgid "Enable sound when away"
+msgstr "टाढा हुँदा ध्वनि सक्षम पार्नुहोस्"
 
 #: ../gossip.schemas.in.h:9
-#, fuzzy
-msgid "Enable spell checker"
-msgstr "हिज्जे परीक्षण सक्षम पार्नुहोस्"
+msgid "Enable sound when busy"
+msgstr "व्यस्त हुँदा ध्वनि सक्षम पार्नुहोस्"
 
 #: ../gossip.schemas.in.h:10
+msgid "Enable spell checker"
+msgstr "हिज्जे परीक्षक सक्षम पार्नुहोस्"
+
+#: ../gossip.schemas.in.h:11
 msgid "Hide main window"
 msgstr "मुख्य सञ्झ्याल लुकाउनुहोस्"
 
-#: ../gossip.schemas.in.h:11
-msgid "Hide the main window."
-msgstr "मुख्य सञ्झ्याल लुकाउनुहोस्"
-
 #: ../gossip.schemas.in.h:12
+msgid "Hide the main window."
+msgstr "मुख्य सञ्झ्याल लुकाउनुहोस् ।"
+
+#: ../gossip.schemas.in.h:13
 msgid "Open new chats in separate windows"
 msgstr "छुट्टै सञ्झ्यालमा नयाँ कुराकानी खोल्नुहोस्"
 
-#: ../gossip.schemas.in.h:13
-#, fuzzy
-msgid "Show avatars"
-msgstr "सम्पर्कहरू देखाउनुहोस्"
-
 #: ../gossip.schemas.in.h:14
-#, fuzzy
-msgid "Show hint about closing the main window"
-msgstr "मुख्य सञ्झ्यालको उचाइ"
+msgid "Show avatars"
+msgstr "अवतार देखाउनुहोस्"
 
 #: ../gossip.schemas.in.h:15
+msgid "Show hint about closing the main window"
+msgstr "मुख्य सञ्झ्यालको बन्द बारे सङ्केत देखाउनुहोस्"
+
+#: ../gossip.schemas.in.h:16
 msgid "Show offline contacts"
 msgstr "अफलाइन सम्पर्कहरू देखाउनुहोस्"
 
-#: ../gossip.schemas.in.h:16
-msgid "Spell checking languages"
-msgstr "भाषाको हिज्जे परीक्षण गर्दै"
-
 #: ../gossip.schemas.in.h:17
-msgid "The last directory that an avatar image was chosen from."
-msgstr ""
+msgid "Spell checking languages"
+msgstr "हिज्जे परीक्षण गर्ने भाषाहरू"
 
 #: ../gossip.schemas.in.h:18
-msgid "The theme that is used to display the conversation in chat windows."
-msgstr "कुराकानि सञ्झ्यालहरूमा तपाईँलाई पहिचान गर्न यो विषयवस्तु प्रयोग गरिनेछ"
+msgid "The default location for file transfers to be saved to"
+msgstr "यसमा बचत गरिनुपर्ने फाइल स्थानान्तरणका लागि पूर्वानिर्धारित स्थान"
 
 #: ../gossip.schemas.in.h:19
-msgid "Use graphical smileys"
-msgstr "ग्राफिकल स्माइलिहरू प्रयोग गर्नुहोस्"
+msgid "The last directory that an avatar image was chosen from."
+msgstr "एउटा अवतार छवि रोजिएको अन्तिम डाइरेक्टरी ।"
 
 #: ../gossip.schemas.in.h:20
-msgid "Use notification sounds"
-msgstr "सूचीत गर्ने ध्वनिहरू प्रयोग गर्नुहोस्"
+msgid "The theme that is used to display the conversation in chat windows."
+msgstr "कुराकानी सञ्झ्यालमा वार्तालाप प्रदर्शन गर्न प्रयोग गरिएको विषयवस्तु ।"
 
 #: ../gossip.schemas.in.h:21
-#, fuzzy
-msgid "Use theme for chat rooms"
-msgstr "कुराकानी कोठा जोड्नुहोस्"
+msgid ""
+"This is updated each time the user changes the location they wish to save "
+"the file to so that the last location used to save file transfers can be "
+"used without prompting the user each time."
+msgstr "यो हरेक पटक प्रयोगकर्ताले स्थान परिवर्तन गर्दा अद्यावधिक गरिन्छ, तिनीहरू फाइल बचत गर्न चाहन्छन् जसले गर्दा फाइल स्थानान्तरण बचत गर्न प्रयोग गरिएको अन्तिम स्थान हरेक पटक प्रयोगकर्तालाई प्रबर्द्धन नगरी प्रयोग गर्न सकिन्छ ।"
 
 #: ../gossip.schemas.in.h:22
+msgid "Use graphical smileys"
+msgstr "ग्राफिकल स्माइलीहरू प्रयोग गर्नुहोस्"
+
+#: ../gossip.schemas.in.h:23
+msgid "Use notification sounds"
+msgstr "सूचना ध्वनि प्रयोग गर्नुहोस्"
+
+#: ../gossip.schemas.in.h:24
+msgid "Use theme for chat rooms"
+msgstr "कुराकानी कोठाका लागि विषयवस्तु प्रयोग गर्नुहोस्"
+
+#: ../gossip.schemas.in.h:25
 msgid ""
 "Whether or not to check words typed against the languages you want to check "
 "with."
-msgstr ""
-
-#: ../gossip.schemas.in.h:23
-msgid ""
-"Whether or not to convert smileys into graphical images in conversations."
-msgstr "संवादहरू मा स्माइलिहरूलाई ग्राफिकल छविहरूमा रूपान्तरण गर्ने कि नगर्ने"
-
-#: ../gossip.schemas.in.h:24
-msgid "Whether or not to play a sound when messages arrive."
-msgstr "सन्देश आउँदा ध्वनि प्ले गर्ने कि नगर्ने"
-
-#: ../gossip.schemas.in.h:25
-msgid "Whether or not to play sounds when away."
-msgstr "टाढा हुँदा ध्वनिहरू प्ले गर्ने कि नगर्ने"
+msgstr "तपाईँले जाँच्न खोजेको भाषाको विरूद्ध टाइप गरेको शब्दहरू जाँच्ने या नजाँच्ने ।"
 
 #: ../gossip.schemas.in.h:26
-msgid "Whether or not to play sounds when busy."
-msgstr "व्यस्त हुँदा ध्वनिहरू प्ले गर्ने कि नगर्ने"
+msgid "Whether or not to convert smileys into graphical images in conversations."
+msgstr "वार्तालापमा ग्राफिकल छविहरूमा स्माइलीहरू रूपान्तरण गर्ने या नगर्ने ।"
 
 #: ../gossip.schemas.in.h:27
-#, fuzzy
-msgid "Whether or not to show a popup when a contact becomes available."
-msgstr "सन्देश आउँदा ध्वनि प्ले गर्ने कि नगर्ने"
+msgid "Whether or not to play a sound when messages arrive."
+msgstr "सन्देश आउँदा ध्वनि प्ले गर्ने कि नगर्ने ।"
 
 #: ../gossip.schemas.in.h:28
-#, fuzzy
+msgid "Whether or not to play sounds when away."
+msgstr "टाढा हुँदा ध्वनिहरू प्ले गर्ने कि नगर्ने ।"
+
+#: ../gossip.schemas.in.h:29
+msgid "Whether or not to play sounds when busy."
+msgstr "व्यस्त हुँदा ध्वनिहरू प्ले गर्ने कि नगर्ने ।"
+
+#: ../gossip.schemas.in.h:30
+msgid "Whether or not to show a popup when a contact becomes available."
+msgstr "सम्पर्क उपलब्ध हुँदा पपअप देखाउने या नदेखाउने ।"
+
+#: ../gossip.schemas.in.h:31
 msgid ""
 "Whether or not to show avatars for contacts in the contact list and chat "
 "windows."
-msgstr "सम्पर्क सूचीमा अफलाइन भएका सम्पर्कहरूलाई देखाउने कि नदेखाउने"
+msgstr "सम्पर्क सूची र कुराकानी सञ्झ्यालमा सम्पर्कहरूका लागि अवतारहरू देखाउने या नदेखाउने ।"
 
-#: ../gossip.schemas.in.h:29
+#: ../gossip.schemas.in.h:32
 msgid "Whether or not to show contacts that are offline in the contact list."
-msgstr "सम्पर्क सूचीमा अफलाइन भएका सम्पर्कहरूलाई देखाउने कि नदेखाउने"
+msgstr "सम्पर्क सूचीमा अफलाइन भएका सम्पर्कहरूलाई देखाउने या नदेखाउने ।"
 
-#: ../gossip.schemas.in.h:30
+#: ../gossip.schemas.in.h:33
 msgid ""
 "Whether or not to show the message dialog about closing the main window with "
 "the 'x' button in the title bar."
-msgstr ""
+msgstr "शीर्षकपट्टीमा 'x' बटनसँग मुख्य सञ्झ्याल बन्द गर्ने बारे सन्देश संवाद देखाउने या नदेखाउने ।"
 
-#: ../gossip.schemas.in.h:31
-#, fuzzy
+#: ../gossip.schemas.in.h:34
 msgid "Whether to show the contact list in compact mode or not."
-msgstr "सम्पर्क सूचीमा अफलाइन भएका सम्पर्कहरूलाई देखाउने कि नदेखाउने"
+msgstr "सम्पर्क सूचीलाई सङ्कुचन मोडमा देखाउने या नदेखाउने ।"
 
-#: ../gossip.schemas.in.h:32
+#: ../gossip.schemas.in.h:35
 msgid "Whether to use the theme for chat rooms or not."
-msgstr ""
+msgstr "कुराकानी कोठामा विषयवस्तु देखाउने या नदेखाउने ।"
 
-#: ../libgossip/gossip-chatroom.c:941
+#: ../gossip.schemas.in.h:36
+msgid ""
+"Which criterium to use when sorting the contact list. Default is to use sort "
+"by the contact's name with the value \"name\". A value of \"state\" will "
+"sort the contact list by state."
+msgstr "सम्पर्क सूची क्रमबद्ध गर्दा कुन मापदण्ड प्रयोग गर्ने । पूर्वानिर्धारित रूपमा \"नाम\" सँग सम्पर्कको नामद्वारा क्रमबद्ध गर्ने हो । \"स्थिति\" को मानले स्थितिद्वारा सम्पर्क सूची क्रमबद्ध गर्नेछ ।"
+
+#: ../libgossip/gossip-chatroom.c:1127
 msgid "Normal"
 msgstr "सामान्य"
 
-#: ../libgossip/gossip-chatroom.c:952
+#: ../libgossip/gossip-chatroom.c:1138
 msgid "Joining"
-msgstr "जोङ्दै"
+msgstr "जडान गर्दै"
 
-#: ../libgossip/gossip-chatroom.c:954
+#: ../libgossip/gossip-chatroom.c:1140
 msgid "Active"
-msgstr "सक्रिय"
+msgstr "सक्रिय पार्नुहोस्"
 
-#: ../libgossip/gossip-chatroom.c:956
+#: ../libgossip/gossip-chatroom.c:1142
 msgid "Inactive"
-msgstr "निष्क्रिय"
+msgstr "निस्क्रिय पार्नुहोस्"
 
-#: ../libgossip/gossip-chatroom.c:958
+#: ../libgossip/gossip-chatroom.c:1144
 msgid "Unknown"
 msgstr "अज्ञात"
 
-#: ../libgossip/gossip-chatroom.c:960
+#: ../libgossip/gossip-chatroom.c:1146
 msgid "Error"
 msgstr "त्रुटि"
 
-#: ../libgossip/gossip-chatroom.c:974
+#: ../libgossip/gossip-chatroom.c:1160
 msgid "Moderator"
 msgid_plural "Moderators"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "मोडरेटर"
+msgstr[1] "मोडरेटर"
 
-#: ../libgossip/gossip-chatroom.c:976
+#: ../libgossip/gossip-chatroom.c:1162
 msgid "Participant"
 msgid_plural "Participants"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "सहभागी"
+msgstr[1] "सहभागी"
 
-#: ../libgossip/gossip-chatroom.c:978
+#: ../libgossip/gossip-chatroom.c:1164
 msgid "Visitor"
 msgid_plural "Visitors"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "आगन्तुक"
+msgstr[1] "आगन्तुक"
 
-#: ../libgossip/gossip-chatroom.c:980
-#, fuzzy
+#: ../libgossip/gossip-chatroom.c:1166
 msgid "No role"
-msgstr "सामान्य"
+msgstr "भूमिका छैन"
 
-#: ../libgossip/gossip-chatroom.c:994
+#: ../libgossip/gossip-chatroom.c:1180
 msgid "Owner"
 msgid_plural "Owners"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "मालिक"
+msgstr[1] "मालिक"
 
-#: ../libgossip/gossip-chatroom.c:996
+#: ../libgossip/gossip-chatroom.c:1182
 msgid "Administrator"
 msgid_plural "Administrators"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "प्रशासक"
+msgstr[1] "प्रशासक"
 
-#: ../libgossip/gossip-chatroom.c:998
+#: ../libgossip/gossip-chatroom.c:1184
 msgid "Member"
 msgid_plural "Members"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "सदस्य"
+msgstr[1] "सदस्यहरू"
 
-#: ../libgossip/gossip-chatroom.c:1000
+#: ../libgossip/gossip-chatroom.c:1186
 msgid "Outcast"
 msgid_plural "Outcasts"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "बाह्य"
+msgstr[1] "बाह्य"
 
-#: ../libgossip/gossip-chatroom.c:1002
+#: ../libgossip/gossip-chatroom.c:1188
 msgid "No affiliation"
-msgstr ""
+msgstr "सम्बन्धन नभएको"
 
-#: ../libgossip/gossip-chatroom-provider.c:331
+#: ../libgossip/gossip-chatroom-provider.c:385
+msgid ""
+"The chat room you tried to join requires a password. You either failed to "
+"supply a password or the password you tried was incorrect."
+msgstr "तपाईँले जडान गर्न चाहनुभएको कुराकानी कोठामा पासवर्डको आवश्यक पर्दछ । तपाईँले पासवर्ड दिन भुल्नुभयो वा तपाईँले दिनुभएको पासवर्ड गलत छ ।"
+
+#: ../libgossip/gossip-chatroom-provider.c:390
+msgid "You have been banned from this chatroom."
+msgstr "तपाईँलाई यो कुराकानी कोठाबाट निषेध गरिएको छ ।"
+
+#: ../libgossip/gossip-chatroom-provider.c:394
+msgid "The conference room you tried to join could not be found."
+msgstr "तपाईँले जडान गर्न चाहनुभएको सम्मेलन कोठा फेला पार्न सकेन ।"
+
+#: ../libgossip/gossip-chatroom-provider.c:398
+msgid "Chatroom creation is restricted on this server."
+msgstr "कुराकानी सिर्जना यो सर्भरमा निषेध गरिएको छ ।"
+
+#: ../libgossip/gossip-chatroom-provider.c:402
+msgid "Chatroom reserved nick names must be used on this server."
+msgstr "कुराकानी सञ्चित गरिएको उपनाम यो सर्भरमा प्रयोग गरिनुपर्छ ।"
+
+#: ../libgossip/gossip-chatroom-provider.c:406
+msgid "You are not on the chatroom's members list."
+msgstr "तपाईँ कुराकानीको सदस्य सूचीमा हुनुहुन्न ।"
+
+#: ../libgossip/gossip-chatroom-provider.c:410
 msgid "The nickname you have chosen is already in use."
 msgstr "तपाईँले छनौट गर्नुभएको उपनाम पहिला नै प्रयोगमा छ।"
 
-#: ../libgossip/gossip-chatroom-provider.c:335
-msgid "The chat room you tried to join requires a password."
-msgstr "तपाईँले जोड्न प्रयास गर्न भएको कुराकानी सञ्झ्याललाई पासवर्ड आवश्यक पर्दछ।"
+#: ../libgossip/gossip-chatroom-provider.c:414
+msgid "The maximum number of users for this chatroom has been reached."
+msgstr "यो कुराकानी कोठाका लागि प्रयोगकर्ताहरूको अधिक्तम सङ्ख्या पुगिसकेको छ ।"
 
-#: ../libgossip/gossip-chatroom-provider.c:339
+#: ../libgossip/gossip-chatroom-provider.c:418
 msgid "The remote conference server did not respond in a sensible time."
-msgstr "दूर कन्फेरेन्स सर्भरले मनाशिव समयमा प्रतिक्रिया जनाएन।"
+msgstr "टाढाको वार्तालाप सर्भरले मनासिव समयमा प्रतिक्रिया दिएन ।"
 
-#: ../libgossip/gossip-chatroom-provider.c:343
-msgid "The conference server you tried to join could not be found."
-msgstr "तपाईँले जोड्न चाहनुभएको कन्फेरेन्स सर्भर फेला पार्न सकिएन।"
-
-#: ../libgossip/gossip-chatroom-provider.c:347
+#: ../libgossip/gossip-chatroom-provider.c:422
 msgid "An unknown error occurred, check your details are correct."
-msgstr "अज्ञात त्रुटि भयो, तपाईँको विस्तृत ठीक भनि जाँच गर्नुहोस्।"
+msgstr "एउटा अज्ञात त्रुटि देखापर्यो, तपाईँको विवरणहरू सही छ भन्ने जाँच गर्नुहोस् ।"
 
-#: ../libgossip/gossip-chatroom-provider.c:351
-#, fuzzy
+#: ../libgossip/gossip-chatroom-provider.c:426
 msgid "Joining the chatroom was canceled."
-msgstr "कुराकानी कोठा जोड्नुहोस्"
+msgstr "कुराकानीमा जडान रद्द गरियो ।"
 
 #. i18n: The current state of the connection.
-#: ../libgossip/gossip-contact.c:866 ../libgossip/gossip-presence.c:242
-#: ../src/gossip-app.c:1903 ../src/gossip-app.c:2527
-#: ../src/gossip-contact-info-dialog.c:159 ../src/gossip-galago.c:197
+#: ../libgossip/gossip-contact.c:965 ../libgossip/gossip-presence.c:242
+#: ../src/gossip-app.c:2430 ../src/gossip-contact-info-dialog.c:156
+#: ../src/gossip-galago.c:197 ../src/gossip-status-icon.c:372
 msgid "Offline"
 msgstr "अफलाइन"
 
 #: ../libgossip/gossip-presence.c:423 ../libgossip/gossip-presence.c:440
-#: ../src/gossip-presence-chooser.c:724 ../src/gossip-presence-chooser.c:857
-#: ../src/gossip-presence-chooser.c:887
+#: ../src/gossip-presence-chooser.c:760 ../src/gossip-presence-chooser.c:959
+#: ../src/gossip-presence-chooser.c:1008
 msgid "Available"
 msgstr "उपलब्ध"
 
-#: ../libgossip/gossip-presence.c:427 ../src/gossip-presence-chooser.c:736
-#: ../src/gossip-presence-chooser.c:915
+#: ../libgossip/gossip-presence.c:427 ../src/gossip-presence-chooser.c:772
+#: ../src/gossip-presence-chooser.c:1036
 msgid "Busy"
 msgstr "व्यस्त"
 
-#: ../libgossip/gossip-presence.c:432 ../src/gossip-presence-chooser.c:748
-#: ../src/gossip-presence-chooser.c:943
+#: ../libgossip/gossip-presence.c:432 ../src/gossip-presence-chooser.c:784
+#: ../src/gossip-presence-chooser.c:1064
 msgid "Away"
 msgstr "टाढा"
 
 #: ../libgossip/gossip-presence.c:437
-#, fuzzy
 msgid "Unavailable"
 msgstr "उपलब्ध"
 
-#: ../libgossip/gossip-protocol.c:781
-msgid "An unknown error occurred."
-msgstr "एउटा अज्ञात त्रुटि भयो।"
+#: ../libgossip/gossip-jabber-disco.c:286
+msgid "Service has gone and is no longer available"
+msgstr "सर्भर डाउन भयो र लामो समय सम्म उपलब्ध छैन"
 
-#: ../libgossip/gossip-protocol.c:785
-msgid "Connection refused."
-msgstr "जडान अविस्कृत"
+#: ../libgossip/gossip-jabber-disco.c:289
+msgid "Bad or malformed request to this service"
+msgstr "यो सेवामा खराब वा विकृत गरिएको अनुरोध"
 
-#: ../libgossip/gossip-protocol.c:788
-msgid "Server address could not be resolved."
-msgstr "सर्भर ठेगाना पुन: समाधान हुन सक्दैन।"
+#: ../libgossip/gossip-jabber-disco.c:292
+msgid "Unauthorized request to this service"
+msgstr "यो सेवामा अधिकारविहिन अनुरोध"
 
-#: ../libgossip/gossip-protocol.c:791
-msgid "Connection timed out."
-msgstr "जडान समय समाप्त"
+#: ../libgossip/gossip-jabber-disco.c:295
+msgid "Payment is required for this service"
+msgstr "यो सेवाका लागि भुक्तानी आवश्यक छ"
 
-#: ../libgossip/gossip-protocol.c:794
-msgid "Authentication failed."
-msgstr "प्रमाणीकरण असफल"
+#: ../libgossip/gossip-jabber-disco.c:299
+msgid "This service is forbidden"
+msgstr "यो सेवा निषिद्ध गरिएको छ"
 
-#: ../libgossip/gossip-protocol.c:797
-msgid "The username you are trying already exists."
-msgstr "तपाईँले प्रयाश गर्नुभएको प्रयोगकर्ता नाम पहिल्यै अवस्थित छ।"
+#: ../libgossip/gossip-jabber-disco.c:303
+msgid "This service is unavailable or not found"
+msgstr "यो सेवा उपलब्ध छैन वा फेला परेको छैन"
 
-#: ../libgossip/gossip-protocol.c:800
-msgid "The username you are trying is not valid."
-msgstr "तपाईँले प्रयास गर्नुभएको प्रयोगकर्ता नाम वैध छैन।"
+#: ../libgossip/gossip-jabber-disco.c:306
+msgid "Unacceptable request sent to this services"
+msgstr "यो सेवाहरूलाई स्वीकार नगरिएको अनुरोध पठाइयो"
 
-#: ../libgossip/gossip-protocol.c:803
-msgid "This feature is unavailable."
-msgstr "यो विशेषता उपलब्ध छैन।"
+#: ../libgossip/gossip-jabber-disco.c:309
+msgid "Registration is required"
+msgstr "दर्ता आवश्यक छ"
 
-#: ../libgossip/gossip-protocol.c:806
-msgid "This feature is unauthorized."
-msgstr "यो विशेषता प्रमाणीकरण छैन।"
+#: ../libgossip/gossip-jabber-disco.c:312
+msgid "There was a conflict of interest trying to use this service"
+msgstr "त्यहाँ यो सेवा प्रयोग गर्ने प्रयास गर्दा रूचिको मतभेद थियो"
 
-#: ../libgossip/gossip-protocol.c:809
-msgid "A specific protocol error occurred that was unexpected."
-msgstr "एउटा अप्रत्यासित प्रोटोकल त्रुटि देखा पर्यो।"
+#: ../libgossip/gossip-jabber-disco.c:315
+msgid "There was an internal service error"
+msgstr "त्यहाँ एउटा आन्तरीक सेवा त्रुटि थियो"
 
-#: ../protocols/jabber/gossip-jabber.c:524
-#: ../protocols/telepathy/gossip-telepathy-cmgr.c:89
-#, fuzzy
+#: ../libgossip/gossip-jabber-disco.c:318
+msgid "This feature is not implemented"
+msgstr "यो विशेषता कार्यान्वयन भएको छैन"
+
+#: ../libgossip/gossip-jabber-disco.c:321
+msgid "The remote service timed out"
+msgstr "टाढाको सेवा समय समाप्त भयो"
+
+#: ../libgossip/gossip-jabber.c:535
 msgid "new account"
 msgstr "नयाँ खाता"
 
-#: ../protocols/jabber/gossip-jabber.c:531
-#: ../src/gossip-account-widget-jabber.c:742
+#: ../libgossip/gossip-jabber.c:536
 msgid "Home"
 msgstr "गृह"
 
-#: ../protocols/jabber/gossip-jabber.c:1386
-#: ../protocols/jabber/gossip-jabber.c:1527
+#: ../libgossip/gossip-jabber.c:1384 ../libgossip/gossip-jabber.c:1523
 msgid "Couldn't send message!"
 msgstr "सन्देश पठाउन सकिएन !"
 
-#: ../protocols/jabber/gossip-jabber.c:1474
+#: ../libgossip/gossip-jabber.c:1470
 msgid "Connection could not be opened"
 msgstr "जडान खोल्न सकिँदैन"
 
-#: ../protocols/jabber/gossip-jabber-disco.c:275
-msgid "Service has gone and is no longer available"
-msgstr ""
+#: ../libgossip/gossip-jabber.c:3885
+msgid "An unknown error occurred."
+msgstr "एउटा अज्ञात त्रुटि देखापर्यो ।"
 
-#: ../protocols/jabber/gossip-jabber-disco.c:278
-msgid "Bad or malformed request to this service"
-msgstr ""
+#: ../libgossip/gossip-jabber.c:3889
+msgid "Connection refused."
+msgstr "जडान अस्वीकृत भयो ।"
 
-#: ../protocols/jabber/gossip-jabber-disco.c:281
-msgid "Unauthorized request to this service"
-msgstr ""
+#: ../libgossip/gossip-jabber.c:3892
+msgid "Server address could not be resolved."
+msgstr "सर्भर ठेगाना पुन: समाधान हुन सक्दैन।"
 
-#: ../protocols/jabber/gossip-jabber-disco.c:284
-msgid "Payment is required for this service"
-msgstr ""
+#: ../libgossip/gossip-jabber.c:3895
+msgid "Connection timed out."
+msgstr "जडान समय समाप्त भयो ।"
 
-#: ../protocols/jabber/gossip-jabber-disco.c:288
-msgid "This service is forbidden"
-msgstr ""
+#: ../libgossip/gossip-jabber.c:3898
+msgid "Authentication failed."
+msgstr "प्रमाणीकरण असफल भयो ।"
 
-#: ../protocols/jabber/gossip-jabber-disco.c:292
-#, fuzzy
-msgid "This service is unavailable or not found"
-msgstr "यो विशेषता उपलब्ध छैन।"
+#: ../libgossip/gossip-jabber.c:3901
+msgid "The username you are trying already exists."
+msgstr "तपाईँले प्रयास गर्नुभएको प्रयोगकर्ता नाम पहिल्यै अवस्थित छ।"
 
-#: ../protocols/jabber/gossip-jabber-disco.c:295
-msgid "Unacceptable request sent to this services"
-msgstr ""
+#: ../libgossip/gossip-jabber.c:3904
+msgid "The username you are trying is not valid."
+msgstr "तपाईँले प्रयास गर्नुभएको प्रयोगकर्ता नाम वैध छैन ।"
 
-#: ../protocols/jabber/gossip-jabber-disco.c:298
-#, fuzzy
-msgid "Registration is required"
-msgstr "दर्ता"
+#: ../libgossip/gossip-jabber.c:3907
+msgid "This feature is unavailable."
+msgstr "यो विशेषता उपलब्ध छैन ।"
 
-#: ../protocols/jabber/gossip-jabber-disco.c:301
-msgid "There was a conflict of interest trying to use this service"
-msgstr ""
+#: ../libgossip/gossip-jabber.c:3910
+msgid "This feature is unauthorized."
+msgstr "यो विशेषता प्रमाणीकरण गरिएको छैन ।"
 
-#: ../protocols/jabber/gossip-jabber-disco.c:304
-msgid "There was an internal service error"
-msgstr ""
+#: ../libgossip/gossip-jabber.c:3913
+msgid "A specific protocol error occurred that was unexpected."
+msgstr "एउटा अनपेक्षित प्रोटोकल त्रुटि देखा पर्यो ।"
 
-#: ../protocols/jabber/gossip-jabber-disco.c:307
-#, fuzzy
-msgid "This feature is not implemented"
-msgstr "यो विशेषता प्रमाणीकरण छैन।"
+#: ../libloudermouth/lm-bs-receiver.c:90 ../libloudermouth/lm-bs-sender.c:251
+msgid "The other party disconnected"
+msgstr "अन्य पक्ष विच्छेदन भयो"
 
-#: ../protocols/jabber/gossip-jabber-disco.c:310
-msgid "The remote service timed out"
-msgstr ""
+#: ../libloudermouth/lm-bs-receiver.c:116
+msgid "A protocol error occurred during the transfer"
+msgstr "स्थानान्तरणको बेला एउटा प्रोटोकल त्रुटि देखापर्यो"
+
+#: ../libloudermouth/lm-bs-transfer.c:250
+msgid "Unable to connect to the other party"
+msgstr "अन्य पक्षमा जडान गर्न असक्षम"
+
+#: ../libloudermouth/lm-bs-transfer.c:316
+msgid "Permission denied"
+msgstr "अनुमति अस्वीकार गरियो"
+
+#: ../libloudermouth/lm-bs-transfer.c:318
+msgid "File name is too long"
+msgstr "फाइलनाम अति लामो छ"
+
+#: ../libloudermouth/lm-bs-transfer.c:320
+msgid "File doesn't exist"
+msgstr "फाइल अवस्थित छैन"
+
+#: ../libloudermouth/lm-bs-transfer.c:322
+#: ../libloudermouth/lm-bs-transfer.c:353
+msgid "File is a directory"
+msgstr "फाइल डाइरेक्टरी हो"
+
+#: ../libloudermouth/lm-bs-transfer.c:324
+msgid "Read only file system"
+msgstr "पढ्ने मात्र फाइल प्रणाली"
+
+#: ../libloudermouth/lm-bs-transfer.c:326
+msgid "File is busy"
+msgstr "फाइल व्यस्त छ"
+
+#: ../libloudermouth/lm-bs-transfer.c:328
+msgid "Bad memory"
+msgstr "खराब स्मृति"
+
+#: ../libloudermouth/lm-bs-transfer.c:330
+msgid "Too many levels of symbolic links"
+msgstr "साङ्केतिक लिङ्कहरूको अति धेरै तहहरू"
+
+#: ../libloudermouth/lm-bs-transfer.c:332
+#: ../libloudermouth/lm-bs-transfer.c:355
+msgid "No space is available"
+msgstr "खाली स्थान उपलब्ध छैन"
+
+#: ../libloudermouth/lm-bs-transfer.c:334
+msgid "Virtual memory exhausted"
+msgstr "वास्तविक स्मृति निश्शेषित गरियो"
+
+#: ../libloudermouth/lm-bs-transfer.c:336
+msgid "Too many open files"
+msgstr "अति धेरै खुल्ला फाइलहरू"
+
+#: ../libloudermouth/lm-bs-transfer.c:339
+#: ../libloudermouth/lm-bs-transfer.c:351
+msgid "Input/output error"
+msgstr "आगत/निर्गत त्रुटि"
+
+#: ../libloudermouth/lm-bs-transfer.c:342
+#: ../libloudermouth/lm-bs-transfer.c:357
+msgid "No such device"
+msgstr "त्यस्तो यन्त्र होइन"
+
+#: ../libloudermouth/lm-bs-transfer.c:349
+msgid "File is too large"
+msgstr "फाइल अति ठूलो छ"
+
+#: ../libloudermouth/lm-bs-transfer.c:363
+msgid "Unknown error"
+msgstr "अज्ञात त्रुटि"
 
 #: ../src/gossip-about-dialog.c:63
 msgid ""
@@ -438,47 +536,40 @@ msgstr ""
 "GNU साधारण सार्वजनिक अनुमतिपत्र हेर्नुहोस्।"
 
 #: ../src/gossip-about-dialog.c:71
-#, fuzzy
 msgid ""
 "You should have received a copy of the GNU General Public License along with "
 "Gossip; if not, write to the Free Software Foundation, Inc., 51 Franklin "
 "Street, Fifth Floor, Boston, MA 02110-130159 USA"
 msgstr ""
 "तपाईँले गोसिवसँग GNU साधारण सार्वजनिक अनुमतिपत्रको एउटा प्रतिलिपि प्राप्त गर्नुभएको हुन "
-"पर्दछ; यदि छैन भने, निशुल्क सफ्टवेयर संस्थालाई, Inc., 59 Temple Place, Suite 330, "
-"Boston, MA  02111-1307  USA मा लेख्नुहोस्।"
+"पर्दछ; यदि छैन भने, निशुल्क सफ्टवेयर संस्था, lnc., 51 Franklin "
+"Street, Fifth Floor, Boston, MA 02110-130159 USA लाई लेख्नुहोस् ।"
+
+#: ../src/gossip-about-dialog.c:99
+msgid "An Instant Messaging client for GNOME"
+msgstr "जिनोमका लागि एउटा शीघ्र सन्देश पठाउने क्लाइन्ट"
 
 #: ../src/gossip-about-dialog.c:105
-#, c-format
-msgid "Using the %s backend"
-msgstr ""
-
-#: ../src/gossip-about-dialog.c:107
-msgid "An Instant Messaging client for GNOME"
-msgstr "जिनोमका लागि एउटा तत्काल सन्देश गर्ने ग्राहक"
-
-#: ../src/gossip-about-dialog.c:120
 msgid "translator-credits"
-msgstr "Jaydeep Bhusal <zaydeep@hotmail.com>Mahesh Subedi<submanesh@gmail.com>"
+msgstr "Shyam krishna bal<balshyam24@yahoo.com>"
 
-#: ../src/gossip-accounts-dialog.c:352
+#: ../src/gossip-accounts-dialog.c:342
 msgid "Stop"
-msgstr ""
+msgstr "रोकनुहोस्"
 
-#: ../src/gossip-accounts-dialog.c:356
+#: ../src/gossip-accounts-dialog.c:346
 msgid "Disconnect"
-msgstr "जडान विच्छेद गर्नुहोस्"
+msgstr "जडान विच्छेदन गर्नुहोस्"
 
-#: ../src/gossip-accounts-dialog.c:359
+#: ../src/gossip-accounts-dialog.c:349
 msgid "Connect"
-msgstr "जडान"
+msgstr "जडान गर्नुहोस्"
 
-#: ../src/gossip-accounts-dialog.c:394 ../ui/main.glade.h:12
-#, fuzzy
+#: ../src/gossip-accounts-dialog.c:384 ../ui/main.glade.h:13
 msgid "<b>No Account Selected</b>"
-msgstr "<b>खाता</b>"
+msgstr "<b>खाता चयन गरिएकोछ छैन</b>"
 
-#: ../src/gossip-accounts-dialog.c:396
+#: ../src/gossip-accounts-dialog.c:386 ../ui/main.glade.h:100
 msgid ""
 "To add a new account, you can click on the 'Add' button and a new entry will "
 "be created for you to start configuring.\n"
@@ -486,23 +577,25 @@ msgid ""
 "If you do not want to add an account, simply click on the account you want "
 "to configure in the list on the left."
 msgstr ""
+"नयाँ खाता थप्नका लागि, तपाईँ 'थप्नुहोस्' बटनमा क्लिक गर्न सक्नुहुन्छ र कन्फिगरिङ सुरु गर्न तपाईँको लागि नयाँ प्रविष्टि सिर्जना हुनेछ ।\n"
+"\n"
+"यदि तपाईँ एउटा खाता थप्न चाहनुहुन्न भने, तपाईँले सूचीको बायाँपट्टी कन्फिगर गर्न चाहनुभएको खातामा क्लिक गर्नुहोस् ।"
 
-#: ../src/gossip-accounts-dialog.c:405
-#, fuzzy
+#: ../src/gossip-accounts-dialog.c:395
 msgid "<b>No Accounts Configured</b>"
-msgstr "<b>खाता</b>"
+msgstr "<b>खाताहरू कन्फिगर गरिएको छैन</b>"
 
-#: ../src/gossip-accounts-dialog.c:407
+#: ../src/gossip-accounts-dialog.c:397
 msgid ""
 "To add a new account, you can click on the 'Add' button and a new entry will "
 "be created for you to start configuring."
-msgstr ""
+msgstr "नयाँ खाता थप्न, तपाईँ 'थप्नुहोस्' बटनमा क्लिक गर्न सक्नुहुन्छ र कन्फिगरिङ सुरु गर्न तपाईँका लागि नयाँ प्रविष्टि सिर्जना गरिनेछ ।"
 
-#: ../src/gossip-accounts-dialog.c:515 ../ui/main.glade.h:24
+#: ../src/gossip-accounts-dialog.c:476 ../ui/main.glade.h:26
 msgid "Accounts"
 msgstr "खाताहरू"
 
-#: ../src/gossip-accounts-dialog.c:1285
+#: ../src/gossip-accounts-dialog.c:1224
 #, c-format
 msgid ""
 "You are about to remove your %s account!\n"
@@ -511,7 +604,7 @@ msgstr ""
 "तपाईँले तपाईँको %s खाता हटाउन लाग्नु भएको हो !\n"
 "तपाईँ काम गर्न यकिन हुनुहुन्छ ?"
 
-#: ../src/gossip-accounts-dialog.c:1291
+#: ../src/gossip-accounts-dialog.c:1230
 msgid ""
 "Any associated conversations and chat rooms will NOT be removed if you "
 "decide to proceed.\n"
@@ -523,128 +616,117 @@ msgstr ""
 "\n"
 "तपाईँले पछिल्लो समयमा खाता पछि थप्ने निश्चय गर्नुभयो, तिनिहरू अहिले पनि उपलब्ध हुँनेछन्।"
 
-#: ../src/gossip-account-widget-irc.c:355
-msgid "Bye bye"
-msgstr ""
+#: ../src/gossip-account-chooser.c:812
+msgid "All"
+msgstr "सबै"
 
-#: ../src/gossip-account-widget-jabber.c:429
-#, fuzzy
+#: ../src/gossip-account-widget-jabber.c:409
 msgid "Successfully registered your new account settings."
-msgstr "तपाईँको नयाँ खाता दर्ता गर्न असफल"
+msgstr "तपाईँको नयाँ खाता सेटिङ सफलतापूर्वक दर्ता भयो ।"
 
-#: ../src/gossip-account-widget-jabber.c:436
-#, fuzzy
+#: ../src/gossip-account-widget-jabber.c:416
 msgid "You should now be able to connect to your new account."
-msgstr "तपाईँले --no-connect संग--accountसँगै प्रयोग गर्न सक्नुहुन्न"
+msgstr "अब तपाईँ आफ्नो नयाँ खातामा जडान गर्न सक्षम हुनुहुनेछ ।"
 
-#: ../src/gossip-account-widget-jabber.c:439
-#, fuzzy
+#: ../src/gossip-account-widget-jabber.c:419
 msgid "Failed to register your new account settings."
-msgstr "तपाईँको नयाँ खाता दर्ता गर्न असफल"
+msgstr "तपाईँको नयाँ खाता सेटिङ दर्ता गर्न असफल भयो ।"
 
-#: ../src/gossip-account-widget-jabber.c:558
-#, fuzzy
+#: ../src/gossip-account-widget-jabber.c:538
 msgid "Successfully changed your account password."
-msgstr "तपाईँको खाता पासवर्ड प्रविष्ट गर्नुहोस्:"
+msgstr "तपाईँको खाता पासवर्ड सफलतापूर्वक परिवर्तन गरियो ।"
 
-#: ../src/gossip-account-widget-jabber.c:565
+#: ../src/gossip-account-widget-jabber.c:545
 msgid "You should now be able to connect with your new password."
-msgstr ""
+msgstr "तपाईँ अब आफ्नो नयाँ पासवर्डसँग जडान गर्न सक्नुहुनेछ ।"
 
-#: ../src/gossip-account-widget-jabber.c:568
-#, fuzzy
+#: ../src/gossip-account-widget-jabber.c:548
 msgid "Failed to change your account password."
-msgstr "तपाईँको खाता पासवर्ड प्रविष्ट गर्नुहोस्:"
+msgstr "तपाईँको खाता पासवर्ड परिवर्तन गर्न असफल भयो ।"
 
-#: ../src/gossip-account-widget-jabber.c:648
-#, fuzzy, c-format
+#: ../src/gossip-account-widget-jabber.c:628
+#, c-format
 msgid ""
 "Please enter a new password for this account:\n"
 "%s"
 msgstr ""
-"कृपया समूहका लागि नयाँ नाम प्रविष्ट गर्नुहोस्:\n"
+"कृपया यो खाताका लागि नयाँ पासवर्ड प्रविष्ट गर्नुहोस्:\n"
 "%s"
 
-#: ../src/gossip-account-widget-generic.c:202
-#, c-format
-msgid "%s:"
-msgstr ""
-
-#: ../src/gossip-add-contact-dialog.c:125
+#: ../src/gossip-add-contact-dialog.c:122
 msgid "No information is available for this contact."
-msgstr "सम्पर्कका लागि कुनै पनि सूचना उपलब्ध छैन।"
+msgstr "यो सम्पर्कका लागि कुनै पनि सूचना उपलब्ध छैन।"
 
-#: ../src/gossip-add-contact-dialog.c:236
+#: ../src/gossip-add-contact-dialog.c:229
 msgid "Information requested, please wait..."
 msgstr "जानकारी अनुरोध गरिएको छ, कृपया प्रतीक्षा गर्नुहोस्..."
 
-#: ../src/gossip-add-contact-dialog.c:337
-#: ../src/gossip-edit-contact-dialog.c:613
-#: ../src/gossip-subscription-dialog.c:455
+#: ../src/gossip-add-contact-dialog.c:328
+#: ../src/gossip-edit-contact-dialog.c:612
+#: ../src/gossip-subscription-dialog.c:497
 msgid "I would like to add you to my contact list."
-msgstr "म तपाईँलाई मेरो सम्पर्क सूचीमा थप्न चाहन्छु"
+msgstr "म तपाईँलाई मेरो सम्पर्क सूचीमा थप्न चाहन्छु ।"
 
-#: ../src/gossip-app.c:652
-#, fuzzy
+#: ../src/gossip-app.c:510
 msgid "Show and edit accounts"
-msgstr "सम्पर्कहरू देखाउनुहोस्"
+msgstr "खाताहरू देखाउनुहोस् र सम्पादन गर्नुहोस्"
 
-#: ../src/gossip-app.c:778
+#: ../src/gossip-app.c:876
 msgid "To summarize:"
-msgstr "संक्षेपिकरण गर्न:"
+msgstr "सारांश गर्न:"
 
-#: ../src/gossip-app.c:805
-#, fuzzy, c-format
+#: ../src/gossip-app.c:903
+#, c-format
 msgid "%d new message"
 msgid_plural "%d new messages"
-msgstr[0] "नयाँ सन्देश"
-msgstr[1] "नयाँ सन्देश"
+msgstr[0] "%d नयाँ सन्देश"
+msgstr[1] "%d नयाँ सन्देश"
 
-#: ../src/gossip-app.c:810
-#, fuzzy, c-format
+#: ../src/gossip-app.c:908
+#, c-format
 msgid "%d subscription request"
 msgid_plural "%d subscription requests"
-msgstr[0] "सदस्यता अनुरोध"
-msgstr[1] "सदस्यता अनुरोध"
+msgstr[0] "%d सदस्यता अनुरोध"
+msgstr[1] "%d सदस्यता अनुरोध"
 
-#: ../src/gossip-app.c:815
-#, fuzzy, c-format
+#: ../src/gossip-app.c:913
+#, c-format
 msgid "%d file transfer request"
 msgid_plural "%d file transfer requests"
-msgstr[0] "फाइल स्थान्तरण अनुरोध"
-msgstr[1] "फाइल स्थान्तरण अनुरोध"
+msgstr[0] "%d फाइल स्थान्तरण अनुरोध"
+msgstr[1] "%d फाइल स्थान्तरण अनुरोध"
 
-#: ../src/gossip-app.c:820
-#, fuzzy, c-format
+#: ../src/gossip-app.c:918
+#, c-format
 msgid "%d server message"
 msgid_plural "%d server messages"
-msgstr[0] "सन्देश पठाउन सकिएन !"
-msgstr[1] "सन्देश पठाउन सकिएन !"
+msgstr[0] "%d सर्भर सन्देश"
+msgstr[1] "%d सर्भर सन्देश"
 
-#: ../src/gossip-app.c:825
-#, fuzzy, c-format
+#: ../src/gossip-app.c:923
+#, c-format
 msgid "%d error"
 msgid_plural "%d errors"
-msgstr[0] "त्रुटि"
-msgstr[1] "त्रुटि"
+msgstr[0] "%d त्रुटि"
+msgstr[1] "%d त्रुटि"
 
-#: ../src/gossip-app.c:850
+#: ../src/gossip-app.c:948
 msgid "If you quit, you will lose all unread information."
-msgstr "यदि तपाईँ निस्कनु भएमा, तपाईँले नपढेको सूचना हराउनु हुँनेछ।"
+msgstr "यदि तपाईँले अन्त्य गर्नुभयो भने, तपाईँले सबै नपढेको सूचना हराउनु हुनेछ ।"
 
-#: ../src/gossip-app.c:916
+#: ../src/gossip-app.c:1013
 msgid "Gossip is still running, it is just hidden."
-msgstr ""
+msgstr "गोसिप अझै चलिरहेको छ, यो मात्र लुकाइएको छ ।"
 
-#: ../src/gossip-app.c:917
+#: ../src/gossip-app.c:1014
 msgid "Click on the notification area icon to show Gossip."
-msgstr ""
+msgstr "गोसिप देखाउने सूचना क्षेत्र प्रतिमामा क्लिक गर्नुहोस् ।"
 
-#: ../src/gossip-app.c:932
+#: ../src/gossip-app.c:1029
 msgid "You were about to quit!"
-msgstr ""
+msgstr "तपाईँ अन्त्य गर्दै हुनुहुन्छ!"
 
-#: ../src/gossip-app.c:933
+#: ../src/gossip-app.c:1030
 msgid ""
 "Since no system or notification tray has been found, this action would "
 "normally quit Gossip.\n"
@@ -652,216 +734,204 @@ msgid ""
 "This is just a reminder, from now on, Gossip will quit when performing this "
 "action unless you uncheck the option below."
 msgstr ""
+"अहिले सम्म कुनै प्रणाली वा सूचना ट्रे फेला परेको छैन, यस्तो कार्यले सामन्यतया गोसिप अन्त्य गर्नेछ ।\n"
+"\n"
+"यो अहिलेबाट स्मरण रहोस् कि, तपाईँले तलको विकल्प जाँच नगरी यो कार्य सम्पादन गर्नुभयो भने गोसिप अन्त्य हुनेछ ।"
 
-#: ../src/gossip-app.c:1292 ../src/gossip-edit-contact-dialog.c:232
+#: ../src/gossip-app.c:1411 ../src/gossip-edit-contact-dialog.c:231
 msgid "Group"
 msgstr "समूह"
 
-#: ../src/gossip-app.c:1313
-#, fuzzy
+#: ../src/gossip-app.c:1432
 msgid "Contact"
-msgstr "सम्पर्क"
+msgstr "सम्पर्क गर्नुहोस्"
 
-#: ../src/gossip-app.c:2370
-#, fuzzy
+#: ../src/gossip-app.c:2355
 msgid "Edit Account _Details"
-msgstr "तपाईँको कुराकानी कोठाको विवरण सम्पादन गर्नुहोस्:"
+msgstr "खाता विवरण सम्पादन गर्नुहोस्"
 
-#: ../src/gossip-avatar-image.c:342
+#: ../src/gossip-avatar-image.c:329
 msgid "Click to enlarge"
-msgstr ""
+msgstr "ठूलो पार्न क्लिक गर्नुहोस्"
 
-#: ../src/gossip-chat.c:488
+#: ../src/gossip-chat.c:498
 msgid "Insert Smiley"
-msgstr "स्माइलि घुसाउनुहोस्"
+msgstr "स्माइली घुसाउनुहोस्"
 
-#: ../src/gossip-chat.c:536
+#: ../src/gossip-chat.c:546
 msgid "_Check Word Spelling..."
 msgstr "अक्षर हिज्जे परीक्षण जाँच गर्नुहोस्..."
 
-#: ../src/gossip-chat-invite.c:88 ../src/gossip-spell-dialog.c:88
+#: ../src/gossip-chat-invite.c:87 ../src/gossip-spell-dialog.c:86
 msgid "Word"
 msgstr "शब्द"
 
-#: ../src/gossip-chat-invite.c:345
+#: ../src/gossip-chat-invite.c:344
 msgid "Select who would you like to invite to room:"
-msgstr ""
+msgstr "तपाईँ कोठामा कसलाई बोलाउन चाहनुहुन्छ चयन गर्नुहोस्:"
 
-#: ../src/gossip-chat-invite.c:351
+#: ../src/gossip-chat-invite.c:350
 msgid "Select which room you would like to invite:"
-msgstr ""
+msgstr "तपाईँ कुन कोठालाई निमन्त्रणा गर्न चाहनुहुन्छ चयन गर्नुहोस्:"
 
-#: ../src/gossip-chat-manager.c:158 ../src/gossip-notify.c:464
+#: ../src/gossip-chat-manager.c:158 ../src/gossip-notify.c:508
 #, c-format
 msgid "New message from %s"
 msgstr "%s बाट नयाँ सन्देश"
 
-#: ../src/gossip-chat-view.c:559
+#: ../src/gossip-chat-view.c:445
 msgid "_Copy Link Address"
 msgstr "लिङ्क ठेगानाको प्रतिलिपि बनाउनुहोस्"
 
-#: ../src/gossip-chat-view.c:567
+#: ../src/gossip-chat-view.c:453
 msgid "_Open Link"
 msgstr "लिङ्क खोल्नुहोस्"
 
-#: ../src/gossip-chat-view.c:904
-msgid "%A %d %B %Y"
-msgstr "%A %d %B %Y"
-
-#: ../src/gossip-chat-view.c:1426
+#: ../src/gossip-chat-view.c:692
 msgid "Your invitation has been declined"
-msgstr "तपाईँको निमन्त्रण अविस्कार गरिएको छ"
+msgstr "तपाईँको निमन्त्रण अस्वीकार गरिएको छ"
 
-#: ../src/gossip-chat-view.c:1709 ../ui/chat.glade.h:14
+#: ../src/gossip-chat-view.c:884 ../ui/chat.glade.h:16
 msgid "You have been invited to join a chat conference."
-msgstr "तपाईँलाई कुराकानी सम्मेलनमा जोड्न निमन्त्रण गरिएको छ।"
+msgstr "तपाईँलाई कुराकानी सम्मेलनमा जोड्न निमन्त्रण गरिएको छ ।"
 
-#: ../src/gossip-chat-view.c:1731
+#: ../src/gossip-chat-view.c:907
 msgid "Accept"
-msgstr "स्विकार गर्नुहोस्"
+msgstr "स्वीकार गर्नुहोस्"
 
-#: ../src/gossip-chat-view.c:1747
+#: ../src/gossip-chat-view.c:923
 msgid "Decline"
-msgstr "अस्विकार गर्नुहोस्"
+msgstr "अस्वीकार गर्नुहोस्"
 
-#: ../src/gossip-chat-window.c:731 ../src/gossip-chat-window.c:761
-#: ../ui/main.glade.h:63
-#, fuzzy
+#: ../src/gossip-chat-window.c:748 ../src/gossip-chat-window.c:778
+#: ../ui/main.glade.h:64
 msgid "New Message"
 msgid_plural "New Messages"
 msgstr[0] "नयाँ सन्देश"
 msgstr[1] "नयाँ सन्देश"
 
-#: ../src/gossip-chat-window.c:737
-#, fuzzy
+#: ../src/gossip-chat-window.c:754
 msgid "Chat Room"
 msgstr "कुराकानी कोठा"
 
-#: ../src/gossip-chat-window.c:742 ../src/gossip-chat-window.c:765
-#, fuzzy, c-format
+#: ../src/gossip-chat-window.c:759 ../src/gossip-chat-window.c:782
+#, c-format
 msgid "Conversation"
 msgid_plural "Conversations (%d)"
-msgstr[0] "वार्तालाप"
-msgstr[1] "वार्तालाप"
+msgstr[0] "(%d)वार्तालाप"
+msgstr[1] "वार्तालाप (%d)"
 
-#: ../src/gossip-chat-window.c:1349
+#: ../src/gossip-chat-window.c:1448
 msgid "Typing a message."
-msgstr "सन्देश टाइप गर्दै"
+msgstr "सन्देश टाइप गर्दै ।"
 
-#: ../src/gossip-chatrooms-window.c:145
-#, fuzzy
+#: ../src/gossip-chatrooms-window.c:135
 msgid "Name"
-msgstr "नाम:"
+msgstr "नाम"
 
-#: ../src/gossip-chatrooms-window.c:167 ../src/gossip-chatrooms-window.c:176
-#, fuzzy
+#: ../src/gossip-chatrooms-window.c:157
 msgid "Room"
 msgstr "कोठा"
 
-#: ../src/gossip-chatrooms-window.c:185
-#, fuzzy
+#: ../src/gossip-chatrooms-window.c:166
+msgid "Server"
+msgstr "सर्भर"
+
+#: ../src/gossip-chatrooms-window.c:175
 msgid "Auto Connect"
-msgstr "जडान रोक्नुहोस्"
+msgstr "स्वत: जडान गर्नुहोस्"
 
-#: ../src/gossip-contact-info-dialog.c:639 ../ui/main.glade.h:55
-#, fuzzy
+#: ../src/gossip-contact-info-dialog.c:636 ../ui/main.glade.h:57
 msgid "Information requested..."
-msgstr "जानकारी अनुरोध गरिएको छ, कृपया प्रतीक्षा गर्नुहोस्..."
+msgstr "सूचना अनुरोध गरिएको छ..."
 
-#: ../src/gossip-contact-list.c:321
-#, fuzzy
+#: ../src/gossip-contact-list.c:328
 msgid "_Contact"
-msgstr "सम्पर्क"
+msgstr "सम्पर्क गर्नुहोस्"
 
-#: ../src/gossip-contact-list.c:325
-#, fuzzy
+#: ../src/gossip-contact-list.c:332
 msgid "_Group"
 msgstr "समूह"
 
-#: ../src/gossip-contact-list.c:329 ../ui/main.glade.h:109
+#: ../src/gossip-contact-list.c:336 ../ui/main.glade.h:117
 msgid "_Chat"
-msgstr "कुराकानि"
+msgstr "कुराकानी"
 
-#: ../src/gossip-contact-list.c:329
-#, fuzzy
+#: ../src/gossip-contact-list.c:336
 msgid "Chat with contact"
-msgstr "एउटा सम्पर्क थप्नुहोस्"
+msgstr "सम्पर्कसँग कुराकानी गर्नुहोस्"
 
-#: ../src/gossip-contact-list.c:333
-#, fuzzy
+#: ../src/gossip-contact-list.c:340
 msgid "Infor_mation"
-msgstr "सम्पर्क जानकारी"
+msgstr "जानकारी"
 
-#: ../src/gossip-contact-list.c:333
-#, fuzzy
+#: ../src/gossip-contact-list.c:340
 msgid "View contact information"
-msgstr "सम्पर्क जानकारी"
+msgstr "सम्पर्क जानकारी हेर्नुहोस्"
 
-#: ../src/gossip-contact-list.c:337
-#, fuzzy
+#: ../src/gossip-contact-list.c:344
 msgid "Re_name"
-msgstr "समूह पुन: नामकरण गर्नुहोस्"
+msgstr "पुन: नामकरण गर्नुहोस्"
 
-#: ../src/gossip-contact-list.c:337 ../src/gossip-contact-list.c:2586
-#, fuzzy
+#: ../src/gossip-contact-list.c:344 ../src/gossip-contact-list.c:3023
 msgid "Rename"
-msgstr "फाइल नाम:"
+msgstr "पुन: नामकरण गर्नुहोस्"
 
-#: ../src/gossip-contact-list.c:341 ../ui/chat.glade.h:21
-#: ../ui/main.glade.h:115
-#, fuzzy
+#: ../src/gossip-contact-list.c:348 ../ui/chat.glade.h:23
+#: ../ui/main.glade.h:123
 msgid "_Edit"
 msgstr "सम्पादन गर्नुहोस्"
 
-#: ../src/gossip-contact-list.c:341
-#, fuzzy
+#: ../src/gossip-contact-list.c:348
 msgid "Edit the groups and name for this contact"
-msgstr "कृपया यो खाताका लागि एउटा नाम प्रविष्ट गर्नुहोस्।"
+msgstr "यो सम्पर्कका लागि समूह र नाम सम्पादन गर्नुहोस्"
 
-#: ../src/gossip-contact-list.c:345
-#, fuzzy
+#: ../src/gossip-contact-list.c:352
 msgid "_Remove"
-msgstr "/सम्पर्क हटाउनुहोस्"
+msgstr "हटाउनुहोस्"
 
-#: ../src/gossip-contact-list.c:345
-#, fuzzy
+#: ../src/gossip-contact-list.c:352
 msgid "Remove contact"
-msgstr "/सम्पर्क हटाउनुहोस्"
+msgstr "सम्पर्क हटाउनुहोस्"
 
-#: ../src/gossip-contact-list.c:349
-#, fuzzy
+#: ../src/gossip-contact-list.c:356
 msgid "_Invite to Chat Room"
-msgstr "/कुराकानी कोठामा निमन्त्रणा गर्नुहोस्"
+msgstr "कुराकानी कोठामा निमन्त्रणा गर्नुहोस्"
 
-#: ../src/gossip-contact-list.c:349
+#: ../src/gossip-contact-list.c:356
 msgid "Invite to a currently open chat room"
-msgstr ""
+msgstr "हालै खोलिएको कुराकानी कोठामा निमन्त्रणा गर्नुहोस्"
 
-#: ../src/gossip-contact-list.c:353
-#, fuzzy
+#: ../src/gossip-contact-list.c:360
 msgid "_Send File..."
-msgstr "/फाइल पठाउनुहोस्..."
+msgstr "फाइल पठाउनुहोस्..."
 
-#: ../src/gossip-contact-list.c:353
-#, fuzzy
+#: ../src/gossip-contact-list.c:360
 msgid "Send a file"
-msgstr "एउटा फाइल चयन गर्नुहोस्"
+msgstr "फाइल पठाउनुहोस्"
 
-#: ../src/gossip-contact-list.c:357 ../ui/chat.glade.h:28
-#: ../ui/main.glade.h:142
+#: ../src/gossip-contact-list.c:364
+msgid "Emai_l..."
+msgstr "इमेल..."
+
+#: ../src/gossip-contact-list.c:364
+msgid "Email contact"
+msgstr "इमेल सम्पर्क"
+
+#: ../src/gossip-contact-list.c:368 ../ui/chat.glade.h:31
+#: ../ui/main.glade.h:151
 msgid "_View Previous Conversations"
-msgstr "पछिल्लो वार्तालाप हेर्नुहोस्"
-
-#: ../src/gossip-contact-list.c:357
-#, fuzzy
-msgid "View previous conversations with this contact"
 msgstr "अघिल्लो वार्तालाप हेर्नुहोस्"
 
-#: ../src/gossip-contact-list.c:2497
+#: ../src/gossip-contact-list.c:368
+msgid "View previous conversations with this contact"
+msgstr "यो सम्पर्कसँग अघिल्लो वार्तालापहरू हेर्नुहोस्"
+
+#: ../src/gossip-contact-list.c:2934
 msgid "Do you want to remove this contact from your roster?"
 msgstr "के तपाईँ तपाईँको सम्पर्क रोस्टरबाट सम्पर्क हटाउन चाहनुहुन्छ ?"
 
-#: ../src/gossip-contact-list.c:2582
+#: ../src/gossip-contact-list.c:3019
 #, c-format
 msgid ""
 "Please enter a new name for the group:\n"
@@ -870,17 +940,17 @@ msgstr ""
 "कृपया समूहका लागि नयाँ नाम प्रविष्ट गर्नुहोस्:\n"
 "%s"
 
-#: ../src/gossip-edit-contact-dialog.c:222
+#: ../src/gossip-edit-contact-dialog.c:221
 msgid "Select"
 msgstr "चयन गर्नुहोस्"
 
-#: ../src/gossip-edit-contact-dialog.c:272
-#: ../src/gossip-edit-contact-dialog.c:282
-#: ../src/gossip-subscription-dialog.c:400
+#: ../src/gossip-edit-contact-dialog.c:271
+#: ../src/gossip-edit-contact-dialog.c:281
+#: ../src/gossip-subscription-dialog.c:442
 msgid "Unsorted"
 msgstr "क्रमबद्ध नगरिएको"
 
-#: ../src/gossip-edit-contact-dialog.c:720
+#: ../src/gossip-edit-contact-dialog.c:719
 #, c-format
 msgid ""
 "Set the alias you want to use for:\n"
@@ -888,112 +958,184 @@ msgid ""
 "\n"
 "You can retrieve contact information from the server."
 msgstr ""
+"यसका लागि प्रयोग गर्न चाहनुभएको उपनाम सेट गर्नुहोस्:\n"
+"<b>%s</b>\n"
+"\n"
+"तपाईँ सर्भरबाट सम्पर्क जानकारी पुन: प्राप्त गर्न सक्नुहुन्छ ।"
 
-#: ../src/gossip-ft-window.c:164
+#: ../src/gossip-ft-dialog.c:229
 #, c-format
 msgid "New file transfer request from %s"
 msgstr "%s बाट नयाँ फाइल स्थान्तरण अनुरोध"
 
-#: ../src/gossip-ft-window.c:196
+#: ../src/gossip-ft-dialog.c:314
+msgid "Your file transfer offer declined."
+msgstr "तपाईँको फाइल स्थान्तरण अनुरोध अस्वीकार भयो ।"
+
+#: ../src/gossip-ft-dialog.c:315
+msgid "The other user decided not to continue."
+msgstr "अन्य प्रयोगकर्ताले जारी नराख्ने निर्णय गर्यो ।"
+
+#: ../src/gossip-ft-dialog.c:320
+msgid "Unable to complete the file transfer."
+msgstr "फाइल स्थानान्तरण पूरा गर्न असक्षम ।"
+
+#: ../src/gossip-ft-dialog.c:325
+msgid "Unable to start the file transfer."
+msgstr "फाइल स्थानान्तरण सुरु गर्न असक्षम ।"
+
+#: ../src/gossip-ft-dialog.c:330
 msgid "File transfer is not supported by both parties."
 msgstr "दुबै पक्षहरूबाट फाइल स्थान्तरण समर्थन गरिएन।"
 
-#: ../src/gossip-ft-window.c:200
-msgid "Your file transfer offer declined."
-msgstr "तपाईँको फाइल स्थान्तरण अनुरोध अस्विकार भयो।"
+#: ../src/gossip-ft-dialog.c:334
+msgid "An unknown error occurred during file transfer."
+msgstr "फाइल स्थान्तरण गर्दा एउटा अज्ञात त्रुटि देखापर्यो ।"
 
-#: ../src/gossip-ft-window.c:201
-msgid "The other user decided not to continue."
-msgstr "अर्को प्रयोगकर्ताले निरन्तरता नदिने निर्णय गर्यो।"
+#: ../src/gossip-ft-dialog.c:498
+msgid "Transfer complete"
+msgstr "स्थानान्तरण पूरा भयो"
 
-#: ../src/gossip-ft-window.c:206
-msgid "Unknown error occurred during file transfer."
-msgstr "फाइल स्थान्तरण गर्दा अज्ञात त्रुटि भयो।"
+#: ../src/gossip-ft-dialog.c:504
+msgid "The file has been transfered successfully."
+msgstr "फाइल सफलतापूर्वक स्थानान्तरण भयो ।"
 
-#: ../src/gossip-ft-window.c:290
+#: ../src/gossip-ft-dialog.c:539
+msgid "Transferring file"
+msgstr "फाइल स्थानान्तरण गर्दै"
+
+#: ../src/gossip-ft-dialog.c:545
+msgid "Please wait while the file is transferred"
+msgstr "फाइल स्थानान्तरण गर्दा कृपया प्रतिक्षा गर्नुहोस्"
+
+#: ../src/gossip-ft-dialog.c:615
 #, c-format
-msgid "%s would like to send you a file."
-msgstr "%s के तपाईँले तपाईँलाई एउटा फाइल पठाउन चाहनुहुन्छ।"
+msgid "%s would like to send you a file"
+msgstr "%s ले फाइल पठाउन चाहन्छ"
 
-#: ../src/gossip-ft-window.c:293
-msgid "Someone would like to send you a file."
-msgstr "कसैले तपाईँलाई एउटा फाइल पठाउन चाहन्छ।"
+#: ../src/gossip-ft-dialog.c:617
+msgid "Someone would like to send you a file"
+msgstr "कसैले तपाईँलाई फाइल पठाउन चाहन्छ"
 
-#: ../src/gossip-ft-window.c:428
+#: ../src/gossip-ft-dialog.c:620 ../ui/file-transfer.glade.h:2
+msgid "Do you want to accept this file?"
+msgstr "तपाईँ यो फाइल स्वीकार गर्न चाहनुहुन्छ ?"
+
+#: ../src/gossip-ft-dialog.c:623
+#, c-format
+msgid "Attempting to send file to %s"
+msgstr "%s लाई फाइल पठाउने प्रयास गर्दै"
+
+#: ../src/gossip-ft-dialog.c:625
+msgid "Attempting to send file"
+msgstr "फाइल पठाउने प्रयास गर्दै"
+
+#: ../src/gossip-ft-dialog.c:628
+msgid "Please wait while the other participant responds"
+msgstr "कृपया अन्य सहभागीले प्रतिक्रिया दिँदा प्रतिक्षा गर्नुहोस्"
+
+#: ../src/gossip-ft-dialog.c:751
 msgid "Select a file"
-msgstr "एउटा फाइल चयन गर्नुहोस्"
+msgstr "फाइल चयन गर्नुहोस्"
 
-#: ../src/gossip-group-chat.c:429
-#, fuzzy
+#: ../src/gossip-group-chat.c:477
 msgid "Connecting..."
-msgstr "जडान गर्दै"
+msgstr "जडान गर्दैछ..."
 
 #. FIXME: Need special case for nickname to put an
 #. * entry in the chat view and to request a new nick.
 #.
-#: ../src/gossip-group-chat.c:483
-#, fuzzy
+#: ../src/gossip-group-chat.c:544
 msgid "Retry connection"
-msgstr "जडान रोक्नुहोस्"
+msgstr "जडान पुन: प्रयास गर्नुहोस्"
 
-#: ../src/gossip-group-chat.c:508 ../src/gossip-private-chat.c:595
+#. i18n: An event, as in "has now been connected".
+#: ../src/gossip-group-chat.c:572 ../src/gossip-private-chat.c:612
 msgid "Connected"
 msgstr "जडान गरियो"
 
-#: ../src/gossip-group-chat.c:561 ../src/gossip-private-chat.c:621
+#: ../src/gossip-group-chat.c:626 ../src/gossip-private-chat.c:638
 msgid "Disconnected"
 msgstr "जडान विच्छेद गरियो"
 
 #. Send event to chat window
-#: ../src/gossip-group-chat.c:742
+#: ../src/gossip-group-chat.c:829
 #, c-format
 msgid "Invited %s to join this chat conference."
 msgstr "यो कुराकानी सम्मेलनमा भाग लिन %s निमन्त्रणा गरियो।"
 
-#: ../src/gossip-group-chat.c:1191
-#, fuzzy, c-format
+#: ../src/gossip-group-chat.c:907
+msgid "<b>Topic:</b>"
+msgstr "<b>विषय:</b>"
+
+#: ../src/gossip-group-chat.c:1094
+msgid "You have been kicked from this room"
+msgstr "तपाईँलाई यो कोठाबाट हटाइएको छ"
+
+#: ../src/gossip-group-chat.c:1219
+#, c-format
 msgid "%s has set the topic: %s"
-msgstr "%s ले शीर्षक सेट गर्यो"
+msgstr "%s ले विषय सेट गरेको छ: %s"
 
-#: ../src/gossip-group-chat.c:1248
-#, fuzzy
+#: ../src/gossip-group-chat.c:1398
 msgid "Enter the new topic you want to set for this room:"
-msgstr "यो सम्पर्कका लागि तपाईँ के उपनाम प्रयोग गर्न चाहनुहुन्छ ?"
+msgstr "तपाईँले यो कोठाका लागि सेट गर्न चाहनुभएको नयाँ विषय प्रविष्ट गर्नुहोस्:"
 
-#: ../src/gossip-group-chat.c:1433
-#, fuzzy, c-format
+#: ../src/gossip-group-chat.c:1414
+msgid "Enter the new nickname you want to be know by:"
+msgstr "तपाईँले जान्न चाहनुभएको नयाँ उपनाम प्रविष्ट गर्नुहोस्:"
+
+#: ../src/gossip-group-chat.c:1438
+#, c-format
+msgid "Kicking %s"
+msgstr "%s हटाइदै"
+
+#: ../src/gossip-group-chat.c:1446
+msgid "You have been removed from the room by an administrator."
+msgstr "तपाईँलाई एउटा प्रशासकद्वारा कोठाबाट हटाइएको छ ।"
+
+#: ../src/gossip-group-chat.c:1818
+#, c-format
 msgid "%s has joined the room"
-msgstr "%s ले शीर्षक सेट गर्यो"
+msgstr "%s ले कोठा जडान गर्यो"
 
-#: ../src/gossip-group-chat.c:1466
-#, fuzzy, c-format
+#: ../src/gossip-group-chat.c:1855
+#, c-format
 msgid "%s has left the room"
-msgstr "%s ले शीर्षक सेट गर्यो"
+msgstr "%s ले कोठा छोड्यो"
 
-#: ../src/gossip-group-chat.c:1808
-#, fuzzy, c-format
+#: ../src/gossip-group-chat.c:2118
+msgid "Nick was not recogized"
+msgstr "उपनाम चिन्न सकिएन"
+
+#: ../src/gossip-group-chat.c:2239
+#, c-format
 msgid "Topic: %s"
-msgstr "विषय:"
+msgstr "विषय: %s"
 
-#: ../src/gossip-log-window.c:473
+#: ../src/gossip-hint.c:87
+msgid "Do not show this again"
+msgstr "यो फेरि नदेखाउनुहोस्"
+
+#: ../src/gossip-log-window.c:479
 msgid "Account"
 msgstr "खाता"
 
-#: ../src/gossip-log-window.c:480
+#: ../src/gossip-log-window.c:486
 msgid "Conversation With"
-msgstr "सँग सम्मेलन"
+msgstr "यससँग वार्तालाप"
 
-#: ../src/gossip-log-window.c:490
+#: ../src/gossip-log-window.c:496
 msgid "Date"
 msgstr "मिति"
 
 #: ../src/gossip-main.c:81
 msgid "Don't connect on startup"
-msgstr "सुरुवातमा जडान नगर्नुहोस्"
+msgstr "सुरुआतमा जडान नगर्नुहोस्"
 
 #: ../src/gossip-main.c:85
 msgid "Allow multiple instances of the application to run at the same time"
-msgstr ""
+msgstr "एउटै समयमा चलाउन अनुप्रयोगको बहुँविध दृष्टान्त अनुमति दिनुहोस्"
 
 #: ../src/gossip-main.c:89
 msgid "List the available accounts"
@@ -1001,231 +1143,238 @@ msgstr "उपलब्ध खाताहरू सूचीबद्ध गर
 
 #: ../src/gossip-main.c:93
 msgid "Which account to connect to on startup"
-msgstr "सुरुवात हुँदा कुन खातामा जडान गर्ने"
+msgstr "सुरुआतमा कुन खाता जडान गर्ने"
 
 #: ../src/gossip-main.c:94
 msgid "ACCOUNT-NAME"
 msgstr "खाता-नाम"
 
-#: ../src/gossip-main.c:104 ../src/gossip-main.c:119
+#: ../src/gossip-main.c:104 ../src/gossip-main.c:120
 msgid "- Gossip Instant Messenger"
-msgstr "- गोसिव तयारि मेसेन्जर"
+msgstr "गोसिब शीघ्र मेसेन्जर"
 
-#: ../src/gossip-main.c:135
+#: ../src/gossip-main.c:136
 msgid "You can not use --no-connect together with --account"
-msgstr "तपाईँले --no-connect संग--accountसँगै प्रयोग गर्न सक्नुहुन्न"
+msgstr "तपाईँले --no-connect with --account सँगै प्रयोग गर्न सक्नुहुन्न"
 
-#: ../src/gossip-main.c:147
+#: ../src/gossip-main.c:148
 msgid "No accounts available."
-msgstr "खाताहरू उपलब्ध छैन।"
+msgstr "खाताहरू उपलब्ध छैन ।"
 
-#: ../src/gossip-main.c:152
+#: ../src/gossip-main.c:153
 msgid "Available accounts:"
 msgstr "उपलब्ध खाताहरू:"
 
-#: ../src/gossip-main.c:162
+#: ../src/gossip-main.c:163
 msgid "[default]"
 msgstr "[पूर्वनिर्धारित]"
 
-#: ../src/gossip-main.c:178
+#: ../src/gossip-main.c:179
 #, c-format
 msgid "There is no account with the name '%s'."
-msgstr "'%s'.नामको कुनै खाता छैन"
+msgstr "'%s'नामको कुनै खाता छैन ।"
 
-#: ../src/gossip-new-chatroom-dialog.c:200
-#: ../src/gossip-new-chatroom-dialog.c:213
-#: ../src/gossip-new-chatroom-dialog.c:234 ../ui/group-chat.glade.h:7
+#: ../src/gossip-new-chatroom-dialog.c:206
+#: ../src/gossip-new-chatroom-dialog.c:219 ../ui/group-chat.glade.h:5
 msgid "Join"
-msgstr "जोड्नुहोस्"
+msgstr "जडान गर्नुहोस्"
 
-#: ../src/gossip-new-chatroom-dialog.c:207
-#, fuzzy
+#: ../src/gossip-new-chatroom-dialog.c:213
 msgid "Create"
-msgstr "मिति"
+msgstr "सिर्जना गर्नुहोस्"
 
-#: ../src/gossip-new-chatroom-dialog.c:594 ../ui/main.glade.h:32
-msgid "Chat Rooms"
-msgstr "कुराकानी कोठा"
+#: ../src/gossip-new-chatroom-dialog.c:497
+msgid "Rooms"
+msgstr "कोठा"
 
-#: ../src/gossip-new-chatroom-dialog.c:843
+#: ../src/gossip-new-chatroom-dialog.c:536
+msgid "Users"
+msgstr "प्रयोगकर्ता"
+
+#: ../src/gossip-new-chatroom-dialog.c:570
+msgid "Description"
+msgstr "वर्णन"
+
+#: ../src/gossip-new-chatroom-dialog.c:821
 #, c-format
-msgid "Found %d conference rooms"
-msgstr ""
+msgid "Found %d conference room"
+msgid_plural "Found %d conference rooms"
+msgstr[0] "%d सम्मेलन कोठा फेला पर्यो्यो"
+msgstr[1] "%d सम्मेलन कोठा फेला पर्यो"
 
-#: ../src/gossip-new-chatroom-dialog.c:879
-#, fuzzy
+#: ../src/gossip-new-chatroom-dialog.c:860
 msgid "Browsing for conference rooms, please wait..."
-msgstr "जानकारी अनुरोध गरिएको छ, कृपया प्रतीक्षा गर्नुहोस्..."
+msgstr "सम्मेलन कोठाका लागि ब्राउज गर्दै, कृपया प्रतिक्षा गर्नुहोस्...ठा"
 
-#: ../src/gossip-new-chatroom-dialog.c:920
+#: ../src/gossip-new-chatroom-dialog.c:904
 msgid "Browsing cancelled!"
-msgstr ""
+msgstr "ब्राउजिङ रद्द गरियो!"
 
 #: ../src/gossip-notify.c:229 ../src/gossip-private-chat.c:508
 #, c-format
 msgid "%s has come online"
 msgstr "%s अनलाइन भयो"
 
-#: ../src/gossip-notify.c:246 ../src/gossip-notify.c:319
-#: ../src/gossip-notify.c:492
+#: ../src/gossip-notify.c:246 ../src/gossip-notify.c:354
+#: ../src/gossip-notify.c:536
 msgid "Default"
-msgstr "[पूर्वनिर्धारित]"
+msgstr "पूर्वनिर्धारित"
 
 #: ../src/gossip-notify.c:249
 msgid "Chat!"
 msgstr "कुराकानी!"
 
-#: ../src/gossip-notify.c:286 ../src/gossip-subscription-dialog.c:335
+#: ../src/gossip-notify.c:301 ../src/gossip-subscription-dialog.c:369
+#, c-format
+msgid "%s wants to be added to your contact list for your '%s' account."
+msgstr "%s तपाईँको '%s' खाताका लागि तपाईँको सम्पर्क सूचीमा थपिन चाहन्छ ।"
+
+#: ../src/gossip-notify.c:305 ../src/gossip-subscription-dialog.c:287
+#, c-format
+msgid "Someone wants to be added to your contact list for your '%s' account."
+msgstr "तपाईँको '%s' खाताका लागि तपाईँको सम्पर्क सूचीमा कोही थपिन चाहन्छ ।"
+
+#: ../src/gossip-notify.c:311 ../src/gossip-subscription-dialog.c:373
 #, c-format
 msgid "%s wants to be added to your contact list."
-msgstr "तपाईँको सम्पर्क सूचीमा %s ले थपिन चाहन्छ।"
+msgstr "तपाईँको सम्पर्क सूचीमा %s थपिन चाहन्छ ।"
 
-#: ../src/gossip-notify.c:288 ../src/gossip-subscription-dialog.c:272
+#: ../src/gossip-notify.c:315 ../src/gossip-subscription-dialog.c:291
 msgid "Someone wants to be added to your contact list."
-msgstr "कसैले तपाईँको सम्पर्क सूचीमा थपिन चाहन्छ।"
+msgstr "तपाईँको सम्पर्क सूचीमा कोही थपिन चाहन्छ ।"
 
-#: ../src/gossip-notify.c:305
-#, fuzzy
+#: ../src/gossip-notify.c:336
 msgid "Subscription request"
 msgstr "सदस्यता अनुरोध"
 
-#: ../src/gossip-notify.c:495
+#: ../src/gossip-notify.c:539
 msgid "Show"
-msgstr ""
+msgstr "देखाउनुहोस्"
 
-#: ../src/gossip-notify.c:501
+#: ../src/gossip-notify.c:545
 msgid "Contact Information"
 msgstr "सम्पर्क जानकारी"
 
-#: ../src/gossip-preferences.c:240
+#: ../src/gossip-preferences.c:253
 msgid "Language"
 msgstr "भाषा"
 
-#: ../src/gossip-presence-chooser.c:466
-#, fuzzy
+#: ../src/gossip-presence-chooser.c:502
 msgid "Are you sure you want to clear the list?"
-msgstr "के तपाईँ सो फाइल स्विकार गर्न चाहनुहुन्छ ?"
+msgstr "तपाईँ सूची खाली गर्न निश्चित हुनुहुन्छ ?"
 
-#: ../src/gossip-presence-chooser.c:470
+#: ../src/gossip-presence-chooser.c:506
 msgid ""
 "This will remove any custom messages you have added to the list of preset "
 "status messages."
-msgstr ""
+msgstr "यसले प्रिसेट वस्तुस्थिति सन्देशहरूको सूचीमा तपाईँले थप्नुभएको कुनै अनुकूल सन्देशहरू हटाउनेछ ।"
 
-#: ../src/gossip-presence-chooser.c:475
+#: ../src/gossip-presence-chooser.c:511
 msgid "Clear List"
 msgstr "सूची खाली गर्नुहोस्"
 
-#: ../src/gossip-presence-chooser.c:904 ../src/gossip-presence-chooser.c:932
-#: ../src/gossip-presence-chooser.c:960
-#, fuzzy
+#: ../src/gossip-presence-chooser.c:1025 ../src/gossip-presence-chooser.c:1053
+#: ../src/gossip-presence-chooser.c:1081
 msgid "Custom message..."
-msgstr "नयाँ सन्देश..."
+msgstr "अनुकूल सन्देश..."
 
-#: ../src/gossip-presence-chooser.c:969
-#, fuzzy
+#: ../src/gossip-presence-chooser.c:1090
 msgid "Clear List..."
-msgstr "सूची खाली गर्नुहोस्"
+msgstr "सूची खाली गर्नुहोस्..."
 
-#: ../src/gossip-private-chat.c:493
+#: ../src/gossip-private-chat.c:494
 #, c-format
 msgid "%s went offline"
 msgstr "%s अफलाइन भयो"
 
-#: ../src/gossip-private-chat.c:1103
+#. i18n: An event, as in "has now been connected".
+#: ../src/gossip-private-chat.c:589
+msgid "Contact has been removed"
+msgstr "सम्पर्क हटाइएको छ"
+
+#: ../src/gossip-private-chat.c:1150
 #, c-format
 msgid "Subject: %s"
 msgstr "विषय: %s"
 
-#: ../src/gossip-spell-dialog.c:261
+#: ../src/gossip-spell-dialog.c:259
 msgid "Suggestions for the word"
-msgstr "शब्दका लागि सुझावहरू"
+msgstr "शब्दका लागि सुझाव"
 
-#: ../src/gossip-subscription-dialog.c:187
+#: ../src/gossip-subscription-dialog.c:186
 #, c-format
 msgid "New subscription request from %s"
 msgstr "%s बाट नयाँ सदस्यता अनुरोध"
 
-#: ../src/gossip-subscription-dialog.c:273
+#: ../src/gossip-subscription-dialog.c:294
 msgid "Do you want to add this person to your contact list?"
 msgstr "के तपाईँले सो मान्छेलाई तपाईँको सम्पर्क सूचीमा थप गर्न चाहनुहुन्छ ?"
 
-#: ../src/gossip-subscription-dialog.c:337
+#: ../src/gossip-subscription-dialog.c:379
 #, c-format
 msgid "Do you want to add %s to your contact list?"
-msgstr "के तपाईँले तपाईँको सम्पर्क सूचीमा %sथप्न चाहनुहुन्छ?"
+msgstr "के तपाईँले तपाईँको सम्पर्क सूचीमा %s थप्न चाहनुहुन्छ?"
 
-#: ../src/gossip-ui-utils.c:242
+#: ../src/gossip-ui-utils.c:74
 #, c-format
 msgid "Please enter your %s account password"
 msgstr "कृपया तपाईँको %s खाता पासवर्ड प्रविष्ट गर्नुहोस्"
 
-#: ../src/gossip-ui-utils.c:253
-#, fuzzy, c-format
+#: ../src/gossip-ui-utils.c:85
+#, c-format
 msgid "Logging in to account '%s'"
-msgstr "सँग लगइन गर्दै: %s"
+msgstr "खाता '%s' मा लग गर्दै"
 
-#: ../src/gossip-ui-utils.c:257
+#: ../src/gossip-ui-utils.c:89
 msgid "Remember Password?"
-msgstr "पासवर्ड सम्झनुहोस् ?"
+msgstr "पासवर्ड सम्झनुहुन्छ ?"
 
-#: ../src/gossip-ui-utils.c:358
-msgid "Do not show this again"
-msgstr ""
-
-#: ../src/gossip-ui-utils.c:1759
+#: ../src/gossip-ui-utils.c:386
 msgid "Could not display the help contents."
-msgstr "मद्दत सामग्री प्रदर्शन गर्न सकेन।"
+msgstr "मद्दत सामग्री प्रदर्शन गर्न सकेन ।"
 
-#: ../src/gossip-theme-manager.c:88
+#: ../src/gossip-theme-boxes.c:888 ../src/gossip-theme-irc.c:456
+msgid "%A %d %B %Y"
+msgstr "%A %d %B %Y"
+
+#: ../src/gossip-theme-manager.c:79
 msgid "Classic"
 msgstr "पुरानो"
 
-#: ../src/gossip-theme-manager.c:89
-#, fuzzy
+#: ../src/gossip-theme-manager.c:80
 msgid "Simple"
-msgstr "उदाहरण"
+msgstr "साधारण"
 
-#: ../src/gossip-theme-manager.c:90
-#, fuzzy
+#: ../src/gossip-theme-manager.c:81
 msgid "Clean"
-msgstr "ग्राहक:"
+msgstr "खाली गर्नुहोस्"
 
-#: ../src/gossip-theme-manager.c:91
+#: ../src/gossip-theme-manager.c:82
 msgid "Blue"
 msgstr "नीलो"
 
-#: ../src/gossip-vcard-dialog.c:225
+#: ../src/gossip-vcard-dialog.c:222
 msgid "Select Your Avatar Image"
-msgstr ""
+msgstr "तपाईँको अवतार छवि चयन गर्नुहोस्"
 
-#: ../src/gossip-vcard-dialog.c:228
+#: ../src/gossip-vcard-dialog.c:225
 msgid "No Image"
-msgstr ""
+msgstr "छवि छैन"
 
-#: ../src/gossip-vcard-dialog.c:482
-msgid "Cancel"
-msgstr ""
-
-#: ../src/gossip-vcard-dialog.c:489
-msgid "OK"
-msgstr ""
-
-#: ../src/gossip-vcard-dialog.c:741
+#: ../src/gossip-vcard-dialog.c:739
 msgid "The server does not seem to be responding."
-msgstr "सर्भरले प्रतिक्रिया जनाउने जस्तो देखिदैन।"
+msgstr "सर्भरले प्रतिक्रिया दिइरहेको छैन ।"
 
-#: ../src/gossip-vcard-dialog.c:742
+#: ../src/gossip-vcard-dialog.c:740
 msgid "Try again later."
-msgstr "पछि पुन: प्रयास गर्नुहोस्।"
+msgstr "पछि फेरि प्रयास गर्नुहोस् ।"
 
 #. Birthday chooser
-#: ../src/gossip-vcard-dialog.c:859
-#, fuzzy
+#: ../src/gossip-vcard-dialog.c:857
 msgid "Change"
-msgstr "कुराकानी"
+msgstr "परिवर्तन गर्नुहोस्"
 
-#: ../src/sounds/gossip.soundlist.in.h:1 ../ui/chat.glade.h:3
+#: ../src/sounds/gossip.soundlist.in.h:1 ../ui/chat.glade.h:4
 msgid "Chat"
 msgstr "कुराकानी"
 
@@ -1235,222 +1384,213 @@ msgstr "सम्पर्क अफलाइन हुँदैछ"
 
 #: ../src/sounds/gossip.soundlist.in.h:3
 msgid "Contact goes online"
-msgstr "सम्पर्क अनलाइन भयो"
+msgstr "सम्पर्क अनलाइन हुँदैछ"
 
 #: ../ui/chat.glade.h:1
-#, fuzzy
 msgid "C_lear"
-msgstr "सूची खाली गर्नुहोस्"
+msgstr "खाली गर्नुहोस्"
 
 #: ../ui/chat.glade.h:2
-msgid "Change _Topic..."
-msgstr ""
+msgid "Change Na_me..."
+msgstr "नाम परिवर्तन गर्नुहोस्..."
 
-#: ../ui/chat.glade.h:4
+#: ../ui/chat.glade.h:3
+msgid "Change _Topic..."
+msgstr "विषय परिवर्तन गर्नुहोस्..."
+
+#: ../ui/chat.glade.h:5
 msgid "Contact Infor_mation"
 msgstr "सम्पर्क जानकारी"
 
-#: ../ui/chat.glade.h:5
-#, fuzzy
-msgid "Cu_t"
-msgstr "कुराकानी"
-
 #: ../ui/chat.glade.h:6
-#, fuzzy
-msgid "In_vite..."
-msgstr "निमन्त्रणा"
+msgid "Cu_t"
+msgstr "काट्नुहोस्"
 
 #: ../ui/chat.glade.h:7
+msgid "In_vite..."
+msgstr "निमन्त्रणा..."
+
+#: ../ui/chat.glade.h:8
 msgid "Insert _Smiley"
 msgstr "स्माइली घुसाउनुहोस्"
 
-#: ../ui/chat.glade.h:8
-#, fuzzy
-msgid "Invitation _message:"
-msgstr "अवस्था सन्देश प्रविष्ट गर्नुहोस्"
-
 #: ../ui/chat.glade.h:9
-#, fuzzy
+msgid "Invitation _message:"
+msgstr "निमन्त्रणा सन्देश:"
+
+#: ../ui/chat.glade.h:10
 msgid "Invite"
-msgstr "निमन्त्रणा"
+msgstr "निमन्त्रणा गर्नुहोस्"
 
-#: ../ui/chat.glade.h:10 ../ui/main.glade.h:58
+#: ../ui/chat.glade.h:11 ../ui/main.glade.h:59
 msgid "Join _New..."
-msgstr ""
-
-#: ../ui/chat.glade.h:11
-msgid "Move Tab _Left"
-msgstr "ट्याब बायाँ तिर सार्नुहोस्"
+msgstr "नयाँ जडान गर्नुहोस्..."
 
 #: ../ui/chat.glade.h:12
+msgid "Move Tab _Left"
+msgstr "ट्याब बायाँतिर सार्नुहोस्"
+
+#: ../ui/chat.glade.h:13
 msgid "Move Tab _Right"
 msgstr "ट्याब दायाँतिर सार्नुहोस्"
 
-#: ../ui/chat.glade.h:13
+#: ../ui/chat.glade.h:14
 msgid "Select who would you like to invite:"
-msgstr ""
+msgstr "तपाईँ कसलाई निमन्त्रणा गर्न चाहनुहुन्छ चयन गर्नुहोस्:"
 
-#: ../ui/chat.glade.h:15 ../ui/main.glade.h:106
+#: ../ui/chat.glade.h:15
+msgid "Send _Email..."
+msgstr "इमेल पठाउनुहोस्..."
+
+#: ../ui/chat.glade.h:17 ../ui/main.glade.h:114
 msgid "_Add Contact..."
-msgstr "सम्पर्क थप्नुहोस्"
+msgstr "सम्पर्क थप्नुहोस्..."
 
-#: ../ui/chat.glade.h:16
+#: ../ui/chat.glade.h:18
 msgid "_Add To Favorites"
 msgstr "मनपर्नेहरू थप्नुहोस्"
 
-#: ../ui/chat.glade.h:17
+#: ../ui/chat.glade.h:19
 msgid "_Close"
-msgstr ""
+msgstr "बन्द गर्नुहोस्"
 
-#: ../ui/chat.glade.h:18
+#: ../ui/chat.glade.h:20
 msgid "_Conversation"
 msgstr "वार्तालाप"
 
-#: ../ui/chat.glade.h:19
+#: ../ui/chat.glade.h:21
 msgid "_Copy"
-msgstr ""
+msgstr "प्रतिलिपि बनाउनुहोस्"
 
-#: ../ui/chat.glade.h:20
+#: ../ui/chat.glade.h:22
 msgid "_Detach Tab"
 msgstr "ट्याबलाई छुट्याउनुहोस्"
 
-#: ../ui/chat.glade.h:22
-msgid "_Next Tab"
-msgstr "आर्को ट्याब"
-
-#: ../ui/chat.glade.h:23
-#, fuzzy
-msgid "_Paste"
-msgstr "मिति"
-
 #: ../ui/chat.glade.h:24
+msgid "_Kick..."
+msgstr "फ्याक्नुहोस्..."
+
+#: ../ui/chat.glade.h:25
+msgid "_Next Tab"
+msgstr "पछिल्लो ट्याब"
+
+#: ../ui/chat.glade.h:26
+msgid "_Paste"
+msgstr "टाँस्नुहोस्"
+
+#: ../ui/chat.glade.h:27
 msgid "_Previous Tab"
 msgstr "अघिल्लो ट्याब"
 
-#: ../ui/chat.glade.h:25 ../ui/main.glade.h:136
+#: ../ui/chat.glade.h:28 ../ui/main.glade.h:144
 msgid "_Room"
 msgstr "कोठा"
 
-#: ../ui/chat.glade.h:26
+#: ../ui/chat.glade.h:29
 msgid "_Show Contacts"
 msgstr "सम्पर्कहरू देखाउनुहोस्"
 
-#: ../ui/chat.glade.h:27
+#: ../ui/chat.glade.h:30
 msgid "_Tabs"
 msgstr "ट्याबहरु"
 
 #: ../ui/file-transfer.glade.h:1
 msgid "Contact ID:"
-msgstr "सम्पर्क ID:"
-
-#: ../ui/file-transfer.glade.h:2
-msgid "Do you want to accept this file?"
-msgstr "के तपाईँ सो फाइल स्विकार गर्न चाहनुहुन्छ ?"
+msgstr "सम्पर्क आईडी:"
 
 #: ../ui/file-transfer.glade.h:3
-msgid "File Transfer Request"
-msgstr "फाइल स्थान्तरण अनुरोध"
+msgid "File Transfer"
+msgstr "फाइल स्थानान्तरण"
 
 #: ../ui/file-transfer.glade.h:4
-msgid "File name:"
-msgstr "फाइल नाम:"
+msgid "Location:"
+msgstr "स्थान:"
 
-#: ../ui/file-transfer.glade.h:5
-msgid "File size:"
-msgstr "फाइल साइज:"
+#: ../ui/file-transfer.glade.h:5 ../ui/main.glade.h:63
+msgid "Name:"
+msgstr "नाम:"
 
 #: ../ui/file-transfer.glade.h:6
-#, fuzzy
 msgid "Not supported yet"
-msgstr "अझसम्म समर्थन गरिएको छैन।"
+msgstr "अहिले सम्म समर्थन गरेको छैन"
 
 #: ../ui/file-transfer.glade.h:7
-msgid "This person wishes to send you this file:"
-msgstr "यो मान्छेले तपाईँलाई सो फाइल पठाउन चाहन्छ:"
+msgid "Open _Folder"
+msgstr "फोल्डर खोल्नुहोस्"
 
-#: ../ui/file-transfer.glade.h:8 ../ui/main.glade.h:100
-msgid "Web site:"
-msgstr "वेब साइट:"
+#: ../ui/file-transfer.glade.h:8
+msgid "Select A File"
+msgstr "फाइल चयन गर्नुहोस्"
 
-#: ../ui/file-transfer.glade.h:9 ../ui/main.glade.h:104
-msgid "_Accept"
-msgstr "स्विकार गर्नुहोस्"
+#: ../ui/file-transfer.glade.h:9
+msgid "Size:"
+msgstr "साइज:"
 
-#: ../ui/file-transfer.glade.h:10 ../ui/main.glade.h:112
-msgid "_Deny"
-msgstr "अस्वीकार गर्नुहोस्"
-
-#: ../ui/group-chat.glade.h:1
-#, fuzzy
-msgid "<b>Topic:</b>"
-msgstr "<b>विकल्पहरू</b>"
-
-#: ../ui/group-chat.glade.h:2 ../ui/main.glade.h:23
+#: ../ui/group-chat.glade.h:1 ../ui/main.glade.h:25
 msgid "Account:"
 msgstr "खाता:"
 
-#: ../ui/group-chat.glade.h:3
+#: ../ui/group-chat.glade.h:2
 msgid "Browse:"
-msgstr ""
+msgstr "ब्राउज:"
+
+#: ../ui/group-chat.glade.h:3
+msgid "Edit Favorite Room"
+msgstr "मनपर्ने कोठा सम्पादन गर्नुहोस्"
 
 #: ../ui/group-chat.glade.h:4
-#, fuzzy
-msgid "Edit Favorite Room"
-msgstr "कुराकानी कोठा सम्पादन गर्नुहोस्"
-
-#: ../ui/group-chat.glade.h:5
-msgid ""
-"Enter the room name to join here or click on one or more rooms in the list."
-msgstr ""
+msgid "Enter the room name to join here or click on one or more rooms in the list."
+msgstr "यहाँ जडान गर्न कोठा नाम प्रविष्ट गर्नुहोस् वा सूचीमा एउटा वा धेरै कोठाहरूमा क्लिक गर्नुहोस् ।"
 
 #: ../ui/group-chat.glade.h:6
-msgid "Group Chat"
-msgstr "समूह कुराकानी"
+msgid "Join New"
+msgstr "नयाँ जडान गर्नुहोस्"
+
+#: ../ui/group-chat.glade.h:7
+msgid "Join room on start_up"
+msgstr "सुरुआतमा कोठा जडान गर्नुहोस्"
 
 #: ../ui/group-chat.glade.h:8
-#, fuzzy
-msgid "Join New"
-msgstr "जोड्नुहोस्"
+msgid "Join this chat room when Gossip starts and you are connected"
+msgstr "गोसिप सुरु हुँदा यो कुराकानी कोठा जडान गर्नुहोस् र तपाईँ जडान हुनुहुन्छ"
 
 #: ../ui/group-chat.glade.h:9
-msgid "Join room on start_up"
-msgstr "सुरुवातमा कोठा जोड्नुहोस्"
-
-#: ../ui/group-chat.glade.h:10
-#, fuzzy
-msgid "Join this chat room when Gossip starts and you are connected"
-msgstr "गोसिव सुरु भएर तपाईँ जडानमा रहनुभएको बेलामा कुराकानी कोठा जोड्नुहोस्।"
-
-#: ../ui/group-chat.glade.h:11
 msgid "Manage Favorite Rooms"
-msgstr ""
+msgstr "मनपर्ने कोठा प्रबन्ध गर्नुहोस्"
 
-#: ../ui/group-chat.glade.h:12 ../ui/main.glade.h:61
+#: ../ui/group-chat.glade.h:10 ../ui/main.glade.h:62
 msgid "N_ame:"
 msgstr "नाम:"
 
-#: ../ui/group-chat.glade.h:13
+#: ../ui/group-chat.glade.h:11
 msgid "Re_fresh"
-msgstr ""
+msgstr "ताजा पार्नुहोस्"
 
-#: ../ui/group-chat.glade.h:14
+#: ../ui/group-chat.glade.h:12
 msgid "S_erver:"
 msgstr "सर्भर:"
 
-#: ../ui/group-chat.glade.h:15
-msgid ""
-"This list represents all chat rooms hosted on the server you have entered."
-msgstr ""
+#: ../ui/group-chat.glade.h:13
+msgid "Show more information about chatrooms found and make the window resizable."
+msgstr "फेला परेको कुराकानी कोठा बारे धेरै जानकारी देखाउनुहोस् र सञ्झ्याललाई रिसाइजयोग्य बनाउनुहोस् ।"
 
-#: ../ui/group-chat.glade.h:16 ../ui/main.glade.h:126
+#: ../ui/group-chat.glade.h:14
+msgid "This list represents all chat rooms hosted on the server you have entered."
+msgstr "यो सूचीले तपाईँले प्रविष्ट गर्नभएको सर्भरमा होस्ट गरिएको सबै कुराकानी कोठाहरूलाई प्रतिनिधित्व गर्दछ ।"
+
+#: ../ui/group-chat.glade.h:15 ../ui/main.glade.h:134
 msgid "_Nickname:"
 msgstr "उपनाम:"
+
+#: ../ui/group-chat.glade.h:16
+msgid "_Password"
+msgstr "पासवर्ड"
 
 #: ../ui/group-chat.glade.h:17
 msgid "_Room:"
 msgstr "कोठा:"
 
-#: ../ui/group-chat.glade.h:18 ../ui/main.glade.h:137
+#: ../ui/group-chat.glade.h:18 ../ui/main.glade.h:146
 msgid "_Server:"
 msgstr "सर्भर:"
 
@@ -1467,895 +1607,544 @@ msgid "<b>Account</b>"
 msgstr "<b>खाता</b>"
 
 #: ../ui/main.glade.h:4
-#, fuzzy
 msgid "<b>Appearance</b>"
-msgstr "<b>देखावट र व्यवहार</b>"
+msgstr "<b>देखावट</b>"
 
 #: ../ui/main.glade.h:5
-#, fuzzy
 msgid "<b>Audio</b>"
-msgstr "<b>बारेमा</b>"
+msgstr "<b>अडियो</b>"
 
 #: ../ui/main.glade.h:6
-#, fuzzy
 msgid "<b>Behaviour</b>"
-msgstr "<b>देखावट र व्यवहार</b>"
+msgstr "<b>व्यवहार</b>"
 
 #: ../ui/main.glade.h:7
 msgid "<b>Client Information</b>"
-msgstr "<b>ग्राहक जानकारी</b>"
+msgstr "<b>क्लाइन्ट जानकारी</b>"
 
 #: ../ui/main.glade.h:8
-#, fuzzy
-msgid "<b>Groups</b>"
-msgstr "<b>बारेमा</b>"
+msgid "<b>Contact List</b>"
+msgstr "<b>सम्पर्क सूची</b>"
 
 #: ../ui/main.glade.h:9
+msgid "<b>Groups</b>"
+msgstr "<b>समूह</b>"
+
+#: ../ui/main.glade.h:10
 msgid "<b>Languages</b>"
 msgstr "<b>भाषाहरू</b>"
 
-#: ../ui/main.glade.h:10
-#, fuzzy
-msgid "<b>Name</b>"
-msgstr "<b>भाषाहरू</b>"
-
 #: ../ui/main.glade.h:11
-#, fuzzy
-msgid "<b>New Account</b>"
-msgstr "<b>खाता</b>"
+msgid "<b>Name</b>"
+msgstr "<b>नाम</b>"
 
-#: ../ui/main.glade.h:13
-msgid "<b>Options</b>"
-msgstr "<b>विकल्पहरू</b>"
+#: ../ui/main.glade.h:12
+msgid "<b>New Account</b>"
+msgstr "<b>नयाँ खाता</b>"
 
 #: ../ui/main.glade.h:14
+msgid "<b>Options</b>"
+msgstr "<b>विकल्प</b>"
+
+#: ../ui/main.glade.h:15
 msgid "<b>Personal Details</b>"
 msgstr "<b>व्यक्तिगत विवरण</b>"
 
-#: ../ui/main.glade.h:15
-#, fuzzy
-msgid "<b>Settings</b>"
-msgstr "<b>वस्तुस्थिती</b>"
-
 #: ../ui/main.glade.h:16
-msgid "<b>Status</b>"
-msgstr "<b>वस्तुस्थिती</b>"
+msgid "<b>Settings</b>"
+msgstr "<b>सेटिङ</b>"
 
 #: ../ui/main.glade.h:17
-#, fuzzy
-msgid "<b>Subscription</b>"
-msgstr "<b>विकल्पहरू</b>"
+msgid "<b>Status</b>"
+msgstr "<b>वस्तुस्थिति</b>"
 
 #: ../ui/main.glade.h:18
-#, fuzzy
-msgid "<b>Visual</b>"
-msgstr "<b>विकल्पहरू</b>"
+msgid "<b>Subscription</b>"
+msgstr "<b>सदस्यता</b>"
 
 #: ../ui/main.glade.h:19
-#, fuzzy
+msgid "<b>Visual</b>"
+msgstr "<b>दृश्यात्मक</b>"
+
+#: ../ui/main.glade.h:20
 msgid ""
 "<small>The list of languages reflects only the languages for which you have "
 "a dictionary installed.</small>"
-msgstr ""
-"भाषाहरूको सूचीले यहाँ केबल तपाईँले जसका लागि शब्दकोश स्थापना गर्नुभएको थियो मात्र "
-"प्रतिबिम्वित गर्दछ।"
+msgstr "<small>भाषाहरूको सूचीले भाषाहरू मात्र प्रतिबिम्ब गर्दछ जसका लागि तपाईँले शब्दकोश स्थापना गर्नुभएको छ ।</small>"
 
-#: ../ui/main.glade.h:20
+#: ../ui/main.glade.h:21
 msgid "<span size=\"smaller\">Example: Mikael or user@server.org</span>"
 msgstr "<span size=\"smaller\">उदाहरण: Mikael or user@server.org</span>"
 
-#: ../ui/main.glade.h:21
-msgid "A unique name for this account to identify it personally to you."
-msgstr ""
-
 #: ../ui/main.glade.h:22
-#, fuzzy
+msgid ""
+"<span size=\"smaller\">Note: You must select an account if the contact is "
+"unknown</span>"
+msgstr "<span size=\"smaller\">द्रष्टब्य: यदि सम्पर्क अज्ञात छ भने तपाईँले एउटा खाता चयन गर्नुपर्नेछ</span>"
+
+#: ../ui/main.glade.h:23
+msgid "A unique name for this account to identify it personally to you."
+msgstr "तपाईँलाई व्यक्तिगत रूपमा पहिचान गर्नका लागि यो खाताका लागि अद्वितिय नाम ।"
+
+#: ../ui/main.glade.h:24
 msgid "Accou_nt:"
 msgstr "खाता:"
 
-#: ../ui/main.glade.h:25
+#: ../ui/main.glade.h:27
 msgid "Add Contact"
 msgstr "सम्पर्क थप्नुहोस्"
 
-#: ../ui/main.glade.h:26
-#, fuzzy
+#: ../ui/main.glade.h:28
 msgid "Alia_s:"
 msgstr "उपनाम:"
 
-#: ../ui/main.glade.h:27
-msgid "Avatar:"
-msgstr ""
-
-#: ../ui/main.glade.h:28
-msgid "Avatars are user chosen images shown in the contact list"
-msgstr ""
-
 #: ../ui/main.glade.h:29
-msgid "Birthday:"
-msgstr ""
+msgid "Avatar:"
+msgstr "अवतार:"
 
 #: ../ui/main.glade.h:30
-msgid "C_hange"
-msgstr ""
+msgid "Avatars are user chosen images shown in the contact list"
+msgstr "अवतार सम्पर्क सूचीमा देखाइने प्रयोगकर्ताले रोजिएका छविहरू हुन्"
 
 #: ../ui/main.glade.h:31
+msgid "Birthday:"
+msgstr "जन्मदिन:"
+
+#: ../ui/main.glade.h:32
+msgid "C_hange"
+msgstr "परिवर्तन गर्नुहोस्"
+
+#: ../ui/main.glade.h:33
 msgid "Ch_at"
 msgstr "कुराकानी"
 
-#: ../ui/main.glade.h:33
-#, fuzzy
-msgid "Chat Th_eme:"
-msgstr "कुराकानि विषयवस्तु:"
-
 #: ../ui/main.glade.h:34
-msgid "Client:"
-msgstr "ग्राहक:"
+msgid "Chat Rooms"
+msgstr "कुराकानी कोठा"
 
 #: ../ui/main.glade.h:35
-#, fuzzy
-msgid "Con_tact:"
-msgstr "सम्पर्क"
+msgid "Chat Th_eme:"
+msgstr "कुराकानी विषयवस्तु:"
 
 #: ../ui/main.glade.h:36
-msgid "Connect on S_tartup"
-msgstr "सुरुवातमा जडान गर्नुहोस्"
+msgid "Client:"
+msgstr "क्लाइन्ट:"
 
 #: ../ui/main.glade.h:37
-#, fuzzy
-msgid "Contact List - Gossip"
-msgstr "सम्पर्क सूची लुकाउनुहोस्"
+msgid "Con_tact:"
+msgstr "सम्पर्क:"
 
 #: ../ui/main.glade.h:38
+msgid "Connect on S_tartup"
+msgstr "सुरुआतमा जडान गर्नुहोस्"
+
+#: ../ui/main.glade.h:39
+msgid "Contact List - Gossip"
+msgstr "सम्पर्क सूची - गोसिप"
+
+#: ../ui/main.glade.h:40
 msgid "Contacts"
 msgstr "सम्पर्क"
 
-#: ../ui/main.glade.h:39
-#, fuzzy
+#: ../ui/main.glade.h:41
 msgid "Context"
-msgstr "सामग्रीहरू"
+msgstr "सामग्री"
 
-#: ../ui/main.glade.h:40
+#: ../ui/main.glade.h:42
 msgid "Country:"
 msgstr "देश:"
 
-#: ../ui/main.glade.h:41
-#, fuzzy
-msgid "Cr_eate!"
-msgstr "कुराकानी!"
+#: ../ui/main.glade.h:43
+msgid "Cr_eate"
+msgstr "सिर्जना गर्नुहोस्"
 
-#: ../ui/main.glade.h:42
+#: ../ui/main.glade.h:44
 msgid "Decide _Later"
 msgstr "पछि निर्णय गर्नुहोस्"
 
-#: ../ui/main.glade.h:43
-msgid "Display notifications when contacts come _online"
-msgstr ""
-
-#: ../ui/main.glade.h:44
-#, fuzzy
-msgid "Edit Contact"
-msgstr "सम्पर्क थप्नुहोस्"
-
 #: ../ui/main.glade.h:45
+msgid "Display notifications when contacts come _online"
+msgstr "सम्पर्कहरू अनलाइन हुँदा सूचनाहरू प्रदर्शन गर्नुहोस्"
+
+#: ../ui/main.glade.h:46
+msgid "Edit Contact"
+msgstr "सम्पर्क सम्पादन गर्नुहोस्"
+
+#: ../ui/main.glade.h:47
 msgid "Edit Groups"
 msgstr "समूहहरू सम्पादन गर्नुहोस्"
 
-#: ../ui/main.glade.h:46
+#: ../ui/main.glade.h:48
 msgid "Email:"
 msgstr "इमेल:"
 
-#: ../ui/main.glade.h:47
-#, fuzzy
-msgid "Enable sounds when _away"
-msgstr "टाढा हुँदा ध्वनिहरू अक्षम पार्नुहोस्"
-
-#: ../ui/main.glade.h:48
-#, fuzzy
-msgid "Enable sounds when _busy"
-msgstr "व्यस्त हुँदा ध्वनिहरू अक्षम पार्दछ"
-
 #: ../ui/main.glade.h:49
-msgid "Enter status message:"
-msgstr "अवस्था सन्देश प्रविष्ट गर्नुहोस्"
+msgid "Enable sounds when _away"
+msgstr "टाढा हुँदा ध्वनि सक्षम पार्नुहोस्"
 
 #: ../ui/main.glade.h:50
-msgid "Forget password and clear the entry."
-msgstr ""
+msgid "Enable sounds when _busy"
+msgstr "व्यस्त हुँदा ध्वनि सक्षम पार्नुहोस्"
 
 #: ../ui/main.glade.h:51
+msgid "Enter status message:"
+msgstr "वस्तुस्थिति सन्देश प्रविष्ट गर्नुहोस्:"
+
+#: ../ui/main.glade.h:52
+msgid "Forget password and clear the entry."
+msgstr "पासवर्ड विर्सनुभयो भने प्रविष्टि खाली गर्नुहोस् ।"
+
+#: ../ui/main.glade.h:53
 msgid "General"
 msgstr "सामान्य"
 
-#: ../ui/main.glade.h:52
-msgid "ID:"
-msgstr "आइ डि:"
-
-#: ../ui/main.glade.h:53
-msgid ""
-"If you chose to decide later you will be asked the next time you log on."
-msgstr ""
-"यदि तपाईँले पछि छनौट निर्णय गर्नु भएमा तपाईँले पछिल्लो समय लगइन गर्दा तपाईँलाई सोधिने छ।"
-
 #: ../ui/main.glade.h:54
-msgid "Imendio "
-msgstr ""
+msgid "ID:"
+msgstr "आईडी:"
+
+#: ../ui/main.glade.h:55
+msgid "If you chose to decide later you will be asked the next time you log on."
+msgstr "यदि तपाईँले पछि छनौट निर्णय गर्नु भएमा तपाईँले पछिल्लो समय लगइन गर्दा तपाईँलाई सोधिने छ ।"
 
 #: ../ui/main.glade.h:56
-msgid "Jabber"
-msgstr "ज्याबर"
+msgid "Imendio "
+msgstr "इमेन्डियो"
 
-#: ../ui/main.glade.h:57
-#, fuzzy
+#: ../ui/main.glade.h:58
 msgid "Join _Favorites"
-msgstr "मनपर्नेहरू थप्नुहोस्"
-
-#: ../ui/main.glade.h:59
-msgid "Login I_D:"
-msgstr "लगइन ID:"
+msgstr "मनपर्नेहरू जडान गर्नुहोस्"
 
 #: ../ui/main.glade.h:60
+msgid "Login I_D:"
+msgstr "लगइन आईडी:"
+
+#: ../ui/main.glade.h:61
 msgid "Manage Favorites..."
-msgstr ""
-
-#: ../ui/main.glade.h:62
-msgid "Name:"
-msgstr "नाम:"
-
-#: ../ui/main.glade.h:64
-#, fuzzy
-msgid "Notifications"
-msgstr "सूचीत गर्ने ध्वनिहरू प्रयोग गर्नुहोस्"
+msgstr "मनपर्ने प्रबन्ध गर्नुहोस्..."
 
 #: ../ui/main.glade.h:65
-msgid "OS:"
-msgstr "ओ एस:"
+msgid "Notifications"
+msgstr "सूचना"
 
 #: ../ui/main.glade.h:66
+msgid "OS:"
+msgstr "OS:"
+
+#: ../ui/main.glade.h:67
 msgid "Pass_word:"
 msgstr "पासवर्ड:"
 
-#: ../ui/main.glade.h:67
+#: ../ui/main.glade.h:68
 msgid "Personal Details"
 msgstr "व्यक्तिगत विवरण"
 
-#: ../ui/main.glade.h:68
+#: ../ui/main.glade.h:69
 msgid "Preferences"
 msgstr "प्राथमिकताहरु"
 
-#: ../ui/main.glade.h:69
-#, fuzzy
+#: ../ui/main.glade.h:70
 msgid "R_egister"
 msgstr "दर्ता"
 
-#: ../ui/main.glade.h:70
+#: ../ui/main.glade.h:71
 msgid "Reso_urce:"
 msgstr "संसाधन:"
 
-#: ../ui/main.glade.h:71
+#: ../ui/main.glade.h:72
 msgid "Search"
 msgstr "खोजी गर्नुहोस्"
 
-#: ../ui/main.glade.h:72
+#: ../ui/main.glade.h:73
 msgid ""
 "Select the groups you want this contact to appear in, you can select more "
 "than one group or no groups."
-msgstr ""
+msgstr "यो सम्पर्कमा देखाउन चाहनुभएको समूह चयन गर्नुहोस्, तपाईँ एक भन्दा बढी समूह वा समूहविहिन चयन गर्न सक्नुहुन्छ ।"
 
-#: ../ui/main.glade.h:73
+#: ../ui/main.glade.h:74
 msgid ""
 "Set the alias you want to use for:\n"
 "<b>foo@bar.baz</b>\n"
 "\n"
 "You can retrieve contact information from the server. "
 msgstr ""
+"यसका लागि प्रयोग गर्न चाहनुभएको उपनाम सेट गर्नुहोस्:\n"
+"<b>foo@bar.baz</b>\n"
+"\n"
+"तपाईँ सर्भरबाट सम्पर्क जानकारी पुन: प्राप्त गर्न सक्नुहुन्छ ।"
 
-#: ../ui/main.glade.h:77
+#: ../ui/main.glade.h:78
 msgid "Show _Offline Contacts"
 msgstr "अफलाइन सम्पर्कहरू देखाउनुहोस्"
 
-#: ../ui/main.glade.h:78
-msgid "Show _avatars"
-msgstr ""
-
 #: ../ui/main.glade.h:79
-#, fuzzy
-msgid "Show _smileys as images"
-msgstr "स्माइलिहरूलाई ग्राफिकल छविहरूमा परिवर्तन गर्नुहोस्"
+msgid "Show _avatars"
+msgstr "अवतार देखाउनुहोस्"
 
 #: ../ui/main.glade.h:80
-#, fuzzy
-msgid "Show co_mpact contact list"
-msgstr "सम्पर्क सूची देखाउनुहोस्"
+msgid "Show _smileys as images"
+msgstr "छविको रूपमा स्माइलीहरू देखाउनुहोस्"
 
 #: ../ui/main.glade.h:81
-msgid "Spell Checker"
-msgstr "हिज्जे परिक्षक"
+msgid "Show co_mpact contact list"
+msgstr "सङ्कुचन सम्पर्क सूची देखाउनुहोस्"
 
 #: ../ui/main.glade.h:82
+msgid "Sort by _name"
+msgstr "नाम अनुसार क्रमबद्ध गर्नुहोस्"
+
+#: ../ui/main.glade.h:83
+msgid "Sort by s_tate"
+msgstr "स्थिति अनुसार क्रमबद्ध गर्नुहोस्"
+
+#: ../ui/main.glade.h:84
+msgid "Spell Checker"
+msgstr "हिज्जे परीक्षक"
+
+#: ../ui/main.glade.h:85
 msgid "Spell Checking"
 msgstr "हिज्जे जाँच"
 
-#: ../ui/main.glade.h:83
+#: ../ui/main.glade.h:86
 msgid "Status"
 msgstr "वस्तुस्थिति"
 
-#: ../ui/main.glade.h:84
+#: ../ui/main.glade.h:87
 msgid "Status Message Presets"
-msgstr "स्थिति सन्देश प्रस्तुत गर्दछ"
+msgstr "वस्तुस्थिति सन्देश प्रस्तुत गर्दछ"
 
-#: ../ui/main.glade.h:85
+#: ../ui/main.glade.h:88
 msgid "Subscription Request"
 msgstr "सदस्यता अनुरोध"
 
-#: ../ui/main.glade.h:86
+#: ../ui/main.glade.h:89
 msgid "Suggestions for the word:"
 msgstr "शब्दका लागि सुझावहरू:"
 
-#: ../ui/main.glade.h:87
+#: ../ui/main.glade.h:90
 msgid "Themes"
-msgstr ""
+msgstr "विषयवस्तु"
 
-#: ../ui/main.glade.h:88
-#, fuzzy
+#: ../ui/main.glade.h:91
+msgid ""
+"This acts as a filter to the contact list below.\n"
+"\n"
+"You can use segments of contact's name or ID, for example, \"jabber.org\" "
+"will list everyone using that server.\n"
+"\n"
+"You can also use the name of a group to show only contacts in a specific "
+"group."
+msgstr ""
+"सम्पर्क सूची तलमा एउटा फिल्टरको रूपमा यसले कार्य गर्दछ।\n"
+"\n"
+"तपाईँले सम्पर्कको नाम वा आईडीको "
+"खण्ड प्रयोग गर्न सक्नुहुन्छ, उदाहरणका लागि, \"jabber.org\" ले त्यो सर्भर प्रयोग गर्ने जो "
+"कसैको पनि सूचीकृत गर्नेछ ।\n"
+"\n"
+"तपाईँले विशेष समूहमा सम्पर्कहरू मात्र देखाउन समूहको नाम पनि प्रयोग गर्न सक्नुहुन्छ ।"
+
+#: ../ui/main.glade.h:96
 msgid ""
 "This acts as a filter to the contact list below. You can use segments of "
 "contact's name or ID, for example, \"jabber.org\" will list everyone using "
 "that server"
 msgstr ""
-"सम्पर्क सूची तलमा एउटा फिल्टरको रूपमा यसले कार्य गर्दछ। तपाईँले सम्पर्कको नाम वा आइडिको "
+"सम्पर्क सूची तलमा एउटा फिल्टरको रूपमा यसले कार्य गर्दछ । तपाईँले सम्पर्कको नाम वा आईडीको "
 "खण्ड प्रयोग गर्न सक्नुहुन्छ, उदाहरणका लागि, \"jabber.org\" ले त्यो सर्भर प्रयोग गर्ने जो "
-"कसैको पनि सूचीकृत गर्दछ।"
-
-#: ../ui/main.glade.h:89
-#, fuzzy
-msgid "This is the name that will be used on your roster for this contact"
-msgstr "यो सम्पर्कका लागि तपाईँको रोस्टरमा यो नाम प्रयोग हुँनेछ।"
-
-#: ../ui/main.glade.h:90
-#, fuzzy
-msgid "This name will be used to identify you in chat windows"
-msgstr "कुराकानि सञ्झ्यालहरूमा तपाईँलाई परिचित गर्न यो नाम प्रयोग गरिनेछ"
-
-#: ../ui/main.glade.h:91
-#, fuzzy
-msgid ""
-"This name will be used to identify you when new contacts lookup your details"
-msgstr ""
-"तपाईँको विवरण नयाँ सम्पर्कले हेरेको बेलामा तपाईँलाई परिचित गर्न यो नाम प्रयोग गरिनेछ"
-
-#: ../ui/main.glade.h:92
-msgid ""
-"To add a new account, you can click on the 'Add' button and a new entry will "
-"be created for you to started configuring.\n"
-"\n"
-"If you do not want to add an account, simply click on the account you want "
-"to configure in the list on the left."
-msgstr ""
-
-#: ../ui/main.glade.h:95
-msgid "Use default name here from the contact's VCard."
-msgstr ""
-
-#: ../ui/main.glade.h:96
-#, fuzzy
-msgid "Use encryption (SS_L)"
-msgstr "गुप्तिकरण प्रयोग गर्नुहोस् (एसएसएल)"
+"कसैको पनि सूचीकृत गर्दछ ।"
 
 #: ../ui/main.glade.h:97
-msgid "Use system pro_xy"
-msgstr "प्रोक्सि प्रणाली प्रयोग गर्नुहोस्"
+msgid "This is the name that will be used on your roster for this contact"
+msgstr "यो तपाईँको सम्पर्कका लागि तपाईँको रोस्टरमा प्रयोग गरिने नाम हो"
 
 #: ../ui/main.glade.h:98
+msgid "This name will be used to identify you in chat windows"
+msgstr "कुराकानी सञ्झ्यालहरूमा तपाईँलाई परिचित गर्न यो नाम प्रयोग गरिनेछ"
+
+#: ../ui/main.glade.h:99
+msgid "This name will be used to identify you when new contacts lookup your details"
+msgstr "तपाईँको विवरण नयाँ सम्पर्कले हेरेको बेलामा तपाईँलाई परिचित गर्न यो नाम प्रयोग गरिनेछ"
+
+#: ../ui/main.glade.h:103
+msgid "Use default name here from the contact's VCard."
+msgstr "सम्पर्कको भीकार्डबाट यहाँ पूर्वनिर्धारित नाम प्रयोग गर्नुहोस् ।"
+
+#: ../ui/main.glade.h:104
+msgid "Use encryption (SS_L)"
+msgstr "गुप्तिकरण (SS_L) प्रयोग गर्नुहोस्"
+
+#: ../ui/main.glade.h:105
+msgid "Use system pro_xy"
+msgstr "प्रोक्सी प्रणाली प्रयोग गर्नुहोस्"
+
+#: ../ui/main.glade.h:106
 msgid "Version:"
 msgstr "संस्करण:"
 
-#: ../ui/main.glade.h:99
+#: ../ui/main.glade.h:107
 msgid "View Previous Conversations"
 msgstr "अघिल्लो वार्तालाप हेर्नुहोस्"
 
-#: ../ui/main.glade.h:101
+#: ../ui/main.glade.h:108
+msgid "Web site:"
+msgstr "वेब साइट:"
+
+#: ../ui/main.glade.h:109
 msgid "Which account do you want to use?"
 msgstr "तपाईँ कुन खाता प्रयोग गर्न चाहनुहुन्छ ?"
 
-#: ../ui/main.glade.h:102
+#: ../ui/main.glade.h:110
 msgid "You are not subscribed to this contact."
-msgstr "तपाईँलाई सो खातामा सदस्यता दिइएको छैन।"
+msgstr "तपाईँलाई सो खातामा सदस्यता दिइएको छैन ।"
 
-#: ../ui/main.glade.h:103
-#, fuzzy
+#: ../ui/main.glade.h:111
 msgid "_About"
-msgstr "खाताहरू"
+msgstr "बारेमा"
 
-#: ../ui/main.glade.h:105
+#: ../ui/main.glade.h:112
+msgid "_Accept"
+msgstr "स्वीकार गर्नुहोस्"
+
+#: ../ui/main.glade.h:113
 msgid "_Accounts"
 msgstr "खाताहरू"
 
-#: ../ui/main.glade.h:107
-#, fuzzy
+#: ../ui/main.glade.h:115
 msgid "_Add to status message list"
-msgstr "स्थितिमा सन्देश सूची थप्नुहोस्"
+msgstr "वस्तुस्थिति सन्देश सूचीमा थप्नुहोस्"
 
-#: ../ui/main.glade.h:108
+#: ../ui/main.glade.h:116
 msgid "_Birthday:"
-msgstr ""
+msgstr "जन्मदिन:"
 
-#: ../ui/main.glade.h:110
+#: ../ui/main.glade.h:118
 msgid "_Connect"
 msgstr "जडान"
 
-#: ../ui/main.glade.h:111
+#: ../ui/main.glade.h:119
 msgid "_Contents"
 msgstr "सामग्रीहरू"
 
-#: ../ui/main.glade.h:113
-#, fuzzy
+#: ../ui/main.glade.h:120
+msgid "_Deny"
+msgstr "अस्वीकार गर्नुहोस्"
+
+#: ../ui/main.glade.h:121
 msgid "_Description:"
 msgstr "वर्णन:"
 
-#: ../ui/main.glade.h:114
+#: ../ui/main.glade.h:122
 msgid "_Disconnect"
 msgstr "जडान विच्छेद गर्नुहोस्"
 
-#: ../ui/main.glade.h:116
-#, fuzzy
+#: ../ui/main.glade.h:124
 msgid "_Email:"
 msgstr "इमेल:"
 
-#: ../ui/main.glade.h:117
-#, fuzzy
+#: ../ui/main.glade.h:125
 msgid "_Enable spell checking"
 msgstr "हिज्जे परीक्षण सक्षम पार्नुहोस्"
 
-#: ../ui/main.glade.h:118
-#, fuzzy
+#: ../ui/main.glade.h:126
 msgid "_Enter the name or contact ID of the person you want to chat to below:"
-msgstr "तपाईँले कुराकानी गर्न चाहनुभएको मानिसको सम्पर्क नाम वा ID तल प्रविष्ट गर्नुहोस्:"
+msgstr "तपाईँले कुराकानी गर्न चाहनुभएको मानिसको सम्पर्क नाम वा आईडी तल प्रविष्ट गर्नुहोस्:"
 
-#: ../ui/main.glade.h:119
-#, fuzzy
+#: ../ui/main.glade.h:127
 msgid "_For:"
-msgstr "पोर्ट:"
+msgstr "यसक लागि:"
 
-#: ../ui/main.glade.h:120
-#, fuzzy
+#: ../ui/main.glade.h:128
 msgid "_Full Name:"
-msgstr "नाम:"
+msgstr "पूरा नाम:"
 
-#: ../ui/main.glade.h:121
-#, fuzzy
+#: ../ui/main.glade.h:129
 msgid "_Group:"
 msgstr "समूह:"
 
-#: ../ui/main.glade.h:122
+#: ../ui/main.glade.h:130
 msgid "_Help"
-msgstr ""
+msgstr "मद्दत"
 
-#: ../ui/main.glade.h:123
+#: ../ui/main.glade.h:131
 msgid "_Name:"
 msgstr "नाम:"
 
-#: ../ui/main.glade.h:124
+#: ../ui/main.glade.h:132
 msgid "_New Message..."
 msgstr "नयाँ सन्देश..."
 
-#: ../ui/main.glade.h:125
-#, fuzzy
+#: ../ui/main.glade.h:133
 msgid "_Nick Name:"
 msgstr "उपनाम:"
 
-#: ../ui/main.glade.h:127
+#: ../ui/main.glade.h:135
 msgid "_Open new chats in separate windows"
 msgstr "नयाँ कुराकानी छुट्टै सञ्झ्यालहरूमा खोल्नुहोस्"
 
-#: ../ui/main.glade.h:128
-#, fuzzy
+#: ../ui/main.glade.h:136
 msgid "_Password:"
 msgstr "पासवर्ड:"
 
-#: ../ui/main.glade.h:129
+#: ../ui/main.glade.h:137
 msgid "_Personal Information"
 msgstr "व्यक्तिगत जानकारी"
 
-#: ../ui/main.glade.h:130
+#: ../ui/main.glade.h:138
 msgid "_Play sound when messages arrive"
 msgstr "सन्देशहरू आउँदा ध्वनि प्ले गर्नुहोस्"
 
-#: ../ui/main.glade.h:131
+#: ../ui/main.glade.h:139
 msgid "_Port:"
 msgstr "पोर्ट:"
 
-#: ../ui/main.glade.h:132
+#: ../ui/main.glade.h:140
 msgid "_Preferences"
 msgstr "प्राथमिकताहरु"
 
-#: ../ui/main.glade.h:133
+#: ../ui/main.glade.h:141
 msgid "_Quit"
-msgstr ""
+msgstr "अन्त्य गर्नुहोस्"
 
-#: ../ui/main.glade.h:134
-#, fuzzy
+#: ../ui/main.glade.h:142
 msgid "_Quit Message:"
-msgstr "नयाँ सन्देश"
+msgstr "सन्देश अन्त्य गर्नुहोस्:"
 
-#: ../ui/main.glade.h:135
+#: ../ui/main.glade.h:143
 msgid "_Retrieve"
-msgstr ""
+msgstr "पुन: प्राप्त गर्नुहोस्"
 
-#: ../ui/main.glade.h:138
+#: ../ui/main.glade.h:145
+msgid "_Search"
+msgstr "खोजी गर्नुहोस्"
+
+#: ../ui/main.glade.h:147
 msgid "_Show Contact List"
 msgstr "सम्पर्क सूची देखाउनुहोस्"
 
-#: ../ui/main.glade.h:139
+#: ../ui/main.glade.h:148
 msgid "_Subscribe"
-msgstr "सदस्य बनाऊनुहोस्"
+msgstr "सदस्य बनाउनुहोस्"
 
-#: ../ui/main.glade.h:140
-#, fuzzy
+#: ../ui/main.glade.h:149
 msgid "_Type:"
-msgstr "विषय:"
+msgstr "प्रकार:"
 
-#: ../ui/main.glade.h:141
-#, fuzzy
+#: ../ui/main.glade.h:150
 msgid "_Use for chat rooms"
-msgstr "यो कुराकानी कोठा बचत गर्नुहोस्"
+msgstr "कुराकानी कोठाका लागि प्रयोग गर्नुहोस्"
 
-#: ../ui/main.glade.h:143
-#, fuzzy
+#: ../ui/main.glade.h:152
 msgid "_Web site:"
 msgstr "वेब साइट:"
 
-#: ../ui/main.glade.h:144
+#: ../ui/main.glade.h:153
 msgid "irc account settings"
-msgstr ""
+msgstr "आईआरसी खाता सेटिङ"
 
-#: ../ui/main.glade.h:145
+#: ../ui/main.glade.h:154
 msgid "jabber account settings"
-msgstr ""
+msgstr "ज्याबर खाता सेटिङ"
 
-#: ../ui/main.glade.h:146
+#: ../ui/main.glade.h:155
 msgid "msn account settings"
-msgstr ""
+msgstr "एमएसएन खाता सेटिङ"
 
-#~ msgid "Be silent when away"
-#~ msgstr "टाढा हुँदा शान्त हुनुहोस्"
-
-#~ msgid "Be silent when busy"
-#~ msgstr "व्यस्त हुंदा शान्त हुनुहोस्"
-
-#~ msgid "Height of main window"
-#~ msgstr "मुख्य सञ्झ्यालको उचाइ"
-
-#~ msgid "Preset status messages"
-#~ msgstr "स्थिति सन्देश पुर्वनिश्चित गर्नुहोस्"
-
-#~ msgid "Preset status messages."
-#~ msgstr "स्थिति सन्देश पुर्वनिश्चित गर्नुहोस्"
-
-#~ msgid "The X position of the main window."
-#~ msgstr "मुख्य सञ्झ्यालको एक्स स्थिति"
-
-#~ msgid "The Y position of the main window."
-#~ msgstr "मुख्य सञ्झ्यालको वाइ स्थिति"
-
-#~ msgid "The width of the main window."
-#~ msgstr "मुख्य सञ्झ्यालको चौडाइ"
-
-#~ msgid "Whether spell checking should be turned on."
-#~ msgstr "अक्षर हुँदैनखुल्ला राख्नु पर्दछ कि"
-
-#~ msgid "Width of the main window"
-#~ msgstr "मुख्य सञ्झ्यालको चौडाइ"
-
-#~ msgid "X position of main window"
-#~ msgstr "मुख्य सञ्झ्यालको एक्स स्थिति "
-
-#~ msgid "Y position of main window"
-#~ msgstr "मुख्य सञ्झ्यालको वाइ स्थिति"
-
-#~ msgid "Perhaps you are trying to connect to the wrong port?"
-#~ msgstr "सम्भवत तपाईँले गलत पोर्टमा जडान प्रयास गर्दै हुनुहुन्छ ?"
-
-#~ msgid "Perhaps the service is not currently running?"
-#~ msgstr "सम्भवत सेवा हालमा चलिरहेको छैन ?"
-
-#~ msgid "Check your connection details."
-#~ msgstr "तपाईँको जडान विवरण जाँच गर्नुहोस्।"
-
-#~ msgid "Perhaps the server is not running this service."
-#~ msgstr "सम्भवत सर्भर यस सेवामा चलिरहेको छैन।"
-
-#~ msgid "Check your username and password are correct."
-#~ msgstr "तपाईँको प्रयोगकर्ता नाम र पासवर्ड ठीक छ भनि जाँच गर्नुहोस्।"
-
-#~ msgid "%s will be added to your contact list."
-#~ msgstr "%s तपाईँको सम्पर्क सूचीमा थपिनेछ"
-
-#~ msgid "%s ID of new contact:"
-#~ msgstr "नयाँ सम्पर्कको %s ID:"
-
-#~ msgid "Example: %s"
-#~ msgstr "उदाहरण: %s"
-
-#~ msgid "Gossip, Instant Messaging Client"
-#~ msgstr "गसिप, तुरुन्त सन्देश गर्ने ग्राहक"
-
-#~ msgid "You have no Instant Messaging accounts configured!"
-#~ msgstr "तपाईँसँग तत्काल सन्देशगर्ने खाता कन्फिगर गरेको हुनुपर्दछ !"
-
-#~ msgid ""
-#~ "Next you will be presented with the Account Information dialog to set "
-#~ "your details up."
-#~ msgstr "पछि तपाईँले तपाईँको विवरण सेट गर्न खाता सूचना संवादसँग प्रस्तुति गर्नु हुँनेछ।"
-
-#~ msgid ""
-#~ "Please enter your invitation message to:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "यसका लागि कृपया तपाईँको निमन्त्रण सन्देश प्रविष्ट गर्नुहोस्:\n"
-#~ "%s"
-
-#~ msgid "Contact Information for %s"
-#~ msgstr "%s का लागि सम्पर्क सूचना"
-
-#~ msgid "Requested Information"
-#~ msgstr "खाता सूचना"
-
-#~ msgid "/Contact Infor_mation"
-#~ msgstr "/सम्पर्क जानकारी"
-
-#~ msgid "/Re_name Contact"
-#~ msgstr "/सम्पर्क पुन: नामकरण गर्नुहोस्"
-
-#~ msgid "/_Edit Groups"
-#~ msgstr "/समूहहरू सम्पादन गर्नुहोस्"
-
-#~ msgid "/_View Previous Conversations"
-#~ msgstr "/पहिलो वार्तालाप हेर्नुहोस्"
-
-#~ msgid ""
-#~ "Please enter a new nickname for the contact\n"
-#~ "%s"
-#~ msgstr ""
-#~ "कृपया सम्पर्कका लागि नयाँ उपनाम प्रविष्ट गर्नुहोस्\n"
-#~ "%s"
-
-#~ msgid "Edit groups for %s"
-#~ msgstr "%s का लागि समूहहरू सम्पादन गर्नुहोस्"
-
-#~ msgid "Conversation Log"
-#~ msgstr "सम्मेलन लग"
-
-#~ msgid "Registering account"
-#~ msgstr "खाता दर्ता गर्दै"
-
-#~ msgid "Respond"
-#~ msgstr "प्रतिक्रिया"
-
-#~ msgid "Available..."
-#~ msgstr "उपलब्ध..."
-
-#~ msgid "Busy..."
-#~ msgstr "व्यस्त..."
-
-#~ msgid "Away..."
-#~ msgstr "टाढा..."
-
-#~ msgid ""
-#~ "Customize your own nickname, the server and chatroom which you wish to "
-#~ "join."
-#~ msgstr "तपाईँले जोड्न चाहनुभएको आफ्नो उपनाम, सर्भर र कुराकानी कोठा अनुकूलन गर्नुहोस्।"
-
-#~ msgid "Na_me:"
-#~ msgstr "नाम:"
-
-#~ msgid "New Chat Room"
-#~ msgstr "नयाँ कुराकानी कोठा"
-
-#~ msgid ""
-#~ "Pick a saved chat room from the presets available below and click Join to "
-#~ "start chatting."
-#~ msgstr ""
-#~ "तलबाट हालमा उपलब्धबाट एउटा बचत गरिएको कुराकानी कोठा लिनुहोस् र कुराकानी सुरु गर्न "
-#~ "जोड्नु क्लिक गर्नुहोस्।"
-
-#~ msgid "    "
-#~ msgstr "    "
-
-#~ msgid "<b>Connection</b>"
-#~ msgstr "<b>जडान</b>"
-
-#~ msgid "<b>Information requested, please wait...</b>"
-#~ msgstr "<b>जानकारी अनुरोध गरिएको छ, कृपया प्रतीक्षा गर्नुहोस्...</b>"
-
-#~ msgid "<b>Sound</b>"
-#~ msgstr "<b>आवाज</b>"
-
-#~ msgid "<span size=\"smaller\">Example: user@jabber.org</span>"
-#~ msgstr "<span size=\"smaller\">उदाहरण: user@jabber.org</span>"
-
-#~ msgid "<span size=\"smaller\">Example:</span>"
-#~ msgstr "<span size=\"smaller\">उदाहरण:</span>"
-
-#~ msgid "Account Name"
-#~ msgstr "खाता नाम"
-
-#~ msgid "Check spelling while I _type"
-#~ msgstr " I टाइप गर्दा हिज्जे जाँच गर्नुहोस्"
-
-#~ msgid "Connection Details"
-#~ msgstr "जडान विवरण"
-
-#~ msgid "Do you already have an account set up on a server?"
-#~ msgstr "के तपाईँले पहिल्यै सर्भरमा एउटा खाता सेटअप गर्नुभएको छ ?"
-
-#~ msgid "Enter the port used in the connection for this account."
-#~ msgstr "यो खाताका लागि जडानमा प्रयोग गरिएको पोर्ट प्रविष्ट गर्नुहोस्।"
-
-#~ msgid "Enter the server used in the connection for this account."
-#~ msgstr "यो खाताका लागि जडानमा प्रयोग गरिएको सर्भर प्रविष्ट गर्नुहोस्।"
-
-#~ msgid "Enter the user's contact ID:"
-#~ msgstr "प्रयोगकर्ताको सम्पर्क ID प्रविष्ट गर्नुहोस्:"
-
-#~ msgid "Enter your real name here."
-#~ msgstr "तपाईँको वास्तविक नाम यहाँ प्रविष्ट गर्नुहोस्।"
-
-#~ msgid "Finished"
-#~ msgstr "समाप्त"
-
-#~ msgid "For increased security, enable this option."
-#~ msgstr "सुरक्षा बढाउनका लागि, यो विकल्प सक्षम पार्नुहोस्।"
-
-#~ msgid "Gossip"
-#~ msgstr "गसिप"
-
-#~ msgid ""
-#~ "Gossip is a modern client for the Jabber Instant Messaging system.\n"
-#~ "\n"
-#~ "This assistant will help you configure Gossip and connect you to your "
-#~ "favorite Jabber server.\n"
-#~ "\n"
-#~ "To get started, just click \"Forward\"."
-#~ msgstr ""
-#~ "ज्याबर तयारि सन्देश प्रणालीका लागि गसिप एउटा आधुनिक ग्राहक हो।\n"
-#~ "\n"
-#~ "यो सहायकले तपाईँलाई गसिप कन्फिगर गर्न र तपाईँलाई तपाईँको मन पर्ने ज्याबर सेवामा "
-#~ "जडान गर्न मद्दत गर्दछ।\n"
-#~ "\n"
-#~ "सुरु हुन, \"अघिल्तिर\"क्लिक गर्नुहोस्।"
-
-#~ msgid ""
-#~ "If you have another machine on your network which 'proxies' the "
-#~ "connection to the internet and you want to use it, enable this option."
-#~ msgstr ""
-#~ "यदि तपाईँसँग तपाईँको सञ्जालमा इन्टरनेटमा जडान 'प्रोक्सि' गर्ने अर्को मेशिन छ भने र "
-#~ "तपाईँले यो प्रयोग गर्न चाहनुहुन्छ भने, यो विकल्प सक्षम पार्नुहोस्।"
-
-#~ msgid ""
-#~ "If you need to set specific connection details, like a different server "
-#~ "or port, you can configure that here:"
-#~ msgstr ""
-#~ "यदि तपाईँले निर्दिष्ट जडान विवरण सेट गर्न आवश्यक परेमा, फरक सर्भरको जस्तो वा पोर्ट, "
-#~ "तपाईँले त्यो यहाँ कन्फिगर गर्न सक्नुहुन्छ:"
-
-#~ msgid ""
-#~ "In order to subscribe to presence notifications from the user, a request "
-#~ "will be sent. Until this request is approved, the user will always be "
-#~ "shown as \"Offline\" in your contact list."
-#~ msgstr ""
-#~ "प्रयोगकर्ताबाट उपस्थिति सूचीतताको सदस्य बन्नका लागि, एउटा अनुरोध पठाइनेछ। यो "
-#~ "अनुरोध स्विकार नहुँदासम्म तपाईँको सम्पर्क सूचीमा प्रयोगकर्तालाई सधै \"अफलाइन\"को रूपमा "
-#~ "देखाइने छ।"
-
-#~ msgid "In which group do you want to place this contact?"
-#~ msgstr "तपाईँले यो सम्पर्कलाई कुन समूहमा राख्न चाहनुहुन्छ ?"
-
-#~ msgid "Jabber ID:"
-#~ msgstr "ज्याबर आइडि:"
-
-#~ msgid "Join _Group Chat..."
-#~ msgstr "समूह कुराकानि जोड्नुहोस्..."
-
-#~ msgid "Nickname:"
-#~ msgstr "उपनाम:"
-
-#~ msgid "Port:"
-#~ msgstr "पोर्ट:"
-
-#~ msgid "Press Subscribe to request to receive their status."
-#~ msgstr "तिनिहरूको अवस्था प्राप्त गर्न सदस्यता थिच्नुहोस्।"
-
-#~ msgid "Registering Account"
-#~ msgstr "खाता दर्ता गर्दैछ"
-
-#~ msgid "Requested information."
-#~ msgstr "अनुरोधित जानकारी"
-
-#~ msgid "Requesting contact information, please wait..."
-#~ msgstr "व्यक्तिगत विवरण अनुरोध गर्दै, कृपया प्रतीक्षा गर्नुहोस्..."
-
-#~ msgid "Resource:"
-#~ msgstr "संसाधन:"
-
-#~ msgid "Sending request"
-#~ msgstr "अनुरोध पठाउँदै"
-
-#~ msgid "Server:"
-#~ msgstr "सर्भर:"
-
-#~ msgid "Web Site:"
-#~ msgstr "वेब साइट:"
-
-#~ msgid "Welcome to Gossip"
-#~ msgstr "गसिपमा स्वागत छ"
-
-#~ msgid "What instant messaging system does the contact use?"
-#~ msgstr "सम्पर्कले के तयारि सन्देश प्रणाली प्रयोग गर्दछ ?"
-
-#~ msgid "What is your name?"
-#~ msgstr "तपाईँको नाम के हो ?"
-
-#~ msgid ""
-#~ "What name do you want to use to identify this account?\n"
-#~ "\n"
-#~ "This name could be something associated with the service provider, for "
-#~ "example, <b>Google</b>."
-#~ msgstr ""
-#~ "तपाईँले सो खाता परिचित गर्न कुन नाम चाहनुहुन्छ ?\n"
-#~ "\n"
-#~ "यो नाम तपाईँको सर्भर प्रदायकसँग सम्बन्धित हुन सक्दछ, उदाहरणका लागि, <b>गुगल</b>"
-
-#~ msgid "What password do you want to use?"
-#~ msgstr "तपाईँ कुन पासवर्ड प्रयोग गर्न चाहनुहुन्छ ?"
-
-#~ msgid "What username do you use?"
-#~ msgstr "तपाईँ कुन प्रयोगकर्ता नाम प्रयोग गर्नुहुन्छ ?"
-
-#~ msgid "What username do you want to use?"
-#~ msgstr "तपाईँ कुन प्रयोगकर्ता नाम प्रयोग गर्न चाहनुहुन्छ ?"
-
-#~ msgid "Which account do you want to add this contact to?"
-#~ msgstr "तपाईँले यो सम्पर्कलाई कुन खाता थप्न चाहनुहुन्छ ?"
-
-#~ msgid ""
-#~ "You can change your account settings later by selecting the Edit-"
-#~ ">Accounts menu item."
-#~ msgstr ""
-#~ "तपाईँले सम्पादन-> खाताको मेनु वस्तु चयन गरेर तपाईँको खाता सेटिङ परिवर्तन गर्न सक्नुहुन्छ।"
-
-#~ msgid ""
-#~ "You can leave this blank if you don't want your password stored on a "
-#~ "public machine. If you decide to do this, you will be prompted each time "
-#~ "you connect for a password."
-#~ msgstr ""
-#~ "यदि तपाईँले सार्वजनिक मेशिनमा तपाईँको पासवर्ड सङ्ग्रह गर्न चाहानु हुन्न भने तपाईँले "
-#~ "यसलाई खाली छोड्न सक्नुहुन्छ। यदि तपाईँले त्यस्तो गर्ने निर्णय गर्न भयो भने, तपाईँलाई हरेक "
-#~ "पटक पासवर्डका लागि जडान गर्दा प्रोप्ट गरिनेछ।"
-
-#~ msgid ""
-#~ "You need to set a name for the connection, for example, <b>Home</b> or "
-#~ "<b>Laptop</b>."
-#~ msgstr ""
-#~ "तपाईँले जडानका लागि एउटा नाम सेट गर्न आवश्यक छ, उदाहरणका लागि, <b>गृह</b> वा "
-#~ "<b>ल्याबटप</b>"
-
-#~ msgid "Your Account"
-#~ msgstr "तपाईँको खाता"
-
-#~ msgid "Your Identity"
-#~ msgstr "तपाईँको पहिचान"
-
-#~ msgid "Your new account has now been set up."
-#~ msgstr "तपाईँको नयाँ खाता अहिले सेटअप गरिएको छ।"
-
-#~ msgid "_Forget"
-#~ msgstr "बिसर्नु"
-
-#~ msgid "_No"
-#~ msgstr "होइन"
-
-#~ msgid "_Search..."
-#~ msgstr "खोजी गर्नुहोस्"
-
-#~ msgid "_Yes"
-#~ msgstr "हो"
