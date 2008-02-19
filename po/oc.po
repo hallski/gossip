@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oc\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-02 21:53+0100\n"
+"POT-Creation-Date: 2008-02-19 20:24+0100\n"
 "PO-Revision-Date: 2007-12-27 15:22+0100\n"
 "Last-Translator: Yannig Marchegay (Kokoyaya) <yannig@marchegay.org>\n"
 "Language-Team: Occitan <ubuntu-l10n-oci@lists.ubuntu.com>\n"
@@ -72,8 +72,8 @@ msgstr ""
 
 #: ../gossip.schemas.in.h:12
 msgid ""
-"Font name to use instead of the system terminal font. Only applied when NOT "
-"using the system terminal font."
+"Font name to use instead of the system document font. Only applied when NOT "
+"using the system document font."
 msgstr ""
 
 #: ../gossip.schemas.in.h:13
@@ -132,7 +132,7 @@ msgid "Use notification sounds"
 msgstr ""
 
 #: ../gossip.schemas.in.h:26
-msgid "Use system terminal font"
+msgid "Use system document font"
 msgstr ""
 
 #: ../gossip.schemas.in.h:27
@@ -187,7 +187,7 @@ msgid "Whether to show the contact list in compact mode or not."
 msgstr ""
 
 #: ../gossip.schemas.in.h:38
-msgid "Whether to use the system terminal font theme or our specific theme."
+msgid "Whether to use the system document font theme or a user specified font."
 msgstr ""
 
 #: ../gossip.schemas.in.h:39
@@ -1671,9 +1671,9 @@ msgid "<b>Behaviour</b>"
 msgstr "<b>Comportament</b>"
 
 #: ../data/glade/main.glade.h:7
-#, fuzzy
+#
 msgid "<b>Chat</b>"
-msgstr "<b>Nom</b>"
+msgstr ""
 
 #: ../data/glade/main.glade.h:8
 msgid "<b>Client Information</b>"
@@ -2048,7 +2048,7 @@ msgid ""
 msgstr ""
 
 #: ../data/glade/main.glade.h:113
-msgid "Use _system terminal font"
+msgid "Use _system document font"
 msgstr ""
 
 #: ../data/glade/main.glade.h:114
