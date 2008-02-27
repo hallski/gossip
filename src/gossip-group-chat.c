@@ -1426,7 +1426,7 @@ gossip_group_chat_set_nick (GossipGroupChat *group_chat)
 
 	group_chat_dialog_new (group_chat, 
 			       "change-nick", 
-			       _("Enter the new nickname you want to be know by:"),
+			       _("Enter the new nickname you want to be known by:"),
 			       gossip_chatroom_get_nick (priv->chatroom));
 }
 

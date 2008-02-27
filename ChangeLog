@@ -1,5 +1,11 @@
 2008-02-27  Wouter Bolsterlee  <wbolster@svn.gnome.org>
 
+	* src/gossip-group-chat.c (gossip_group_chat_set_nick):
+
+	Fix error in user-visible sting.
+
+2008-02-27  Wouter Bolsterlee  <wbolster@svn.gnome.org>
+
 	* CONTRIBUTORS: Shamelessly add myself since people who
 	have contributed even less are in it as well :)
 
