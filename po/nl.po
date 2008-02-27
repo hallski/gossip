@@ -1612,7 +1612,7 @@ msgstr "Vo_rig tabblad"
 
 #: ../data/glade/chat.glade.h:27 ../data/glade/main.glade.h:158
 msgid "_Room"
-msgstr "_Ruimte"
+msgstr "C_hatruimte"
 
 #: ../data/glade/chat.glade.h:28
 msgid "_Show Contacts"
