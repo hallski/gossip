@@ -1,4 +1,4 @@
-# translation of gossip.HEAD.po to Basque
+# translation of eu.po to Basque
 # Copyright (C) 2003 THE gossip'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the gossip package.
 #
@@ -7,10 +7,10 @@
 # Iñaki Larrañaga Murgoitio <dooteo@zundan.com>, 2007.
 msgid ""
 msgstr ""
-"Project-Id-Version: gossip.HEAD\n"
+"Project-Id-Version: eu\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-14 16:02+0100\n"
-"PO-Revision-Date: 2008-02-14 15:56+0100\n"
+"POT-Creation-Date: 2008-02-27 13:12+0100\n"
+"PO-Revision-Date: 2008-02-27 13:14+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@euskalgnu.org>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
 "MIME-Version: 1.0\n"
@@ -36,8 +36,7 @@ msgid "Chat window theme"
 msgstr "Berriketako leihoaren gaia"
 
 #: ../gossip.schemas.in.h:3
-msgid ""
-"Comma separated list of spell checker languages to use (e.g. en, fr, nl)."
+msgid "Comma separated list of spell checker languages to use (e.g. en, fr, nl)."
 msgstr ""
 "Komaz bereiztu erabiltzea nahi diren hizkuntzen zuzentzaile ortografikoen "
 "zerrenda (adib. de, ca, eu)."
@@ -157,8 +156,7 @@ msgstr ""
 "ez."
 
 #: ../gossip.schemas.in.h:29
-msgid ""
-"Whether or not to convert smileys into graphical images in conversations."
+msgid "Whether or not to convert smileys into graphical images in conversations."
 msgstr ""
 "Elkarrizketetan smiley-ak aurpegiera grafikoetara bihurtuko diren ala ez "
 "adierazten du."
@@ -335,8 +333,7 @@ msgstr "Berriketa-gelako gehienezko erabiltzaile kopurua gainditu da."
 
 #: ../libgossip/gossip-chatroom-provider.c:418
 msgid "The remote conference server did not respond in a sensible time."
-msgstr ""
-"Urruneko solasaldiko zerbitzariak ez du erantzun denboraldi handi batean."
+msgstr "Urruneko solasaldiko zerbitzariak ez du erantzun denboraldi handi batean."
 
 #: ../libgossip/gossip-chatroom-provider.c:422
 msgid "An unknown error occurred, check your details are correct."
@@ -451,8 +448,7 @@ msgstr "Zerbitzariaren helbidea ezin izan da ebatzi."
 
 #: ../libgossip/gossip-jabber-utils.c:313
 msgid "Account requires a password to authenticate and none was given."
-msgstr ""
-"Kontuak pasahitz bat behar du autentifikatzeko, baina ez da pasahitzik eman."
+msgstr "Kontuak pasahitz bat behar du autentifikatzeko, baina ez da pasahitzik eman."
 
 #: ../libgossip/gossip-jabber-utils.c:316
 msgid "Connection timed out."
@@ -558,7 +554,7 @@ msgstr "Fitxategia handiegia da"
 msgid "Unknown error"
 msgstr "Errore ezezaguna"
 
-#: ../src/gossip-about-dialog.c:63
+#: ../src/gossip-about-dialog.c:64
 msgid ""
 "Gossip is free software; you can redistribute it and/or modify it under the "
 "terms of the GNU General Public License as published by the Free Software "
@@ -569,7 +565,7 @@ msgstr ""
 "ek argitaratutako GNU Lizentzia Publiko Orokorraren 2. bertsioan, edo "
 "(nahiago baduzu) beste berriago batean, jasotako baldintzak betez gero."
 
-#: ../src/gossip-about-dialog.c:67
+#: ../src/gossip-about-dialog.c:68
 msgid ""
 "Gossip is distributed in the hope that it will be useful, but WITHOUT ANY "
 "WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
@@ -581,7 +577,7 @@ msgstr ""
 "HELBURU PARTIKULARRETARAKO ERABILTZEKO. Argibide gehiago nahi izanez gero, "
 "ikus GNU Lizentzia Publiko Orokorra."
 
-#: ../src/gossip-about-dialog.c:71
+#: ../src/gossip-about-dialog.c:72
 msgid ""
 "You should have received a copy of the GNU General Public License along with "
 "Gossip; if not, write to the Free Software Foundation, Inc., 51 Franklin "
@@ -591,11 +587,11 @@ msgstr ""
 "jasoko zenuen; hala ez bada, idatzi hona: Free Software Foundation, Inc., 51 "
 "Franklin Street, Fifth Floor, Boston, MA 02110-130159 USA"
 
-#: ../src/gossip-about-dialog.c:99
+#: ../src/gossip-about-dialog.c:100
 msgid "An Instant Messaging client for GNOME"
 msgstr "Gossip, berehalako mezularitzako bezero bat GNOMErako"
 
-#: ../src/gossip-about-dialog.c:105
+#: ../src/gossip-about-dialog.c:106
 msgid "translator-credits"
 msgstr ""
 "Mikel Olasagasti <hey_neken@mundurat.net>\n"
@@ -1147,7 +1143,7 @@ msgid "Enter the new topic you want to set for this room:"
 msgstr "Idatzi gai berria gela honetan ezartzeko:"
 
 #: ../src/gossip-group-chat.c:1429
-msgid "Enter the new nickname you want to be know by:"
+msgid "Enter the new nickname you want to be known by:"
 msgstr "Idatzi goitizen berria zure burua aurkezteko:"
 
 #: ../src/gossip-group-chat.c:1453
@@ -1651,8 +1647,7 @@ msgid "Edit Favorite Room"
 msgstr "Editatu gogoko gela"
 
 #: ../data/glade/group-chat.glade.h:4
-msgid ""
-"Enter the room name to join here or click on one or more rooms in the list."
+msgid "Enter the room name to join here or click on one or more rooms in the list."
 msgstr ""
 "Idatzi gelaren izena bertara elkartzeko edo egin klik gela batean edo "
 "gehiagotan zerrendan."
@@ -1686,15 +1681,13 @@ msgid "S_erver:"
 msgstr "_Zerbitzaria:"
 
 #: ../data/glade/group-chat.glade.h:13
-msgid ""
-"Show more information about chatrooms found and make the window resizable."
+msgid "Show more information about chatrooms found and make the window resizable."
 msgstr ""
 "Erakutsi aurkitutako berriketa-gelen informazio gehiago eta leihoa tamainaz "
 "aldagarria egin."
 
 #: ../data/glade/group-chat.glade.h:14
-msgid ""
-"This list represents all chat rooms hosted on the server you have entered."
+msgid "This list represents all chat rooms hosted on the server you have entered."
 msgstr ""
 "Zerrenda honek emandako zerbitzarian ostatutako berriketa-gela guztiak "
 "adierazten ditu."
@@ -1942,8 +1935,7 @@ msgid "ID:"
 msgstr "IDa:"
 
 #: ../data/glade/main.glade.h:57
-msgid ""
-"If you chose to decide later you will be asked the next time you log on."
+msgid "If you chose to decide later you will be asked the next time you log on."
 msgstr ""
 "Geroago erabakitzea hautatu baduzu, saioa hasten duzun hurrengo aldian "
 "galdetuko zaizu."
@@ -2143,8 +2135,7 @@ msgid "This name will be used to identify you in chat windows"
 msgstr "Izen hau zu identifikatzeko erabiliko da berriketako leihoetan."
 
 #: ../data/glade/main.glade.h:109
-msgid ""
-"This name will be used to identify you when new contacts lookup your details"
+msgid "This name will be used to identify you when new contacts lookup your details"
 msgstr ""
 "Izen hau zu identifikatzeko erabiliko da kontaktu berriek zure xehetasunak "
 "begiratzean."
@@ -2354,3 +2345,4 @@ msgstr "_Berriketa"
 #: ../data/glade/main.glade.h:171
 msgid "msn account settings"
 msgstr "msn kontuaren ezarpenak"
+
