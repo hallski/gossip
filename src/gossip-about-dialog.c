@@ -56,6 +56,7 @@ static const char *documenters[] = {
 
 static const char *artists[] = {
 	"Daniel Taylor",
+	"Andreas Nilsson",
 	NULL
 };
 
