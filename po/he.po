@@ -1,0 +1,2290 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+
+msgid ""
+msgstr ""
+"Project-Id-Version: gossip\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-02-20 04:04+0000\n"
+"PO-Revision-Date: 2008-02-23 18:22+0200\n"
+"Last-Translator: Mark Krapivner <mark125@gmail.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\\n\n"
+"X-Poedit-Language: Hebrew\n"
+
+#: ../gossip.desktop.in.in.h:1
+msgid "Gossip Instant Messenger"
+msgstr ""
+"‏Gossip - מסרים מיידיים"
+
+#: ../gossip.desktop.in.in.h:2
+msgid "Instant Messenger"
+msgstr "מסרים מיידיים"
+
+#: ../gossip.schemas.in.h:1
+msgid "Always open a separate chat window for new chats."
+msgstr "Always open a separate chat window for new chats."
+
+#: ../gossip.schemas.in.h:2
+msgid "Chat window theme"
+msgstr "Chat window theme"
+
+#: ../gossip.schemas.in.h:3
+msgid ""
+"Comma separated list of spell checker languages to use (e.g. en, fr, nl)."
+msgstr ""
+"Comma separated list of spell checker languages to use (e.g. en, fr, nl)."
+
+#: ../gossip.schemas.in.h:4
+msgid "Compact contact list"
+msgstr "Compact contact list"
+
+#: ../gossip.schemas.in.h:5
+msgid "Contact list sort criterium"
+msgstr "Contact list sort criterium"
+
+#: ../gossip.schemas.in.h:6
+msgid "Default directory to select an avatar image from"
+msgstr "Default directory to select an avatar image from"
+
+#: ../gossip.schemas.in.h:7
+msgid "Enable popup when contact is available"
+msgstr "Enable popup when contact is available"
+
+#: ../gossip.schemas.in.h:8
+msgid "Enable sound when away"
+msgstr "Enable sound when away"
+
+#: ../gossip.schemas.in.h:9
+msgid "Enable sound when busy"
+msgstr "Enable sound when busy"
+
+#: ../gossip.schemas.in.h:10
+msgid "Enable spell checker"
+msgstr "Enable spell checker"
+
+#: ../gossip.schemas.in.h:11
+msgid "Font name to use"
+msgstr "Font name to use"
+
+#: ../gossip.schemas.in.h:12
+msgid ""
+"Font name to use instead of the system document font. Only applied when NOT "
+"using the system document font."
+msgstr ""
+"Font name to use instead of the system document font. Only applied when NOT "
+"using the system document font."
+
+#: ../gossip.schemas.in.h:13
+msgid "Hide main window"
+msgstr "Hide main window"
+
+#: ../gossip.schemas.in.h:14
+msgid "Hide the main window."
+msgstr "Hide the main window."
+
+#: ../gossip.schemas.in.h:15
+msgid "Open new chats in separate windows"
+msgstr "Open new chats in separate windows"
+
+#: ../gossip.schemas.in.h:16
+msgid "Show avatars"
+msgstr "Show avatars"
+
+#: ../gossip.schemas.in.h:17
+msgid "Show hint about closing the main window"
+msgstr "Show hint about closing the main window"
+
+#: ../gossip.schemas.in.h:18
+msgid "Show offline contacts"
+msgstr "Show offline contacts"
+
+#: ../gossip.schemas.in.h:19
+msgid "Spell checking languages"
+msgstr "Spell checking languages"
+
+#: ../gossip.schemas.in.h:20
+msgid "The default location for file transfers to be saved to"
+msgstr "The default location for file transfers to be saved to"
+
+#: ../gossip.schemas.in.h:21
+msgid "The last directory that an avatar image was chosen from."
+msgstr "The last directory that an avatar image was chosen from."
+
+#: ../gossip.schemas.in.h:22
+msgid "The theme that is used to display the conversation in chat windows."
+msgstr "The theme that is used to display the conversation in chat windows."
+
+#: ../gossip.schemas.in.h:23
+msgid ""
+"This is updated each time the user changes the location they wish to save "
+"the file to so that the last location used to save file transfers can be "
+"used without prompting the user each time."
+msgstr ""
+"This is updated each time the user changes the location they wish to save "
+"the file to so that the last location used to save file transfers can be "
+"used without prompting the user each time."
+
+#: ../gossip.schemas.in.h:24
+msgid "Use graphical smileys"
+msgstr "Use graphical smileys"
+
+#: ../gossip.schemas.in.h:25
+msgid "Use notification sounds"
+msgstr "Use notification sounds"
+
+#: ../gossip.schemas.in.h:26
+msgid "Use system document font"
+msgstr "Use system document font"
+
+#: ../gossip.schemas.in.h:27
+msgid "Use theme for chat rooms"
+msgstr "Use theme for chat rooms"
+
+#: ../gossip.schemas.in.h:28
+msgid ""
+"Whether or not to check words typed against the languages you want to check "
+"with."
+msgstr ""
+"Whether or not to check words typed against the languages you want to check "
+"with."
+
+#: ../gossip.schemas.in.h:29
+msgid ""
+"Whether or not to convert smileys into graphical images in conversations."
+msgstr ""
+"Whether or not to convert smileys into graphical images in conversations."
+
+#: ../gossip.schemas.in.h:30
+msgid "Whether or not to play a sound when messages arrive."
+msgstr "Whether or not to play a sound when messages arrive."
+
+#: ../gossip.schemas.in.h:31
+msgid "Whether or not to play sounds when away."
+msgstr "Whether or not to play sounds when away."
+
+#: ../gossip.schemas.in.h:32
+msgid "Whether or not to play sounds when busy."
+msgstr "Whether or not to play sounds when busy."
+
+#: ../gossip.schemas.in.h:33
+msgid "Whether or not to show a popup when a contact becomes available."
+msgstr "Whether or not to show a popup when a contact becomes available."
+
+#: ../gossip.schemas.in.h:34
+msgid ""
+"Whether or not to show avatars for contacts in the contact list and chat "
+"windows."
+msgstr ""
+"Whether or not to show avatars for contacts in the contact list and chat "
+"windows."
+
+#: ../gossip.schemas.in.h:35
+msgid "Whether or not to show contacts that are offline in the contact list."
+msgstr "Whether or not to show contacts that are offline in the contact list."
+
+#: ../gossip.schemas.in.h:36
+msgid ""
+"Whether or not to show the message dialog about closing the main window with "
+"the 'x' button in the title bar."
+msgstr ""
+"Whether or not to show the message dialog about closing the main window with "
+"the 'x' button in the title bar."
+
+#: ../gossip.schemas.in.h:37
+msgid "Whether to show the contact list in compact mode or not."
+msgstr "Whether to show the contact list in compact mode or not."
+
+#: ../gossip.schemas.in.h:38
+msgid "Whether to use the system document font theme or a user specified font."
+msgstr "Whether to use the system document font theme or a user specified font."
+
+#: ../gossip.schemas.in.h:39
+msgid "Whether to use the theme for chat rooms or not."
+msgstr "Whether to use the theme for chat rooms or not."
+
+#: ../gossip.schemas.in.h:40
+msgid ""
+"Which criterium to use when sorting the contact list. Default is to use sort "
+"by the contact's name with the value \"name\". A value of \"state\" will "
+"sort the contact list by state."
+msgstr ""
+"Which criterium to use when sorting the contact list. Default is to use sort "
+"by the contact's name with the value \"name\". A value of \"state\" will "
+"sort the contact list by state."
+
+#: ../libgossip/gossip-chatroom.c:1040
+msgid "Joining"
+msgstr "מצטרף"
+
+#: ../libgossip/gossip-chatroom.c:1042
+msgid "Active"
+msgstr "פעיל"
+
+#: ../libgossip/gossip-chatroom.c:1044
+msgid "Inactive"
+msgstr "לא פעיל"
+
+#: ../libgossip/gossip-chatroom.c:1046 ../src/gossip-log-window.c:1887
+msgid "Unknown"
+msgstr "לא ידוע"
+
+#: ../libgossip/gossip-chatroom.c:1048
+msgid "Error"
+msgstr "שגיאה"
+
+#: ../libgossip/gossip-chatroom.c:1062
+msgid "Moderator"
+msgid_plural "Moderators"
+msgstr[0] "אחראי"
+msgstr[1] "אחראים"
+
+#: ../libgossip/gossip-chatroom.c:1064
+msgid "Participant"
+msgid_plural "Participants"
+msgstr[0] "משתתף"
+msgstr[1] "משתתפים"
+
+#: ../libgossip/gossip-chatroom.c:1066
+msgid "Visitor"
+msgid_plural "Visitors"
+msgstr[0] "מבקר"
+msgstr[1] "מבקרים"
+
+#: ../libgossip/gossip-chatroom.c:1068
+msgid "No role"
+msgstr "אין תפקיד"
+
+#: ../libgossip/gossip-chatroom.c:1082
+msgid "Owner"
+msgid_plural "Owners"
+msgstr[0] "בעלים"
+msgstr[1] "בעלים"
+
+#: ../libgossip/gossip-chatroom.c:1084
+msgid "Administrator"
+msgid_plural "Administrators"
+msgstr[0] "מנהל"
+msgstr[1] "מנהלים"
+
+#: ../libgossip/gossip-chatroom.c:1086
+msgid "Member"
+msgid_plural "Members"
+msgstr[0] "חבר"
+msgstr[1] "חברים"
+
+#: ../libgossip/gossip-chatroom.c:1088
+msgid "Outcast"
+msgid_plural "Outcasts"
+msgstr[0] "מנודה"
+msgstr[1] "מנודים"
+
+#: ../libgossip/gossip-chatroom.c:1090
+msgid "No affiliation"
+msgstr "אין שייכות"
+
+#: ../libgossip/gossip-chatroom-provider.c:385
+msgid ""
+"The chat room you tried to join requires a password. You either failed to "
+"supply a password or the password you tried was incorrect."
+msgstr ""
+
+#: ../libgossip/gossip-chatroom-provider.c:390
+msgid "You have been banned from this chatroom."
+msgstr ""
+
+#: ../libgossip/gossip-chatroom-provider.c:394
+msgid "The conference room you tried to join could not be found."
+msgstr ""
+
+#: ../libgossip/gossip-chatroom-provider.c:398
+msgid "Chatroom creation is restricted on this server."
+msgstr ""
+
+#: ../libgossip/gossip-chatroom-provider.c:402
+msgid "Chatroom reserved nick names must be used on this server."
+msgstr ""
+
+#: ../libgossip/gossip-chatroom-provider.c:406
+msgid "You are not on the chatroom's members list."
+msgstr ""
+
+#: ../libgossip/gossip-chatroom-provider.c:410
+msgid "The nickname you have chosen is already in use."
+msgstr "הכינוי שבחרתה כבר נמצא בשימוש."
+
+#: ../libgossip/gossip-chatroom-provider.c:414
+msgid "The maximum number of users for this chatroom has been reached."
+msgstr ""
+
+#: ../libgossip/gossip-chatroom-provider.c:418
+msgid "The remote conference server did not respond in a sensible time."
+msgstr ""
+
+#: ../libgossip/gossip-chatroom-provider.c:422
+msgid "An unknown error occurred, check your details are correct."
+msgstr ""
+
+#: ../libgossip/gossip-chatroom-provider.c:426
+msgid "Joining the chatroom was canceled."
+msgstr ""
+
+#. i18n: The current state of the connection.
+#: ../libgossip/gossip-contact.c:965 ../libgossip/gossip-presence.c:242
+#: ../src/gossip-app.c:2605 ../src/gossip-contact-info-dialog.c:156
+#: ../src/gossip-galago.c:186 ../src/gossip-status-icon.c:363
+msgid "Offline"
+msgstr "מנותק"
+
+#: ../libgossip/gossip-presence.c:423 ../libgossip/gossip-presence.c:440
+#: ../src/gossip-presence-chooser.c:760 ../src/gossip-presence-chooser.c:959
+#: ../src/gossip-presence-chooser.c:1008
+msgid "Available"
+msgstr "זמין"
+
+#: ../libgossip/gossip-presence.c:427 ../src/gossip-presence-chooser.c:772
+#: ../src/gossip-presence-chooser.c:1036
+msgid "Busy"
+msgstr "עסוק"
+
+#: ../libgossip/gossip-presence.c:432 ../src/gossip-presence-chooser.c:784
+#: ../src/gossip-presence-chooser.c:1064
+msgid "Away"
+msgstr "מרוחק"
+
+#: ../libgossip/gossip-presence.c:437
+msgid "Unavailable"
+msgstr "לא זמין"
+
+#: ../libgossip/gossip-jabber-disco.c:286
+msgid "Service has gone and is no longer available"
+msgstr ""
+
+#: ../libgossip/gossip-jabber-disco.c:289
+msgid "Bad or malformed request to this service"
+msgstr ""
+
+#: ../libgossip/gossip-jabber-disco.c:292
+msgid "Unauthorized request to this service"
+msgstr ""
+
+#: ../libgossip/gossip-jabber-disco.c:295
+msgid "Payment is required for this service"
+msgstr ""
+
+#: ../libgossip/gossip-jabber-disco.c:299
+msgid "This service is forbidden"
+msgstr ""
+
+#: ../libgossip/gossip-jabber-disco.c:303
+msgid "This service is unavailable or not found"
+msgstr ""
+
+#: ../libgossip/gossip-jabber-disco.c:306
+msgid "Unacceptable request sent to this services"
+msgstr ""
+
+#: ../libgossip/gossip-jabber-disco.c:309
+msgid "Registration is required"
+msgstr ""
+
+#: ../libgossip/gossip-jabber-disco.c:312
+msgid "There was a conflict of interest trying to use this service"
+msgstr ""
+
+#: ../libgossip/gossip-jabber-disco.c:315
+msgid "There was an internal service error"
+msgstr ""
+
+#: ../libgossip/gossip-jabber-disco.c:318
+msgid "This feature is not implemented"
+msgstr ""
+
+#: ../libgossip/gossip-jabber-disco.c:321
+msgid "The remote service timed out"
+msgstr ""
+
+#: ../libgossip/gossip-jabber.c:515
+msgid "new account"
+msgstr "חשבון חדש"
+
+#: ../libgossip/gossip-jabber.c:516
+msgid "Home"
+msgstr ""
+
+#: ../libgossip/gossip-jabber.c:1185 ../libgossip/gossip-jabber-register.c:214
+msgid "Couldn't send message!"
+msgstr ""
+
+#: ../libgossip/gossip-jabber-register.c:159
+msgid "Connection could not be opened"
+msgstr ""
+
+#: ../libgossip/gossip-jabber-utils.c:303
+msgid "An unknown error occurred."
+msgstr ""
+
+#: ../libgossip/gossip-jabber-utils.c:307
+msgid "Connection refused."
+msgstr ""
+
+#: ../libgossip/gossip-jabber-utils.c:310
+msgid "Server address could not be resolved."
+msgstr ""
+
+#: ../libgossip/gossip-jabber-utils.c:313
+msgid "Account requires a password to authenticate and none was given."
+msgstr ""
+
+#: ../libgossip/gossip-jabber-utils.c:316
+msgid "Connection timed out."
+msgstr ""
+
+#: ../libgossip/gossip-jabber-utils.c:319
+msgid "Authentication failed."
+msgstr ""
+
+#: ../libgossip/gossip-jabber-utils.c:322
+msgid "The username you are trying already exists."
+msgstr ""
+
+#: ../libgossip/gossip-jabber-utils.c:325
+msgid "The username you are trying is not valid."
+msgstr ""
+
+#: ../libgossip/gossip-jabber-utils.c:328
+msgid "This feature is unavailable."
+msgstr ""
+
+#: ../libgossip/gossip-jabber-utils.c:331
+msgid "This feature is unauthorized."
+msgstr ""
+
+#: ../libgossip/gossip-jabber-utils.c:334
+msgid "A specific protocol error occurred that was unexpected."
+msgstr ""
+
+#: ../libloudermouth/lm-bs-receiver.c:90 ../libloudermouth/lm-bs-sender.c:251
+#, c-format
+msgid "The other party disconnected"
+msgstr ""
+
+#: ../libloudermouth/lm-bs-receiver.c:116
+#, c-format
+msgid "A protocol error occurred during the transfer"
+msgstr ""
+
+#: ../libloudermouth/lm-bs-transfer.c:250
+msgid "Unable to connect to the other party"
+msgstr ""
+
+#: ../libloudermouth/lm-bs-transfer.c:316
+msgid "Permission denied"
+msgstr ""
+
+#: ../libloudermouth/lm-bs-transfer.c:318
+msgid "File name is too long"
+msgstr "שם הקובץ ארוך מידי"
+
+#: ../libloudermouth/lm-bs-transfer.c:320
+msgid "File doesn't exist"
+msgstr "הקובץ לא קיים"
+
+#: ../libloudermouth/lm-bs-transfer.c:322
+#: ../libloudermouth/lm-bs-transfer.c:353
+msgid "File is a directory"
+msgstr ""
+
+#: ../libloudermouth/lm-bs-transfer.c:324
+msgid "Read only file system"
+msgstr ""
+
+#: ../libloudermouth/lm-bs-transfer.c:326
+msgid "File is busy"
+msgstr ""
+
+#: ../libloudermouth/lm-bs-transfer.c:328
+msgid "Bad memory"
+msgstr ""
+
+#: ../libloudermouth/lm-bs-transfer.c:330
+msgid "Too many levels of symbolic links"
+msgstr ""
+
+#: ../libloudermouth/lm-bs-transfer.c:332
+#: ../libloudermouth/lm-bs-transfer.c:355
+msgid "No space is available"
+msgstr ""
+
+#: ../libloudermouth/lm-bs-transfer.c:334
+msgid "Virtual memory exhausted"
+msgstr ""
+
+#: ../libloudermouth/lm-bs-transfer.c:336
+msgid "Too many open files"
+msgstr "יותר מידי קבצים פתוחים"
+
+#: ../libloudermouth/lm-bs-transfer.c:339
+#: ../libloudermouth/lm-bs-transfer.c:351
+msgid "Input/output error"
+msgstr ""
+
+#: ../libloudermouth/lm-bs-transfer.c:342
+#: ../libloudermouth/lm-bs-transfer.c:357
+msgid "No such device"
+msgstr ""
+
+#: ../libloudermouth/lm-bs-transfer.c:349
+msgid "File is too large"
+msgstr "קובץ גדול מידי"
+
+#: ../libloudermouth/lm-bs-transfer.c:363
+msgid "Unknown error"
+msgstr "שגיאה לא ידועה"
+
+#: ../src/gossip-about-dialog.c:64
+msgid ""
+"Gossip is free software; you can redistribute it and/or modify it under the "
+"terms of the GNU General Public License as published by the Free Software "
+"Foundation; either version 2 of the License, or (at your option) any later "
+"version."
+msgstr ""
+"Gossip is free software; you can redistribute it and/or modify it under the "
+"terms of the GNU General Public License as published by the Free Software "
+"Foundation; either version 2 of the License, or (at your option) any later "
+"version."
+
+#: ../src/gossip-about-dialog.c:68
+msgid ""
+"Gossip is distributed in the hope that it will be useful, but WITHOUT ANY "
+"WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
+"FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
+"details."
+msgstr ""
+"Gossip is distributed in the hope that it will be useful, but WITHOUT ANY "
+"WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
+"FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
+"details."
+
+#: ../src/gossip-about-dialog.c:72
+msgid ""
+"You should have received a copy of the GNU General Public License along with "
+"Gossip; if not, write to the Free Software Foundation, Inc., 51 Franklin "
+"Street, Fifth Floor, Boston, MA 02110-130159 USA"
+msgstr ""
+"You should have received a copy of the GNU General Public License along with "
+"Gossip; if not, write to the Free Software Foundation, Inc., 51 Franklin "
+"Street, Fifth Floor, Boston, MA 02110-130159 USA"
+
+#: ../src/gossip-about-dialog.c:100
+msgid "An Instant Messaging client for GNOME"
+msgstr "לקוח מסרים מיידיים עבור GNOME"
+
+#: ../src/gossip-about-dialog.c:106
+msgid "translator-credits"
+msgstr ""
+"מארק קרפיבנר <mark125@gmail.com>\n"
+"\n"
+"פרוייקט תרגום GNOME לעברית:\n"
+"‏http://gnome-il.berlios.de"
+
+#: ../src/gossip-accounts-dialog.c:376 ../data/glade/main.glade.h:14
+msgid "<b>No Account Selected</b>"
+msgstr "<b>לא נבחרו חשבונות</b>"
+
+#: ../src/gossip-accounts-dialog.c:378 ../data/glade/main.glade.h:110
+msgid ""
+"To add a new account, you can click on the 'Add' button and a new entry will "
+"be created for you to start configuring.\n"
+"\n"
+"If you do not want to add an account, simply click on the account you want "
+"to configure in the list on the left."
+msgstr ""
+
+#: ../src/gossip-accounts-dialog.c:387
+msgid "<b>No Accounts Configured</b>"
+msgstr ""
+
+#: ../src/gossip-accounts-dialog.c:389
+msgid ""
+"To add a new account, you can click on the 'Add' button and a new entry will "
+"be created for you to start configuring."
+msgstr ""
+
+#: ../src/gossip-accounts-dialog.c:473 ../data/glade/main.glade.h:28
+msgid "Accounts"
+msgstr "חשבונות"
+
+#: ../src/gossip-accounts-dialog.c:1200
+#, c-format
+msgid ""
+"You are about to remove your %s account!\n"
+"Are you sure you want to proceed?"
+msgstr ""
+
+#: ../src/gossip-accounts-dialog.c:1206
+msgid ""
+"Any associated conversations and chat rooms will NOT be removed if you "
+"decide to proceed.\n"
+"\n"
+"Should you decide to add the account back at a later time, they will still "
+"be available."
+msgstr ""
+
+#: ../src/gossip-account-chooser.c:839
+msgid "All"
+msgstr ""
+
+#: ../src/gossip-account-widget-jabber.c:667
+msgid "Successfully registered your new account settings."
+msgstr ""
+
+#: ../src/gossip-account-widget-jabber.c:674
+msgid "You should now be able to connect to your new account."
+msgstr ""
+
+#: ../src/gossip-account-widget-jabber.c:677
+msgid "Failed to register your new account settings."
+msgstr ""
+
+#: ../src/gossip-account-widget-jabber.c:826
+msgid "Successfully changed your account password."
+msgstr ""
+
+#: ../src/gossip-account-widget-jabber.c:833
+msgid "You should now be able to connect with your new password."
+msgstr ""
+
+#: ../src/gossip-account-widget-jabber.c:836
+msgid "Failed to change your account password."
+msgstr ""
+
+#: ../src/gossip-account-widget-jabber.c:922
+#, c-format
+msgid ""
+"Please enter a new password for this account:\n"
+"%s"
+msgstr ""
+
+#: ../src/gossip-add-contact-dialog.c:122
+msgid "No information is available for this contact."
+msgstr ""
+
+#: ../src/gossip-add-contact-dialog.c:229
+msgid "Information requested, please wait..."
+msgstr ""
+
+#: ../src/gossip-add-contact-dialog.c:328
+#: ../src/gossip-edit-contact-dialog.c:612
+#: ../src/gossip-subscription-dialog.c:497
+msgid "I would like to add you to my contact list."
+msgstr "הייתי רוצה להוסיף אותך לרשימת אנשי הקשר שלי."
+
+#: ../src/gossip-app.c:522
+msgid "Show and edit accounts"
+msgstr ""
+
+#: ../src/gossip-app.c:848
+msgid "About Gossip"
+msgstr "אודות Gossip"
+
+#: ../src/gossip-app.c:853
+msgid "Preferences..."
+msgstr "העדפות..."
+
+#: ../src/gossip-app.c:925
+msgid "To summarize:"
+msgstr ""
+
+#: ../src/gossip-app.c:952
+#, c-format
+msgid "%d new message"
+msgid_plural "%d new messages"
+msgstr[0] "%d הודעות חדשות"
+msgstr[1] "%d הודעות חדשות"
+
+#: ../src/gossip-app.c:957
+#, c-format
+msgid "%d subscription request"
+msgid_plural "%d subscription requests"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../src/gossip-app.c:962
+#, c-format
+msgid "%d file transfer request"
+msgid_plural "%d file transfer requests"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../src/gossip-app.c:967
+#, c-format
+msgid "%d server message"
+msgid_plural "%d server messages"
+msgstr[0] "%d הודעות שרת"
+msgstr[1] "%d הודעות שרת"
+
+#: ../src/gossip-app.c:972
+#, c-format
+msgid "%d error"
+msgid_plural "%d errors"
+msgstr[0] "%d שגיאות"
+msgstr[1] "%d שגיאות"
+
+#: ../src/gossip-app.c:997
+msgid "If you quit, you will lose all unread information."
+msgstr "אם אתה בוחר לצאת, המידע שלא נקרא יאבד."
+
+#: ../src/gossip-app.c:1062
+msgid "Gossip is still running, it is just hidden."
+msgstr "Gossip עדיין פועל, הוא רק חבוי."
+
+#: ../src/gossip-app.c:1063
+msgid "Click on the notification area icon to show Gossip."
+msgstr ""
+
+#: ../src/gossip-app.c:1078
+msgid "You were about to quit!"
+msgstr ""
+
+#: ../src/gossip-app.c:1079
+msgid ""
+"Since no system or notification tray has been found, this action would "
+"normally quit Gossip.\n"
+"\n"
+"This is just a reminder, from now on, Gossip will quit when performing this "
+"action unless you uncheck the option below."
+msgstr ""
+
+#: ../src/gossip-app.c:1494 ../src/gossip-edit-contact-dialog.c:231
+msgid "Group"
+msgstr "קבוצה"
+
+#: ../src/gossip-app.c:1515
+msgid "Contact"
+msgstr ""
+
+#: ../src/gossip-app.c:1828
+#, c-format
+msgid "Please enter your %s account password"
+msgstr ""
+
+#: ../src/gossip-app.c:1839
+#, c-format
+msgid "Logging in to account '%s'"
+msgstr "מתחבר לחשבון '%s'"
+
+#: ../src/gossip-app.c:1843
+msgid "Remember Password?"
+msgstr ""
+
+#: ../src/gossip-app.c:2530
+msgid "Edit Account _Details"
+msgstr "עריכת _פרטי חשבון"
+
+#: ../src/gossip-avatar-image.c:329
+msgid "Click to enlarge"
+msgstr "לחץ כדי להגדיל"
+
+#: ../src/gossip-chat.c:602
+msgid "Insert Smiley"
+msgstr ""
+
+#: ../src/gossip-chat.c:650
+msgid "_Check Word Spelling..."
+msgstr ""
+
+#: ../src/gossip-chat-invite.c:87 ../src/gossip-spell-dialog.c:86
+msgid "Word"
+msgstr ""
+
+#: ../src/gossip-chat-invite.c:344
+msgid "Select who would you like to invite to room:"
+msgstr ""
+
+#: ../src/gossip-chat-invite.c:350
+msgid "Select which room you would like to invite:"
+msgstr ""
+
+#: ../src/gossip-chat-manager.c:158
+#, c-format
+msgid "New message from %s"
+msgstr ""
+
+#: ../src/gossip-chat-view.c:506
+msgid "_Copy Link Address"
+msgstr "_העתק את  כתובת הקישור"
+
+#: ../src/gossip-chat-view.c:514
+msgid "_Open Link"
+msgstr "_פתח קישור"
+
+#: ../src/gossip-chat-view.c:753
+msgid "Your invitation has been declined"
+msgstr ""
+
+#: ../src/gossip-chat-view.c:945 ../data/glade/chat.glade.h:16
+msgid "You have been invited to join a chat conference."
+msgstr ""
+
+#: ../src/gossip-chat-view.c:968
+msgid "Accept"
+msgstr ""
+
+#: ../src/gossip-chat-view.c:984
+msgid "Decline"
+msgstr ""
+
+#: ../src/gossip-chat-window.c:755 ../src/gossip-chat-window.c:785
+#: ../data/glade/main.glade.h:68
+msgid "New Message"
+msgid_plural "New Messages"
+msgstr[0] "הודעה חדשה"
+msgstr[1] "הודעות חדשות"
+
+#: ../src/gossip-chat-window.c:761
+msgid "Chat Room"
+msgstr "חדר שיחה"
+
+#: ../src/gossip-chat-window.c:766 ../src/gossip-chat-window.c:789
+#, c-format
+msgid "Conversation"
+msgid_plural "Conversations (%d)"
+msgstr[0] "שיחה"
+msgstr[1] "שיחות (%d)"
+
+#: ../src/gossip-chat-window.c:1455
+msgid "Typing a message."
+msgstr "מקליד הודעה."
+
+#: ../src/gossip-chatrooms-window.c:147
+msgid "Name"
+msgstr "שם"
+
+#: ../src/gossip-chatrooms-window.c:154
+msgid "Room"
+msgstr "חדר"
+
+#: ../src/gossip-chatrooms-window.c:162
+msgid "Server"
+msgstr "שרת"
+
+#: ../src/gossip-chatrooms-window.c:196
+msgid "Auto Connect"
+msgstr "חיבור אוטומטי"
+
+#: ../src/gossip-contact-info-dialog.c:636 ../data/glade/main.glade.h:59
+msgid "Information requested..."
+msgstr ""
+
+#: ../src/gossip-contact-list.c:333
+msgid "_Contact"
+msgstr ""
+
+#: ../src/gossip-contact-list.c:337
+msgid "_Group"
+msgstr "_קבוצה"
+
+#: ../src/gossip-contact-list.c:341
+msgid "_Chat"
+msgstr "_שיחה"
+
+#: ../src/gossip-contact-list.c:341
+msgid "Chat with contact"
+msgstr ""
+
+#: ../src/gossip-contact-list.c:345
+msgid "Infor_mation"
+msgstr ""
+
+#: ../src/gossip-contact-list.c:345
+msgid "View contact information"
+msgstr "צפייה בנתוני איש הקשר"
+
+#: ../src/gossip-contact-list.c:349
+msgid "Re_name"
+msgstr "שנה _שם"
+
+#: ../src/gossip-contact-list.c:349 ../src/gossip-contact-list.c:3208
+msgid "Rename"
+msgstr "שנה שם"
+
+#: ../src/gossip-contact-list.c:353
+msgid "_Edit"
+msgstr "_ערוך"
+
+#: ../src/gossip-contact-list.c:353
+msgid "Edit the groups and name for this contact"
+msgstr ""
+
+#: ../src/gossip-contact-list.c:357
+msgid "_Remove"
+msgstr "_הסר"
+
+#: ../src/gossip-contact-list.c:357
+msgid "Remove contact"
+msgstr "הסר איש קשר"
+
+#: ../src/gossip-contact-list.c:361
+msgid "_Invite to Chat Room"
+msgstr "_הזמן לחדר שיחה"
+
+#: ../src/gossip-contact-list.c:361
+msgid "Invite to a currently open chat room"
+msgstr ""
+
+#: ../src/gossip-contact-list.c:365
+msgid "_Send File..."
+msgstr "_שלח קובץ..."
+
+#: ../src/gossip-contact-list.c:365
+msgid "Send a file"
+msgstr "שלח קובץ"
+
+#: ../src/gossip-contact-list.c:369
+msgid "Emai_l..."
+msgstr "דוא\"_ל..."
+
+#: ../src/gossip-contact-list.c:369
+msgid "Email contact"
+msgstr ""
+
+#: ../src/gossip-contact-list.c:373 ../data/glade/chat.glade.h:30
+#: ../data/glade/main.glade.h:163
+msgid "_View Previous Conversations"
+msgstr "_צפייה בשיחות קודמות"
+
+#: ../src/gossip-contact-list.c:373
+msgid "View previous conversations with this contact"
+msgstr ""
+
+#: ../src/gossip-contact-list.c:3119
+msgid "Do you want to remove this contact from your roster?"
+msgstr ""
+
+#: ../src/gossip-contact-list.c:3204
+#, c-format
+msgid ""
+"Please enter a new name for the group:\n"
+"%s"
+msgstr ""
+
+#: ../src/gossip-edit-contact-dialog.c:221
+msgid "Select"
+msgstr "בחר"
+
+#: ../src/gossip-edit-contact-dialog.c:271
+#: ../src/gossip-edit-contact-dialog.c:281
+#: ../src/gossip-subscription-dialog.c:442
+msgid "Unsorted"
+msgstr "לא ממויין"
+
+#: ../src/gossip-edit-contact-dialog.c:719
+#, c-format
+msgid ""
+"Set the alias you want to use for:\n"
+"<b>%s</b>\n"
+"\n"
+"You can retrieve contact information from the server."
+msgstr ""
+
+#: ../src/gossip-ft-dialog.c:223
+#, c-format
+msgid "New file transfer request from %s"
+msgstr ""
+
+#: ../src/gossip-ft-dialog.c:308
+msgid "Your file transfer offer declined."
+msgstr ""
+
+#: ../src/gossip-ft-dialog.c:309
+msgid "The other user decided not to continue."
+msgstr ""
+
+#: ../src/gossip-ft-dialog.c:314
+msgid "Unable to complete the file transfer."
+msgstr ""
+
+#: ../src/gossip-ft-dialog.c:319
+msgid "Unable to start the file transfer."
+msgstr ""
+
+#: ../src/gossip-ft-dialog.c:324
+msgid "File transfer is not supported by both parties."
+msgstr ""
+
+#: ../src/gossip-ft-dialog.c:328
+msgid "An unknown error occurred during file transfer."
+msgstr ""
+
+#: ../src/gossip-ft-dialog.c:492
+msgid "Transfer complete"
+msgstr "השליחה הסתיימה"
+
+#: ../src/gossip-ft-dialog.c:498
+msgid "The file has been transfered successfully."
+msgstr "הקובץ נשלח בהצלחה."
+
+#: ../src/gossip-ft-dialog.c:533
+msgid "Transferring file"
+msgstr "שולח קובץ"
+
+#: ../src/gossip-ft-dialog.c:539
+msgid "Please wait while the file is transferred"
+msgstr ""
+
+#: ../src/gossip-ft-dialog.c:609
+#, c-format
+msgid "%s would like to send you a file"
+msgstr ""
+"‏%s מעוניין לשלוח לך קובץ"
+
+#: ../src/gossip-ft-dialog.c:611
+msgid "Someone would like to send you a file"
+msgstr "מישהו מעוניין שלוח לך קובץ"
+
+#: ../src/gossip-ft-dialog.c:614 ../data/glade/file-transfer.glade.h:2
+msgid "Do you want to accept this file?"
+msgstr ""
+
+#: ../src/gossip-ft-dialog.c:617
+#, c-format
+msgid "Attempting to send file to %s"
+msgstr ""
+
+#: ../src/gossip-ft-dialog.c:619
+msgid "Attempting to send file"
+msgstr "מנסה לשלוח קובץ"
+
+#: ../src/gossip-ft-dialog.c:622
+msgid "Please wait while the other participant responds"
+msgstr ""
+
+#: ../src/gossip-ft-dialog.c:745
+msgid "Select a file"
+msgstr "בחר קובץ"
+
+#: ../src/gossip-group-chat.c:480
+msgid "Connecting..."
+msgstr "מתחבר..."
+
+#. FIXME: Need special case for nickname to put an
+#. * entry in the chat view and to request a new nick.
+#.
+#: ../src/gossip-group-chat.c:547
+msgid "Retry connection"
+msgstr ""
+
+#. i18n: An event, as in "has now been connected".
+#: ../src/gossip-group-chat.c:575 ../src/gossip-private-chat.c:612
+msgid "Connected"
+msgstr "התחבר"
+
+#: ../src/gossip-group-chat.c:629 ../src/gossip-private-chat.c:638
+msgid "Disconnected"
+msgstr "התנתק"
+
+#. Send event to chat window
+#: ../src/gossip-group-chat.c:832
+#, c-format
+msgid "Invited %s to join this chat conference."
+msgstr ""
+
+#: ../src/gossip-group-chat.c:910
+msgid "<b>Topic:</b>"
+msgstr "<b>נושא:</b>"
+
+#: ../src/gossip-group-chat.c:1105
+msgid "You have been kicked from this room"
+msgstr "נזרקת מהחדר"
+
+#: ../src/gossip-group-chat.c:1234
+#, c-format
+msgid "%s has set the topic: %s"
+msgstr ""
+
+#: ../src/gossip-group-chat.c:1413
+msgid "Enter the new topic you want to set for this room:"
+msgstr ""
+
+#: ../src/gossip-group-chat.c:1429
+msgid "Enter the new nickname you want to be known by:"
+msgstr ""
+
+#: ../src/gossip-group-chat.c:1453
+#, c-format
+msgid "Kicking %s"
+msgstr "זורק את %s"
+
+#: ../src/gossip-group-chat.c:1461
+msgid "You have been removed from the room by an administrator."
+msgstr "הוסרת מהחדר על ידי מנהל."
+
+
+#: ../src/gossip-group-chat.c:1833
+#, c-format
+msgid "%s has joined the room"
+msgstr ""
+"‏%s הצטרף לחדר"
+
+#: ../src/gossip-group-chat.c:1870
+#, c-format
+msgid "%s has left the room"
+msgstr ""
+"‏%s עזב את החדר"
+
+#: ../src/gossip-group-chat.c:2133
+msgid "Nick was not recogized"
+msgstr ""
+
+#: ../src/gossip-group-chat.c:2255
+#, c-format
+msgid "Topic: %s"
+msgstr ""
+
+#: ../src/gossip-hint.c:87
+msgid "Do not show this again"
+msgstr "אל תציג את זה שוב"
+
+#: ../src/gossip-log-window.c:530 ../src/gossip-log-window.c:1986
+msgid "Account"
+msgstr "חשבון"
+
+#: ../src/gossip-log-window.c:537 ../src/gossip-log-window.c:1995
+msgid "Conversation With"
+msgstr "שיחה עם"
+
+#: ../src/gossip-log-window.c:547 ../src/gossip-log-window.c:2006
+msgid "Date"
+msgstr "תאריך"
+
+#: ../src/gossip-log-window.c:2018
+msgid "Link"
+msgstr ""
+
+#: ../src/gossip-main.c:81
+msgid "Don't connect on startup"
+msgstr "Don't connect on startup"
+
+#: ../src/gossip-main.c:85
+msgid "Allow multiple instances of the application to run at the same time"
+msgstr "Allow multiple instances of the application to run at the same time"
+
+#: ../src/gossip-main.c:89
+msgid "List the available accounts"
+msgstr "List the available accounts"
+
+#: ../src/gossip-main.c:93
+msgid "Which account to connect to on startup"
+msgstr "Which account to connect to on startup"
+
+#: ../src/gossip-main.c:94
+msgid "ACCOUNT-NAME"
+msgstr "ACCOUNT-NAME"
+
+#: ../src/gossip-main.c:104 ../src/gossip-main.c:128
+msgid "- Gossip Instant Messenger"
+msgstr "- Gossip Instant Messenger"
+
+#: ../src/gossip-main.c:144
+#, c-format
+msgid "You can not use --no-connect together with --account"
+msgstr "You can not use --no-connect together with --account"
+
+#: ../src/gossip-main.c:156
+#, c-format
+msgid "No accounts available."
+msgstr "No accounts available."
+
+#: ../src/gossip-main.c:161
+#, c-format
+msgid "Available accounts:"
+msgstr "Available accounts:"
+
+#: ../src/gossip-main.c:171
+#, c-format
+msgid "[default]"
+msgstr "[default]"
+
+#: ../src/gossip-main.c:187
+#, c-format
+msgid "There is no account with the name '%s'."
+msgstr "There is no account with the name '%s'."
+
+#: ../src/gossip-new-chatroom-dialog.c:206
+#: ../src/gossip-new-chatroom-dialog.c:219 ../data/glade/group-chat.glade.h:5
+msgid "Join"
+msgstr "הצתרף"
+
+#: ../src/gossip-new-chatroom-dialog.c:213
+msgid "Create"
+msgstr "יצירה"
+
+#: ../src/gossip-new-chatroom-dialog.c:561
+msgid "Rooms"
+msgstr "חדרים"
+
+#: ../src/gossip-new-chatroom-dialog.c:601
+msgid "Users"
+msgstr "משתמשים"
+
+#: ../src/gossip-new-chatroom-dialog.c:637
+msgid "Description"
+msgstr "תיאור"
+
+#: ../src/gossip-new-chatroom-dialog.c:833
+#, c-format
+msgid "Found %d conference room"
+msgid_plural "Found %d conference rooms"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../src/gossip-new-chatroom-dialog.c:872
+msgid "Browsing for conference rooms, please wait..."
+msgstr ""
+
+#: ../src/gossip-new-chatroom-dialog.c:916
+msgid "Browsing cancelled!"
+msgstr ""
+
+#: ../src/gossip-notify.c:224
+#, c-format
+msgid "%s is %s"
+msgstr ""
+
+#: ../src/gossip-notify.c:228
+msgid "Contact Online"
+msgstr ""
+
+#: ../src/gossip-notify.c:241 ../src/gossip-notify.c:349
+#: ../src/gossip-notify.c:563
+msgid "Default"
+msgstr "ברירת מחדל"
+
+#: ../src/gossip-notify.c:244
+msgid "Chat!"
+msgstr ""
+
+#: ../src/gossip-notify.c:296
+#, c-format
+msgid "%s wants to be added to your contact list for your “%s” account"
+msgstr ""
+"‏%s רוצה להתווסף לרשימת אנשי הקשר שלך בחשבון “%s”"
+#: ../src/gossip-notify.c:300
+#, c-format
+msgid "Someone wants to be added to your contact list for your “%s” account"
+msgstr "מישהו רוצה להתווסף לרשימת אנשי הקשר שלך בחשבון “%s”"
+
+#: ../src/gossip-notify.c:306
+#, c-format
+msgid "%s wants to be added to your contact list"
+msgstr ""
+"‏%s רוצה להתווסף לרשימת אנשי הקשר שלך"
+
+#: ../src/gossip-notify.c:310
+#, c-format
+msgid "Someone wants to be added to your contact list"
+msgstr "מישהו רוצה להתווסף לרשימת אנשי הקשר שלך"
+
+#: ../src/gossip-notify.c:331 ../data/glade/main.glade.h:97
+msgid "Subscription Request"
+msgstr ""
+
+#. These messages copy (more-or-less) the ones found in the file transfer dialogue.
+#: ../src/gossip-notify.c:375
+#, c-format
+msgid "%s would like to send you “%s”"
+msgstr ""
+"‏%s רוצה לשלוח לך “%s”"
+
+#: ../src/gossip-notify.c:378 ../data/glade/file-transfer.glade.h:3
+msgid "File Transfer"
+msgstr "העברת קבצים"
+
+#: ../src/gossip-notify.c:535
+#, c-format
+msgid "New Message from %s"
+msgstr "הודעה חדשה מ %s"
+
+#: ../src/gossip-notify.c:544
+#, c-format
+msgid "“%s...”"
+msgstr "“%s...”"
+
+#: ../src/gossip-notify.c:546
+#, c-format
+msgid "“%s”"
+msgstr "“%s”"
+
+#: ../src/gossip-notify.c:566
+msgid "Show"
+msgstr "הצג"
+
+#: ../src/gossip-notify.c:572
+msgid "Contact Information"
+msgstr "נתוני איש קשר"
+
+#: ../src/gossip-preferences.c:263
+msgid "Language"
+msgstr "שפה"
+
+#: ../src/gossip-presence-chooser.c:502
+msgid "Are you sure you want to clear the list?"
+msgstr ""
+
+#: ../src/gossip-presence-chooser.c:506
+msgid ""
+"This will remove any custom messages you have added to the list of preset "
+"status messages."
+msgstr ""
+
+#: ../src/gossip-presence-chooser.c:511
+msgid "Clear List"
+msgstr "נקה רשימה"
+
+#: ../src/gossip-presence-chooser.c:1025 ../src/gossip-presence-chooser.c:1053
+#: ../src/gossip-presence-chooser.c:1081
+msgid "Custom message..."
+msgstr "הודעה מותאמת אישית..."
+
+#: ../src/gossip-presence-chooser.c:1090
+msgid "Clear List..."
+msgstr "נקה רשימה..."
+
+#: ../src/gossip-private-chat.c:494
+#, c-format
+msgid "%s went offline"
+msgstr ""
+"‏%s התנתק"
+
+#: ../src/gossip-private-chat.c:508
+#, c-format
+msgid "%s has come online"
+msgstr ""
+"‏%s התחבר"
+
+#. i18n: An event, as in "has now been connected".
+#: ../src/gossip-private-chat.c:589
+msgid "Contact has been removed"
+msgstr "איש קשר הוסר"
+
+#: ../src/gossip-private-chat.c:1150
+#, c-format
+msgid "Subject: %s"
+msgstr ""
+
+#: ../src/gossip-spell-dialog.c:259
+msgid "Suggestions for the word"
+msgstr "הצעות עבור המילה"
+
+#: ../src/gossip-subscription-dialog.c:186
+#, c-format
+msgid "New subscription request from %s"
+msgstr ""
+
+#: ../src/gossip-subscription-dialog.c:287
+#, c-format
+msgid "Someone wants to be added to your contact list for your '%s' account."
+msgstr "מישהו רוצה להתווסף לרשימת אנשי הקשר שלך בחשבון “%s”."
+
+#: ../src/gossip-subscription-dialog.c:291
+#, c-format
+msgid "Someone wants to be added to your contact list."
+msgstr "מישהו רוצה להתווסף לרשימת אנשי הקשר שלך"
+
+#: ../src/gossip-subscription-dialog.c:294
+msgid "Do you want to add this person to your contact list?"
+msgstr ""
+
+#: ../src/gossip-subscription-dialog.c:369
+#, c-format
+msgid "%s wants to be added to your contact list for your '%s' account."
+msgstr ""
+
+#: ../src/gossip-subscription-dialog.c:373
+#, c-format
+msgid "%s wants to be added to your contact list."
+msgstr ""
+
+#: ../src/gossip-subscription-dialog.c:379
+#, c-format
+msgid "Do you want to add %s to your contact list?"
+msgstr ""
+
+#: ../src/gossip-ui-utils.c:420
+msgid "Could not display the help contents."
+msgstr ""
+
+#: ../src/gossip-theme-boxes.c:887 ../src/gossip-theme-irc.c:456
+msgid "%A %d %B %Y"
+msgstr "%A %d %B %Y"
+
+#: ../src/gossip-theme-manager.c:79
+msgid "Classic"
+msgstr "קלאסי"
+
+#: ../src/gossip-theme-manager.c:80
+msgid "Simple"
+msgstr "פשוט"
+
+#: ../src/gossip-theme-manager.c:81
+msgid "Clean"
+msgstr "נקי"
+
+#: ../src/gossip-theme-manager.c:82
+msgid "Blue"
+msgstr "כחול"
+
+#: ../src/gossip-vcard-dialog.c:232
+msgid "Select Your Avatar Image"
+msgstr "בחר את התמונה האישית שלך"
+
+#: ../src/gossip-vcard-dialog.c:235
+msgid "No Image"
+msgstr "ללא תמונה"
+
+#: ../src/gossip-vcard-dialog.c:855
+msgid "The server does not seem to be responding."
+msgstr "נראה שהשרת לא מגיב"
+
+#: ../src/gossip-vcard-dialog.c:856
+msgid "Try again later."
+msgstr "נסה שוב מאוחר יותר."
+
+#. Birthday chooser
+#: ../src/gossip-vcard-dialog.c:985
+msgid "Change"
+msgstr "שנה"
+
+#: ../src/sounds/gossip.soundlist.in.h:1 ../data/glade/chat.glade.h:4
+msgid "Chat"
+msgstr ""
+
+#: ../src/sounds/gossip.soundlist.in.h:2
+msgid "Contact goes offline"
+msgstr "איש קשר מתנתק"
+
+#: ../src/sounds/gossip.soundlist.in.h:3
+msgid "Contact goes online"
+msgstr "איש קשר מתחבר"
+
+#: ../data/glade/chat.glade.h:1
+msgid "C_lear"
+msgstr "נ_קה"
+
+#: ../data/glade/chat.glade.h:2
+msgid "Change Na_me..."
+msgstr ""
+
+#: ../data/glade/chat.glade.h:3
+msgid "Change _Topic..."
+msgstr ""
+
+#: ../data/glade/chat.glade.h:5
+msgid "Contact Infor_mation"
+msgstr ""
+
+#: ../data/glade/chat.glade.h:6
+msgid "Cu_t"
+msgstr "ג_זור"
+
+#: ../data/glade/chat.glade.h:7
+msgid "In_vite..."
+msgstr "ה_זמן..."
+
+#: ../data/glade/chat.glade.h:8
+msgid "Insert _Smiley"
+msgstr ""
+
+#: ../data/glade/chat.glade.h:9
+msgid "Invitation _message:"
+msgstr ""
+
+#: ../data/glade/chat.glade.h:10
+msgid "Invite"
+msgstr "הזמן"
+
+#: ../data/glade/chat.glade.h:11 ../data/glade/main.glade.h:61
+msgid "Join _New..."
+msgstr ""
+
+#: ../data/glade/chat.glade.h:12
+msgid "Move Tab _Left"
+msgstr ""
+
+#: ../data/glade/chat.glade.h:13
+msgid "Move Tab _Right"
+msgstr ""
+
+#: ../data/glade/chat.glade.h:14
+msgid "Select who would you like to invite:"
+msgstr ""
+
+#: ../data/glade/chat.glade.h:15
+msgid "Send _Email..."
+msgstr "שלוח _דוא\"ל..."
+
+#: ../data/glade/chat.glade.h:17 ../data/glade/main.glade.h:130
+msgid "_Add Contact..."
+msgstr "_הוסף איש קשר..."
+
+#: ../data/glade/chat.glade.h:18
+msgid "_Add To Favorites"
+msgstr "_הוסף למועדפים"
+
+#: ../data/glade/chat.glade.h:19
+msgid "_Close"
+msgstr "_סגור"
+
+#: ../data/glade/chat.glade.h:20
+msgid "_Conversation"
+msgstr "_שיחה"
+
+#: ../data/glade/chat.glade.h:21
+msgid "_Copy"
+msgstr "_העתק"
+
+#: ../data/glade/chat.glade.h:22
+msgid "_Detach Tab"
+msgstr "_נתק לשונית"
+
+#: ../data/glade/chat.glade.h:23
+msgid "_Kick..."
+msgstr "_זרוק.."
+
+#: ../data/glade/chat.glade.h:24
+msgid "_Next Tab"
+msgstr "_לשונית הבאה"
+
+#: ../data/glade/chat.glade.h:25
+msgid "_Paste"
+msgstr "_הדבק"
+
+#: ../data/glade/chat.glade.h:26
+msgid "_Previous Tab"
+msgstr "_לשונית קודמת"
+
+#: ../data/glade/chat.glade.h:27 ../data/glade/main.glade.h:158
+msgid "_Room"
+msgstr "_חדר"
+
+#: ../data/glade/chat.glade.h:28
+msgid "_Show Contacts"
+msgstr "_הצג אנשי קשר"
+
+#: ../data/glade/chat.glade.h:29
+msgid "_Tabs"
+msgstr "_לשוניות"
+
+#.
+#. This is the text that should appear on a menu title. Don't include the prefix 'menu title|' in the translation.
+#: ../data/glade/chat.glade.h:33 ../data/glade/main.glade.h:170
+msgid "menu title|_Edit"
+msgstr "_עריכה"
+
+#: ../data/glade/file-transfer.glade.h:1
+msgid "Contact ID:"
+msgstr ""
+
+#: ../data/glade/file-transfer.glade.h:4
+msgid "Location:"
+msgstr "מיקום:"
+
+#: ../data/glade/file-transfer.glade.h:5 ../data/glade/main.glade.h:67
+msgid "Name:"
+msgstr "שם:"
+
+#: ../data/glade/file-transfer.glade.h:6
+msgid "Not supported yet"
+msgstr "עוד לא נתמך"
+
+#: ../data/glade/file-transfer.glade.h:7
+msgid "Open _Folder"
+msgstr "פתח _תיקייה"
+
+#: ../data/glade/file-transfer.glade.h:8
+msgid "Select A File"
+msgstr "בחק קובץ"
+
+#: ../data/glade/file-transfer.glade.h:9
+msgid "Size:"
+msgstr "גודל"
+
+#: ../data/glade/group-chat.glade.h:1 ../data/glade/main.glade.h:27
+msgid "Account:"
+msgstr "חשבון:"
+
+#: ../data/glade/group-chat.glade.h:2
+msgid "Browse:"
+msgstr "עיין:"
+
+#: ../data/glade/group-chat.glade.h:3
+msgid "Edit Favorite Room"
+msgstr "ערוך חדר מועדף"
+
+#: ../data/glade/group-chat.glade.h:4
+msgid ""
+"Enter the room name to join here or click on one or more rooms in the list."
+msgstr ""
+
+#: ../data/glade/group-chat.glade.h:6
+msgid "Join New"
+msgstr ""
+
+#: ../data/glade/group-chat.glade.h:7
+msgid "Join room on start_up"
+msgstr ""
+
+#: ../data/glade/group-chat.glade.h:8
+msgid "Join this chat room when Gossip starts and you are connected"
+msgstr ""
+
+#: ../data/glade/group-chat.glade.h:9
+msgid "Manage Favorite Rooms"
+msgstr ""
+
+#: ../data/glade/group-chat.glade.h:10 ../data/glade/main.glade.h:66
+msgid "N_ame:"
+msgstr "ש_ם:"
+
+#: ../data/glade/group-chat.glade.h:11
+msgid "Re_fresh"
+msgstr "רע_נן"
+
+#: ../data/glade/group-chat.glade.h:12
+msgid "S_erver:"
+msgstr "ש_רת:"
+
+#: ../data/glade/group-chat.glade.h:13
+msgid ""
+"Show more information about chatrooms found and make the window resizable."
+msgstr ""
+
+#: ../data/glade/group-chat.glade.h:14
+msgid ""
+"This list represents all chat rooms hosted on the server you have entered."
+msgstr ""
+
+#: ../data/glade/group-chat.glade.h:15 ../data/glade/main.glade.h:146
+msgid "_Nickname:"
+msgstr "_כינוי:"
+
+#: ../data/glade/group-chat.glade.h:16
+msgid "_Password"
+msgstr "_סיסמה"
+
+#: ../data/glade/group-chat.glade.h:17
+msgid "_Room:"
+msgstr "_חדר:"
+
+#: ../data/glade/group-chat.glade.h:18 ../data/glade/main.glade.h:159
+msgid "_Server:"
+msgstr "_שרת:"
+
+#: ../data/glade/main.glade.h:1
+msgid "-"
+msgstr "-"
+
+#: ../data/glade/main.glade.h:2
+msgid "<b>About</b>"
+msgstr "<b>אודות</b>"
+
+#: ../data/glade/main.glade.h:3
+msgid "<b>Account</b>"
+msgstr "<b>חשבון</b>"
+
+#: ../data/glade/main.glade.h:4
+msgid "<b>Appearance</b>"
+msgstr "<b>מראה</b>"
+
+#: ../data/glade/main.glade.h:5
+msgid "<b>Audio</b>"
+msgstr "<b>צליל</b>"
+
+#: ../data/glade/main.glade.h:6
+msgid "<b>Behaviour</b>"
+msgstr "<b>התנהגות</b>"
+
+#: ../data/glade/main.glade.h:7
+msgid "<b>Chat</b>"
+msgstr "<b>שיחה</b>"
+
+#: ../data/glade/main.glade.h:8
+msgid "<b>Client Information</b>"
+msgstr ""
+
+#: ../data/glade/main.glade.h:9
+msgid "<b>Contact List</b>"
+msgstr "<b>רשימת אנשי קשר</b>"
+
+#: ../data/glade/main.glade.h:10
+msgid "<b>Groups</b>"
+msgstr "<b>קבוצות</b>"
+
+#: ../data/glade/main.glade.h:11
+msgid "<b>Languages</b>"
+msgstr "<b>שפות</b>"
+
+#: ../data/glade/main.glade.h:12
+msgid "<b>Name</b>"
+msgstr "<b>שם</b>"
+
+#: ../data/glade/main.glade.h:13
+msgid "<b>New Account</b>"
+msgstr "<b>חשבון חדש</b>"
+
+#: ../data/glade/main.glade.h:15
+msgid "<b>Options</b>"
+msgstr "<b>אפשרויות</b>"
+
+#: ../data/glade/main.glade.h:16
+msgid "<b>Personal Details</b>"
+msgstr "<b>פרטים אישיים</b>"
+
+#: ../data/glade/main.glade.h:17
+msgid "<b>Settings</b>"
+msgstr "<b>הגדרות</b>"
+
+#: ../data/glade/main.glade.h:18
+msgid "<b>Status</b>"
+msgstr "<b>מצב</b>"
+
+#: ../data/glade/main.glade.h:19
+msgid "<b>Subscription</b>"
+msgstr ""
+
+#: ../data/glade/main.glade.h:20
+msgid "<b>Visual</b>"
+msgstr ""
+
+#: ../data/glade/main.glade.h:21
+msgid ""
+"<small>The list of languages reflects only the languages for which you have "
+"a dictionary installed.</small>"
+msgstr "<small>ברשימת השפות מוצגות שפות שעבורן מותקנים אצלך מילונים.</small>"
+
+#: ../data/glade/main.glade.h:22
+msgid "<span size=\"smaller\">Example: Mikael or user@server.org</span>"
+msgstr "<span size=\"smaller\">דוגמה: Mikael או user@server.org</span>"
+
+#: ../data/glade/main.glade.h:23
+msgid ""
+"<span size=\"smaller\">Note: You must select an account if the contact is "
+"unknown</span>"
+msgstr ""
+
+#: ../data/glade/main.glade.h:24
+msgid "A unique name for this account to identify it personally to you."
+msgstr ""
+
+#: ../data/glade/main.glade.h:25
+msgid "A_vatar:"
+msgstr ""
+
+#: ../data/glade/main.glade.h:26
+msgid "Accou_nt:"
+msgstr "חש_בון:"
+
+#: ../data/glade/main.glade.h:29
+msgid "Add Contact"
+msgstr "הוסף איש קשר"
+
+#: ../data/glade/main.glade.h:30
+msgid "Alia_s:"
+msgstr ""
+
+#: ../data/glade/main.glade.h:31
+msgid "Avatars are user chosen images shown in the contact list"
+msgstr ""
+
+#: ../data/glade/main.glade.h:32
+msgid "Birthday:"
+msgstr "יום הולדת:"
+
+#: ../data/glade/main.glade.h:33
+msgid "C_hange"
+msgstr "_שנה"
+
+#: ../data/glade/main.glade.h:34
+msgid "Ch_at"
+msgstr "התחל שיחה"
+
+#: ../data/glade/main.glade.h:35
+msgid "Chat Rooms"
+msgstr "חדרי שיחה"
+
+#: ../data/glade/main.glade.h:36
+msgid "Chat Th_eme:"
+msgstr "ער_כת נושא לשיחה:"
+
+#: ../data/glade/main.glade.h:37
+msgid "Client:"
+msgstr ""
+
+#: ../data/glade/main.glade.h:38
+msgid "Con_tact:"
+msgstr "איש קש_ר:"
+
+#: ../data/glade/main.glade.h:39
+msgid "Connect on S_tartup"
+msgstr ""
+
+#: ../data/glade/main.glade.h:40
+msgid "Contact List - Gossip"
+msgstr "רשימת אנשי קשר - Gossip"
+
+#: ../data/glade/main.glade.h:41
+msgid "Contacts"
+msgstr "אנשי קשר"
+
+#: ../data/glade/main.glade.h:42
+msgid "Context"
+msgstr ""
+
+#: ../data/glade/main.glade.h:43
+msgid "Country:"
+msgstr "מדינה:"
+
+#: ../data/glade/main.glade.h:44
+msgid "Cr_eate"
+msgstr ""
+
+#: ../data/glade/main.glade.h:45
+msgid "Decide _Later"
+msgstr ""
+
+#: ../data/glade/main.glade.h:46
+msgid "Display notifications when contacts come _online"
+msgstr ""
+
+#: ../data/glade/main.glade.h:47
+msgid ""
+"Each account you create has a unique name associated with it (for example "
+"<b>Google</b>)."
+msgstr ""
+
+#: ../data/glade/main.glade.h:48
+msgid "Edit Contact"
+msgstr "ערוך איש קשר"
+
+#: ../data/glade/main.glade.h:49
+msgid "Edit Groups"
+msgstr "ערוך קבוצות"
+
+#: ../data/glade/main.glade.h:50
+msgid "Email:"
+msgstr "דוא\"ל:"
+
+#: ../data/glade/main.glade.h:51
+msgid "Enable sounds when _away"
+msgstr ""
+
+#: ../data/glade/main.glade.h:52
+msgid "Enable sounds when _busy"
+msgstr ""
+
+#: ../data/glade/main.glade.h:53
+msgid "Enter status message:"
+msgstr "הקלד הודעת מצב:"
+
+#: ../data/glade/main.glade.h:54
+msgid "Forget password and clear the entry."
+msgstr ""
+
+#: ../data/glade/main.glade.h:55
+msgid "General"
+msgstr "כללי"
+
+#: ../data/glade/main.glade.h:56
+msgid "ID:"
+msgstr ""
+
+#: ../data/glade/main.glade.h:57
+msgid ""
+"If you chose to decide later you will be asked the next time you log on."
+msgstr ""
+
+#: ../data/glade/main.glade.h:58
+msgid "Imendio "
+msgstr ""
+
+#: ../data/glade/main.glade.h:60
+msgid "Join _Favorites"
+msgstr ""
+
+#: ../data/glade/main.glade.h:62
+msgid "Links"
+msgstr ""
+
+#: ../data/glade/main.glade.h:63
+msgid "Logi_n ID:"
+msgstr "מזה_ה משתמש:"
+
+#: ../data/glade/main.glade.h:64
+msgid "Login I_D:"
+msgstr "מזהה משת_מש:"
+
+#: ../data/glade/main.glade.h:65
+msgid "Manage Favorites..."
+msgstr "נהל מועדפים..."
+
+#: ../data/glade/main.glade.h:69
+msgid "Notifications"
+msgstr "התרעות"
+
+#: ../data/glade/main.glade.h:70
+msgid "OS:"
+msgstr ""
+
+#: ../data/glade/main.glade.h:71
+msgid "Pass_word:"
+msgstr "סיסמ_ה:"
+
+#: ../data/glade/main.glade.h:72
+msgid "Personal Details"
+msgstr "פרטים אישיים"
+
+#: ../data/glade/main.glade.h:73
+msgid ""
+"Populate from your desktop personal details (set in the Evolution email "
+"client or the About Me application)."
+msgstr ""
+
+#: ../data/glade/main.glade.h:74
+msgid "Preferences"
+msgstr "העדפות"
+
+#: ../data/glade/main.glade.h:75
+msgid "R_egister"
+msgstr "הר_שם"
+
+#: ../data/glade/main.glade.h:76
+msgid ""
+"Register this account with the Jabber server. If this is a new account, you "
+"will need to click on this first before connecting."
+msgstr ""
+"רשום את החשבון הזה עם שרת ה-Jabber, אם זה חשבון חדש, תצטרך ללחוץ על זה קודם "
+"לפני ההתחברות."
+
+#: ../data/glade/main.glade.h:77
+msgid "Reso_urce:"
+msgstr ""
+
+#: ../data/glade/main.glade.h:78
+msgid "S_how Offline Contacts"
+msgstr "הצג אנשי קשר מנותקים"
+
+#: ../data/glade/main.glade.h:79
+msgid "Search"
+msgstr "חיפוש"
+
+#: ../data/glade/main.glade.h:80
+msgid "Search the log and press enter to continue on to the next item found"
+msgstr ""
+
+#: ../data/glade/main.glade.h:81
+msgid ""
+"Select the groups you want this contact to appear in, you can select more "
+"than one group or no groups."
+msgstr ""
+
+#: ../data/glade/main.glade.h:82
+msgid "Select the name you want to use for this account:"
+msgstr "בחר שם לשימוש עבור חשבון זה:"
+
+#: ../data/glade/main.glade.h:83
+msgid "Ser_ver:"
+msgstr "שר_ת"
+
+#: ../data/glade/main.glade.h:84
+msgid ""
+"Set the alias you want to use for:\n"
+"<b>foo@bar.baz</b>\n"
+"\n"
+"You can retrieve contact information from the server. "
+msgstr ""
+
+#: ../data/glade/main.glade.h:88
+msgid "Show _avatars"
+msgstr "הצג _תמנות אישיות"
+
+#: ../data/glade/main.glade.h:89
+msgid "Show _smileys as images"
+msgstr ""
+
+#: ../data/glade/main.glade.h:90
+msgid "Show co_mpact contact list"
+msgstr ""
+
+#: ../data/glade/main.glade.h:91
+msgid "Sort by _name"
+msgstr "מיין לפי _שם"
+
+#: ../data/glade/main.glade.h:92
+msgid "Sort by s_tate"
+msgstr "מיין לפי מצ_ב"
+
+#: ../data/glade/main.glade.h:93
+msgid "Spell Checker"
+msgstr "בודק איות"
+
+#: ../data/glade/main.glade.h:94
+msgid "Spell Checking"
+msgstr "בדיקת איות"
+
+#: ../data/glade/main.glade.h:95
+msgid "Status"
+msgstr "מצב"
+
+#: ../data/glade/main.glade.h:96
+msgid "Status Message Presets"
+msgstr ""
+
+#: ../data/glade/main.glade.h:98
+msgid "Suggestions for the word:"
+msgstr ""
+
+#: ../data/glade/main.glade.h:99
+msgid "Synchroni_ze when saving"
+msgstr ""
+
+#: ../data/glade/main.glade.h:100
+msgid "Themes"
+msgstr "ערכות נושא"
+
+#: ../data/glade/main.glade.h:101
+msgid ""
+"This acts as a filter to the contact list below.\n"
+"\n"
+"You can use segments of contact's name or ID, for example, \"jabber.org\" "
+"will list everyone using that server.\n"
+"\n"
+"You can also use the name of a group to show only contacts in a specific "
+"group."
+msgstr ""
+
+#: ../data/glade/main.glade.h:106
+msgid ""
+"This acts as a filter to the contact list below. You can use segments of "
+"contact's name or ID, for example, \"jabber.org\" will list everyone using "
+"that server"
+msgstr ""
+
+#: ../data/glade/main.glade.h:107
+msgid "This is the name that will be used on your roster for this contact"
+msgstr ""
+
+#: ../data/glade/main.glade.h:108
+msgid "This name will be used to identify you in chat windows"
+msgstr ""
+
+#: ../data/glade/main.glade.h:109
+msgid ""
+"This name will be used to identify you when new contacts lookup your details"
+msgstr ""
+
+#: ../data/glade/main.glade.h:113
+msgid "Use _system document font"
+msgstr ""
+
+#: ../data/glade/main.glade.h:114
+msgid "Use default name here from the contact's VCard."
+msgstr ""
+
+#: ../data/glade/main.glade.h:115
+msgid "Use encryption (SS_L)"
+msgstr "שימוש בהצפנה (SS_L)"
+
+#: ../data/glade/main.glade.h:116
+msgid "Use system pro_xy"
+msgstr ""
+
+#: ../data/glade/main.glade.h:117
+msgid "Use this f_ont:"
+msgstr ""
+
+#: ../data/glade/main.glade.h:118
+msgid "Use this to filter the links found"
+msgstr ""
+
+#: ../data/glade/main.glade.h:119
+msgid "Version:"
+msgstr ""
+
+#: ../data/glade/main.glade.h:120
+msgid "View Previous Conversations"
+msgstr "צפייה בשיחות קודמות"
+
+#: ../data/glade/main.glade.h:121
+msgid "Web site:"
+msgstr "אתר אינטרנט:"
+
+#: ../data/glade/main.glade.h:122
+msgid "Which account do you want to use?"
+msgstr ""
+
+#: ../data/glade/main.glade.h:123
+msgid "You are not subscribed to this contact."
+msgstr ""
+
+#: ../data/glade/main.glade.h:124
+msgid ""
+"Your desktop personal information can be used here to fill in the details "
+"below.\n"
+"Similarly, you can choose to set this information which is used by the "
+"email \n"
+"client and other desktop applications. "
+msgstr ""
+
+#: ../data/glade/main.glade.h:127
+msgid "_About"
+msgstr "_אודות"
+
+#: ../data/glade/main.glade.h:128
+msgid "_Accept"
+msgstr ""
+
+#: ../data/glade/main.glade.h:129
+msgid "_Accounts"
+msgstr "_חשבונות"
+
+#: ../data/glade/main.glade.h:131
+msgid "_Add to status message list"
+msgstr "_הוסף לרשימת הודעות מצב"
+
+#: ../data/glade/main.glade.h:132
+msgid "_Birthday:"
+msgstr "יום _הולדת:"
+
+#: ../data/glade/main.glade.h:133
+msgid "_Contents"
+msgstr "_תכנים"
+
+#: ../data/glade/main.glade.h:134
+msgid "_Deny"
+msgstr "_דחה"
+
+#: ../data/glade/main.glade.h:135
+msgid "_Description:"
+msgstr "_תיאור:"
+
+#: ../data/glade/main.glade.h:136
+msgid "_Email:"
+msgstr "_דוא\"ל"
+
+#: ../data/glade/main.glade.h:137
+msgid "_Enable spell checking"
+msgstr "_הפעל בדיקת איות"
+
+#: ../data/glade/main.glade.h:138
+msgid "_Enter the name or contact ID of the person you want to chat to below:"
+msgstr "_הכנס שם או מזהה איש קשר למי שברצונך לדבר איתו:"
+
+#: ../data/glade/main.glade.h:139
+msgid "_For"
+msgstr "_ערך"
+
+#: ../data/glade/main.glade.h:140
+msgid "_Full Name:"
+msgstr "_שם מלא:"
+
+#: ../data/glade/main.glade.h:141
+msgid "_Group:"
+msgstr "_קבוצה:"
+
+#: ../data/glade/main.glade.h:142
+msgid "_Help"
+msgstr "_עזרה"
+
+#: ../data/glade/main.glade.h:143
+msgid "_Name:"
+msgstr "_שם:"
+
+#: ../data/glade/main.glade.h:144
+msgid "_New Message..."
+msgstr "_הודעה חדשה..."
+
+#: ../data/glade/main.glade.h:145
+msgid "_Nick Name:"
+msgstr "_כינוי:"
+
+#: ../data/glade/main.glade.h:147
+msgid "_Open"
+msgstr "_פתח"
+
+#: ../data/glade/main.glade.h:148
+msgid "_Open new chats in separate windows"
+msgstr "_פתח שיחות חדשות בחלונות נפרדים"
+
+#: ../data/glade/main.glade.h:149
+msgid "_Password:"
+msgstr "סיסמה:"
+
+#: ../data/glade/main.glade.h:150
+msgid "_Personal Information"
+msgstr "מידע _אישי"
+
+#: ../data/glade/main.glade.h:151
+msgid "_Play sound when messages arrive"
+msgstr "_נגן צליל כשמתקבלת הודעה"
+
+#: ../data/glade/main.glade.h:152
+msgid "_Port:"
+msgstr "_שער:"
+
+#: ../data/glade/main.glade.h:153
+msgid "_Preferences"
+msgstr "_העדפות"
+
+#: ../data/glade/main.glade.h:154
+msgid "_Quit"
+msgstr "יצי_אה"
+
+#: ../data/glade/main.glade.h:155
+msgid "_Quit Message:"
+msgstr "הודעת _יציאה:"
+
+#: ../data/glade/main.glade.h:156
+msgid "_Retrieve"
+msgstr ""
+
+#: ../data/glade/main.glade.h:157
+msgid "_Retrieve From Desktop"
+msgstr ""
+
+#: ../data/glade/main.glade.h:160
+msgid "_Show Contact List"
+msgstr "_הצג רשימת אנשי קשר"
+
+#: ../data/glade/main.glade.h:161
+msgid "_Subscribe"
+msgstr "_הרשם"
+
+#: ../data/glade/main.glade.h:162
+msgid "_Use for chat rooms"
+msgstr "_השתמש בחדרי שיחה"
+
+#: ../data/glade/main.glade.h:164
+msgid "_Web site:"
+msgstr "_אתר אינטרנט"
+
+#: ../data/glade/main.glade.h:165
+msgid "irc account settings"
+msgstr "הגדרות חשבון irc"
+
+#: ../data/glade/main.glade.h:166
+msgid "jabber account settings"
+msgstr "הגדרות חשבון jabber"
+
+#. This is the text that should appear on a menu title. Don't include the prefix 'menu title|' in the translation.
+#: ../data/glade/main.glade.h:168
+msgid "menu title|_Chat"
+msgstr "_שיחה"
+
+#: ../data/glade/main.glade.h:171
+msgid "msn account settings"
+msgstr "הגדרות חשבון msn"
