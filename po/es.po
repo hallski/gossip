@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-07 18:19+0000\n"
-"PO-Revision-Date: 2008-02-11 12:00+0100\n"
+"POT-Creation-Date: 2008-02-27 10:36+0000\n"
+"PO-Revision-Date: 2008-02-29 12:50+0100\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -80,8 +80,9 @@ msgid ""
 "Font name to use instead of the system document font. Only applied when NOT "
 "using the system document font."
 msgstr ""
-"Nombre de la tipografía que usar en lugar de la tipografía de documentos del sistema. "
-"Sólo se aplica cuando NO se está usando la tipografía de documentos del sistema."
+"Nombre de la tipografía que usar en lugar de la tipografía de documentos del "
+"sistema. Sólo se aplica cuando NO se está usando la tipografía de documentos "
+"del sistema."
 
 #: ../gossip.schemas.in.h:13
 msgid "Hide main window"
@@ -211,8 +212,8 @@ msgstr "Indica si debe o no mostrar la lista de contactos en modo compacto."
 #: ../gossip.schemas.in.h:38
 msgid "Whether to use the system document font theme or a user specified font."
 msgstr ""
-"Indica si se debe usar la tipografía de documentos del tema del sistema o una tipografía "
-"especificada por el usuario."
+"Indica si se debe usar la tipografía de documentos del tema del sistema o "
+"una tipografía especificada por el usuario."
 
 #: ../gossip.schemas.in.h:39
 msgid "Whether to use the theme for chat rooms or not."
@@ -484,10 +485,12 @@ msgid "A specific protocol error occurred that was unexpected."
 msgstr "Ocurrió un error específico de protocolo inesperado."
 
 #: ../libloudermouth/lm-bs-receiver.c:90 ../libloudermouth/lm-bs-sender.c:251
+#, c-format
 msgid "The other party disconnected"
 msgstr "La otra parte se desconectó"
 
 #: ../libloudermouth/lm-bs-receiver.c:116
+#, c-format
 msgid "A protocol error occurred during the transfer"
 msgstr "Ocurrió un error de protocolo durante la transferencia"
 
@@ -1150,7 +1153,7 @@ msgid "Enter the new topic you want to set for this room:"
 msgstr "Introduzca el nuevo tema que quiere establecer para esta sala:"
 
 #: ../src/gossip-group-chat.c:1429
-msgid "Enter the new nickname you want to be know by:"
+msgid "Enter the new nickname you want to be known by:"
 msgstr "Introduzca el nuevo apodo por el que quiere que se le conozca:"
 
 #: ../src/gossip-group-chat.c:1453
@@ -1226,18 +1229,22 @@ msgid "- Gossip Instant Messenger"
 msgstr "- Mensajería instantánea Gossip"
 
 #: ../src/gossip-main.c:144
+#, c-format
 msgid "You can not use --no-connect together with --account"
 msgstr "No puede usar --no-connect junto con --account"
 
 #: ../src/gossip-main.c:156
+#, c-format
 msgid "No accounts available."
 msgstr "Ninguna cuenta está disponible."
 
 #: ../src/gossip-main.c:161
+#, c-format
 msgid "Available accounts:"
 msgstr "Cuentas disponibles:"
 
 #: ../src/gossip-main.c:171
+#, c-format
 msgid "[default]"
 msgstr "[predeterminada]"
 
@@ -1316,6 +1323,7 @@ msgid "%s wants to be added to your contact list"
 msgstr "%s quiere que le añada a su lista de contactos"
 
 #: ../src/gossip-notify.c:310
+#, c-format
 msgid "Someone wants to be added to your contact list"
 msgstr "Alguien quiere que le añada a su lista de contactos"
 
@@ -1420,6 +1428,7 @@ msgid "Someone wants to be added to your contact list for your '%s' account."
 msgstr "Alguien quiere que le añada a su lista de contactos de su cuenta «%s»."
 
 #: ../src/gossip-subscription-dialog.c:291
+#, c-format
 msgid "Someone wants to be added to your contact list."
 msgstr "Alguien quiere que le añada a su lista de contactos."
 
