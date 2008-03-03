@@ -1,5 +1,9 @@
 2008-03-03  Martyn Russell  <martyn@imendio.com>
 
+	* ChangeLog: Fixed Jorge's spacing issues.
+
+2008-03-03  Martyn Russell  <martyn@imendio.com>
+
 	* ChangeLog: Fixed Jorge's name to be consistent with PO file.
 
 2008-01-29  Jorge González  <jorgegonz@svn.gnome.org>
@@ -12,7 +16,7 @@
 
 2008-01-20  Jorge González  <jorgegonz@svn.gnome.org>
 
-        * es/es.po: Updated Spanish translation by Daniel Mustieles
+	* es/es.po: Updated Spanish translation by Daniel Mustieles
 
 2008-01-12  Jorge González  <jorgegonz@svn.gnome.org>
 
