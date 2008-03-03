@@ -1,3 +1,15 @@
+2008-03-03  Martyn Russell  <martyn@imendio.com>
+
+	* data/glade/group-chat.glade:
+	* src/gossip-chatrooms-window.c:
+	(chatrooms_window_model_add_columns):
+	(chatrooms_window_model_add):
+	(chatrooms_window_model_setup):
+	(chatrooms_window_chatroom_changed_foreach):
+	* src/gossip-new-chatroom-dialog.c:
+	(new_chatroom_dialog_model_setup): Improve the way we show Locked
+	information for chatrooms.
+
 2008-02-27  Wouter Bolsterlee  <wbolster@svn.gnome.org>
 
 	* src/gossip-about-dialog.c:

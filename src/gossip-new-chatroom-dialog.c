@@ -616,7 +616,7 @@ new_chatroom_dialog_model_setup (GossipNewChatroomDialog *dialog)
 		      "stock-size", GTK_ICON_SIZE_SMALL_TOOLBAR,
 		      NULL);
 
-	column = gtk_tree_view_column_new_with_attributes ("*", cell, 
+	column = gtk_tree_view_column_new_with_attributes (_("Locked"), cell, 
 							   "stock-id", COL_PASSWORD_PROTECTED, 
 							   NULL);
 	gtk_tree_view_column_set_alignment (column, 0.5);
