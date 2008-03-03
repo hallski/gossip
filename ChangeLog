@@ -1,5 +1,12 @@
 2008-03-03  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-app.c:
+	(app_favorite_chatroom_menu_setup): Reverse the chatroom list
+	before inserting it to the favourite menu so it appears in the
+	same order it is listed in the 'manage chatrooms' window.
+
+2008-03-03  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-new-chatroom-dialog.c:
 	(new_chatroom_dialog_update_buttons):
 	(new_chatroom_dialog_model_setup): Make sure the refresh button

@@ -1320,6 +1320,13 @@ app_favorite_chatroom_menu_setup (void)
 	priv->room_menu =
 		gtk_menu_item_get_submenu (GTK_MENU_ITEM (priv->room));
 
+	/* Reverse the list here because we want to make sure that we
+	 * always insert the next item in at position 3 so we start at
+	 * the right place. This of course means that new items are
+	 * put in before the last one.
+	 */
+	chatrooms = g_list_reverse (chatrooms);
+
 	for (l = chatrooms; l; l = l->next) {
 		if (app_favorite_chatroom_menu_add (l->data)) {
 			found = TRUE;
