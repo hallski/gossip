@@ -167,9 +167,7 @@ chatrooms_window_model_add_columns (GossipChatroomsWindow *window)
 	/* Password Protected */
 	cell = gtk_cell_renderer_pixbuf_new ();
 	g_object_set (cell,
-		      "xalign", 0.5, 
 		      "xpad", (guint) 4,
-		      "ypad", (guint) 1,
 		      "stock-size", GTK_ICON_SIZE_SMALL_TOOLBAR,
 		      NULL);
 
@@ -184,14 +182,14 @@ chatrooms_window_model_add_columns (GossipChatroomsWindow *window)
 	count = gtk_tree_view_append_column (view, column);
 
 	/* Chatroom auto connect */
-	cell = gtk_cell_renderer_toggle_new ();
+	cell = gtk_cell_renderer_pixbuf_new ();
 	g_object_set (cell,
 		      "xpad", (guint) 4,
-		      "ypad", (guint) 1,
+		      "stock-size", GTK_ICON_SIZE_SMALL_TOOLBAR,
 		      NULL);
 
-	column = gtk_tree_view_column_new_with_attributes (_("Auto Connect"), cell,
-							   "active", COL_AUTO_CONNECT,
+	column = gtk_tree_view_column_new_with_attributes (_("Join"), cell,
+							   "stock-id", COL_AUTO_CONNECT,
 							   NULL);
 	gtk_tree_view_column_set_alignment (column, 0.5);
 	gtk_tree_view_column_set_expand (column, FALSE);
@@ -384,7 +382,7 @@ chatrooms_window_model_add (GossipChatroomsWindow *window,
 	GtkListStore     *store;
 	GtkTreeIter       iter;
 	const gchar      *password_protected = NULL;
-	gboolean          auto_connect = FALSE;
+	const gchar      *auto_connect = NULL;
 
 	view = GTK_TREE_VIEW (window->treeview);
 	selection = gtk_tree_view_get_selection (view);
@@ -396,7 +394,7 @@ chatrooms_window_model_add (GossipChatroomsWindow *window,
 	}
 	
 	if (gossip_chatroom_get_auto_connect (chatroom)) {
-		auto_connect = TRUE;
+		auto_connect = GTK_STOCK_EXECUTE;
 	}
 	
 	gtk_list_store_append (store, &iter);
@@ -452,7 +450,7 @@ chatrooms_window_model_setup (GossipChatroomsWindow *window)
 				    G_TYPE_STRING,         /* Room */
 				    G_TYPE_STRING,         /* Server */
 				    G_TYPE_STRING,         /* Password protected */
-				    G_TYPE_BOOLEAN,        /* Auto start */
+				    G_TYPE_STRING,         /* Auto start */
 				    GOSSIP_TYPE_CHATROOM); /* Chatroom */
 
 	gtk_tree_view_set_model (view, GTK_TREE_MODEL (store));
@@ -563,14 +561,14 @@ chatrooms_window_chatroom_changed_foreach (GtkTreeModel   *model,
 		 * functions to work it out on update.
 		 */
 		const gchar *password_protected = NULL;
-		gboolean     auto_connect = FALSE;
+		const gchar *auto_connect = NULL;
 		
 		if (!G_STR_EMPTY (gossip_chatroom_get_password (chatroom))) {
 			password_protected = GTK_STOCK_DIALOG_AUTHENTICATION;
 		}
 		
 		if (gossip_chatroom_get_auto_connect (chatroom)) {
-			auto_connect = TRUE;
+			auto_connect = GTK_STOCK_EXECUTE;
 		}
 
 		gtk_list_store_set (GTK_LIST_STORE (model), iter,
