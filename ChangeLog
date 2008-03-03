@@ -1,5 +1,13 @@
 2008-03-03  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-new-chatroom-dialog.c:
+	(new_chatroom_dialog_update_buttons):
+	(new_chatroom_dialog_model_setup): Make sure the refresh button
+	sensitivity is tied to there being a server and change some of the
+	spacing and alignment in the list of rooms.
+
+2008-03-03  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-chatrooms-window.c:
 	(chatrooms_window_model_add_columns):
 	(chatrooms_window_model_add):

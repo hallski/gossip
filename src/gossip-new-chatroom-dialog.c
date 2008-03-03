@@ -223,6 +223,9 @@ new_chatroom_dialog_update_buttons (GossipNewChatroomDialog *dialog)
 		}
 	}
 	
+	/* Only allow browsing if we have a server */
+	gtk_widget_set_sensitive (dialog->togglebutton_refresh, !G_STR_EMPTY (server));
+
 	/* Only join if:
 	 * 1. If we are not ALREADY in the room 
 	 * 2. If we are creating the room
@@ -571,7 +574,6 @@ new_chatroom_dialog_model_setup (GossipNewChatroomDialog *dialog)
 	cell = gtk_cell_renderer_text_new ();
 	g_object_set (cell,
 		      "xpad", (guint) 4,
-		      "ypad", (guint) 1,
 		      "ellipsize", PANGO_ELLIPSIZE_END,
 		      NULL);
 
@@ -593,9 +595,7 @@ new_chatroom_dialog_model_setup (GossipNewChatroomDialog *dialog)
 	/* Columns: Occupants */
 	cell = gtk_cell_renderer_text_new ();
 	g_object_set (cell,
-		      "xalign", 0.5, 
 		      "xpad", (guint) 4,
-		      "ypad", (guint) 1,
 		      NULL);
 
 	column = gtk_tree_view_column_new_with_attributes (_("Users"), cell, 
@@ -610,9 +610,7 @@ new_chatroom_dialog_model_setup (GossipNewChatroomDialog *dialog)
 	/* Columns: Password Protected */
 	cell = gtk_cell_renderer_pixbuf_new ();
 	g_object_set (cell,
-		      "xalign", 0.5, 
 		      "xpad", (guint) 4,
-		      "ypad", (guint) 1,
 		      "stock-size", GTK_ICON_SIZE_SMALL_TOOLBAR,
 		      NULL);
 
@@ -630,7 +628,6 @@ new_chatroom_dialog_model_setup (GossipNewChatroomDialog *dialog)
 	cell = gtk_cell_renderer_text_new ();
 	g_object_set (cell,
 		      "xpad", (guint) 4,
-		      "ypad", (guint) 1,
 		      "ellipsize", PANGO_ELLIPSIZE_END,
 		      NULL);
 
