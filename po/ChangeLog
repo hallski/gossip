@@ -1,3 +1,7 @@
+2008-03-03  Gintautas Miliauskas  <gintas@akl.lt>
+
+	* lt.po: Fixed typo in Lithuanian translation.
+
 2008-03-03  Martyn Russell  <martyn@imendio.com>
 
 	* ChangeLog: Fixed Inaki's name to be consistent with PO file.

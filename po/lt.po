@@ -5,14 +5,14 @@
 #
 #
 # Justina Klingaitė <justina.klingaite@gmail.com>, 2006, 2008.
-# Gintautas Miliauskas <gintas@akl.lt>, 2006.
+# Gintautas Miliauskas <gintas@akl.lt>, 2006, 2008.
 # Žygimantas Beručka <zygis@gnome.org>, 2004-2008.
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-27 19:13+0200\n"
-"PO-Revision-Date: 2008-02-27 19:15+0200\n"
+"POT-Creation-Date: 2008-03-03 19:53+0200\n"
+"PO-Revision-Date: 2008-03-03 19:53+0200\n"
 "Last-Translator: Žygimantas Beručka <zygis@gnome.org>\n"
 "Language-Team: Lithuanian <komp_lt@konferencijos.lt>\n"
 "MIME-Version: 1.0\n"
@@ -1550,7 +1550,7 @@ msgstr "Pakviesti"
 
 #: ../data/glade/chat.glade.h:11 ../data/glade/main.glade.h:61
 msgid "Join _New..."
-msgstr "Prisijungi prie _naujo..."
+msgstr "Prisijungti prie _naujo..."
 
 #: ../data/glade/chat.glade.h:12
 msgid "Move Tab _Left"
@@ -1675,7 +1675,7 @@ msgstr ""
 
 #: ../data/glade/group-chat.glade.h:6
 msgid "Join New"
-msgstr "Prisijungi prie naujo"
+msgstr "Prisijungti prie naujo"
 
 #: ../data/glade/group-chat.glade.h:7
 msgid "Join room on start_up"
