@@ -1,5 +1,19 @@
 2008-03-03  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-chatroom-manager.c:
+	(gossip_chatroom_manager_set_index):
+	* libgossip/gossip-chatroom-manager.h:
+	* src/gossip-chatrooms-window.c:
+	(chatrooms_window_chatroom_reordered_foreach):
+	(chatrooms_window_rows_reordered_cb):
+	(chatrooms_window_model_setup): Reindex favourite chatrooms when
+	resorting the list in the chatroom manager. This affects the order
+	in which we load chatroom tabs. More work is needed to reorder the
+	menu in the main window and to make moving this list around
+	manually instead of by just the column sorting.
+
+2008-03-03  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-app.c:
 	(app_favorite_chatroom_menu_setup): Reverse the chatroom list
 	before inserting it to the favourite menu so it appears in the

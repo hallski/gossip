@@ -262,6 +262,26 @@ gossip_chatroom_manager_remove (GossipChatroomManager *manager,
 	}
 }
 
+void
+gossip_chatroom_manager_set_index (GossipChatroomManager *manager,
+				   GossipChatroom        *chatroom,
+				   gint                   index)
+{
+	GossipChatroomManagerPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_CHATROOM_MANAGER (manager));
+	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
+
+	priv = GET_PRIV (manager);
+
+	gossip_debug (DEBUG_DOMAIN,
+		      "Indexing chatroom with name:'%s' to position %d",
+		      gossip_chatroom_get_name (chatroom), index);
+
+	priv->chatrooms = g_list_remove (priv->chatrooms, chatroom);
+	priv->chatrooms = g_list_insert (priv->chatrooms, chatroom, index);
+}
+
 static void
 chatroom_manager_chatroom_enabled_cb (GossipChatroom        *chatroom,
 				      GParamSpec            *arg1,

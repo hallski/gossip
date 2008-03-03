@@ -51,6 +51,9 @@ gboolean        gossip_chatroom_manager_add             (GossipChatroomManager *
 							 GossipChatroom        *chatroom);
 void            gossip_chatroom_manager_remove          (GossipChatroomManager *manager,
 							 GossipChatroom        *chatroom);
+void            gossip_chatroom_manager_set_index       (GossipChatroomManager *manager,
+							 GossipChatroom        *chatroom,
+							 gint                   index);
 GossipChatroom *gossip_chatroom_manager_find            (GossipChatroomManager *manager,
 							 GossipChatroomId       id);
 GList *         gossip_chatroom_manager_find_extended   (GossipChatroomManager *manager,

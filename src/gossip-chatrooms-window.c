@@ -429,6 +429,45 @@ chatrooms_window_row_activated_cb (GtkTreeView           *tree_view,
 	}
 }
 
+static gboolean
+chatrooms_window_chatroom_reordered_foreach (GtkTreeModel *model,
+					     GtkTreePath  *path,
+					     GtkTreeIter  *iter,
+					     gpointer      user_data)
+{
+	GossipChatroom        *chatroom;
+	GossipChatroomManager *manager;
+	gint                  *indices;
+
+	/* Reindex the chatrooms in the chatroom manager to make sure
+	 * we save them in the same order.
+	 */
+
+	gtk_tree_model_get (model, iter, COL_POINTER, &chatroom, -1);
+	indices = gtk_tree_path_get_indices (path);
+
+	manager = gossip_app_get_chatroom_manager ();
+	gossip_chatroom_manager_set_index (manager, chatroom, indices[0]);
+	gossip_chatroom_manager_store (manager);
+
+	g_object_unref (chatroom);
+
+	return FALSE;
+}
+
+static void
+chatrooms_window_rows_reordered_cb (GtkTreeModel          *tree_model,
+				    GtkTreePath           *path,
+				    GtkTreeIter           *iter,
+				    gpointer               arg3,
+				    GossipChatroomsWindow *window)
+{
+	gtk_tree_model_foreach (tree_model,
+				(GtkTreeModelForeachFunc)
+				chatrooms_window_chatroom_reordered_foreach,
+				NULL);
+}
+
 static void
 chatrooms_window_model_setup (GossipChatroomsWindow *window)
 {
@@ -461,6 +500,12 @@ chatrooms_window_model_setup (GossipChatroomsWindow *window)
 
 	g_signal_connect (selection, "changed",
 			  G_CALLBACK (chatrooms_window_model_selection_changed), 
+			  window);
+
+
+	/* Model */
+	g_signal_connect (GTK_TREE_MODEL (store), "rows-reordered",
+			  G_CALLBACK (chatrooms_window_rows_reordered_cb),
 			  window);
 
 	/* Columns */
