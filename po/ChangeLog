@@ -1,8 +1,12 @@
+2008-03-03  Martyn Russell  <martyn@imendio.com>
+
+	* ChangeLog: Fixed Jorge's name to be consistent with PO file.
+
 2008-02-29  Yair Hershkovitz  <yairhr@gmail.com>
 
 	* he.po: Added Hebrew translation.
 
-2008-02-29  Jorge Gonzalez  <jorgegonz@svn.gnome.org>  
+2008-02-29  Jorge González  <jorgegonz@svn.gnome.org>
 
 	* es.po: Updated Spanish translation  
 
@@ -30,7 +34,7 @@
 
 	* eu.po: Updated Basque translation.
 
-2008-02-11  Jorge Gonzalez  <jorgegonz@svn.gnome.org>
+2008-02-11  Jorge González  <jorgegonz@svn.gnome.org>
 
 	* es.po: Updated Spanish translation
 
@@ -42,11 +46,11 @@
 
 	* ru.po: Updated Russian translation
 
-2008-01-27  Jorge Gonzalez  <jorgegonz@svn.gnome.org>
+2008-01-27  Jorge González  <jorgegonz@svn.gnome.org>
 
 	* es.po: Updated Spanish translation
 
-2008-01-20  Jorge Gonzalez  <jorgegonz@svn.gnome.org>
+2008-01-20  Jorge González  <jorgegonz@svn.gnome.org>
 
 	* es.po: Updated Spanish translation
 
@@ -54,7 +58,7 @@
 
 	* ca.po: Updated Catalan translation.
 
-2008-01-12  Jorge Gonzalez  <jorgegonz@svn.gnome.org>
+2008-01-12  Jorge González  <jorgegonz@svn.gnome.org>
 
 	* es.po: Updated Spanish translation
 
@@ -65,11 +69,11 @@
 
 	* sv.po: Updated Swedish translation.
 
-2007-12-30  Jorge Gonzalez  <jorgegonz@svn.gnome.org>  
+2007-12-30  Jorge González  <jorgegonz@svn.gnome.org>  
 
 	* es.po: Updated Spanish translation 
 
-2007-12-11  Jorge Gonzalez  <jorgegonz@svn.gnome.org>  
+2007-12-11  Jorge González  <jorgegonz@svn.gnome.org>  
 
         * es.po: Updated Spanish translation   
 
@@ -81,7 +85,7 @@
 
 	* ca.po: Updated Catalan translation.
 
-2007-11-13  Jorge Gonzalez  <jorgegonz@svn.gnome.org>
+2007-11-13  Jorge González  <jorgegonz@svn.gnome.org>
 
         * es.po: Updated Spanish translation
 
@@ -95,7 +99,7 @@
 	some missing files from libgossip/ discovered running make
 	distcheck.
 
-2007-11-01  Jorge Gonzalez  <jorgegonz@svn.gnome.org>
+2007-11-01  Jorge González  <jorgegonz@svn.gnome.org>
 
         * es.po: Updated Spanish translation
 
@@ -107,7 +111,7 @@
 
 	* sv.po: Updated Swedish translation.
 
-2007-10-07  Jorge Gonzalez  <jorgegonz@svn.gnome.org>
+2007-10-07  Jorge González  <jorgegonz@svn.gnome.org>
 
         * es.po: Updated Spanish translation.
 
@@ -120,15 +124,15 @@
 
 	* oc.po: Fixed build error.
 
-2007-09-29  Jorge Gonzalez  <jorgegonz@svn.gnome.org>
+2007-09-29  Jorge González  <jorgegonz@svn.gnome.org>
 
         * es.po: Updated Spanish translation
 
-2007-09-26  Jorge Gonzalez  <jorgegonz@svn.gnome.org>
+2007-09-26  Jorge González  <jorgegonz@svn.gnome.org>
 
         * es.po: Updated Spanish translation
 
-2007-09-20  Jorge Gonzalez  <jorgegonz@svn.gnome.org>
+2007-09-20  Jorge González  <jorgegonz@svn.gnome.org>
 
         * es.po: Updated Spanish translation
 
