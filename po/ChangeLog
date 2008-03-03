@@ -1,5 +1,9 @@
 2008-03-03  Martyn Russell  <martyn@imendio.com>
 
+	* ChangeLog: Fixed Jorge's spacing issues with ChangeLog entries.
+
+2008-03-03  Martyn Russell  <martyn@imendio.com>
+
 	* ChangeLog: Fixed Jorge's name to be consistent with PO file.
 
 2008-02-29  Yair Hershkovitz  <yairhr@gmail.com>
@@ -75,7 +79,7 @@
 
 2007-12-11  Jorge González  <jorgegonz@svn.gnome.org>  
 
-        * es.po: Updated Spanish translation   
+	* es.po: Updated Spanish translation   
 
 2007-12-09  Kjartan Maraas  <kmaraas@gnome.org>
 
@@ -87,7 +91,7 @@
 
 2007-11-13  Jorge González  <jorgegonz@svn.gnome.org>
 
-        * es.po: Updated Spanish translation
+	* es.po: Updated Spanish translation
 
 2007-11-10  Daniel Nylander <po@danielnylander.se>
 
@@ -101,7 +105,7 @@
 
 2007-11-01  Jorge González  <jorgegonz@svn.gnome.org>
 
-        * es.po: Updated Spanish translation
+	* es.po: Updated Spanish translation
 
 2007-11-01  Gabor Kelemen  <kelemeng@gnome.hu>
 
@@ -113,7 +117,7 @@
 
 2007-10-07  Jorge González  <jorgegonz@svn.gnome.org>
 
-        * es.po: Updated Spanish translation.
+	* es.po: Updated Spanish translation.
 
 2007-10-04  Stéphane Raimbault  <stephane.raimbault@gmail.com>
 
@@ -126,19 +130,19 @@
 
 2007-09-29  Jorge González  <jorgegonz@svn.gnome.org>
 
-        * es.po: Updated Spanish translation
+	* es.po: Updated Spanish translation
 
 2007-09-26  Jorge González  <jorgegonz@svn.gnome.org>
 
-        * es.po: Updated Spanish translation
+	* es.po: Updated Spanish translation
 
 2007-09-20  Jorge González  <jorgegonz@svn.gnome.org>
 
-        * es.po: Updated Spanish translation
+	* es.po: Updated Spanish translation
 
 2007-09-17  Inaki Larranaga Murgoitio  <dooteo@zundan.com>
 
-        * eu.po: Updated Basque translation.
+	* eu.po: Updated Basque translation.
 
 2007-09-17  Gintautas Miliauskas  <gintas@akl.lt>
 
@@ -2302,7 +2306,7 @@
 	* cs.po: Updated Czech translation.
 
 2003-11-10  Grigory Bakunov  <black@asplinux.ru>
-  
+
 	* ru.po: Updated Russian translation.
 	
 2003-11-10  Vincent van Adrighem  <adrighem@gnome.org>
