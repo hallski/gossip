@@ -278,6 +278,8 @@ gossip_jabber_vcard_set (GossipJabber    *jabber,
 	LmMessageHandler   *handler;
 	GossipCallbackData *data;
 	GossipAvatar       *avatar;
+	GossipContact      *own_contact;
+	const gchar        *id;
 	const gchar        *str;
 	gboolean            result;
 
@@ -286,6 +288,10 @@ gossip_jabber_vcard_set (GossipJabber    *jabber,
 	m = lm_message_new_with_sub_type (NULL,
 					  LM_MESSAGE_TYPE_IQ,
 					  LM_MESSAGE_SUB_TYPE_SET);
+
+	own_contact = gossip_jabber_get_own_contact (jabber);
+	id = gossip_contact_get_id (own_contact);
+	lm_message_node_set_attribute (m->node, "from", id);
 
 	node = lm_message_node_add_child (m->node, "vCard", NULL);
 	lm_message_node_set_attribute (node, "xmlns", "vcard-temp");

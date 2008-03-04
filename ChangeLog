@@ -1,5 +1,28 @@
 2008-03-04  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-ebook.c:
+	(gossip_ebook_get_jabber_id):
+	(gossip_ebook_get_name):
+	(gossip_ebook_get_nickname):
+	(gossip_ebook_get_email):
+	(gossip_ebook_get_website):
+	(gossip_ebook_get_birthdate): Also include some debugging so we know
+	when we are requesting this information from libebook. 
+	
+	(gossip_ebook_get_avatar): We ALWAYS get a mime type of
+	"image/X-EVOLUTION-UNKNOWN" for images we know are of type
+	"image/png" from the About Me settings. This means that you can
+	never synchronise your avatar because we don't know what image
+	type it is. Changed this to know guess it will be a PNG. This
+	might break for JPEGs.
+	
+	* libgossip/gossip-jabber-vcard.c:
+	(gossip_jabber_vcard_set): Make sure we include the "from"
+	information when setting the vcard, this is how the JEP shows the
+	message should be sent.
+
+2008-03-04  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-contact-list.c:
 	(contact_list_remove_contact): Make sure we emit the row-changed
 	signal on parents for children that are removed to make sure the

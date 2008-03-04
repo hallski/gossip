@@ -116,7 +116,13 @@ gossip_ebook_get_jabber_id (void)
 	gchar *id;
 
 	ebook_init ();
+
 	id = e_contact_get (me, E_CONTACT_IM_JABBER_HOME_1);
+
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Getting id '%s'", 
+		      id);
+
 	ebook_term ();
 
 	return id;
@@ -160,6 +166,10 @@ gossip_ebook_get_name (void)
 	ebook_init ();
 
 	name = e_contact_get (me, E_CONTACT_FULL_NAME);
+
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Getting name '%s'", 
+		      name);
 
 	ebook_term ();
 
@@ -205,6 +215,10 @@ gossip_ebook_get_nickname (void)
 	ebook_init ();
 
 	nickname = e_contact_get (me, E_CONTACT_NICKNAME);
+
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Getting nickname '%s'", 
+		      nickname);
 	
 	ebook_term ();
 
@@ -252,6 +266,10 @@ gossip_ebook_get_email (void)
 
 	email = e_contact_get (me, E_CONTACT_EMAIL_1);
 
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Getting email address '%s'", 
+		      email);
+
 	ebook_term ();
 	
 	return email;
@@ -296,6 +314,10 @@ gossip_ebook_get_website (void)
 	ebook_init ();
 
 	website = e_contact_get (me, E_CONTACT_HOMEPAGE_URL);
+
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Getting website '%s'", 
+		      website);
 	
 	ebook_term ();
 
@@ -317,12 +339,19 @@ gossip_ebook_get_birthdate (void)
 	birthdate = e_contact_get (me, E_CONTACT_BIRTH_DATE);
 
 	if (!birthdate) {
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Getting NO birthday");
+
 		ebook_term ();
 		return NULL;
 	}
 
 	str = e_contact_date_to_string (birthdate);
 	e_contact_date_free (birthdate);
+
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Getting birthday '%s'", 
+		      str);
 
 	/* FIXME: Needs to work with different localisations */
 	if (sscanf (str, "%04d-%02d-%02d", &year, &month, &day) != 3) {
@@ -387,28 +416,46 @@ gossip_ebook_get_avatar (void)
 {
 	EContactPhoto *photo;
 	GossipAvatar  *avatar;
+	gchar         *mime_type = "image/png";
+	guchar        *data;
+	gsize          length;
 
 	ebook_init ();
 
 	photo = e_contact_get (me, E_CONTACT_PHOTO);
 
 	if (!photo) {
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Getting NO avatar");
+
 		ebook_term ();
 		return NULL;
 	}
 
-	/* Return NULL, if eds avatar is set to Unknown */
-	if (strcmp (EVO_UNKNOWN_IMAGE, (gchar*) photo->data.inlined.mime_type) == 0) {
-		e_contact_photo_free (photo);
-		ebook_term ();
-		return NULL;
+	data = (guchar*) photo->data.inlined.data;
+	length = photo->data.inlined.length;
+
+	/* Return NULL, if eds avatar is set to Unknown? It is ALWAYS unknown? */
+	if (strcmp ((gchar*) photo->data.inlined.mime_type, EVO_UNKNOWN_IMAGE) == 0) {
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Getting avatar with unknown mime type '%s', trying PNG", 
+			      photo->data.inlined.mime_type);
+
+		/* e_contact_photo_free (photo); */
+		/* ebook_term (); */
+		/* return NULL; */
+	} else {
+		mime_type = (gchar*) photo->data.inlined.mime_type;
 	}
 
-	avatar = gossip_avatar_new ((guchar*) photo->data.inlined.data,
-				    photo->data.inlined.length,
-				    (gchar*) photo->data.inlined.mime_type);
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Getting avatar of type '%s' and size %d", 
+		      photo->data.inlined.mime_type,
+		      photo->data.inlined.length);
 
+	avatar = gossip_avatar_new (data, length, mime_type);
 	e_contact_photo_free (photo);
+
 	ebook_term ();
 
 	return avatar;
