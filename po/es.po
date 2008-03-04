@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-27 10:36+0000\n"
-"PO-Revision-Date: 2008-02-29 12:50+0100\n"
+"POT-Creation-Date: 2008-03-03 20:07+0000\n"
+"PO-Revision-Date: 2008-03-04 18:54+0100\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -349,7 +349,7 @@ msgstr "Se canceló la entrada a esta sala de chat."
 
 #. i18n: The current state of the connection.
 #: ../libgossip/gossip-contact.c:965 ../libgossip/gossip-presence.c:242
-#: ../src/gossip-app.c:2605 ../src/gossip-contact-info-dialog.c:156
+#: ../src/gossip-app.c:2612 ../src/gossip-contact-info-dialog.c:156
 #: ../src/gossip-galago.c:186 ../src/gossip-status-icon.c:363
 msgid "Offline"
 msgstr "Desconectado"
@@ -562,7 +562,7 @@ msgstr "El archivo es demasiado grande"
 msgid "Unknown error"
 msgstr "Error desconocido"
 
-#: ../src/gossip-about-dialog.c:63
+#: ../src/gossip-about-dialog.c:64
 msgid ""
 "Gossip is free software; you can redistribute it and/or modify it under the "
 "terms of the GNU General Public License as published by the Free Software "
@@ -574,7 +574,7 @@ msgstr ""
 "Foundation; ya sea en la versión 2 de la Licencia, o (a su elección) "
 "cualquier versión posterior."
 
-#: ../src/gossip-about-dialog.c:67
+#: ../src/gossip-about-dialog.c:68
 msgid ""
 "Gossip is distributed in the hope that it will be useful, but WITHOUT ANY "
 "WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
@@ -586,7 +586,7 @@ msgstr ""
 "PARA UN PROPÓSITO PARTICULAR. Vea la Licencia Pública General de GNU para "
 "más detalles."
 
-#: ../src/gossip-about-dialog.c:71
+#: ../src/gossip-about-dialog.c:72
 msgid ""
 "You should have received a copy of the GNU General Public License along with "
 "Gossip; if not, write to the Free Software Foundation, Inc., 51 Franklin "
@@ -596,11 +596,11 @@ msgstr ""
 "con Gossip ; si no, escriba a la Free Software Foundation, Inc., 51 Franklin "
 "Street, Fifth Floor, Boston, MA 02110-130159 USA"
 
-#: ../src/gossip-about-dialog.c:99
+#: ../src/gossip-about-dialog.c:100
 msgid "An Instant Messaging client for GNOME"
 msgstr "Un cliente de mensajería instantánea para GNOME"
 
-#: ../src/gossip-about-dialog.c:105
+#: ../src/gossip-about-dialog.c:106
 msgid "translator-credits"
 msgstr ""
 "Jorge González <jorgegonz@svn.gnome.org>\n"
@@ -796,29 +796,29 @@ msgstr ""
 "Esto es solo un recordatoria, desde ahora, Gossip terminará al realizar esta "
 "acción a menos que desmarque la opción de abajo."
 
-#: ../src/gossip-app.c:1494 ../src/gossip-edit-contact-dialog.c:231
+#: ../src/gossip-app.c:1501 ../src/gossip-edit-contact-dialog.c:231
 msgid "Group"
 msgstr "Grupo"
 
-#: ../src/gossip-app.c:1515
+#: ../src/gossip-app.c:1522
 msgid "Contact"
 msgstr "Contacto"
 
-#: ../src/gossip-app.c:1828
+#: ../src/gossip-app.c:1835
 #, c-format
 msgid "Please enter your %s account password"
 msgstr "Introduzca la contraseña de su cuenta %s:"
 
-#: ../src/gossip-app.c:1839
+#: ../src/gossip-app.c:1846
 #, c-format
 msgid "Logging in to account '%s'"
 msgstr "Iniciando sesión en la cuenta «%s»"
 
-#: ../src/gossip-app.c:1843
+#: ../src/gossip-app.c:1850
 msgid "Remember Password?"
 msgstr "¿Desea recordar su contraseña?"
 
-#: ../src/gossip-app.c:2530
+#: ../src/gossip-app.c:2537
 msgid "Edit Account _Details"
 msgstr "Editar _detalles de la cuenta"
 
@@ -897,21 +897,28 @@ msgstr[1] "Conversaciones (%d)"
 msgid "Typing a message."
 msgstr "Tecleando un mensaje."
 
-#: ../src/gossip-chatrooms-window.c:147
+#: ../src/gossip-chatrooms-window.c:146
 msgid "Name"
 msgstr "Nombre"
 
-#: ../src/gossip-chatrooms-window.c:154
+#: ../src/gossip-chatrooms-window.c:153
 msgid "Room"
 msgstr "Sala"
 
-#: ../src/gossip-chatrooms-window.c:162
+#: ../src/gossip-chatrooms-window.c:161
 msgid "Server"
 msgstr "Servidor"
 
-#: ../src/gossip-chatrooms-window.c:196
-msgid "Auto Connect"
-msgstr "Autoconectar"
+#: ../src/gossip-chatrooms-window.c:174
+#: ../src/gossip-new-chatroom-dialog.c:617
+msgid "Locked"
+msgstr "Bloqueado"
+
+#: ../src/gossip-chatrooms-window.c:191
+#: ../src/gossip-new-chatroom-dialog.c:206
+#: ../src/gossip-new-chatroom-dialog.c:219 ../data/glade/group-chat.glade.h:5
+msgid "Join"
+msgstr "Unirse"
 
 #: ../src/gossip-contact-info-dialog.c:636 ../data/glade/main.glade.h:59
 msgid "Information requested..."
@@ -1253,16 +1260,11 @@ msgstr "[predeterminada]"
 msgid "There is no account with the name '%s'."
 msgstr "No hay ninguna cuenta llamada «%s»."
 
-#: ../src/gossip-new-chatroom-dialog.c:206
-#: ../src/gossip-new-chatroom-dialog.c:219 ../data/glade/group-chat.glade.h:5
-msgid "Join"
-msgstr "Unirse"
-
 #: ../src/gossip-new-chatroom-dialog.c:213
 msgid "Create"
 msgstr "Crear"
 
-#: ../src/gossip-new-chatroom-dialog.c:561
+#: ../src/gossip-new-chatroom-dialog.c:564
 msgid "Rooms"
 msgstr "Salas"
 
@@ -1270,22 +1272,22 @@ msgstr "Salas"
 msgid "Users"
 msgstr "Usuarios"
 
-#: ../src/gossip-new-chatroom-dialog.c:637
+#: ../src/gossip-new-chatroom-dialog.c:634
 msgid "Description"
 msgstr "Descripción"
 
-#: ../src/gossip-new-chatroom-dialog.c:833
+#: ../src/gossip-new-chatroom-dialog.c:830
 #, c-format
 msgid "Found %d conference room"
 msgid_plural "Found %d conference rooms"
 msgstr[0] "Se encontró una sala de conferencias"
 msgstr[1] "Se encontraron %d salas de conferencias"
 
-#: ../src/gossip-new-chatroom-dialog.c:872
+#: ../src/gossip-new-chatroom-dialog.c:869
 msgid "Browsing for conference rooms, please wait..."
 msgstr "Buscando salas de conferencia, espere por favor…"
 
-#: ../src/gossip-new-chatroom-dialog.c:916
+#: ../src/gossip-new-chatroom-dialog.c:913
 msgid "Browsing cancelled!"
 msgstr "¡Búsqueda cancelada!"
 
