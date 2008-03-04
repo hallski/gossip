@@ -1,3 +1,14 @@
+2008-03-04  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-contact-list.c:
+	(contact_list_remove_contact): Make sure we emit the row-changed
+	signal on parents for children that are removed to make sure the
+	group is potentially removed if there are no contacts to show due
+	to them being offline or having no events, etc. This fixes a bug
+	shown by removing a contact from a group which has 1 offline
+	contact left in it. The group was shown with no children, just a
+	separator. 
+
 2008-03-03  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-chatroom-manager.c:
