@@ -11,15 +11,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-03-03 19:53+0200\n"
-"PO-Revision-Date: 2008-03-03 19:53+0200\n"
+"POT-Creation-Date: 2008-03-08 20:27+0200\n"
+"PO-Revision-Date: 2008-03-08 20:25+0200\n"
 "Last-Translator: Žygimantas Beručka <zygis@gnome.org>\n"
-"Language-Team: Lithuanian <komp_lt@konferencijos.lt>\n"
+"Language-Team: Lithuanian <gnome-lt@lists.akl.lt>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms:  nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n%"
 "100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: KBabel 1.11.4\n"
 
 #: ../gossip.desktop.in.in.h:1
 msgid "Gossip Instant Messenger"
@@ -129,9 +130,9 @@ msgid ""
 "the file to so that the last location used to save file transfers can be "
 "used without prompting the user each time."
 msgstr ""
-"Tai atnaujinama kiekvieną kartą, kai naudotojas pakeičia rinkmenų "
-"išsaugojimo vietą, tam, kad paskutinė vieta, naudota atsiųstų rinkmenų "
-"išsaugojimui, galėtų būti naudojama neklausiant naudotojo."
+"Tai atnaujinama kiekvieną kartą, kai naudotojas pakeičia failų išsaugojimo "
+"vietą, tam, kad paskutinė vieta, naudota atsiųstų failų išsaugojimui, galėtų "
+"būti naudojama neklausiant naudotojo."
 
 #: ../gossip.schemas.in.h:24
 msgid "Use graphical smileys"
@@ -348,7 +349,7 @@ msgstr "Prisijungimas prie pokalbių kambario buvo atšauktas."
 
 #. i18n: The current state of the connection.
 #: ../libgossip/gossip-contact.c:965 ../libgossip/gossip-presence.c:242
-#: ../src/gossip-app.c:2605 ../src/gossip-contact-info-dialog.c:156
+#: ../src/gossip-app.c:2612 ../src/gossip-contact-info-dialog.c:156
 #: ../src/gossip-galago.c:186 ../src/gossip-status-icon.c:363
 msgid "Offline"
 msgstr "Atsijungęs (-usi)"
@@ -502,24 +503,24 @@ msgstr "Prieiga uždrausta"
 
 #: ../libloudermouth/lm-bs-transfer.c:318
 msgid "File name is too long"
-msgstr "Rinkmenos pavadinimas per ilgas"
+msgstr "Failo pavadinimas per ilgas"
 
 #: ../libloudermouth/lm-bs-transfer.c:320
 msgid "File doesn't exist"
-msgstr "Tokios rinkmenos nėra"
+msgstr "Tokio failo nėra"
 
 #: ../libloudermouth/lm-bs-transfer.c:322
 #: ../libloudermouth/lm-bs-transfer.c:353
 msgid "File is a directory"
-msgstr "Ši rinkmena yra aplankas"
+msgstr "Šis failas yra aplankas"
 
 #: ../libloudermouth/lm-bs-transfer.c:324
 msgid "Read only file system"
-msgstr "Rinkmenų sistema tik skaitoma"
+msgstr "Failų sistema tik skaitoma"
 
 #: ../libloudermouth/lm-bs-transfer.c:326
 msgid "File is busy"
-msgstr "Rinkmena jau naudojama"
+msgstr "Failas jau naudojamas"
 
 #: ../libloudermouth/lm-bs-transfer.c:328
 msgid "Bad memory"
@@ -540,7 +541,7 @@ msgstr "Išnaudoto virtuali atmintis"
 
 #: ../libloudermouth/lm-bs-transfer.c:336
 msgid "Too many open files"
-msgstr "Atverta per daug rinkmenų"
+msgstr "Atverta per daug failų"
 
 #: ../libloudermouth/lm-bs-transfer.c:339
 #: ../libloudermouth/lm-bs-transfer.c:351
@@ -554,7 +555,7 @@ msgstr "Tokio įrenginio nėra"
 
 #: ../libloudermouth/lm-bs-transfer.c:349
 msgid "File is too large"
-msgstr "Rinkmena per didelė"
+msgstr "Failas per didelis"
 
 #: ../libloudermouth/lm-bs-transfer.c:363
 msgid "Unknown error"
@@ -746,9 +747,9 @@ msgstr[2] "%d užsisakymo prašymų"
 #, c-format
 msgid "%d file transfer request"
 msgid_plural "%d file transfer requests"
-msgstr[0] "%d rinkmenų siuntimo užklausa"
-msgstr[1] "%d rinkmenų siuntimo užklausos"
-msgstr[2] "%d rinkmenų siuntimo užklausų"
+msgstr[0] "%d failų siuntimo užklausa"
+msgstr[1] "%d failų siuntimo užklausos"
+msgstr[2] "%d failų siuntimo užklausų"
 
 #: ../src/gossip-app.c:967
 #, c-format
@@ -797,29 +798,29 @@ msgstr ""
 "Tai tik priminimas, nuo dabar, atliekant šį veiksmą Gossip bus uždaroma, "
 "nebent išjungsite žemiau esančią parinktį."
 
-#: ../src/gossip-app.c:1494 ../src/gossip-edit-contact-dialog.c:231
+#: ../src/gossip-app.c:1501 ../src/gossip-edit-contact-dialog.c:231
 msgid "Group"
 msgstr "Grupė"
 
-#: ../src/gossip-app.c:1515
+#: ../src/gossip-app.c:1522
 msgid "Contact"
 msgstr "Bičiulis"
 
-#: ../src/gossip-app.c:1828
+#: ../src/gossip-app.c:1835
 #, c-format
 msgid "Please enter your %s account password"
 msgstr "Įveskite abonento %s slaptažodį"
 
-#: ../src/gossip-app.c:1839
+#: ../src/gossip-app.c:1846
 #, c-format
 msgid "Logging in to account '%s'"
 msgstr "Jungiamasi prie abonento „%s“"
 
-#: ../src/gossip-app.c:1843
+#: ../src/gossip-app.c:1850
 msgid "Remember Password?"
 msgstr "Atsiminti slaptažodį?"
 
-#: ../src/gossip-app.c:2530
+#: ../src/gossip-app.c:2537
 msgid "Edit Account _Details"
 msgstr "Keisti abonento _informaciją"
 
@@ -900,21 +901,28 @@ msgstr[2] "Pokalbių (%d)"
 msgid "Typing a message."
 msgstr "Rašoma žinutė."
 
-#: ../src/gossip-chatrooms-window.c:147
+#: ../src/gossip-chatrooms-window.c:146
 msgid "Name"
 msgstr "Vardas"
 
-#: ../src/gossip-chatrooms-window.c:154
+#: ../src/gossip-chatrooms-window.c:153
 msgid "Room"
 msgstr "Kambarys"
 
-#: ../src/gossip-chatrooms-window.c:162
+#: ../src/gossip-chatrooms-window.c:161
 msgid "Server"
 msgstr "Serveris"
 
-#: ../src/gossip-chatrooms-window.c:196
-msgid "Auto Connect"
-msgstr "Automatiškai prisijungti"
+#: ../src/gossip-chatrooms-window.c:174
+#: ../src/gossip-new-chatroom-dialog.c:617
+msgid "Locked"
+msgstr "Užrakinta"
+
+#: ../src/gossip-chatrooms-window.c:191
+#: ../src/gossip-new-chatroom-dialog.c:206
+#: ../src/gossip-new-chatroom-dialog.c:219 ../data/glade/group-chat.glade.h:5
+msgid "Join"
+msgstr "Prisijungti"
 
 #: ../src/gossip-contact-info-dialog.c:636 ../data/glade/main.glade.h:59
 msgid "Information requested..."
@@ -948,7 +956,7 @@ msgstr "Žiūrėti bičiulio informaciją"
 msgid "Re_name"
 msgstr "Pervadi_nti"
 
-#: ../src/gossip-contact-list.c:349 ../src/gossip-contact-list.c:3208
+#: ../src/gossip-contact-list.c:349 ../src/gossip-contact-list.c:3223
 msgid "Rename"
 msgstr "Pervadinti"
 
@@ -978,11 +986,11 @@ msgstr "Pakviesti į dabar atvertą pokalbių kambarį"
 
 #: ../src/gossip-contact-list.c:365
 msgid "_Send File..."
-msgstr "_Siųsti rinkmeną..."
+msgstr "_Siųsti failą..."
 
 #: ../src/gossip-contact-list.c:365
 msgid "Send a file"
-msgstr "Siųsti rinkmeną"
+msgstr "Siųsti failą"
 
 #: ../src/gossip-contact-list.c:369
 msgid "Emai_l..."
@@ -1001,11 +1009,11 @@ msgstr "Žiūrė_ti ankstesnius pokalbius"
 msgid "View previous conversations with this contact"
 msgstr "Žiūrėti ankstesnius pokalbius su šiuo bičiuliu"
 
-#: ../src/gossip-contact-list.c:3119
+#: ../src/gossip-contact-list.c:3134
 msgid "Do you want to remove this contact from your roster?"
 msgstr "Ar norite pašalinti bičiulį iš sąrašo?"
 
-#: ../src/gossip-contact-list.c:3204
+#: ../src/gossip-contact-list.c:3219
 #, c-format
 msgid ""
 "Please enter a new name for the group:\n"
@@ -1040,11 +1048,11 @@ msgstr ""
 #: ../src/gossip-ft-dialog.c:223
 #, c-format
 msgid "New file transfer request from %s"
-msgstr "Nauja rinkmenos siuntimo užklausa iš %s"
+msgstr "Nauja failo siuntimo užklausa iš %s"
 
 #: ../src/gossip-ft-dialog.c:308
 msgid "Your file transfer offer declined."
-msgstr "Rinkmenos siuntimo atsisakyta."
+msgstr "Failo siuntimo atsisakyta."
 
 #: ../src/gossip-ft-dialog.c:309
 msgid "The other user decided not to continue."
@@ -1052,19 +1060,19 @@ msgstr "Kitas naudotojas nusprendė nebetęsti."
 
 #: ../src/gossip-ft-dialog.c:314
 msgid "Unable to complete the file transfer."
-msgstr "Nepavyko baigti rinkmenos siuntimo."
+msgstr "Nepavyko baigti failo siuntimo."
 
 #: ../src/gossip-ft-dialog.c:319
 msgid "Unable to start the file transfer."
-msgstr "Nepavyko pradėti rinkmenos siuntimo."
+msgstr "Nepavyko pradėti failo siuntimo."
 
 #: ../src/gossip-ft-dialog.c:324
 msgid "File transfer is not supported by both parties."
-msgstr "Rinkmenų siuntimą palaiko ne abi pusės."
+msgstr "Failų siuntimą palaiko ne abi pusės."
 
 #: ../src/gossip-ft-dialog.c:328
 msgid "An unknown error occurred during file transfer."
-msgstr "Rinkmenos siuntimo metu įvyko nežinoma klaida."
+msgstr "Failo siuntimo metu įvyko nežinoma klaida."
 
 #: ../src/gossip-ft-dialog.c:492
 msgid "Transfer complete"
@@ -1072,37 +1080,37 @@ msgstr "Siuntimas baigtas"
 
 #: ../src/gossip-ft-dialog.c:498
 msgid "The file has been transfered successfully."
-msgstr "Rinkmena nusiųsta sėkmingai."
+msgstr "Failas nusiųstas sėkmingai."
 
 #: ../src/gossip-ft-dialog.c:533
 msgid "Transferring file"
-msgstr "Siunčiama rinkmena"
+msgstr "Siunčiamas failas"
 
 #: ../src/gossip-ft-dialog.c:539
 msgid "Please wait while the file is transferred"
-msgstr "Luktelėkite, kol bus baigtas rinkmenos siuntimas"
+msgstr "Luktelėkite, kol bus baigtas failo siuntimas"
 
 #: ../src/gossip-ft-dialog.c:609
 #, c-format
 msgid "%s would like to send you a file"
-msgstr "%s nori Jums atsiųsti rinkmeną"
+msgstr "%s nori Jums atsiųsti failą"
 
 #: ../src/gossip-ft-dialog.c:611
 msgid "Someone would like to send you a file"
-msgstr "Kažkas pageidauja atsiųsti jums rinkmeną."
+msgstr "Kažkas pageidauja atsiųsti jums failą."
 
 #: ../src/gossip-ft-dialog.c:614 ../data/glade/file-transfer.glade.h:2
 msgid "Do you want to accept this file?"
-msgstr "Ar norite priimti šią rinkmeną?"
+msgstr "Ar norite priimti šį failą?"
 
 #: ../src/gossip-ft-dialog.c:617
 #, c-format
 msgid "Attempting to send file to %s"
-msgstr "Bandoma siųsti rinkmeną bičiuliui %s"
+msgstr "Bandoma siųsti failą bičiuliui %s"
 
 #: ../src/gossip-ft-dialog.c:619
 msgid "Attempting to send file"
-msgstr "Bandoma siųsti rinkmeną"
+msgstr "Bandoma siųsti failą"
 
 #: ../src/gossip-ft-dialog.c:622
 msgid "Please wait while the other participant responds"
@@ -1110,7 +1118,7 @@ msgstr "Palaukite, kol kitas dalyvis atsakys"
 
 #: ../src/gossip-ft-dialog.c:745
 msgid "Select a file"
-msgstr "Pasirinkite rinkmeną"
+msgstr "Pasirinkite failą"
 
 #: ../src/gossip-group-chat.c:480
 msgid "Connecting..."
@@ -1256,16 +1264,11 @@ msgstr "[numatytasis]"
 msgid "There is no account with the name '%s'."
 msgstr "Abonento vardu „%s“ nėra."
 
-#: ../src/gossip-new-chatroom-dialog.c:206
-#: ../src/gossip-new-chatroom-dialog.c:219 ../data/glade/group-chat.glade.h:5
-msgid "Join"
-msgstr "Prisijungti"
-
 #: ../src/gossip-new-chatroom-dialog.c:213
 msgid "Create"
 msgstr "Sukurti"
 
-#: ../src/gossip-new-chatroom-dialog.c:561
+#: ../src/gossip-new-chatroom-dialog.c:564
 msgid "Rooms"
 msgstr "Kambariai"
 
@@ -1273,11 +1276,11 @@ msgstr "Kambariai"
 msgid "Users"
 msgstr "Naudotojai"
 
-#: ../src/gossip-new-chatroom-dialog.c:637
+#: ../src/gossip-new-chatroom-dialog.c:634
 msgid "Description"
 msgstr "Aprašymas"
 
-#: ../src/gossip-new-chatroom-dialog.c:833
+#: ../src/gossip-new-chatroom-dialog.c:830
 #, c-format
 msgid "Found %d conference room"
 msgid_plural "Found %d conference rooms"
@@ -1285,11 +1288,11 @@ msgstr[0] "Rastas %d konferencinis kambarys"
 msgstr[1] "Rasta %d konferenciniai kambariai"
 msgstr[2] "Rasta %d konferencinių kambarių"
 
-#: ../src/gossip-new-chatroom-dialog.c:872
+#: ../src/gossip-new-chatroom-dialog.c:869
 msgid "Browsing for conference rooms, please wait..."
 msgstr "Ieškoma konferencinių kambarių, palaukite..."
 
-#: ../src/gossip-new-chatroom-dialog.c:916
+#: ../src/gossip-new-chatroom-dialog.c:913
 msgid "Browsing cancelled!"
 msgstr "Paieška atšaukta!"
 
@@ -1343,7 +1346,7 @@ msgstr "%s nori jums atsiųsti „%s“."
 
 #: ../src/gossip-notify.c:378 ../data/glade/file-transfer.glade.h:3
 msgid "File Transfer"
-msgstr "Rinkmenų siuntimas"
+msgstr "Failų siuntimas"
 
 #: ../src/gossip-notify.c:535
 #, c-format
@@ -1648,7 +1651,7 @@ msgstr "Atverti _aplanką"
 
 #: ../data/glade/file-transfer.glade.h:8
 msgid "Select A File"
-msgstr "Pasirinkite rinkmeną"
+msgstr "Pasirinkite failą"
 
 #: ../data/glade/file-transfer.glade.h:9
 msgid "Size:"
