@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oc\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-19 20:24+0100\n"
+"POT-Creation-Date: 2008-03-07 10:22+0100\n"
 "PO-Revision-Date: 2007-12-27 15:22+0100\n"
 "Last-Translator: Yannig Marchegay (Kokoyaya) <yannig@marchegay.org>\n"
 "Language-Team: Occitan <ubuntu-l10n-oci@lists.ubuntu.com>\n"
@@ -319,7 +319,7 @@ msgstr ""
 
 #. i18n: The current state of the connection.
 #: ../libgossip/gossip-contact.c:965 ../libgossip/gossip-presence.c:242
-#: ../src/gossip-app.c:2605 ../src/gossip-contact-info-dialog.c:156
+#: ../src/gossip-app.c:2612 ../src/gossip-contact-info-dialog.c:156
 #: ../src/gossip-galago.c:186 ../src/gossip-status-icon.c:363
 msgid "Offline"
 msgstr "Desconnectat"
@@ -530,7 +530,7 @@ msgstr ""
 msgid "Unknown error"
 msgstr "Error desconeguda"
 
-#: ../src/gossip-about-dialog.c:63
+#: ../src/gossip-about-dialog.c:64
 msgid ""
 "Gossip is free software; you can redistribute it and/or modify it under the "
 "terms of the GNU General Public License as published by the Free Software "
@@ -538,7 +538,7 @@ msgid ""
 "version."
 msgstr ""
 
-#: ../src/gossip-about-dialog.c:67
+#: ../src/gossip-about-dialog.c:68
 msgid ""
 "Gossip is distributed in the hope that it will be useful, but WITHOUT ANY "
 "WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
@@ -546,18 +546,18 @@ msgid ""
 "details."
 msgstr ""
 
-#: ../src/gossip-about-dialog.c:71
+#: ../src/gossip-about-dialog.c:72
 msgid ""
 "You should have received a copy of the GNU General Public License along with "
 "Gossip; if not, write to the Free Software Foundation, Inc., 51 Franklin "
 "Street, Fifth Floor, Boston, MA 02110-130159 USA"
 msgstr ""
 
-#: ../src/gossip-about-dialog.c:99
+#: ../src/gossip-about-dialog.c:100
 msgid "An Instant Messaging client for GNOME"
 msgstr ""
 
-#: ../src/gossip-about-dialog.c:105
+#: ../src/gossip-about-dialog.c:106
 msgid "translator-credits"
 msgstr "Yannig Marchegay (Kokoyaya) <yannig@marchegay.org>"
 
@@ -729,29 +729,29 @@ msgid ""
 "action unless you uncheck the option below."
 msgstr ""
 
-#: ../src/gossip-app.c:1494 ../src/gossip-edit-contact-dialog.c:231
+#: ../src/gossip-app.c:1501 ../src/gossip-edit-contact-dialog.c:231
 msgid "Group"
 msgstr "Grop"
 
-#: ../src/gossip-app.c:1515
+#: ../src/gossip-app.c:1522
 msgid "Contact"
 msgstr "Contacte"
 
-#: ../src/gossip-app.c:1828
+#: ../src/gossip-app.c:1835
 #, c-format
 msgid "Please enter your %s account password"
 msgstr ""
 
-#: ../src/gossip-app.c:1839
+#: ../src/gossip-app.c:1846
 #, c-format
 msgid "Logging in to account '%s'"
 msgstr ""
 
-#: ../src/gossip-app.c:1843
+#: ../src/gossip-app.c:1850
 msgid "Remember Password?"
 msgstr ""
 
-#: ../src/gossip-app.c:2530
+#: ../src/gossip-app.c:2537
 msgid "Edit Account _Details"
 msgstr ""
 
@@ -830,20 +830,27 @@ msgstr[1] ""
 msgid "Typing a message."
 msgstr ""
 
-#: ../src/gossip-chatrooms-window.c:147
+#: ../src/gossip-chatrooms-window.c:146
 msgid "Name"
 msgstr "Nom"
 
-#: ../src/gossip-chatrooms-window.c:154
+#: ../src/gossip-chatrooms-window.c:153
 msgid "Room"
 msgstr "Sala"
 
-#: ../src/gossip-chatrooms-window.c:162
+#: ../src/gossip-chatrooms-window.c:161
 msgid "Server"
 msgstr "Servidor"
 
-#: ../src/gossip-chatrooms-window.c:196
-msgid "Auto Connect"
+#: ../src/gossip-chatrooms-window.c:174
+#: ../src/gossip-new-chatroom-dialog.c:617
+msgid "Locked"
+msgstr ""
+
+#: ../src/gossip-chatrooms-window.c:191
+#: ../src/gossip-new-chatroom-dialog.c:206
+#: ../src/gossip-new-chatroom-dialog.c:219 ../data/glade/group-chat.glade.h:5
+msgid "Join"
 msgstr ""
 
 #: ../src/gossip-contact-info-dialog.c:636 ../data/glade/main.glade.h:59
@@ -878,7 +885,7 @@ msgstr ""
 msgid "Re_name"
 msgstr "Re_nommar"
 
-#: ../src/gossip-contact-list.c:349 ../src/gossip-contact-list.c:3208
+#: ../src/gossip-contact-list.c:349 ../src/gossip-contact-list.c:3223
 msgid "Rename"
 msgstr "Renommar"
 
@@ -931,11 +938,11 @@ msgstr ""
 msgid "View previous conversations with this contact"
 msgstr ""
 
-#: ../src/gossip-contact-list.c:3119
+#: ../src/gossip-contact-list.c:3134
 msgid "Do you want to remove this contact from your roster?"
 msgstr ""
 
-#: ../src/gossip-contact-list.c:3204
+#: ../src/gossip-contact-list.c:3219
 #, c-format
 msgid ""
 "Please enter a new name for the group:\n"
@@ -1080,7 +1087,7 @@ msgid "Enter the new topic you want to set for this room:"
 msgstr ""
 
 #: ../src/gossip-group-chat.c:1429
-msgid "Enter the new nickname you want to be know by:"
+msgid "Enter the new nickname you want to be known by:"
 msgstr ""
 
 #: ../src/gossip-group-chat.c:1453
@@ -1180,16 +1187,11 @@ msgstr ""
 msgid "There is no account with the name '%s'."
 msgstr ""
 
-#: ../src/gossip-new-chatroom-dialog.c:206
-#: ../src/gossip-new-chatroom-dialog.c:219 ../data/glade/group-chat.glade.h:5
-msgid "Join"
-msgstr ""
-
 #: ../src/gossip-new-chatroom-dialog.c:213
 msgid "Create"
 msgstr "Crear"
 
-#: ../src/gossip-new-chatroom-dialog.c:561
+#: ../src/gossip-new-chatroom-dialog.c:564
 msgid "Rooms"
 msgstr ""
 
@@ -1197,22 +1199,22 @@ msgstr ""
 msgid "Users"
 msgstr "Utilizaires"
 
-#: ../src/gossip-new-chatroom-dialog.c:637
+#: ../src/gossip-new-chatroom-dialog.c:634
 msgid "Description"
 msgstr "Descripcion"
 
-#: ../src/gossip-new-chatroom-dialog.c:833
+#: ../src/gossip-new-chatroom-dialog.c:830
 #, c-format
 msgid "Found %d conference room"
 msgid_plural "Found %d conference rooms"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../src/gossip-new-chatroom-dialog.c:872
+#: ../src/gossip-new-chatroom-dialog.c:869
 msgid "Browsing for conference rooms, please wait..."
 msgstr ""
 
-#: ../src/gossip-new-chatroom-dialog.c:916
+#: ../src/gossip-new-chatroom-dialog.c:913
 msgid "Browsing cancelled!"
 msgstr ""
 
@@ -1670,8 +1672,8 @@ msgstr ""
 msgid "<b>Behaviour</b>"
 msgstr "<b>Comportament</b>"
 
-#: ../data/glade/main.glade.h:7
 #
+#: ../data/glade/main.glade.h:7
 msgid "<b>Chat</b>"
 msgstr ""
 
