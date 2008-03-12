@@ -1589,31 +1589,38 @@ contact_list_remove_contact (GossipContactList *list,
 		
 		for (l = iters; l; l = l->next) {
 			GtkTreeIter parent_iter;
+			gboolean    has_parent;
 			
 			/* NOTE: it is only <= 2 here because we have
 			 * separators after the group name, otherwise it
 			 * should be 1. 
 			 */
-			if (gtk_tree_model_iter_parent (model, &parent_iter, l->data) &&
-			    gtk_tree_model_iter_n_children (model, &parent_iter) <= 2) {
-				gtk_tree_store_remove (priv->store, &parent_iter);
-			} else {
-				GtkTreePath *parent_path = NULL;
+			has_parent = gtk_tree_model_iter_parent (model, &parent_iter, l->data);
 
-				gtk_tree_store_remove (priv->store, l->data);
-				
-				/* To make sure the parent is hidden
-				 * correctly if we now have no more
-				 * online contacts, we emit the
-				 * row-changed signal on the parent so
-				 * it prompts it to be refreshed by
-				 * the filter func.  
-				 */
-				parent_path = gtk_tree_model_get_path (model, &parent_iter);
-				if (parent_path) {
-					gtk_tree_model_row_changed (model, parent_path, &parent_iter);
-					gtk_tree_path_free (parent_path);
+			if (has_parent) {
+				GtkTreePath *parent_path = NULL;
+				gint         children;
+
+				children = gtk_tree_model_iter_n_children (model, &parent_iter);
+
+				if (children <= 2) {
+					gtk_tree_store_remove (priv->store, &parent_iter);
+				} else {
+					/* To make sure the parent is hidden
+					 * correctly if we now have no more
+					 * online contacts, we emit the
+					 * row-changed signal on the parent so
+					 * it prompts it to be refreshed by
+					 * the filter func.  
+					 */
+					parent_path = gtk_tree_model_get_path (model, &parent_iter);
+					if (parent_path) {
+						gtk_tree_model_row_changed (model, parent_path, &parent_iter);
+						gtk_tree_path_free (parent_path);
+					}
 				}
+			} else {
+				gtk_tree_store_remove (priv->store, l->data);
 			}
 		}
 		

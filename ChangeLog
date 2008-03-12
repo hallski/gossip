@@ -1,3 +1,9 @@
+2008-03-12  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-contact-list.c (contact_list_remove_contact): Fix a
+	crash which occurs when disconnecting and trying to get the path
+	of a parent iter which doesn't exist.	
+
 2008-03-04  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-ebook.c:
