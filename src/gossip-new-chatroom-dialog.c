@@ -428,8 +428,8 @@ new_chatroom_dialog_model_pixbuf_cell_data_func (GtkTreeViewColumn       *tree_c
 {
 	GossipChatroom       *chatroom;
 	GossipChatroomStatus  status;
+	GossipChatroomError   last_error;
 	GdkPixbuf            *pixbuf = NULL;
-	const gchar          *last_error;
 
 	gtk_tree_model_get (model, iter,
 			    COL_IMAGE, &pixbuf,
@@ -455,7 +455,8 @@ new_chatroom_dialog_model_pixbuf_cell_data_func (GtkTreeViewColumn       *tree_c
 	status = gossip_chatroom_get_status (chatroom);
 	last_error = gossip_chatroom_get_last_error (chatroom);
 
-	if (status == GOSSIP_CHATROOM_STATUS_ERROR && !last_error) {
+	if (status == GOSSIP_CHATROOM_STATUS_ERROR && 
+	    last_error == GOSSIP_CHATROOM_ERROR_NONE) {
 		status = GOSSIP_CHATROOM_STATUS_INACTIVE;
 	}
 

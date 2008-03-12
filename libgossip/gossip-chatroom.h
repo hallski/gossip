@@ -28,6 +28,74 @@
 
 G_BEGIN_DECLS
 
+typedef enum {
+	GOSSIP_CHATROOM_AFFILIATION_OWNER,
+	GOSSIP_CHATROOM_AFFILIATION_ADMIN,
+	GOSSIP_CHATROOM_AFFILIATION_MEMBER,
+	GOSSIP_CHATROOM_AFFILIATION_OUTCAST,
+	GOSSIP_CHATROOM_AFFILIATION_NONE
+} GossipChatroomAffiliation;
+
+typedef enum {
+	GOSSIP_CHATROOM_ROLE_MODERATOR,
+	GOSSIP_CHATROOM_ROLE_PARTICIPANT,
+	GOSSIP_CHATROOM_ROLE_VISITOR,
+	GOSSIP_CHATROOM_ROLE_NONE
+} GossipChatroomRole;
+
+typedef enum {
+	GOSSIP_CHATROOM_STATUS_INACTIVE,
+	GOSSIP_CHATROOM_STATUS_JOINING,
+	GOSSIP_CHATROOM_STATUS_ACTIVE,
+	GOSSIP_CHATROOM_STATUS_ERROR,
+	GOSSIP_CHATROOM_STATUS_UNKNOWN,
+} GossipChatroomStatus;
+
+typedef enum {
+	GOSSIP_CHATROOM_FEATURE_HIDDEN               = 1 << 0,
+	GOSSIP_CHATROOM_FEATURE_MEMBERS_ONLY         = 1 << 1,
+	GOSSIP_CHATROOM_FEATURE_MODERATED            = 1 << 2,
+	GOSSIP_CHATROOM_FEATURE_NONANONYMOUS         = 1 << 3,
+	GOSSIP_CHATROOM_FEATURE_OPEN                 = 1 << 4,
+	GOSSIP_CHATROOM_FEATURE_PASSWORD_PROTECTED   = 1 << 5,
+	GOSSIP_CHATROOM_FEATURE_PERSISTENT           = 1 << 6,
+	GOSSIP_CHATROOM_FEATURE_PUBLIC               = 1 << 7,
+	GOSSIP_CHATROOM_FEATURE_SEMIANONYMOUS        = 1 << 8,
+	GOSSIP_CHATROOM_FEATURE_TEMPORARY            = 1 << 9,
+	GOSSIP_CHATROOM_FEATURE_UNMODERATED          = 1 << 10,
+	GOSSIP_CHATROOM_FEATURE_UNSECURED            = 1 << 11
+} GossipChatroomFeature;
+
+/*
+ * GossipChatroomError
+ */ 
+#define GOSSIP_TYPE_CHATROOM_ERROR (gossip_chatroom_error_get_type ())
+
+typedef enum {
+	GOSSIP_CHATROOM_ERROR_NONE,
+
+	/* MUC errors */
+	GOSSIP_CHATROOM_ERROR_PASSWORD_INVALID_OR_MISSING,
+	GOSSIP_CHATROOM_ERROR_USER_BANNED,
+	GOSSIP_CHATROOM_ERROR_ROOM_NOT_FOUND,
+	GOSSIP_CHATROOM_ERROR_ROOM_CREATION_RESTRICTED,
+	GOSSIP_CHATROOM_ERROR_USE_RESERVED_ROOM_NICK,
+	GOSSIP_CHATROOM_ERROR_NOT_ON_MEMBERS_LIST,
+	GOSSIP_CHATROOM_ERROR_NICK_IN_USE,
+	GOSSIP_CHATROOM_ERROR_MAXIMUM_USERS_REACHED,
+
+	/* Internal errors */
+	GOSSIP_CHATROOM_ERROR_ALREADY_OPEN,
+	GOSSIP_CHATROOM_ERROR_TIMED_OUT,
+	GOSSIP_CHATROOM_ERROR_CANCELED,
+	GOSSIP_CHATROOM_ERROR_UNKNOWN
+} GossipChatroomError;
+
+GType gossip_chatroom_error_get_type (void) G_GNUC_CONST;
+
+/*
+ * GossipChatroom
+ */
 #define GOSSIP_TYPE_CHATROOM             (gossip_chatroom_get_type ())
 #define GOSSIP_CHATROOM(o)               (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_CHATROOM, GossipChatroom))
 #define GOSSIP_CHATROOM_CLASS(k)         (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_CHATROOM, GossipChatroomClass))
@@ -68,44 +136,6 @@ struct _GossipChatroomClass {
 	GObjectClass parent_class;
 };
 
-typedef enum {
-	GOSSIP_CHATROOM_AFFILIATION_OWNER,
-	GOSSIP_CHATROOM_AFFILIATION_ADMIN,
-	GOSSIP_CHATROOM_AFFILIATION_MEMBER,
-	GOSSIP_CHATROOM_AFFILIATION_OUTCAST,
-	GOSSIP_CHATROOM_AFFILIATION_NONE
-} GossipChatroomAffiliation;
-
-typedef enum {
-	GOSSIP_CHATROOM_ROLE_MODERATOR,
-	GOSSIP_CHATROOM_ROLE_PARTICIPANT,
-	GOSSIP_CHATROOM_ROLE_VISITOR,
-	GOSSIP_CHATROOM_ROLE_NONE
-} GossipChatroomRole;
-
-typedef enum {
-	GOSSIP_CHATROOM_STATUS_INACTIVE,
-	GOSSIP_CHATROOM_STATUS_JOINING,
-	GOSSIP_CHATROOM_STATUS_ACTIVE,
-	GOSSIP_CHATROOM_STATUS_ERROR,
-	GOSSIP_CHATROOM_STATUS_UNKNOWN,
-} GossipChatroomStatus;
-
-typedef enum {
-	GOSSIP_CHATROOM_FEATURE_HIDDEN               = 1 << 0,
-	GOSSIP_CHATROOM_FEATURE_MEMBERS_ONLY         = 1 << 1,
-	GOSSIP_CHATROOM_FEATURE_MODERATED            = 1 << 2,
-	GOSSIP_CHATROOM_FEATURE_NONANONYMOUS         = 1 << 3,
-	GOSSIP_CHATROOM_FEATURE_OPEN                 = 1 << 4,
-	GOSSIP_CHATROOM_FEATURE_PASSWORD_PROTECTED   = 1 << 5,
-	GOSSIP_CHATROOM_FEATURE_PERSISTENT           = 1 << 6,
-	GOSSIP_CHATROOM_FEATURE_PUBLIC               = 1 << 7,
-	GOSSIP_CHATROOM_FEATURE_SEMIANONYMOUS        = 1 << 8,
-	GOSSIP_CHATROOM_FEATURE_TEMPORARY            = 1 << 9,
-	GOSSIP_CHATROOM_FEATURE_UNMODERATED          = 1 << 10,
-	GOSSIP_CHATROOM_FEATURE_UNSECURED            = 1 << 11
-} GossipChatroomFeature;
-
 struct _GossipChatroomContactInfo {
 	GossipChatroomRole        role;
 	GossipChatroomAffiliation affiliation;
@@ -131,7 +161,8 @@ GossipChatroomFeature
 GossipChatroomStatus
                   gossip_chatroom_get_status           (GossipChatroom  *chatroom);
 guint             gossip_chatroom_get_occupants        (GossipChatroom  *chatroom);
-const gchar *     gossip_chatroom_get_last_error       (GossipChatroom  *chatroom);
+GossipChatroomError
+                  gossip_chatroom_get_last_error       (GossipChatroom  *chatroom);
 GossipChatroomContactInfo *
                   gossip_chatroom_get_contact_info     (GossipChatroom  *chatroom,
 							GossipContact   *contact);
@@ -163,7 +194,7 @@ void              gossip_chatroom_set_status           (GossipChatroom  *chatroo
 void              gossip_chatroom_set_occupants        (GossipChatroom  *chatroom,
 							guint            occupants);
 void              gossip_chatroom_set_last_error       (GossipChatroom  *chatroom,
-							const gchar     *last_error);
+							GossipChatroomError last_error);
 void              gossip_chatroom_set_contact_info     (GossipChatroom  *chatroom,
 							GossipContact   *contact,
 							GossipChatroomContactInfo *info);
@@ -175,6 +206,7 @@ gboolean          gossip_chatroom_equal                 (gconstpointer   v1,
 gboolean          gossip_chatroom_equal_full            (gconstpointer   v1,
 							 gconstpointer   v2);
 const gchar *     gossip_chatroom_status_to_string      (GossipChatroomStatus status);
+const gchar *     gossip_chatroom_error_to_string       (GossipChatroomError error);
 const gchar *     gossip_chatroom_role_to_string        (GossipChatroomRole role,
 							 gint               nr);
 const gchar *

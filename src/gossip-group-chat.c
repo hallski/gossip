@@ -61,6 +61,7 @@ struct _GossipGroupChatPriv {
 
 	GossipChatroomProvider *chatroom_provider;
 	GossipChatroom         *chatroom;
+	GossipChatroomStatus    last_status;
 
 	GtkWidget              *widget;
 	GtkWidget              *hpaned;
@@ -120,11 +121,6 @@ static void            group_chat_protocol_connected_cb       (GossipSession    
 							       GossipAccount                *account,
 							       GossipJabber                 *jabber,
 							       GossipGroupChat              *chat);
-static void            group_chat_protocol_disconnected_cb    (GossipSession                *session,
-							       GossipAccount                *account,
-							       GossipJabber                 *jabber,
-							       gint                          reason,
-							       GossipGroupChat              *chat);
 static gboolean        group_chat_key_press_event_cb          (GtkWidget                    *widget,
 							       GdkEventKey                  *event,
 							       GossipGroupChat              *chat);
@@ -146,6 +142,9 @@ static gint            group_chat_contacts_completion_func    (const gchar      
 							       gsize                         n);
 static void            group_chat_create_ui                   (GossipGroupChat              *chat);
 static void            group_chat_chatroom_name_cb            (GossipChatroom               *chatroom,
+							       GParamSpec                   *spec,
+							       GossipGroupChat              *chat);
+static void            group_chat_chatroom_status_cb          (GossipChatroom               *chatroom,
 							       GParamSpec                   *spec,
 							       GossipGroupChat              *chat);
 static void            group_chat_kicked_cb                   (GossipChatroomProvider       *provider,
@@ -326,11 +325,6 @@ gossip_group_chat_init (GossipGroupChat *chat)
 				 G_CALLBACK (group_chat_protocol_connected_cb),
 				 chat, 0);
 
-	g_signal_connect_object (gossip_app_get_session (),
-				 "protocol-disconnected",
-				 G_CALLBACK (group_chat_protocol_disconnected_cb),
-				 chat, 0);
-
 	chatview = GOSSIP_CHAT_VIEW (GOSSIP_CHAT (chat)->view);
 	gossip_chat_view_set_is_group_chat (chatview, TRUE);
 
@@ -364,23 +358,11 @@ group_chat_finalize (GObject *object)
 	id = gossip_chatroom_get_id (priv->chatroom);
 	g_hash_table_steal (group_chats, GINT_TO_POINTER (id));
 
-	if (priv->chatroom) {
-		GossipChatroomStatus status;
-
-		status = gossip_chatroom_get_status (priv->chatroom);
-		if (status == GOSSIP_CHATROOM_STATUS_ACTIVE) {
-			gossip_chatroom_provider_leave (priv->chatroom_provider,
-							gossip_chatroom_get_id (priv->chatroom));
-		} else if (status == GOSSIP_CHATROOM_STATUS_JOINING) {
-			gossip_chatroom_provider_cancel (priv->chatroom_provider,
-							 gossip_chatroom_get_id (priv->chatroom));
-		}
-
-		g_object_unref (priv->chatroom);
-	}
-
 	g_signal_handlers_disconnect_by_func (priv->chatroom, 
-					      G_CALLBACK (group_chat_chatroom_name_cb),
+					      group_chat_chatroom_name_cb,
+					      chat);
+	g_signal_handlers_disconnect_by_func (priv->chatroom, 
+					      group_chat_chatroom_status_cb,
 					      chat);
 	g_signal_handlers_disconnect_by_func (priv->chatroom_provider,
 					      group_chat_kicked_cb, 
@@ -406,6 +388,25 @@ group_chat_finalize (GObject *object)
 	g_signal_handlers_disconnect_by_func (priv->chatroom,
 					      group_chat_contact_info_changed_cb,
 					      chat);
+
+	/* Make sure we do this AFTER removing signal handlers
+	 * because when we update the status, we get called back and
+	 * the widget is destroyed. 
+	 */
+	if (priv->chatroom) {
+		GossipChatroomStatus status;
+
+		status = gossip_chatroom_get_status (priv->chatroom);
+		if (status == GOSSIP_CHATROOM_STATUS_ACTIVE) {
+			gossip_chatroom_provider_leave (priv->chatroom_provider,
+							gossip_chatroom_get_id (priv->chatroom));
+		} else if (status == GOSSIP_CHATROOM_STATUS_JOINING) {
+			gossip_chatroom_provider_cancel (priv->chatroom_provider,
+							 gossip_chatroom_get_id (priv->chatroom));
+		}
+
+		g_object_unref (priv->chatroom);
+	}
 	
 	g_object_unref (priv->chatroom_provider);
 
@@ -464,6 +465,91 @@ group_chat_set_scrolling_for_events (GossipGroupChat *chat,
 }
 
 static void
+group_chat_chatroom_status_update (GossipGroupChat     *chat,
+				   GossipChatroomError  error)
+{
+	GossipGroupChatPriv  *priv;
+	GossipChatroomStatus  status;
+	const gchar          *event_str;
+
+	priv = GET_PRIV (chat);
+
+	status = gossip_chatroom_get_status (priv->chatroom);
+
+	/* If the state is different, then do something */
+	if (status == priv->last_status) {
+		return;
+	}
+
+	priv->last_status = status;
+
+	/* Make widgets available based on state */
+	gtk_widget_set_sensitive (priv->hbox_topic, 
+				  status == GOSSIP_CHATROOM_STATUS_ACTIVE);
+	gtk_widget_set_sensitive (priv->scrolled_window_contacts, 
+				  status == GOSSIP_CHATROOM_STATUS_ACTIVE);
+	gtk_widget_set_sensitive (priv->scrolled_window_input, 
+				  status == GOSSIP_CHATROOM_STATUS_ACTIVE);
+
+	/* Clear previous roster if re-connecting */
+	if (status == GOSSIP_CHATROOM_STATUS_ACTIVE && 
+	    error != GOSSIP_CHATROOM_ERROR_ALREADY_OPEN) {
+		GtkTreeView  *view;
+		GtkTreeModel *model;
+		GtkTreeStore *store;
+		
+		view = GTK_TREE_VIEW (priv->treeview);
+		model = gtk_tree_view_get_model (view);
+		store = GTK_TREE_STORE (model);
+		gtk_tree_store_clear (store);
+	}
+	
+	/* Either print state or error */
+	if (error == GOSSIP_CHATROOM_ERROR_NONE ||
+	    error == GOSSIP_CHATROOM_ERROR_ALREADY_OPEN) {
+		event_str = gossip_chatroom_status_to_string (status);
+	} else {
+		event_str = gossip_chatroom_error_to_string (error);
+	}
+	
+	/* Add status event message */
+	group_chat_set_scrolling_for_events (chat, TRUE);
+	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, event_str);
+	group_chat_set_scrolling_for_events (chat, FALSE);
+	
+	/* If we have a situation where we can retry, add a button to
+	 * do so. 
+	 */
+	if (error == GOSSIP_CHATROOM_ERROR_NICK_IN_USE ||
+	    error == GOSSIP_CHATROOM_ERROR_MAXIMUM_USERS_REACHED ||
+	    error == GOSSIP_CHATROOM_ERROR_TIMED_OUT ||
+	    error == GOSSIP_CHATROOM_ERROR_UNKNOWN ||
+	    error == GOSSIP_CHATROOM_ERROR_CANCELED) {
+		GtkWidget *button;
+
+		/* FIXME: Need special case for nickname to put an
+		 * entry in the chat view and to request a new nick.
+		 */
+		button = gtk_button_new_with_label (_("Retry connection"));
+		g_signal_connect (button, "clicked", 
+				  G_CALLBACK (group_chat_retry_connection_clicked_cb),
+				  chat);
+
+		group_chat_set_scrolling_for_events (chat, TRUE);
+		gossip_chat_view_append_button (GOSSIP_CHAT (chat)->view,
+						NULL,
+						button,
+						NULL);
+		group_chat_set_scrolling_for_events (chat, FALSE);
+	}
+
+	/* Signal to the chat object to update */
+	g_signal_emit_by_name (chat, "status-changed");
+
+	gtk_widget_grab_focus (GOSSIP_CHAT (chat)->input_text_view);
+}
+
+static void
 group_chat_join (GossipGroupChat *chat)
 {
 	GossipGroupChatPriv *priv;
@@ -474,13 +560,6 @@ group_chat_join (GossipGroupChat *chat)
 				       priv->chatroom,
 				       (GossipChatroomJoinCb) group_chat_join_cb,
 				       NULL);
-
-	group_chat_set_scrolling_for_events (chat, TRUE);
-	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, 
-				       _("Connecting..."));
-	group_chat_set_scrolling_for_events (chat, FALSE);
-
-	g_signal_emit_by_name (chat, "status-changed");
 }
 
 static void     
@@ -491,91 +570,27 @@ group_chat_join_cb (GossipChatroomProvider *provider,
 {
 	GossipGroupChatPriv *priv;
 	GossipChat          *chat;
-	GossipChatView      *chatview;
-	GtkTreeView         *view;
-	GtkTreeModel        *model;
-	GtkTreeStore        *store;
-	GtkWidget           *button;
-	const gchar         *error_str;
 
 	chat = g_hash_table_lookup (group_chats, GINT_TO_POINTER (id));
+
 	if (!chat) {
 		return;
 	}
 
 	priv = GET_PRIV (chat);
 
-	error_str = gossip_chatroom_provider_error_to_string (error);
-
-	gossip_debug (DEBUG_DOMAIN, 
-		      "Join callback for id:%d, error:%d->'%s'", 
-		      id, error, error_str);
-
-	chatview = chat->view;
-	g_signal_emit_by_name (chat, "status-changed");
-
 	/* Set the time we joined this chatroom so we know for new
 	 * messages if they are backlog or not.
 	 */
 	priv->time_joined = gossip_time_get_current ();
 
-	/* Check the error */
-	switch (error) {
-	case GOSSIP_CHATROOM_ERROR_NONE:
-	case GOSSIP_CHATROOM_ERROR_ALREADY_OPEN:
-		break;
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Join callback for id:%d, error:%d->'%s'", 
+		      id, 
+		      error, 
+		      gossip_chatroom_error_to_string (error));
 
-	case GOSSIP_CHATROOM_ERROR_PASSWORD_INVALID_OR_MISSING:
-	case GOSSIP_CHATROOM_ERROR_USER_BANNED:
-	case GOSSIP_CHATROOM_ERROR_ROOM_NOT_FOUND:
-	case GOSSIP_CHATROOM_ERROR_ROOM_CREATION_RESTRICTED:
-	case GOSSIP_CHATROOM_ERROR_USE_RESERVED_ROOM_NICK:
-	case GOSSIP_CHATROOM_ERROR_NOT_ON_MEMBERS_LIST:
-		group_chat_set_scrolling_for_events (GOSSIP_GROUP_CHAT (chat), TRUE);
-		gossip_chat_view_append_event (chatview, error_str);
-		group_chat_set_scrolling_for_events (GOSSIP_GROUP_CHAT (chat), FALSE);
-		return;
-
-	case GOSSIP_CHATROOM_ERROR_NICK_IN_USE:
-	case GOSSIP_CHATROOM_ERROR_MAXIMUM_USERS_REACHED:
-	case GOSSIP_CHATROOM_ERROR_TIMED_OUT:
-	case GOSSIP_CHATROOM_ERROR_UNKNOWN:
-	case GOSSIP_CHATROOM_ERROR_CANCELED:
-		/* FIXME: Need special case for nickname to put an
-		 * entry in the chat view and to request a new nick.
-		 */
-		button = gtk_button_new_with_label (_("Retry connection"));
-		g_signal_connect (button, "clicked", 
-				  G_CALLBACK (group_chat_retry_connection_clicked_cb),
-				  chat);
-
-		group_chat_set_scrolling_for_events (GOSSIP_GROUP_CHAT (chat), TRUE);
-		gossip_chat_view_append_event (chatview, error_str);
-		gossip_chat_view_append_button (chatview,
-						NULL,
-						button,
-						NULL);
-		group_chat_set_scrolling_for_events (GOSSIP_GROUP_CHAT (chat), FALSE);
-
-		return;
-	}
-
-	/* Clear previous roster */
-	view = GTK_TREE_VIEW (priv->treeview);
-	model = gtk_tree_view_get_model (view);
-	store = GTK_TREE_STORE (model);
-	gtk_tree_store_clear (store);
-	
-	/* Make widgets available */
-	gtk_widget_set_sensitive (priv->hbox_topic, TRUE);
-	gtk_widget_set_sensitive (priv->scrolled_window_contacts, TRUE);
-	gtk_widget_set_sensitive (priv->scrolled_window_input, TRUE);
-
-	group_chat_set_scrolling_for_events (GOSSIP_GROUP_CHAT (chat), TRUE);
-	gossip_chat_view_append_event (chatview, _("Connected"));
-	group_chat_set_scrolling_for_events (GOSSIP_GROUP_CHAT (chat), FALSE);
-
-	gtk_widget_grab_focus (GOSSIP_CHAT (chat)->input_text_view);
+	group_chat_chatroom_status_update (GOSSIP_GROUP_CHAT (chat), error);
 }
 
 static void
@@ -584,8 +599,8 @@ group_chat_protocol_connected_cb (GossipSession   *session,
 				  GossipJabber    *jabber,
 				  GossipGroupChat *chat)
 {
-	GossipGroupChatPriv *priv;
-	GossipAccount       *this_account;
+	GossipGroupChatPriv  *priv;
+	GossipAccount        *this_account;
 
 	priv = GET_PRIV (chat);
 
@@ -594,42 +609,12 @@ group_chat_protocol_connected_cb (GossipSession   *session,
 		return;
 	}
 
-	g_signal_emit_by_name (chat, "status-changed");
-
-/* 	gtk_widget_set_sensitive (GOSSIP_CHAT (chat)->input_text_view, TRUE); */
-
-/*	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, _("Connected")); */
-
-	/* FIXME: We should really attempt to re-join group chat here */
-}
-
-static void
-group_chat_protocol_disconnected_cb (GossipSession   *session,
-				     GossipAccount   *account,
-				     GossipJabber    *jabber,
-				     gint             reason,
-				     GossipGroupChat *chat)
-{
-	GossipGroupChatPriv *priv;
-	GossipAccount       *this_account;
-
-	priv = GET_PRIV (chat);
-
-	this_account = gossip_contact_get_account (priv->own_contact);
-	if (!gossip_account_equal (this_account, account)) {
+	/* Here we attempt to reconnect if we are not already connected */
+	if (gossip_chatroom_get_status (priv->chatroom) == GOSSIP_CHATROOM_STATUS_ACTIVE) {
 		return;
 	}
 
-	gtk_widget_set_sensitive (priv->hbox_topic, FALSE);
-	gtk_widget_set_sensitive (priv->scrolled_window_contacts, FALSE);
-	gtk_widget_set_sensitive (priv->scrolled_window_input, FALSE);
-
-	/* i18n: Disconnected as in "was disconnected". */
-	group_chat_set_scrolling_for_events (chat, TRUE);
-	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, _("Disconnected"));
-	group_chat_set_scrolling_for_events (chat, FALSE);
-
-	g_signal_emit_by_name (chat, "status-changed");
+	group_chat_join (chat);
 }
 
 static gboolean
@@ -1076,7 +1061,21 @@ group_chat_chatroom_name_cb (GossipChatroom  *chatroom,
 			     GParamSpec      *spec,
 			     GossipGroupChat *chat)
 {
-	g_signal_emit_by_name (chat, "name_changed", gossip_chatroom_get_name (chatroom));
+	g_signal_emit_by_name (chat, "name-changed", gossip_chatroom_get_name (chatroom));
+}
+
+static void
+group_chat_chatroom_status_cb (GossipChatroom  *chatroom,
+			       GParamSpec      *spec,
+			       GossipGroupChat *chat)
+{
+	GossipGroupChatPriv *priv;
+	GossipChatroomError  last_error;
+
+	priv = GET_PRIV (chat);
+
+	last_error = gossip_chatroom_get_last_error (priv->chatroom);
+	group_chat_chatroom_status_update (chat, last_error);
 }
 
 static void
@@ -1259,7 +1258,7 @@ group_chat_error_cb (GossipChatroomProvider *provider,
 		return;
 	}
 
-	error_str = gossip_chatroom_provider_error_to_string (error);
+	error_str = gossip_chatroom_error_to_string (error);
 
 	gossip_debug (DEBUG_DOMAIN, "[%d] Error:%d->'%s'", 
 		      id, error, error_str);
@@ -2524,6 +2523,7 @@ gossip_group_chat_new (GossipChatroomProvider *provider,
 
 	priv->chatroom = g_object_ref (chatroom);
 	priv->chatroom_provider = g_object_ref (provider);
+	priv->last_status = gossip_chatroom_get_status (chatroom);
 
 	priv->private_chats = NULL;
 
@@ -2531,6 +2531,9 @@ gossip_group_chat_new (GossipChatroomProvider *provider,
 
 	g_signal_connect (chatroom, "notify::name",
 			  G_CALLBACK (group_chat_chatroom_name_cb),
+			  chat);
+	g_signal_connect (chatroom, "notify::status",
+			  G_CALLBACK (group_chat_chatroom_status_cb),
 			  chat);
 	g_signal_connect (provider, "chatroom-kicked",
 			  G_CALLBACK (group_chat_kicked_cb),

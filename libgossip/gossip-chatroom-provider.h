@@ -37,26 +37,6 @@ G_BEGIN_DECLS
 typedef struct _GossipChatroomProvider      GossipChatroomProvider;
 typedef struct _GossipChatroomProviderIface GossipChatroomProviderIface;
 
-typedef enum {
-	GOSSIP_CHATROOM_ERROR_NONE,
-
-	/* MUC errors */
-	GOSSIP_CHATROOM_ERROR_PASSWORD_INVALID_OR_MISSING,
-	GOSSIP_CHATROOM_ERROR_USER_BANNED,
-	GOSSIP_CHATROOM_ERROR_ROOM_NOT_FOUND,
-	GOSSIP_CHATROOM_ERROR_ROOM_CREATION_RESTRICTED,
-	GOSSIP_CHATROOM_ERROR_USE_RESERVED_ROOM_NICK,
-	GOSSIP_CHATROOM_ERROR_NOT_ON_MEMBERS_LIST,
-	GOSSIP_CHATROOM_ERROR_NICK_IN_USE,
-	GOSSIP_CHATROOM_ERROR_MAXIMUM_USERS_REACHED,
-
-	/* Internal errors */
-	GOSSIP_CHATROOM_ERROR_ALREADY_OPEN,
-	GOSSIP_CHATROOM_ERROR_TIMED_OUT,
-	GOSSIP_CHATROOM_ERROR_CANCELED,
-	GOSSIP_CHATROOM_ERROR_UNKNOWN
-} GossipChatroomError;
-
 typedef void (*GossipChatroomJoinCb)   (GossipChatroomProvider   *provider,
 					GossipChatroomId          id,
 					GossipChatroomError       error,
@@ -165,8 +145,6 @@ void         gossip_chatroom_provider_browse_rooms       (GossipChatroomProvider
 							  const gchar            *server,
 							  GossipChatroomBrowseCb  callback,
 							  gpointer                user_data);
-
-const gchar *gossip_chatroom_provider_error_to_string    (GossipChatroomError     error);
 
 G_END_DECLS
 

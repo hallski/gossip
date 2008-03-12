@@ -200,8 +200,6 @@ static void         chat_window_new_message_cb                 (GossipChat      
 								GossipMessage         *message,
 								gboolean               is_backlog,
 								GossipChatWindow      *window);
-static void         chat_window_disconnected_cb                (GossipApp             *app,
-								GossipChatWindow      *window);
 static GtkNotebook* chat_window_detach_hook                    (GtkNotebook           *source,
 								GtkWidget             *page,
 								gint                   x,
@@ -397,13 +395,8 @@ gossip_chat_window_init (GossipChatWindow *window)
 	/* Set up signals we can't do with glade since we may need to
 	 * block/unblock them at some later stage.
 	 */
-	g_signal_connect (gossip_app_get_session (),
-			  "disconnected",
-			  G_CALLBACK (chat_window_disconnected_cb),
-			  window);
-
 	g_signal_connect (priv->dialog,
-			  "delete_event",
+			  "delete-event",
 			  G_CALLBACK (chat_window_delete_event_cb),
 			  window);
 
@@ -422,23 +415,23 @@ gossip_chat_window_init (GossipChatWindow *window)
 				  priv->notebook);
 
 	g_signal_connect (priv->dialog,
-			  "focus_in_event",
+			  "focus-in-event",
 			  G_CALLBACK (chat_window_focus_in_event_cb),
 			  window);
 	g_signal_connect_after (priv->notebook,
-				"switch_page",
+				"switch-page",
 				G_CALLBACK (chat_window_page_switched_cb),
 				window);
 	g_signal_connect (priv->notebook,
-			  "page_reordered",
+			  "page-reordered",
 			  G_CALLBACK (chat_window_page_reordered_cb),
 			  window);
 	g_signal_connect (priv->notebook,
-			  "page_added",
+			  "page-added",
 			  G_CALLBACK (chat_window_page_added_cb),
 			  window);
 	g_signal_connect (priv->notebook,
-			  "page_removed",
+			  "page-removed",
 			  G_CALLBACK (chat_window_page_removed_cb),
 			  window);
 
@@ -516,10 +509,6 @@ gossip_chat_window_finalize (GObject *object)
 
 	window = GOSSIP_CHAT_WINDOW (object);
 	priv = GET_PRIV (window);
-
-	g_signal_handlers_disconnect_by_func (gossip_app_get_session (),
-					      chat_window_disconnected_cb,
-					      window);
 
 	if (priv->save_geometry_id != 0) {
 		g_source_remove (priv->save_geometry_id);
@@ -1544,28 +1533,6 @@ chat_window_new_message_cb (GossipChat       *chat,
 	}
 }
 
-static void
-chat_window_disconnected_cb (GossipApp        *app,
-			     GossipChatWindow *window)
-{
-	GossipChatWindowPriv *priv;
-	GList		     *l;
-
-	g_return_if_fail (GOSSIP_IS_CHAT_WINDOW (window));
-
-	priv = GET_PRIV (window);
-
-	/* FIXME: This works for now, but should operate on a PER
-	 * protocol basis not ALL connections since some tabs will
-	 * belong to contacts on accounts which might still be online.
-	 */
-	for (l = priv->chats; l != NULL; l = g_list_next (l)) {
-		chat_window_update_status (window, l->data);
-	}
-
-	chat_window_update_menu (window);
-}
-
 static GtkNotebook *
 chat_window_detach_hook (GtkNotebook *source,
 			 GtkWidget   *page,
@@ -1667,16 +1634,16 @@ chat_window_page_added_cb (GtkNotebook      *notebook,
 	gossip_chat_set_window (chat, window);
 
 	/* Connect chat signals for this window */
-	g_signal_connect (chat, "status_changed",
+	g_signal_connect (chat, "status-changed",
 			  G_CALLBACK (chat_window_status_changed_cb),
 			  window);
-	g_signal_connect (chat, "name_changed",
+	g_signal_connect (chat, "name-changed",
 			  G_CALLBACK (chat_window_name_changed_cb),
 			  window);
 	g_signal_connect (chat, "composing",
 			  G_CALLBACK (chat_window_composing_cb),
 			  window);
-	g_signal_connect (chat, "new_message",
+	g_signal_connect (chat, "new-message",
 			  G_CALLBACK (chat_window_new_message_cb),
 			  window);
 

@@ -1047,9 +1047,12 @@ gossip_chat_view_append_button (GossipChatView *view,
 
 	bottom = chat_view_is_scrolled_down (view);
 
-	gossip_theme_append_timestamp (priv->theme, priv->theme_context,
-				       view, NULL,
-				       TRUE, TRUE);
+	/* FIXME: We don't call this because it breaks, GossipMessage
+	 * can not be NULL.
+	 */
+	/* gossip_theme_append_timestamp (priv->theme, priv->theme_context, */
+	/* 			       view, NULL, */
+	/* 			       TRUE, TRUE); */
 
 	if (message) {
 		gossip_theme_append_text (priv->theme, priv->theme_context,

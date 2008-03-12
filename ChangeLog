@@ -1,5 +1,36 @@
 2008-03-12  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-chatroom-provider.[ch]:
+	* libgossip/gossip-chatroom.[ch]: 
+	* src/gossip-chatrooms-window.c:
+	* src/gossip-new-chatroom-dialog.c:  Move GossipChatroomError to
+	the gossip-chatroom module and make it a GType enum. Also made the
+	_{get|set}_last_error return the enum instead of a string.
+	
+	* libgossip/gossip-jabber-chatrooms.c: Make sure we set the last
+	error before setting the state of the chatroom for callbacks to be
+	able to use it.
+	
+	* src/gossip-chat-view.c:
+	(gossip_chat_view_append_button): Don't append a timestamp when
+	adding a button to the view, this causes an error because we have
+	no GossipMessage to get the time from.
+	
+	* src/gossip-chat-window.c:
+	(gossip_chat_window_init):
+	(gossip_chat_window_finalize):
+	(chat_window_page_added_cb): Don't use the protocol-disconnected
+	signal to know when a chat room is inactive, instead wait for the
+	"status-changed" signal to be emitted on the GossipChat object.
+	
+	* src/gossip-group-chat.c: Use the notify::status signal on the
+	chatroom instead of the protocol-connected and
+	protocol-disconnected signals to make sure we update the menu
+	correctly when we are disconnected and rejoin chatrooms when
+	disconnected. 
+
+2008-03-12  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-contact-list.c (contact_list_remove_contact): Fix a
 	crash which occurs when disconnecting and trying to get the path
 	of a parent iter which doesn't exist.	

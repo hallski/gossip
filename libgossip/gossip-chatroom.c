@@ -54,7 +54,7 @@ struct _GossipChatroomPriv {
 
 	guint                  occupants;
 
-	gchar                 *last_error;
+	GossipChatroomError    last_error;
 
 	GHashTable            *contacts;
 };
@@ -100,6 +100,63 @@ enum {
 
 static guint signals[LAST_SIGNAL] = {0};
 
+GType
+gossip_chatroom_error_get_type (void)
+{
+	static GType etype = 0;
+
+	if (etype == 0) {
+		static const GEnumValue values[] = {
+			/* MUC errors */
+			{ GOSSIP_CHATROOM_ERROR_NONE, 
+			  "GOSSIP_CHATROOM_ERROR_NONE", 
+			  "none" },
+			{ GOSSIP_CHATROOM_ERROR_PASSWORD_INVALID_OR_MISSING, 
+			  "GOSSIP_CHATROOM_ERROR_PASSWORD_INVALID_OR_MISSING", 
+			  "password invalid or missing" },
+			{ GOSSIP_CHATROOM_ERROR_USER_BANNED, 
+			  "GOSSIP_CHATROOM_ERROR_USER_BANNED", 
+			  "user banned" },
+			{ GOSSIP_CHATROOM_ERROR_ROOM_NOT_FOUND, 
+			  "GOSSIP_CHATROOM_ERROR_ROOM_NOT_FOUND", 
+			  "room not found" },
+			{ GOSSIP_CHATROOM_ERROR_ROOM_CREATION_RESTRICTED, 
+			  "GOSSIP_CHATROOM_ERROR_ROOM_CREATION_RESTRICTED", 
+			  "room creation restricted" },
+			{ GOSSIP_CHATROOM_ERROR_USE_RESERVED_ROOM_NICK, 
+			  "GOSSIP_CHATROOM_ERROR_USE_RESERVED_ROOM_NICK", 
+			  "use reserved room nick" },
+			{ GOSSIP_CHATROOM_ERROR_NOT_ON_MEMBERS_LIST, 
+			  "GOSSIP_CHATROOM_ERROR_NOT_ON_MEMBERS_LIST", 
+			  "not on members list" },
+			{ GOSSIP_CHATROOM_ERROR_NICK_IN_USE, 
+			  "GOSSIP_CHATROOM_ERROR_NICK_IN_USE", 
+			  "nick in use" },
+			{ GOSSIP_CHATROOM_ERROR_MAXIMUM_USERS_REACHED, 
+			  "GOSSIP_CHATROOM_ERROR_MAXIMUM_USERS_REACHED", 
+			  "maximum users reached" },
+			/* Internal errors */
+			{ GOSSIP_CHATROOM_ERROR_ALREADY_OPEN, 
+			  "GOSSIP_CHATROOM_ERROR_ALREADY_OPEN", 
+			  "already open" },
+			{ GOSSIP_CHATROOM_ERROR_TIMED_OUT, 
+			  "GOSSIP_CHATROOM_ERROR_TIMED_OUT", 
+			  "timed out" },
+			{ GOSSIP_CHATROOM_ERROR_CANCELED, 
+			  "GOSSIP_CHATROOM_ERROR_CANCELED", 
+			  "canceled" },
+			{ GOSSIP_CHATROOM_ERROR_UNKNOWN, 
+			  "GOSSIP_CHATROOM_ERROR_UNKNOWN", 
+			  "unknown" },
+			{ 0, NULL, NULL }
+		};
+
+		etype = g_enum_register_static ("GossipChatroomError", values);
+	}
+
+	return etype;
+}
+
 G_DEFINE_TYPE (GossipChatroom, gossip_chatroom, G_TYPE_OBJECT);
 
 static void
@@ -125,7 +182,7 @@ gossip_chatroom_class_init (GossipChatroomClass *klass)
 
 	g_object_class_install_property (object_class,
 					 PROP_ID_STR,
-					 g_param_spec_string ("id_str",
+					 g_param_spec_string ("id-str",
 							      "Chatroom String ID",
 							      "Chatroom represented as 'room@server'",
 							      NULL,
@@ -189,7 +246,7 @@ gossip_chatroom_class_init (GossipChatroomClass *klass)
 
 	g_object_class_install_property (object_class,
 					 PROP_AUTO_CONNECT,
-					 g_param_spec_boolean ("auto_connect",
+					 g_param_spec_boolean ("auto-connect",
 							       "Chatroom Auto Connect",
 							       "Connect on startup",
 							       FALSE,
@@ -235,11 +292,12 @@ gossip_chatroom_class_init (GossipChatroomClass *klass)
 
 	g_object_class_install_property (object_class,
 					 PROP_LAST_ERROR,
-					 g_param_spec_string ("last_error",
-							      "Last Error",
-							      "The last error that was given when trying to connect",
-							      NULL,
-							      G_PARAM_READWRITE));
+					 g_param_spec_enum ("last-error",
+							    "Last Error",
+							    "The last error that was given when trying to connect",
+							    gossip_chatroom_error_get_type (),
+							    GOSSIP_CHATROOM_ERROR_NONE,
+							    G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class,
 					 PROP_ACCOUNT,
@@ -316,8 +374,6 @@ chatroom_finalize (GObject *object)
 	g_free (priv->room);
 	g_free (priv->password);
 
-	g_free (priv->last_error);
-
 	if (priv->account) {
 		g_object_unref (priv->account);
 	}
@@ -384,7 +440,7 @@ chatroom_get_property (GObject    *object,
 		g_value_set_uint (value, priv->occupants);
 		break;
 	case PROP_LAST_ERROR:
-		g_value_set_string (value, priv->last_error);
+		g_value_set_enum (value, priv->last_error);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
@@ -457,7 +513,7 @@ chatroom_set_property (GObject      *object,
 		break;
 	case PROP_LAST_ERROR:
 		gossip_chatroom_set_last_error (GOSSIP_CHATROOM (object),
-						g_value_get_string (value));
+						g_value_get_enum (value));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
@@ -645,14 +701,15 @@ gossip_chatroom_get_occupants (GossipChatroom *chatroom)
 	return priv->occupants;
 }
 
-const gchar *
+GossipChatroomError
 gossip_chatroom_get_last_error (GossipChatroom *chatroom)
 {
 	GossipChatroomPriv *priv;
 
-	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), GOSSIP_CHATROOM_ERROR_NONE);
 
 	priv = GET_PRIV (chatroom);
+
 	return priv->last_error;
 }
 
@@ -829,7 +886,7 @@ gossip_chatroom_set_auto_connect (GossipChatroom *chatroom,
 	priv = GET_PRIV (chatroom);
 	priv->auto_connect = auto_connect;
 
-	g_object_notify (G_OBJECT (chatroom), "auto_connect");
+	g_object_notify (G_OBJECT (chatroom), "auto-connect");
 }
 
 void
@@ -906,8 +963,8 @@ gossip_chatroom_set_occupants (GossipChatroom *chatroom,
 }
 
 void
-gossip_chatroom_set_last_error (GossipChatroom *chatroom,
-				const gchar    *last_error)
+gossip_chatroom_set_last_error (GossipChatroom      *chatroom,
+				GossipChatroomError  last_error)
 {
 	GossipChatroomPriv *priv;
 
@@ -915,14 +972,9 @@ gossip_chatroom_set_last_error (GossipChatroom *chatroom,
 
 	priv = GET_PRIV (chatroom);
 
-	g_free (priv->last_error);
-	if (last_error) {
-		priv->last_error = g_strdup (last_error);
-	} else {
-		priv->last_error = NULL;
-	}
+	priv->last_error = last_error;
 
-	g_object_notify (G_OBJECT (chatroom), "last_error");
+	g_object_notify (G_OBJECT (chatroom), "last-error");
 }
 
 void
@@ -1049,6 +1101,40 @@ gossip_chatroom_status_to_string (GossipChatroomStatus status)
 	}
 
 	g_warning ("Invalid chatroom status: %d", status);
+
+	return "";
+}
+
+const gchar *
+gossip_chatroom_error_to_string (GossipChatroomError error)
+{
+	switch (error) {
+	case GOSSIP_CHATROOM_ERROR_PASSWORD_INVALID_OR_MISSING:
+		return _("The chat room you tried to join requires a password. "
+			 "You either failed to supply a password or the password you tried was incorrect.");
+	case GOSSIP_CHATROOM_ERROR_USER_BANNED:
+		return _("You have been banned from this chatroom.");
+	case GOSSIP_CHATROOM_ERROR_ROOM_NOT_FOUND:
+		return _("The conference room you tried to join could not be found.");
+	case GOSSIP_CHATROOM_ERROR_ROOM_CREATION_RESTRICTED:
+		return _("Chatroom creation is restricted on this server.");
+	case GOSSIP_CHATROOM_ERROR_USE_RESERVED_ROOM_NICK:
+		return _("Chatroom reserved nick names must be used on this server.");
+	case GOSSIP_CHATROOM_ERROR_NOT_ON_MEMBERS_LIST:
+		return _("You are not on the chatroom's members list.");
+	case GOSSIP_CHATROOM_ERROR_NICK_IN_USE:
+		return _("The nickname you have chosen is already in use.");
+	case GOSSIP_CHATROOM_ERROR_MAXIMUM_USERS_REACHED:
+		return _("The maximum number of users for this chatroom has been reached.");
+	case GOSSIP_CHATROOM_ERROR_TIMED_OUT:
+		return _("The remote conference server did not respond in a sensible time.");
+	case GOSSIP_CHATROOM_ERROR_UNKNOWN:
+		return _("An unknown error occurred, check your details are correct.");
+	case GOSSIP_CHATROOM_ERROR_CANCELED:
+		return _("Joining the chatroom was canceled.");
+	default:
+		break;
+	}
 
 	return "";
 }

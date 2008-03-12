@@ -629,7 +629,7 @@ jabber_chatrooms_presence_handler (LmMessageHandler      *handler,
 			
 			error = jabber_chatrooms_error_from_code (code);
 			gossip_debug (DEBUG_DOMAIN, "ID[%d] %s", 
-				      id, gossip_chatroom_provider_error_to_string (error));
+				      id, gossip_chatroom_error_to_string (error));
 			
 			g_signal_emit_by_name (chatrooms->jabber,
 					       "chatroom-error",
@@ -651,8 +651,8 @@ static gboolean
 jabber_chatrooms_join_timeout_cb (JabberChatroom *room)
 {
 	GossipChatroomId       id;
+	GossipChatroomError    error;
 	GossipJabberChatrooms *chatrooms;
-	const gchar           *last_error;
 
 	room->timeout_id = 0;
 
@@ -665,10 +665,10 @@ jabber_chatrooms_join_timeout_cb (JabberChatroom *room)
 	gossip_debug (DEBUG_DOMAIN, "ID[%d] Join timed out (internally)", id);
 
 	/* Set chatroom status and error */
-	gossip_chatroom_set_status (room->chatroom, GOSSIP_CHATROOM_STATUS_ERROR);
+	error = GOSSIP_CHATROOM_ERROR_TIMED_OUT;
 
-	last_error = gossip_chatroom_provider_error_to_string (GOSSIP_CHATROOM_ERROR_TIMED_OUT);
-	gossip_chatroom_set_last_error (room->chatroom, last_error);
+	gossip_chatroom_set_last_error (room->chatroom, error);
+	gossip_chatroom_set_status (room->chatroom, GOSSIP_CHATROOM_STATUS_ERROR);
 
 	/* Call callback */
 	chatrooms = room->chatrooms;
@@ -677,7 +677,7 @@ jabber_chatrooms_join_timeout_cb (JabberChatroom *room)
 		gossip_debug (DEBUG_DOMAIN, "ID[%d] Calling back... (timed out)", id);
 		(room->callback) (GOSSIP_CHATROOM_PROVIDER (chatrooms->jabber),
 				  id,
-				  GOSSIP_CHATROOM_ERROR_TIMED_OUT,
+				  error,
 				  room->user_data);
 	}
 
@@ -907,7 +907,7 @@ jabber_chatrooms_join_cb (LmMessageHandler *handler,
 
 		error = jabber_chatrooms_error_from_code (code);
 		gossip_debug (DEBUG_DOMAIN, "ID[%d] %s", 
-			      id, gossip_chatroom_provider_error_to_string (error));
+			      id, gossip_chatroom_error_to_string (error));
 
 		/* Set room state */
 		status = GOSSIP_CHATROOM_STATUS_ERROR;
@@ -916,9 +916,8 @@ jabber_chatrooms_join_cb (LmMessageHandler *handler,
 		status = GOSSIP_CHATROOM_STATUS_ACTIVE;
 	}
 
+	gossip_chatroom_set_last_error (room->chatroom, error);
 	gossip_chatroom_set_status (room->chatroom, status);
-	gossip_chatroom_set_last_error (room->chatroom,
-					gossip_chatroom_provider_error_to_string (error));
 
 	if (room->callback != NULL) {
 		gossip_debug (DEBUG_DOMAIN, "ID[%d] Calling back...", id);
@@ -965,8 +964,8 @@ jabber_chatrooms_close (GossipJabberChatrooms *chatrooms,
 		return;
 	}
 
+	gossip_chatroom_set_last_error (room->chatroom, GOSSIP_CHATROOM_ERROR_NONE);
 	gossip_chatroom_set_status (room->chatroom, GOSSIP_CHATROOM_STATUS_INACTIVE);
-	gossip_chatroom_set_last_error (room->chatroom, NULL);
 
 	g_hash_table_remove (chatrooms->room_id_hash,
 			     GINT_TO_POINTER (id));
@@ -1038,8 +1037,8 @@ gossip_jabber_chatrooms_join (GossipJabberChatrooms *chatrooms,
 	room->callback = callback;
 	room->user_data = user_data;
 
+	gossip_chatroom_set_last_error (room->chatroom, GOSSIP_CHATROOM_ERROR_NONE);
 	gossip_chatroom_set_status (chatroom, GOSSIP_CHATROOM_STATUS_JOINING);
-	gossip_chatroom_set_last_error (room->chatroom, NULL);
 
 	/* Compose message. */
 	m = lm_message_new_with_sub_type (gossip_jid_get_full (room->jid),
@@ -1120,8 +1119,8 @@ gossip_jabber_chatrooms_cancel (GossipJabberChatrooms *chatrooms,
 		room->join_handler = NULL;
 	}
 
+	gossip_chatroom_set_last_error (room->chatroom, GOSSIP_CHATROOM_ERROR_NONE);
 	gossip_chatroom_set_status (room->chatroom, GOSSIP_CHATROOM_STATUS_INACTIVE);
-	gossip_chatroom_set_last_error (room->chatroom, NULL);
 
 	if (room->callback != NULL) {
 		gossip_debug (DEBUG_DOMAIN, "ID[%d] Calling back...", id);
