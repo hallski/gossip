@@ -115,7 +115,8 @@ add_contact_dialog_vcard_cb (GossipResult            result,
 	if (result != GOSSIP_RESULT_OK || 
 	    (!gossip_vcard_get_name (vcard) &&
 	     !gossip_vcard_get_email (vcard) &&
-	     !gossip_vcard_get_country (vcard))) {
+	     !gossip_vcard_get_country (vcard) &&
+	     !gossip_vcard_get_avatar (vcard))) {
 		gchar *str;
 
 		str = g_strdup_printf ("<i>%s</i>",
@@ -125,8 +126,9 @@ add_contact_dialog_vcard_cb (GossipResult            result,
 
 	    	gtk_widget_show (dialog->label_information);
 	} else {
-		GdkPixbuf   *pixbuf;
-		const gchar *value;
+		GossipAvatar *avatar;
+		GdkPixbuf    *pixbuf;
+		const gchar  *value;
 
 		gtk_widget_hide (dialog->label_information);
 
@@ -156,7 +158,8 @@ add_contact_dialog_vcard_cb (GossipResult            result,
 		}
 		
 		/* Avatar */
-		pixbuf = gossip_avatar_create_pixbuf_with_size (gossip_vcard_get_avatar (vcard), 48);
+		avatar = gossip_vcard_get_avatar (vcard);
+		pixbuf = gossip_avatar_create_pixbuf_with_size (avatar, 48);
 		if (pixbuf != NULL) {
 			gossip_avatar_image_set_pixbuf (GOSSIP_AVATAR_IMAGE (dialog->avatar_image), 
 							pixbuf);

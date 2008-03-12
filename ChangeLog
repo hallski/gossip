@@ -1,9 +1,19 @@
 2008-03-12  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-avatar.c: Don't create avatars of fixed sizes
+	of 32x32, use the size passed.
+	(avatar_create_pixbuf):
+	
+	* src/gossip-add-contact-dialog.c:
+	(add_contact_dialog_vcard_cb): Only show the "no information
+	available" label if there is no avatar too.
+
+2008-03-12  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-chatroom-provider.[ch]:
 	* libgossip/gossip-chatroom.[ch]: 
 	* src/gossip-chatrooms-window.c:
-	* src/gossip-new-chatroom-dialog.c:  Move GossipChatroomError to
+	* src/gossip-new-chatroom-dialog.c: Move GossipChatroomError to
 	the gossip-chatroom module and make it a GType enum. Also made the
 	_{get|set}_last_error return the enum instead of a string.
 	

@@ -164,10 +164,10 @@ avatar_create_pixbuf (GossipAvatar *avatar, gint size)
 	GdkPixbuf        *ret_pixbuf;
 	GdkPixbufLoader	 *loader;
 	GError           *error = NULL;
-	int               orig_width;
-	int               orig_height;
-	int               scale_width;
-	int               scale_height;
+	gint              orig_width;
+	gint              orig_height;
+	gint              scale_width;
+	gint              scale_height;
 
 	if (!avatar) {
 		return NULL;
@@ -188,25 +188,26 @@ avatar_create_pixbuf (GossipAvatar *avatar, gint size)
 	tmp_pixbuf = gdk_pixbuf_loader_get_pixbuf (loader);
 	scale_width = orig_width = gdk_pixbuf_get_width (tmp_pixbuf);
 	scale_height = orig_height = gdk_pixbuf_get_height (tmp_pixbuf);
-	if(scale_height > scale_width) {
-		scale_width = (gdouble) size * (double)scale_width / (double)scale_height;
+
+	if (scale_height > scale_width) {
+		scale_width = (gdouble) size * (gdouble) scale_width / (gdouble) scale_height;
 		scale_height = size;
 	} else {
-		scale_height = (gdouble) size * (double)scale_height / (double)scale_width;
+		scale_height = (gdouble) size * (gdouble) scale_height / (gdouble) scale_width;
 		scale_width = size;
 	}
 
-	ret_pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, 32, 32);
+	ret_pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, TRUE, 8, size, size);
 	gdk_pixbuf_fill (ret_pixbuf, 0x00000000);
 	gdk_pixbuf_scale (tmp_pixbuf, ret_pixbuf, 
-			  (size - scale_width)/2,
-			  (size - scale_height)/2,
+			  (size - scale_width) / 2,
+			  (size - scale_height) / 2,
 			  scale_width, 
 			  scale_height, 
-			  (size - scale_width)/2, 
-			  (size - scale_height)/2, 
-			  (double)scale_width/(double)orig_width, 
-			  (double)scale_height/(double)orig_height,
+			  (size - scale_width) / 2, 
+			  (size - scale_height) / 2, 
+			  (gdouble) scale_width / (gdouble) orig_width, 
+			  (gdouble) scale_height / (gdouble) orig_height,
 			  GDK_INTERP_BILINEAR);
 
 	if (avatar_pixbuf_is_opaque (ret_pixbuf)) {
