@@ -1,5 +1,13 @@
 2008-03-14  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-contact-list.c:
+	(contact_list_filter_func_show_contact):
+	(contact_list_filter_func_show_group):
+	(contact_list_filter_func): Nicer debug statments so it is clearer
+	what is actually happening with filtering.
+
+2008-03-14  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-app.[ch]: Make the connect and disconnect items much
 	nicer to use, now if we have one account, we only have connect or
 	disconnect shown, not both. If we have multiple accounts, we have

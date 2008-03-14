@@ -2893,10 +2893,8 @@ contact_list_filter_func_show_contact (GtkTreeModel      *model,
 	}
 
 	gossip_debug (DEBUG_DOMAIN_FILTER, 
-		      "---> Filter func: contact:'%s' %s, filter:'%s'\n", 
-		      contact ? gossip_contact_get_name (contact) : "NO CONTACT",
-		      visible ? "match" : "didn't match",
-		      priv->filter_text);
+		      "---> Filter func: ## %s\n", 
+		      visible ? "SHOWING" : "HIDING");
 	
 	return visible;
 }
@@ -2933,9 +2931,8 @@ contact_list_filter_func_show_group (GtkTreeModel      *model,
 	}
 
 	gossip_debug (DEBUG_DOMAIN_FILTER,
-		      "---> Filter func:   group:'%s' %s\n", 
-		      group,
-		      visible ? "match" : "didn't match");
+		      "---> Filter func: ## %s\n",
+		      visible ? "SHOWING" : "HIDING");
 	
 	g_free (group);
 
@@ -2964,7 +2961,7 @@ contact_list_filter_func (GtkTreeModel      *model,
 		gossip_debug (DEBUG_DOMAIN_FILTER, 
 			      "<--- Filter func: ** SEPARATOR **");
 		gossip_debug (DEBUG_DOMAIN_FILTER, 
-			      "---> Filter func: returning TRUE\n");
+			      "---> Filter func: ## SHOWING\n");
 		g_free (name);
 		return TRUE;
 	}
