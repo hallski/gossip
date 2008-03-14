@@ -2386,7 +2386,8 @@ app_connection_items_setup (GladeXML *glade)
 
 	const gchar   *widgets_connected[] = {
 		"chat_disconnect",
-		"room",
+		"room_join_new", 
+		"room_join_favorites", 
 		"chat_new_message",
 		"chat_add_contact",
 		"edit_personal_information"

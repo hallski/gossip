@@ -1,5 +1,12 @@
 2008-03-14  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-app.c:
+	(app_connection_items_setup): Make the Room menu available when
+	all accounts are disconnected so you can manage chatrooms. We just
+	disable the join new and join favorites items.
+
+2008-03-14  Martyn Russell  <martyn@imendio.com>
+
 	* data/glade/group-chat.glade: Reorder buttons according to the
 	HIG, fixes bug #520793 (Marco Barisione).
 
