@@ -1,6 +1,13 @@
 2008-03-14  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-contact-list.c:
+	(contact_list_remove_contact): Make sure we refilter the whole
+	model if we remove a contact or group at the topmost level of the
+	tree. This stops empty groups being left around.
+
+2008-03-14  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-contact-list.c:
 	(contact_list_filter_func_show_contact):
 	(contact_list_filter_func_show_group):
 	(contact_list_filter_func): Nicer debug statments so it is clearer

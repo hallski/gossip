@@ -1641,6 +1641,7 @@ contact_list_remove_contact (GossipContactList *list,
 	GossipContactListPriv *priv;
 	GtkTreeModel          *model;
 	GList                 *iters, *l;
+	gboolean               refilter = FALSE;
 
 	/* Note: The shallow_remove flag is here so we know if we
 	 * should disconnect the signal handlers for GossipContact.
@@ -1677,6 +1678,7 @@ contact_list_remove_contact (GossipContactList *list,
 				children = gtk_tree_model_iter_n_children (model, &parent_iter);
 
 				if (children <= 2) {
+					refilter = TRUE;
 					gtk_tree_store_remove (priv->store, &parent_iter);
 				} else {
 					gtk_tree_store_remove (priv->store, l->data);
@@ -1695,6 +1697,7 @@ contact_list_remove_contact (GossipContactList *list,
 					}
 				}
 			} else {
+				refilter = TRUE;
 				gtk_tree_store_remove (priv->store, l->data);
 			}
 		}
@@ -1705,6 +1708,12 @@ contact_list_remove_contact (GossipContactList *list,
 		gossip_debug (DEBUG_DOMAIN, 
 			      " - Now %d top level nodes remaining in the tree\n",
 			      gtk_tree_model_iter_n_children (model, NULL));
+	}
+
+	if (refilter) {
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Refiltering model, contact/groups removed at the topmost level");
+		gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (priv->filter));
 	}
 
 	gossip_debug (DEBUG_DOMAIN, " - Unsetting signal handlers");
