@@ -166,6 +166,10 @@ vcard_dialog_create_avatar_chooser (GossipVCardDialog *dialog)
 	account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
 	account = gossip_account_chooser_get_account (account_chooser);
 
+	if (!account) {
+		return;
+	}
+
 	gossip_session_get_avatar_requirements (gossip_app_get_session (),
 						account,
 						&min_width, &min_height,
@@ -593,6 +597,10 @@ vcard_dialog_lookup_start (GossipVCardDialog *dialog)
 	session = gossip_app_get_session ();
 	account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
 	account = gossip_account_chooser_get_account (account_chooser);
+
+	if (!account) {
+		return;
+	}
 
 	dialog->requesting_vcard = TRUE;
 

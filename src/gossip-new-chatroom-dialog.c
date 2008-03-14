@@ -159,8 +159,6 @@ static GossipNewChatroomDialog *dialog_p = NULL;
 static void
 new_chatroom_dialog_update_buttons (GossipNewChatroomDialog *dialog)
 {
-	GossipAccount        *account;
-	GossipAccountChooser *account_chooser;
 	GtkButton            *button;
 	GtkWidget            *image;
 	GList                *chatrooms;
@@ -175,10 +173,6 @@ new_chatroom_dialog_update_buttons (GossipNewChatroomDialog *dialog)
 	const gchar          *server;
 	const gchar          *room;
 	const gchar          *nick;
-
-	/* Get account information */
-	account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
-	account = gossip_account_chooser_get_account (account_chooser);
 
 	/* Sort out Join button. */
 	button = GTK_BUTTON (dialog->button_join);
@@ -245,12 +239,6 @@ new_chatroom_dialog_update_buttons (GossipNewChatroomDialog *dialog)
 static void
 new_chatroom_dialog_update_widgets (GossipNewChatroomDialog *dialog)
 {
-	GossipAccount        *account;
-	GossipAccountChooser *account_chooser;
-	
-	account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
-	account = gossip_account_chooser_get_account (account_chooser);
-
 	new_chatroom_dialog_set_defaults (dialog);
 	new_chatroom_dialog_update_buttons (dialog);
 
@@ -661,6 +649,10 @@ new_chatroom_dialog_set_defaults (GossipNewChatroomDialog *dialog)
 	account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
 	account = gossip_account_chooser_get_account (account_chooser);
 
+	if (!account) {
+		return;
+	}
+	
 	nick = gossip_session_get_nickname (session, account);
 	if (nick) {
 		gtk_entry_set_text (GTK_ENTRY (dialog->entry_nick), nick);
@@ -717,6 +709,10 @@ new_chatroom_dialog_join (GossipNewChatroomDialog *dialog)
 
 	account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
 	account = gossip_account_chooser_get_account (account_chooser);
+
+	if (!account) {
+		return;
+	}
 
 	provider = gossip_session_get_chatroom_provider (session, account);
 
@@ -880,6 +876,10 @@ new_chatroom_dialog_browse_start (GossipNewChatroomDialog *dialog)
 
 	account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
 	account = gossip_account_chooser_get_account (account_chooser);
+	
+	if (!account) {
+		return;
+	}
 
 	provider = gossip_session_get_chatroom_provider (session, account);
 
@@ -924,6 +924,10 @@ new_chatroom_dialog_browse_stop (GossipNewChatroomDialog *dialog)
 
 	account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
 	account = gossip_account_chooser_get_account (account_chooser);
+
+	if (!account) {
+		return;
+	}
 
 	provider = gossip_session_get_chatroom_provider (session, account);
 	

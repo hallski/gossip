@@ -192,6 +192,10 @@ add_contact_dialog_id_entry_focus_cb (GtkWidget              *widget,
 	account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
 	account = gossip_account_chooser_get_account (account_chooser);
 
+	if (!account) {
+		return FALSE;
+	}
+
 	/* Make sure we aren't looking up the same ID or the example */
 	id = gtk_entry_get_text (GTK_ENTRY (dialog->entry_id));
 	example = gossip_jid_get_example_string ();
@@ -242,15 +246,10 @@ static void
 add_contact_dialog_account_chooser_changed_cb (GtkWidget              *account_chooser,
 					       GossipAddContactDialog *dialog)
 {
-	GossipAccount *account;
-	const gchar   *example;
-
-	account = gossip_account_chooser_get_account (GOSSIP_ACCOUNT_CHOOSER (account_chooser));
+	const gchar *example;
 
 	example = gossip_jid_get_example_string ();
 	gtk_entry_set_text (GTK_ENTRY (dialog->entry_id), example);
-	
-	g_object_unref (account);
 }
 
 static void
@@ -333,15 +332,17 @@ add_contact_dialog_response_cb (GtkDialog              *widget,
 		account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
 		account = gossip_account_chooser_get_account (account_chooser);
 
-		id = gtk_entry_get_text (GTK_ENTRY (dialog->entry_id));
-		name = gtk_entry_get_text (GTK_ENTRY (dialog->entry_alias));
-		group = gtk_entry_get_text (GTK_ENTRY (dialog->entry_group));
-
-		gossip_session_add_contact (gossip_app_get_session (),
-					    account,
-					    id, name, group, message);
-
-		g_object_unref (account);
+		if (account) {
+			id = gtk_entry_get_text (GTK_ENTRY (dialog->entry_id));
+			name = gtk_entry_get_text (GTK_ENTRY (dialog->entry_alias));
+			group = gtk_entry_get_text (GTK_ENTRY (dialog->entry_group));
+			
+			gossip_session_add_contact (gossip_app_get_session (),
+						    account,
+						    id, name, group, message);
+			
+			g_object_unref (account);
+		}
 	}
 
 	gtk_widget_destroy (dialog->dialog);

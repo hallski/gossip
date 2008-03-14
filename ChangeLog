@@ -1,3 +1,15 @@
+2008-03-14  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-account-chooser.c:
+	(gossip_account_chooser_get_account): Don't try to look up the
+	combo model data if the iter isn't set.
+	
+	* src/gossip-add-contact-dialog.c:
+	* src/gossip-log-window.c: 
+	* src/gossip-new-chatroom-dialog.c:
+	* src/gossip-vcard-dialog.c: Don't crash and spew warnings if the
+	account chooser couldn't return an account.
+
 2008-03-12  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-avatar.c: Don't create avatars of fixed sizes

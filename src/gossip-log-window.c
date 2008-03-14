@@ -779,6 +779,10 @@ log_window_contacts_populate (GossipLogWindow *window)
 	selection = gtk_tree_view_get_selection (view);
 	store = GTK_LIST_STORE (model);
 
+	if (!account) {
+		return;
+	}
+
 	/* Block signals to stop the logs being retrieved prematurely */
 	g_signal_handlers_block_by_func (selection,
 					 log_window_contacts_changed_cb,
@@ -1369,6 +1373,10 @@ log_window_chatrooms_populate (GossipLogWindow *window)
 	selection = gtk_tree_view_get_selection (view);
 	store = GTK_LIST_STORE (model);
 
+	if (!account) {
+		return;
+	}
+
 	/* Block signals to stop the logs being retrieved prematurely */
 	g_signal_handlers_block_by_func (selection,
 					 log_window_chatrooms_changed_cb,
@@ -1858,6 +1866,10 @@ log_window_links_populate (GossipLogWindow *window)
 	store = GTK_LIST_STORE (window->treestore_links);
 
 	gtk_list_store_clear (store);
+
+	if (!account) {
+		return;
+	}
 
 	gossip_debug (DEBUG_DOMAIN, "Getting links for %s%s...", 
 		      account ? "account " : "ALL accounts ",

@@ -594,7 +594,7 @@ GossipAccount *
 gossip_account_chooser_get_account (GossipAccountChooser *account_chooser)
 {
 	GossipAccountChooserPriv *priv;
-	GossipAccount            *account;
+	GossipAccount            *account = NULL;
 	GtkTreeModel             *model;
 	GtkTreeIter               iter;
 
@@ -603,9 +603,9 @@ gossip_account_chooser_get_account (GossipAccountChooser *account_chooser)
 	priv = GET_PRIV (account_chooser);
 
 	model = gtk_combo_box_get_model (GTK_COMBO_BOX (account_chooser));
-	gtk_combo_box_get_active_iter (GTK_COMBO_BOX (account_chooser), &iter);
-
-	gtk_tree_model_get (model, &iter, COL_ACCOUNT_POINTER, &account, -1);
+	if (gtk_combo_box_get_active_iter (GTK_COMBO_BOX (account_chooser), &iter)) {
+		gtk_tree_model_get (model, &iter, COL_ACCOUNT_POINTER, &account, -1);
+	}
 
 	return account;
 }
