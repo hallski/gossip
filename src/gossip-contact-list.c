@@ -63,6 +63,9 @@
 /* Time after connecting which we wait before active users are enabled */
 #define ACTIVE_USER_WAIT_TO_ENABLE_TIME 5000
 
+/* Time to wait before updating a user (i.e. to throttle updates) */
+#define UPDATE_USER_DELAY_TIME 500
+
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CONTACT_LIST, GossipContactListPriv))
 
 struct _GossipContactListPriv {
@@ -71,6 +74,7 @@ struct _GossipContactListPriv {
 	GHashTable            *groups;
 	GHashTable            *flash_table;
 	GHashTable            *active_contacts;
+	GHashTable            *update_contacts;
 	GHashTable            *set_group_state;
 
 	GtkUIManager          *ui;
@@ -184,7 +188,7 @@ static void     contact_list_add_contact                     (GossipContactList 
 							      GossipContact          *contact);
 static void     contact_list_remove_contact                  (GossipContactList      *list,
 							      GossipContact          *contact,
-							      gboolean                remove_flash);
+							      gboolean                shallow_remove);
 static void     contact_list_create_model                    (GossipContactList      *list);
 static void     contact_list_setup_view                      (GossipContactList      *list);
 static void     contact_list_drag_data_received              (GtkWidget              *widget,
@@ -550,6 +554,12 @@ gossip_contact_list_init (GossipContactList *list)
 						       (GDestroyNotify) 
 						       contact_list_contact_set_active_destroy_cb);
 
+	priv->update_contacts = g_hash_table_new_full (gossip_contact_hash,
+						       gossip_contact_equal,
+						       (GDestroyNotify) g_object_unref,
+						       (GDestroyNotify) 
+						       contact_list_contact_set_active_destroy_cb);
+
 	priv->set_group_state = g_hash_table_new_full (g_str_hash,
 						       g_str_equal,
 						       (GDestroyNotify) g_free,
@@ -649,6 +659,7 @@ contact_list_finalize (GObject *object)
 	g_hash_table_destroy (priv->flash_table);
 	/* FIXME: Shouldn't we free the groups hash table? */
 	g_hash_table_destroy (priv->active_contacts);
+	g_hash_table_destroy (priv->update_contacts);
 	g_hash_table_destroy (priv->set_group_state);
 
 	g_free (priv->filter_text);
@@ -912,26 +923,6 @@ contact_list_contact_added_cb (GossipSession     *session,
 			       GossipContact     *contact,
 			       GossipContactList *list)
 {
-	gossip_debug (DEBUG_DOMAIN, 
-		      "Contact:'%s' added",
-		      gossip_contact_get_name (contact));
-
-	g_signal_connect (contact, "notify::groups",
-			  G_CALLBACK (contact_list_contact_groups_updated_cb),
-			  list);
-	g_signal_connect (contact, "notify::presences",
-			  G_CALLBACK (contact_list_contact_updated_cb),
-			  list);
-	g_signal_connect (contact, "notify::name",
-			  G_CALLBACK (contact_list_contact_updated_cb),
-			  list);
-	g_signal_connect (contact, "notify::avatar",
-			  G_CALLBACK (contact_list_contact_updated_cb),
-			  list);
-	g_signal_connect (contact, "notify::type",
-			  G_CALLBACK (contact_list_contact_updated_cb),
-			  list);
-
 	contact_list_add_contact (list, contact);
 }
 
@@ -962,8 +953,35 @@ contact_list_contact_groups_updated_cb (GossipContact     *contact,
 	 * would have to check the groups already set up for each
 	 * contact and then see what has been updated.
 	 */
-	contact_list_remove_contact (list, contact, FALSE);
+	contact_list_remove_contact (list, contact, TRUE);
 	contact_list_add_contact (list, contact);
+}
+
+static gboolean
+contact_list_contact_updated_delay_cb (ActiveContactData *data)
+{
+	GossipContactList     *list;
+	GossipContactListPriv *priv;
+	GossipContact         *contact;
+
+	g_return_val_if_fail (data != NULL, FALSE);
+
+	list = data->list;
+	contact = data->contact;
+
+	priv = GET_PRIV (list);
+
+	if (g_hash_table_lookup (priv->update_contacts, contact)) {
+		g_hash_table_remove (priv->update_contacts, contact);
+	}
+
+	gossip_debug (DEBUG_DOMAIN,
+		      "Contact:'%s' updated, checking roster is in sync...",
+		      gossip_contact_get_name (contact));
+
+	contact_list_contact_update (list, contact);
+
+	return FALSE;
 }
 
 static void
@@ -971,11 +989,28 @@ contact_list_contact_updated_cb (GossipContact     *contact,
 				 GParamSpec        *param,
 				 GossipContactList *list)
 {
-	gossip_debug (DEBUG_DOMAIN,
-		      "Contact:'%s' updated, checking roster is in sync...",
-		      gossip_contact_get_name (contact));
+	/* Since we may get many updates at one time, we throttle
+	 * these to make sure we don't over update the roster for the
+	 * same contact.
+	 */ 
 
-	contact_list_contact_update (list, contact);
+	ActiveContactData     *data;
+	GossipContactListPriv *priv;
+
+	priv = GET_PRIV (list);
+
+	if (g_hash_table_lookup (priv->update_contacts, contact)) {
+		g_hash_table_remove (priv->update_contacts, contact);
+	}
+	
+	data = g_new0 (ActiveContactData, 1);
+	data->list = g_object_ref (list);
+	data->contact = g_object_ref (contact);
+	data->timeout_id = g_timeout_add (UPDATE_USER_DELAY_TIME,
+					  (GSourceFunc) contact_list_contact_updated_delay_cb,
+					  data);
+
+	g_hash_table_insert (priv->update_contacts, g_object_ref (contact), data);
 }
 
 static void
@@ -983,18 +1018,7 @@ contact_list_contact_removed_cb (GossipSession     *session,
 				 GossipContact     *contact,
 				 GossipContactList *list)
 {
-	gossip_debug (DEBUG_DOMAIN, 
-		      "Contact:'%s' removed",
-		      gossip_contact_get_name (contact));
-
-	g_signal_handlers_disconnect_by_func (contact, 
-					      G_CALLBACK (contact_list_contact_groups_updated_cb),
-					      list);
-	g_signal_handlers_disconnect_by_func (contact,
-					      G_CALLBACK (contact_list_contact_updated_cb),
-					      list);
-	
-	contact_list_remove_contact (list, contact, TRUE);
+	contact_list_remove_contact (list, contact, FALSE);
 }
 
 static void
@@ -1435,8 +1459,46 @@ contact_list_add_contact (GossipContactList *list,
 	GtkTreeIter            iter, iter_group, iter_separator;
 	GtkTreeModel          *model;
 	GList                 *l, *groups;
+	GList                 *iters;
+
+	/* Note: The shallow_add flag is here so we know if we
+	 * should connect the signal handlers for GossipContact.
+	 * We also use this function with _remove_contact() when we
+	 * update contacts with complex group changes, since it is
+	 * easier.
+	 */
 
 	priv = GET_PRIV (list);
+
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Contact:'%s' adding...",
+		      gossip_contact_get_name (contact));
+
+	iters = contact_list_find_contact (list, contact);
+	if (iters) {
+		gossip_debug (DEBUG_DOMAIN, " - Already exists, not adding");
+	
+		g_list_foreach (iters, (GFunc) gtk_tree_iter_free, NULL);
+		g_list_free (iters);
+
+		return;
+	}
+	
+	/* Add signals */
+	gossip_debug (DEBUG_DOMAIN, " - Setting signal handlers");
+	
+	g_signal_connect (contact, "notify::groups",
+			  G_CALLBACK (contact_list_contact_groups_updated_cb),
+			  list);
+	g_signal_connect (contact, "notify::presences",
+			  G_CALLBACK (contact_list_contact_updated_cb),
+			  list);
+	g_signal_connect (contact, "notify::name",
+			  G_CALLBACK (contact_list_contact_updated_cb),
+			  list);
+	g_signal_connect (contact, "notify::avatar",
+			  G_CALLBACK (contact_list_contact_updated_cb),
+			  list);
 
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 
@@ -1574,11 +1636,22 @@ contact_list_add_contact (GossipContactList *list,
 static void
 contact_list_remove_contact (GossipContactList *list,
 			     GossipContact     *contact,
-			     gboolean           remove_flash)
+			     gboolean           shallow_remove)
 {
 	GossipContactListPriv *priv;
 	GtkTreeModel          *model;
 	GList                 *iters, *l;
+
+	/* Note: The shallow_remove flag is here so we know if we
+	 * should disconnect the signal handlers for GossipContact.
+	 * We also use this function with _add_contact() when we
+	 * update contacts with complex group changes, since it is
+	 * easier.
+	 */
+
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Contact:'%s' removing...",
+		      gossip_contact_get_name (contact));
 
 	priv = GET_PRIV (list);
 
@@ -1606,6 +1679,8 @@ contact_list_remove_contact (GossipContactList *list,
 				if (children <= 2) {
 					gtk_tree_store_remove (priv->store, &parent_iter);
 				} else {
+					gtk_tree_store_remove (priv->store, l->data);
+
 					/* To make sure the parent is hidden
 					 * correctly if we now have no more
 					 * online contacts, we emit the
@@ -1628,11 +1703,21 @@ contact_list_remove_contact (GossipContactList *list,
 		g_list_free (iters);
 		
 		gossip_debug (DEBUG_DOMAIN, 
-			      "Now %d top level nodes remaining in the tree\n",
+			      " - Now %d top level nodes remaining in the tree\n",
 			      gtk_tree_model_iter_n_children (model, NULL));
 	}
 
-	if (remove_flash) {
+	gossip_debug (DEBUG_DOMAIN, " - Unsetting signal handlers");
+
+	g_signal_handlers_disconnect_by_func (contact, 
+					      contact_list_contact_groups_updated_cb,
+					      list);
+	g_signal_handlers_disconnect_by_func (contact,
+					      contact_list_contact_updated_cb,
+					      list);
+
+	if (!shallow_remove) {
+		gossip_debug (DEBUG_DOMAIN, " - Removing flash information");
 		g_hash_table_remove (priv->flash_table, contact);
 	}
 }
@@ -2657,7 +2742,8 @@ contact_list_filter_show_contact_for_events (GossipContactList *list,
 	has_activity = g_hash_table_lookup (priv->active_contacts, contact) != NULL;
 
 	subscription = gossip_contact_get_subscription (contact);
-	has_no_subscription = subscription != GOSSIP_SUBSCRIPTION_BOTH;
+	has_no_subscription = (subscription == GOSSIP_SUBSCRIPTION_NONE ||
+			       subscription == GOSSIP_SUBSCRIPTION_FROM);
 
 	/* If we have a reason to remain visible in the roster, then
 	 * set visible TRUE (i.e we have events pending, we are
@@ -3271,7 +3357,7 @@ contact_list_foreach_contact_flash (GossipContact     *contact,
 	iters = contact_list_find_contact (list, contact);
 	if (!iters) {
 		gossip_debug (DEBUG_DOMAIN,
-			      "Contact:'%s' not found in treeview, adding...",
+			      "Contact:'%s' not found in treeview",
 			      gossip_contact_get_name (contact));
 		return;
 	}

@@ -61,8 +61,6 @@ static void contact_set_property  (GObject            *object,
 				   guint               param_id,
 				   const GValue       *value,
 				   GParamSpec         *pspec);
-static void contact_set_type      (GossipContact      *contact,
-				   GossipContactType   type);
 static void contact_set_presences (GossipContact      *contact,
 				   GList              *presences);
 
@@ -298,8 +296,8 @@ contact_set_property (GObject      *object,
 
 	switch (param_id) {
 	case PROP_TYPE:
-		contact_set_type (GOSSIP_CONTACT (object),
-				  g_value_get_int (value));
+		gossip_contact_set_type (GOSSIP_CONTACT (object),
+					 g_value_get_int (value));
 		break;
 	case PROP_NAME:
 		gossip_contact_set_name (GOSSIP_CONTACT (object),
@@ -569,9 +567,9 @@ gossip_contact_get_subscription (GossipContact *contact)
 	return priv->subscription;
 }
 
-static void
-contact_set_type (GossipContact      *contact,
-		  GossipContactType   type)
+void
+gossip_contact_set_type (GossipContact     *contact,
+			 GossipContactType  type)
 {
 	GossipContactPriv *priv;
 

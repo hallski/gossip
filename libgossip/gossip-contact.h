@@ -91,6 +91,8 @@ GossipPresence *   gossip_contact_get_active_presence       (GossipContact      
 GList *            gossip_contact_get_presence_list         (GossipContact      *contact);
 GList *            gossip_contact_get_groups                (GossipContact      *contact);
 GossipSubscription gossip_contact_get_subscription          (GossipContact      *contact);
+void               gossip_contact_set_type                  (GossipContact      *contact,
+							     GossipContactType   type);
 void               gossip_contact_set_id                    (GossipContact      *contact,
 							     const gchar        *id);
 void               gossip_contact_set_name                  (GossipContact      *contact,

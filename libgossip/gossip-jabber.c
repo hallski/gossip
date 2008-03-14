@@ -2640,12 +2640,9 @@ jabber_request_roster (GossipJabber *jabber,
 		const gchar       *jid_str;
 		const gchar       *subscription;
 		gboolean           added_item = FALSE;
-		gboolean           removed_item = FALSE;
-		LmMessageNode     *subnode;
 		LmMessageNode     *child;
 		GList             *groups;
 		const gchar       *name;
-		GList             *new_groups;
 
 		if (strcmp (node->name, "item") != 0) {
 			continue;
@@ -2663,30 +2660,9 @@ jabber_request_roster (GossipJabber *jabber,
 
 		type = gossip_contact_get_type (contact);
 
-		/* Groups */
-		groups = NULL;
-		for (subnode = node->children; subnode; subnode = subnode->next) {
-			if (strcmp (subnode->name, "group") != 0) {
-				continue;
-			}
-
-			if (subnode->value) {
-				/* FIXME: unescape the markup here: #342927 */
-				groups = g_list_append (groups, subnode->value);
-			}
-		}
-
-		/* FIXME: why is this here if we set the groups below */
-		if (groups) {
-			gossip_contact_set_groups (contact, groups);
-		}
-
-		g_list_free (groups);
-
 		/* Subscription */
 		subscription = lm_message_node_get_attribute (node, "subscription");
 		if (contact && subscription) {
-			GossipContactType  contact_type;
 			GossipSubscription subscription_type;
 
 			if (strcmp (subscription, "remove") == 0) {
@@ -2717,24 +2693,10 @@ jabber_request_roster (GossipJabber *jabber,
 			 * subscription requests for people already on
 			 * the roster with "to" or "from" conditions.
 			 */
-			if (subscription_type != GOSSIP_SUBSCRIPTION_NONE) {
-				g_object_get (contact, "type", &contact_type, NULL);
-				if (contact_type != GOSSIP_CONTACT_TYPE_CONTACTLIST) {
-					added_item = TRUE;
-				}
-				
-				contact_type = GOSSIP_CONTACT_TYPE_CONTACTLIST;
-				g_object_set (contact, "type", contact_type, NULL);
-			} else {
-				g_object_get (contact, "type", &contact_type, NULL);
-				if (contact_type == GOSSIP_CONTACT_TYPE_CONTACTLIST) {
-					removed_item = TRUE;
-				}
+			
+			added_item = TRUE;
 
-				contact_type = GOSSIP_CONTACT_TYPE_TEMPORARY;
-				g_object_set (contact, "type", contact_type, NULL);
-			}
-
+			gossip_contact_set_type (contact, GOSSIP_CONTACT_TYPE_CONTACTLIST);
 			gossip_contact_set_subscription (contact, subscription_type);
 		}
 
@@ -2743,26 +2705,22 @@ jabber_request_roster (GossipJabber *jabber,
 			gossip_contact_set_name (contact, name);
 		}
 
-		new_groups = NULL;
+		groups = NULL;
 		for (child = node->children; child; child = child->next) {
+			/* FIXME: unescape the markup here: #342927 */
 			if (strcmp (child->name, "group") == 0 && child->value) {
-				new_groups = g_list_append (new_groups, child->value);
+				groups = g_list_prepend (groups, child->value);
 			}
 		}
 
-		if (new_groups) {
-			gossip_contact_set_groups (contact, new_groups);
+		if (groups) {
+			groups = g_list_reverse (groups);
+			gossip_contact_set_groups (contact, groups);
+			g_list_free (groups);
 		}
-
-		g_list_free (new_groups);
 
 		if (added_item) {
 			g_signal_emit_by_name (jabber, "contact-added", contact);
-		}
-
-		if (removed_item) {
-			g_signal_emit_by_name (jabber, "contact-removed", contact);
-			g_hash_table_remove (priv->contacts, gossip_contact_get_id (contact));
 		}
 	}
 }

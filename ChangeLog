@@ -1,5 +1,22 @@
 2008-03-14  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-contact.[ch]:
+	(contact_set_property): Make it possible to set the contact type.
+	
+	* libgossip/gossip-jabber.c:
+	(jabber_request_roster): Don't set the groups twice (major
+	inefficiency) and if a contact is on our roster then they are of
+	type GOSSIP_CONTACT_TYPE_CONTACT_LIST. 
+	
+	* src/gossip-contact-list.c: Throttle updating contacts in case we
+	get 10 updates in the same second so we don't spam roster changes.
+	Make sure we connect signals for contacts that are ah-hoc added to
+	the roster in the contact_updated_cb() function. Don't allow the
+	same contact to be added to the roster more than once. Don't
+	notify about contact type changes.
+
+2008-03-14  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-account-chooser.c:
 	(gossip_account_chooser_get_account): Don't try to look up the
 	combo model data if the iter isn't set.
