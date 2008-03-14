@@ -1,5 +1,10 @@
 2008-03-14  Martyn Russell  <martyn@imendio.com>
 
+	* data/glade/group-chat.glade: Reorder buttons according to the
+	HIG, fixes bug #520793 (Marco Barisione).
+
+2008-03-14  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-contact-list.c:
 	(contact_list_remove_contact): Make sure we refilter the whole
 	model if we remove a contact or group at the topmost level of the
