@@ -56,6 +56,7 @@ struct _GossipAppClass {
 GType                  gossip_app_get_type             (void) G_GNUC_CONST;
 void                   gossip_app_connect              (GossipAccount        *account,
 							gboolean              startup);
+void                   gossip_app_disconnect           (GossipAccount        *account);
 void                   gossip_app_net_down             (void);
 void                   gossip_app_net_up               (void);
 void                   gossip_app_create               (GossipSession        *session);

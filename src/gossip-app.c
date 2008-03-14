@@ -217,10 +217,6 @@ static void
 app_favorite_chatroom_menu_setup             (void);
 static void     app_chat_quit_cb             (GtkWidget             *window,
 					      GossipApp             *app);
-static void     app_chat_connect_cb          (GtkWidget             *window,
-					      GossipApp             *app);
-static void     app_chat_disconnect_cb       (GtkWidget             *window,
-					      GossipApp             *app);
 static void     app_chat_search_cb           (GtkWidget             *window,
 					      GossipApp             *app);
 static void     app_chat_new_message_cb      (GtkWidget             *widget,
@@ -309,7 +305,6 @@ static void
 app_notify_compact_contact_list_cb           (GossipConf            *conf,
 					      const gchar           *key,
 					      gpointer               user_data);
-static void     app_disconnect               (void);
 static void     app_connection_items_setup   (GladeXML              *glade);
 static void     app_connection_items_update  (void);
 static void     
@@ -340,6 +335,9 @@ app_session_chatroom_auto_connect_cb         (GossipSession         *session,
 					      gpointer               user_data);
 static void     app_event_added_cb           (GossipEventManager    *manager,
 					      GossipEvent           *event,
+					      gpointer               user_data);
+static void     app_accounts_updated_cb      (GossipAccountManager  *manager,
+					      GossipAccount         *account,
 					      gpointer               user_data);
 static void     app_contact_activated_cb     (GossipContactList     *contact_list,
 					      GossipContact         *contact,
@@ -453,6 +451,10 @@ app_finalize (GObject *object)
 
 	g_signal_handlers_disconnect_by_func (priv->event_manager,
 					      app_event_added_cb,
+					      NULL);
+
+	g_signal_handlers_disconnect_by_func (gossip_session_get_account_manager (priv->session),
+					      app_accounts_updated_cb,
 					      NULL);
 
 	gossip_ft_dialog_finalize (priv->session);
@@ -703,13 +705,14 @@ app_setup_contact_list (GtkWidget *scrolled_window,
 static void
 app_setup (GossipSession *session)
 {
-	GossipAppPriv *priv;
-	GossipConf    *conf;
-	GladeXML      *glade;
-	GtkWidget     *sw;
-	GtkWidget     *show_offline_widget;
-	GtkWidget     *help_contents;
-
+	GossipAppPriv        *priv;
+	GossipConf           *conf;
+	GossipAccountManager *account_manager;
+	GladeXML             *glade;
+	GtkWidget            *sw;
+	GtkWidget            *show_offline_widget;
+	GtkWidget            *help_contents;
+			
 	gossip_debug (DEBUG_DOMAIN_SETUP, "Beginning...");
 
 	priv = GET_PRIV (app);
@@ -717,6 +720,8 @@ app_setup (GossipSession *session)
 	conf = gossip_conf_get ();
 
 	priv->session = g_object_ref (session);
+
+	account_manager = gossip_session_get_account_manager (session);
 
 	gossip_debug (DEBUG_DOMAIN_SETUP,
 		      "Initialising session listeners "
@@ -754,25 +759,28 @@ app_setup (GossipSession *session)
 	g_signal_connect (priv->session, "protocol-connecting",
 			  G_CALLBACK (app_session_protocol_connecting_cb),
 			  NULL);
-
 	g_signal_connect (priv->session, "protocol-connected",
 			  G_CALLBACK (app_session_protocol_connected_cb),
 			  NULL);
-
 	g_signal_connect (priv->session, "protocol-disconnected",
 			  G_CALLBACK (app_session_protocol_disconnected_cb),
 			  NULL);
-
 	g_signal_connect (priv->session, "protocol-error",
 			  G_CALLBACK (app_session_protocol_error_cb),
 			  NULL);
-
 	g_signal_connect (priv->session, "chatroom-auto-connect",
 			  G_CALLBACK (app_session_chatroom_auto_connect_cb),
 			  NULL);
 
 	g_signal_connect (priv->event_manager, "event-added",
 			  G_CALLBACK (app_event_added_cb),
+			  NULL);
+
+	g_signal_connect (account_manager, "account-added",
+			  G_CALLBACK (app_accounts_updated_cb),
+			  NULL);
+	g_signal_connect (account_manager, "account-removed",
+			  G_CALLBACK (app_accounts_updated_cb),
 			  NULL);
 
 	/* Set up interface */
@@ -810,8 +818,6 @@ app_setup (GossipSession *session)
 			      "find_entry", "changed", app_find_entry_changed_cb, 
 			      "chat", "button-press-event", app_chat_button_press_event_cb,
 			      "chat_quit", "activate", app_chat_quit_cb,
-			      "chat_connect", "activate", app_chat_connect_cb,
-			      "chat_disconnect", "activate", app_chat_disconnect_cb,
 			      "chat_search", "activate", app_chat_search_cb,
 			      "chat_new_message", "activate", app_chat_new_message_cb,
 			      "chat_history", "activate", app_chat_history_cb,
@@ -1353,6 +1359,26 @@ app_favorite_chatroom_menu_setup (void)
 }
 
 static void
+app_chat_connect_activate_cb (GtkMenuItem *menuitem,
+			      gpointer     user_data)
+{
+	GossipAccount *account;
+
+	account = g_object_get_data (G_OBJECT (menuitem), "account");
+	gossip_app_connect (account, FALSE); 
+}
+
+static void
+app_chat_disconnect_activate_cb (GtkMenuItem *menuitem,
+				 gpointer     user_data)
+{
+	GossipAccount *account;
+
+	account = g_object_get_data (G_OBJECT (menuitem), "account");
+	gossip_app_disconnect (account); 
+}
+
+static void
 app_chat_quit_cb (GtkWidget *window,
 		  GossipApp *app)
 {
@@ -1363,20 +1389,6 @@ app_chat_quit_cb (GtkWidget *window,
 	if (!app_main_window_quit_confirm (app, priv->window)) {
 		gtk_widget_destroy (priv->window);
 	}
-}
-
-static void
-app_chat_connect_cb (GtkWidget *window,
-		     GossipApp *app)
-{
-	gossip_app_connect (NULL, FALSE);
-}
-
-static void
-app_chat_disconnect_cb (GtkWidget *window,
-			GossipApp *app)
-{
-	app_disconnect ();
 }
 
 static void
@@ -2271,6 +2283,23 @@ gossip_app_connect (GossipAccount *account, gboolean startup)
 	gossip_session_connect (priv->session, account, startup);
 }
 
+void
+gossip_app_disconnect (GossipAccount *account)
+{
+	GossipAppPriv        *priv;
+	GossipAccountManager *manager;
+	
+	priv = GET_PRIV (app);
+
+	manager = gossip_session_get_account_manager (priv->session);
+	if (gossip_account_manager_get_count (manager) < 1) {
+		/* Show the accounts dialog instead */
+		return;
+	}
+	
+	gossip_session_disconnect (priv->session, account);
+}
+
 /* Test hack to add support for disconnecting all accounts and then connect
  * them again due to if the net goes up and down.
  */
@@ -2351,16 +2380,6 @@ gossip_app_get (void)
 }
 
 static void
-app_disconnect (void)
-{
-	GossipAppPriv *priv;
-
-	priv = GET_PRIV (app);
-
-	gossip_session_disconnect (priv->session, NULL);
-}
-
-static void
 app_connection_items_setup (GladeXML *glade)
 {
 	GossipAppPriv *priv;
@@ -2399,6 +2418,148 @@ app_connection_items_setup (GladeXML *glade)
 }
 
 static void
+app_connection_menu_update (void)
+{
+	GossipAppPriv        *priv;
+	GossipAccountManager *manager;
+	GList                *accounts;
+	GList                *l;
+	GtkWidget            *menu_connect = NULL;
+	GtkWidget            *menu_disconnect = NULL;
+	gboolean              connected;
+
+	priv = GET_PRIV (app);
+		
+	manager = gossip_session_get_account_manager (priv->session);
+	accounts = gossip_account_manager_get_accounts (manager);
+
+	/* We always disconnect these in case we move from 1 account
+	 * to many accounts, if we don't do this, we start connecting
+	 * when we are showing submenus.
+	 */
+	g_signal_handlers_disconnect_by_func (priv->chat_connect, 
+					      app_chat_connect_activate_cb,
+					      NULL);
+	g_signal_handlers_disconnect_by_func (priv->chat_disconnect, 
+					      app_chat_disconnect_activate_cb,
+					      NULL);
+
+	/* If we have one account we do things quite differently. We
+	 * only have one menu item and toggle it.
+	 */
+	if (g_list_length (accounts) == 0) {
+		gtk_widget_show (priv->chat_connect);
+		gtk_widget_hide (priv->chat_disconnect);
+
+		gtk_menu_item_set_submenu (GTK_MENU_ITEM (priv->chat_connect), NULL);
+		gtk_menu_item_set_submenu (GTK_MENU_ITEM (priv->chat_disconnect), NULL);
+
+		g_list_foreach (accounts, (GFunc) g_object_unref, NULL);
+		g_list_free (accounts);
+
+		return;
+	}
+
+	if (g_list_length (accounts) == 1) {
+		connected = gossip_session_is_connected (priv->session, accounts->data);
+
+		if (connected) {
+			gtk_widget_hide (priv->chat_connect);
+			gtk_widget_show (priv->chat_disconnect);
+		} else {
+			gtk_widget_show (priv->chat_connect);
+			gtk_widget_hide (priv->chat_disconnect);
+		}			
+
+		gtk_menu_item_set_submenu (GTK_MENU_ITEM (priv->chat_connect), NULL);
+		gtk_menu_item_set_submenu (GTK_MENU_ITEM (priv->chat_disconnect), NULL);
+
+		g_object_set_data_full (G_OBJECT (priv->chat_connect), "account", 
+					g_object_ref (accounts->data), 
+					g_object_unref);
+		g_object_set_data_full (G_OBJECT (priv->chat_disconnect), "account", 
+					g_object_ref (accounts->data), 
+					g_object_unref);
+
+		g_signal_connect (priv->chat_connect, "activate",
+				  G_CALLBACK (app_chat_connect_activate_cb),
+				  NULL);
+		g_signal_connect (priv->chat_disconnect, "activate",
+				  G_CALLBACK (app_chat_disconnect_activate_cb),
+				  NULL);
+
+		g_list_foreach (accounts, (GFunc) g_object_unref, NULL);
+		g_list_free (accounts);
+
+		return;
+	}
+
+	/* If we have multiple accounts we show a connect-> and a
+	 * disconnect-> menu instead. 
+	 */
+	gtk_widget_show (priv->chat_connect);
+	gtk_widget_show (priv->chat_disconnect);
+
+	for (l = accounts; l; l = l->next) {
+		GtkWidget   *item;
+		GtkWidget   *image;
+		GCallback    callback;
+		const gchar *name;
+		GdkPixbuf   *pixbuf;
+
+		name = gossip_account_get_name (l->data);
+		item = gtk_image_menu_item_new_with_label (name);
+
+		connected = gossip_session_is_connected (priv->session, l->data);
+		pixbuf = gossip_account_status_create_pixbuf (l->data, 
+							      GTK_ICON_SIZE_MENU,
+							      connected);
+		image = gtk_image_new_from_pixbuf (pixbuf);
+		gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+		g_object_unref (pixbuf);
+
+		gtk_widget_show (item);
+
+		if (gossip_session_is_connected (priv->session, l->data) || 
+		    gossip_session_is_connecting (priv->session, l->data)) {
+			/* Create disconnect account menu item */
+			if (!menu_disconnect) {
+				menu_disconnect = gtk_menu_new ();
+				gtk_widget_show (menu_disconnect);
+			}
+
+			callback = G_CALLBACK (app_chat_disconnect_activate_cb);
+			gtk_menu_shell_append (GTK_MENU_SHELL (menu_disconnect), item);
+		} else {
+			/* Create connect account menu item */
+			if (!menu_connect) {
+				menu_connect = gtk_menu_new ();
+				gtk_widget_show (menu_connect);
+			}
+			
+			callback = G_CALLBACK (app_chat_connect_activate_cb);
+			gtk_menu_shell_append (GTK_MENU_SHELL (menu_connect), item);
+		}
+
+		g_object_set_data_full (G_OBJECT (item), "account", 
+					g_object_ref (l->data), 
+					g_object_unref);
+		g_signal_connect (item, "activate",
+				  callback,
+				  NULL);
+	}
+
+	g_list_foreach (accounts, (GFunc) g_object_unref, NULL);
+	g_list_free (accounts);
+
+	gtk_menu_item_set_submenu (GTK_MENU_ITEM (priv->chat_connect), menu_connect);
+	gtk_menu_item_set_submenu (GTK_MENU_ITEM (priv->chat_disconnect), menu_disconnect);
+
+	gtk_widget_set_sensitive (priv->chat_connect, menu_connect != NULL);
+	gtk_widget_set_sensitive (priv->chat_disconnect, menu_disconnect != NULL);
+}
+
+static void
 app_connection_items_update (void)
 {
 	GossipAppPriv *priv;
@@ -2407,6 +2568,9 @@ app_connection_items_update (void)
 	guint          disconnected = 0;
 
 	priv = GET_PRIV (app);
+
+	/* Set up connect/disconnect menus */
+	app_connection_menu_update ();
 
 	/* Get account count for:
 	 *  - connected and disabled,
@@ -2736,6 +2900,14 @@ app_event_added_cb (GossipEventManager *manager,
 	priv = GET_PRIV (app);
 
 	gossip_request_user_attention ();
+}
+
+static void
+app_accounts_updated_cb (GossipAccountManager  *manager,
+			 GossipAccount         *account,
+			 gpointer               user_data)
+{
+	app_connection_items_update ();
 }
 
 static void
