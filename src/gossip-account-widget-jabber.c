@@ -198,6 +198,8 @@ gossip_account_widget_jabber_init (GossipAccountWidgetJabber *settings)
 
 #ifdef HAVE_EBOOK
 	gtk_widget_show (priv->button_ebook_retrieve);
+#else
+	gtk_widget_hide (priv->button_ebook_retrieve);
 #endif
 
 	/* We do this manually so we can block it. */

@@ -1,3 +1,9 @@
+2008-03-23  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-account-widget-jabber.c:
+	(gossip_account_widget_jabber_init): Hide the ebook button if
+	ebook is not available.
+
 2008-03-14  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-app.c:
