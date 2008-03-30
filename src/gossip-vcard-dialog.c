@@ -64,16 +64,14 @@
 #define AVATAR_MAX_HEIGHT 96
 #define AVATAR_MAX_WIDTH  96
 
+#define RESPONSE_IMPORT   1
+
 typedef struct {
 	GtkWidget *dialog;
 
 	GtkWidget *hbox_account;
 	GtkWidget *label_account;
 	GtkWidget *account_chooser;
-
-	GtkWidget *vbox_ebook;
-	GtkWidget *checkbutton_ebook_sync;
-	GtkWidget *button_ebook_retrieve;
 
 	GtkWidget *vbox_details;
 
@@ -95,6 +93,7 @@ typedef struct {
 
 	GtkWidget *calendar;
 
+	GtkWidget *button_import;
 	GtkWidget *button_cancel;
 	GtkWidget *button_save;
 
@@ -277,8 +276,7 @@ vcard_dialog_button_image_clicked_cb (GtkWidget         *button,
 }
 
 static void
-vcard_dialog_button_ebook_retrieve_clicked_cb (GtkWidget         *button,
-					       GossipVCardDialog *dialog)
+vcard_dialog_import (GossipVCardDialog *dialog)
 {
 #ifdef HAVE_EBOOK
 	GossipAvatar *avatar;
@@ -586,8 +584,8 @@ vcard_dialog_lookup_start (GossipVCardDialog *dialog)
 	GossipAccountChooser *account_chooser;
 
 	gtk_widget_set_sensitive (dialog->vbox_details, FALSE);
-	gtk_widget_set_sensitive (dialog->vbox_ebook, FALSE);
 	gtk_widget_set_sensitive (dialog->account_chooser, FALSE);
+	gtk_widget_set_sensitive (dialog->button_import, FALSE);
 	gtk_widget_set_sensitive (dialog->button_save, FALSE);
 
 	dialog->timeout_id = g_timeout_add (VCARD_TIMEOUT,
@@ -620,8 +618,8 @@ vcard_dialog_lookup_stop (GossipVCardDialog *dialog)
 	dialog->requesting_vcard = FALSE;
 
 	gtk_widget_set_sensitive (dialog->vbox_details, TRUE);
-	gtk_widget_set_sensitive (dialog->vbox_ebook, TRUE);
 	gtk_widget_set_sensitive (dialog->account_chooser, TRUE);
+	gtk_widget_set_sensitive (dialog->button_import, TRUE);
 	gtk_widget_set_sensitive (dialog->button_save, TRUE);
 
 	if (dialog->timeout_id != 0) {
@@ -702,6 +700,7 @@ vcard_dialog_get_vcard_cb (GossipResult       result,
 static void
 vcard_dialog_set_vcard_finish (GossipVCardDialog *dialog)
 {
+	gtk_widget_set_sensitive (dialog->button_import, TRUE);
 	gtk_widget_set_sensitive (dialog->button_save, TRUE);
 }
 
@@ -753,35 +752,6 @@ vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 	if (avatar_data) {
 		avatar = gossip_avatar_new (avatar_data, avatar_size, dialog->avatar_format);
 	}
-
-#ifdef HAVE_EBOOK 
-	/* Set EDS data */
-	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (dialog->checkbutton_ebook_sync))) {
-		gossip_ebook_set_name (name);
-		gossip_ebook_set_nickname (nickname);
-		
-		/* FIXME: Finish, currently not supported */
-#if 0
-		if (birthday_formatted) {
-			gossip_ebook_set_birthday (birthday_formatted);
-		}
-#endif
-		
-		gossip_ebook_set_website (website);
-		gossip_ebook_set_email (email);
-		
-		/* FIXME: Finish, currently not supported */
-#if 0
-		gossip_ebook_set_description (description);
-#endif
-		
-		if (avatar) {
-			gossip_ebook_set_avatar (avatar);
-		}
-	} else {
-		gossip_debug (DEBUG_DOMAIN, "Not saving to EDS");
-	}
-#endif	
 
 	/* Set VCard */
 	if (gossip_app_is_connected ()) {
@@ -884,6 +854,7 @@ vcard_dialog_response_cb (GtkDialog         *widget,
 {
 	switch (response) {
 	case GTK_RESPONSE_OK:
+		gtk_widget_set_sensitive (dialog->button_import, FALSE);
 		gtk_widget_set_sensitive (dialog->button_save, FALSE);
 		vcard_dialog_set_vcard (dialog);
 		return;
@@ -897,6 +868,11 @@ vcard_dialog_response_cb (GtkDialog         *widget,
 			vcard_dialog_set_account_to_last (dialog);
 			return;
 		}
+		break;
+
+	case RESPONSE_IMPORT:
+		vcard_dialog_import (dialog);
+		return;
 
 	default:
 		break;
@@ -937,9 +913,6 @@ gossip_vcard_dialog_show (GtkWindow *parent)
 				       "vcard_dialog", &dialog->dialog,
 				       "hbox_account", &dialog->hbox_account,
 				       "label_account", &dialog->label_account,
-				       "vbox_ebook", &dialog->vbox_ebook,
-				       "checkbutton_ebook_sync", &dialog->checkbutton_ebook_sync,
-				       "button_ebook_retrieve", &dialog->button_ebook_retrieve,
 				       "vbox_details", &dialog->vbox_details,
 				       "label_name", &dialog->label_name,
 				       "label_nickname", &dialog->label_nickname,
@@ -953,6 +926,7 @@ gossip_vcard_dialog_show (GtkWindow *parent)
 				       "entry_birthday", &dialog->entry_birthday,
 				       "hbox_birthday_placeholder", &birthday_placeholder,
 				       "textview_description", &dialog->textview_description,
+				       "button_import", &dialog->button_import,
 				       "button_cancel", &dialog->button_cancel,
 				       "button_save", &dialog->button_save,
 				       "button_image", &dialog->button_image,
@@ -963,7 +937,6 @@ gossip_vcard_dialog_show (GtkWindow *parent)
 			      "vcard_dialog", "destroy", vcard_dialog_destroy_cb,
 			      "vcard_dialog", "response", vcard_dialog_response_cb,
 			      "button_image", "clicked", vcard_dialog_button_image_clicked_cb,
-			      "button_ebook_retrieve", "clicked", vcard_dialog_button_ebook_retrieve_clicked_cb,
 			      NULL);
 
 	g_object_add_weak_pointer (G_OBJECT (dialog->dialog), (gpointer) &dialog);
@@ -978,19 +951,19 @@ gossip_vcard_dialog_show (GtkWindow *parent)
 				       "label_birthday",
 				       "label_avatar",
 				       "label_description",
-#ifdef HAVE_EBOOK
-				       "image_ebook",
-#endif 
 				       NULL);
 
 	g_object_unref (glade);
 
 #ifdef HAVE_EBOOK
-	gtk_widget_show (dialog->vbox_ebook);
+	gtk_widget_show (dialog->button_import);
+
+	gtk_button_box_set_child_secondary (GTK_BUTTON_BOX (GTK_DIALOG (dialog->dialog)->action_area), 
+					    dialog->button_import, TRUE);
 #endif 
 
 	/* Birthday chooser */
-	dialog->button_birthday = gossip_popup_button_new (_("Change"));
+	dialog->button_birthday = gossip_popup_button_new (_("C_hange"));
 	gtk_box_pack_start (GTK_BOX (birthday_placeholder), 
 			    dialog->button_birthday, 0, FALSE, FALSE);
 	gtk_widget_show (dialog->button_birthday);

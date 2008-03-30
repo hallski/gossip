@@ -58,7 +58,7 @@ struct _GossipAccountWidgetJabberPriv {
 
 	GtkWidget     *vbox_settings;
 
-	GtkWidget     *button_ebook_retrieve;
+	GtkWidget     *button_import;
 	GtkWidget     *button_register;
 
 	GtkWidget     *button_forget;
@@ -120,10 +120,8 @@ static void     account_widget_jabber_register_cb                       (GossipR
 									 GossipAccountWidgetJabber      *settings);
 static void     account_widget_jabber_button_register_clicked_cb        (GtkWidget                      *button,
 									 GossipAccountWidgetJabber      *settings);
-static void
-                account_widget_jabber_button_ebook_retrieve_clicked_cb  (GtkWidget                      *button,
+static void     account_widget_jabber_button_import_clicked_cb          (GtkWidget                      *button,
 									 GossipAccountWidgetJabber      *settings);
-
 static void     account_widget_jabber_button_forget_clicked_cb          (GtkWidget                      *button,
 									 GossipAccountWidgetJabber      *settings);
 static void     account_widget_jabber_cp_entry_activate_cb              (GtkWidget                      *entry,
@@ -163,7 +161,7 @@ gossip_account_widget_jabber_init (GossipAccountWidgetJabber *settings)
 				       "vbox_jabber_settings",
 				       NULL,
 				       "vbox_jabber_settings", &priv->vbox_settings,
-				       "button_ebook_retrieve", &priv->button_ebook_retrieve,
+				       "button_import", &priv->button_import,
 				       "button_register", &priv->button_register,
 				       "button_forget", &priv->button_forget,
 				       "button_change_password", &priv->button_change_password,
@@ -182,7 +180,7 @@ gossip_account_widget_jabber_init (GossipAccountWidgetJabber *settings)
 
 	gossip_glade_connect (glade, 
 			      settings,
-			      "button_ebook_retrieve", "clicked", account_widget_jabber_button_ebook_retrieve_clicked_cb,
+			      "button_import", "clicked", account_widget_jabber_button_import_clicked_cb,
 			      "button_register", "clicked", account_widget_jabber_button_register_clicked_cb,
 			      "button_forget", "clicked", account_widget_jabber_button_forget_clicked_cb,
 			      "button_change_password", "clicked", account_widget_jabber_button_change_password_clicked_cb,
@@ -197,9 +195,9 @@ gossip_account_widget_jabber_init (GossipAccountWidgetJabber *settings)
 	g_object_unref (glade);
 
 #ifdef HAVE_EBOOK
-	gtk_widget_show (priv->button_ebook_retrieve);
+	gtk_widget_show (priv->button_import);
 #else
-	gtk_widget_hide (priv->button_ebook_retrieve);
+	gtk_widget_hide (priv->button_import);
 #endif
 
 	/* We do this manually so we can block it. */
@@ -697,8 +695,8 @@ account_widget_jabber_register_cb (GossipResult               result,
 }
 
 static void
-account_widget_jabber_button_ebook_retrieve_clicked_cb (GtkWidget                 *button,
-							GossipAccountWidgetJabber *settings)
+account_widget_jabber_button_import_clicked_cb (GtkWidget                 *button,
+						GossipAccountWidgetJabber *settings)
 {
 #ifdef HAVE_EBOOK
 	GossipAccountWidgetJabberPriv *priv;
@@ -707,9 +705,41 @@ account_widget_jabber_button_ebook_retrieve_clicked_cb (GtkWidget               
 	priv = GET_PRIV (settings);
 
 	str = gossip_ebook_get_jabber_id ();
-	if (!G_STR_EMPTY (str)) {
+	if (G_STR_EMPTY (str)) {
+		GtkWidget   *toplevel;
+		GtkWidget   *md;
+		const gchar *msg1, *msg2;
+
+		toplevel = gtk_widget_get_toplevel (priv->vbox_settings);
+		if (GTK_WIDGET_TOPLEVEL (toplevel) != TRUE || 
+		    GTK_WIDGET_TYPE (toplevel) != GTK_TYPE_WINDOW) {
+			toplevel = NULL;
+		}
+
+		msg1 = _("No Jabber account details available");
+		msg2 = _("Your desktop settings don't include any "
+			 "information about your Jabber account.\n"
+			 "\n"
+			 "To set your Jabber information, use the "
+			 "'About Me' application");
+
+		md = gtk_message_dialog_new (GTK_WINDOW (toplevel),
+					     GTK_DIALOG_MODAL,
+					     GTK_MESSAGE_INFO,
+					     GTK_BUTTONS_CLOSE,
+					     msg1);
+		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (md),
+							  msg2);
+
+		g_signal_connect_swapped (md, "response", 
+					  G_CALLBACK (gtk_widget_destroy),
+					  md);
+		
+		gtk_widget_show_all (md);
+	} else {
 		gtk_entry_set_text (GTK_ENTRY (priv->entry_id), str);
 	}
+
 	g_free (str);
 #endif
 }

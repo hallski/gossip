@@ -123,6 +123,7 @@ gossip_popup_button_new (const gchar *label)
 	
 	button = g_object_new (GOSSIP_TYPE_POPUP_BUTTON,
 			       "label", label,
+			       "use-underline", TRUE,
 			       NULL);
 	
 	return button;
