@@ -1257,7 +1257,7 @@ gossip_jabber_is_connected (GossipJabber *jabber)
 		return FALSE;
 	}
 
-	return lm_connection_is_authenticated (priv->connection);
+	return lm_connection_is_open (priv->connection);
 }
 
 gboolean

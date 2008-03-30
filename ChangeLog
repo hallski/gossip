@@ -1,5 +1,29 @@
 2008-03-30  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-jabber.c: Use lm_connection_is_open() instead
+	of _is_authenticated() to know if we are connected. Seems to stop
+	a crash in the accounts dialog when we repetitively connect and
+	disconnect. 
+
+2008-03-30  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-contact.[ch]: Added
+	gossip_contact_type_to_string().
+	
+	* libgossip/gossip-jabber-ft.c:
+	* libgossip/gossip-jabber-utils.c:
+	* libgossip/gossip-jabber.[ch]: Updated
+	gossip_jabber_get_contact_from_jid() to make it possible to set
+	the contact to be permanent.
+	
+	* src/gossip-contact-list.c: Removed the 'groups' hash table, it
+	was unused. Make sure we remove contacts from other hash tables
+	when they are removed from the roster, this stops us re-adding
+	them in active/update timeouts and causing them to be invisible
+	when we reconnect to the server.
+
+2008-03-30  Martyn Russell  <martyn@imendio.com>
+
 	* data/glade/main.glade: Fix vcard dialog OK response ID.
 
 2008-03-30  Martyn Russell  <martyn@imendio.com>
