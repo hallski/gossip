@@ -1,9 +1,17 @@
+2008-03-30  Martyn Russell  <martyn@imendio.com>
+
+	* configure.ac: Finally bump Loudmouth version requirement to
+	1.3.4. This should fix a lot of issues currently in Bugzilla. This
+	fixes bug #519603 (Loudmouth), fixes bug #468260 (Loudmouth),
+	fixes bug #478481 (Loudmouth), fixes bug #342927 (Loudmouth),
+	fixes bug #514977 (Loudmouth). There are possibly others too.
+
 2008-03-23  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-account-widget-jabber.c:
 	(gossip_account_widget_jabber_init): Hide the ebook button if
 	ebook is not available.
-
+	
 2008-03-14  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-app.c:
