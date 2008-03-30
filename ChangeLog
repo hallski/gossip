@@ -1,5 +1,9 @@
 2008-03-30  Martyn Russell  <martyn@imendio.com>
 
+	* data/glade/main.glade: Fix vcard dialog OK response ID.
+
+2008-03-30  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-popup-button.c: Make it possible to use mnemonics.
 
 	* data/glade/main.glade:
