@@ -67,6 +67,7 @@ GossipContact *gossip_jabber_get_own_contact           (GossipJabber        *jab
 GossipContact *gossip_jabber_get_contact_from_jid      (GossipJabber        *jabber,
 							const gchar         *jid,
 							gboolean            *new_item,
+							gboolean             set_permanent,
 							gboolean             get_vcard);
 void           gossip_jabber_send_presence             (GossipJabber        *jabber,
 							GossipPresence      *presence);

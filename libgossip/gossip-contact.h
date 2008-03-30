@@ -121,6 +121,7 @@ gboolean           gossip_contact_is_online                 (GossipContact      
 gboolean           gossip_contact_is_in_group               (GossipContact      *contact,
 							     const gchar        *group);
 const gchar *      gossip_contact_get_status                (GossipContact      *contact);
+const gchar *      gossip_contact_type_to_string            (GossipContactType   type);
 
 G_END_DECLS
 

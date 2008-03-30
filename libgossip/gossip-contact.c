@@ -964,3 +964,19 @@ gossip_contact_get_status (GossipContact *contact)
 	}
 }
 
+const gchar *
+gossip_contact_type_to_string (GossipContactType type)
+{
+	switch (type) {
+	case GOSSIP_CONTACT_TYPE_TEMPORARY:
+		return "GOSSIP_CONTACT_TYPE_TEMPORARY";
+	case GOSSIP_CONTACT_TYPE_CONTACTLIST:
+		return "GOSSIP_CONTACT_TYPE_CONTACTLIST";
+	case GOSSIP_CONTACT_TYPE_CHATROOM:
+		return "GOSSIP_CONTACT_TYPE_CHATROOM";
+	case GOSSIP_CONTACT_TYPE_USER:
+		return "GOSSIP_CONTACT_TYPE_USER";
+	}
+
+	return "";
+}

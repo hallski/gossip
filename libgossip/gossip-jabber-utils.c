@@ -163,6 +163,7 @@ gossip_jabber_get_message_conference (GossipJabber *jabber,
 	contact = gossip_jabber_get_contact_from_jid (jabber,
 						      contact_id,
 						      NULL,
+						      FALSE,
 						      TRUE);
 
 	id = lm_message_node_get_attribute (m->node, "from");

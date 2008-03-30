@@ -696,7 +696,11 @@ jabber_ft_handle_request (GossipJabber *jabber,
 
 	from_str = lm_message_node_get_attribute (m->node, "from");
 	id_str = lm_message_node_get_attribute (m->node, "id");
-	from = gossip_jabber_get_contact_from_jid (jabber, from_str, NULL, TRUE);
+	from = gossip_jabber_get_contact_from_jid (jabber, 
+						   from_str, 
+						   NULL, 
+						   FALSE,
+						   TRUE);
 
 	node = lm_message_node_find_child (m->node, "si");
 	sid = lm_message_node_get_attribute (node, "id");
@@ -765,7 +769,11 @@ jabber_ft_handle_error (GossipJabber *jabber,
 	}
 
 	from_str = lm_message_node_get_attribute (m->node, "from");
-	from = gossip_jabber_get_contact_from_jid (jabber, from_str, NULL, TRUE);
+	from = gossip_jabber_get_contact_from_jid (jabber, 
+						   from_str, 
+						   NULL, 
+						   FALSE, 
+						   TRUE);
 
 	node = lm_message_node_find_child (m->node, "error");
 	error_reason = lm_message_node_get_value (node);

@@ -71,7 +71,6 @@
 struct _GossipContactListPriv {
 	GossipSession         *session;
 
-	GHashTable            *groups;
 	GHashTable            *flash_table;
 	GHashTable            *active_contacts;
 	GHashTable            *update_contacts;
@@ -972,15 +971,18 @@ contact_list_contact_updated_delay_cb (ActiveContactData *data)
 	priv = GET_PRIV (list);
 
 	if (g_hash_table_lookup (priv->update_contacts, contact)) {
-		g_hash_table_remove (priv->update_contacts, contact);
+		gossip_debug (DEBUG_DOMAIN,
+			      "Contact:'%s' updated, checking roster is in sync...",
+			      gossip_contact_get_name (contact));
+		contact_list_contact_update (list, contact);
+	} else {
+		gossip_debug (DEBUG_DOMAIN,
+			      "Contact:'%s' updated, ignoring due to removal",
+			      gossip_contact_get_name (contact));
 	}
 
-	gossip_debug (DEBUG_DOMAIN,
-		      "Contact:'%s' updated, checking roster is in sync...",
-		      gossip_contact_get_name (contact));
-
-	contact_list_contact_update (list, contact);
-
+	g_hash_table_remove (priv->update_contacts, contact);
+		
 	return FALSE;
 }
 
@@ -999,9 +1001,8 @@ contact_list_contact_updated_cb (GossipContact     *contact,
 
 	priv = GET_PRIV (list);
 
-	if (g_hash_table_lookup (priv->update_contacts, contact)) {
-		g_hash_table_remove (priv->update_contacts, contact);
-	}
+	/* Always remove the last one as part of the throttling */
+	g_hash_table_remove (priv->update_contacts, contact);
 	
 	data = g_new0 (ActiveContactData, 1);
 	data->list = g_object_ref (list);
@@ -1706,13 +1707,13 @@ contact_list_remove_contact (GossipContactList *list,
 		g_list_free (iters);
 		
 		gossip_debug (DEBUG_DOMAIN, 
-			      " - Now %d top level nodes remaining in the tree\n",
+			      " - Now %d top level nodes remaining in the tree",
 			      gtk_tree_model_iter_n_children (model, NULL));
 	}
 
 	if (refilter) {
 		gossip_debug (DEBUG_DOMAIN, 
-			      "Refiltering model, contact/groups removed at the topmost level");
+			      " - Refiltering model, contact/groups at the topmost level");
 		gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (priv->filter));
 	}
 
@@ -1726,8 +1727,10 @@ contact_list_remove_contact (GossipContactList *list,
 					      list);
 
 	if (!shallow_remove) {
-		gossip_debug (DEBUG_DOMAIN, " - Removing flash information");
+		gossip_debug (DEBUG_DOMAIN, " - Removing information (flash/update/active)");
 		g_hash_table_remove (priv->flash_table, contact);
+		g_hash_table_remove (priv->active_contacts, contact);
+		g_hash_table_remove (priv->update_contacts, contact);
 	}
 }
 

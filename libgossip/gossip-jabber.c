@@ -538,6 +538,7 @@ gossip_jabber_new_contact (GossipJabber *jabber,
 	contact = gossip_jabber_get_contact_from_jid (jabber,
 						      id,
 						      &new_contact,
+						      FALSE,
 						      FALSE);
 	if (new_contact && !G_STR_EMPTY (name)) {
 		gossip_contact_set_name (contact, name);
@@ -1351,6 +1352,7 @@ gossip_jabber_send_message (GossipJabber *jabber, GossipMessage *message)
 	recipient = gossip_jabber_get_contact_from_jid (jabber,
 							recipient_id,
 							&new_contact,
+							FALSE,
 							TRUE);
 	if (new_contact) {
 		g_object_unref (recipient);
@@ -2172,6 +2174,7 @@ jabber_message_handler (LmMessageHandler *handler,
 	from = gossip_jabber_get_contact_from_jid (jabber,
 						   from_str,
 						   NULL,
+						   FALSE,
 						   TRUE);
 
 	if (gossip_jabber_get_message_is_event (m)) {
@@ -2355,7 +2358,11 @@ jabber_presence_handler (LmMessageHandler *handler,
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 
-	contact = gossip_jabber_get_contact_from_jid (jabber, from, &new_item, TRUE);
+	contact = gossip_jabber_get_contact_from_jid (jabber, 
+						      from, 
+						      &new_item, 
+						      FALSE, 
+						      TRUE);
 
 	/* Get the type */
 	type = lm_message_node_get_attribute (m->node, "type");
@@ -2656,6 +2663,7 @@ jabber_request_roster (GossipJabber *jabber,
 		contact = gossip_jabber_get_contact_from_jid (jabber,
 							      jid_str,
 							      &added_item,
+							      TRUE,
 							      FALSE);
 
 		type = gossip_contact_get_type (contact);
@@ -2696,7 +2704,6 @@ jabber_request_roster (GossipJabber *jabber,
 			
 			added_item = TRUE;
 
-			gossip_contact_set_type (contact, GOSSIP_CONTACT_TYPE_CONTACTLIST);
 			gossip_contact_set_subscription (contact, subscription_type);
 		}
 
@@ -3202,12 +3209,14 @@ GossipContact *
 gossip_jabber_get_contact_from_jid (GossipJabber *jabber,
 				    const gchar  *jid_str,
 				    gboolean     *new_item,
+				    gboolean      set_permanent,
 				    gboolean      get_vcard)
 {
-	GossipJabberPriv *priv;
-	GossipContact    *contact;
-	GossipJID        *jid;
-	gboolean          tmp_new_item = FALSE;
+	GossipJabberPriv  *priv;
+	GossipContact     *contact;
+	GossipContactType  type;
+	GossipJID         *jid;
+	gboolean           tmp_new_item = FALSE;
 
 	priv = GET_PRIV (jabber);
 
@@ -3217,11 +3226,18 @@ gossip_jabber_get_contact_from_jid (GossipJabber *jabber,
 				       gossip_jid_get_without_resource (jid));
 
 	if (!contact) {
+		if (set_permanent) {
+			type = GOSSIP_CONTACT_TYPE_CONTACTLIST;
+		} else {
+			type = GOSSIP_CONTACT_TYPE_TEMPORARY;
+		}
+
 		gossip_debug (DEBUG_DOMAIN,
-			      "New contact:'%s' (GOSSIP_CONTACT_TYPE_TEMPORARY)",
-			      gossip_jid_get_full (jid));
-		contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_TEMPORARY,
-					      priv->account);
+			      "New contact:'%s' (%s)",
+			      gossip_jid_get_full (jid),
+			      gossip_contact_type_to_string (type));
+
+		contact = gossip_contact_new (type, priv->account);
 		gossip_contact_set_id (contact, gossip_jid_get_full (jid));
 		gossip_contact_set_name (contact, gossip_jid_get_without_resource (jid));
 
@@ -3238,32 +3254,17 @@ gossip_jabber_get_contact_from_jid (GossipJabber *jabber,
 			jabber_contact_vcard (jabber, contact);
 		}
 	} else {
-		GossipContactType  type;
-		const gchar       *type_str;
+		if (set_permanent) {
+			gossip_contact_set_type (contact, GOSSIP_CONTACT_TYPE_CONTACTLIST);
+		}
 
 		type = gossip_contact_get_type (contact);
 
-		switch (type) {
-		case GOSSIP_CONTACT_TYPE_TEMPORARY:
-			type_str = "GOSSIP_CONTACT_TYPE_TEMPORARY";
-			break;
-		case GOSSIP_CONTACT_TYPE_CONTACTLIST:
-			type_str = "GOSSIP_CONTACT_TYPE_CONTACTLIST";
-			break;
-		case GOSSIP_CONTACT_TYPE_CHATROOM:
-			type_str = "GOSSIP_CONTACT_TYPE_CHATROOM";
-			break;
-		case GOSSIP_CONTACT_TYPE_USER:
-			type_str = "GOSSIP_CONTACT_TYPE_USER";
-			break;
-		default:
-			type_str = "unknown";
-			break;
-		}
-
 		gossip_debug (DEBUG_DOMAIN,
 			      "Get contact:'%s', type:%d-->'%s'",
-			      gossip_jid_get_full (jid), type, type_str);
+			      gossip_jid_get_full (jid), 
+			      type, 
+			      gossip_contact_type_to_string (type));
 	}
 
 	gossip_jid_unref (jid);
