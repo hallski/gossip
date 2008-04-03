@@ -1,3 +1,10 @@
+2008-04-03  Richard Hult  <richard@imendio.com>
+
+	* data/glade/main.glade:
+	* src/gossip-accounts-dialog.c:
+	(accounts_dialog_update_connect_button): Tweak the accounts dialog
+	slightly so it looks a bit less cluttered.
+
 2008-03-30  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-jabber.c: Use lm_connection_is_open() instead

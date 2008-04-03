@@ -4922,6 +4922,7 @@ You can also use the name of a group to show only contacts in a specific group.<
 
 		  <child>
 		    <widget class="GtkTreeView" id="treeview">
+		      <property name="width_request">125</property>
 		      <property name="height_request">200</property>
 		      <property name="visible">True</property>
 		      <property name="can_focus">True</property>
@@ -4949,39 +4950,34 @@ You can also use the name of a group to show only contacts in a specific group.<
 		  <property name="spacing">6</property>
 
 		  <child>
-		    <widget class="GtkButton" id="button_connect">
-		      <property name="visible">True</property>
-		      <property name="can_focus">True</property>
-		      <property name="label">Connect</property>
-		      <property name="use_underline">True</property>
-		      <property name="relief">GTK_RELIEF_NORMAL</property>
-		      <property name="focus_on_click">True</property>
-		    </widget>
-		    <packing>
-		      <property name="padding">0</property>
-		      <property name="expand">False</property>
-		      <property name="fill">False</property>
-		    </packing>
-		  </child>
-
-		  <child>
 		    <widget class="GtkHBox" id="hbox148">
 		      <property name="visible">True</property>
-		      <property name="homogeneous">True</property>
+		      <property name="homogeneous">False</property>
 		      <property name="spacing">6</property>
 
 		      <child>
 			<widget class="GtkButton" id="button_add">
 			  <property name="visible">True</property>
+			  <property name="tooltip" translatable="yes">Add an account</property>
 			  <property name="can_focus">True</property>
-			  <property name="label">gtk-add</property>
-			  <property name="use_stock">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
 			  <property name="focus_on_click">True</property>
+
+			  <child>
+			    <widget class="GtkImage" id="image903">
+			      <property name="visible">True</property>
+			      <property name="stock">gtk-add</property>
+			      <property name="icon_size">4</property>
+			      <property name="xalign">0.5</property>
+			      <property name="yalign">0.5</property>
+			      <property name="xpad">0</property>
+			      <property name="ypad">0</property>
+			    </widget>
+			  </child>
 			</widget>
 			<packing>
 			  <property name="padding">0</property>
-			  <property name="expand">True</property>
+			  <property name="expand">False</property>
 			  <property name="fill">True</property>
 			</packing>
 		      </child>
@@ -4989,16 +4985,45 @@ You can also use the name of a group to show only contacts in a specific group.<
 		      <child>
 			<widget class="GtkButton" id="button_remove">
 			  <property name="visible">True</property>
+			  <property name="tooltip" translatable="yes">Remove the selected account</property>
 			  <property name="can_focus">True</property>
-			  <property name="label">gtk-remove</property>
-			  <property name="use_stock">True</property>
+			  <property name="relief">GTK_RELIEF_NORMAL</property>
+			  <property name="focus_on_click">True</property>
+
+			  <child>
+			    <widget class="GtkImage" id="image904">
+			      <property name="visible">True</property>
+			      <property name="stock">gtk-remove</property>
+			      <property name="icon_size">4</property>
+			      <property name="xalign">0.5</property>
+			      <property name="yalign">0.5</property>
+			      <property name="xpad">0</property>
+			      <property name="ypad">0</property>
+			    </widget>
+			  </child>
+			</widget>
+			<packing>
+			  <property name="padding">0</property>
+			  <property name="expand">False</property>
+			  <property name="fill">True</property>
+			</packing>
+		      </child>
+
+		      <child>
+			<widget class="GtkButton" id="button_connect">
+			  <property name="visible">True</property>
+			  <property name="tooltip" translatable="yes">Connect/disconnect the selected account</property>
+			  <property name="can_focus">True</property>
+			  <property name="label"></property>
+			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
 			  <property name="focus_on_click">True</property>
 			</widget>
 			<packing>
 			  <property name="padding">0</property>
-			  <property name="expand">True</property>
-			  <property name="fill">True</property>
+			  <property name="expand">False</property>
+			  <property name="fill">False</property>
+			  <property name="pack_type">GTK_PACK_END</property>
 			</packing>
 		      </child>
 		    </widget>
@@ -5068,42 +5093,6 @@ You can also use the name of a group to show only contacts in a specific group.<
 				  <property name="spacing">6</property>
 
 				  <child>
-				    <widget class="GtkLabel" id="label_name">
-				      <property name="visible">True</property>
-				      <property name="label" translatable="yes">Imendio </property>
-				      <property name="use_underline">False</property>
-				      <property name="use_markup">False</property>
-				      <property name="justify">GTK_JUSTIFY_LEFT</property>
-				      <property name="wrap">False</property>
-				      <property name="selectable">False</property>
-				      <property name="xalign">0</property>
-				      <property name="yalign">0.5</property>
-				      <property name="xpad">0</property>
-				      <property name="ypad">0</property>
-				      <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
-				      <property name="width_chars">0</property>
-				      <property name="single_line_mode">False</property>
-				      <property name="angle">0</property>
-				    </widget>
-				    <packing>
-				      <property name="padding">0</property>
-				      <property name="expand">False</property>
-				      <property name="fill">False</property>
-				    </packing>
-				  </child>
-
-				  <child>
-				    <widget class="GtkHSeparator" id="hseparator1">
-				      <property name="visible">True</property>
-				    </widget>
-				    <packing>
-				      <property name="padding">0</property>
-				      <property name="expand">True</property>
-				      <property name="fill">True</property>
-				    </packing>
-				  </child>
-
-				  <child>
 				    <widget class="GtkVBox" id="vbox219">
 				      <property name="visible">True</property>
 				      <property name="homogeneous">False</property>
@@ -5166,22 +5155,60 @@ You can also use the name of a group to show only contacts in a specific group.<
 		      </child>
 
 		      <child>
-			<widget class="GtkLabel" id="label598">
+			<widget class="GtkHBox" id="hbox196">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">&lt;b&gt;Account&lt;/b&gt;</property>
-			  <property name="use_underline">False</property>
-			  <property name="use_markup">True</property>
-			  <property name="justify">GTK_JUSTIFY_LEFT</property>
-			  <property name="wrap">False</property>
-			  <property name="selectable">False</property>
-			  <property name="xalign">0.5</property>
-			  <property name="yalign">0.5</property>
-			  <property name="xpad">0</property>
-			  <property name="ypad">0</property>
-			  <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
-			  <property name="width_chars">-1</property>
-			  <property name="single_line_mode">False</property>
-			  <property name="angle">0</property>
+			  <property name="homogeneous">False</property>
+			  <property name="spacing">6</property>
+
+			  <child>
+			    <widget class="GtkLabel" id="labelfoo">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">&lt;b&gt;Account:&lt;/b&gt;</property>
+			      <property name="use_underline">False</property>
+			      <property name="use_markup">True</property>
+			      <property name="justify">GTK_JUSTIFY_LEFT</property>
+			      <property name="wrap">False</property>
+			      <property name="selectable">False</property>
+			      <property name="xalign">0</property>
+			      <property name="yalign">0.5</property>
+			      <property name="xpad">0</property>
+			      <property name="ypad">0</property>
+			      <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
+			      <property name="width_chars">0</property>
+			      <property name="single_line_mode">False</property>
+			      <property name="angle">0</property>
+			    </widget>
+			    <packing>
+			      <property name="padding">0</property>
+			      <property name="expand">False</property>
+			      <property name="fill">False</property>
+			    </packing>
+			  </child>
+
+			  <child>
+			    <widget class="GtkLabel" id="label_name">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes"></property>
+			      <property name="use_underline">False</property>
+			      <property name="use_markup">False</property>
+			      <property name="justify">GTK_JUSTIFY_LEFT</property>
+			      <property name="wrap">False</property>
+			      <property name="selectable">False</property>
+			      <property name="xalign">0.5</property>
+			      <property name="yalign">0.5</property>
+			      <property name="xpad">0</property>
+			      <property name="ypad">0</property>
+			      <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
+			      <property name="width_chars">-1</property>
+			      <property name="single_line_mode">False</property>
+			      <property name="angle">0</property>
+			    </widget>
+			    <packing>
+			      <property name="padding">0</property>
+			      <property name="expand">False</property>
+			      <property name="fill">False</property>
+			    </packing>
+			  </child>
 			</widget>
 			<packing>
 			  <property name="type">label_item</property>
@@ -7315,7 +7342,7 @@ You can retrieve contact information from the server. </property>
       <child>
 	<widget class="GtkButton" id="button_register">
 	  <property name="visible">True</property>
-	  <property name="tooltip" translatable="yes">Register this account with the Jabber server. If this is a new account, you will need to click on this first before connecting.</property>
+	  <property name="tooltip" translatable="yes">Register account with the Jabber server. If this is a new account, you will need to register it before connecting.</property>
 	  <property name="can_focus">True</property>
 	  <property name="label" translatable="yes">R_egister</property>
 	  <property name="use_underline">True</property>
@@ -7360,7 +7387,7 @@ You can retrieve contact information from the server. </property>
 	  <child>
 	    <widget class="GtkButton" id="button_forget">
 	      <property name="visible">True</property>
-	      <property name="tooltip" translatable="yes">Forget password and clear the entry.</property>
+	      <property name="tooltip" translatable="yes">Forget password</property>
 	      <property name="can_focus">True</property>
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="focus_on_click">True</property>

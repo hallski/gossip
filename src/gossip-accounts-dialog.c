@@ -321,6 +321,7 @@ accounts_dialog_update_connect_button (GossipAccountsDialog *dialog)
 	const gchar      *stock_id;
 	gboolean          is_connected;
 	gboolean          is_connecting;
+	GtkWidget        *image;
 
 	view = GTK_TREE_VIEW (dialog->treeview);
 	selection = gtk_tree_view_get_selection (view);
@@ -345,8 +346,9 @@ accounts_dialog_update_connect_button (GossipAccountsDialog *dialog)
 		}
 	}
 
-	gtk_button_set_label (GTK_BUTTON (dialog->button_connect), stock_id);
-	gtk_button_set_use_stock (GTK_BUTTON (dialog->button_connect), TRUE);
+	image = gtk_image_new_from_stock (stock_id, GTK_ICON_SIZE_BUTTON);
+	gtk_button_set_image (GTK_BUTTON (dialog->button_connect), image);
+	gtk_widget_show (image); /* override gtk-button-images setting */
 }
 
 static void
