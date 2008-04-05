@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-03-30 22:11+0100\n"
-"PO-Revision-Date: 2008-04-01 10:03+0200\n"
+"POT-Creation-Date: 2008-04-03 21:14+0100\n"
+"PO-Revision-Date: 2008-04-04 13:06+0200\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -1967,7 +1967,7 @@ msgstr "Introduzca mensaje de estado:"
 
 #: ../data/glade/main.glade.h:56
 msgid "Forget password"
-msgstr ""
+msgstr "Olvidar contraseña"
 
 #: ../data/glade/main.glade.h:57
 msgid "Forget password and clear the entry."
@@ -1992,7 +1992,8 @@ msgstr ""
 msgid ""
 "Import your personal information from your desktop settings and use it here"
 msgstr ""
-"Importe su información personal desde su configuración de escritorio y úsela aquí"
+"Importe su información personal desde su configuración de escritorio y úsela "
+"aquí"
 
 #: ../data/glade/main.glade.h:63
 msgid "Join _Favorites"
@@ -2048,7 +2049,7 @@ msgstr ""
 
 #: ../data/glade/main.glade.h:79
 msgid "Remove the selected account"
-msgstr ""
+msgstr "Eliminar la cuenta seleccionada"
 
 #: ../data/glade/main.glade.h:80
 msgid "Reso_urce:"
