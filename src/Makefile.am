@@ -46,6 +46,7 @@ gossip_SOURCES = 				                        	\
 	gossip-avatar-image.c		   gossip-avatar-image.h	   	\
 	gossip-cell-renderer-expander.c    gossip-cell-renderer-expander.h 	\
 	gossip-cell-renderer-text.c        gossip-cell-renderer-text.h     	\
+	gossip-change-password-dialog.c    gossip-change-password-dialog.h   	\
 	gossip-chat.c		           gossip-chat.h		   	\
 	gossip-chat-invite.c	           gossip-chat-invite.h	           	\
 	gossip-chat-manager.c              gossip-chat-manager.h           	\

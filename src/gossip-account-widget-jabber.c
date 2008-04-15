@@ -41,6 +41,7 @@
 #endif
 
 #include "gossip-account-widget-jabber.h"
+#include "gossip-change-password-dialog.h"
 #include "gossip-app.h"
 #include "gossip-glade.h"
 #include "gossip-marshal.h"
@@ -114,7 +115,6 @@ static void     account_widget_jabber_entry_port_insert_text_cb         (GtkEdit
 									 gint                           *position,
 									 GossipAccountWidgetJabber      *settings);
 static void     account_widget_jabber_register_cancel                   (GossipAccountWidgetJabber      *settings);
-static void     account_widget_jabber_change_password_cancel            (GossipAccountWidgetJabber      *settings);
 static void     account_widget_jabber_register_cb                       (GossipResult                    result,
 									 GError                         *error,
 									 GossipAccountWidgetJabber      *settings);
@@ -123,11 +123,6 @@ static void     account_widget_jabber_button_register_clicked_cb        (GtkWidg
 static void     account_widget_jabber_button_import_clicked_cb          (GtkWidget                      *button,
 									 GossipAccountWidgetJabber      *settings);
 static void     account_widget_jabber_button_forget_clicked_cb          (GtkWidget                      *button,
-									 GossipAccountWidgetJabber      *settings);
-static void     account_widget_jabber_cp_entry_activate_cb              (GtkWidget                      *entry,
-									 GtkDialog                      *dialog);
-static void     account_widget_jabber_cp_response_cb                    (GtkWidget                      *dialog,
-									 gint                            response,
 									 GossipAccountWidgetJabber      *settings);
 static void     account_widget_jabber_button_change_password_clicked_cb (GtkWidget                      *button,
 									 GossipAccountWidgetJabber      *settings);
@@ -255,7 +250,6 @@ account_widget_jabber_dispose (GObject *object)
 		priv->disposed = TRUE;
 
 		account_widget_jabber_register_cancel (settings);
-		account_widget_jabber_change_password_cancel (settings);
 
 		if (priv->account_changed) {
 			gossip_debug (DEBUG_DOMAIN, "Disposing of this widget and accounts changed, saving accounts...");
@@ -808,173 +802,14 @@ account_widget_jabber_button_forget_clicked_cb (GtkWidget                 *butto
 }
 
 static void
-account_widget_jabber_change_password_cancel (GossipAccountWidgetJabber *settings)
-{
-	GossipAccountWidgetJabberPriv *priv;
-	GossipSession                 *session;
-
-	priv = GET_PRIV (settings);
-
-	if (!priv->changing_password) {
-		return;
-	}
-
-	session = gossip_app_get_session ();
-	gossip_session_change_password_cancel (session, priv->account);
-
-	priv->changing_password = FALSE;
-	gtk_widget_set_sensitive (priv->button_change_password, TRUE);
-	gtk_widget_set_sensitive (priv->vbox_settings, TRUE);
-}
-
-static void
-account_widget_jabber_change_password_cb (GossipResult               result,
-					  GError                    *error,
-					  GossipAccountWidgetJabber *settings)
-{
-	GossipAccountWidgetJabberPriv *priv;
-	GtkWidget                     *toplevel;
-	GtkWidget                     *md;
-	const gchar                   *str;
-
-	priv = GET_PRIV (settings);
-
-	priv->changing_password = FALSE;
-
-	/* FIXME: Not sure how to do this right, but really we
-	 * shouldn't show the register button as sensitive if we have
-	 * just registered.
-	 */
-	gtk_widget_set_sensitive (priv->button_change_password, TRUE);
-	gtk_widget_set_sensitive (priv->vbox_settings, TRUE);
-
-	toplevel = gtk_widget_get_toplevel (priv->vbox_settings);
-	if (GTK_WIDGET_TOPLEVEL (toplevel) != TRUE || 
-	    GTK_WIDGET_TYPE (toplevel) != GTK_TYPE_WINDOW) {
-		toplevel = NULL;
-	}
-	
-	if (result == GOSSIP_RESULT_OK) {
-		str = _("Successfully changed your account password.");
-		md = gtk_message_dialog_new (GTK_WINDOW (toplevel),
-					     GTK_DIALOG_MODAL,
-					     GTK_MESSAGE_INFO,
-					     GTK_BUTTONS_CLOSE,
-					     str);
-
-		str = _("You should now be able to connect with your new password.");
-		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (md), str);
-	} else {
-		str = _("Failed to change your account password.");
-		md = gtk_message_dialog_new (GTK_WINDOW (toplevel),
-					     GTK_DIALOG_MODAL,
-					     GTK_MESSAGE_ERROR,
-					     GTK_BUTTONS_CLOSE,
-					     str);
-		
-		if (error && error->message) {
-			gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (md),
-								  error->message);
-		}
-	}
-
-	g_signal_connect_swapped (md, "response", 
-				  G_CALLBACK (gtk_widget_destroy),
-				  md);
-
-	gtk_widget_show_all (md);
-}
-
-static void
-account_widget_jabber_cp_entry_activate_cb (GtkWidget *entry,
-					    GtkDialog *dialog)
-{
-	gtk_dialog_response (dialog, GTK_RESPONSE_OK);
-}
-
-static void
-account_widget_jabber_cp_response_cb (GtkWidget                 *dialog,
-				      gint                       response,
-				      GossipAccountWidgetJabber *settings)
-{
-	if (response == GTK_RESPONSE_OK) {
-		GossipAccountWidgetJabberPriv *priv;
-		GossipSession                 *session;
-		GtkWidget                     *entry;
-		const gchar                   *new_password;
-		
-		priv = GET_PRIV (settings);
-
-		entry = g_object_get_data (G_OBJECT (dialog), "entry");
-		new_password = gtk_entry_get_text (GTK_ENTRY (entry));
-		
-		priv->changing_password = TRUE;
-		gtk_widget_set_sensitive (priv->button_change_password, FALSE);
-		gtk_widget_set_sensitive (priv->vbox_settings, FALSE);
-
-		session = gossip_app_get_session ();
-		gossip_session_change_password (session,
-						priv->account,
-						new_password,
-						(GossipErrorCallback)
-						account_widget_jabber_change_password_cb,
-						settings);
-	}
-
-	gtk_widget_destroy (dialog);
-}
-
-static void
 account_widget_jabber_button_change_password_clicked_cb (GtkWidget                 *button,
 							 GossipAccountWidgetJabber *settings)
 {
 	GossipAccountWidgetJabberPriv *priv;
-	GtkWidget                     *toplevel;
-	GtkWidget                     *dialog;
-	GtkWidget                     *entry;
-	GtkWidget                     *hbox;
-	gchar                         *str;
-	const gchar                   *id;
-	
+
 	priv = GET_PRIV (settings);
 
-	toplevel = gtk_widget_get_toplevel (priv->vbox_settings);
-	if (GTK_WIDGET_TOPLEVEL (toplevel) != TRUE || 
-	    GTK_WIDGET_TYPE (toplevel) != GTK_TYPE_WINDOW) {
-		toplevel = NULL;
-	}
-
-	/* Dialog here to get new password from user */
-	id = gossip_account_get_id (priv->account);
-	str = g_strdup_printf ("<b>%s</b>", id);
-	dialog = gtk_message_dialog_new (GTK_WINDOW (toplevel),
-					 0,
-					 GTK_MESSAGE_QUESTION,
-					 GTK_BUTTONS_OK_CANCEL,
-					 _("Please enter a new password for this account:\n%s"),
-					 str);
-
-	g_free (str);
-
-	hbox = gtk_hbox_new (FALSE, 0);
-	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox),
-			    hbox, FALSE, TRUE, 4);
-
-	entry = gtk_entry_new ();
-	gtk_editable_select_region (GTK_EDITABLE (entry), 0, -1);
-	gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 4);
-
-	g_object_set (GTK_MESSAGE_DIALOG (dialog)->label, "use-markup", TRUE, NULL);
-	g_object_set_data (G_OBJECT (dialog), "entry", entry);
-
-	g_signal_connect (entry, "activate",
-			  G_CALLBACK (account_widget_jabber_cp_entry_activate_cb),
-			  dialog);
-	g_signal_connect (dialog, "response",
-			  G_CALLBACK (account_widget_jabber_cp_response_cb),
-			  settings);
-
-	gtk_widget_show_all (dialog);
+	gossip_change_password_dialog_show (priv->account);
 }
 
 static void

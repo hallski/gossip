@@ -1,5 +1,16 @@
 2008-04-15  Martyn Russell  <martyn@imendio.com>
 
+	* data/glade/main.glade:
+	* src/Makefile.am:
+	* src/gossip-account-widget-jabber.c:
+	* src/gossip-change-password-dialog.[ch]:
+	(account_widget_jabber_dispose):
+	(account_widget_jabber_button_change_password_clicked_cb): Use a
+	proper change password dialog which asks the user twice to avoid
+	user error. Fixes bug #524903.
+
+2008-04-15  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-avatar.[ch]: 
 	* libgossip/gossip-vcard.c: Use the mime type as provided in the
 	avatar Jabber message to create the pixbuf loader instead of just
