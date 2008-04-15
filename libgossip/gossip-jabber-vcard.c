@@ -50,6 +50,8 @@ jabber_vcard_get_cb (LmMessageHandler   *handler,
 	LmMessageNode       *vcard_node, *photo_node, *node;
 	LmMessageSubType     type;
 
+	gossip_debug (DEBUG_DOMAIN, "Received!");
+
 	if (!data || !data->callback) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
@@ -90,16 +92,16 @@ jabber_vcard_get_cb (LmMessageHandler   *handler,
 			}
 		}
 
-		(callback) (result,
-			    NULL,
-			    data->user_data);
+		(callback) (result, NULL, data->user_data);
 
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 
-	/* no vcard node */
+	/* No vcard node */
 	vcard_node = lm_message_node_get_child (m->node, "vCard");
 	if (!vcard_node) {
+		gossip_debug (DEBUG_DOMAIN, "Invalid VCard, no 'vCard' node");
+
 		(callback) (GOSSIP_RESULT_ERROR_INVALID_REPLY,
 			    NULL,
 			    data->user_data);
@@ -107,22 +109,24 @@ jabber_vcard_get_cb (LmMessageHandler   *handler,
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 
-	/* everything else must be OK */
 	vcard = gossip_vcard_new ();
 
 	node = lm_message_node_get_child (vcard_node, "FN");
 	if (node) {
 		gossip_vcard_set_name (vcard, node->value);
+		gossip_debug (DEBUG_DOMAIN, "- Name:'%s'", node->value);
 	}
 
 	node = lm_message_node_get_child (vcard_node, "NICKNAME");
 	if (node) {
 		gossip_vcard_set_nickname (vcard, node->value);
+		gossip_debug (DEBUG_DOMAIN, "- Nickname:'%s'", node->value);
 	}
 
 	node = lm_message_node_get_child (vcard_node, "BDAY");
 	if (node) {
 		gossip_vcard_set_birthday (vcard, node->value);
+		gossip_debug (DEBUG_DOMAIN, "- Birthday:'%s'", node->value);
 	}
 
 	node = lm_message_node_get_child (vcard_node, "EMAIL");
@@ -135,12 +139,14 @@ jabber_vcard_get_cb (LmMessageHandler   *handler,
 			 * don't work and don't abide by the standards.
 			 */
 			email = node->value;
+			gossip_debug (DEBUG_DOMAIN, "- Email:'%s' (legacy node)", node->value);
 		}
 
 		/* Correct method: */
 		node = lm_message_node_get_child (node, "USERID");
 		if (node && node->value) {
 			email = node->value;
+			gossip_debug (DEBUG_DOMAIN, "- Email:'%s'", node->value);
 		}
 
 		/* Some checking */
@@ -152,28 +158,52 @@ jabber_vcard_get_cb (LmMessageHandler   *handler,
 	node = lm_message_node_get_child (vcard_node, "URL");
 	if (node) {
 		gossip_vcard_set_url (vcard, node->value);
+		gossip_debug (DEBUG_DOMAIN, "- URL:'%s'", node->value);
 	}
 
 	node = lm_message_node_get_child (vcard_node, "DESC");
 	if (node) {
 		gossip_vcard_set_description (vcard, node->value);
+		gossip_debug (DEBUG_DOMAIN, "- Description:'%s'", node->value);
 	}
 
 	photo_node = lm_message_node_get_child (vcard_node, "PHOTO");
 	if (photo_node) {
+		GossipAvatar *avatar;
+		guchar       *decoded_avatar = NULL;
+		gsize         len = 0;
+		const gchar  *type = NULL;
+		gboolean      default_type = FALSE; 
+		
 		node = lm_message_node_get_child (photo_node, "BINVAL");
 		if (node && node->value) {
-			guchar       *decoded_avatar;
-			GossipAvatar *avatar;
-			gsize         len;
-
 			decoded_avatar = g_base64_decode (node->value, &len);
-			avatar = gossip_avatar_new (decoded_avatar,
-						    len, "image/png");
+		}
+
+		node = lm_message_node_get_child (photo_node, "TYPE");
+		if (node && node->value) {
+			type = node->value;
+		}
+
+		if (!type) {
+			default_type = TRUE;
+			type = "image/png";
+		}
+			
+		if (decoded_avatar) {
+			avatar = gossip_avatar_new (decoded_avatar, len, type);
 			gossip_vcard_set_avatar (vcard, avatar);
+		
 			g_free (decoded_avatar);
 			gossip_avatar_unref (avatar);
 		}
+
+
+		gossip_debug (DEBUG_DOMAIN, 
+			      "- Avatar: %" G_GSIZE_FORMAT " bytes, type:'%s' (default:'%s')",
+			      len,
+			      type,
+			      default_type ? "yes" : "no");
 	}
 
 	(callback) (GOSSIP_RESULT_OK, vcard, data->user_data);
@@ -209,7 +239,9 @@ gossip_jabber_vcard_get (GossipJabber         *jabber,
 	jid = gossip_jid_new (jid_str);
 	jid_without_resource = gossip_jid_get_without_resource (jid);
 
-	gossip_debug (DEBUG_DOMAIN, "Requesting VCard, JID:'%s'", jid_without_resource);
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Getting for JID:'%s'...", 
+		      jid_without_resource);
 
 	m = lm_message_new (jid_without_resource,
 			    LM_MESSAGE_TYPE_IQ);
@@ -228,6 +260,10 @@ gossip_jabber_vcard_get (GossipJabber         *jabber,
 					  (GDestroyNotify) jabber_vcard_free);
 
 	if (!lm_connection_send_with_reply (connection, m, handler, error)) {
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Failed to get VCard for JID:'%s' (could not send request)", 
+			      jid_without_resource);
+
 		lm_message_unref (m);
 		lm_message_handler_unref (handler);
 		return FALSE;
@@ -249,6 +285,8 @@ jabber_vcard_set_cb (LmMessageHandler   *handler,
 {
 	GossipCallback callback;
 
+	gossip_debug (DEBUG_DOMAIN, "Sent!");
+
 	if (!data || !data->callback) {
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 	}
@@ -256,7 +294,7 @@ jabber_vcard_set_cb (LmMessageHandler   *handler,
 	callback = data->callback;
 	(callback) (GOSSIP_RESULT_OK, data->user_data);
 
-	gossip_debug (DEBUG_DOMAIN, "Setting presence after vcard");
+	gossip_debug (DEBUG_DOMAIN, "Notifying contacts with presence update...");
 
 	/* Send our current presence to indicate the avatar has changed */
 	gossip_jabber_send_presence (GOSSIP_JABBER (data->data1), NULL);
@@ -282,6 +320,8 @@ gossip_jabber_vcard_set (GossipJabber    *jabber,
 	const gchar        *id;
 	const gchar        *str;
 	gboolean            result;
+
+	gossip_debug (DEBUG_DOMAIN, "Setting...");
 
 	connection = gossip_jabber_get_connection (jabber);
 
@@ -332,7 +372,10 @@ gossip_jabber_vcard_set (GossipJabber    *jabber,
 		gchar *avatar_encoded;
 
 		node = lm_message_node_add_child (node, "PHOTO", NULL);
-		lm_message_node_add_child (node, "TYPE", avatar->format);
+
+		if (avatar->format) {
+			lm_message_node_add_child (node, "TYPE", avatar->format);
+		}
 
 		avatar_encoded = g_base64_encode (avatar->data, avatar->len);
 		lm_message_node_add_child (node, "BINVAL", avatar_encoded);

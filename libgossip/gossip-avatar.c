@@ -138,15 +138,14 @@ gossip_avatar_get_gtype (void)
 }
 
 GossipAvatar *
-gossip_avatar_new (guchar *data,
-		   gsize   len,
-		   gchar  *format)
+gossip_avatar_new (guchar      *data,
+		   gsize        len,
+		   const gchar *format)
 {
 	GossipAvatar *avatar;
 
 	g_return_val_if_fail (data != NULL, NULL);
 	g_return_val_if_fail (len > 0, NULL);
-	g_return_val_if_fail (format != NULL, NULL);
 
 	avatar = g_slice_new0 (GossipAvatar);
 	avatar->data = g_memdup (data, len);
@@ -173,11 +172,23 @@ avatar_create_pixbuf (GossipAvatar *avatar, gint size)
 		return NULL;
 	}
 
-	loader = gdk_pixbuf_loader_new ();
+	if (avatar->format) {
+		loader = gdk_pixbuf_loader_new_with_mime_type (avatar->format, &error);
+
+		if (error) {
+			g_warning ("Couldn't create GdkPixbuf loader for image format:'%s', %s",
+				   avatar->format, 
+				   error->message);
+			g_error_free (error);
+			return NULL;
+		}
+	} else {
+		loader = gdk_pixbuf_loader_new ();
+	}
 
 	if (!gdk_pixbuf_loader_write (loader, avatar->data, avatar->len, &error)) {
 		g_warning ("Couldn't write avatar image:%p with "
-			   "length:%" G_GSIZE_FORMAT " to pixbuf loader: %s",
+			   "length:%" G_GSIZE_FORMAT " to pixbuf loader, %s",
 			   avatar->data, avatar->len, error->message);
 		g_error_free (error);
 		return NULL;
@@ -246,6 +257,7 @@ gossip_avatar_unref (GossipAvatar *avatar)
 	if (avatar->refcount == 0) {
 		g_free (avatar->data);
 		g_free (avatar->format);
+
 		if (avatar->pixbuf) {
 			g_object_unref (avatar->pixbuf);
 		}

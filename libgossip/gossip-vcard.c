@@ -384,13 +384,27 @@ gossip_vcard_create_avatar_pixbuf (GossipVCard *vcard)
 		return NULL;
 	}
 
-	loader = gdk_pixbuf_loader_new ();
+	if (avatar->format) {
+		loader = gdk_pixbuf_loader_new_with_mime_type (avatar->format, &error);
+
+		if (error) {
+			g_warning ("Couldn't create GdkPixbuf loader for image format:'%s', %s",
+				   avatar->format, 
+				   error->message);
+			g_error_free (error);
+			return NULL;
+		}
+	} else {
+		loader = gdk_pixbuf_loader_new ();
+	}
 
 	if (!gdk_pixbuf_loader_write (loader, avatar->data, avatar->len,
 				      &error)) {
 		g_warning ("Couldn't write avatar image:%p with "
-			   "length:%" G_GSIZE_FORMAT " to pixbuf loader: %s",
-			   avatar->data, avatar->len, error->message);
+			   "length:%" G_GSIZE_FORMAT " to pixbuf loader, %s",
+			   avatar->data, 
+			   avatar->len, 
+			   error->message);
 		g_error_free (error);
 		return NULL;
 	}

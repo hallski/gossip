@@ -43,7 +43,7 @@ struct _GossipAvatar {
 GType          gossip_avatar_get_gtype                  (void) G_GNUC_CONST;
 GossipAvatar * gossip_avatar_new                        (guchar       *avatar,
 							 gsize         len,
-							 gchar        *format);
+							 const gchar  *format);
 GdkPixbuf *    gossip_avatar_get_pixbuf                 (GossipAvatar *avatar);
 GdkPixbuf *    gossip_avatar_create_pixbuf_with_size    (GossipAvatar *avatar,
 							 gint          size);

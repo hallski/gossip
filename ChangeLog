@@ -1,3 +1,14 @@
+2008-04-15  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-avatar.[ch]: 
+	* libgossip/gossip-vcard.c: Use the mime type as provided in the
+	avatar Jabber message to create the pixbuf loader instead of just
+	assuming it will always be PNG. Also, if we don't know the format
+	because of buggy Jabber implementations, try to guess with the pixbuf
+	loader.
+
+	* libgossip/gossip-jabber-vcard.c: Improve debugging.
+
 2008-04-03  Richard Hult  <richard@imendio.com>
 
 	* data/glade/main.glade:
