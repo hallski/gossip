@@ -1,3 +1,10 @@
+2008-04-25  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-contact-list.c: (contact_list_action_remove_selected),
+	(contact_list_action_rename_group_selected): Don't poke at private
+	fields. This is probably the first commit brought to you by the
+	power of GSEAL :)
+
 2008-04-15  Martyn Russell  <martyn@imendio.com>
 
 	* data/glade/main.glade:

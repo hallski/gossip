@@ -3214,7 +3214,7 @@ contact_list_action_remove_selected (GossipContactList *list)
 	GossipContactListPriv *priv;
 	GossipContact         *contact;
 	GtkWidget             *dialog;
-	gchar                 *name;
+	gchar                 *str;
 
 	priv = GET_PRIV (list);
 
@@ -3223,30 +3223,25 @@ contact_list_action_remove_selected (GossipContactList *list)
 		return;
 	}
 
-	name = g_strdup_printf ("<b>%s</b>\n",
-				gossip_contact_get_name (contact));
-
 	dialog = gtk_message_dialog_new (GTK_WINDOW (gossip_app_get_window ()),
 					 0,
 					 GTK_MESSAGE_QUESTION,
 					 GTK_BUTTONS_NONE,
-					 "%s\n\n"
-					 "%s"
-					 "%s\n",
-					 _("Do you want to remove this contact from your roster?"),
-					 name ? name : "",
-					 gossip_contact_get_id (contact));
-	g_free (name);
+					 NULL);
+
+	str = g_strdup_printf ("%s\n\n"
+			       "<b>%s</b>\n"
+			       "%s\n",
+			       _("Do you want to remove this contact from your roster?"),
+			       gossip_contact_get_name (contact),
+			       gossip_contact_get_id (contact));
+	gtk_message_dialog_set_markup (GTK_MESSAGE_DIALOG (dialog), str);
+	g_free (str);
 
 	gtk_dialog_add_buttons (GTK_DIALOG (dialog),
 				GTK_STOCK_CANCEL, GTK_RESPONSE_NO,
 				GTK_STOCK_REMOVE, GTK_RESPONSE_YES,
 				NULL);
-
-	g_object_set (GTK_MESSAGE_DIALOG (dialog)->label,
-		      "use-markup", TRUE,
-		      "wrap", FALSE,
-		      NULL);
 
 	g_object_set_data_full (G_OBJECT (dialog), "contact", contact, g_object_unref);
 
@@ -3313,19 +3308,23 @@ contact_list_action_rename_group_selected (GossipContactList *list)
 	}
 
 	/* Translator: %s denotes the contact ID */
-	str = g_strdup_printf ("<b>%s</b>", group);
 	dialog = gtk_message_dialog_new (GTK_WINDOW (gossip_app_get_window ()),
 					 0,
 					 GTK_MESSAGE_QUESTION,
 					 GTK_BUTTONS_NONE,
-					 _("Please enter a new name for the group:\n%s"),
-					 str);
+					 NULL);
+
+	str = g_strdup_printf ("%s\n<b>%s</b>",
+			       _("Please enter a new name for the group:"),
+			       group);
+	gtk_message_dialog_set_markup (GTK_MESSAGE_DIALOG (dialog), str);
+	g_free (str);
+
 	gtk_dialog_add_buttons (GTK_DIALOG (dialog), 
 				GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 				_("Rename"), GTK_RESPONSE_OK,
 				NULL);
 
-	g_free (str);
 
 	hbox = gtk_hbox_new (FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox),
@@ -3336,7 +3335,6 @@ contact_list_action_rename_group_selected (GossipContactList *list)
 	gtk_editable_select_region (GTK_EDITABLE (entry), 0, -1);
 	gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 4);
 
-	g_object_set (GTK_MESSAGE_DIALOG (dialog)->label, "use-markup", TRUE, NULL);
 	g_object_set_data (G_OBJECT (dialog), "entry", entry);
 	g_object_set_data_full (G_OBJECT (dialog), "group", group, g_free);
 
