@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-15 20:28+0100\n"
-"PO-Revision-Date: 2008-04-20 17:38+0200\n"
+"POT-Creation-Date: 2008-04-25 20:40+0000\n"
+"PO-Revision-Date: 2008-04-27 20:41+0200\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -1000,18 +1000,13 @@ msgstr "_Ver conversaciones previas"
 msgid "View previous conversations with this contact"
 msgstr "Ver conversaciones anteriores con este contacto"
 
-#: ../src/gossip-contact-list.c:3236
+#: ../src/gossip-contact-list.c:3235
 msgid "Do you want to remove this contact from your roster?"
 msgstr "¿Quiere quitar este contacto de su lista de contactos?"
 
-#: ../src/gossip-contact-list.c:3321
-#, c-format
-msgid ""
-"Please enter a new name for the group:\n"
-"%s"
-msgstr ""
-"Introduzca un nombre nuevo para el grupo:\n"
-"%s"
+#: ../src/gossip-contact-list.c:3318
+msgid "Please enter a new name for the group:"
+msgstr "Introduzca un nombre nuevo para el grupo:"
 
 #: ../src/gossip-edit-contact-dialog.c:221
 msgid "Select"
@@ -2168,8 +2163,8 @@ msgid ""
 "To make sure your password is set correctly, enter your password and then "
 "confirm it below."
 msgstr ""
-"Para asegurarse de que su contraseña se establece correctamente, introduzca su contraseña "
-"y después confírmela."
+"Para asegurarse de que su contraseña se establece correctamente, introduzca "
+"su contraseña y después confírmela."
 
 #: ../data/glade/main.glade.h:119
 msgid "Use _system document font"
