@@ -36,10 +36,6 @@ paths_get_root_dir (void)
 		const gchar *env;
 
 		env = g_getenv ("GOSSIP_DATA_PREFIX");
-		if (!env) {
-			env = g_getenv ("GTK_DATA_PREFIX");
-		}
-
 		if (env) {
 			root = g_build_filename (env, "share", NULL);
 		} else {
