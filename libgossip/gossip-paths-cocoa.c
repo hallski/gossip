@@ -41,7 +41,7 @@ paths_get_root_dir (void)
 		}
 
 		if (env) {
-			root = g_strdup (env);
+			root = g_build_filename (env, "share", NULL);
 		} else {
 			root = g_strdup (SHAREDIR);
 		}

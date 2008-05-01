@@ -1,5 +1,11 @@
 2008-05-01  Richard Hult  <richard@imendio.com>
 
+	* libgossip/gossip-paths-cocoa.c (paths_get_root_dir): Add "share"
+	to get the right path. The path set by the bundler used to include
+	share but that's not right and has been fixed.
+
+2008-05-01  Richard Hult  <richard@imendio.com>
+
 	* data/glade/main.glade:
 	* src/gossip-accounts-dialog.c:
 	(accounts_dialog_update_connect_button): Use smaller icon for the
