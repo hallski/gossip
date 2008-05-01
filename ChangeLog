@@ -1,3 +1,10 @@
+2008-05-01  Richard Hult  <richard@imendio.com>
+
+	* data/glade/main.glade:
+	* src/gossip-accounts-dialog.c:
+	(accounts_dialog_update_connect_button): Use smaller icon for the
+	icon-only buttons, looks better.
+
 2008-04-25  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-contact-list.c: (contact_list_action_remove_selected),
