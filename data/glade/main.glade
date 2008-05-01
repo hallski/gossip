@@ -4967,7 +4967,7 @@ You can also use the name of a group to show only contacts in a specific group.<
 			    <widget class="GtkImage" id="image903">
 			      <property name="visible">True</property>
 			      <property name="stock">gtk-add</property>
-			      <property name="icon_size">4</property>
+			      <property name="icon_size">1</property>
 			      <property name="xalign">0.5</property>
 			      <property name="yalign">0.5</property>
 			      <property name="xpad">0</property>
@@ -4994,7 +4994,7 @@ You can also use the name of a group to show only contacts in a specific group.<
 			    <widget class="GtkImage" id="image904">
 			      <property name="visible">True</property>
 			      <property name="stock">gtk-remove</property>
-			      <property name="icon_size">4</property>
+			      <property name="icon_size">1</property>
 			      <property name="xalign">0.5</property>
 			      <property name="yalign">0.5</property>
 			      <property name="xpad">0</property>

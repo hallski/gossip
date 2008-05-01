@@ -346,7 +346,7 @@ accounts_dialog_update_connect_button (GossipAccountsDialog *dialog)
 		}
 	}
 
-	image = gtk_image_new_from_stock (stock_id, GTK_ICON_SIZE_BUTTON);
+	image = gtk_image_new_from_stock (stock_id, GTK_ICON_SIZE_MENU);
 	gtk_button_set_image (GTK_BUTTON (dialog->button_connect), image);
 	gtk_widget_show (image); /* override gtk-button-images setting */
 }
