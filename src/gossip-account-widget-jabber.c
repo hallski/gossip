@@ -72,6 +72,8 @@ struct _GossipAccountWidgetJabberPriv {
 	GtkWidget     *entry_port;
 
 	GtkWidget     *checkbutton_ssl;
+	GtkWidget     *checkbutton_proxy;
+	GtkWidget     *checkbutton_auto_connect;
 
 	gboolean       registering;
 	gboolean       changing_password;
@@ -171,6 +173,8 @@ gossip_account_widget_jabber_init (GossipAccountWidgetJabber *settings)
 				       "entry_server", &priv->entry_server,
 				       "entry_port", &priv->entry_port,
 				       "checkbutton_ssl", &priv->checkbutton_ssl,
+				       "checkbutton_proxy", &priv->checkbutton_proxy,
+				       "checkbutton_auto_connect", &priv->checkbutton_auto_connect,
 				       NULL);
 
 	gossip_glade_connect (glade, 
@@ -195,8 +199,14 @@ gossip_account_widget_jabber_init (GossipAccountWidgetJabber *settings)
 	gtk_widget_hide (priv->button_import);
 #endif
 
-	/* We do this manually so we can block it. */
+	/* We do these manually so we can block it. */
 	g_signal_connect (priv->checkbutton_ssl, "toggled", 
+			  G_CALLBACK (account_widget_jabber_checkbutton_toggled_cb),
+			  settings);
+	g_signal_connect (priv->checkbutton_proxy, "toggled", 
+			  G_CALLBACK (account_widget_jabber_checkbutton_toggled_cb),
+			  settings);
+	g_signal_connect (priv->checkbutton_auto_connect, "toggled", 
 			  G_CALLBACK (account_widget_jabber_checkbutton_toggled_cb),
 			  settings);
 
@@ -571,6 +581,16 @@ account_widget_jabber_checkbutton_toggled_cb (GtkWidget                 *checkbu
 			gtk_entry_set_text (GTK_ENTRY (priv->entry_port), port_str);
 			g_free (port_str);
 		}
+	} else if (checkbutton == priv->checkbutton_proxy) {
+		gboolean use_proxy;
+
+		use_proxy = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (checkbutton));
+		gossip_account_set_use_proxy (priv->account, use_proxy);
+	} else if (checkbutton == priv->checkbutton_auto_connect) {
+		gboolean auto_connect;
+
+		auto_connect = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (checkbutton));
+		gossip_account_set_auto_connect (priv->account, auto_connect);
 	}
 
 	gossip_debug (DEBUG_DOMAIN, "Checkbutton toggled, saving accounts...");
@@ -825,6 +845,8 @@ account_widget_jabber_setup (GossipAccountWidgetJabber *settings,
 	const gchar                   *server;
 	const gchar                   *password;
 	gboolean                       use_ssl;
+	gboolean                       use_proxy;
+	gboolean                       auto_connect;
 	gboolean                       is_connected;
 
 	priv = GET_PRIV (settings);
@@ -837,19 +859,39 @@ account_widget_jabber_setup (GossipAccountWidgetJabber *settings,
 	server = gossip_account_get_server (priv->account);
 	port = gossip_account_get_port (priv->account);
 	use_ssl = gossip_account_get_use_ssl (priv->account);
+	use_proxy = gossip_account_get_use_proxy (priv->account);
+	auto_connect = gossip_account_get_auto_connect (priv->account);
 
+	/* Set up checkbuttons, but block signals first */
+	g_signal_handlers_block_by_func (priv->checkbutton_ssl, 
+					 account_widget_jabber_checkbutton_toggled_cb,
+					 settings);
+	g_signal_handlers_block_by_func (priv->checkbutton_proxy, 
+					 account_widget_jabber_checkbutton_toggled_cb,
+					 settings);
+	g_signal_handlers_block_by_func (priv->checkbutton_auto_connect, 
+					 account_widget_jabber_checkbutton_toggled_cb,
+					 settings);
 	if (gossip_jabber_is_ssl_supported ()) {
-		g_signal_handlers_block_by_func (priv->checkbutton_ssl, 
-						 account_widget_jabber_checkbutton_toggled_cb,
-						 settings);
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->checkbutton_ssl), use_ssl);
-		g_signal_handlers_unblock_by_func (priv->checkbutton_ssl, 
-						   account_widget_jabber_checkbutton_toggled_cb,
-						   settings);
 	} else {
 		gtk_widget_set_sensitive (priv->checkbutton_ssl, FALSE);
 	}
 
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->checkbutton_proxy), use_proxy);
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->checkbutton_auto_connect), auto_connect);
+
+	g_signal_handlers_unblock_by_func (priv->checkbutton_ssl, 
+					   account_widget_jabber_checkbutton_toggled_cb,
+					   settings);
+	g_signal_handlers_unblock_by_func (priv->checkbutton_proxy, 
+					   account_widget_jabber_checkbutton_toggled_cb,
+					   settings);
+	g_signal_handlers_unblock_by_func (priv->checkbutton_auto_connect, 
+					   account_widget_jabber_checkbutton_toggled_cb,
+					   settings);
+
+	/* Set up entries, but block signals first */
 	g_signal_handlers_block_by_func (priv->entry_id, 
 					 account_widget_jabber_entry_changed_cb, 
 					 settings);

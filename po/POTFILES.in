@@ -27,6 +27,7 @@ src/gossip-add-contact-dialog.c
 src/gossip-app.c
 src/gossip-avatar-image.c
 src/gossip-cell-renderer-text.c
+src/gossip-change-password-dialog.c
 src/gossip-chat.c
 src/gossip-chat-invite.c
 src/gossip-chat-manager.c

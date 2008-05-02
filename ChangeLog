@@ -1,3 +1,14 @@
+2008-05-02  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-jabber.c: Get the host name and use that as the
+	resource instead of just "Home". 
+	
+	* data/glade/main.glade:
+	* src/gossip-account-widget-jabber.c:
+	* src/gossip-accounts-dialog.c: Reworked the account widget to
+	only show the most important information and hide in an expander
+	all the advanced connection settings which are rarely modified.
+
 2008-05-01  Richard Hult  <richard@imendio.com>
 
 	* libgossip/gossip-paths-cocoa.c (paths_get_root_dir): Never fall

@@ -1,3 +1,8 @@
+2008-05-02  Martyn Russell  <martyn@imendio.com>
+
+	* POTFILES.in: Added files which were missing to fix make
+	distcheck in preparation for a release.
+
 2008-04-27  Jorge Gonzalez  <jorgegonz@svn.gnome.org>
 
 	* es.po: Updated Spanish translation 

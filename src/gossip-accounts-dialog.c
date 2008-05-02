@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2005-2007 Imendio AB
+ * Copyright (C) 2005-2008 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -49,7 +49,7 @@ typedef struct {
 
 	GtkWidget *alignment_settings;
 
-	GtkWidget *vbox_details;
+	GtkWidget *frame_details;
 	GtkWidget *frame_no_account;
 	GtkWidget *label_no_account;
 	GtkWidget *label_no_account_blurb;
@@ -64,9 +64,6 @@ typedef struct {
 	GtkWidget *button_create;
 	GtkWidget *button_back;
 
-	GtkWidget *label_name;
-	GtkWidget *checkbutton_connect;
-	GtkWidget *checkbutton_proxy;
 	GtkWidget *settings_widget;
 
 	gboolean   connecting_show;
@@ -156,8 +153,6 @@ static void           accounts_dialog_treeview_row_activated_cb (GtkTreeView    
 								 GtkTreeViewColumn    *column,
 								 gpointer             *dialog);
 static void           accounts_dialog_save                      (GossipAccountsDialog *dialog);
-static void           accounts_dialog_checkbutton_toggled_cb    (GtkWidget            *widget,
-								 GossipAccountsDialog *dialog);
 static gboolean       accounts_dialog_foreach                   (GtkTreeModel         *model,
 								 GtkTreePath          *path,
 								 GtkTreeIter          *iter,
@@ -365,7 +360,7 @@ accounts_dialog_update_account (GossipAccountsDialog *dialog,
 		GtkTreeModel *model;
 
 		gtk_widget_show (dialog->frame_no_account);
-		gtk_widget_hide (dialog->vbox_details);
+		gtk_widget_hide (dialog->frame_details);
 
 		gtk_widget_set_sensitive (dialog->button_connect, FALSE);
 		gtk_widget_set_sensitive (dialog->button_remove, FALSE);
@@ -394,7 +389,7 @@ accounts_dialog_update_account (GossipAccountsDialog *dialog,
 		}
 	} else {
 		gtk_widget_hide (dialog->frame_no_account);
-		gtk_widget_show (dialog->vbox_details);
+		gtk_widget_show (dialog->frame_details);
 
 		dialog->settings_widget = 
 			gossip_account_widget_jabber_new (account);
@@ -413,17 +408,6 @@ accounts_dialog_update_account (GossipAccountsDialog *dialog,
 			      "can-default", TRUE,
 			      "has-default", TRUE,
 			      NULL);
-	}
-
-	if (account) {
-		gtk_label_set_text (GTK_LABEL (dialog->label_name), 
-				    gossip_account_get_name (account));
-
-		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (dialog->checkbutton_proxy),
-					      gossip_account_get_use_proxy (account));
-
-		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (dialog->checkbutton_connect),
-					      gossip_account_get_auto_connect (account));
 	}
 }
 
@@ -468,7 +452,7 @@ accounts_dialog_model_add_columns (GossipAccountsDialog *dialog)
 	GtkCellRenderer   *cell;
 
 	view = GTK_TREE_VIEW (dialog->treeview);
-	gtk_tree_view_set_headers_visible (view, TRUE);
+	/* gtk_tree_view_set_headers_visible (view, TRUE); */
 
 	/* account name/status */
 	column = gtk_tree_view_column_new ();
@@ -1065,7 +1049,7 @@ accounts_dialog_button_create_clicked_cb (GtkWidget             *button,
 	const gchar          *str;
 
 	/* Update widgets */
-	gtk_widget_show (dialog->vbox_details);
+	gtk_widget_show (dialog->frame_details);
 	gtk_widget_hide (dialog->frame_no_account);
 	gtk_widget_hide (dialog->frame_new_account);
 
@@ -1088,7 +1072,7 @@ accounts_dialog_button_back_clicked_cb (GtkWidget             *button,
 {
 	GossipAccount *account;
 
-	gtk_widget_hide (dialog->vbox_details);
+	gtk_widget_hide (dialog->frame_details);
 	gtk_widget_hide (dialog->frame_no_account);
 	gtk_widget_hide (dialog->frame_new_account);
 
@@ -1156,7 +1140,7 @@ static void
 accounts_dialog_button_add_clicked_cb (GtkWidget            *button,
 				       GossipAccountsDialog *dialog)
 {
-	gtk_widget_hide (dialog->vbox_details);
+	gtk_widget_hide (dialog->frame_details);
 	gtk_widget_hide (dialog->frame_no_account);
 	gtk_widget_show (dialog->frame_new_account);
 
@@ -1243,7 +1227,6 @@ accounts_dialog_save (GossipAccountsDialog *dialog)
 	GossipSession        *session;
 	GossipAccount        *account;
 	GossipAccountManager *manager;
-	gboolean              bool;
 
 	dialog->account_changed = FALSE;
 
@@ -1255,22 +1238,9 @@ accounts_dialog_save (GossipAccountsDialog *dialog)
 		return;
 	}
 
-	bool = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (dialog->checkbutton_connect));
-	gossip_account_set_auto_connect (account, bool);
-
-	bool = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (dialog->checkbutton_proxy));
-	gossip_account_set_use_proxy (account, bool);
-
 	gossip_account_manager_store (manager);
 
 	g_object_unref (account);
-}
-
-static void  
-accounts_dialog_checkbutton_toggled_cb (GtkWidget            *widget,
-					GossipAccountsDialog *dialog)
-{
-	accounts_dialog_save (dialog);
 }
 
 static gboolean
@@ -1372,7 +1342,7 @@ gossip_accounts_dialog_show (GossipAccount *account)
 				       "accounts_dialog",
 				       NULL,
 				       "accounts_dialog", &dialog->window,
-				       "vbox_details", &dialog->vbox_details,
+				       "frame_details", &dialog->frame_details,
 				       "frame_no_account", &dialog->frame_no_account,
 				       "label_no_account", &dialog->label_no_account,
 				       "label_no_account_blurb", &dialog->label_no_account_blurb,
@@ -1383,9 +1353,6 @@ gossip_accounts_dialog_show (GossipAccount *account)
 				       "entry_name", &dialog->entry_name,
 				       "button_create", &dialog->button_create,
 				       "button_back", &dialog->button_back,
-				       "label_name", &dialog->label_name,
-				       "checkbutton_connect", &dialog->checkbutton_connect,
-				       "checkbutton_proxy", &dialog->checkbutton_proxy,
 				       "button_remove", &dialog->button_remove,
 				       "button_connect", &dialog->button_connect,
 				       "button_close", &button_close,
@@ -1399,8 +1366,6 @@ gossip_accounts_dialog_show (GossipAccount *account)
 			      "button_back", "clicked", accounts_dialog_button_back_clicked_cb,
 			      "entry_name", "changed", accounts_dialog_entry_name_changed_cb,
 			      "treeview", "row-activated", accounts_dialog_treeview_row_activated_cb,
-			      "checkbutton_connect", "toggled", accounts_dialog_checkbutton_toggled_cb,
-			      "checkbutton_proxy", "toggled", accounts_dialog_checkbutton_toggled_cb,
 			      "button_connect", "clicked", accounts_dialog_button_connect_clicked_cb,
 			      "button_add", "clicked", accounts_dialog_button_add_clicked_cb,
 			      "button_remove", "clicked", accounts_dialog_button_remove_clicked_cb,

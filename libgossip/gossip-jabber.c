@@ -505,21 +505,28 @@ gossip_jabber_new_account (void)
 	const gchar   *example_id;
 	guint          port;
 	GossipJID     *jid;
+	const gchar   *computer_name;
 
 	example_id = gossip_jid_get_example_string ();
 	jid = gossip_jid_new (example_id);
 	port = gossip_jabber_get_default_port (gossip_jabber_is_ssl_supported ());
+	computer_name = g_get_host_name ();
 	
+	if (!computer_name) {
+		computer_name = _("Home");
+	}
+
 	/* Set a default value for each account parameter */
 	account = g_object_new (GOSSIP_TYPE_ACCOUNT,
 				"name", _("new account"),
-				"resource", _("Home"),
 				"server", gossip_jid_get_part_host (jid),
+				"resource", computer_name,
 				"port", port, 
 				"use_ssl", gossip_jabber_is_ssl_supported (),
 				"auto_connect", TRUE,
 				"use_proxy", FALSE,
 				NULL);
+
 	gossip_jid_unref (jid);
 
 	return account;
