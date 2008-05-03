@@ -487,6 +487,10 @@ account_manager_parse_account (GossipAccountManager *manager, xmlNodePtr node)
 			gossip_account_set_use_ssl (account, strcmp (str, "yes") == 0);
 		} else if (strcmp (tag, "use_proxy") == 0) {
 			gossip_account_set_use_proxy (account, strcmp (str, "yes") == 0);
+		} else if (strcmp (tag, "force_old_ssl") == 0) {
+			gossip_account_set_force_old_ssl (account, strcmp (str, "yes") == 0);
+		} else if (strcmp (tag, "ignore_ssl_errors") == 0) {
+			gossip_account_set_ignore_ssl_errors (account, strcmp (str, "yes") == 0);
 		}
 
 		xmlFree (str);
@@ -651,6 +655,8 @@ account_manager_file_save (GossipAccountManager *manager)
 		xmlNewChild (node, NULL, "auto_connect", gossip_account_get_auto_connect (account) ? "yes" : "no");
 		xmlNewChild (node, NULL, "use_ssl", gossip_account_get_use_ssl (account) ? "yes" : "no");
 		xmlNewChild (node, NULL, "use_proxy", gossip_account_get_use_proxy (account) ? "yes" : "no");
+		xmlNewChild (node, NULL, "force_old_ssl", gossip_account_get_force_old_ssl (account) ? "yes" : "no");
+		xmlNewChild (node, NULL, "ignore_ssl_errors", gossip_account_get_ignore_ssl_errors (account) ? "yes" : "no");
 
 		g_free (port);
 	}

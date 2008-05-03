@@ -1,3 +1,18 @@
+2008-05-03  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-account-manager.c:
+	* libgossip/gossip-account.[ch]:
+	* libgossip/gossip-account.dtd: 
+	* src/gossip-account-widget-jabber.c: Add properties for ignoring
+	SSL certificate errors and using the OLD SSL connection port.
+	
+	* data/glade/main.glade:
+	* libgossip/gossip-jabber-private.h:
+	* libgossip/gossip-jabber-register.c:
+	* libgossip/gossip-jabber.c: Support feeding back the certificate
+	errors to the user in the UI and support using STARTTLS when
+	connecting on the standard Jabber port.
+
 2008-05-02  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-jabber.c: Get the host name and use that as the

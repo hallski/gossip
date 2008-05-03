@@ -90,7 +90,7 @@ jabber_register_data_new (GossipAccount       *account,
 	
 	rd = g_new0 (RegisterData, 1);
 
-	rd->connection = gossip_jabber_new_connection (account);
+	rd->connection = gossip_jabber_new_connection (jabber, account);
 	if (!rd->connection) {
 		g_free (rd);
 		return NULL;

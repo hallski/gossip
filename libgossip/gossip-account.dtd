@@ -9,7 +9,7 @@
 <!ELEMENT default (#PCDATA)>
 
 <!ELEMENT account 
-    (name,id,(resource?),(password?),(server?),(port?),(auto_connect?),(use_ssl?),(use_proxy?))>
+    (name,id,(resource?),(password?),(server?),(port?),(auto_connect?),(use_ssl?),(use_proxy?),(force_old_ssl?),(ignore_ssl_errors?))>
 
 <!ELEMENT name (#PCDATA)>
 <!ELEMENT id (#PCDATA)>
@@ -20,3 +20,5 @@
 <!ELEMENT auto_connect (#PCDATA)>
 <!ELEMENT use_ssl (#PCDATA)>
 <!ELEMENT use_proxy (#PCDATA)>
+<!ELEMENT force_old_ssl (#PCDATA)>
+<!ELEMENT ignore_ssl_errors (#PCDATA)>

@@ -49,16 +49,18 @@
 typedef struct _GossipAccountPriv GossipAccountPriv;
 
 struct _GossipAccountPriv {
-	gchar             *name;
-	gchar             *id;
-	gchar             *password;
-	gchar             *password_tmp;
-	gchar             *resource;
-	gchar             *server;
-	guint16            port;
-	gboolean           auto_connect;
-	gboolean           use_ssl;
-	gboolean           use_proxy;
+	gchar    *name;
+	gchar    *id;
+	gchar    *password;
+	gchar    *password_tmp;
+	gchar    *resource;
+	gchar    *server;
+	guint16   port;
+	gboolean  auto_connect;
+	gboolean  use_ssl;
+	gboolean  use_proxy;
+	gboolean  force_old_ssl;
+	gboolean  ignore_ssl_errors;
 };
 
 static void gossip_account_class_init (GossipAccountClass *klass);
@@ -84,7 +86,9 @@ enum {
 	PROP_PORT,
 	PROP_AUTO_CONNECT,
 	PROP_USE_SSL,
-	PROP_USE_PROXY
+	PROP_USE_PROXY,
+	PROP_FORCE_OLD_SSL,
+	PROP_IGNORE_SSL_ERRORS
 };
 
 G_DEFINE_TYPE (GossipAccount, gossip_account, G_TYPE_OBJECT);
@@ -161,27 +165,43 @@ gossip_account_class_init (GossipAccountClass *klass)
 
 	g_object_class_install_property (object_class,
 					 PROP_AUTO_CONNECT,
-					 g_param_spec_boolean ("auto_connect",
+					 g_param_spec_boolean ("auto-connect",
 							       "Account Auto Connect",
 							       "Connect on startup",
 							       TRUE,
-							       G_PARAM_READWRITE));
+							       G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 
 	g_object_class_install_property (object_class,
 					 PROP_USE_SSL,
-					 g_param_spec_boolean ("use_ssl",
+					 g_param_spec_boolean ("use-ssl",
 							       "Account Uses SSL",
 							       "Identifies if the connection uses secure methods",
-							       FALSE,
-							       G_PARAM_READWRITE));
+							       TRUE,
+							       G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 	
 	g_object_class_install_property (object_class,
 					 PROP_USE_PROXY,
-					 g_param_spec_boolean ("use_proxy",
+					 g_param_spec_boolean ("use-proxy",
 							       "Account Uses Proxy",
 							       "Identifies if the connection uses the environment proxy",
 							       FALSE,
 							       G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
+					 PROP_FORCE_OLD_SSL,
+					 g_param_spec_boolean ("force-old-ssl",
+							       "Force Old SSL",
+							       "Connect to a different port for SSL, don't use STARTTLS",
+							       FALSE,
+							       G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
+					 PROP_IGNORE_SSL_ERRORS,
+					 g_param_spec_boolean ("ignore-ssl-errors",
+							       "Ignore SSL Errors",
+							       "If certificates are untrusted, expired, not found, etc, ignore it and just continue.",
+							       TRUE,
+							       G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 	
 	g_type_class_add_private (object_class, sizeof (GossipAccountPriv));
 }
@@ -189,23 +209,6 @@ gossip_account_class_init (GossipAccountClass *klass)
 static void
 gossip_account_init (GossipAccount *account)
 {
-	GossipAccountPriv *priv;
-
-	priv = GET_PRIV (account);
-
-	priv->name         = NULL;
-
-	priv->id           = NULL;
-	priv->password     = NULL;
-	priv->password_tmp = NULL;
-	priv->resource     = NULL;
-	priv->server       = NULL;
-	priv->port         = 0;
-
-	priv->auto_connect = TRUE;
-
-	priv->use_ssl      = FALSE;
-	priv->use_proxy    = FALSE;
 }
 
 static void
@@ -270,6 +273,12 @@ account_get_property (GObject    *object,
 	case PROP_USE_PROXY:
 		g_value_set_boolean (value, priv->use_proxy);
 		break;
+	case PROP_FORCE_OLD_SSL:
+		g_value_set_boolean (value, priv->force_old_ssl);
+		break;
+	case PROP_IGNORE_SSL_ERRORS:
+		g_value_set_boolean (value, priv->ignore_ssl_errors);
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
 		break;
@@ -326,6 +335,14 @@ account_set_property (GObject      *object,
 	case PROP_USE_PROXY:
 		gossip_account_set_use_proxy (GOSSIP_ACCOUNT (object),
 					    g_value_get_boolean (value));
+		break;
+	case PROP_FORCE_OLD_SSL:
+		gossip_account_set_force_old_ssl (GOSSIP_ACCOUNT (object),
+						  g_value_get_boolean (value));
+		break;
+	case PROP_IGNORE_SSL_ERRORS:
+		gossip_account_set_ignore_ssl_errors (GOSSIP_ACCOUNT (object),
+						      g_value_get_boolean (value));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
@@ -549,6 +566,28 @@ gossip_account_get_use_proxy (GossipAccount *account)
 	return priv->use_proxy;
 }
 
+gboolean
+gossip_account_get_force_old_ssl (GossipAccount *account)
+{
+	GossipAccountPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), FALSE);
+
+	priv = GET_PRIV (account);
+	return priv->force_old_ssl;
+}
+
+gboolean
+gossip_account_get_ignore_ssl_errors (GossipAccount *account)
+{
+	GossipAccountPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), TRUE);
+
+	priv = GET_PRIV (account);
+	return priv->ignore_ssl_errors;
+}
+
 void 
 gossip_account_set_name (GossipAccount *account,
 			 const gchar   *name)
@@ -751,7 +790,7 @@ gossip_account_set_auto_connect (GossipAccount *account,
 	priv = GET_PRIV (account);
 	priv->auto_connect = auto_connect;
 
-	g_object_notify (G_OBJECT (account), "auto_connect");
+	g_object_notify (G_OBJECT (account), "auto-connect");
 }
 
 void
@@ -765,7 +804,7 @@ gossip_account_set_use_ssl (GossipAccount *account,
 	priv = GET_PRIV (account);
 	priv->use_ssl = use_ssl;
 
-	g_object_notify (G_OBJECT (account), "use_ssl");
+	g_object_notify (G_OBJECT (account), "use-ssl");
 }
 
 void
@@ -779,7 +818,35 @@ gossip_account_set_use_proxy (GossipAccount *account,
 	priv = GET_PRIV (account);
 	priv->use_proxy = use_proxy;
 
-	g_object_notify (G_OBJECT (account), "use_proxy");
+	g_object_notify (G_OBJECT (account), "use-proxy");
+}
+
+void
+gossip_account_set_force_old_ssl (GossipAccount *account,
+				  gboolean       force_old_ssl)
+{
+	GossipAccountPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
+
+	priv = GET_PRIV (account);
+	priv->force_old_ssl = force_old_ssl;
+
+	g_object_notify (G_OBJECT (account), "force-old-ssl");
+}
+
+void
+gossip_account_set_ignore_ssl_errors (GossipAccount *account,
+				      gboolean       ignore_ssl_errors)
+{
+	GossipAccountPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
+
+	priv = GET_PRIV (account);
+	priv->ignore_ssl_errors = ignore_ssl_errors;
+
+	g_object_notify (G_OBJECT (account), "ignore-ssl-errors");
 }
 
 guint

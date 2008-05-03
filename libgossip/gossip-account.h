@@ -55,53 +55,56 @@ typedef enum {
 	GOSSIP_ACCOUNT_TYPE_COUNT
 } GossipAccountType;
 
-GType             gossip_account_get_type             (void) G_GNUC_CONST;
-
-const gchar *     gossip_account_get_name             (GossipAccount     *account);
-const gchar *     gossip_account_get_id               (GossipAccount     *account);
-const gchar *     gossip_account_get_password         (GossipAccount     *account);
-const gchar *     gossip_account_get_password_tmp     (GossipAccount     *account);
-const gchar *     gossip_account_get_resource         (GossipAccount     *account);
-const gchar *     gossip_account_get_server           (GossipAccount     *account);
-guint16           gossip_account_get_port             (GossipAccount     *account);
-gboolean          gossip_account_get_auto_connect     (GossipAccount     *account);
-gboolean          gossip_account_get_use_ssl          (GossipAccount     *account);
-gboolean          gossip_account_get_use_proxy        (GossipAccount     *account);
-
-void              gossip_account_set_id               (GossipAccount     *account,
-						       const gchar       *id);
-void              gossip_account_set_name             (GossipAccount     *account,
-						       const gchar       *name);
-void              gossip_account_set_password         (GossipAccount     *account,
-						       const gchar       *password);
-void              gossip_account_set_password_tmp     (GossipAccount     *account,
-						       const gchar       *password);
-void              gossip_account_set_resource         (GossipAccount     *account,
-						       const gchar       *resource);
-void              gossip_account_set_server           (GossipAccount     *account,
-						       const gchar       *server);
-void              gossip_account_set_port             (GossipAccount     *account,
-						       guint16            port);
-void              gossip_account_set_auto_connect     (GossipAccount     *account,
-						       gboolean           auto_connect);
-void              gossip_account_set_use_ssl          (GossipAccount     *account,
-						       gboolean           use_ssl);
-void              gossip_account_set_use_proxy        (GossipAccount     *account,
-						       gboolean           use_proxy);
-
-guint             gossip_account_hash                 (gconstpointer      key);
-gboolean          gossip_account_equal                (gconstpointer      a,
-						       gconstpointer      b);
+GType             gossip_account_get_type              (void) G_GNUC_CONST;
+const gchar *     gossip_account_get_name              (GossipAccount     *account);
+const gchar *     gossip_account_get_id                (GossipAccount     *account);
+const gchar *     gossip_account_get_password          (GossipAccount     *account);
+const gchar *     gossip_account_get_password_tmp      (GossipAccount     *account);
+const gchar *     gossip_account_get_resource          (GossipAccount     *account);
+const gchar *     gossip_account_get_server            (GossipAccount     *account);
+guint16           gossip_account_get_port              (GossipAccount     *account);
+gboolean          gossip_account_get_auto_connect      (GossipAccount     *account);
+gboolean          gossip_account_get_use_ssl           (GossipAccount     *account);
+gboolean          gossip_account_get_use_proxy         (GossipAccount     *account);
+gboolean          gossip_account_get_force_old_ssl     (GossipAccount     *account);
+gboolean          gossip_account_get_ignore_ssl_errors (GossipAccount     *account);
+void              gossip_account_set_id                (GossipAccount     *account,
+							const gchar       *id);
+void              gossip_account_set_name              (GossipAccount     *account,
+							const gchar       *name);
+void              gossip_account_set_password          (GossipAccount     *account,
+							const gchar       *password);
+void              gossip_account_set_password_tmp      (GossipAccount     *account,
+							const gchar       *password);
+void              gossip_account_set_resource          (GossipAccount     *account,
+							const gchar       *resource);
+void              gossip_account_set_server            (GossipAccount     *account,
+							const gchar       *server);
+void              gossip_account_set_port              (GossipAccount     *account,
+							guint16            port);
+void              gossip_account_set_auto_connect      (GossipAccount     *account,
+							gboolean           auto_connect);
+void              gossip_account_set_use_ssl           (GossipAccount     *account,
+							gboolean           use_ssl);
+void              gossip_account_set_use_proxy         (GossipAccount     *account,
+							gboolean           use_proxy);
+void              gossip_account_set_force_old_ssl     (GossipAccount     *account,
+							gboolean           force_old_ssl);
+void              gossip_account_set_ignore_ssl_errors (GossipAccount     *account,
+							gboolean           ignore_ssl_errors);
+guint             gossip_account_hash                  (gconstpointer      key);
+gboolean          gossip_account_equal                 (gconstpointer      a,
+							gconstpointer      b);
 
 /* Utils */
-const gchar *     gossip_account_type_to_string       (GossipAccountType  type);
-GossipAccountType gossip_account_string_to_type       (const gchar       *str);
-GdkPixbuf *       gossip_account_type_create_pixbuf   (GossipAccountType  type,
-						       GtkIconSize        icon_size);
-GdkPixbuf *       gossip_account_create_pixbuf        (GossipAccount     *account,
-						       GtkIconSize        icon_size);
-GdkPixbuf *       gossip_account_status_create_pixbuf (GossipAccount     *account,
-						       GtkIconSize        icon_size,
-						       gboolean           online);
+const gchar *     gossip_account_type_to_string        (GossipAccountType  type);
+GossipAccountType gossip_account_string_to_type        (const gchar       *str);
+GdkPixbuf *       gossip_account_type_create_pixbuf    (GossipAccountType  type,
+							GtkIconSize        icon_size);
+GdkPixbuf *       gossip_account_create_pixbuf         (GossipAccount     *account,
+							GtkIconSize        icon_size);
+GdkPixbuf *       gossip_account_status_create_pixbuf  (GossipAccount     *account,
+							GtkIconSize        icon_size,
+							gboolean           online);
 
 #endif /* __GOSSIP_ACCOUNT_H__ */

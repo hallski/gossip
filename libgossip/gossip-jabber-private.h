@@ -28,8 +28,10 @@
 
 G_BEGIN_DECLS
 
-LmConnection *   gossip_jabber_new_connection (GossipAccount *account);
+LmConnection *   gossip_jabber_new_connection (GossipJabber  *jabber,
+					       GossipAccount *account);
 gboolean         gossip_jabber_set_connection (LmConnection  *connection,
+					       GossipJabber  *jabber,
 					       GossipAccount *account);
 LmConnection *   gossip_jabber_get_connection (GossipJabber  *jabber);
 GossipJabberFTs *gossip_jabber_get_fts        (GossipJabber  *jabber);

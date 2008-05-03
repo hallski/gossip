@@ -83,6 +83,8 @@
 
 struct _GossipJabberPriv {
 	LmConnection          *connection;
+	LmSSLStatus            ssl_status;
+	gboolean               ssl_disconnection;
 
 	GossipContact         *contact;
 	GossipAccount         *account;
@@ -523,8 +525,6 @@ gossip_jabber_new_account (void)
 				"resource", computer_name,
 				"port", port, 
 				"use_ssl", gossip_jabber_is_ssl_supported (),
-				"auto_connect", TRUE,
-				"use_proxy", FALSE,
 				NULL);
 
 	gossip_jid_unref (jid);
@@ -575,7 +575,7 @@ gossip_jabber_setup (GossipJabber  *jabber,
 
 	server = gossip_account_get_server (priv->account);
 
-	priv->connection = gossip_jabber_new_connection (account);
+	priv->connection = gossip_jabber_new_connection (jabber, account);
 
 	/* setup the connection to send keep alive messages every 30 seconds */
 	lm_connection_set_keep_alive_rate (priv->connection, 30);
@@ -636,6 +636,7 @@ gossip_jabber_login (GossipJabber *jabber)
 	gossip_debug (DEBUG_DOMAIN, "Refreshing connection details");
 
 	gossip_jabber_set_connection (priv->connection, 
+				      jabber,
 				      priv->account);
 
 	/* Update connection details and own contact information */
@@ -670,6 +671,13 @@ gossip_jabber_login (GossipJabber *jabber)
 	 * time.
 	 */
 	priv->disconnect_request = FALSE;
+
+	/* This is important. If we just got disconnected because of
+	 * an invalid certificate, we need to reset this in case
+	 * things have changed since then.
+	 */
+	priv->ssl_status = LM_SSL_STATUS_NO_CERT_FOUND;
+	priv->ssl_disconnection = FALSE;
 
 	/* Set up new presence information */
 	if (priv->presence) {
@@ -797,6 +805,76 @@ jabber_logout_contact_foreach (gpointer       key,
 	return TRUE;
 }
 
+static const gchar *
+jabber_ssl_status_to_string (LmSSLStatus status)
+{
+	switch (status) {
+	case LM_SSL_STATUS_NO_CERT_FOUND:
+		return _("No certificate found");
+	case LM_SSL_STATUS_UNTRUSTED_CERT:
+		return _("Untrusted certificate");
+	case LM_SSL_STATUS_CERT_EXPIRED:
+		return _("Certificate expired");
+	case LM_SSL_STATUS_CERT_NOT_ACTIVATED:
+		return _("Certificate not activated");
+	case LM_SSL_STATUS_CERT_HOSTNAME_MISMATCH:
+		return _("Certificate host mismatch");
+	case LM_SSL_STATUS_CERT_FINGERPRINT_MISMATCH:
+		return _("Certificate fingerprint mismatch");
+	case LM_SSL_STATUS_GENERIC_ERROR:
+		return _("Unknown security error occurred");
+	default:
+		break;
+	}
+
+	return _("Unknown error");
+}
+
+static LmSSLResponse
+jabber_ssl_status_cb (LmConnection  *connection,
+		      LmSSLStatus    status,
+		      GossipJabber  *jabber)
+{
+	GossipJabberPriv *priv;
+	GossipAccount    *account;
+	const gchar      *str;
+
+	priv = GET_PRIV (jabber);
+
+	str = jabber_ssl_status_to_string (status);
+	gossip_debug (DEBUG_DOMAIN, "%s", str);
+
+	priv->ssl_status = status;
+
+	account = gossip_jabber_get_account (jabber);
+
+	if (gossip_account_get_ignore_ssl_errors (account)) {
+		priv->ssl_disconnection = FALSE;
+		return LM_SSL_RESPONSE_CONTINUE;
+	} else {
+		priv->ssl_disconnection = TRUE;
+
+		/* FIXME: Not sure if this is a LM bug, but, we don't
+		 * disconnect properly in this situation when using
+		 * STARTTLS - so we force a disconnect
+		 */
+		if (!gossip_account_get_force_old_ssl (account)) {
+			GError      *error;
+			const gchar *str;
+
+			gossip_jabber_logout (jabber);
+
+			/* This code is duplicated because of this bug */
+			str = jabber_ssl_status_to_string (priv->ssl_status);
+			error = gossip_jabber_error_create (priv->ssl_status, str);
+			g_signal_emit_by_name (jabber, "error", account, error);
+			g_error_free (error);
+		}
+
+		return LM_SSL_RESPONSE_STOP;
+	}
+}
+
 static void
 jabber_connected_cb (LmConnection *connection,
 		     gboolean      result,
@@ -828,7 +906,21 @@ jabber_connected_cb (LmConnection *connection,
 	if (result == FALSE) {
 		gossip_debug (DEBUG_DOMAIN, "Cleaning up connection, disconnecting...");
 		gossip_jabber_logout (jabber);
-		gossip_jabber_error (jabber, GOSSIP_JABBER_NO_CONNECTION);
+
+		if (priv->ssl_disconnection) {
+			GossipAccount *account;
+			GError        *error;
+			const gchar   *str;
+
+			account = gossip_jabber_get_account (jabber);
+			str = jabber_ssl_status_to_string (priv->ssl_status);
+			error = gossip_jabber_error_create (priv->ssl_status, str);
+			g_signal_emit_by_name (jabber, "error", account, error);
+			g_error_free (error);
+		} else {
+			gossip_jabber_error (jabber, GOSSIP_JABBER_NO_CONNECTION);
+		}
+
 		return;
 	}
 
@@ -1002,45 +1094,6 @@ jabber_disconnected_cb (LmConnection       *connection,
 	}
 
 	g_signal_emit_by_name (jabber, "disconnected", priv->account, gossip_reason);
-}
-
-static LmSSLResponse
-jabber_ssl_status_cb (LmConnection *connection,
-		      LmSSLStatus   status,
-		      GossipJabber *jabber)
-{
-	const gchar *str = "";
-
-	switch (status) {
-	case LM_SSL_STATUS_NO_CERT_FOUND:
-		str = "No certificate found";
-		break;
-	case LM_SSL_STATUS_UNTRUSTED_CERT:
-		str = "Untrusted certificate";
-		break;
-	case LM_SSL_STATUS_CERT_EXPIRED:
-		str = "Certificate expired";
-		break;
-	case LM_SSL_STATUS_CERT_NOT_ACTIVATED:
-		str = "Certificate not activated";
-		break;
-	case LM_SSL_STATUS_CERT_HOSTNAME_MISMATCH:
-		str = "Certificate host mismatch";
-		break;
-	case LM_SSL_STATUS_CERT_FINGERPRINT_MISMATCH:
-		str = "Certificate fingerprint mismatch";
-		break;
-	case LM_SSL_STATUS_GENERIC_ERROR:
-		str = "Generic error";
-		break;
-	default:
-		str = "Unknown error:";
-		break;
-	}
-
-	gossip_debug (DEBUG_DOMAIN, "%s", str);
-
-	return LM_SSL_RESPONSE_CONTINUE;
 }
 
 static LmHandlerResult
@@ -3397,6 +3450,7 @@ gossip_jabber_subscription_disallow_all (GossipJabber *jabber)
 
 gboolean
 gossip_jabber_set_connection (LmConnection  *connection, 
+			      GossipJabber  *jabber,
 			      GossipAccount *account)
 {
 	GossipJID    *jid;
@@ -3406,35 +3460,62 @@ gossip_jabber_set_connection (LmConnection  *connection,
 	gboolean      use_proxy = FALSE;
 
 	g_return_val_if_fail (connection != NULL, FALSE);
+	g_return_val_if_fail (GOSSIP_IS_JABBER (jabber), FALSE);
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), FALSE);
+
+	gossip_debug (DEBUG_DOMAIN,
+		      "Setting connection details for account:'%s'", 
+		      gossip_account_get_name (account));
 
 	id = gossip_account_get_id (account);
 	if (id) {
+		gossip_debug (DEBUG_DOMAIN, "- ID:'%s'", id);
 		jid = gossip_jid_new (id);
 		lm_connection_set_jid (connection, gossip_jid_get_without_resource (jid));
 		gossip_jid_unref (jid);
 	}
 
+
 	server = gossip_account_get_server (account);
 	if (server) {
+		gossip_debug (DEBUG_DOMAIN, "- Server:'%s'", server);
 		lm_connection_set_server (connection, server);
 	}
 
 	port = gossip_account_get_port (account);
+	gossip_debug (DEBUG_DOMAIN, "- Port:%d", port);
 	lm_connection_set_port (connection, port);
 
-	if (gossip_account_get_use_ssl (account)) {
+	/* So here, we do the following:
+	 * Either: 
+	 * - If we should use old school SSL, set up simple SSL
+	 * OR: 
+	 * - Attempt to use STARTTLS.
+	 * - Require STARTTLS ONLY if the user requires security.
+	 * - Ignore SSL errors if we don't require security.
+	 */
+	if (gossip_account_get_force_old_ssl (account)) {
 		LmSSL *ssl;
 
-		gossip_debug (DEBUG_DOMAIN, "Using SSL");
+		gossip_debug (DEBUG_DOMAIN, "- Using OLD SSL method for connection");
 
-		ssl = lm_ssl_new (NULL,
-				  (LmSSLFunction) jabber_ssl_status_cb,
-				  NULL, NULL);
-
+		ssl = lm_ssl_new (NULL, 
+				  (LmSSLFunction) jabber_ssl_status_cb, 
+				  jabber, 
+				  NULL);
 		lm_connection_set_ssl (connection, ssl);
-		lm_connection_set_port (connection, port);
+		lm_ssl_unref (ssl);
+	} else {
+		LmSSL    *ssl;
 
+		gossip_debug (DEBUG_DOMAIN, "- Using STARTTLS method for connection");
+
+		ssl = lm_ssl_new (NULL, 
+				  (LmSSLFunction) jabber_ssl_status_cb, 
+				  jabber, 
+				  NULL);
+		lm_connection_set_ssl (connection, ssl);
+		lm_ssl_use_starttls (ssl, TRUE, gossip_account_get_use_ssl (account));
 		lm_ssl_unref (ssl);
 	}
 
@@ -3457,13 +3538,16 @@ gossip_jabber_set_connection (LmConnection  *connection,
 
 		if (use_proxy) {
 			LmProxy  *proxy;
-			
+
+			gossip_debug (DEBUG_DOMAIN, "- Proxy server:'%s', port:%d", host, port);
+	
 			proxy = lm_proxy_new_with_server (LM_PROXY_TYPE_HTTP,
 							  host, 
 							  (guint) port);
 			lm_connection_set_proxy (connection, proxy);
 			
 			if (use_auth) {
+				gossip_debug (DEBUG_DOMAIN, "- Proxy auth username:'%s'", username);
 				lm_proxy_set_username (proxy, username);
 				lm_proxy_set_password (proxy, password);
 			}
@@ -3485,7 +3569,8 @@ gossip_jabber_set_connection (LmConnection  *connection,
 }
 
 LmConnection *
-gossip_jabber_new_connection (GossipAccount *account)
+gossip_jabber_new_connection (GossipJabber  *jabber,
+			      GossipAccount *account)
 {
 	LmConnection *connection;
 	const gchar  *server;
@@ -3494,7 +3579,7 @@ gossip_jabber_new_connection (GossipAccount *account)
 
 	server = gossip_account_get_server (account);
 	connection = lm_connection_new (server);
-	gossip_jabber_set_connection (connection, account);
+ 	gossip_jabber_set_connection (connection, jabber, account);
 
 	return connection;
 }

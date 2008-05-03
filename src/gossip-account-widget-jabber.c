@@ -72,8 +72,10 @@ struct _GossipAccountWidgetJabberPriv {
 	GtkWidget     *entry_port;
 
 	GtkWidget     *checkbutton_ssl;
-	GtkWidget     *checkbutton_proxy;
 	GtkWidget     *checkbutton_auto_connect;
+	GtkWidget     *checkbutton_proxy;
+	GtkWidget     *checkbutton_force_old_ssl;
+	GtkWidget     *checkbutton_ignore_ssl_errors;
 
 	gboolean       registering;
 	gboolean       changing_password;
@@ -173,8 +175,10 @@ gossip_account_widget_jabber_init (GossipAccountWidgetJabber *settings)
 				       "entry_server", &priv->entry_server,
 				       "entry_port", &priv->entry_port,
 				       "checkbutton_ssl", &priv->checkbutton_ssl,
-				       "checkbutton_proxy", &priv->checkbutton_proxy,
 				       "checkbutton_auto_connect", &priv->checkbutton_auto_connect,
+				       "checkbutton_proxy", &priv->checkbutton_proxy,
+				       "checkbutton_force_old_ssl", &priv->checkbutton_force_old_ssl,
+				       "checkbutton_ignore_ssl_errors", &priv->checkbutton_ignore_ssl_errors,
 				       NULL);
 
 	gossip_glade_connect (glade, 
@@ -203,10 +207,16 @@ gossip_account_widget_jabber_init (GossipAccountWidgetJabber *settings)
 	g_signal_connect (priv->checkbutton_ssl, "toggled", 
 			  G_CALLBACK (account_widget_jabber_checkbutton_toggled_cb),
 			  settings);
+	g_signal_connect (priv->checkbutton_auto_connect, "toggled", 
+			  G_CALLBACK (account_widget_jabber_checkbutton_toggled_cb),
+			  settings);
 	g_signal_connect (priv->checkbutton_proxy, "toggled", 
 			  G_CALLBACK (account_widget_jabber_checkbutton_toggled_cb),
 			  settings);
-	g_signal_connect (priv->checkbutton_auto_connect, "toggled", 
+	g_signal_connect (priv->checkbutton_force_old_ssl, "toggled", 
+			  G_CALLBACK (account_widget_jabber_checkbutton_toggled_cb),
+			  settings);
+	g_signal_connect (priv->checkbutton_ignore_ssl_errors, "toggled", 
 			  G_CALLBACK (account_widget_jabber_checkbutton_toggled_cb),
 			  settings);
 
@@ -550,6 +560,7 @@ account_widget_jabber_checkbutton_toggled_cb (GtkWidget                 *checkbu
 		guint16        port_without_ssl;
 		guint16        port;
 		gboolean       use_ssl;
+		gboolean       force_old_ssl;
 		gboolean       changed = FALSE;
 
 		port_with_ssl = gossip_jabber_get_default_port (TRUE);
@@ -558,11 +569,19 @@ account_widget_jabber_checkbutton_toggled_cb (GtkWidget                 *checkbu
 		port = gossip_account_get_port (priv->account);
 
 		use_ssl = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (checkbutton));
+		force_old_ssl = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (priv->checkbutton_force_old_ssl));
 
-		if (use_ssl) {
-			if (port == port_without_ssl) {
-				port = port_with_ssl;
-				changed = TRUE;
+		if (force_old_ssl) {
+			if (use_ssl) {
+				if (port == port_without_ssl) {
+					port = port_with_ssl;
+					changed = TRUE;
+				}
+			} else {
+				if (port == port_with_ssl) {
+					port = port_without_ssl;
+					changed = TRUE;
+				}
 			}
 		} else {
 			if (port == port_with_ssl) {
@@ -581,16 +600,76 @@ account_widget_jabber_checkbutton_toggled_cb (GtkWidget                 *checkbu
 			gtk_entry_set_text (GTK_ENTRY (priv->entry_port), port_str);
 			g_free (port_str);
 		}
-	} else if (checkbutton == priv->checkbutton_proxy) {
-		gboolean use_proxy;
 
-		use_proxy = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (checkbutton));
-		gossip_account_set_use_proxy (priv->account, use_proxy);
+		/* So if we use STARTTLS we don't worry if we get SSL
+		 * errors since we might not use it and may fallback.
+		 */ 
+		if (!use_ssl) {
+			gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->checkbutton_ignore_ssl_errors), TRUE);
+		}
+
+		gtk_widget_set_sensitive (priv->checkbutton_force_old_ssl, use_ssl);
+		gtk_widget_set_sensitive (priv->checkbutton_ignore_ssl_errors, use_ssl);
 	} else if (checkbutton == priv->checkbutton_auto_connect) {
 		gboolean auto_connect;
 
 		auto_connect = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (checkbutton));
 		gossip_account_set_auto_connect (priv->account, auto_connect);
+	} else if (checkbutton == priv->checkbutton_proxy) {
+		gboolean use_proxy;
+
+		use_proxy = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (checkbutton));
+		gossip_account_set_use_proxy (priv->account, use_proxy);
+	} else if (checkbutton == priv->checkbutton_force_old_ssl) {
+		guint16        port_with_ssl;
+		guint16        port_without_ssl;
+		guint16        port;
+		gboolean       use_ssl;
+		gboolean       force_old_ssl;
+		gboolean       changed = FALSE;
+
+		port_with_ssl = gossip_jabber_get_default_port (TRUE);
+		port_without_ssl = gossip_jabber_get_default_port (FALSE);
+
+		port = gossip_account_get_port (priv->account);
+		
+		force_old_ssl = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (checkbutton));
+		use_ssl = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (priv->checkbutton_ssl));
+
+		if (force_old_ssl) {
+			if (use_ssl) {
+				if (port == port_without_ssl) {
+					port = port_with_ssl;
+					changed = TRUE;
+				}
+			} else {
+				if (port == port_with_ssl) {
+					port = port_without_ssl;
+					changed = TRUE;
+				}
+			}
+		} else {
+			if (port == port_with_ssl) {
+				port = port_without_ssl;
+				changed = TRUE;
+			}
+		}
+
+		gossip_account_set_force_old_ssl (priv->account, force_old_ssl);
+		gossip_account_set_port (priv->account, port);
+
+		if (changed) {
+			gchar *port_str;
+
+			port_str = g_strdup_printf ("%d", port);
+			gtk_entry_set_text (GTK_ENTRY (priv->entry_port), port_str);
+			g_free (port_str);
+		}
+	} else if (checkbutton == priv->checkbutton_ignore_ssl_errors) {
+		gboolean ignore_ssl_errors;
+
+		ignore_ssl_errors = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (checkbutton));
+		gossip_account_set_ignore_ssl_errors (priv->account, ignore_ssl_errors);
 	}
 
 	gossip_debug (DEBUG_DOMAIN, "Checkbutton toggled, saving accounts...");
@@ -845,8 +924,10 @@ account_widget_jabber_setup (GossipAccountWidgetJabber *settings,
 	const gchar                   *server;
 	const gchar                   *password;
 	gboolean                       use_ssl;
-	gboolean                       use_proxy;
 	gboolean                       auto_connect;
+	gboolean                       use_proxy;
+	gboolean                       force_old_ssl;
+	gboolean                       ignore_ssl_errors;
 	gboolean                       is_connected;
 
 	priv = GET_PRIV (settings);
@@ -859,32 +940,52 @@ account_widget_jabber_setup (GossipAccountWidgetJabber *settings,
 	server = gossip_account_get_server (priv->account);
 	port = gossip_account_get_port (priv->account);
 	use_ssl = gossip_account_get_use_ssl (priv->account);
-	use_proxy = gossip_account_get_use_proxy (priv->account);
 	auto_connect = gossip_account_get_auto_connect (priv->account);
+	use_proxy = gossip_account_get_use_proxy (priv->account);
+	force_old_ssl = gossip_account_get_force_old_ssl (priv->account);
+	ignore_ssl_errors = gossip_account_get_ignore_ssl_errors (priv->account);
 
 	/* Set up checkbuttons, but block signals first */
 	g_signal_handlers_block_by_func (priv->checkbutton_ssl, 
 					 account_widget_jabber_checkbutton_toggled_cb,
 					 settings);
+	g_signal_handlers_block_by_func (priv->checkbutton_auto_connect, 
+					 account_widget_jabber_checkbutton_toggled_cb,
+					 settings);
 	g_signal_handlers_block_by_func (priv->checkbutton_proxy, 
 					 account_widget_jabber_checkbutton_toggled_cb,
 					 settings);
-	g_signal_handlers_block_by_func (priv->checkbutton_auto_connect, 
+	g_signal_handlers_block_by_func (priv->checkbutton_force_old_ssl, 
+					 account_widget_jabber_checkbutton_toggled_cb,
+					 settings);
+	g_signal_handlers_block_by_func (priv->checkbutton_ignore_ssl_errors, 
 					 account_widget_jabber_checkbutton_toggled_cb,
 					 settings);
 	if (gossip_jabber_is_ssl_supported ()) {
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->checkbutton_ssl), use_ssl);
+		gtk_widget_set_sensitive (priv->checkbutton_ssl, TRUE);
+		gtk_widget_set_sensitive (priv->checkbutton_force_old_ssl, use_ssl);
+		gtk_widget_set_sensitive (priv->checkbutton_ignore_ssl_errors, use_ssl);
 	} else {
 		gtk_widget_set_sensitive (priv->checkbutton_ssl, FALSE);
+		gtk_widget_set_sensitive (priv->checkbutton_force_old_ssl, FALSE);
+		gtk_widget_set_sensitive (priv->checkbutton_ignore_ssl_errors, FALSE);
 	}
 
-	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->checkbutton_proxy), use_proxy);
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->checkbutton_auto_connect), auto_connect);
+ 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->checkbutton_force_old_ssl), force_old_ssl);
+ 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (priv->checkbutton_ignore_ssl_errors), ignore_ssl_errors);
 
-	g_signal_handlers_unblock_by_func (priv->checkbutton_ssl, 
+	g_signal_handlers_unblock_by_func (priv->checkbutton_ignore_ssl_errors, 
+					   account_widget_jabber_checkbutton_toggled_cb,
+					   settings);
+	g_signal_handlers_unblock_by_func (priv->checkbutton_force_old_ssl, 
 					   account_widget_jabber_checkbutton_toggled_cb,
 					   settings);
 	g_signal_handlers_unblock_by_func (priv->checkbutton_proxy, 
+					   account_widget_jabber_checkbutton_toggled_cb,
+					   settings);
+	g_signal_handlers_unblock_by_func (priv->checkbutton_ssl, 
 					   account_widget_jabber_checkbutton_toggled_cb,
 					   settings);
 	g_signal_handlers_unblock_by_func (priv->checkbutton_auto_connect, 

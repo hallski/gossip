@@ -7068,8 +7068,9 @@ You can retrieve contact information from the server. </property>
 	  <child>
 	    <widget class="GtkCheckButton" id="checkbutton_ssl">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Encrypt all data sent when communicating with the server</property>
 	      <property name="can_focus">True</property>
-	      <property name="label" translatable="yes">Use encryption (SS_L)</property>
+	      <property name="label" translatable="yes">_Use encryption</property>
 	      <property name="use_underline">True</property>
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="focus_on_click">True</property>
@@ -7163,7 +7164,7 @@ You can retrieve contact information from the server. </property>
 	  <child>
 	    <widget class="GtkTable" id="table15">
 	      <property name="visible">True</property>
-	      <property name="n_rows">4</property>
+	      <property name="n_rows">6</property>
 	      <property name="n_columns">2</property>
 	      <property name="homogeneous">False</property>
 	      <property name="row_spacing">6</property>
@@ -7230,7 +7231,7 @@ You can retrieve contact information from the server. </property>
 	      <child>
 		<widget class="GtkLabel" id="label_resource">
 		  <property name="visible">True</property>
-		  <property name="label" translatable="yes">Reso_urce:</property>
+		  <property name="label" translatable="yes">_Location:</property>
 		  <property name="use_underline">True</property>
 		  <property name="use_markup">False</property>
 		  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -7337,6 +7338,52 @@ You can retrieve contact information from the server. </property>
 		  <property name="right_attach">2</property>
 		  <property name="top_attach">2</property>
 		  <property name="bottom_attach">3</property>
+		  <property name="y_options"></property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkCheckButton" id="checkbutton_force_old_ssl">
+		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">This is a legacy option required for supporting older servers which use a different port (5223) to communicate securely. With newer encryption techniques, the same port (5222) can be used for both</property>
+		  <property name="can_focus">True</property>
+		  <property name="label" translatable="yes">_Force older secure connection method</property>
+		  <property name="use_underline">True</property>
+		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <property name="focus_on_click">True</property>
+		  <property name="active">False</property>
+		  <property name="inconsistent">False</property>
+		  <property name="draw_indicator">True</property>
+		</widget>
+		<packing>
+		  <property name="left_attach">0</property>
+		  <property name="right_attach">2</property>
+		  <property name="top_attach">4</property>
+		  <property name="bottom_attach">5</property>
+		  <property name="x_options">fill</property>
+		  <property name="y_options"></property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkCheckButton" id="checkbutton_ignore_ssl_errors">
+		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">When checked, any certification errors will stop the connection attempt. For example, if the server's certificate has expired or the server simply doesn't have one, it is considered unsafe and the connection attempt will stop.</property>
+		  <property name="can_focus">True</property>
+		  <property name="label" translatable="yes">I_gnore security warnings</property>
+		  <property name="use_underline">True</property>
+		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <property name="focus_on_click">True</property>
+		  <property name="active">False</property>
+		  <property name="inconsistent">False</property>
+		  <property name="draw_indicator">True</property>
+		</widget>
+		<packing>
+		  <property name="left_attach">0</property>
+		  <property name="right_attach">2</property>
+		  <property name="top_attach">5</property>
+		  <property name="bottom_attach">6</property>
+		  <property name="x_options">fill</property>
 		  <property name="y_options"></property>
 		</packing>
 	      </child>
