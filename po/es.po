@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-25 20:40+0000\n"
-"PO-Revision-Date: 2008-04-27 20:41+0200\n"
+"POT-Creation-Date: 2008-05-03 11:03+0000\n"
+"PO-Revision-Date: 2008-05-04 21:40+0200\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -422,15 +422,47 @@ msgstr "Esta característica no está implementada"
 msgid "The remote service timed out"
 msgstr "Se agotó el tiempo de expiración del servicio remoto"
 
-#: ../libgossip/gossip-jabber.c:515
-msgid "new account"
-msgstr "Cuenta nueva"
-
-#: ../libgossip/gossip-jabber.c:516
+#: ../libgossip/gossip-jabber.c:518
 msgid "Home"
 msgstr "Inicio"
 
-#: ../libgossip/gossip-jabber.c:1186 ../libgossip/gossip-jabber-register.c:214
+#: ../libgossip/gossip-jabber.c:523
+msgid "new account"
+msgstr "Cuenta nueva"
+
+#: ../libgossip/gossip-jabber.c:813
+msgid "No certificate found"
+msgstr "No se encontró ningún certificado"
+
+#: ../libgossip/gossip-jabber.c:815
+msgid "Untrusted certificate"
+msgstr "Certificado sin confianza"
+
+#: ../libgossip/gossip-jabber.c:817
+msgid "Certificate expired"
+msgstr "Certificado caducado"
+
+#: ../libgossip/gossip-jabber.c:819
+msgid "Certificate not activated"
+msgstr "Certificado no activado"
+
+#: ../libgossip/gossip-jabber.c:821
+msgid "Certificate host mismatch"
+msgstr "El equipo del certificado no coincide"
+
+#: ../libgossip/gossip-jabber.c:823
+msgid "Certificate fingerprint mismatch"
+msgstr "La huella del certificado no coincide"
+
+#: ../libgossip/gossip-jabber.c:825
+msgid "Unknown security error occurred"
+msgstr "Ocurrió un error de seguridad desconocido"
+
+#: ../libgossip/gossip-jabber.c:830 ../libloudermouth/lm-bs-transfer.c:363
+msgid "Unknown error"
+msgstr "Error desconocido"
+
+#: ../libgossip/gossip-jabber.c:1246 ../libgossip/gossip-jabber-register.c:214
 msgid "Couldn't send message!"
 msgstr "No se pudo enviar el mensaje."
 
@@ -558,10 +590,6 @@ msgstr "No existe el dispositivo"
 msgid "File is too large"
 msgstr "El archivo es demasiado grande"
 
-#: ../libloudermouth/lm-bs-transfer.c:363
-msgid "Unknown error"
-msgstr "Error desconocido"
-
 #: ../src/gossip-about-dialog.c:64
 msgid ""
 "Gossip is free software; you can redistribute it and/or modify it under the "
@@ -608,11 +636,11 @@ msgstr ""
 "Ezequiel Pérez<eazel7@yahoo.com.ar>\n"
 "QA: Francisco Javier F. Serrador <serrador@cvs.gnome.org>"
 
-#: ../src/gossip-accounts-dialog.c:378 ../data/glade/main.glade.h:14
+#: ../src/gossip-accounts-dialog.c:373 ../data/glade/main.glade.h:13
 msgid "<b>No Account Selected</b>"
 msgstr "<b>Sin cuenta seleccionada</b>"
 
-#: ../src/gossip-accounts-dialog.c:380 ../data/glade/main.glade.h:115
+#: ../src/gossip-accounts-dialog.c:375 ../data/glade/main.glade.h:114
 msgid ""
 "To add a new account, you can click on the 'Add' button and a new entry will "
 "be created for you to start configuring.\n"
@@ -626,11 +654,11 @@ msgstr ""
 "Si no quiere añadir una cuenta, simplemente pulse en la cuenta que quiere "
 "configurar en la lista de la izquierda."
 
-#: ../src/gossip-accounts-dialog.c:389
+#: ../src/gossip-accounts-dialog.c:384
 msgid "<b>No Accounts Configured</b>"
 msgstr "<b>No hay ninguna cuenta configurada</b>"
 
-#: ../src/gossip-accounts-dialog.c:391
+#: ../src/gossip-accounts-dialog.c:386
 msgid ""
 "To add a new account, you can click on the 'Add' button and a new entry will "
 "be created for you to start configuring."
@@ -638,11 +666,11 @@ msgstr ""
 "Para añadir una cuenta nueva, pulse en el botón 'Añadir' y se creará una "
 "entrada nueva para que la configure."
 
-#: ../src/gossip-accounts-dialog.c:475 ../data/glade/main.glade.h:29
+#: ../src/gossip-accounts-dialog.c:459 ../data/glade/main.glade.h:28
 msgid "Accounts"
 msgstr "Cuentas"
 
-#: ../src/gossip-accounts-dialog.c:1202
+#: ../src/gossip-accounts-dialog.c:1186
 #, c-format
 msgid ""
 "You are about to remove your %s account!\n"
@@ -651,7 +679,7 @@ msgstr ""
 "Va a eliminar su cuenta %s\n"
 "¿Seguro que quiere continuar?"
 
-#: ../src/gossip-accounts-dialog.c:1208
+#: ../src/gossip-accounts-dialog.c:1192
 msgid ""
 "Any associated conversations and chat rooms will NOT be removed if you "
 "decide to proceed.\n"
@@ -668,23 +696,23 @@ msgstr ""
 msgid "All"
 msgstr "Todo"
 
-#: ../src/gossip-account-widget-jabber.c:661
+#: ../src/gossip-account-widget-jabber.c:760
 msgid "Successfully registered your new account settings."
 msgstr "Se ha registrado con éxito la configuración de su cuenta nueva."
 
-#: ../src/gossip-account-widget-jabber.c:668
+#: ../src/gossip-account-widget-jabber.c:767
 msgid "You should now be able to connect to your new account."
 msgstr "Ahora debería poder conectarse a su cuenta nueva."
 
-#: ../src/gossip-account-widget-jabber.c:671
+#: ../src/gossip-account-widget-jabber.c:770
 msgid "Failed to register your new account settings."
 msgstr "Falló al registrar la configuración de su cuenta nueva"
 
-#: ../src/gossip-account-widget-jabber.c:713
+#: ../src/gossip-account-widget-jabber.c:812
 msgid "No Jabber account details available"
 msgstr "No hay detalles disponibles de una cuenta Jabber"
 
-#: ../src/gossip-account-widget-jabber.c:714
+#: ../src/gossip-account-widget-jabber.c:813
 msgid ""
 "Your desktop settings don't include any information about your Jabber "
 "account.\n"
@@ -821,6 +849,19 @@ msgstr "Editar _detalles de la cuenta"
 msgid "Click to enlarge"
 msgstr "Pulsar para ampliar"
 
+#. Show success dialog
+#: ../src/gossip-change-password-dialog.c:84
+msgid "Successfully changed your account password."
+msgstr "Se cambió la contraseña de su cuenta satisfactoriamente."
+
+#: ../src/gossip-change-password-dialog.c:91
+msgid "You should now be able to connect with your new password."
+msgstr "Ahora debería poder conectarse a su cuenta con su nueva contraseña."
+
+#: ../src/gossip-change-password-dialog.c:94
+msgid "Failed to change your account password."
+msgstr "Falló al cambiar la contraseña de su cuenta."
+
 #: ../src/gossip-chat.c:602
 msgid "Insert Smiley"
 msgstr "Insertar emoticono"
@@ -871,7 +912,7 @@ msgid "Decline"
 msgstr "Rechazar"
 
 #: ../src/gossip-chat-window.c:744 ../src/gossip-chat-window.c:774
-#: ../data/glade/main.glade.h:74
+#: ../data/glade/main.glade.h:73
 msgid "New Message"
 msgid_plural "New Messages"
 msgstr[0] "Mensaje nuevo"
@@ -992,7 +1033,7 @@ msgid "Email contact"
 msgstr "Enviar un correo-e al contacto"
 
 #: ../src/gossip-contact-list.c:376 ../data/glade/chat.glade.h:30
-#: ../data/glade/main.glade.h:165
+#: ../data/glade/main.glade.h:164
 msgid "_View Previous Conversations"
 msgstr "_Ver conversaciones previas"
 
@@ -1306,7 +1347,7 @@ msgstr "%s quiere que le añada a su lista de contactos"
 msgid "Someone wants to be added to your contact list"
 msgstr "Alguien quiere que le añada a su lista de contactos"
 
-#: ../src/gossip-notify.c:331 ../data/glade/main.glade.h:103
+#: ../src/gossip-notify.c:331 ../data/glade/main.glade.h:101
 msgid "Subscription Request"
 msgstr "Solicitud de subscripción"
 
@@ -1480,7 +1521,7 @@ msgid "Try again later."
 msgstr "Inténtelo otra vez más tarde."
 
 #. Birthday chooser
-#: ../src/gossip-vcard-dialog.c:966 ../data/glade/main.glade.h:35
+#: ../src/gossip-vcard-dialog.c:966 ../data/glade/main.glade.h:34
 msgid "C_hange"
 msgstr "_Cambiar"
 
@@ -1552,7 +1593,7 @@ msgstr "Seleccione a quién quiere invitar:"
 msgid "Send _Email..."
 msgstr "_Enviar correo-e…"
 
-#: ../data/glade/chat.glade.h:17 ../data/glade/main.glade.h:133
+#: ../data/glade/chat.glade.h:17 ../data/glade/main.glade.h:132
 msgid "_Add Contact..."
 msgstr "_Añadir contacto…"
 
@@ -1592,7 +1633,7 @@ msgstr "_Pegar"
 msgid "_Previous Tab"
 msgstr "Solapa _anterior"
 
-#: ../data/glade/chat.glade.h:27 ../data/glade/main.glade.h:160
+#: ../data/glade/chat.glade.h:27 ../data/glade/main.glade.h:159
 msgid "_Room"
 msgstr "_Sala"
 
@@ -1606,7 +1647,7 @@ msgstr "_Solapas"
 
 #.
 #. This is the text that should appear on a menu title. Don't include the prefix 'menu title|' in the translation.
-#: ../data/glade/chat.glade.h:33 ../data/glade/main.glade.h:172
+#: ../data/glade/chat.glade.h:33 ../data/glade/main.glade.h:170
 msgid "menu title|_Edit"
 msgstr "_Editar"
 
@@ -1618,7 +1659,7 @@ msgstr "ID del contacto:"
 msgid "Location:"
 msgstr "Ubicación:"
 
-#: ../data/glade/file-transfer.glade.h:5 ../data/glade/main.glade.h:73
+#: ../data/glade/file-transfer.glade.h:5 ../data/glade/main.glade.h:72
 msgid "Name:"
 msgstr "Nombre:"
 
@@ -1638,7 +1679,7 @@ msgstr "Seleccione un archivo"
 msgid "Size:"
 msgstr "Tamaño:"
 
-#: ../data/glade/group-chat.glade.h:1 ../data/glade/main.glade.h:28
+#: ../data/glade/group-chat.glade.h:1 ../data/glade/main.glade.h:27
 msgid "Account:"
 msgstr "Cuenta:"
 
@@ -1672,7 +1713,7 @@ msgstr "Unirse a esta sala de chat cuando Gossip se inicia y estás conectado."
 msgid "Manage Favorite Rooms"
 msgstr "Gestionar salas favoritas"
 
-#: ../data/glade/group-chat.glade.h:10 ../data/glade/main.glade.h:72
+#: ../data/glade/group-chat.glade.h:10 ../data/glade/main.glade.h:71
 msgid "N_ame:"
 msgstr "_Nombre:"
 
@@ -1708,7 +1749,7 @@ msgstr "Contra_seña"
 msgid "_Room:"
 msgstr "_Sala:"
 
-#: ../data/glade/group-chat.glade.h:18 ../data/glade/main.glade.h:161
+#: ../data/glade/group-chat.glade.h:18
 msgid "_Server:"
 msgstr "_Servidor:"
 
@@ -1721,78 +1762,74 @@ msgid "<b>About</b>"
 msgstr "<b>Acerca de</b>"
 
 #: ../data/glade/main.glade.h:3
-msgid "<b>Account:</b>"
-msgstr "<b>Cuenta:</b>"
-
-#: ../data/glade/main.glade.h:4
 msgid "<b>Appearance</b>"
 msgstr "<b>Apariencia</b>"
 
-#: ../data/glade/main.glade.h:5
+#: ../data/glade/main.glade.h:4
 msgid "<b>Audio</b>"
 msgstr "<b>Sonido</b>"
 
-#: ../data/glade/main.glade.h:6
+#: ../data/glade/main.glade.h:5
 msgid "<b>Behaviour</b>"
 msgstr "<b>Comportamiento</b>"
 
-#: ../data/glade/main.glade.h:7
+#: ../data/glade/main.glade.h:6
 msgid "<b>Chat</b>"
 msgstr "<b>Charla</b>"
 
-#: ../data/glade/main.glade.h:8
+#: ../data/glade/main.glade.h:7
 msgid "<b>Client Information</b>"
 msgstr "<b>Información del cliente</b>"
 
-#: ../data/glade/main.glade.h:9
+#: ../data/glade/main.glade.h:8
 msgid "<b>Contact List</b>"
 msgstr "<b>Lista de contactos</b>"
 
-#: ../data/glade/main.glade.h:10
+#: ../data/glade/main.glade.h:9
 msgid "<b>Groups</b>"
 msgstr "<b>Grupos</b>"
 
-#: ../data/glade/main.glade.h:11
+#: ../data/glade/main.glade.h:10
 msgid "<b>Languages</b>"
 msgstr "<b>Idiomas</b>"
 
-#: ../data/glade/main.glade.h:12
+#: ../data/glade/main.glade.h:11
 msgid "<b>Name</b>"
 msgstr "<b>Nombre</b>"
 
-#: ../data/glade/main.glade.h:13
+#: ../data/glade/main.glade.h:12
 msgid "<b>New Account</b>"
 msgstr "<b>Cuenta nueva</b>"
 
-#: ../data/glade/main.glade.h:15
+#: ../data/glade/main.glade.h:14
 msgid "<b>Options</b>"
 msgstr "<b>Opciones</b>"
 
-#: ../data/glade/main.glade.h:16
+#: ../data/glade/main.glade.h:15
 msgid "<b>Passwords do not match!</b>"
 msgstr "<b>Las contraseñas no coinciden</b>"
 
-#: ../data/glade/main.glade.h:17
+#: ../data/glade/main.glade.h:16
 msgid "<b>Personal Details</b>"
 msgstr "<b>Detalles personales</b>"
 
-#: ../data/glade/main.glade.h:18
+#: ../data/glade/main.glade.h:17
 msgid "<b>Settings</b>"
 msgstr "<b>Configuración</b>"
 
-#: ../data/glade/main.glade.h:19
+#: ../data/glade/main.glade.h:18
 msgid "<b>Status</b>"
 msgstr "<b>Estado</b>"
 
-#: ../data/glade/main.glade.h:20
+#: ../data/glade/main.glade.h:19
 msgid "<b>Subscription</b>"
 msgstr "<b>Subscripción</b>"
 
-#: ../data/glade/main.glade.h:21
+#: ../data/glade/main.glade.h:20
 msgid "<b>Visual</b>"
 msgstr "<b>Visual</b>"
 
-#: ../data/glade/main.glade.h:22
+#: ../data/glade/main.glade.h:21
 msgid ""
 "<small>The list of languages reflects only the languages for which you have "
 "a dictionary installed.</small>"
@@ -1800,11 +1837,11 @@ msgstr ""
 "<small>La lista de idiomas refleja sólo los idiomas para los cuales tiene un "
 "diccionario instalado.</small>"
 
-#: ../data/glade/main.glade.h:23
+#: ../data/glade/main.glade.h:22
 msgid "<span size=\"smaller\">Example: Mikael or user@server.org</span>"
 msgstr "<span size=\"smaller\">Ejemplo: Miguel  o usuario@servidor.org</span>"
 
-#: ../data/glade/main.glade.h:24
+#: ../data/glade/main.glade.h:23
 msgid ""
 "<span size=\"smaller\">Note: You must select an account if the contact is "
 "unknown</span>"
@@ -1812,105 +1849,105 @@ msgstr ""
 "<span size=\"smaller\">Nota: Si el contacto es desconocido debe seleccionar "
 "una cuenta</span>"
 
-#: ../data/glade/main.glade.h:25
+#: ../data/glade/main.glade.h:24
 msgid "A unique name for this account to identify it personally to you."
 msgstr "Un nombre único para identificar esta cuenta personalmente con usted."
 
-#: ../data/glade/main.glade.h:26
+#: ../data/glade/main.glade.h:25
 msgid "A_vatar:"
 msgstr "A_vatar:"
 
-#: ../data/glade/main.glade.h:27
+#: ../data/glade/main.glade.h:26
 msgid "Accou_nt:"
 msgstr "_Cuenta:"
 
-#: ../data/glade/main.glade.h:30
+#: ../data/glade/main.glade.h:29
 msgid "Add Contact"
 msgstr "Añadir contacto"
 
-#: ../data/glade/main.glade.h:31
+#: ../data/glade/main.glade.h:30
 msgid "Add an account"
 msgstr "Añadir una cuenta nueva"
 
-#: ../data/glade/main.glade.h:32
+#: ../data/glade/main.glade.h:31
 msgid "Alia_s:"
 msgstr "Alia_s:"
 
-#: ../data/glade/main.glade.h:33
+#: ../data/glade/main.glade.h:32
 msgid "Avatars are user chosen images shown in the contact list"
 msgstr ""
 "Los avatares son imágenes elegidas por el usuario que se muestran en la "
 "lista de contactos"
 
-#: ../data/glade/main.glade.h:34
+#: ../data/glade/main.glade.h:33
 msgid "Birthday:"
 msgstr "Cumpleaños:"
 
-#: ../data/glade/main.glade.h:36
+#: ../data/glade/main.glade.h:35
 msgid "Ch_at"
 msgstr "_Charlar"
 
-#: ../data/glade/main.glade.h:37
+#: ../data/glade/main.glade.h:36
 msgid "Change Password"
 msgstr "Cambiar la contraseña"
 
-#: ../data/glade/main.glade.h:38
+#: ../data/glade/main.glade.h:37
 msgid "Chat Rooms"
 msgstr "Salas de chat"
 
-#: ../data/glade/main.glade.h:39
+#: ../data/glade/main.glade.h:38
 msgid "Chat Th_eme:"
 msgstr "_Tema del chat:"
 
-#: ../data/glade/main.glade.h:40
+#: ../data/glade/main.glade.h:39
 msgid "Client:"
 msgstr "Cliente:"
 
-#: ../data/glade/main.glade.h:41
+#: ../data/glade/main.glade.h:40
 msgid "Con_firm:"
 msgstr "Con_firmar:"
 
-#: ../data/glade/main.glade.h:42
+#: ../data/glade/main.glade.h:41
 msgid "Con_tact:"
 msgstr "_Contacto:"
 
-#: ../data/glade/main.glade.h:43
+#: ../data/glade/main.glade.h:42
 msgid "Connect on S_tartup"
 msgstr "Conectar al _iniciar"
 
-#: ../data/glade/main.glade.h:44
+#: ../data/glade/main.glade.h:43
 msgid "Connect/disconnect the selected account"
 msgstr "Conectar/desconectar la cuenta seleccionada"
 
-#: ../data/glade/main.glade.h:45
+#: ../data/glade/main.glade.h:44
 msgid "Contact List - Gossip"
 msgstr "Lista de contactos - Gossip"
 
-#: ../data/glade/main.glade.h:46
+#: ../data/glade/main.glade.h:45
 msgid "Contacts"
 msgstr "Contactos"
 
-#: ../data/glade/main.glade.h:47
+#: ../data/glade/main.glade.h:46
 msgid "Context"
 msgstr "Contexto"
 
-#: ../data/glade/main.glade.h:48
+#: ../data/glade/main.glade.h:47
 msgid "Country:"
 msgstr "País:"
 
-#: ../data/glade/main.glade.h:49
+#: ../data/glade/main.glade.h:48
 msgid "Cr_eate"
 msgstr "Cr_ear"
 
-#: ../data/glade/main.glade.h:50
+#: ../data/glade/main.glade.h:49
 msgid "Decide _Later"
 msgstr "_Decidir más tarde"
 
-#: ../data/glade/main.glade.h:51
+#: ../data/glade/main.glade.h:50
 msgid "Display notifications when contacts come _online"
 msgstr "Mostrar notificaciones cuando los contactos se _conecten"
 
-#: ../data/glade/main.glade.h:52
+#: ../data/glade/main.glade.h:51
 msgid ""
 "Each account you create has a unique name associated with it (for example "
 "<b>Google</b>)."
@@ -1918,25 +1955,29 @@ msgstr ""
 "Cada cuenta que cree tiene un nombre único asociado a ella (por ejemplo "
 "<b>Google</b>)."
 
-#: ../data/glade/main.glade.h:53
+#: ../data/glade/main.glade.h:52
 msgid "Edit Contact"
 msgstr "Editar contacto"
 
-#: ../data/glade/main.glade.h:54
+#: ../data/glade/main.glade.h:53
 msgid "Edit Groups"
 msgstr "Editar grupos"
 
-#: ../data/glade/main.glade.h:55
+#: ../data/glade/main.glade.h:54
 msgid "Email:"
 msgstr "Correo-e:"
 
-#: ../data/glade/main.glade.h:56
+#: ../data/glade/main.glade.h:55
 msgid "Enable sounds when _away"
 msgstr "Activar sonidos al _ausentarse"
 
-#: ../data/glade/main.glade.h:57
+#: ../data/glade/main.glade.h:56
 msgid "Enable sounds when _busy"
 msgstr "Activar sonidos cuando se esté _ocupado"
+
+#: ../data/glade/main.glade.h:57
+msgid "Encrypt all data sent when communicating with the server"
+msgstr "Cifrar todos los datos enviados al comunicarse con el servidor"
 
 #: ../data/glade/main.glade.h:58
 msgid "Enter status message:"
@@ -1947,16 +1988,16 @@ msgid "Forget password"
 msgstr "Olvidar contraseña"
 
 #: ../data/glade/main.glade.h:60
-msgid "Forget password and clear the entry."
-msgstr "Olvidar la contraseña y limpiar la entrada."
-
-#: ../data/glade/main.glade.h:61
 msgid "General"
 msgstr "General"
 
-#: ../data/glade/main.glade.h:62
+#: ../data/glade/main.glade.h:61
 msgid "ID:"
 msgstr "ID:"
+
+#: ../data/glade/main.glade.h:62
+msgid "I_gnore security warnings"
+msgstr "_Ignorar las advertencias de seguridad"
 
 #: ../data/glade/main.glade.h:63
 msgid "If you chose to decide later you will be asked the next time you log on."
@@ -1983,38 +2024,34 @@ msgid "Logi_n ID:"
 msgstr "ID de _usuario:"
 
 #: ../data/glade/main.glade.h:70
-msgid "Login I_D:"
-msgstr "_ID de sesión:"
-
-#: ../data/glade/main.glade.h:71
 msgid "Manage Favorites..."
 msgstr "Gestionar favoritos…"
 
-#: ../data/glade/main.glade.h:75
+#: ../data/glade/main.glade.h:74
 msgid "Notifications"
 msgstr "Notificaciones"
 
-#: ../data/glade/main.glade.h:76
+#: ../data/glade/main.glade.h:75
 msgid "OS:"
 msgstr "SO:"
 
-#: ../data/glade/main.glade.h:77
+#: ../data/glade/main.glade.h:76
 msgid "Pass_word:"
 msgstr "Contra_seña:"
 
-#: ../data/glade/main.glade.h:78
+#: ../data/glade/main.glade.h:77
 msgid "Personal Details"
 msgstr "Detalles personales"
 
-#: ../data/glade/main.glade.h:79
+#: ../data/glade/main.glade.h:78
 msgid "Preferences"
 msgstr "Preferencias"
 
-#: ../data/glade/main.glade.h:80
+#: ../data/glade/main.glade.h:79
 msgid "R_egister"
 msgstr "_Registrar"
 
-#: ../data/glade/main.glade.h:81
+#: ../data/glade/main.glade.h:80
 msgid ""
 "Register account with the Jabber server. If this is a new account, you will "
 "need to register it before connecting."
@@ -2022,29 +2059,25 @@ msgstr ""
 "Registrar esta cuenta en el servidor Jabber. Si esta es una cuenta nueva "
 "deberá registrarla antes de conectarse."
 
-#: ../data/glade/main.glade.h:82
+#: ../data/glade/main.glade.h:81
 msgid "Remove the selected account"
 msgstr "Eliminar la cuenta seleccionada"
 
-#: ../data/glade/main.glade.h:83
-msgid "Reso_urce:"
-msgstr "Re_curso:"
-
-#: ../data/glade/main.glade.h:84
+#: ../data/glade/main.glade.h:82
 msgid "S_how Offline Contacts"
 msgstr "Mo_strar contactos desconectados"
 
-#: ../data/glade/main.glade.h:85
+#: ../data/glade/main.glade.h:83
 msgid "Search"
 msgstr "Buscar"
 
-#: ../data/glade/main.glade.h:86
+#: ../data/glade/main.glade.h:84
 msgid "Search the log and press enter to continue on to the next item found"
 msgstr ""
 "Buscar en el registro y pulsar intro para continuar con el siguiente "
 "elemento encontrado"
 
-#: ../data/glade/main.glade.h:87
+#: ../data/glade/main.glade.h:85
 msgid ""
 "Select the groups you want this contact to appear in, you can select more "
 "than one group or no groups."
@@ -2052,15 +2085,15 @@ msgstr ""
 "Seleccione los grupos donde quiere que aparezca este contacto, se puede "
 "seleccionar más de un grupo o ningún grupo."
 
-#: ../data/glade/main.glade.h:88
+#: ../data/glade/main.glade.h:86
 msgid "Select the name you want to use for this account:"
 msgstr "Seleccione el nombre que quiere usar para esta cuenta:"
 
-#: ../data/glade/main.glade.h:89
+#: ../data/glade/main.glade.h:87
 msgid "Ser_ver:"
 msgstr "Ser_vidor:"
 
-#: ../data/glade/main.glade.h:90
+#: ../data/glade/main.glade.h:88
 msgid ""
 "Set the alias you want to use for:\n"
 "<b>foo@bar.baz</b>\n"
@@ -2072,51 +2105,51 @@ msgstr ""
 "\n"
 "Puede obtener la información del contacto desde el servidor."
 
-#: ../data/glade/main.glade.h:94
+#: ../data/glade/main.glade.h:92
 msgid "Show _avatars"
 msgstr "Mostrar _avatares"
 
-#: ../data/glade/main.glade.h:95
+#: ../data/glade/main.glade.h:93
 msgid "Show _smileys as images"
 msgstr "Mostrar los _emoticonos como imágenes"
 
-#: ../data/glade/main.glade.h:96
+#: ../data/glade/main.glade.h:94
 msgid "Show co_mpact contact list"
 msgstr "Mostrar lista de contactos co_mpacta"
 
-#: ../data/glade/main.glade.h:97
+#: ../data/glade/main.glade.h:95
 msgid "Sort by _name"
 msgstr "Ordenar por _nombre"
 
-#: ../data/glade/main.glade.h:98
+#: ../data/glade/main.glade.h:96
 msgid "Sort by s_tate"
 msgstr "Ordenar por es_tado"
 
-#: ../data/glade/main.glade.h:99
+#: ../data/glade/main.glade.h:97
 msgid "Spell Checker"
 msgstr "Revisor ortográfico"
 
-#: ../data/glade/main.glade.h:100
+#: ../data/glade/main.glade.h:98
 msgid "Spell Checking"
 msgstr "Revisión ortográfica"
 
-#: ../data/glade/main.glade.h:101
+#: ../data/glade/main.glade.h:99
 msgid "Status"
 msgstr "Estado"
 
-#: ../data/glade/main.glade.h:102
+#: ../data/glade/main.glade.h:100
 msgid "Status Message Presets"
 msgstr "Preconfiguraciones de mensajes de estado"
 
-#: ../data/glade/main.glade.h:104
+#: ../data/glade/main.glade.h:102
 msgid "Suggestions for the word:"
 msgstr "Sugerencias para la palabra:"
 
-#: ../data/glade/main.glade.h:105
+#: ../data/glade/main.glade.h:103
 msgid "Themes"
 msgstr "Temas"
 
-#: ../data/glade/main.glade.h:106
+#: ../data/glade/main.glade.h:104
 msgid ""
 "This acts as a filter to the contact list below.\n"
 "\n"
@@ -2134,7 +2167,7 @@ msgstr ""
 "También puede usar el nombre de un grupo para mostrar sólo los contactos en "
 "un grupo específico."
 
-#: ../data/glade/main.glade.h:111
+#: ../data/glade/main.glade.h:109
 msgid ""
 "This acts as a filter to the contact list below. You can use segments of "
 "contact's name or ID, for example, \"jabber.org\" will list everyone using "
@@ -2144,21 +2177,31 @@ msgstr ""
 "utilizar segmentos del nombre del contacto o del ID, por ejemplo, «jabber."
 "org» listará a todo el mundo usando ese servidor"
 
-#: ../data/glade/main.glade.h:112
+#: ../data/glade/main.glade.h:110
+msgid ""
+"This is a legacy option required for supporting older servers which use a "
+"different port (5223) to communicate securely. With newer encryption "
+"techniques, the same port (5222) can be used for both"
+msgstr ""
+"Esta es una opción heredada requerida para soportar servidores antiguos que usan "
+"un puerto diferente (5223) para comunicarse de forma segura. Con las nuevas técnicas "
+"de cifrado, se puede usar el mismo puerto (5222) para ambas."
+
+#: ../data/glade/main.glade.h:111
 msgid "This is the name that will be used on your roster for this contact"
 msgstr "Éste es el nombre que se usará en su lista para este contacto"
 
-#: ../data/glade/main.glade.h:113
+#: ../data/glade/main.glade.h:112
 msgid "This name will be used to identify you in chat windows"
 msgstr "Este nombre se usará para identificarle en sus ventanas de chat"
 
-#: ../data/glade/main.glade.h:114
+#: ../data/glade/main.glade.h:113
 msgid "This name will be used to identify you when new contacts lookup your details"
 msgstr ""
 "Este nombre se usará para identificarle cuando sus contactos nuevos busquen "
 "sus detalles"
 
-#: ../data/glade/main.glade.h:118
+#: ../data/glade/main.glade.h:117
 msgid ""
 "To make sure your password is set correctly, enter your password and then "
 "confirm it below."
@@ -2166,65 +2209,76 @@ msgstr ""
 "Para asegurarse de que su contraseña se establece correctamente, introduzca "
 "su contraseña y después confírmela."
 
-#: ../data/glade/main.glade.h:119
+#: ../data/glade/main.glade.h:118
 msgid "Use _system document font"
 msgstr "Usar la tipografía de documentos del _sistema"
 
-#: ../data/glade/main.glade.h:120
+#: ../data/glade/main.glade.h:119
 msgid "Use default name here from the contact's VCard."
 msgstr "Use aquí el nombre predeterminado de la tarjeta VCard del contacto."
 
-#: ../data/glade/main.glade.h:121
-msgid "Use encryption (SS_L)"
-msgstr "Usar encriptado (SS_L)"
-
-#: ../data/glade/main.glade.h:122
+#: ../data/glade/main.glade.h:120
 msgid "Use system pro_xy"
 msgstr "Usar el pro_xy del sistema"
 
-#: ../data/glade/main.glade.h:123
+#: ../data/glade/main.glade.h:121
 msgid "Use this f_ont:"
 msgstr "Usar esta tip_ografía:"
 
-#: ../data/glade/main.glade.h:124
+#: ../data/glade/main.glade.h:122
 msgid "Use this to filter the links found"
 msgstr "Use esto para filtrar los enlaces encontrados"
 
-#: ../data/glade/main.glade.h:125
+#: ../data/glade/main.glade.h:123
 msgid "Version:"
 msgstr "Versión:"
 
-#: ../data/glade/main.glade.h:126
+#: ../data/glade/main.glade.h:124
 msgid "View Previous Conversations"
 msgstr "Ver conversaciones anteriores"
 
-#: ../data/glade/main.glade.h:127
+#: ../data/glade/main.glade.h:125
 msgid "Web site:"
 msgstr "Sitio web:"
 
-#: ../data/glade/main.glade.h:128
+#: ../data/glade/main.glade.h:126
+msgid ""
+"When checked, any certification errors will stop the connection attempt. For "
+"example, if the server's certificate has expired or the server simply "
+"doesn't have one, it is considered unsafe and the connection attempt will "
+"stop."
+msgstr ""
+"Cuando está seleccionada, cualquier error de certificación parará los intentos de conexión. Por "
+"ejemplo, si el certificado del servidor ha caducado o simplemente, el servidor no tiene uno "
+"se considera inseguro y se parará el intento de conexón."
+
+#: ../data/glade/main.glade.h:127
 msgid "Which account do you want to use?"
 msgstr "¿Qué cuenta quiere usar?"
 
-#: ../data/glade/main.glade.h:129
+#: ../data/glade/main.glade.h:128
 msgid "You are not subscribed to this contact."
 msgstr "Usted no está subscrito a este contacto."
 
-#: ../data/glade/main.glade.h:130
+#: ../data/glade/main.glade.h:129
 msgid "_About"
 msgstr "_Acerca de"
 
-#: ../data/glade/main.glade.h:131
+#: ../data/glade/main.glade.h:130
 msgid "_Accept"
 msgstr "_Aceptar"
 
-#: ../data/glade/main.glade.h:132
+#: ../data/glade/main.glade.h:131
 msgid "_Accounts"
 msgstr "_Cuentas"
 
-#: ../data/glade/main.glade.h:134
+#: ../data/glade/main.glade.h:133
 msgid "_Add to status message list"
 msgstr "_Añadir a la lista de mensajes de estado"
+
+#: ../data/glade/main.glade.h:134
+msgid "_Advanced"
+msgstr "_Avanzado"
 
 #: ../data/glade/main.glade.h:135
 msgid "_Birthday:"
@@ -2261,8 +2315,8 @@ msgid "_For"
 msgstr "_Para"
 
 #: ../data/glade/main.glade.h:143
-msgid "_Full Name:"
-msgstr "_Nombre completo:"
+msgid "_Force older secure connection method"
+msgstr "_Forzar el método de conexión segura antiguo"
 
 #: ../data/glade/main.glade.h:144
 msgid "_Group:"
@@ -2273,16 +2327,16 @@ msgid "_Help"
 msgstr "Ay_uda"
 
 #: ../data/glade/main.glade.h:146
+msgid "_Location:"
+msgstr "_Ubicación:"
+
+#: ../data/glade/main.glade.h:147
 msgid "_Name:"
 msgstr "_Nombre:"
 
-#: ../data/glade/main.glade.h:147
+#: ../data/glade/main.glade.h:148
 msgid "_New Message..."
 msgstr "Mensaje _nuevo…"
-
-#: ../data/glade/main.glade.h:148
-msgid "_Nick Name:"
-msgstr "A_podo:"
 
 #: ../data/glade/main.glade.h:150
 msgid "_Open"
@@ -2317,43 +2371,35 @@ msgid "_Quit"
 msgstr "_Salir"
 
 #: ../data/glade/main.glade.h:158
-msgid "_Quit Message:"
-msgstr "Mensaje de _salida:"
-
-#: ../data/glade/main.glade.h:159
 msgid "_Retrieve"
 msgstr "_Recuperar"
 
-#: ../data/glade/main.glade.h:162
+#: ../data/glade/main.glade.h:160
 msgid "_Show Contact List"
 msgstr "_Mostrar lista de contactos"
 
-#: ../data/glade/main.glade.h:163
+#: ../data/glade/main.glade.h:161
 msgid "_Subscribe"
 msgstr "_Suscribirse"
 
-#: ../data/glade/main.glade.h:164
+#: ../data/glade/main.glade.h:162
+msgid "_Use encryption"
+msgstr "_Usar cifrado"
+
+#: ../data/glade/main.glade.h:163
 msgid "_Use for chat rooms"
 msgstr "_Usar para salas de chat"
 
-#: ../data/glade/main.glade.h:166
+#: ../data/glade/main.glade.h:165
 msgid "_Web site:"
 msgstr "Página _web:"
 
-#: ../data/glade/main.glade.h:167
-msgid "irc account settings"
-msgstr "ajustes de la cuenta IRC"
-
-#: ../data/glade/main.glade.h:168
+#: ../data/glade/main.glade.h:166
 msgid "jabber account settings"
 msgstr "ajustes de la cuenta Jabber"
 
 #. This is the text that should appear on a menu title. Don't include the prefix 'menu title|' in the translation.
-#: ../data/glade/main.glade.h:170
+#: ../data/glade/main.glade.h:168
 msgid "menu title|_Chat"
 msgstr "_Chat"
-
-#: ../data/glade/main.glade.h:173
-msgid "msn account settings"
-msgstr "ajustes de la cuenta MSN"
 
