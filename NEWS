@@ -1,3 +1,34 @@
+NEW in 0.29:
+==============
+- Fixed #514977, crash in Gossip Instant Messenger: (Loudmouth)
+- Fixed #342927, Subscription Dialog should accept special characters (Loudmouth)
+- Fixed #400132, Use about-me information when creating accounts (Wade Mealing, Brian Pepple, Martyn Russell)
+- Fixed #429529, Schema/code mismatch for show offline property (Richard Hult)
+- Fixed #442319, Support for user specified fonts (Martyn Russell)
+- Fixed #468260, Two case targets undefined--compile dies (Loudmouth)
+- Fixed #495672, Fix linking order (Fryderyk Dziarmagowski)
+- Fixed #499119, Compile warning on trunk (Richard Hult)
+- Fixed #505196, Check for virtual functions in GossipTheme before using them (Xavier Claessens)
+- Fixed #524903, Gossip should ask for new password twice to prevent user error (Martyn Russell)
+
+Translations:
+- Updated ca: Jordi Mallach
+- Updated es: Jorge González
+- Updated eu: Iñaki Larrañaga Murgoitio
+- Updated fr: Stéphane Raimbault
+- Updated he: Yair Hershkovitz, Mark Krapivner
+- Updated lt: Žygimantas Beručka, Justina Klingaitė
+- Updated nb: Sigurd Gartmann
+- Updated ne: Pawan Chitrakar, Shyam Krishna Bal
+- Updated nl: Wouter Bolsterlee
+- Updated oc: Yannig Marchegay, Yannig Marchegay (Kokoyaya)
+- Updated ru: Anton Shestakov
+- Updated sv: Daniel Nylander
+
+Help Manual Translations:
+- Updated es: Francisco Javier F. Serrador, Daniel Mustieles
+- Updated oc: Yannig Marchegay, Yannig Marchegay (Kokoyaya)
+
 NEW in 0.28:
 ==============
 - Fixed #371927, crash in Gossip Instant Messenger: Log in after registration (Martyn Russell)

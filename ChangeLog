@@ -1,3 +1,7 @@
+2008-05-08  Martyn Russell  <martyn@imendio.com>
+
+	* configure.ac: Bumped version to 0.29.
+
 2008-05-03  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-account-manager.c:
