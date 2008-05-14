@@ -53,18 +53,31 @@ struct _GossipGroupChatClass {
 	GossipChatClass parent_class;
 };
 
-GType            gossip_group_chat_get_type              (void) G_GNUC_CONST;
-GossipGroupChat *gossip_group_chat_new                   (GossipChatroomProvider *provider,
-							  GossipChatroom         *chatroom);
-GossipChatroomId gossip_group_chat_get_chatroom_id       (GossipGroupChat        *group_chat);
+GType            gossip_group_chat_get_type                   (void) G_GNUC_CONST;
+GossipGroupChat *gossip_group_chat_new                        (GossipChatroomProvider *provider,
+							       GossipChatroom         *chatroom);
+GossipChatroomId gossip_group_chat_get_chatroom_id            (GossipGroupChat        *group_chat);
 GossipChatroomProvider *
-		 gossip_group_chat_get_chatroom_provider (GossipGroupChat        *group_chat);
-GossipChatroom * gossip_group_chat_get_chatroom          (GossipGroupChat        *group_chat);
-GossipContact *  gossip_group_chat_get_selected_contact  (GossipGroupChat        *group_chat);
-void             gossip_group_chat_set_topic             (GossipGroupChat        *group_chat);
-void             gossip_group_chat_set_nick              (GossipGroupChat        *group_chat);
-void             gossip_group_chat_kick                  (GossipGroupChat        *group_chat,
-							  GossipContact          *contact);
+		 gossip_group_chat_get_chatroom_provider      (GossipGroupChat        *group_chat);
+GossipChatroom * gossip_group_chat_get_chatroom               (GossipGroupChat        *group_chat);
+GossipContact *  gossip_group_chat_get_selected_contact       (GossipGroupChat        *group_chat);
+
+/* Actions */
+void             gossip_group_chat_change_subject             (GossipGroupChat        *group_chat);
+void             gossip_group_chat_change_nick                (GossipGroupChat        *group_chat);
+void             gossip_group_chat_contact_kick               (GossipGroupChat        *group_chat,
+							       GossipContact          *contact);
+
+
+/* Privileges */
+gboolean         gossip_group_chat_contact_can_message_all    (GossipGroupChat        *group_chat,
+							       GossipContact          *contact);
+gboolean         gossip_group_chat_contact_can_change_subject (GossipGroupChat        *group_chat,
+							       GossipContact          *contact);
+gboolean         gossip_group_chat_contact_can_kick           (GossipGroupChat        *group_chat,
+							       GossipContact          *contact);
+gboolean         gossip_group_chat_contact_can_change_role    (GossipGroupChat        *group_chat,
+							       GossipContact          *contact);
 
 G_END_DECLS
 

@@ -93,8 +93,8 @@ struct _GossipChatWindowPriv {
 	GtkWidget   *menu_room_join_new;
 	GtkWidget   *menu_room_invite;
 	GtkWidget   *menu_room_add;
-	GtkWidget   *menu_room_set_topic;
-	GtkWidget   *menu_room_set_nick;
+	GtkWidget   *menu_room_change_subject;
+	GtkWidget   *menu_room_change_nick;
 	GtkWidget   *menu_room_kick;
 	GtkWidget   *menu_room_show_contacts;
 
@@ -111,129 +111,129 @@ struct _GossipChatWindowPriv {
 	guint        save_geometry_id;
 };
 
-static void         gossip_chat_window_class_init              (GossipChatWindowClass *klass);
-static void         gossip_chat_window_init                    (GossipChatWindow      *window);
-static void         gossip_chat_window_finalize                (GObject               *object);
-static GdkPixbuf *  chat_window_get_status_pixbuf              (GossipChatWindow      *window,
-								GossipChat            *chat);
-static void         chat_window_accel_cb                       (GtkAccelGroup         *accelgroup,
-								GObject               *object,
-								guint                  key,
-								GdkModifierType        mod,
-								GossipChatWindow      *window);
-static void         chat_window_avatar_changed_cb              (GossipContact         *contact,
-								GParamSpec            *param,
-								GossipChatWindow      *window);
-static void         chat_window_close_clicked_cb               (GtkWidget             *button,
-								GossipChat            *chat);
-static GtkWidget *  chat_window_create_label                   (GossipChatWindow      *window,
-								GossipChat            *chat);
-static void         chat_window_update_status                  (GossipChatWindow      *window,
-								GossipChat            *chat);
-static void         chat_window_update_title                   (GossipChatWindow      *window,
-								GossipChat            *chat);
-static void         chat_window_update_menu                    (GossipChatWindow      *window);
-static gboolean     chat_window_save_geometry_timeout_cb       (GossipChatWindow      *window);
-static gboolean     chat_window_configure_event_cb             (GtkWidget             *widget,
-								GdkEventConfigure     *event,
-								GossipChatWindow      *window);
-static void         chat_window_conv_activate_cb               (GtkWidget             *menuitem,
-								GossipChatWindow      *window);
-static void         chat_window_conv_clear_activate_cb         (GtkWidget             *menuitem,
-								GossipChatWindow      *window);
-static void         chat_window_conv_info_activate_cb          (GtkWidget             *menuitem,
-								GossipChatWindow      *window);
-static void         chat_window_conv_email_activate_cb         (GtkWidget             *menuitem,
-								GossipChatWindow      *window);
-static void         chat_window_conv_add_contact_activate_cb   (GtkWidget             *menuitem,
-								GossipChatWindow      *window);
-static void         chat_window_conv_log_activate_cb           (GtkWidget             *menuitem,
-								GossipChatWindow      *window);
-static void         chat_window_conv_show_contacts_toggled_cb  (GtkWidget             *menuitem,
-								GossipChatWindow      *window);
-static void         chat_window_conv_close_activate_cb         (GtkWidget             *menuitem,
-								GossipChatWindow      *window);
-static void         chat_window_room_activate_cb               (GtkWidget             *menuitem,
-								GossipChatWindow      *window);
-static void         chat_window_room_join_new_activate_cb      (GtkWidget             *menuitem,
-								GossipChatWindow      *window);
-static void         chat_window_room_invite_activate_cb        (GtkWidget             *menuitem,
-								GossipChatWindow      *window);
-static void         chat_window_room_add_activate_cb           (GtkWidget             *menuitem,
-								GossipChatWindow      *window);
-static void         chat_window_room_set_topic_activate_cb     (GtkWidget             *menuitem,
-								GossipChatWindow      *window);
-static void         chat_window_room_set_nick_activate_cb      (GtkWidget             *menuitem,
-								GossipChatWindow      *window);
-static void         chat_window_room_kick_activate_cb          (GtkWidget             *menuitem,
-								GossipChatWindow      *window);
-static void         chat_window_edit_activate_cb               (GtkWidget             *menuitem,
-								GossipChatWindow      *window);
-static void         chat_window_edit_insert_smiley_activate_cb (GtkWidget             *menuitem,
-								GossipChatWindow      *window);
-static void         chat_window_edit_cut_activate_cb           (GtkWidget             *menuitem,
-								GossipChatWindow      *window);
-static void         chat_window_edit_copy_activate_cb          (GtkWidget             *menuitem,
-								GossipChatWindow      *window);
-static void         chat_window_edit_paste_activate_cb         (GtkWidget             *menuitem,
-								GossipChatWindow      *window);
-static void         chat_window_tabs_left_activate_cb          (GtkWidget             *menuitem,
-								GossipChatWindow      *window);
-static void         chat_window_tabs_right_activate_cb         (GtkWidget             *menuitem,
-								GossipChatWindow      *window);
-static void         chat_window_tabs_detach_activate_cb        (GtkWidget             *menuitem,
-								GossipChatWindow      *window);
-static gboolean     chat_window_delete_event_cb                (GtkWidget             *dialog,
-								GdkEvent              *event,
-								GossipChatWindow      *window);
-static void         chat_window_status_changed_cb              (GossipChat            *chat,
-								GossipChatWindow      *window);
-static void         chat_window_update_tooltip                 (GossipChatWindow      *window,
-								GossipChat            *chat);
-static void         chat_window_name_changed_cb                (GossipChat            *chat,
-								const gchar           *name,
-								GossipChatWindow      *window);
-static void         chat_window_composing_cb                   (GossipChat            *chat,
-								gboolean               is_composing,
-								GossipChatWindow      *window);
-static void         chat_window_new_message_cb                 (GossipChat            *chat,
-								GossipMessage         *message,
-								gboolean               is_backlog,
-								GossipChatWindow      *window);
-static GtkNotebook* chat_window_detach_hook                    (GtkNotebook           *source,
-								GtkWidget             *page,
-								gint                   x,
-								gint                   y,
-								gpointer               user_data);
-static void         chat_window_page_switched_cb               (GtkNotebook           *notebook,
-								GtkNotebookPage       *page,
-								gint                   page_num,
-								GossipChatWindow      *window);
-static void         chat_window_page_reordered_cb              (GtkNotebook           *notebook,
-								GtkWidget             *widget,
-								guint                  page_num,
-								GossipChatWindow      *window);
-static void         chat_window_page_added_cb                  (GtkNotebook           *notebook,
-								GtkWidget             *child,
-								guint                  page_num,
-								GossipChatWindow      *window);
-static void         chat_window_page_removed_cb                (GtkNotebook           *notebook,
-								GtkWidget             *child,
-								guint                  page_num,
-								GossipChatWindow      *window);
-static gboolean     chat_window_focus_in_event_cb              (GtkWidget             *widget,
-								GdkEvent              *event,
-								GossipChatWindow      *window);
-static void         chat_window_drag_data_received             (GtkWidget             *widget,
-								GdkDragContext        *context,
-								int                    x,
-								int                    y,
-								GtkSelectionData      *selection,
-								guint                  info,
-								guint                  time,
-								GossipChatWindow      *window);
-static void         chat_window_set_urgency_hint               (GossipChatWindow      *window,
-								gboolean               urgent);
+static void         gossip_chat_window_class_init               (GossipChatWindowClass *klass);
+static void         gossip_chat_window_init                     (GossipChatWindow      *window);
+static void         gossip_chat_window_finalize                 (GObject               *object);
+static GdkPixbuf *  chat_window_get_status_pixbuf               (GossipChatWindow      *window,
+								 GossipChat            *chat);
+static void         chat_window_accel_cb                        (GtkAccelGroup         *accelgroup,
+								 GObject               *object,
+								 guint                  key,
+								 GdkModifierType        mod,
+								 GossipChatWindow      *window);
+static void         chat_window_avatar_changed_cb               (GossipContact         *contact,
+								 GParamSpec            *param,
+								 GossipChatWindow      *window);
+static void         chat_window_close_clicked_cb                (GtkWidget             *button,
+								 GossipChat            *chat);
+static GtkWidget *  chat_window_create_label                    (GossipChatWindow      *window,
+								 GossipChat            *chat);
+static void         chat_window_update_status                   (GossipChatWindow      *window,
+								 GossipChat            *chat);
+static void         chat_window_update_title                    (GossipChatWindow      *window,
+								 GossipChat            *chat);
+static void         chat_window_update_menu                     (GossipChatWindow      *window);
+static gboolean     chat_window_save_geometry_timeout_cb        (GossipChatWindow      *window);
+static gboolean     chat_window_configure_event_cb              (GtkWidget             *widget,
+								 GdkEventConfigure     *event,
+								 GossipChatWindow      *window);
+static void         chat_window_conv_activate_cb                (GtkWidget             *menuitem,
+								 GossipChatWindow      *window);
+static void         chat_window_conv_clear_activate_cb          (GtkWidget             *menuitem,
+								 GossipChatWindow      *window);
+static void         chat_window_conv_info_activate_cb           (GtkWidget             *menuitem,
+								 GossipChatWindow      *window);
+static void         chat_window_conv_email_activate_cb          (GtkWidget             *menuitem,
+								 GossipChatWindow      *window);
+static void         chat_window_conv_add_contact_activate_cb    (GtkWidget             *menuitem,
+								 GossipChatWindow      *window);
+static void         chat_window_conv_log_activate_cb            (GtkWidget             *menuitem,
+								 GossipChatWindow      *window);
+static void         chat_window_conv_show_contacts_toggled_cb   (GtkWidget             *menuitem,
+								 GossipChatWindow      *window);
+static void         chat_window_conv_close_activate_cb          (GtkWidget             *menuitem,
+								 GossipChatWindow      *window);
+static void         chat_window_room_activate_cb                (GtkWidget             *menuitem,
+								 GossipChatWindow      *window);
+static void         chat_window_room_join_new_activate_cb       (GtkWidget             *menuitem,
+								 GossipChatWindow      *window);
+static void         chat_window_room_invite_activate_cb         (GtkWidget             *menuitem,
+								 GossipChatWindow      *window);
+static void         chat_window_room_add_activate_cb            (GtkWidget             *menuitem,
+								 GossipChatWindow      *window);
+static void         chat_window_room_change_subject_activate_cb (GtkWidget             *menuitem,
+								 GossipChatWindow      *window);
+static void         chat_window_room_change_nick_activate_cb    (GtkWidget             *menuitem,
+								 GossipChatWindow      *window);
+static void         chat_window_room_kick_activate_cb           (GtkWidget             *menuitem,
+								 GossipChatWindow      *window);
+static void         chat_window_edit_activate_cb                (GtkWidget             *menuitem,
+								 GossipChatWindow      *window);
+static void         chat_window_edit_insert_smiley_activate_cb  (GtkWidget             *menuitem,
+								 GossipChatWindow      *window);
+static void         chat_window_edit_cut_activate_cb            (GtkWidget             *menuitem,
+								 GossipChatWindow      *window);
+static void         chat_window_edit_copy_activate_cb           (GtkWidget             *menuitem,
+								 GossipChatWindow      *window);
+static void         chat_window_edit_paste_activate_cb          (GtkWidget             *menuitem,
+								 GossipChatWindow      *window);
+static void         chat_window_tabs_left_activate_cb           (GtkWidget             *menuitem,
+								 GossipChatWindow      *window);
+static void         chat_window_tabs_right_activate_cb          (GtkWidget             *menuitem,
+								 GossipChatWindow      *window);
+static void         chat_window_tabs_detach_activate_cb         (GtkWidget             *menuitem,
+								 GossipChatWindow      *window);
+static gboolean     chat_window_delete_event_cb                 (GtkWidget             *dialog,
+								 GdkEvent              *event,
+								 GossipChatWindow      *window);
+static void         chat_window_status_changed_cb               (GossipChat            *chat,
+								 GossipChatWindow      *window);
+static void         chat_window_update_tooltip                  (GossipChatWindow      *window,
+								 GossipChat            *chat);
+static void         chat_window_name_changed_cb                 (GossipChat            *chat,
+								 const gchar           *name,
+								 GossipChatWindow      *window);
+static void         chat_window_composing_cb                    (GossipChat            *chat,
+								 gboolean               is_composing,
+								 GossipChatWindow      *window);
+static void         chat_window_new_message_cb                  (GossipChat            *chat,
+								 GossipMessage         *message,
+								 gboolean               is_backlog,
+								 GossipChatWindow      *window);
+static GtkNotebook* chat_window_detach_hook                     (GtkNotebook           *source,
+								 GtkWidget             *page,
+								 gint                   x,
+								 gint                   y,
+								 gpointer               user_data);
+static void         chat_window_page_switched_cb                (GtkNotebook           *notebook,
+								 GtkNotebookPage       *page,
+								 gint                   page_num,
+								 GossipChatWindow      *window);
+static void         chat_window_page_reordered_cb               (GtkNotebook           *notebook,
+								 GtkWidget             *widget,
+								 guint                  page_num,
+								 GossipChatWindow      *window);
+static void         chat_window_page_added_cb                   (GtkNotebook           *notebook,
+								 GtkWidget             *child,
+								 guint                  page_num,
+								 GossipChatWindow      *window);
+static void         chat_window_page_removed_cb                 (GtkNotebook           *notebook,
+								 GtkWidget             *child,
+								 guint                  page_num,
+								 GossipChatWindow      *window);
+static gboolean     chat_window_focus_in_event_cb               (GtkWidget             *widget,
+								 GdkEvent              *event,
+								 GossipChatWindow      *window);
+static void         chat_window_drag_data_received              (GtkWidget             *widget,
+								 GdkDragContext        *context,
+								 int                    x,
+								 int                    y,
+								 GtkSelectionData      *selection,
+								 guint                  info,
+								 guint                  time,
+								 GossipChatWindow      *window);
+static void         chat_window_set_urgency_hint                (GossipChatWindow      *window,
+								 gboolean               urgent);
 
 static GList *chat_windows = NULL;
 
@@ -313,8 +313,8 @@ gossip_chat_window_init (GossipChatWindow *window)
 				       "menu_room_join_new", &priv->menu_room_join_new,
 				       "menu_room_invite", &priv->menu_room_invite,
 				       "menu_room_add", &priv->menu_room_add,
-				       "menu_room_set_topic", &priv->menu_room_set_topic,
-				       "menu_room_set_nick", &priv->menu_room_set_nick,
+				       "menu_room_change_subject", &priv->menu_room_change_subject,
+				       "menu_room_change_nick", &priv->menu_room_change_nick,
 				       "menu_room_kick", &priv->menu_room_kick,
 				       "menu_room_show_contacts", &priv->menu_room_show_contacts,
 				       "menu_edit_cut", &priv->menu_edit_cut,
@@ -341,8 +341,8 @@ gossip_chat_window_init (GossipChatWindow *window)
 			      "menu_room_join_new", "activate", chat_window_room_join_new_activate_cb,
 			      "menu_room_invite", "activate", chat_window_room_invite_activate_cb,
 			      "menu_room_add", "activate", chat_window_room_add_activate_cb,
-			      "menu_room_set_topic", "activate", chat_window_room_set_topic_activate_cb,
-			      "menu_room_set_nick", "activate", chat_window_room_set_nick_activate_cb,
+			      "menu_room_change_subject", "activate", chat_window_room_change_subject_activate_cb,
+			      "menu_room_change_nick", "activate", chat_window_room_change_nick_activate_cb,
 			      "menu_room_kick", "activate", chat_window_room_kick_activate_cb,
 			      "menu_edit", "activate", chat_window_edit_activate_cb,
 			      "menu_edit_cut", "activate", chat_window_edit_cut_activate_cb,
@@ -841,6 +841,8 @@ chat_window_update_menu (GossipChatWindow *window)
 		GossipChatroom        *chatroom;
 		GossipChatroomId       id;
 		gboolean               saved;
+		gboolean               can_kick = TRUE;
+		gboolean               can_change_subject = TRUE;
 
 		group_chat = GOSSIP_GROUP_CHAT (priv->current_chat);
 		chatroom = gossip_group_chat_get_chatroom (group_chat);
@@ -859,12 +861,19 @@ chat_window_update_menu (GossipChatWindow *window)
 		id = gossip_chatroom_get_id (chatroom);
 		saved = gossip_chatroom_manager_find (manager, id) != NULL;
 
+		can_kick &= is_connected;
+		can_kick &= gossip_group_chat_contact_can_kick (group_chat, own_contact);
+
+		can_change_subject &= is_connected;
+		can_change_subject &= gossip_group_chat_contact_can_change_subject (group_chat, own_contact);
+
 		gtk_widget_set_sensitive (priv->menu_room_add, !saved);
 		gtk_widget_set_sensitive (priv->menu_conv_insert_smiley, is_connected);
 		gtk_widget_set_sensitive (priv->menu_room_join_new, is_connected);
 		gtk_widget_set_sensitive (priv->menu_room_invite, is_connected);
-		gtk_widget_set_sensitive (priv->menu_room_set_topic, is_connected);
-		gtk_widget_set_sensitive (priv->menu_room_set_nick, is_connected);
+		gtk_widget_set_sensitive (priv->menu_room_change_subject, can_change_subject);
+		gtk_widget_set_sensitive (priv->menu_room_change_nick, is_connected);
+		gtk_widget_set_sensitive (priv->menu_room_kick, can_kick);
 
 		/* We need to block the signal here because all we are
 		 * really trying to do is check or uncheck the menu
@@ -1123,6 +1132,7 @@ chat_window_room_activate_cb (GtkWidget        *menuitem,
 	GossipContact        *contact;
 	GossipContact        *own_contact;
 	gboolean              can_kick;
+	gboolean              can_change_subject;
 
 	priv = GET_PRIV (window);
 
@@ -1137,8 +1147,14 @@ chat_window_room_activate_cb (GtkWidget        *menuitem,
 
 	can_kick  = TRUE;
 	can_kick &= contact && !gossip_contact_equal (contact, own_contact);
+	can_kick &= gossip_group_chat_contact_can_kick (group_chat, own_contact);
 
 	gtk_widget_set_sensitive (priv->menu_room_kick, can_kick);
+
+	can_change_subject = TRUE;
+	can_change_subject &= gossip_group_chat_contact_can_change_subject (group_chat, own_contact);
+
+	gtk_widget_set_sensitive (priv->menu_room_change_subject, can_change_subject);
 }
 
 static void
@@ -1203,8 +1219,8 @@ chat_window_room_add_activate_cb (GtkWidget        *menuitem,
 }
 
 static void
-chat_window_room_set_topic_activate_cb (GtkWidget        *menuitem,
-					GossipChatWindow *window)
+chat_window_room_change_subject_activate_cb (GtkWidget        *menuitem,
+					     GossipChatWindow *window)
 {
 	GossipChatWindowPriv *priv;
 	GossipGroupChat      *group_chat;
@@ -1216,12 +1232,12 @@ chat_window_room_set_topic_activate_cb (GtkWidget        *menuitem,
 	}
 
 	group_chat = GOSSIP_GROUP_CHAT (priv->current_chat);
-	gossip_group_chat_set_topic (group_chat);
+	gossip_group_chat_change_subject (group_chat);
 }
 
 static void
-chat_window_room_set_nick_activate_cb (GtkWidget        *menuitem,
-				       GossipChatWindow *window)
+chat_window_room_change_nick_activate_cb (GtkWidget        *menuitem,
+					  GossipChatWindow *window)
 {
 	GossipChatWindowPriv *priv;
 	GossipGroupChat      *group_chat;
@@ -1233,7 +1249,7 @@ chat_window_room_set_nick_activate_cb (GtkWidget        *menuitem,
 	}
 
 	group_chat = GOSSIP_GROUP_CHAT (priv->current_chat);
-	gossip_group_chat_set_nick (group_chat);
+	gossip_group_chat_change_nick (group_chat);
 }
 
 static void
@@ -1250,7 +1266,7 @@ chat_window_room_kick_activate_cb (GtkWidget        *menuitem,
 	}
 
 	group_chat = GOSSIP_GROUP_CHAT (priv->current_chat);
-	gossip_group_chat_kick (group_chat, NULL);
+	gossip_group_chat_contact_kick (group_chat, NULL);
 }
 
 static void

@@ -208,7 +208,7 @@ gossip_chatroom_class_init (GossipChatroomClass *klass)
 					 PROP_SUBJECT,
 					 g_param_spec_string ("subject",
 							      "Chatroom Subject",
-							      "The conversation topic",
+							      "The conversation subject",
 							      "Random Crap",
 							      G_PARAM_READWRITE));
 
@@ -1228,3 +1228,100 @@ gossip_chatroom_contact_left (GossipChatroom *chatroom,
 	}
 }
 
+gboolean 
+gossip_chatroom_contact_can_message_all (GossipChatroom *chatroom,
+					 GossipContact  *contact)
+{
+	GossipChatroomPriv        *priv;
+	GossipChatroomContactInfo *info;
+
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), FALSE);
+	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), FALSE);
+
+	priv = GET_PRIV (chatroom);
+
+	info = gossip_chatroom_get_contact_info	(chatroom, contact);
+	if (!info) {
+		return FALSE;
+	}
+
+	if (info->role != GOSSIP_CHATROOM_ROLE_PARTICIPANT &&
+	    info->role != GOSSIP_CHATROOM_ROLE_MODERATOR) {
+		return FALSE;
+	}
+	
+	return TRUE;
+}
+
+gboolean 
+gossip_chatroom_contact_can_change_subject (GossipChatroom *chatroom,
+					    GossipContact  *contact)
+{
+	GossipChatroomPriv        *priv;
+	GossipChatroomContactInfo *info;
+
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), FALSE);
+	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), FALSE);
+
+	priv = GET_PRIV (chatroom);
+
+	info = gossip_chatroom_get_contact_info	(chatroom, contact);
+	if (!info) {
+		return FALSE;
+	}
+
+	if (info->role != GOSSIP_CHATROOM_ROLE_PARTICIPANT &&
+	    info->role != GOSSIP_CHATROOM_ROLE_MODERATOR) {
+		return FALSE;
+	}
+	
+	return TRUE;
+}
+
+gboolean 
+gossip_chatroom_contact_can_kick (GossipChatroom *chatroom,
+				  GossipContact  *contact)
+{
+	GossipChatroomPriv        *priv;
+	GossipChatroomContactInfo *info;
+
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), FALSE);
+	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), FALSE);
+
+	priv = GET_PRIV (chatroom);
+
+	info = gossip_chatroom_get_contact_info	(chatroom, contact);
+	if (!info) {
+		return FALSE;
+	}
+
+	if (info->role != GOSSIP_CHATROOM_ROLE_MODERATOR) {
+		return FALSE;
+	}
+	
+	return TRUE;
+}
+
+gboolean 
+gossip_chatroom_contact_can_change_role (GossipChatroom *chatroom,
+					 GossipContact  *contact)
+{
+	GossipChatroomPriv        *priv;
+	GossipChatroomContactInfo *info;
+
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), FALSE);
+	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), FALSE);
+
+	priv = GET_PRIV (chatroom);
+
+	info = gossip_chatroom_get_contact_info	(chatroom, contact);
+	if (!info) {
+		return FALSE;
+	}
+
+	if (info->role != GOSSIP_CHATROOM_ROLE_MODERATOR) {
+		return FALSE;
+	}
+	
+	return TRUE;
+}

@@ -1,3 +1,17 @@
+2008-05-14  Martyn Russell  <martyn@imendio.com>
+
+	* data/glade/chat.glade:
+	* libgossip/gossip-chatroom-provider.[ch]:
+	* libgossip/gossip-chatroom.c:
+	* libgossip/gossip-chatroom.h:
+	* libgossip/gossip-jabber-chatrooms.[ch]:
+	* libgossip/gossip-jabber.c:
+	* src/gossip-chat-window.c:
+	* src/gossip-chat.c:
+	* src/gossip-group-chat.[ch]: Disable particular actions depending
+	on people's role in chatrooms according to the defaults set by the
+	standards for MUC.
+
 2008-05-09  Martyn Russell  <martyn@imendio.com>
 
 	* configure.ac: Bumped version to 0.30 and updated copyright date.

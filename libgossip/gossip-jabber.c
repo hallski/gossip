@@ -208,9 +208,9 @@ static void             jabber_chatroom_cancel              (GossipChatroomProvi
 static void             jabber_chatroom_send                (GossipChatroomProvider     *provider,
 							     GossipChatroomId            id,
 							     const gchar                *message);
-static void             jabber_chatroom_change_topic        (GossipChatroomProvider     *provider,
+static void             jabber_chatroom_change_subject      (GossipChatroomProvider     *provider,
 							     GossipChatroomId            id,
-							     const gchar                *new_topic);
+							     const gchar                *new_subject);
 static void             jabber_chatroom_change_nick         (GossipChatroomProvider     *provider,
 							     GossipChatroomId            id,
 							     const gchar                *new_nick);
@@ -2844,7 +2844,7 @@ jabber_chatroom_init (GossipChatroomProviderIface *iface)
 	iface->join            = jabber_chatroom_join;
 	iface->cancel          = jabber_chatroom_cancel;
 	iface->send            = jabber_chatroom_send;
-	iface->change_topic    = jabber_chatroom_change_topic;
+	iface->change_subject  = jabber_chatroom_change_subject;
 	iface->change_nick     = jabber_chatroom_change_nick;
 	iface->leave           = jabber_chatroom_leave;
 	iface->kick            = jabber_chatroom_kick;
@@ -2910,9 +2910,9 @@ jabber_chatroom_send (GossipChatroomProvider *provider,
 }
 
 static void
-jabber_chatroom_change_topic (GossipChatroomProvider *provider,
-			      GossipChatroomId        id,
-			      const gchar            *new_topic)
+jabber_chatroom_change_subject (GossipChatroomProvider *provider,
+				GossipChatroomId        id,
+				const gchar            *new_subject)
 {
 	GossipJabber     *jabber;
 	GossipJabberPriv *priv;
@@ -2922,7 +2922,7 @@ jabber_chatroom_change_topic (GossipChatroomProvider *provider,
 	jabber = GOSSIP_JABBER (provider);
 	priv = GET_PRIV (jabber);
 
-	gossip_jabber_chatrooms_change_topic (priv->chatrooms, id, new_topic);
+	gossip_jabber_chatrooms_change_subject (priv->chatrooms, id, new_subject);
 }
 
 static void

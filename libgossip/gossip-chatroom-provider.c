@@ -34,7 +34,7 @@ enum {
 	CHATROOM_KICKED,
 	CHATROOM_NEW_MESSAGE,
 	CHATROOM_NEW_EVENT,
-	CHATROOM_TOPIC_CHANGED,
+	CHATROOM_SUBJECT_CHANGED,
 	CHATROOM_ERROR,
 	LAST_SIGNAL
 };
@@ -114,8 +114,8 @@ chatroom_provider_base_init (gpointer g_class)
 				      libgossip_marshal_VOID__INT_STRING,
 				      G_TYPE_NONE,
 				      2, G_TYPE_INT, G_TYPE_STRING);
-		signals[CHATROOM_TOPIC_CHANGED] =
-			g_signal_new ("chatroom-topic-changed",
+		signals[CHATROOM_SUBJECT_CHANGED] =
+			g_signal_new ("chatroom-subject-changed",
 				      G_TYPE_FROM_CLASS (g_class),
 				      G_SIGNAL_RUN_LAST,
 				      0,
@@ -187,18 +187,18 @@ gossip_chatroom_provider_send (GossipChatroomProvider *provider,
 }
 
 void
-gossip_chatroom_provider_change_topic (GossipChatroomProvider *provider,
-				       GossipChatroomId        id,
-				       const gchar            *new_topic)
+gossip_chatroom_provider_change_subject (GossipChatroomProvider *provider,
+					 GossipChatroomId        id,
+					 const gchar            *new_subject)
 {
 	g_return_if_fail (GOSSIP_IS_CHATROOM_PROVIDER (provider));
 	g_return_if_fail (id > 0);
-	g_return_if_fail (new_topic != NULL);
+	g_return_if_fail (new_subject != NULL);
 
-	if (GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->change_topic) {
-		GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->change_topic(provider,
-									    id,
-									    new_topic);
+	if (GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->change_subject) {
+		GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->change_subject (provider,
+									       id,
+									       new_subject);
 	}
 }
 

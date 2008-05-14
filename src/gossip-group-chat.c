@@ -71,9 +71,9 @@ struct _GossipGroupChatPriv {
 	GtkWidget              *scrolled_window_input;
 	GtkWidget              *scrolled_window_contacts;
 
-	GtkWidget              *hbox_topic;
-	GtkWidget              *label_topic;
-	gchar                  *topic;
+	GtkWidget              *hbox_subject;
+	GtkWidget              *label_subject;
+	gchar                  *subject;
 
 	GtkWidget              *treeview;
 
@@ -158,10 +158,10 @@ static void            group_chat_new_event_cb                (GossipChatroomPro
 							       gint                          id,
 							       const gchar                  *event,
 							       GossipGroupChat              *chat);
-static void            group_chat_topic_changed_cb            (GossipChatroomProvider       *provider,
+static void            group_chat_subject_changed_cb          (GossipChatroomProvider       *provider,
 							       gint                          id,
 							       GossipContact                *who,
-							       const gchar                  *new_topic,
+							       const gchar                  *new_subject,
 							       GossipGroupChat              *chat);
 static void            group_chat_error_cb                    (GossipChatroomProvider       *provider,
 							       GossipChatroomId              id,
@@ -374,7 +374,7 @@ group_chat_finalize (GObject *object)
 					      group_chat_new_event_cb,
 					      chat);
 	g_signal_handlers_disconnect_by_func (priv->chatroom_provider,
-					      group_chat_topic_changed_cb,
+					      group_chat_subject_changed_cb,
 					      chat);
 	g_signal_handlers_disconnect_by_func (priv->chatroom_provider,
 					      group_chat_error_cb,
@@ -410,7 +410,7 @@ group_chat_finalize (GObject *object)
 	
 	g_object_unref (priv->chatroom_provider);
 
-	g_free (priv->topic);
+	g_free (priv->subject);
 
 	g_list_foreach (priv->private_chats,
 			(GFunc) group_chat_private_chat_stop_foreach,
@@ -484,7 +484,7 @@ group_chat_chatroom_status_update (GossipGroupChat     *chat,
 	priv->last_status = status;
 
 	/* Make widgets available based on state */
-	gtk_widget_set_sensitive (priv->hbox_topic, 
+	gtk_widget_set_sensitive (priv->hbox_subject, 
 				  status == GOSSIP_CHATROOM_STATUS_ACTIVE);
 	gtk_widget_set_sensitive (priv->scrolled_window_contacts, 
 				  status == GOSSIP_CHATROOM_STATUS_ACTIVE);
@@ -886,28 +886,28 @@ group_chat_create_ui (GossipGroupChat *chat)
 				     "border-width", 4,
 				     NULL);
 
-	priv->hbox_topic = gtk_hbox_new (FALSE, 6);
+	priv->hbox_subject = gtk_hbox_new (FALSE, 6);
 
-	gtk_box_pack_start (GTK_BOX (priv->widget), priv->hbox_topic,
+	gtk_box_pack_start (GTK_BOX (priv->widget), priv->hbox_subject,
 			    FALSE, FALSE, 2);
 
 	temp_widget = g_object_new (GTK_TYPE_LABEL,
-				    "label", _("<b>Topic:</b>"),
+				    "label", _("<b>Subject:</b>"),
 				    "use-markup", TRUE,
 				    NULL);
 
-	gtk_box_pack_start (GTK_BOX (priv->hbox_topic), temp_widget,
+	gtk_box_pack_start (GTK_BOX (priv->hbox_subject), temp_widget,
 			    FALSE, FALSE, 0);
 
-	priv->label_topic = g_object_new (GTK_TYPE_LABEL,
-					  "use-markup", TRUE,
-					  "single-line-mode", TRUE,
-					  "ellipsize", PANGO_ELLIPSIZE_END,
-					  "selectable", TRUE,
-					  "xalign", 0.0,
-					  NULL);
+	priv->label_subject = g_object_new (GTK_TYPE_LABEL,
+					    "use-markup", TRUE,
+					    "single-line-mode", TRUE,
+					    "ellipsize", PANGO_ELLIPSIZE_END,
+					    "selectable", TRUE,
+					    "xalign", 0.0,
+					    NULL);
 
-	gtk_box_pack_start (GTK_BOX (priv->hbox_topic), priv->label_topic,
+	gtk_box_pack_start (GTK_BOX (priv->hbox_subject), priv->label_subject,
 			    TRUE, TRUE, 0);
 
 	priv->hpaned = gtk_hpaned_new ();
@@ -1018,7 +1018,7 @@ group_chat_create_ui (GossipGroupChat *chat)
 	g_list_free (list);
 
 	list = g_list_append (NULL, priv->hpaned);
-	list = g_list_append (list, priv->hbox_topic);
+	list = g_list_append (list, priv->hbox_subject);
 	gtk_container_set_focus_chain (GTK_CONTAINER (priv->widget), list);
 	g_list_free (list);
 }
@@ -1096,7 +1096,7 @@ group_chat_kicked_cb (GossipChatroomProvider *provider,
 
 	chatview = GOSSIP_CHAT (chat)->view;
 
-	gtk_widget_set_sensitive (priv->hbox_topic, FALSE);
+	gtk_widget_set_sensitive (priv->hbox_subject, FALSE);
 	gtk_widget_set_sensitive (priv->scrolled_window_contacts, FALSE);
 	gtk_widget_set_sensitive (priv->scrolled_window_input, FALSE);
 	
@@ -1207,10 +1207,10 @@ group_chat_new_event_cb (GossipChatroomProvider *provider,
 }
 
 static void
-group_chat_topic_changed_cb (GossipChatroomProvider *provider,
+group_chat_subject_changed_cb (GossipChatroomProvider *provider,
 			     gint                    id,
 			     GossipContact          *who,
-			     const gchar            *new_topic,
+			     const gchar            *new_subject,
 			     GossipGroupChat        *chat)
 {
 	GossipGroupChatPriv *priv;
@@ -1222,17 +1222,17 @@ group_chat_topic_changed_cb (GossipChatroomProvider *provider,
 		return;
 	}
 
-	gossip_debug (DEBUG_DOMAIN, "[%d] Topic changed by:'%s' to:'%s'",
-		      id, gossip_contact_get_id (who), new_topic);
+	gossip_debug (DEBUG_DOMAIN, "[%d] Subject changed by:'%s' to:'%s'",
+		      id, gossip_contact_get_id (who), new_subject);
 
-	g_free (priv->topic);
-	priv->topic = g_strdup (new_topic);
+	g_free (priv->subject);
+	priv->subject = g_strdup (new_subject);
 	
-	gtk_label_set_text (GTK_LABEL (priv->label_topic), new_topic);
+	gtk_label_set_text (GTK_LABEL (priv->label_subject), new_subject);
 
-	event = g_strdup_printf (_("%s has set the topic: %s"),
+	event = g_strdup_printf (_("%s has set the subject: %s"),
 				 gossip_contact_get_name (who),
-				 new_topic);
+				 new_subject);
 
 	group_chat_set_scrolling_for_events (chat, TRUE);
 	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, event);
@@ -1296,10 +1296,10 @@ group_chat_dialog_response_cb (GtkWidget       *dialog,
 
 				priv = GET_PRIV (chat);
 
-				if (strcmp (purpose, "change-topic") == 0) {
-					gossip_chatroom_provider_change_topic (priv->chatroom_provider,
-									       gossip_chatroom_get_id (priv->chatroom),
-									       str);
+				if (strcmp (purpose, "change-subject") == 0) {
+					gossip_chatroom_provider_change_subject (priv->chatroom_provider,
+										 gossip_chatroom_get_id (priv->chatroom),
+										 str);
 				}
 				else if (strcmp (purpose, "change-nick") == 0) {
 					gossip_chatroom_provider_change_nick (priv->chatroom_provider,
@@ -1396,69 +1396,6 @@ gossip_group_chat_get_selected_contact (GossipGroupChat *group_chat)
 	gtk_tree_model_get (model, &iter, COL_CONTACT, &contact, -1);
 
 	return contact;
-}
-
-void
-gossip_group_chat_set_topic (GossipGroupChat *group_chat)
-{
-	GossipGroupChatPriv *priv;
-
-	g_return_if_fail (GOSSIP_IS_GROUP_CHAT (group_chat));
-
-	priv = GET_PRIV (group_chat);
-
-	group_chat_dialog_new (group_chat, 
-			       "change-topic", 
-			       _("Enter the new topic you want to set for this room:"),
-			       gtk_label_get_text (GTK_LABEL (priv->label_topic)));
-
-}
-
-void
-gossip_group_chat_set_nick (GossipGroupChat *group_chat)
-{
-	GossipGroupChatPriv *priv;
-
-	g_return_if_fail (GOSSIP_IS_GROUP_CHAT (group_chat));
-
-	priv = GET_PRIV (group_chat);
-
-	group_chat_dialog_new (group_chat, 
-			       "change-nick", 
-			       _("Enter the new nickname you want to be known by:"),
-			       gossip_chatroom_get_nick (priv->chatroom));
-}
-
-void
-gossip_group_chat_kick (GossipGroupChat *group_chat,
-			GossipContact   *contact)
-{
-	GossipGroupChatPriv *priv;
-	GossipContact       *contact_to_kick = NULL;
-	gchar               *str;
-
-	g_return_if_fail (GOSSIP_IS_GROUP_CHAT (group_chat));
-
-	priv = GET_PRIV (group_chat);
-
-	if (contact) {
-		contact_to_kick = contact;
-	} else {
-		contact_to_kick = gossip_group_chat_get_selected_contact (group_chat);
-	}
-
-	g_return_if_fail (contact_to_kick != NULL);
-
-	str = g_strdup_printf (_("Kicking %s"), 
-			       gossip_contact_get_name (contact_to_kick)); 
-	gossip_chat_view_append_event (GOSSIP_CHAT (group_chat)->view, str);
-	g_free (str);
-
-	gossip_chatroom_provider_kick (priv->chatroom_provider,
-				       gossip_chatroom_get_id (priv->chatroom),
-				       contact_to_kick,
-				       _("You have been removed from the "
-					 "room by an administrator."));
 }
 
 static void
@@ -2126,7 +2063,7 @@ group_chat_send (GossipGroupChat *chat)
 		}
 		
 		if (contact) {
-			gossip_group_chat_kick (chat, contact);
+			gossip_group_chat_contact_kick (chat, contact);
 		} else {
 			gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, 
 						       _("Nick was not recogized"));
@@ -2134,13 +2071,22 @@ group_chat_send (GossipGroupChat *chat)
 
 		handled_command = TRUE;
 	}
+	else if (g_ascii_strncasecmp (msg, "/subject ", 9) == 0 && strlen (msg) > 9) {
+		const gchar *subject;
+		
+		subject = msg + 9;
+		gossip_chatroom_provider_change_subject (priv->chatroom_provider,
+							 gossip_chatroom_get_id (priv->chatroom),
+							 subject);
+		handled_command = TRUE;
+	}
 	else if (g_ascii_strncasecmp (msg, "/topic ", 7) == 0 && strlen (msg) > 7) {
-		const gchar *topic;
-
-		topic = msg + 7;
-		gossip_chatroom_provider_change_topic (priv->chatroom_provider,
-						       gossip_chatroom_get_id (priv->chatroom),
-						       topic);
+		const gchar *subject;
+		
+		subject = msg + 7;
+		gossip_chatroom_provider_change_subject (priv->chatroom_provider,
+							 gossip_chatroom_get_id (priv->chatroom),
+							 subject);
 		handled_command = TRUE;
 	}
 	else if (g_ascii_strcasecmp (msg, "/clear") == 0) {
@@ -2247,15 +2193,15 @@ group_chat_get_tooltip (GossipChat *chat)
 	group_chat = GOSSIP_GROUP_CHAT (chat);
 	priv = GET_PRIV (group_chat);
 
-	if (priv->topic) {
-		gchar *topic;
+	if (priv->subject) {
+		gchar *subject;
 		gchar *tooltip;
 
-		topic = g_strdup_printf (_("Topic: %s"), priv->topic);
+		subject = g_strdup_printf (_("Subject: %s"), priv->subject);
 		tooltip = g_strdup_printf ("%s\n%s", 
 					   gossip_chatroom_get_name (priv->chatroom), 
-					   topic);
-		g_free (topic);
+					   subject);
+		g_free (subject);
 
 		return tooltip;
 	}
@@ -2544,8 +2490,8 @@ gossip_group_chat_new (GossipChatroomProvider *provider,
 	g_signal_connect (provider, "chatroom-new-event",
 			  G_CALLBACK (group_chat_new_event_cb),
 			  chat);
-	g_signal_connect (provider, "chatroom-topic-changed",
-			  G_CALLBACK (group_chat_topic_changed_cb),
+	g_signal_connect (provider, "chatroom-subject-changed",
+			  G_CALLBACK (group_chat_subject_changed_cb),
 			  chat);
 	g_signal_connect (provider, "chatroom-error",
 			  G_CALLBACK (group_chat_error_cb),
@@ -2616,4 +2562,148 @@ gossip_group_chat_get_chatroom (GossipGroupChat *chat)
 	priv = GET_PRIV (chat);
 
 	return priv->chatroom;
+}
+
+
+void
+gossip_group_chat_change_subject (GossipGroupChat *group_chat)
+{
+	GossipGroupChatPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_GROUP_CHAT (group_chat));
+
+	priv = GET_PRIV (group_chat);
+
+	group_chat_dialog_new (group_chat, 
+			       "change-subject", 
+			       _("Enter the new subject you want to set for this room:"),
+			       gtk_label_get_text (GTK_LABEL (priv->label_subject)));
+
+}
+
+void
+gossip_group_chat_change_nick (GossipGroupChat *group_chat)
+{
+	GossipGroupChatPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_GROUP_CHAT (group_chat));
+
+	priv = GET_PRIV (group_chat);
+
+	group_chat_dialog_new (group_chat, 
+			       "change-nick", 
+			       _("Enter the new nickname you want to be known by:"),
+			       gossip_chatroom_get_nick (priv->chatroom));
+}
+
+void
+gossip_group_chat_contact_kick (GossipGroupChat *group_chat,
+				GossipContact   *contact)
+{
+	GossipGroupChatPriv *priv;
+	GossipContact       *contact_to_kick;
+	gchar               *str;
+
+	g_return_if_fail (GOSSIP_IS_GROUP_CHAT (group_chat));
+
+	priv = GET_PRIV (group_chat);
+
+	if (contact) {
+		contact_to_kick = contact;
+	} else {
+		contact_to_kick = gossip_group_chat_get_selected_contact (group_chat);
+	}
+
+	g_return_if_fail (contact_to_kick != NULL);
+
+	str = g_strdup_printf (_("Kicking %s"), 
+			       gossip_contact_get_name (contact_to_kick)); 
+	gossip_chat_view_append_event (GOSSIP_CHAT (group_chat)->view, str);
+	g_free (str);
+
+	gossip_chatroom_provider_kick (priv->chatroom_provider,
+				       gossip_chatroom_get_id (priv->chatroom),
+				       contact_to_kick,
+				       _("You have been removed from the "
+					 "room by an administrator."));
+}
+
+gboolean
+gossip_group_chat_contact_can_message_all (GossipGroupChat *group_chat,
+					   GossipContact   *contact)
+{
+	GossipGroupChatPriv *priv;
+	GossipContact       *contact_to_use;
+
+	g_return_val_if_fail (GOSSIP_IS_GROUP_CHAT (group_chat), FALSE);
+
+	priv = GET_PRIV (group_chat);
+
+	if (contact) {
+		contact_to_use = contact;
+	} else {
+		contact_to_use = gossip_group_chat_get_selected_contact (group_chat);
+	}
+
+	return gossip_chatroom_contact_can_message_all (priv->chatroom, contact_to_use);
+}
+
+gboolean
+gossip_group_chat_contact_can_change_subject (GossipGroupChat *group_chat,
+					      GossipContact   *contact)
+{
+	GossipGroupChatPriv *priv;
+	GossipContact       *contact_to_use;
+
+	g_return_val_if_fail (GOSSIP_IS_GROUP_CHAT (group_chat), FALSE);
+
+	priv = GET_PRIV (group_chat);
+
+	if (contact) {
+		contact_to_use = contact;
+	} else {
+		contact_to_use = gossip_group_chat_get_selected_contact (group_chat);
+	}
+
+	return gossip_chatroom_contact_can_change_subject (priv->chatroom, contact_to_use);
+}
+
+gboolean
+gossip_group_chat_contact_can_kick (GossipGroupChat *group_chat,
+				    GossipContact   *contact)
+{
+	GossipGroupChatPriv *priv;
+	GossipContact       *contact_to_use;
+
+	g_return_val_if_fail (GOSSIP_IS_GROUP_CHAT (group_chat), FALSE);
+
+	priv = GET_PRIV (group_chat);
+
+	if (contact) {
+		contact_to_use = contact;
+	} else {
+		contact_to_use = gossip_group_chat_get_selected_contact (group_chat);
+	}
+
+	return gossip_chatroom_contact_can_kick (priv->chatroom, contact_to_use);
+}
+
+gboolean
+gossip_group_chat_contact_can_change_role (GossipGroupChat *group_chat,
+					   GossipContact   *contact)
+{
+	GossipGroupChatPriv *priv;
+	GossipContact       *contact_to_use;
+
+	g_return_val_if_fail (GOSSIP_IS_GROUP_CHAT (group_chat), FALSE);
+
+	priv = GET_PRIV (group_chat);
+
+	if (contact) {
+		contact_to_use = contact;
+	} else {
+		contact_to_use = gossip_group_chat_get_selected_contact (group_chat);
+	}
+
+	return gossip_chatroom_contact_can_change_role (priv->chatroom, contact_to_use);
 }

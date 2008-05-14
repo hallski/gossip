@@ -386,7 +386,7 @@ jabber_chatrooms_message_handler (LmMessageHandler      *handler,
 		contact = jabber_chatrooms_get_contact (room, jid, NULL);
 
 		g_signal_emit_by_name (chatrooms->jabber,
-				       "chatroom-topic-changed",
+				       "chatroom-subject-changed",
 				       id, contact, node->value);
 	}
 
@@ -1170,16 +1170,16 @@ gossip_jabber_chatrooms_send (GossipJabberChatrooms *chatrooms,
 }
 
 void
-gossip_jabber_chatrooms_change_topic (GossipJabberChatrooms *chatrooms,
-				      GossipChatroomId       id,
-				      const gchar           *new_topic)
+gossip_jabber_chatrooms_change_subject (GossipJabberChatrooms *chatrooms,
+					GossipChatroomId       id,
+					const gchar           *new_subject)
 {
 	JabberChatroom *room;
 	const gchar    *without_resource;
 	LmMessage      *m;
 
 	g_return_if_fail (chatrooms != NULL);
-	g_return_if_fail (new_topic != NULL);
+	g_return_if_fail (new_subject != NULL);
 
 	room = g_hash_table_lookup (chatrooms->room_id_hash,
 				    GINT_TO_POINTER (id));
@@ -1188,8 +1188,8 @@ gossip_jabber_chatrooms_change_topic (GossipJabberChatrooms *chatrooms,
 		return;
 	}
 
-	gossip_debug (DEBUG_DOMAIN, "ID[%d] Change topic to:'%s'",
-		      id, new_topic);
+	gossip_debug (DEBUG_DOMAIN, "ID[%d] Change subject to:'%s'",
+		      id, new_subject);
 
 	without_resource = gossip_jid_get_without_resource (room->jid);
 
@@ -1197,7 +1197,7 @@ gossip_jabber_chatrooms_change_topic (GossipJabberChatrooms *chatrooms,
 					  LM_MESSAGE_TYPE_MESSAGE,
 					  LM_MESSAGE_SUB_TYPE_GROUPCHAT);
 
-	lm_message_node_add_child (m->node, "subject", new_topic);
+	lm_message_node_add_child (m->node, "subject", new_subject);
 
 	lm_connection_send (chatrooms->connection, m, NULL);
 	lm_message_unref (m);

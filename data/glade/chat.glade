@@ -316,15 +316,15 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="menu_room_set_topic">
+		    <widget class="GtkMenuItem" id="menu_room_change_subject">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Change _Topic...</property>
+		      <property name="label" translatable="yes">Change Subjec_t...</property>
 		      <property name="use_underline">True</property>
 		    </widget>
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="menu_room_set_nick">
+		    <widget class="GtkMenuItem" id="menu_room_change_nick">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Change Na_me...</property>
 		      <property name="use_underline">True</property>

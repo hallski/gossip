@@ -142,81 +142,95 @@ struct _GossipChatroomContactInfo {
 };
 
 /* Chatroom */
-GType             gossip_chatroom_get_type             (void) G_GNUC_CONST;
+GType          gossip_chatroom_get_type                (void) G_GNUC_CONST;
+GossipAccount * 
+               gossip_chatroom_get_account             (GossipChatroom           *chatroom);
+GossipChatroomId 
+               gossip_chatroom_get_id                  (GossipChatroom           *chatroom);
+const gchar *  gossip_chatroom_get_id_str              (GossipChatroom           *chatroom);
+const gchar *  gossip_chatroom_get_name                (GossipChatroom           *chatroom);
+const gchar *  gossip_chatroom_get_description         (GossipChatroom           *chatroom);
+const gchar *  gossip_chatroom_get_subject             (GossipChatroom           *chatroom);
+const gchar *  gossip_chatroom_get_nick                (GossipChatroom           *chatroom);
+const gchar *  gossip_chatroom_get_server              (GossipChatroom           *chatroom);
+const gchar *  gossip_chatroom_get_room                (GossipChatroom           *chatroom);
+const gchar *  gossip_chatroom_get_password            (GossipChatroom           *chatroom);
+gboolean       gossip_chatroom_get_auto_connect        (GossipChatroom           *chatroom);
+gboolean       gossip_chatroom_get_favourite           (GossipChatroom           *chatroom);
 
-GossipAccount *   gossip_chatroom_get_account          (GossipChatroom  *chatroom);
-GossipChatroomId  gossip_chatroom_get_id               (GossipChatroom  *chatroom);
-const gchar *     gossip_chatroom_get_id_str           (GossipChatroom  *chatroom);
-const gchar *     gossip_chatroom_get_name             (GossipChatroom  *chatroom);
-const gchar *     gossip_chatroom_get_description      (GossipChatroom  *chatroom);
-const gchar *     gossip_chatroom_get_subject          (GossipChatroom  *chatroom);
-const gchar *     gossip_chatroom_get_nick             (GossipChatroom  *chatroom);
-const gchar *     gossip_chatroom_get_server           (GossipChatroom  *chatroom);
-const gchar *     gossip_chatroom_get_room             (GossipChatroom  *chatroom);
-const gchar *     gossip_chatroom_get_password         (GossipChatroom  *chatroom);
-gboolean          gossip_chatroom_get_auto_connect     (GossipChatroom  *chatroom);
-gboolean          gossip_chatroom_get_favourite        (GossipChatroom  *chatroom);
 GossipChatroomFeature
-                  gossip_chatroom_get_features         (GossipChatroom  *chatroom);
+               gossip_chatroom_get_features            (GossipChatroom            *chatroom);
 GossipChatroomStatus
-                  gossip_chatroom_get_status           (GossipChatroom  *chatroom);
-guint             gossip_chatroom_get_occupants        (GossipChatroom  *chatroom);
+               gossip_chatroom_get_status              (GossipChatroom            *chatroom);
+guint          gossip_chatroom_get_occupants           (GossipChatroom            *chatroom);
 GossipChatroomError
-                  gossip_chatroom_get_last_error       (GossipChatroom  *chatroom);
+               gossip_chatroom_get_last_error          (GossipChatroom            *chatroom);
 GossipChatroomContactInfo *
-                  gossip_chatroom_get_contact_info     (GossipChatroom  *chatroom,
-							GossipContact   *contact);
+               gossip_chatroom_get_contact_info        (GossipChatroom            *chatroom,
+							GossipContact             *contact);
 
-void              gossip_chatroom_set_account          (GossipChatroom  *chatroom,
-							GossipAccount   *account);
-void              gossip_chatroom_set_name             (GossipChatroom  *chatroom,
-							const gchar     *name);
-void              gossip_chatroom_set_description      (GossipChatroom  *chatroom,
-							const gchar     *description);
-void              gossip_chatroom_set_subject          (GossipChatroom  *chatroom,
-							const gchar     *subject);
-void              gossip_chatroom_set_nick             (GossipChatroom  *chatroom,
-							const gchar     *nick);
-void              gossip_chatroom_set_server           (GossipChatroom  *chatroom,
-							const gchar     *server);
-void              gossip_chatroom_set_room             (GossipChatroom  *chatroom,
-							const gchar     *room);
-void              gossip_chatroom_set_password         (GossipChatroom  *chatroom,
-							const gchar     *password);
-void              gossip_chatroom_set_auto_connect     (GossipChatroom  *chatroom,
-							gboolean         auto_connect);
-void              gossip_chatroom_set_favourite        (GossipChatroom  *chatroom,
-							gboolean         favourite);
-void              gossip_chatroom_set_features         (GossipChatroom  *chatroom,
-							GossipChatroomFeature features);
-void              gossip_chatroom_set_status           (GossipChatroom  *chatroom,
-							GossipChatroomStatus status);
-void              gossip_chatroom_set_occupants        (GossipChatroom  *chatroom,
-							guint            occupants);
-void              gossip_chatroom_set_last_error       (GossipChatroom  *chatroom,
-							GossipChatroomError last_error);
-void              gossip_chatroom_set_contact_info     (GossipChatroom  *chatroom,
-							GossipContact   *contact,
+void           gossip_chatroom_set_account             (GossipChatroom            *chatroom,
+							GossipAccount             *account);
+void           gossip_chatroom_set_name                (GossipChatroom            *chatroom,
+							const gchar               *name);
+void           gossip_chatroom_set_description         (GossipChatroom            *chatroom,
+							const gchar               *description);
+void           gossip_chatroom_set_subject             (GossipChatroom            *chatroom,
+							const gchar               *subject);
+void           gossip_chatroom_set_nick                (GossipChatroom            *chatroom,
+							const gchar               *nick);
+void           gossip_chatroom_set_server              (GossipChatroom            *chatroom,
+							const gchar               *server);
+void           gossip_chatroom_set_room                (GossipChatroom            *chatroom,
+							const gchar               *room);
+void           gossip_chatroom_set_password            (GossipChatroom            *chatroom,
+							const gchar               *password);
+void           gossip_chatroom_set_auto_connect        (GossipChatroom            *chatroom,
+							gboolean                   auto_connect);
+void           gossip_chatroom_set_favourite           (GossipChatroom            *chatroom,
+							gboolean                   favourite);
+void           gossip_chatroom_set_features            (GossipChatroom            *chatroom,
+							GossipChatroomFeature      features);
+void           gossip_chatroom_set_status              (GossipChatroom            *chatroom,
+							GossipChatroomStatus       status);
+void           gossip_chatroom_set_occupants           (GossipChatroom            *chatroom,
+							guint                      occupants);
+void           gossip_chatroom_set_last_error          (GossipChatroom            *chatroom,
+							GossipChatroomError        last_error);
+void           gossip_chatroom_set_contact_info        (GossipChatroom            *chatroom,
+							GossipContact             *contact,
 							GossipChatroomContactInfo *info);
 
 /* Utils */
-guint             gossip_chatroom_hash                  (gconstpointer   key);
-gboolean          gossip_chatroom_equal                 (gconstpointer   v1,
-							 gconstpointer   v2);
-gboolean          gossip_chatroom_equal_full            (gconstpointer   v1,
-							 gconstpointer   v2);
-const gchar *     gossip_chatroom_status_to_string      (GossipChatroomStatus status);
-const gchar *     gossip_chatroom_error_to_string       (GossipChatroomError error);
-const gchar *     gossip_chatroom_role_to_string        (GossipChatroomRole role,
-							 gint               nr);
-const gchar *
-                  gossip_chatroom_affiliation_to_string (GossipChatroomAffiliation  affiliation,
-							 gint                       nr);
-void              gossip_chatroom_contact_joined        (GossipChatroom  *chatroom,
-							 GossipContact   *contact,
-							 GossipChatroomContactInfo *info);
-void              gossip_chatroom_contact_left          (GossipChatroom  *chatroom,
-							 GossipContact   *contact);
+guint          gossip_chatroom_hash                    (gconstpointer              key);
+gboolean       gossip_chatroom_equal                   (gconstpointer              v1,
+							gconstpointer              v2);
+gboolean       gossip_chatroom_equal_full              (gconstpointer              v1,
+							gconstpointer              v2);
+const gchar *  gossip_chatroom_status_to_string        (GossipChatroomStatus       status);
+const gchar *  gossip_chatroom_error_to_string         (GossipChatroomError        error);
+const gchar *  gossip_chatroom_role_to_string          (GossipChatroomRole         role,
+							gint                       nr);
+const gchar *  gossip_chatroom_affiliation_to_string   (GossipChatroomAffiliation  affiliation,
+							gint                       nr);
+
+/* Actions */
+void           gossip_chatroom_contact_joined          (GossipChatroom            *chatroom,
+							GossipContact             *contact,
+							GossipChatroomContactInfo *info);
+void           gossip_chatroom_contact_left            (GossipChatroom            *chatroom,
+							GossipContact             *contact);
+
+/* Privileges */
+gboolean       gossip_chatroom_contact_can_message_all (GossipChatroom            *chatroom,
+							GossipContact             *contact);
+gboolean       gossip_chatroom_contact_can_change_subject 
+                                                        (GossipChatroom           *chatroom,
+							 GossipContact            *contact);
+gboolean       gossip_chatroom_contact_can_kick         (GossipChatroom           *chatroom,
+							 GossipContact            *contact);
+gboolean       gossip_chatroom_contact_can_change_role  (GossipChatroom           *chatroom,
+							 GossipContact            *contact);
 
 G_BEGIN_DECLS
 

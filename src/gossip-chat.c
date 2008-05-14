@@ -707,7 +707,8 @@ gossip_chat_get_is_command (const gchar *str)
 	else if (g_str_has_prefix (str, "/nick")) {
 		return TRUE;
 	}
-	else if (g_str_has_prefix (str, "/topic")) {
+	else if (g_str_has_prefix (str, "/subject") || 
+		 g_str_has_prefix (str, "/topic")) {
 		return TRUE;
 	}
 
