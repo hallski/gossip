@@ -95,7 +95,8 @@ struct _GossipChatWindowPriv {
 	GtkWidget   *menu_room_add;
 	GtkWidget   *menu_room_change_subject;
 	GtkWidget   *menu_room_change_nick;
-	GtkWidget   *menu_room_kick;
+	GtkWidget   *menu_room_contact;
+	GtkWidget   *menu_room_separator;
 	GtkWidget   *menu_room_show_contacts;
 
 	GtkWidget   *menu_edit_cut;
@@ -164,8 +165,6 @@ static void         chat_window_room_add_activate_cb            (GtkWidget      
 static void         chat_window_room_change_subject_activate_cb (GtkWidget             *menuitem,
 								 GossipChatWindow      *window);
 static void         chat_window_room_change_nick_activate_cb    (GtkWidget             *menuitem,
-								 GossipChatWindow      *window);
-static void         chat_window_room_kick_activate_cb           (GtkWidget             *menuitem,
 								 GossipChatWindow      *window);
 static void         chat_window_edit_activate_cb                (GtkWidget             *menuitem,
 								 GossipChatWindow      *window);
@@ -315,7 +314,8 @@ gossip_chat_window_init (GossipChatWindow *window)
 				       "menu_room_add", &priv->menu_room_add,
 				       "menu_room_change_subject", &priv->menu_room_change_subject,
 				       "menu_room_change_nick", &priv->menu_room_change_nick,
-				       "menu_room_kick", &priv->menu_room_kick,
+				       "menu_room_contact", &priv->menu_room_contact,
+				       "menu_room_separator", &priv->menu_room_separator,
 				       "menu_room_show_contacts", &priv->menu_room_show_contacts,
 				       "menu_edit_cut", &priv->menu_edit_cut,
 				       "menu_edit_copy", &priv->menu_edit_copy,
@@ -343,7 +343,6 @@ gossip_chat_window_init (GossipChatWindow *window)
 			      "menu_room_add", "activate", chat_window_room_add_activate_cb,
 			      "menu_room_change_subject", "activate", chat_window_room_change_subject_activate_cb,
 			      "menu_room_change_nick", "activate", chat_window_room_change_nick_activate_cb,
-			      "menu_room_kick", "activate", chat_window_room_kick_activate_cb,
 			      "menu_edit", "activate", chat_window_edit_activate_cb,
 			      "menu_edit_cut", "activate", chat_window_edit_cut_activate_cb,
 			      "menu_edit_copy", "activate", chat_window_edit_copy_activate_cb,
@@ -841,7 +840,6 @@ chat_window_update_menu (GossipChatWindow *window)
 		GossipChatroom        *chatroom;
 		GossipChatroomId       id;
 		gboolean               saved;
-		gboolean               can_kick = TRUE;
 		gboolean               can_change_subject = TRUE;
 
 		group_chat = GOSSIP_GROUP_CHAT (priv->current_chat);
@@ -861,9 +859,6 @@ chat_window_update_menu (GossipChatWindow *window)
 		id = gossip_chatroom_get_id (chatroom);
 		saved = gossip_chatroom_manager_find (manager, id) != NULL;
 
-		can_kick &= is_connected;
-		can_kick &= gossip_group_chat_contact_can_kick (group_chat, own_contact);
-
 		can_change_subject &= is_connected;
 		can_change_subject &= gossip_group_chat_contact_can_change_subject (group_chat, own_contact);
 
@@ -873,7 +868,6 @@ chat_window_update_menu (GossipChatWindow *window)
 		gtk_widget_set_sensitive (priv->menu_room_invite, is_connected);
 		gtk_widget_set_sensitive (priv->menu_room_change_subject, can_change_subject);
 		gtk_widget_set_sensitive (priv->menu_room_change_nick, is_connected);
-		gtk_widget_set_sensitive (priv->menu_room_kick, can_kick);
 
 		/* We need to block the signal here because all we are
 		 * really trying to do is check or uncheck the menu
@@ -1129,10 +1123,7 @@ chat_window_room_activate_cb (GtkWidget        *menuitem,
 {
 	GossipChatWindowPriv *priv;
 	GossipGroupChat      *group_chat;
-	GossipContact        *contact;
-	GossipContact        *own_contact;
-	gboolean              can_kick;
-	gboolean              can_change_subject;
+	GtkWidget            *submenu = NULL;
 
 	priv = GET_PRIV (window);
 
@@ -1142,19 +1133,26 @@ chat_window_room_activate_cb (GtkWidget        *menuitem,
 
 	/* Set up 'selected contact' sensitive items */
 	group_chat = GOSSIP_GROUP_CHAT (priv->current_chat);
-	contact = gossip_group_chat_get_selected_contact (group_chat);
-	own_contact = gossip_chat_get_own_contact (priv->current_chat);
 
-	can_kick  = TRUE;
-	can_kick &= contact && !gossip_contact_equal (contact, own_contact);
-	can_kick &= gossip_group_chat_contact_can_kick (group_chat, own_contact);
+	submenu = gossip_group_chat_contact_menu (group_chat);
+	
+	if (submenu) {
+		GtkMenuItem *item;
 
-	gtk_widget_set_sensitive (priv->menu_room_kick, can_kick);
+		item = GTK_MENU_ITEM (priv->menu_room_contact);
+		
+		gtk_menu_item_set_submenu (item, submenu);
+		gtk_widget_show (priv->menu_room_contact);
+		gtk_widget_show (priv->menu_room_separator);
+	} else {
+		GtkMenuItem *item;
 
-	can_change_subject = TRUE;
-	can_change_subject &= gossip_group_chat_contact_can_change_subject (group_chat, own_contact);
+		item = GTK_MENU_ITEM (priv->menu_room_contact);
 
-	gtk_widget_set_sensitive (priv->menu_room_change_subject, can_change_subject);
+		gtk_menu_item_set_submenu (item, NULL);
+		gtk_widget_hide (priv->menu_room_contact);
+		gtk_widget_hide (priv->menu_room_separator);
+	}
 }
 
 static void
@@ -1250,23 +1248,6 @@ chat_window_room_change_nick_activate_cb (GtkWidget        *menuitem,
 
 	group_chat = GOSSIP_GROUP_CHAT (priv->current_chat);
 	gossip_group_chat_change_nick (group_chat);
-}
-
-static void
-chat_window_room_kick_activate_cb (GtkWidget        *menuitem,
-				   GossipChatWindow *window)
-{
-	GossipChatWindowPriv *priv;
-	GossipGroupChat      *group_chat;
-	
-	priv = GET_PRIV (window);
-
-	if (!gossip_chat_is_group_chat (priv->current_chat)) {
-		return;
-	}
-
-	group_chat = GOSSIP_GROUP_CHAT (priv->current_chat);
-	gossip_group_chat_contact_kick (group_chat, NULL);
 }
 
 static void

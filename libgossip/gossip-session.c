@@ -1954,7 +1954,18 @@ gossip_session_get_version (GossipSession          *session,
 	jabber = session_get_protocol (session, contact);
 
 	if (!jabber) {
-		return FALSE;
+		/* Temporary contact. Use account */
+		GossipAccount           *account;
+		GossipSessionPriv        *priv = GET_PRIV (session);
+
+		account = gossip_session_find_account (session, contact);
+		g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), FALSE);
+
+		jabber = g_hash_table_lookup (priv->accounts, account);
+ 		g_object_unref (account);
+
+		g_return_val_if_fail (jabber, FALSE);
+
 	}
 
 	return gossip_jabber_get_version (jabber, contact,

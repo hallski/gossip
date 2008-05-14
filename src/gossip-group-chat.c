@@ -44,6 +44,7 @@
 #include "gossip-chat-invite.h"
 #include "gossip-chat-view.h"
 #include "gossip-contact-list-iface.h"
+#include "gossip-contact-info-dialog.h"
 #include "gossip-glade.h"
 #include "gossip-group-chat.h"
 #include "gossip-private-chat.h"
@@ -225,6 +226,9 @@ static void            group_chat_cl_row_activated_cb         (GtkTreeView      
 							       GtkTreePath                  *path,
 							       GtkTreeViewColumn            *col,
 							       GossipGroupChat              *chat);
+static gboolean        group_chat_cl_button_press_event_cb    (GtkTreeView                  *view,
+							       GdkEventButton               *event,
+							       GossipGroupChat              *chat);  
 static gint            group_chat_cl_sort_func                (GtkTreeModel                 *model,
 							       GtkTreeIter                  *iter_a,
 							       GtkTreeIter                  *iter_b,
@@ -255,6 +259,16 @@ static void            group_chat_cl_expander_cell_data_func  (GtkTreeViewColumn
 static void            group_chat_cl_set_background           (GossipGroupChat              *chat,
 							       GtkCellRenderer              *cell,
 							       gboolean                      is_header);
+static GtkWidget *     group_chat_cl_menu_create              (GossipGroupChat              *chat,
+							       GossipContact                *contact);
+static void            group_chat_cl_menu_destroy             (GtkWidget                    *menu,
+	                                                       GossipGroupChat              *chat);
+static void            group_chat_cl_menu_info_activate_cb    (GtkMenuItem                  *menuitem,
+	                                                       GossipGroupChat              *chat);
+static void            group_chat_cl_menu_chat_activate_cb    (GtkMenuItem                  *menuitem,
+	                                                       GossipGroupChat              *chat);
+static void            group_chat_cl_menu_kick_activate_cb    (GtkMenuItem                  *menuitem,
+	                                                       GossipGroupChat              *chat);
 static void            group_chat_set_scrolling_for_events    (GossipGroupChat              *chat,
 							       gboolean                      disable);
 static gboolean        group_chat_scroll_down_when_idle_func  (GossipGroupChat              *chat);
@@ -593,14 +607,94 @@ group_chat_join_cb (GossipChatroomProvider *provider,
 	group_chat_chatroom_status_update (GOSSIP_GROUP_CHAT (chat), error);
 }
 
+static GtkWidget*
+group_chat_cl_menu_create (GossipGroupChat *chat,
+			   GossipContact   *contact)
+{
+	GladeXML      *glade;
+	GtkWidget     *menu;
+	GtkWidget     *menu_item_kick;
+	GossipContact *own_contact;
+	gboolean       can_kick = TRUE;
+	
+	g_return_val_if_fail (GOSSIP_IS_GROUP_CHAT (chat), NULL);
+	
+	glade = gossip_glade_get_file ("group-chat.glade",
+				       "contact_menu",
+				       NULL,
+				       "contact_menu", &menu,
+				       "kick", &menu_item_kick,
+				       NULL);
+	
+	gossip_glade_connect (glade,
+			      chat,
+			      "contact_menu", "selection-done", group_chat_cl_menu_destroy,
+			      "private_chat", "activate", group_chat_cl_menu_chat_activate_cb,
+			      "contact_information", "activate", group_chat_cl_menu_info_activate_cb,
+			      "kick", "activate", group_chat_cl_menu_kick_activate_cb,
+			      NULL);
+	
+	own_contact = gossip_chat_get_own_contact (GOSSIP_CHAT (chat));
+	can_kick &= gossip_chat_is_connected (GOSSIP_CHAT (chat));
+	can_kick &= gossip_group_chat_contact_can_kick (chat, own_contact);
+
+	gtk_widget_set_sensitive (menu_item_kick, can_kick);
+	
+	g_object_unref (glade); 
+	
+	return menu;    
+}
+
+static void
+group_chat_cl_menu_destroy (GtkWidget       *menu,
+			    GossipGroupChat *chat)
+{
+	gtk_widget_destroy (menu);
+	g_object_unref (menu);
+}
+
+static void
+group_chat_cl_menu_info_activate_cb (GtkMenuItem     *menuitem,
+				     GossipGroupChat *chat)
+{
+	GossipContact *contact;
+	
+	contact = gossip_group_chat_get_selected_contact (chat);
+	
+	gossip_contact_info_dialog_show (contact,
+					 NULL);
+	g_object_unref (contact);
+	
+}
+static void
+group_chat_cl_menu_chat_activate_cb (GtkMenuItem     *menuitem,
+				     GossipGroupChat *chat)
+{
+	GossipContact *contact;
+	
+	contact = gossip_group_chat_get_selected_contact(chat);
+	
+	group_chat_private_chat_new (chat, contact);
+	
+	g_object_unref (contact);
+	
+}
+
+static void
+group_chat_cl_menu_kick_activate_cb (GtkMenuItem     *menuitem,
+				     GossipGroupChat *chat)
+{
+	gossip_group_chat_contact_kick (chat, NULL);
+}
+ 
 static void
 group_chat_protocol_connected_cb (GossipSession   *session,
 				  GossipAccount   *account,
 				  GossipJabber    *jabber,
 				  GossipGroupChat *chat)
 {
-	GossipGroupChatPriv  *priv;
-	GossipAccount        *this_account;
+	GossipGroupChatPriv *priv;
+	GossipAccount       *this_account;
 
 	priv = GET_PRIV (chat);
 
@@ -1474,6 +1568,50 @@ group_chat_cl_sort_func (GtkTreeModel *model,
 	}
 }
 
+static gboolean
+group_chat_cl_button_press_event_cb (GtkTreeView     *view,
+				     GdkEventButton  *event,
+				     GossipGroupChat *chat)
+{
+	GtkWidget        *menu;
+	GtkTreePath      *path;
+	GtkTreeSelection *selection;
+	gboolean          row_exists;
+	
+	if (event->button != 3) {
+		return FALSE;
+	}
+	
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
+	
+	gtk_widget_grab_focus (GTK_WIDGET (view));
+	
+	row_exists = gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (view),
+						    event->x, event->y,
+						    &path,
+						    NULL, NULL, NULL);
+	if (!row_exists) {
+		return FALSE;
+	}
+	
+	gtk_tree_selection_unselect_all (selection);
+	gtk_tree_selection_select_path (selection, path);
+	
+	menu = gossip_group_chat_contact_menu (chat);
+		
+	if (menu) {
+		g_object_ref (menu);
+		g_object_ref_sink (menu);
+		g_object_unref (menu);
+		gtk_widget_show (menu);
+		gtk_menu_popup (GTK_MENU (menu),
+				NULL, NULL, NULL, NULL,
+				event->button, event->time);
+	}
+	
+	return TRUE;
+}
+
 static void
 group_chat_cl_setup (GossipGroupChat *chat)
 {
@@ -1548,8 +1686,11 @@ group_chat_cl_setup (GossipGroupChat *chat)
 
 	gtk_tree_view_append_column (treeview, col);
 
-	g_signal_connect (treeview, "row_activated",
+	g_signal_connect (treeview, "row-activated",
 			  G_CALLBACK (group_chat_cl_row_activated_cb),
+			  chat);
+	g_signal_connect (treeview, "button-press-event",
+			  G_CALLBACK (group_chat_cl_button_press_event_cb),
 			  chat);
 }
 
@@ -2565,6 +2706,37 @@ gossip_group_chat_get_chatroom (GossipGroupChat *chat)
 }
 
 
+GtkWidget *
+gossip_group_chat_contact_menu (GossipGroupChat *group_chat)
+{
+	GossipGroupChatPriv *priv;
+	GossipContact       *contact;
+	GtkWidget           *menu = NULL;
+
+	g_return_val_if_fail (GOSSIP_IS_GROUP_CHAT (group_chat), NULL);
+
+	priv = GET_PRIV (group_chat);
+
+	if (!gossip_chat_is_connected (GOSSIP_CHAT (group_chat))) {
+		return NULL;
+	}
+
+	contact = gossip_group_chat_get_selected_contact (group_chat);
+	if (!contact) {
+		return NULL;
+	}
+	
+	if (gossip_contact_equal (contact, priv->own_contact)) {
+		g_object_unref (contact);
+		return NULL;
+	}
+
+	menu = group_chat_cl_menu_create (group_chat, contact);
+	g_object_unref (contact);
+
+	return menu;
+}
+
 void
 gossip_group_chat_change_subject (GossipGroupChat *group_chat)
 {
@@ -2707,3 +2879,4 @@ gossip_group_chat_contact_can_change_role (GossipGroupChat *group_chat,
 
 	return gossip_chatroom_contact_can_change_role (priv->chatroom, contact_to_use);
 }
+

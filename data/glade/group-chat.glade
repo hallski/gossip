@@ -1133,4 +1133,60 @@
   </child>
 </widget>
 
+<widget class="GtkMenu" id="contact_menu">
+  <property name="visible">True</property>
+
+  <child>
+    <widget class="GtkImageMenuItem" id="private_chat">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Private Chat</property>
+      <property name="use_underline">True</property>
+
+      <child internal-child="image">
+	<widget class="GtkImage" id="image12">
+	  <property name="visible">True</property>
+	  <property name="pixbuf">gossip-message.png</property>
+	  <property name="xalign">0.5</property>
+	  <property name="yalign">0.5</property>
+	  <property name="xpad">0</property>
+	  <property name="ypad">0</property>
+	</widget>
+      </child>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkImageMenuItem" id="contact_information">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Contact Information</property>
+      <property name="use_underline">True</property>
+
+      <child internal-child="image">
+	<widget class="GtkImage" id="image13">
+	  <property name="visible">True</property>
+	  <property name="pixbuf">vcard_16.png</property>
+	  <property name="xalign">0.5</property>
+	  <property name="yalign">0.5</property>
+	  <property name="xpad">0</property>
+	  <property name="ypad">0</property>
+	</widget>
+      </child>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkSeparatorMenuItem" id="separator1">
+      <property name="visible">True</property>
+    </widget>
+  </child>
+
+  <child>
+    <widget class="GtkMenuItem" id="kick">
+      <property name="visible">True</property>
+      <property name="label" translatable="yes">Kick...</property>
+      <property name="use_underline">True</property>
+    </widget>
+  </child>
+</widget>
+
 </glade-interface>

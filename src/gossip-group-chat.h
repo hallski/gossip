@@ -61,13 +61,13 @@ GossipChatroomProvider *
 		 gossip_group_chat_get_chatroom_provider      (GossipGroupChat        *group_chat);
 GossipChatroom * gossip_group_chat_get_chatroom               (GossipGroupChat        *group_chat);
 GossipContact *  gossip_group_chat_get_selected_contact       (GossipGroupChat        *group_chat);
+GtkWidget *      gossip_group_chat_contact_menu               (GossipGroupChat        *group_chat);
 
 /* Actions */
 void             gossip_group_chat_change_subject             (GossipGroupChat        *group_chat);
 void             gossip_group_chat_change_nick                (GossipGroupChat        *group_chat);
 void             gossip_group_chat_contact_kick               (GossipGroupChat        *group_chat,
 							       GossipContact          *contact);
-
 
 /* Privileges */
 gboolean         gossip_group_chat_contact_can_message_all    (GossipGroupChat        *group_chat,

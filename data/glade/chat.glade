@@ -332,21 +332,21 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkSeparatorMenuItem" id="separator12">
+		    <widget class="GtkSeparatorMenuItem" id="menu_room_separator">
 		      <property name="visible">True</property>
 		    </widget>
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="menu_room_kick">
-		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">_Kick...</property>
+		    <widget class="GtkMenuItem" id="menu_room_contact">
+		      <property name="visible">False</property>
+		      <property name="label" translatable="yes">_Contact</property>
 		      <property name="use_underline">True</property>
 		    </widget>
 		  </child>
 
 		  <child>
-		    <widget class="GtkSeparatorMenuItem" id="separator10">
+		    <widget class="GtkSeparatorMenuItem" id="menu_room_separator_bottom">
 		      <property name="visible">True</property>
 		    </widget>
 		  </child>

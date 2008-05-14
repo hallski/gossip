@@ -230,23 +230,15 @@ gossip_jabber_vcard_get (GossipJabber         *jabber,
 	LmMessage          *m;
 	LmMessageNode      *node;
 	LmMessageHandler   *handler;
-	GossipJID          *jid;
 	GossipCallbackData *data;
-	const gchar        *jid_without_resource;
 
 	connection = gossip_jabber_get_connection (jabber);
 
-	jid = gossip_jid_new (jid_str);
-	jid_without_resource = gossip_jid_get_without_resource (jid);
+	gossip_debug (DEBUG_DOMAIN, "Requesting VCard, JID:'%s'", jid_str);
 
-	gossip_debug (DEBUG_DOMAIN, 
-		      "Getting for JID:'%s'...", 
-		      jid_without_resource);
-
-	m = lm_message_new (jid_without_resource,
+	m = lm_message_new (jid_str,
 			    LM_MESSAGE_TYPE_IQ);
 
-	gossip_jid_unref (jid);
 
 	node = lm_message_node_add_child (m->node, "vCard", NULL);
 	lm_message_node_set_attribute (node, "xmlns", "vcard-temp");
@@ -262,7 +254,7 @@ gossip_jabber_vcard_get (GossipJabber         *jabber,
 	if (!lm_connection_send_with_reply (connection, m, handler, error)) {
 		gossip_debug (DEBUG_DOMAIN, 
 			      "Failed to get VCard for JID:'%s' (could not send request)", 
-			      jid_without_resource);
+			      jid_str);
 
 		lm_message_unref (m);
 		lm_message_handler_unref (handler);

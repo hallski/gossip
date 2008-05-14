@@ -1,5 +1,17 @@
 2008-05-14  Martyn Russell  <martyn@imendio.com>
 
+	* ChangeLog:
+	* data/glade/chat.glade:
+	* data/glade/group-chat.glade:
+	* libgossip/gossip-jabber-vcard.c:
+	* libgossip/gossip-session.c:
+	* src/gossip-chat-window.c:
+	* src/gossip-group-chat.[ch]: Add a context menu for users in a
+	chatroom and append it to the main menu dynamically. Fixes bug
+	#522388 (Igor Stepura, Martyn Russell).
+
+2008-05-14  Martyn Russell  <martyn@imendio.com>
+
 	* data/glade/chat.glade:
 	* libgossip/gossip-chatroom-provider.[ch]:
 	* libgossip/gossip-chatroom.c:
