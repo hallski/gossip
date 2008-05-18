@@ -81,24 +81,24 @@ enum {
 
 static guint signals[TRANSFER_LAST_SIGNAL] = { 0 };
 
-static void     bs_transfer_finalize               (GObject         *object);
-static void     bs_transfer_free_streamhost_data   (gpointer         data);
-static void     bs_transfer_client_connected_cb    (LmBsClient      *client,
-						    StreamHostData  *sreamhost_data);
-static void     bs_transfer_client_disconnected_cb (LmBsClient      *client,
-						    StreamHostData  *sreamhost_data);
-static gboolean bs_transfer_channel_open_for_write (LmBsTransfer    *transfer,
-						    GError         **error);
-static gboolean bs_transfer_channel_open_for_read  (LmBsTransfer    *transfer,
-						    GError         **error);
-static gchar *  bs_transfer_io_error_to_string     (GError          *error);
-static void     bs_transfer_initiated              (LmBsTransfer    *transfer);
-static void     bs_transfer_complete               (LmBsTransfer    *transfer);
-static void     bs_transfer_progress               (LmBsTransfer    *transfer);
-static void     bs_transfer_error                  (LmBsTransfer    *transfer,
-						    const gchar     *error_msg);
-static gchar *  bs_transfer_get_initiator          (LmBsTransfer    *transfer);
-static gchar *  bs_transfer_get_target             (LmBsTransfer    *transfer);
+static void         bs_transfer_finalize               (GObject         *object);
+static void         bs_transfer_free_streamhost_data   (gpointer         data);
+static void         bs_transfer_client_connected_cb    (LmBsClient      *client,
+							StreamHostData  *sreamhost_data);
+static void         bs_transfer_client_disconnected_cb (LmBsClient      *client,
+							StreamHostData  *sreamhost_data);
+static gboolean     bs_transfer_channel_open_for_write (LmBsTransfer    *transfer,
+							GError         **error);
+static gboolean     bs_transfer_channel_open_for_read  (LmBsTransfer    *transfer,
+							GError         **error);
+static const gchar *bs_transfer_io_error_to_string     (GError          *error);
+static void         bs_transfer_initiated              (LmBsTransfer    *transfer);
+static void         bs_transfer_complete               (LmBsTransfer    *transfer);
+static void         bs_transfer_progress               (LmBsTransfer    *transfer);
+static void         bs_transfer_error                  (LmBsTransfer    *transfer,
+							const gchar     *error_msg);
+static gchar *      bs_transfer_get_initiator          (LmBsTransfer    *transfer);
+static gchar *      bs_transfer_get_target             (LmBsTransfer    *transfer);
 
 G_DEFINE_TYPE (LmBsTransfer, lm_bs_transfer, G_TYPE_OBJECT);
 
@@ -303,7 +303,7 @@ bs_transfer_channel_open_for_read (LmBsTransfer  *transfer,
 	return TRUE;
 }
 
-static gchar*
+static const gchar *
 bs_transfer_io_error_to_string (GError *error)
 {
 	g_return_val_if_fail (error != NULL, NULL);

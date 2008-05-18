@@ -1,5 +1,10 @@
 2008-05-18  Richard Hult  <richard@imendio.com>
 
+	* libloudermouth/lm-bs-transfer.c:
+	(bs_transfer_channel_open_for_read): Return const string.
+
+2008-05-18  Richard Hult  <richard@imendio.com>
+
 	* data/glade/group-chat.glade: Don't show windows by default.
 
 	* src/gossip-edit-chatroom-dialog.c:
