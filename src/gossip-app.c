@@ -504,7 +504,7 @@ app_setup_throbber (void)
 	GossipAppPriv *priv;
 	GtkWidget     *ebox;
 	GtkToolItem   *item;
-	gchar         *str;
+	const gchar   *str;
 
 	priv = GET_PRIV (app);
 
