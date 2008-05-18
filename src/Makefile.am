@@ -29,6 +29,10 @@ if HAVE_LIBNOTIFY
 libnotify_sources = gossip-notify.c gossip-notify.h
 endif
 
+if HAVE_PLATFORM_OSX
+dock_sources = gossip-mac-dock.c gossip-mac-dock.h
+endif
+
 # Main application 
 bin_PROGRAMS = gossip
 
@@ -36,6 +40,7 @@ gossip_SOURCES = 				                        	\
 	$(dbus_sources)			     	                           	\
 	$(galago_sources)		     	                           	\
 	$(libnotify_sources)		     	                           	\
+	$(dock_sources)		     	       	                    		\
 	ephy-spinner.c                     ephy-spinner.h	  	   	\
 	gossip-about-dialog.c              gossip-about-dialog.h	   	\
 	gossip-accounts-dialog.c           gossip-accounts-dialog.h	   	\
@@ -138,5 +143,6 @@ EXTRA_DIST =					\
 	$(dbus_sources)				\
 	$(dbus_binding_sources)			\
 	$(galago_sources)			\
-	$(libnotify_sources)
+	$(libnotify_sources)			\
+	$(dock_sources)
 
