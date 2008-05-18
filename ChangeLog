@@ -1,5 +1,11 @@
 2008-05-18  Richard Hult  <richard@imendio.com>
 
+	* data/packaging/mac/gossip.bundle:
+	* data/packaging/mac/environmebt.sh: Use builtin pango module and
+	set up the gossip path.
+
+2008-05-18  Richard Hult  <richard@imendio.com>
+
 	* configure.ac: Require new mac integration version.
 
 	* src/gossip-app.c: (app_setup): Setup mac menu key handler.
