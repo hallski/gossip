@@ -189,5 +189,6 @@ gossip_edit_chatroom_dialog_show (GtkWindow      *parent,
 	if (parent) {
 		gtk_window_set_transient_for (GTK_WINDOW (dialog->dialog), parent);
 	}
-}
 
+	gtk_widget_show (dialog->dialog);
+}

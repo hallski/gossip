@@ -1455,7 +1455,11 @@ static void
 app_room_manage_favorites_cb (GtkWidget *window,
 			      GossipApp *app)
 {
-	gossip_chatrooms_window_show (NULL, FALSE);
+	GossipAppPriv *priv;
+
+	priv = GET_PRIV (app);
+
+	gossip_chatrooms_window_show (GTK_WINDOW (priv->window), FALSE);
 }
 
 static void

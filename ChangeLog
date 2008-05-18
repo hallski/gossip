@@ -1,3 +1,14 @@
+2008-05-18  Richard Hult  <richard@imendio.com>
+
+	* data/glade/group-chat.glade: Don't show windows by default.
+
+	* src/gossip-edit-chatroom-dialog.c:
+	(gossip_edit_chatroom_dialog_show): Show the window after it's set
+	up.
+
+	* src/gossip-app.c: (app_room_manage_favorites_cb): Set transient
+	like for the other dialogs.
+
 2008-05-14  Martyn Russell  <martyn@imendio.com>
 
 	* ChangeLog:
