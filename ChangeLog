@@ -1,5 +1,11 @@
 2008-05-18  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-app.c: (app_finalize), (app_setup),
+	(app_status_icon_popup_menu_cb), (app_status_icon_create_menu):
+	Disable the status icon popup menu on mac.
+
+2008-05-18  Richard Hult  <richard@imendio.com>
+
 	* data/packaging/mac/gossip.bundle:
 	* data/packaging/mac/environmebt.sh: Use builtin pango module and
 	set up the gossip path.

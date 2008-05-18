@@ -421,7 +421,9 @@ app_finalize (GObject *object)
 		g_hash_table_destroy (priv->reconnects);
 	}
 
-	gtk_widget_destroy (priv->popup_menu);
+	if (priv->popup_menu) {
+		gtk_widget_destroy (priv->popup_menu);
+	}
 
 	g_object_unref (priv->tooltips);
 
@@ -904,7 +906,6 @@ app_setup (GossipSession *session)
 	/* Setup the contact list */
 	app_setup_contact_list (sw, show_offline_widget);
 
-	/* Sort criterium */
 	/* Set window to be hidden. If doesn't have status icon, show window
 	 * and mask "chat_hide_list".
 	 */
@@ -2039,6 +2040,11 @@ app_status_icon_popup_menu_cb (GtkStatusIcon  *status_icon,
 
 	priv = GET_PRIV (app);
 
+	if (!priv->popup_menu) {
+		/* On Mac, there is no menu (at least for now). */ 
+		return;
+	}
+
 	show = gossip_window_get_is_visible (GTK_WINDOW (priv->window));
 
 	g_signal_handlers_block_by_func (priv->popup_menu_show_list_item,
@@ -2067,6 +2073,11 @@ app_status_icon_create_menu (void)
 	GossipAppPriv *priv;
 	GladeXML      *glade;
 	GtkWidget     *message_item;
+
+#ifdef GDK_WINDOWING_QUARTZ
+	/* Unused for now. */
+	return;
+#endif
 
 	priv = GET_PRIV (app);
 
