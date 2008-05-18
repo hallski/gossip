@@ -1,5 +1,14 @@
 2008-05-18  Richard Hult  <richard@imendio.com>
 
+	* configure.ac: Require new mac integration version.
+
+	* src/gossip-app.c: (app_setup): Setup mac menu key handler.
+
+	* src/ige-mac-menu.[ch]: Those should have been removed a while
+	ago.
+
+2008-05-18  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-app.c: (app_setup_throbber): Constify string from
 	gettext.
 
@@ -442,6 +451,7 @@
 	* data/packaging/mac: Add mac bundle data.
 
 2008-02-07  Richard Hult  <richard@imendio.com>
+
 	* configure.ac:
 	* src/Makefile.am:
 	* src/gossip-app.c:

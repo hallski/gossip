@@ -54,7 +54,7 @@ elif test "x$IGE_PLATFORM" = xosx; then
    gconf_pkgconfig=
    gnome_vfs_pkgconfig=
    libgnomeui_pkgconfig=
-   platform_pkgconfig=ige-mac-integration
+   platform_pkgconfig="ige-mac-integration >= 0.8.2"
    PLATFORM_CFLAGS="-xobjective-c"
    PLATFORM_LDFLAGS="-framework Carbon -framework AppKit -framework IOKit -lobjc"
 elif test "x$IGE_PLATFORM" = xwin32; then

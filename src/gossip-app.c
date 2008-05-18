@@ -31,7 +31,7 @@
 #include <glib/gi18n.h>
 
 #ifdef GDK_WINDOWING_QUARTZ
-#include <ige-mac-menu.h>
+#include <ige-mac-integration.h>
 #endif
 
 #include <libgossip/gossip-chatroom.h>
@@ -842,6 +842,9 @@ app_setup (GossipSession *session)
 		IgeMacMenuGroup *group;
 
 		gtk_widget_set_name (priv->window, "small-font");
+
+                /*ige_mac_menu_connect_window_key_handler (GTK_WINDOW (priv->window));*/
+		ige_mac_menu_set_global_key_handler_enabled (TRUE);
 
 		ige_mac_menu_set_menu_bar (GTK_MENU_SHELL (priv->menu_bar));
 
