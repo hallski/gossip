@@ -1,5 +1,4 @@
 imagedir = $(datadir)/gossip
-
 image_DATA =				\
 	gossip-logo.png			\
 	gossip-offline.png		\
@@ -12,8 +11,14 @@ image_DATA =				\
 	gossip-typing.png		\
 	gossip-group-message.png 	\
 	gossip-file-transfer.png        \
+	gossip-mac-overlay-new-message.png \
 	vcard_16.png			\
 	vcard_48.png
+
+macdir = $(datadir)/gossip
+if HAVE_PLATFORM_OSX
+mac_DATA = gossip-mac-overlay-new-message.png
+endif
 
 icon16dir = $(datadir)/icons/hicolor/16x16/apps
 icon16_DATA = 16x16/gossip.png
@@ -53,4 +58,5 @@ EXTRA_DIST = 		\
 	$(icon32_DATA)  \
 	$(icon48_DATA)  \
 	$(svgicon_DATA) \
-	$(image_DATA)
+	$(image_DATA)	\
+	$(mac_DATA)

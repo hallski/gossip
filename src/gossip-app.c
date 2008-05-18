@@ -74,6 +74,10 @@
 #include "gossip-vcard-dialog.h"
 #include "ephy-spinner.h"
 
+#ifdef GDK_WINDOWING_QUARTZ
+#include "gossip-mac-dock.h"
+#endif
+
 #ifdef HAVE_DBUS
 #include "gossip-dbus.h"
 #endif
@@ -147,6 +151,11 @@ struct _GossipAppPriv {
 	GtkWidget             *popup_menu;
 	GtkWidget             *popup_menu_status_item;
 	GtkWidget             *popup_menu_show_list_item;
+
+	/* Dock */
+#ifdef GDK_WINDOWING_QUARTZ
+	GossipDock            *dock;
+#endif
 
 	/* Throbber */
 	GtkWidget             *throbber;
@@ -290,6 +299,7 @@ app_status_icon_popup_menu_cb                (GtkStatusIcon         *status_icon
 					      GossipApp             *app);
 static void     app_status_icon_create_menu  (void);
 static void     app_status_icon_create       (void);
+static void     app_setup_dock               (void);
 static gboolean 
 app_status_icon_check_embedded_cb            (gpointer               user_data);
 static void     app_notify_show_offline_cb   (GossipConf            *conf,
@@ -906,6 +916,8 @@ app_setup (GossipSession *session)
 	/* Setup the contact list */
 	app_setup_contact_list (sw, show_offline_widget);
 
+	app_setup_dock ();
+
 	/* Set window to be hidden. If doesn't have status icon, show window
 	 * and mask "chat_hide_list".
 	 */
@@ -1475,6 +1487,29 @@ app_chat_add_contact_cb (GtkWidget *widget,
 	priv = GET_PRIV (app);
 
 	gossip_add_contact_dialog_show (GTK_WINDOW (priv->window), NULL);
+}
+
+static void
+app_setup_dock (void)
+{
+#ifdef GDK_WINDOWING_QUARTZ
+	GossipAppPriv *priv;
+	GossipConf    *conf;
+	gboolean       hidden;
+
+	priv = GET_PRIV (app);
+
+	priv->dock = gossip_dock_get ();
+
+	conf = gossip_conf_get ();
+	gossip_conf_get_bool (conf,
+			      GOSSIP_PREFS_UI_MAIN_WINDOW_HIDDEN,
+			      &hidden);
+
+	if (!hidden) {
+		gtk_widget_show (priv->window);
+	}
+#endif
 }
 
 static void

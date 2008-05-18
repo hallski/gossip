@@ -1,5 +1,16 @@
 2008-05-18  Richard Hult  <richard@imendio.com>
 
+	* data/pixmaps/Makefile.am: Add temporary dock icon for new
+	message (copied from gnome-icon-theme, GPL), will need a better
+	one.
+
+	* src/Makefile.am:
+	* src/gossip-app.c: (app_setup):
+	* src/gossip-mac-dock.[ch]: Use the dock to display new messages
+	on mac.
+
+2008-05-18  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-app.c: (app_finalize), (app_setup),
 	(app_status_icon_popup_menu_cb), (app_status_icon_create_menu):
 	Disable the status icon popup menu on mac.
