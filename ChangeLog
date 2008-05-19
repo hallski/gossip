@@ -1,3 +1,16 @@
+2008-05-19  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat-manager.c: (gossip_chat_manager_show_chat): Add
+	missing space.
+
+	* src/gossip-chat-window.c: Refactor the title/status updating a
+	bit in an attempt to make it more clear. Not sure if that
+	succeeded ;)
+	- Also add support for the mac dock.
+
+	* src/gossip-mac-dock.c: Handle unread chat messages from chat
+	windows in addition to the event manager events.
+
 2008-05-18  Richard Hult  <richard@imendio.com>
 
 	* data/pixmaps/Makefile.am: Add temporary dock icon for new

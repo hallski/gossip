@@ -59,9 +59,6 @@ gossip_dock_class_init (GossipDockClass *klass)
 static void
 gossip_dock_init (GossipDock *dock)
 {
-        /*gtk_dock_set_from_stock (GOSSIP_DOCK (dock),
-          GOSSIP_STOCK_OFFLINE);*/
-
         g_signal_connect (gossip_app_get_event_manager (), "event-added",
                           G_CALLBACK (dock_event_added_cb),
                           dock);
@@ -90,10 +87,13 @@ dock_finalize (GObject *object)
                                               dock_event_removed_cb,
                                               object);
 
+	g_list_foreach (priv->events, (GFunc) g_free, NULL);
+	g_list_free (priv->events);
+
         G_OBJECT_CLASS (gossip_dock_parent_class)->finalize (object);
 }
 
-static GossipEvent *
+static GObject *
 dock_get_next_event (GossipDock *dock)
 {
         GossipDockPriv *priv;
@@ -111,88 +111,98 @@ static void
 dock_clicked_cb (IgeMacDock *dock)
 {
         GossipDockPriv *priv;
+	GObject        *event;
 
         priv = GET_PRIV (dock);
 
-        if (!priv->events) {
-                gossip_app_set_visibility (TRUE);
-        } else {
-                gossip_event_manager_activate (gossip_app_get_event_manager (),
-                                               dock_get_next_event (GOSSIP_DOCK (dock)));
+	event = dock_get_next_event (GOSSIP_DOCK (dock));
+
+        if (!event) {
+		if (!gossip_app_is_window_visible ()) {
+			gossip_app_set_visibility (TRUE);
+		}
         }
+	else if (GOSSIP_IS_EVENT (event)) {
+                gossip_event_manager_activate (gossip_app_get_event_manager (),
+					       GOSSIP_EVENT (event));
+	}
+	else if (GOSSIP_IS_CHAT (event)) {
+		gossip_chat_present (GOSSIP_CHAT (event));
+	} else {
+		g_warning ("Got unhandled event type.");
+	}
 }
 
-static GdkPixbuf *
-dock_get_event_pixbuf (GossipDock *dock)
+static void
+dock_update_overlay (GossipDock *dock)
 {
         GossipDockPriv *priv;
-	GossipEvent    *event;
+	GObject        *event;
 	gchar          *path;
 	GdkPixbuf      *pixbuf;
 
         priv = GET_PRIV (dock);
 
         event = dock_get_next_event (dock);
-	if (!event) {
-		return NULL;
+	if (event) {
+		path = gossip_paths_get_image_path ("gossip-mac-overlay-new-message.png");
+	} else {
+		path = gossip_paths_get_image_path ("gossip-logo.png");
 	}
 
-	path = gossip_paths_get_image_path ("gossip-mac-overlay-new-message.png");
 	pixbuf = gdk_pixbuf_new_from_file (path, NULL);
 	g_free (path);
 
-	return pixbuf;
-}
-
-static void
-dock_update_overlay (GossipDock *dock)
-{
-	GdkPixbuf *pixbuf;
-
-	pixbuf = dock_get_event_pixbuf (dock);
-	if (pixbuf) {
+	if (event) {
 		ige_mac_dock_set_overlay_from_pixbuf (IGE_MAC_DOCK (dock), pixbuf);
-		g_object_unref (pixbuf);
 	} else {
-		gchar     *path;
-		GdkPixbuf *pixbuf;
-
-		path = gossip_paths_get_image_path ("gossip-logo.png");
-		pixbuf = gdk_pixbuf_new_from_file (path, NULL);
-		g_free (path);
-
-		if (pixbuf) {
-			ige_mac_dock_set_icon_from_pixbuf (IGE_MAC_DOCK (dock), pixbuf);
-			g_object_unref (pixbuf);
-		}
+		ige_mac_dock_set_icon_from_pixbuf (IGE_MAC_DOCK (dock), pixbuf);
 	}
+
+	g_object_unref (pixbuf);
+}
+
+static gint
+event_compare (gconstpointer a,
+	       gconstpointer b)
+{
+	if (GOSSIP_IS_EVENT (a) && GOSSIP_IS_EVENT (b)) {
+		return gossip_event_compare (a, b);
+	}
+
+	if (a == b) {
+		return 0;
+	}
+
+	return 1;
 }
 
 static void
-dock_add_event (GossipDock *dock, GossipEvent *event)
+dock_add_event (GossipDock *dock,
+		GObject    *event)
 {
         GossipDockPriv *priv;
         GList          *l;
 
         priv = GET_PRIV (dock);
 
-        l = g_list_find_custom (priv->events, event, gossip_event_compare);
+        l = g_list_find_custom (priv->events, event, event_compare);
         if (!l) {
 		priv->events = g_list_append (priv->events, g_object_ref (event));
-
 		dock_update_overlay (dock);
 	}
 }
 
 static void
-dock_remove_event (GossipDock *dock, GossipEvent *event)
+dock_remove_event (GossipDock *dock,
+		   GObject    *event)
 {
         GossipDockPriv *priv;
         GList          *l;
 
         priv = GET_PRIV (dock);
 
-        l = g_list_find_custom (priv->events, event, gossip_event_compare);
+        l = g_list_find_custom (priv->events, event, event_compare);
         if (l) {
 		priv->events = g_list_delete_link (priv->events, l);
 		g_object_unref (event);
@@ -206,7 +216,7 @@ dock_event_added_cb (GossipEventManager *manager,
                      GossipEvent        *event,
                      GossipDock         *dock)
 {
-        dock_add_event (dock, event);
+        dock_add_event (dock, G_OBJECT (event));
 }
 
 static void
@@ -214,7 +224,7 @@ dock_event_removed_cb (GossipEventManager *manager,
                        GossipEvent        *event,
                        GossipDock         *dock)
 {
-        dock_remove_event (dock, event);
+        dock_remove_event (dock, G_OBJECT (event));
 }
 
 GossipDock *
@@ -228,4 +238,26 @@ gossip_dock_get (void)
         }
 
         return dock;
+}
+
+void
+gossip_dock_mark_as_unread (GossipDock *dock,
+			    gpointer    data)
+{
+	GossipDockPriv *priv;
+
+        priv = GET_PRIV (dock);
+
+	dock_add_event (dock, data);
+}
+
+void
+gossip_dock_mark_as_read (GossipDock *dock,
+			  gpointer    data)
+{
+	GossipDockPriv *priv;
+
+        priv = GET_PRIV (dock);
+
+	dock_remove_event (dock, data);
 }

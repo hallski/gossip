@@ -323,5 +323,5 @@ gossip_chat_manager_show_chat (GossipChatManager *manager,
 
 	gossip_chat_present (GOSSIP_CHAT (chat));
 
-	gossip_chat_manager_remove_events(manager, contact);
+	gossip_chat_manager_remove_events (manager, contact);
 }

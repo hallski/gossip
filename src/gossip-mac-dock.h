@@ -43,8 +43,12 @@ struct _GossipDockClass {
         IgeMacDockClass parent_class;
 };
 
-GType       gossip_dock_get_type (void);
-GossipDock *gossip_dock_get      (void);
+GType       gossip_dock_get_type       (void);
+GossipDock *gossip_dock_get            (void);
+void        gossip_dock_mark_as_unread (GossipDock *dock,
+                                        gpointer    data);
+void        gossip_dock_mark_as_read   (GossipDock *dock,
+                                        gpointer    data);
 
 G_END_DECLS
 

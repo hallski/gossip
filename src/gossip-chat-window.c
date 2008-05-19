@@ -29,6 +29,7 @@
 
 #ifdef GDK_WINDOWING_QUARTZ
 #include <ige-mac-menu.h>
+#import <AppKit/AppKit.h>
 #endif
 
 #include <libgossip/gossip-contact.h>
@@ -53,6 +54,10 @@
 #include "gossip-smiley.h"
 #include "gossip-sound.h"
 #include "gossip-ui-utils.h"
+
+#ifdef GDK_WINDOWING_QUARTZ
+#include "gossip-mac-dock.h"
+#endif
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHAT_WINDOW, GossipChatWindowPriv))
 
@@ -129,10 +134,9 @@ static void         chat_window_close_clicked_cb                (GtkWidget      
 								 GossipChat            *chat);
 static GtkWidget *  chat_window_create_label                    (GossipChatWindow      *window,
 								 GossipChat            *chat);
-static void         chat_window_update_status                   (GossipChatWindow      *window,
+static void         chat_window_update_chat_status              (GossipChatWindow      *window,
 								 GossipChat            *chat);
-static void         chat_window_update_title                    (GossipChatWindow      *window,
-								 GossipChat            *chat);
+static void         chat_window_update_title                    (GossipChatWindow      *window);
 static void         chat_window_update_menu                     (GossipChatWindow      *window);
 static gboolean     chat_window_save_geometry_timeout_cb        (GossipChatWindow      *window);
 static gboolean     chat_window_configure_event_cb              (GtkWidget             *widget,
@@ -706,8 +710,8 @@ chat_window_create_label (GossipChatWindow *window,
 }
 
 static void
-chat_window_update_status (GossipChatWindow *window,
-			   GossipChat       *chat)
+chat_window_update_chat_status (GossipChatWindow *window,
+				GossipChat       *chat)
 {
 	GtkImage  *image;
 	GdkPixbuf *pixbuf;
@@ -718,13 +722,11 @@ chat_window_update_status (GossipChatWindow *window,
 
 	g_object_unref (pixbuf);
 	
-	chat_window_update_title (window, chat);
 	chat_window_update_tooltip (window, chat);
 }
 
 static void
-chat_window_update_title (GossipChatWindow *window,
-			  GossipChat       *chat)
+chat_window_update_title (GossipChatWindow *window)
 {
 	GossipChatWindowPriv	*priv;
 	GdkPixbuf		*pixbuf = NULL;
@@ -1349,7 +1351,8 @@ chat_window_tabs_left_activate_cb (GtkWidget        *menuitem,
 				    index - 1);
 
 	chat_window_update_menu (window);
-	chat_window_update_status (window, chat);
+	chat_window_update_title (window);
+	chat_window_update_chat_status (window, chat);
 }
 
 static void
@@ -1370,7 +1373,8 @@ chat_window_tabs_right_activate_cb (GtkWidget        *menuitem,
 				    index + 1);
 
 	chat_window_update_menu (window);
-	chat_window_update_status (window, chat);
+	chat_window_update_title (window);
+	chat_window_update_chat_status (window, chat);
 }
 
 static void
@@ -1421,7 +1425,7 @@ chat_window_status_changed_cb (GossipChat       *chat,
 			       GossipChatWindow *window)
 {
 	chat_window_update_menu (window);
-	chat_window_update_status (window, chat);
+	chat_window_update_chat_status (window, chat);
 }
 
 static void
@@ -1454,6 +1458,56 @@ chat_window_update_tooltip (GossipChatWindow *window,
 }
 
 static void
+chat_window_chat_mark_as_unread (GossipChatWindow *window,
+				 GossipChat       *chat)
+{
+	GossipChatWindowPriv *priv;
+
+	priv = GET_PRIV (window);
+
+	if (g_list_find (priv->chats_new_msg, chat)) {
+		return;
+	}
+
+	priv->chats_new_msg = g_list_prepend (priv->chats_new_msg, chat);
+
+	chat_window_update_chat_status (window, chat);
+
+#ifdef GDK_WINDOWING_QUARTZ
+	/* We make the window focused if the app is not the active one to
+	 * avoid changing the focus between the previously focused one and
+	 * the new one when the dock is clicked...
+	 */
+	if (![NSApp isActive]) {
+		gdk_window_focus (priv->dialog->window, 0);
+	}
+
+	gossip_dock_mark_as_unread (gossip_dock_get (), chat);
+#endif
+}
+
+static void
+chat_window_chat_mark_as_read (GossipChatWindow *window,
+			       GossipChat       *chat)
+{
+	GossipChatWindowPriv *priv;
+
+	priv = GET_PRIV (window);
+
+	if (!g_list_find (priv->chats_new_msg, chat)) {
+		return;
+	}
+
+	priv->chats_new_msg = g_list_remove (priv->chats_new_msg, chat);
+
+	chat_window_update_chat_status (window, chat);
+
+#ifdef GDK_WINDOWING_QUARTZ
+	gossip_dock_mark_as_read (gossip_dock_get (), chat);
+#endif
+}
+
+static void
 chat_window_name_changed_cb (GossipChat       *chat,
 			     const gchar      *name,
 			     GossipChatWindow *window)
@@ -1480,7 +1534,7 @@ chat_window_composing_cb (GossipChat       *chat,
 		priv->chats_composing = g_list_remove (priv->chats_composing, chat);
 	}
 
-	chat_window_update_status (window, chat);
+	chat_window_update_chat_status (window, chat);
 }
 
 static void
@@ -1523,10 +1577,8 @@ chat_window_new_message_cb (GossipChat       *chat,
 		gossip_request_user_attention ();
 	}
 
-	if (!is_backlog && 
-	    !g_list_find (priv->chats_new_msg, chat)) {
-		priv->chats_new_msg = g_list_prepend (priv->chats_new_msg, chat);
-		chat_window_update_status (window, chat);
+	if (!is_backlog) {
+		chat_window_chat_mark_as_unread (window, chat);
 	}
 }
 
@@ -1583,10 +1635,10 @@ chat_window_page_switched_cb (GtkNotebook      *notebook,
 	}
 
 	priv->current_chat = chat;
-	priv->chats_new_msg = g_list_remove (priv->chats_new_msg, chat);
 
+	chat_window_chat_mark_as_read (window, chat);
+	chat_window_update_title (window);
 	chat_window_update_menu (window);
-	chat_window_update_status (window, chat);
 }
 
 static void
@@ -1660,6 +1712,8 @@ chat_window_page_added_cb (GtkNotebook      *notebook,
 
 	/* Get list of chats up to date */
 	priv->chats = g_list_append (priv->chats, chat);
+
+	chat_window_update_chat_status (window, chat);
 }
 
 static void
@@ -1719,11 +1773,13 @@ chat_window_page_removed_cb (GtkNotebook      *notebook,
 	priv->chats_new_msg = g_list_remove (priv->chats_new_msg, chat);
 	priv->chats_composing = g_list_remove (priv->chats_composing, chat);
 
+	chat_window_chat_mark_as_read (window, chat);
+
 	if (priv->chats == NULL) {
 		g_object_unref (window);
 	} else {
 		chat_window_update_menu (window);
-		chat_window_update_title (window, NULL);
+		chat_window_update_title (window);
 	}
 }
 
@@ -1738,13 +1794,10 @@ chat_window_focus_in_event_cb (GtkWidget        *widget,
 
 	priv = GET_PRIV (window);
 
-	priv->chats_new_msg = g_list_remove (priv->chats_new_msg, priv->current_chat);
+	chat_window_chat_mark_as_read (window, priv->current_chat);
 
 	chat_window_set_urgency_hint (window, FALSE);
 	
-	/* Update the title, since we now mark all unread messages as read. */
-	chat_window_update_status (window, priv->current_chat);
-
 #ifdef GDK_WINDOWING_QUARTZ
 	ige_mac_menu_set_menu_bar (GTK_MENU_SHELL (priv->menu_bar));
 	gtk_widget_hide (priv->menu_bar);
