@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-05-03 11:03+0000\n"
-"PO-Revision-Date: 2008-05-04 21:40+0200\n"
+"POT-Creation-Date: 2008-05-14 22:22+0000\n"
+"PO-Revision-Date: 2008-05-24 10:14+0200\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -911,25 +911,25 @@ msgstr "Aceptar"
 msgid "Decline"
 msgstr "Rechazar"
 
-#: ../src/gossip-chat-window.c:744 ../src/gossip-chat-window.c:774
+#: ../src/gossip-chat-window.c:743 ../src/gossip-chat-window.c:773
 #: ../data/glade/main.glade.h:73
 msgid "New Message"
 msgid_plural "New Messages"
 msgstr[0] "Mensaje nuevo"
 msgstr[1] "Mensajes nuevos"
 
-#: ../src/gossip-chat-window.c:750
+#: ../src/gossip-chat-window.c:749
 msgid "Chat Room"
 msgstr "Sala de chat"
 
-#: ../src/gossip-chat-window.c:755 ../src/gossip-chat-window.c:778
+#: ../src/gossip-chat-window.c:754 ../src/gossip-chat-window.c:777
 #, c-format
 msgid "Conversation"
 msgid_plural "Conversations (%d)"
 msgstr[0] "Conversación"
 msgstr[1] "Conversaciones (%d)"
 
-#: ../src/gossip-chat-window.c:1444
+#: ../src/gossip-chat-window.c:1441
 msgid "Typing a message."
 msgstr "Tecleando un mensaje."
 
@@ -952,7 +952,7 @@ msgstr "Bloqueado"
 
 #: ../src/gossip-chatrooms-window.c:191
 #: ../src/gossip-new-chatroom-dialog.c:200
-#: ../src/gossip-new-chatroom-dialog.c:213 ../data/glade/group-chat.glade.h:5
+#: ../src/gossip-new-chatroom-dialog.c:213 ../data/glade/group-chat.glade.h:6
 msgid "Join"
 msgstr "Unirse"
 
@@ -960,7 +960,7 @@ msgstr "Unirse"
 msgid "Information requested..."
 msgstr "Información solicitada…"
 
-#: ../src/gossip-contact-list.c:336
+#: ../src/gossip-contact-list.c:336 ../data/glade/chat.glade.h:20
 msgid "_Contact"
 msgstr "Con_tacto"
 
@@ -1150,64 +1150,64 @@ msgstr "Seleccione un archivo"
 #. FIXME: Need special case for nickname to put an
 #. * entry in the chat view and to request a new nick.
 #.
-#: ../src/gossip-group-chat.c:533
+#: ../src/gossip-group-chat.c:547
 msgid "Retry connection"
 msgstr "Reintentar la conexión"
 
 #. Send event to chat window
-#: ../src/gossip-group-chat.c:817
+#: ../src/gossip-group-chat.c:911
 #, c-format
 msgid "Invited %s to join this chat conference."
 msgstr "Invitó a %s a unirse en esta conferencia por chat."
 
-#: ../src/gossip-group-chat.c:895
-msgid "<b>Topic:</b>"
-msgstr "<b>Tema:</b>"
+#: ../src/gossip-group-chat.c:989
+msgid "<b>Subject:</b>"
+msgstr "<b>Asunto:</b>"
 
-#: ../src/gossip-group-chat.c:1104
+#: ../src/gossip-group-chat.c:1198
 msgid "You have been kicked from this room"
-msgstr "Se le ha echado de esta sala"
+msgstr "Se le ha expulsado de esta sala"
 
-#: ../src/gossip-group-chat.c:1233
+#: ../src/gossip-group-chat.c:1327
 #, c-format
-msgid "%s has set the topic: %s"
-msgstr "%s ha puesto el tema: %s"
+msgid "%s has set the subject: %s"
+msgstr "%s tiene el asunto: %s"
 
-#: ../src/gossip-group-chat.c:1412
-msgid "Enter the new topic you want to set for this room:"
-msgstr "Introduzca el nuevo tema que quiere establecer para esta sala:"
-
-#: ../src/gossip-group-chat.c:1428
-msgid "Enter the new nickname you want to be known by:"
-msgstr "Introduzca el nuevo apodo por el que quiere que se le conozca:"
-
-#: ../src/gossip-group-chat.c:1452
-#, c-format
-msgid "Kicking %s"
-msgstr "Echando a %s"
-
-#: ../src/gossip-group-chat.c:1460
-msgid "You have been removed from the room by an administrator."
-msgstr "Ha sido expulsado de la sala por un administrador."
-
-#: ../src/gossip-group-chat.c:1832
+#: ../src/gossip-group-chat.c:1910
 #, c-format
 msgid "%s has joined the room"
 msgstr "%s se ha unido a la sala"
 
-#: ../src/gossip-group-chat.c:1869
+#: ../src/gossip-group-chat.c:1947
 #, c-format
 msgid "%s has left the room"
 msgstr "%s ha dejado la sala"
 
-#: ../src/gossip-group-chat.c:2132
+#: ../src/gossip-group-chat.c:2210
 msgid "Nick was not recogized"
 msgstr "No se reconoció el apodo"
 
-#: ../src/gossip-group-chat.c:2254
+#: ../src/gossip-group-chat.c:2341 ../src/gossip-private-chat.c:1150
 #, c-format
-msgid "Topic: %s"
-msgstr "Tema: %s"
+msgid "Subject: %s"
+msgstr "Asunto: %s"
+
+#: ../src/gossip-group-chat.c:2751
+msgid "Enter the new subject you want to set for this room:"
+msgstr "Introduzca el nuevo asunto que quiere establecer para esta sala:"
+
+#: ../src/gossip-group-chat.c:2767
+msgid "Enter the new nickname you want to be known by:"
+msgstr "Introduzca el nuevo apodo por el que quiere que se le conozca:"
+
+#: ../src/gossip-group-chat.c:2791
+#, c-format
+msgid "Kicking %s"
+msgstr "Expulsando a %s"
+
+#: ../src/gossip-group-chat.c:2799
+msgid "You have been removed from the room by an administrator."
+msgstr "Ha sido expulsado de la sala por un administrador."
 
 #: ../src/gossip-hint.c:87
 msgid "Do not show this again"
@@ -1380,7 +1380,7 @@ msgstr "«%s»"
 msgid "Show"
 msgstr "Mostrar"
 
-#: ../src/gossip-notify.c:572
+#: ../src/gossip-notify.c:572 ../data/glade/group-chat.glade.h:3
 msgid "Contact Information"
 msgstr "Información del contacto"
 
@@ -1436,11 +1436,6 @@ msgstr "Conectado"
 #: ../src/gossip-private-chat.c:638
 msgid "Disconnected"
 msgstr "Desconectado"
-
-#: ../src/gossip-private-chat.c:1150
-#, c-format
-msgid "Subject: %s"
-msgstr "Asunto: %s"
 
 #: ../src/gossip-spell-dialog.c:259
 msgid "Suggestions for the word"
@@ -1546,8 +1541,8 @@ msgid "Change Na_me..."
 msgstr "Cambiar no_mbre…"
 
 #: ../data/glade/chat.glade.h:3
-msgid "Change _Topic..."
-msgstr "Cambiar el _tema…"
+msgid "Change Subjec_t..."
+msgstr "Cambiar asun_to…"
 
 #: ../data/glade/chat.glade.h:5
 msgid "Contact Infor_mation"
@@ -1605,21 +1600,17 @@ msgstr "Añadir a _favoritos"
 msgid "_Close"
 msgstr "_Cerrar"
 
-#: ../data/glade/chat.glade.h:20
+#: ../data/glade/chat.glade.h:21
 msgid "_Conversation"
 msgstr "_Conversación"
 
-#: ../data/glade/chat.glade.h:21
+#: ../data/glade/chat.glade.h:22
 msgid "_Copy"
 msgstr "_Copiar"
 
-#: ../data/glade/chat.glade.h:22
+#: ../data/glade/chat.glade.h:23
 msgid "_Detach Tab"
 msgstr "_Desacoplar solapa"
-
-#: ../data/glade/chat.glade.h:23
-msgid "_Kick..."
-msgstr "_Echar…"
 
 #: ../data/glade/chat.glade.h:24
 msgid "_Next Tab"
@@ -1687,69 +1678,77 @@ msgstr "Cuenta:"
 msgid "Browse:"
 msgstr "Buscar:"
 
-#: ../data/glade/group-chat.glade.h:3
+#: ../data/glade/group-chat.glade.h:4
 msgid "Edit Favorite Room"
 msgstr "Editar sala favorita"
 
-#: ../data/glade/group-chat.glade.h:4
+#: ../data/glade/group-chat.glade.h:5
 msgid "Enter the room name to join here or click on one or more rooms in the list."
 msgstr ""
 "Introduzca el nombre de la sala para unirse aquí o pulse en una o más salas "
 "de la lista."
 
-#: ../data/glade/group-chat.glade.h:6
+#: ../data/glade/group-chat.glade.h:7
 msgid "Join New"
 msgstr "Unirse a nuevo"
 
-#: ../data/glade/group-chat.glade.h:7
+#: ../data/glade/group-chat.glade.h:8
 msgid "Join room on start_up"
 msgstr "Unirse a la sala al _inicio"
 
-#: ../data/glade/group-chat.glade.h:8
+#: ../data/glade/group-chat.glade.h:9
 msgid "Join this chat room when Gossip starts and you are connected"
 msgstr "Unirse a esta sala de chat cuando Gossip se inicia y estás conectado."
 
-#: ../data/glade/group-chat.glade.h:9
+#: ../data/glade/group-chat.glade.h:10
+msgid "Kick..."
+msgstr "Expulsar…"
+
+#: ../data/glade/group-chat.glade.h:11
 msgid "Manage Favorite Rooms"
 msgstr "Gestionar salas favoritas"
 
-#: ../data/glade/group-chat.glade.h:10 ../data/glade/main.glade.h:71
+#: ../data/glade/group-chat.glade.h:12 ../data/glade/main.glade.h:71
 msgid "N_ame:"
 msgstr "_Nombre:"
 
-#: ../data/glade/group-chat.glade.h:11
+#: ../data/glade/group-chat.glade.h:13
+msgid "Private Chat"
+msgstr "Chat privado"
+
+#: ../data/glade/group-chat.glade.h:14
 msgid "Re_fresh"
 msgstr "_Recargar"
 
-#: ../data/glade/group-chat.glade.h:12
+#: ../data/glade/group-chat.glade.h:15
 msgid "S_erver:"
 msgstr "_Servidor:"
 
-#: ../data/glade/group-chat.glade.h:13
+#: ../data/glade/group-chat.glade.h:16
 msgid "Show more information about chatrooms found and make the window resizable."
 msgstr ""
 "Mostrar más información sobre las salas de chat encontradas y hacer la "
 "ventana redimensionable."
 
-#: ../data/glade/group-chat.glade.h:14
+#: ../data/glade/group-chat.glade.h:17
 msgid "This list represents all chat rooms hosted on the server you have entered."
 msgstr ""
 "Esta lista representa todas los chat que alberga el servidor al que ha "
 "entrado."
 
-#: ../data/glade/group-chat.glade.h:15 ../data/glade/main.glade.h:149
+#: ../data/glade/group-chat.glade.h:18 ../data/glade/main.glade.h:149
 msgid "_Nickname:"
 msgstr "A_podo:"
 
-#: ../data/glade/group-chat.glade.h:16
+#: ../data/glade/group-chat.glade.h:19
 msgid "_Password"
 msgstr "Contra_seña"
 
-#: ../data/glade/group-chat.glade.h:17
+#: ../data/glade/group-chat.glade.h:20
 msgid "_Room:"
 msgstr "_Sala:"
 
-#: ../data/glade/group-chat.glade.h:18
+#: ../data/glade/group-chat.glade.h:21
 msgid "_Server:"
 msgstr "_Servidor:"
 
@@ -2183,9 +2182,9 @@ msgid ""
 "different port (5223) to communicate securely. With newer encryption "
 "techniques, the same port (5222) can be used for both"
 msgstr ""
-"Esta es una opción heredada requerida para soportar servidores antiguos que usan "
-"un puerto diferente (5223) para comunicarse de forma segura. Con las nuevas técnicas "
-"de cifrado, se puede usar el mismo puerto (5222) para ambas."
+"Esta es una opción heredada requerida para soportar servidores antiguos que "
+"usan un puerto diferente (5223) para comunicarse de forma segura. Con las "
+"nuevas técnicas de cifrado, se puede usar el mismo puerto (5222) para ambas."
 
 #: ../data/glade/main.glade.h:111
 msgid "This is the name that will be used on your roster for this contact"
@@ -2248,9 +2247,10 @@ msgid ""
 "doesn't have one, it is considered unsafe and the connection attempt will "
 "stop."
 msgstr ""
-"Cuando está seleccionada, cualquier error de certificación parará los intentos de conexión. Por "
-"ejemplo, si el certificado del servidor ha caducado o simplemente, el servidor no tiene uno "
-"se considera inseguro y se parará el intento de conexón."
+"Cuando está seleccionada, cualquier error de certificación parará los "
+"intentos de conexión. Por ejemplo, si el certificado del servidor ha "
+"caducado o simplemente, el servidor no tiene uno se considera inseguro y se "
+"parará el intento de conexón."
 
 #: ../data/glade/main.glade.h:127
 msgid "Which account do you want to use?"
