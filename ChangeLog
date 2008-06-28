@@ -1,3 +1,9 @@
+2008-06-28  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-preferences.c (preferences_radio_button_toggled_cb):
+	Fix crash in mac port caused by setting a conf value to NULL when
+	switching contact list sort critiera.
+
 2008-05-19  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-chat-manager.c: (gossip_chat_manager_show_chat): Add

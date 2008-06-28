@@ -927,6 +927,16 @@ preferences_radio_button_toggled_cb (GtkWidget *button,
 
 			if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button))) {
 				value = enum_value->value_nick;
+			} else {
+				/* If not active, we also get a callback for
+				 * the other radio button in the group that
+				 * has the right value, so ignore this.
+				 */
+				/* FIXME: Note that this hardcoding of keys
+				 * if not how I meant this code to be used
+				 * at all, should be fixed at some point.
+				 */
+				return;
 			}
 		} else if (strcmp (key, GOSSIP_PREFS_CHAT_THEME_USE_SYSTEM_FONT) == 0) {
 			if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button))) {
