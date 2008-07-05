@@ -60,6 +60,11 @@ GList *         gossip_chatroom_manager_find_extended   (GossipChatroomManager *
 							 GossipAccount         *account,
 							 const gchar           *server,
 							 const gchar           *room);
+GossipChatroom *gossip_chatroom_manager_find_or_create  (GossipChatroomManager *manager,
+							 GossipAccount         *account,
+							 const gchar           *server,
+							 const gchar           *room,
+							 gboolean              *created);
 gboolean        gossip_chatroom_manager_store           (GossipChatroomManager *manager);
 GList *         gossip_chatroom_manager_get_chatrooms   (GossipChatroomManager *manager,
 							 GossipAccount         *account);
@@ -68,7 +73,6 @@ guint           gossip_chatroom_manager_get_count       (GossipChatroomManager *
 GossipChatroom *gossip_chatroom_manager_get_default     (GossipChatroomManager *manager);
 void            gossip_chatroom_manager_set_default     (GossipChatroomManager *manager,
 							 GossipChatroom        *chatroom);
-
 G_END_DECLS
 
 #endif /* __GOSSIP_CHATROOM_MANAGER_H__ */

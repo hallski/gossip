@@ -46,15 +46,28 @@ struct _GossipContactManagerClass {
 	GObjectClass parent_class;
 };
 
-GType                 gossip_contact_manager_get_type (void) G_GNUC_CONST;
-gboolean              gossip_contact_manager_add      (GossipContactManager *manager,
+GType          gossip_contact_manager_get_type        (void) G_GNUC_CONST;
+
+gboolean       gossip_contact_manager_add             (GossipContactManager *manager,
 						       GossipContact        *contact);
-void                  gossip_contact_manager_remove   (GossipContactManager *manager,
+void           gossip_contact_manager_remove          (GossipContactManager *manager,
 						       GossipContact        *contact);
-GossipContact *       gossip_contact_manager_find     (GossipContactManager *manager,
+GossipContact *gossip_contact_manager_find            (GossipContactManager *manager,
 						       GossipAccount        *account,
 						       const gchar          *contact_id);
-gboolean              gossip_contact_manager_store    (GossipContactManager *manager);
+GossipContact *gossip_contact_manager_find_extended   (GossipContactManager *manager,
+						       GossipAccount        *account,
+						       GossipContactType     type,
+						       const gchar          *contact_id);
+GossipContact *gossip_contact_manager_find_or_create  (GossipContactManager *manager,
+						       GossipAccount        *account,
+						       GossipContactType     type,
+						       const gchar          *contact_id,
+						       gboolean             *created);
+GossipContact *gossip_contact_manager_get_own_contact (GossipContactManager *manager,
+						       GossipAccount        *account);
+gboolean       gossip_contact_manager_store           (GossipContactManager *manager);
+
 
 G_END_DECLS
 

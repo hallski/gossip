@@ -232,7 +232,7 @@ gossip_jabber_vcard_get (GossipJabber         *jabber,
 	LmMessageHandler   *handler;
 	GossipCallbackData *data;
 
-	connection = gossip_jabber_get_connection (jabber);
+	connection = _gossip_jabber_get_connection (jabber);
 
 	gossip_debug (DEBUG_DOMAIN, "Requesting VCard, JID:'%s'", jid_str);
 
@@ -315,7 +315,7 @@ gossip_jabber_vcard_set (GossipJabber    *jabber,
 
 	gossip_debug (DEBUG_DOMAIN, "Setting...");
 
-	connection = gossip_jabber_get_connection (jabber);
+	connection = _gossip_jabber_get_connection (jabber);
 
 	m = lm_message_new_with_sub_type (NULL,
 					  LM_MESSAGE_TYPE_IQ,

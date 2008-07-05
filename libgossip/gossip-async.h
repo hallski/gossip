@@ -57,6 +57,13 @@ typedef void (*GossipVersionCallback) (GossipResult       result,
 				       GossipVersionInfo *info,
 				       gpointer           user_data);
 
+GossipCallbackData *gossip_callback_data_new  (gpointer            callback,
+					       gpointer            user_data,
+					       gpointer            data1,
+					       gpointer            data2,
+					       gpointer            data3);
+void                gossip_callback_data_free (GossipCallbackData *data);
+
 G_END_DECLS 
 
 #endif /* __GOSSIP_ASYNC_H__ */

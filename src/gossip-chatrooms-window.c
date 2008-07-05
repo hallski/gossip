@@ -273,25 +273,13 @@ chatrooms_window_model_get_selected (GossipChatroomsWindow *window)
 static void
 chatrooms_window_model_action_selected (GossipChatroomsWindow *window)
 {
-	GossipSession          *session;
-	GossipAccount          *account;
-	GossipAccountChooser   *account_chooser;
-	GossipChatroomProvider *provider;
-	GossipChatroom         *chatroom;
-	GossipChatroomStatus    status;
-	GtkTreeView            *view;
-	GtkTreeModel           *model;
+	GossipSession        *session;
+	GossipChatroom       *chatroom;
+	GossipChatroomStatus  status;
+	GtkTreeView          *view;
+	GtkTreeModel         *model;
 
 	session = gossip_app_get_session ();
-
-	account_chooser = GOSSIP_ACCOUNT_CHOOSER (window->account_chooser);
-	account = gossip_account_chooser_get_account (account_chooser);
-
-	provider = gossip_session_get_chatroom_provider (session, account);
-
-	if (account) {
-		g_object_unref (account);
-	}
 
 	view = GTK_TREE_VIEW (window->treeview);
 	model = gtk_tree_view_get_model (view);
@@ -384,6 +372,11 @@ chatrooms_window_model_add (GossipChatroomsWindow *window,
 	GtkTreeIter       iter;
 	const gchar      *password_protected = NULL;
 	const gchar      *auto_connect = NULL;
+
+	/* We only show favorites here, not EVERY chatroom */
+	if (!gossip_chatroom_get_favorite (chatroom)) {
+		return;
+	}
 
 	view = GTK_TREE_VIEW (window->treeview);
 	selection = gtk_tree_view_get_selection (view);
@@ -557,7 +550,7 @@ chatrooms_window_button_remove_clicked_cb (GtkWidget             *widget,
 
 	/* Remove from config */
 	manager = gossip_app_get_chatroom_manager ();
-	gossip_chatroom_manager_remove (manager, chatroom);
+	gossip_chatroom_set_favorite (chatroom, FALSE);
 	gossip_chatroom_manager_store (manager);
 	
 	g_object_unref (chatroom);

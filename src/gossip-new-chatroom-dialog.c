@@ -736,13 +736,16 @@ new_chatroom_dialog_join (GossipNewChatroomDialog *dialog)
 	
 	/* New or existing? */
 	if (new_chatroom) {
-		chatroom = g_object_new (GOSSIP_TYPE_CHATROOM,
-					 "account", account,
-					 "name", room,
-					 "server", server,
-					 "nick", nick,
-					 "room", room,
-					 NULL);
+		GossipChatroomManager *chatroom_manager;
+
+		chatroom_manager = gossip_session_get_chatroom_manager (session);
+		chatroom = gossip_chatroom_manager_find_or_create (chatroom_manager, 
+								   account, 
+								   server, 
+								   room,
+								   NULL);
+
+		gossip_chatroom_set_nick (chatroom, nick);
 
 		if (!G_STR_EMPTY (password)) {
 			gossip_chatroom_set_password (chatroom, password);

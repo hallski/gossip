@@ -339,7 +339,6 @@
 
 		  <child>
 		    <widget class="GtkMenuItem" id="menu_room_contact">
-		      <property name="visible">False</property>
 		      <property name="label" translatable="yes">_Contact</property>
 		      <property name="use_underline">True</property>
 		    </widget>
@@ -697,7 +696,7 @@ This is the text that should appear on a menu title. Don't include the prefix 'm
 		  <property name="editable">True</property>
 		  <property name="visibility">True</property>
 		  <property name="max_length">0</property>
-		  <property name="text" translatable="yes">You have been invited to join a chat conference.</property>
+		  <property name="text" translatable="yes"></property>
 		  <property name="has_frame">True</property>
 		  <property name="invisible_char">*</property>
 		  <property name="activates_default">True</property>

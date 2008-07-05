@@ -23,6 +23,7 @@
  */
 
 #include <string.h>
+#include <stdlib.h>
 
 #include <glib/gi18n.h>
 
@@ -33,6 +34,7 @@
 #include "gossip-jabber.h"
 #include "gossip-jabber-utils.h"
 #include "gossip-jid.h"
+#include "gossip-utils.h"
 
 #define DEBUG_DOMAIN "JabberUtils"
 
@@ -162,7 +164,7 @@ gossip_jabber_get_message_conference (GossipJabber *jabber,
 	contact_id = lm_message_node_get_attribute (node, "from");
 	contact = gossip_jabber_get_contact_from_jid (jabber,
 						      contact_id,
-						      NULL,
+						      FALSE,
 						      FALSE,
 						      TRUE);
 
@@ -236,31 +238,160 @@ gossip_jabber_get_message_is_composing (LmMessage *m)
 	return FALSE;
 }
 
+static GArray *
+get_status (LmMessage *m)
+{
+	LmMessageNode *node;
+	GArray        *status = NULL;
+
+	if (!m) {
+		return NULL;
+	}
+
+	node = lm_message_node_get_child (m->node, "x");
+	if (!node) {
+		return NULL;
+	}
+
+	node = node->children;
+
+	while (node) {
+		if (!node) {
+			break;
+		}
+
+		if (node->name && strcmp (node->name, "status") == 0) {
+			const gchar *code;
+
+			code = lm_message_node_get_attribute (node, "code");
+			if (code) {
+				gint value;
+
+				if (!status) {
+					status = g_array_new (FALSE, FALSE, sizeof (gint));
+				}
+
+				value = atoi (code);
+				g_array_append_val (status, value);
+			}
+		}
+
+		node = node->next;
+	}
+
+	return status;
+}
+
+gboolean 
+gossip_jabber_get_message_has_status (LmMessage *m,
+				      gint       code)
+{
+	GArray   *codes;
+	gboolean  found;
+	gint      i;
+
+	g_return_val_if_fail (m != NULL, FALSE);
+	g_return_val_if_fail (code > 0, FALSE);
+
+	codes = get_status (m);
+	if (!codes) {
+		return FALSE;
+	}
+
+	for (i = 0, found = FALSE; i < codes->len && !found; i++) {
+		if (g_array_index (codes, gint, i) == code) {
+			found = TRUE;
+		}
+	}
+
+	g_array_free (codes, TRUE);
+	
+	return found;
+}
+
+gboolean
+gossip_jabber_get_message_is_muc_new_nick (LmMessage  *m, 
+					   gchar     **new_nick)
+{
+	LmMessageNode *node;
+	const gchar   *str;
+
+	g_return_val_if_fail (m != NULL, FALSE);
+
+	if (new_nick) {
+		*new_nick = NULL;
+	}
+
+	/* 303 = nick changed */
+	if (!gossip_jabber_get_message_has_status (m, 303)) {
+		return FALSE;
+	}
+	
+	if (!new_nick) {
+		return TRUE;
+	}
+
+	node = lm_message_get_node (m);
+
+	node = lm_message_node_find_child (node, "x");
+	if (!node) {
+		return FALSE;
+	}
+
+	str = lm_message_node_get_attribute (node, "xmlns");
+	if (!str || strcmp (str, "http://jabber.org/protocol/muc#user") != 0) {
+		return FALSE;
+	}
+
+	node = lm_message_node_find_child (node, "item");
+	if (!node) {
+		return FALSE;
+	}
+
+	/* Get old nick */
+	str = lm_message_node_get_attribute (node, "nick");
+
+	*new_nick = g_strdup (str);
+
+	return TRUE;
+}
+
 gchar *
 gossip_jabber_get_name_to_use (const gchar *jid_str,
 			       const gchar *nickname,
-			       const gchar *full_name)
+			       const gchar *full_name,
+			       const gchar *current_name)
 {
-	if (nickname && strlen (nickname) > 0) {
+	if (!G_STR_EMPTY (current_name)) {
+		gchar     *part_name;
+		gboolean   use_current_name;
+
+		part_name = gossip_jid_string_get_part_name (jid_str);
+		
+		use_current_name = 
+			g_ascii_strcasecmp (jid_str, current_name) != 0 && 
+			g_ascii_strcasecmp (part_name, current_name) != 0;
+
+		g_free (part_name); 
+
+		if (use_current_name) {
+			return g_strdup (current_name);
+		}
+	}
+
+	if (!G_STR_EMPTY (nickname)) {
 		return g_strdup (nickname);
 	}
 
-	if (full_name && strlen (full_name) > 0) {
+	if (!G_STR_EMPTY (full_name)) {
 		return g_strdup (full_name);
 	}
 
-	if (jid_str && strlen (jid_str) > 0) {
-		GossipJID *jid;
-		gchar     *part_name;
-
-		jid = gossip_jid_new (jid_str);
-		part_name = gossip_jid_get_part_name (jid);
-		gossip_jid_unref (jid);
-
-		return part_name;
+	if (!G_STR_EMPTY (jid_str)) {
+		return gossip_jid_string_get_part_name (jid_str);
 	}
 
-	return "";
+	return g_strdup ("");
 }
 
 GError *

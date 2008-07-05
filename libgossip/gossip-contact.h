@@ -72,8 +72,7 @@ GossipContact *    gossip_contact_new_full                  (GossipContactType  
 							     const gchar        *id,
 							     const gchar        *name);
 GossipContact *    gossip_contact_copy                      (GossipContact      *contact);
-void               gossip_contact_copy_values               (GossipContact      *contact_from,
-							     GossipContact      *contact_to);
+
 GossipContactType  gossip_contact_get_type                  (GossipContact      *contact);
 const gchar *      gossip_contact_get_id                    (GossipContact      *contact);
 const gchar *      gossip_contact_get_name                  (GossipContact      *contact);
@@ -81,16 +80,9 @@ GossipAvatar *     gossip_contact_get_avatar                (GossipContact      
 GdkPixbuf *        gossip_contact_get_avatar_pixbuf         (GossipContact      *contact);
 GossipAccount *    gossip_contact_get_account               (GossipContact      *contact);
 GossipVCard *      gossip_contact_get_vcard                 (GossipContact      *contact);
-void               gossip_contact_add_presence              (GossipContact      *contact,
-							     GossipPresence     *presence);
-void               gossip_contact_remove_presence           (GossipContact      *contact,
-							     GossipPresence     *presence);
-GossipPresence *   gossip_contact_get_presence_for_resource (GossipContact      *contact,
-							     const gchar        *resource);
-GossipPresence *   gossip_contact_get_active_presence       (GossipContact      *contact);
-GList *            gossip_contact_get_presence_list         (GossipContact      *contact);
 GList *            gossip_contact_get_groups                (GossipContact      *contact);
 GossipSubscription gossip_contact_get_subscription          (GossipContact      *contact);
+
 void               gossip_contact_set_type                  (GossipContact      *contact,
 							     GossipContactType   type);
 void               gossip_contact_set_id                    (GossipContact      *contact,
@@ -107,13 +99,20 @@ void               gossip_contact_set_groups                (GossipContact      
 							     GList              *categories);
 void               gossip_contact_set_subscription          (GossipContact      *contact,
 							     GossipSubscription  subscription);
-gint               gossip_contact_name_compare              (gconstpointer       a,
-							     gconstpointer       b);
-gint               gossip_contact_name_case_compare         (gconstpointer       a,
-							     gconstpointer       b);
-gint               gossip_contact_name_case_n_compare       (gconstpointer       a,
-							     gconstpointer       b,
-							     gsize               n);
+
+/* Presence */
+void               gossip_contact_add_presence              (GossipContact      *contact,
+							     GossipPresence     *presence);
+void               gossip_contact_remove_presence           (GossipContact      *contact,
+							     GossipPresence     *presence);
+GossipPresence *   gossip_contact_get_presence_for_resource (GossipContact      *contact,
+							     const gchar        *resource);
+GossipPresence *   gossip_contact_get_active_presence       (GossipContact      *contact);
+GList *            gossip_contact_get_presence_list         (GossipContact      *contact);
+void               gossip_contact_set_presence_list         (GossipContact      *contact,
+							     GList              *presences);
+
+/* Utility functions */
 gboolean           gossip_contact_equal                     (gconstpointer       v1,
 							     gconstpointer       v2);
 guint              gossip_contact_hash                      (gconstpointer       key);

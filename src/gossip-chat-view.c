@@ -712,7 +712,7 @@ chat_view_invite_accept_cb (GtkWidget *button,
 	gtk_widget_set_sensitive (button, FALSE);
 	gtk_widget_set_sensitive (other_button, FALSE);
 
-	contact = gossip_chatroom_invite_get_invitor (invite);
+	contact = gossip_chatroom_invite_get_inviter (invite);
 	reason = gossip_chatroom_invite_get_reason (invite);
 
 	session = gossip_app_get_session ();
@@ -744,7 +744,7 @@ chat_view_invite_decline_cb (GtkWidget *button,
 	gtk_widget_set_sensitive (button, FALSE);
 	gtk_widget_set_sensitive (other_button, FALSE);
 
-	contact = gossip_chatroom_invite_get_invitor (invite);
+	contact = gossip_chatroom_invite_get_inviter (invite);
 
 	session = gossip_app_get_session ();
 	account = gossip_contact_get_account (contact);
@@ -896,18 +896,17 @@ gossip_chat_view_append_invite (GossipChatView *view,
 				GossipMessage  *message)
 {
 	GossipChatViewPriv   *priv;
-	GossipContact        *sender;
+	GossipContact        *inviter;
 	GossipChatroomInvite *invite;
-	const gchar          *body;
 	GtkTextChildAnchor   *anchor;
 	GtkTextIter           iter;
 	GtkWidget            *button_accept;
 	GtkWidget            *button_decline;
-	const gchar          *id;
+	const gchar          *id_str;
 	const gchar          *reason;
 	gboolean              bottom;
 	const gchar          *tag;
-	GString              *s;
+	gchar                *str;
 
 	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
 
@@ -917,49 +916,40 @@ gossip_chat_view_append_invite (GossipChatView *view,
 
 	bottom = chat_view_is_scrolled_down (view);
 
-	sender = gossip_message_get_sender (message);
 	invite = gossip_message_get_invite (message);
-	body = gossip_message_get_body (message);
+	inviter = gossip_chatroom_invite_get_inviter (invite);
+	id_str = gossip_chatroom_invite_get_id (invite);
 
-	gossip_theme_append_timestamp (priv->theme, priv->theme_context,
+	gossip_theme_append_timestamp (priv->theme, 
+				       priv->theme_context,
 				       view, message, TRUE, TRUE);
+	
+	str = g_strdup_printf (_("You have been invited to join a chat "
+				 "conference with '%s' in the room '%s'"),
+			       gossip_contact_get_name (inviter),
+			       id_str);
+
+	gossip_theme_append_text (priv->theme, 
+				  priv->theme_context, 
+				  view, 
+				  str, 
+				  tag, 
+				  NULL);
+	g_free (str);
 
 	reason = gossip_chatroom_invite_get_reason (invite);
 
-	s = g_string_new ("");
-	if (!G_STR_EMPTY (body)) {
-		s = g_string_append (s, body);
+	if (!G_STR_EMPTY (reason)) {
+		str = g_strconcat ("\n", _("Reason: "), reason, NULL);
+
+		gossip_theme_append_text (priv->theme, 
+					  priv->theme_context, 
+					  view, 
+					  str, 
+					  tag, 
+					  NULL);
+		g_free (str);
 	}
-
-	/* Make sure the reason is not the body (or in the body) */
-	if (!G_STR_EMPTY (reason) && !strstr (body, reason)) {
-		if (s->len > 0) {
-			s = g_string_append_c (s, '\n');
-		}
-
-		s = g_string_append (s, reason);
-	}
-
-	if (s->len < 1) {
-		s = g_string_append
-			(s, _("You have been invited to join a chat conference."));
-	}
-
-	/* Don't include the invite in the chat window if it is part of the
-	 * actual request - some chat clients send this and it looks weird
-	 * repeated.
-	 */
-	id = gossip_chatroom_invite_get_id (invite);
-
-	if (!strstr (s->str, id)) {
-		g_string_append_printf (s, "\n(%s)\n", id);
-	}
-
-	s = g_string_prepend_c (s, '\n');
-
-	gossip_theme_append_text (priv->theme, priv->theme_context, 
-				  view, s->str, tag, NULL);
-	g_string_free (s, TRUE);
 
 	gtk_text_buffer_get_end_iter (priv->buffer, &iter);
 

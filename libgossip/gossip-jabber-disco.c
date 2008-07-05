@@ -157,7 +157,7 @@ jabber_disco_new (GossipJabber *jabber)
 
 	disco->jabber = g_object_ref (jabber);
 
-	connection = gossip_jabber_get_connection (jabber);
+	connection = _gossip_jabber_get_connection (jabber);
 
 	handler = lm_message_handler_new (jabber_disco_message_handler, disco, NULL);
 	disco->message_handler = handler;
@@ -180,9 +180,9 @@ jabber_disco_init (void)
 
 	inited = TRUE;
 
-	discos = g_hash_table_new_full (gossip_jid_hash,
-					gossip_jid_equal,
-					(GDestroyNotify) gossip_jid_unref,
+	discos = g_hash_table_new_full (gossip_jid_hash_without_resource,
+					gossip_jid_equal_without_resource,
+					(GDestroyNotify) g_object_unref,
 					(GDestroyNotify) jabber_disco_free);
 }
 
@@ -190,7 +190,7 @@ static void
 jabber_disco_destroy_items_foreach (GossipJabberDiscoItem *item,
 				    gpointer               user_data)
 {
-	gossip_jid_unref (item->jid);
+	g_object_unref (item->jid);
 
 	g_free (item->node);
 	g_free (item->name);
@@ -366,7 +366,7 @@ jabber_disco_message_handler (LmMessageHandler *handler,
 
 	if (lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_RESULT &&
 	    lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_ERROR) {
-		gossip_jid_unref (from_jid);
+		g_object_unref (from_jid);
 
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 
@@ -439,7 +439,7 @@ jabber_disco_request_items (GossipJabberDisco *disco)
 		      "disco items to: %s",
 		      gossip_jid_get_full (disco->to));
 
-	connection = gossip_jabber_get_connection (disco->jabber);
+	connection = _gossip_jabber_get_connection (disco->jabber);
 
 	lm_message_node_add_child (m->node, "query", NULL);
 	node = lm_message_node_get_child (m->node, "query");
@@ -557,7 +557,7 @@ jabber_disco_request_info (GossipJabberDisco *disco)
 	GList        *l;
 	GossipJID    *jid;
 
-	connection = gossip_jabber_get_connection (disco->jabber);
+	connection = _gossip_jabber_get_connection (disco->jabber);
 	jid = gossip_jid_new ("users.jabber.org");
 
 	disco->items_total = disco->items_remaining = g_list_length (disco->items);
@@ -606,7 +606,7 @@ jabber_disco_request_info (GossipJabberDisco *disco)
 		lm_message_unref (m);
 	}
 
-	gossip_jid_unref (jid);
+	g_object_unref (jid);
 }
 
 static void
@@ -812,7 +812,7 @@ gossip_jabber_disco_request (GossipJabber              *jabber,
 	}
 
 	disco = jabber_disco_new (jabber);
-	g_hash_table_insert (discos, gossip_jid_ref (jid), disco);
+	g_hash_table_insert (discos, g_object_ref (jid), disco);
 
 	disco->to = jid;
 
@@ -848,7 +848,7 @@ gossip_jabber_disco_destroy (GossipJabberDisco *disco)
 
 	disco->destroying = TRUE;
 
-	connection = gossip_jabber_get_connection (disco->jabber);
+	connection = _gossip_jabber_get_connection (disco->jabber);
 
 	handler = disco->message_handler;
 	if (handler) {
@@ -897,7 +897,7 @@ gossip_jabber_disco_request_info (GossipJabber              *jabber,
 	disco = g_hash_table_lookup (discos, jid);
 
 	if (disco) {
-		gossip_jid_unref (jid);
+		g_object_unref (jid);
 		return disco;
 	}
 
@@ -907,7 +907,7 @@ gossip_jabber_disco_request_info (GossipJabber              *jabber,
 	disco->jabber = g_object_ref (jabber);
 
 	/* Set up handler */
-	connection = gossip_jabber_get_connection (jabber);
+	connection = _gossip_jabber_get_connection (jabber);
 
 	handler = lm_message_handler_new (jabber_disco_message_handler, disco, NULL);
 	disco->message_handler = handler;
@@ -917,7 +917,7 @@ gossip_jabber_disco_request_info (GossipJabber              *jabber,
 						LM_HANDLER_PRIORITY_NORMAL);
 
 	/* Add disco and configure members */
-	g_hash_table_insert (discos, gossip_jid_ref (jid), disco);
+	g_hash_table_insert (discos, g_object_ref (jid), disco);
 
 	disco->to = jid;
 
@@ -932,7 +932,7 @@ gossip_jabber_disco_request_info (GossipJabber              *jabber,
 	/* Add item */
 	item = g_slice_new0 (GossipJabberDiscoItem);
 
-	item->jid = gossip_jid_ref (jid);
+	item->jid = g_object_ref (jid);
 
 	disco->items = g_list_append (disco->items, item);
 
@@ -991,7 +991,7 @@ gossip_jabber_disco_get_category (GossipJabberDisco *disco,
 		}
 
 		if (have_category && can_register) {
-			services = g_list_append (services, gossip_jid_ref (item->jid));
+			services = g_list_append (services, g_object_ref (item->jid));
 		}
 	}
 
@@ -1063,7 +1063,7 @@ gossip_jabber_disco_get_category_and_type (GossipJabberDisco *disco,
 		}
 
 		if (have_category && have_type && can_register) {
-			services = g_list_append (services, gossip_jid_ref (item->jid));
+			services = g_list_append (services, g_object_ref (item->jid));
 		}
 	}
 
@@ -1261,7 +1261,7 @@ gossip_jabber_disco_init (GossipJabber *jabber)
 
 	g_return_if_fail (GOSSIP_IS_JABBER (jabber));
 
-	connection = gossip_jabber_get_connection (jabber);
+	connection = _gossip_jabber_get_connection (jabber);
 	handler = lm_message_handler_new ((LmHandleMessageFunction) jabber_disco_info_handler,
 					  jabber, NULL);
 	lm_connection_register_message_handler (connection,

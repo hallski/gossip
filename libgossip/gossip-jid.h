@@ -21,16 +21,31 @@
 #ifndef __GOSSIP_JID_H__
 #define __GOSSIP_JID_H__
 
-#include <glib.h>
+#include <glib-object.h>
 
 G_BEGIN_DECLS
 
-typedef struct GossipJID GossipJID;
+#define GOSSIP_TYPE_JID         (gossip_jid_get_type ())
+#define GOSSIP_JID(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_JID, GossipJID))
+#define GOSSIP_JID_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_JID, GossipJIDClass))
+#define GOSSIP_IS_JID(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), GOSSIP_TYPE_JID))
+#define GOSSIP_IS_JID_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_JID))
+#define GOSSIP_JID_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_JID, GossipJIDClass))
+
+typedef struct _GossipJID      GossipJID;
+typedef struct _GossipJIDClass GossipJIDClass;
+
+struct _GossipJID {
+	GObject parent;
+};
+
+struct _GossipJIDClass {
+	GObjectClass parent_class;
+};
+
+GType        gossip_jid_get_type                 (void) G_GNUC_CONST;
 
 GossipJID *  gossip_jid_new                      (const gchar   *str_jid);
-GossipJID *  gossip_jid_ref                      (GossipJID     *jid);
-void         gossip_jid_unref                    (GossipJID     *jid);
-
 void         gossip_jid_set_without_resource     (GossipJID     *jid,
 						  const gchar   *str);
 void         gossip_jid_set_resource             (GossipJID     *jid,
@@ -62,6 +77,10 @@ gint         gossip_jid_case_compare             (gconstpointer  a,
 gboolean     gossip_jid_equal                    (gconstpointer  v1,
 						  gconstpointer  v2);
 guint        gossip_jid_hash                     (gconstpointer  key);
+
+gboolean     gossip_jid_equal_without_resource   (gconstpointer  v1,
+						  gconstpointer  v2);
+guint        gossip_jid_hash_without_resource    (gconstpointer  key);
 
 const gchar *gossip_jid_get_example_string       (void);
 

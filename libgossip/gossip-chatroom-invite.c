@@ -27,7 +27,7 @@
 struct _GossipChatroomInvite {
 	guint          ref_count;
 
-	GossipContact *invitor;
+	GossipContact *inviter;
 	gchar         *id;
 	gchar         *reason;
 };
@@ -48,20 +48,20 @@ gossip_chatroom_invite_get_type (void)
 }
 
 GossipChatroomInvite *
-gossip_chatroom_invite_new (GossipContact *invitor,
+gossip_chatroom_invite_new (GossipContact *inviter,
 			    const gchar   *id,
 			    const gchar   *reason)
 {
 	GossipChatroomInvite *invite;
 
-	g_return_val_if_fail (GOSSIP_IS_CONTACT (invitor), NULL);
+	g_return_val_if_fail (GOSSIP_IS_CONTACT (inviter), NULL);
 	g_return_val_if_fail (id != NULL, NULL);
 
 	invite = g_new0 (GossipChatroomInvite, 1);
 
 	invite->ref_count = 1;
 
-	invite->invitor = g_object_ref (invitor);
+	invite->inviter = g_object_ref (inviter);
 	invite->id = g_strdup (id);
 
 	if (reason) {
@@ -94,8 +94,8 @@ gossip_chatroom_invite_unref (GossipChatroomInvite *invite)
 		return;
 	}
 
-	if (invite->invitor) {
-		g_object_unref (invite->invitor);
+	if (invite->inviter) {
+		g_object_unref (invite->inviter);
 	}
 
 	g_free (invite->id);
@@ -103,11 +103,11 @@ gossip_chatroom_invite_unref (GossipChatroomInvite *invite)
 }
 
 GossipContact *
-gossip_chatroom_invite_get_invitor (GossipChatroomInvite *invite)
+gossip_chatroom_invite_get_inviter (GossipChatroomInvite *invite)
 {
 	g_return_val_if_fail (invite != NULL, NULL);
 
-	return invite->invitor;
+	return invite->inviter;
 }
 
 const gchar *

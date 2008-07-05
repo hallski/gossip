@@ -612,7 +612,7 @@ edit_contact_dialog_button_subscribe_clicked_cb (GtkWidget               *widget
 	message = _("I would like to add you to my contact list.");
 
 	session = gossip_app_get_session ();
-	account = gossip_session_find_account (session, dialog->contact);
+	account = gossip_contact_get_account (dialog->contact);
 
 	gossip_session_add_contact (session,
 				    account,

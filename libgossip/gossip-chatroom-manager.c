@@ -47,31 +47,31 @@ typedef struct _GossipChatroomManagerPriv GossipChatroomManagerPriv;
 
 struct _GossipChatroomManagerPriv {
 	GossipAccountManager *account_manager;
+	GossipContactManager *contact_manager;
 
 	GList                *chatrooms;
 
 	gchar                *chatrooms_file_name;
-
 	gchar                *default_name;
 };
 
-static void     chatroom_manager_finalize              (GObject                  *object);
-static void     chatroom_manager_chatroom_enabled_cb   (GossipChatroom           *chatroom,
-							GParamSpec               *arg1,
-							GossipChatroomManager    *manager);
-static void     chatroom_manager_chatroom_favourite_cb (GossipChatroom           *chatroom,
-							GParamSpec               *arg1,
-							GossipChatroomManager    *manager);
-static gboolean chatroom_manager_get_all               (GossipChatroomManager    *manager);
-static gboolean chatroom_manager_file_parse            (GossipChatroomManager    *manager,
-							const gchar              *filename);
-static gboolean chatroom_manager_file_save             (GossipChatroomManager    *manager);
+static void     chatroom_manager_finalize             (GObject                  *object);
+static void     chatroom_manager_chatroom_enabled_cb  (GossipChatroom           *chatroom,
+						       GParamSpec               *arg1,
+						       GossipChatroomManager    *manager);
+static void     chatroom_manager_chatroom_favorite_cb (GossipChatroom           *chatroom,
+						       GParamSpec               *arg1,
+						       GossipChatroomManager    *manager);
+static gboolean chatroom_manager_get_all              (GossipChatroomManager    *manager);
+static gboolean chatroom_manager_file_parse           (GossipChatroomManager    *manager,
+						       const gchar              *filename);
+static gboolean chatroom_manager_file_save            (GossipChatroomManager    *manager);
 
 enum {
 	CHATROOM_ADDED,
 	CHATROOM_REMOVED,
 	CHATROOM_ENABLED,
-	CHATROOM_FAVOURITE_UPDATE,
+	CHATROOM_FAVORITE_UPDATE,
 	NEW_DEFAULT,
 	LAST_SIGNAL
 };
@@ -114,8 +114,8 @@ gossip_chatroom_manager_class_init (GossipChatroomManagerClass *klass)
 			      libgossip_marshal_VOID__OBJECT,
 			      G_TYPE_NONE,
 			      1, GOSSIP_TYPE_CHATROOM);
-	signals[CHATROOM_FAVOURITE_UPDATE] =
-		g_signal_new ("chatroom-favourite-update",
+	signals[CHATROOM_FAVORITE_UPDATE] =
+		g_signal_new ("chatroom-favorite-update",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
 			      0,
@@ -149,21 +149,26 @@ chatroom_manager_finalize (GObject *object)
 
 	priv = GET_PRIV (object);
 
+	g_free (priv->chatrooms_file_name);
+	g_free (priv->default_name);
+
 	g_list_foreach (priv->chatrooms, (GFunc)g_object_unref, NULL);
 	g_list_free (priv->chatrooms);
+
+	if (priv->contact_manager) {
+		g_object_unref (priv->contact_manager);
+	}
 
 	if (priv->account_manager) {
 		g_object_unref (priv->account_manager);
 	}
-
-	g_free (priv->chatrooms_file_name);
-	g_free (priv->default_name);
 
 	(G_OBJECT_CLASS (gossip_chatroom_manager_parent_class)->finalize) (object);
 }
 
 GossipChatroomManager *
 gossip_chatroom_manager_new (GossipAccountManager *account_manager,
+			     GossipContactManager *contact_manager,
 			     const gchar          *filename)
 {
 
@@ -171,6 +176,7 @@ gossip_chatroom_manager_new (GossipAccountManager *account_manager,
 	GossipChatroomManagerPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (account_manager), NULL);
+	g_return_val_if_fail (GOSSIP_IS_CONTACT_MANAGER (contact_manager), NULL);
 
 	manager = g_object_new (GOSSIP_TYPE_CHATROOM_MANAGER, NULL);
 
@@ -178,6 +184,10 @@ gossip_chatroom_manager_new (GossipAccountManager *account_manager,
 
 	if (account_manager) {
 		priv->account_manager = g_object_ref (account_manager);
+	}
+
+	if (contact_manager) {
+		priv->contact_manager = g_object_ref (contact_manager);
 	}
 
 	if (filename) {
@@ -195,39 +205,48 @@ gossip_chatroom_manager_add (GossipChatroomManager *manager,
 			     GossipChatroom        *chatroom)
 {
 	GossipChatroomManagerPriv *priv;
+	GossipContact             *own_contact;
+	const gchar               *name;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM_MANAGER (manager), FALSE);
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), FALSE);
 
 	priv = GET_PRIV (manager);
 
-	/* don't add more than once */
-	if (!gossip_chatroom_manager_find (manager, gossip_chatroom_get_id (chatroom))) {
-		const gchar *name;
-
-		name = gossip_chatroom_get_name (chatroom);
-
-		gossip_debug (DEBUG_DOMAIN, "Adding %s chatroom with name:'%s'",
-			      gossip_chatroom_get_auto_connect (chatroom) ? "connecting on startup " : "",
-			      name);
-
-		g_signal_connect (chatroom, "notify::enabled",
-				  G_CALLBACK (chatroom_manager_chatroom_enabled_cb),
-				  manager);
-
-		g_signal_connect (chatroom, "notify::favourite",
-				  G_CALLBACK (chatroom_manager_chatroom_favourite_cb),
-				  manager);
-
-		priv->chatrooms = g_list_append (priv->chatrooms,
-						 g_object_ref (chatroom));
-
-		g_signal_emit (manager, signals[CHATROOM_ADDED], 0, chatroom);
-
-		return TRUE;
+	/* Don't add more than once */
+	if (gossip_chatroom_manager_find (manager, gossip_chatroom_get_id (chatroom))) {
+		return FALSE;
 	}
+       
+	name = gossip_chatroom_get_name (chatroom);
+	
+	gossip_debug (DEBUG_DOMAIN, "Adding %s chatroom with name:'%s'",
+		      gossip_chatroom_get_auto_connect (chatroom) ? "connecting on startup " : "",
+		      name);
 
-	return FALSE;
+	/* Make sure we have an 'own_contact' */
+	own_contact = gossip_contact_manager_find_or_create (priv->contact_manager,
+							     gossip_chatroom_get_account (chatroom),
+							     GOSSIP_CONTACT_TYPE_CHATROOM,
+							     gossip_chatroom_get_own_contact_id_str (chatroom),
+							     NULL);
+	
+	gossip_chatroom_set_own_contact (chatroom, own_contact);
+	
+	g_signal_connect (chatroom, "notify::enabled",
+			  G_CALLBACK (chatroom_manager_chatroom_enabled_cb),
+			  manager);
+	
+	g_signal_connect (chatroom, "notify::favorite",
+			  G_CALLBACK (chatroom_manager_chatroom_favorite_cb),
+			  manager);
+	
+	priv->chatrooms = g_list_append (priv->chatrooms,
+					 g_object_ref (chatroom));
+	
+	g_signal_emit (manager, signals[CHATROOM_ADDED], 0, chatroom);
+	
+	return TRUE;
 }
 
 void
@@ -251,7 +270,7 @@ gossip_chatroom_manager_remove (GossipChatroomManager *manager,
 					      manager);
 
 	g_signal_handlers_disconnect_by_func (chatroom,
-					      chatroom_manager_chatroom_favourite_cb,
+					      chatroom_manager_chatroom_favorite_cb,
 					      manager);
 
 	link = g_list_find (priv->chatrooms, chatroom);
@@ -291,11 +310,11 @@ chatroom_manager_chatroom_enabled_cb (GossipChatroom        *chatroom,
 }
 
 static void
-chatroom_manager_chatroom_favourite_cb (GossipChatroom        *chatroom,
+chatroom_manager_chatroom_favorite_cb (GossipChatroom        *chatroom,
 					GParamSpec            *arg1,
 					GossipChatroomManager *manager)
 {
-	g_signal_emit (manager, signals[CHATROOM_FAVOURITE_UPDATE], 0, chatroom);
+	g_signal_emit (manager, signals[CHATROOM_FAVORITE_UPDATE], 0, chatroom);
 }
 
 GList *
@@ -426,8 +445,6 @@ gossip_chatroom_manager_find_extended (GossipChatroomManager *manager,
 			this_account = gossip_chatroom_get_account (chatroom);
 			if (this_account) {
 				same_account = gossip_account_equal (account, this_account);
-			} else {
-				same_account = FALSE;
 			}
 		}
 
@@ -439,6 +456,46 @@ gossip_chatroom_manager_find_extended (GossipChatroomManager *manager,
 	}
 
 	return found;
+}
+
+GossipChatroom *
+gossip_chatroom_manager_find_or_create (GossipChatroomManager *manager,
+					GossipAccount         *account,
+					const gchar           *server,
+					const gchar           *room,
+					gboolean              *created)
+{
+	GossipChatroom *chatroom;
+	GList          *found;
+
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM_MANAGER (manager), NULL);
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
+	g_return_val_if_fail (server != NULL, NULL);
+	g_return_val_if_fail (room != NULL, NULL);
+
+	found = gossip_chatroom_manager_find_extended (manager, 
+						       account, 
+						       server,
+						       room);
+
+	if (g_list_length (found) > 1) {
+		g_warning ("Expected ONE chatroom to be found, actually found %d, using first", 
+			   g_list_length (found));
+	}
+
+	if (created) {
+		*created = found == NULL;
+	}
+
+	if (found) {
+		chatroom = found->data;
+		g_list_free (found);
+	} else {
+		chatroom = gossip_chatroom_new (account, server, room);
+		gossip_chatroom_manager_add (manager, chatroom);
+	}
+
+	return chatroom;
 }
 
 void
@@ -556,7 +613,7 @@ chatroom_manager_parse_chatroom (GossipChatroomManager *manager,
 	gchar                     *str;
 	gchar                     *name, *nick, *server;
 	gchar                     *room, *password, *account_name;
-	gboolean                   auto_connect, favourite;
+	gboolean                   auto_connect;
 
 	priv = GET_PRIV (manager);
 
@@ -567,7 +624,6 @@ chatroom_manager_parse_chatroom (GossipChatroomManager *manager,
 	room = NULL;
 	password = NULL;
 	auto_connect = TRUE;
-	favourite = FALSE;
 	account_name = NULL;
 
 	child = node->children;
@@ -608,13 +664,6 @@ chatroom_manager_parse_chatroom (GossipChatroomManager *manager,
 				auto_connect = FALSE;
 			}
 		}
-		else if (strcmp (tag, "favourite") == 0) {
-			if (strcmp (str, "yes") == 0) {
-				favourite = TRUE;
-			} else {
-				favourite = FALSE;
-			}
-		}
 		else if (strcmp (tag, "account") == 0) {
 			account_name = g_strdup (str);
 		}
@@ -625,13 +674,15 @@ chatroom_manager_parse_chatroom (GossipChatroomManager *manager,
 	}
 
 	if (name && server && room) {
-		chatroom = g_object_new (GOSSIP_TYPE_CHATROOM,
-					 "name", name,
-					 "server", server,
-					 "room", room,
-					 "auto_connect", auto_connect,
-					 "favourite", favourite,
-					 NULL);
+		GossipAccount *account = NULL;
+		
+		account = gossip_account_manager_find (priv->account_manager,
+						       account_name);
+		
+		chatroom = gossip_chatroom_new (account, server, room);
+		gossip_chatroom_set_name (chatroom, name);
+		gossip_chatroom_set_auto_connect (chatroom, auto_connect);
+		gossip_chatroom_set_favorite (chatroom, TRUE);
 
 		if (nick) {
 			gossip_chatroom_set_nick (chatroom, nick);
@@ -639,19 +690,6 @@ chatroom_manager_parse_chatroom (GossipChatroomManager *manager,
 
 		if (password) {
 			gossip_chatroom_set_password (chatroom, password);
-		}
-
-		if (account_name) {
-			GossipAccount *account = NULL;
-
-			if (priv->account_manager) {
-				account = gossip_account_manager_find (priv->account_manager,
-								       account_name);
-			}
-
-			if (account) {
-				gossip_chatroom_set_account (chatroom, account);
-			}
 		}
 
 		gossip_chatroom_manager_add (manager, chatroom);
@@ -779,6 +817,11 @@ chatroom_manager_file_save (GossipChatroomManager *manager)
 
 		chatroom = l->data;
 
+		/* We only save favorites */
+		if (!gossip_chatroom_get_favorite (chatroom)) {
+			continue;
+		}
+
 		node = xmlNewChild (root, NULL, "chatroom", NULL);
 		xmlNewChild (node, NULL, "type", "normal"); /* We should remove this */
 		xmlNewTextChild (node, NULL, "name", gossip_chatroom_get_name (chatroom));
@@ -789,12 +832,9 @@ chatroom_manager_file_save (GossipChatroomManager *manager)
 
 		xmlNewTextChild (node, NULL, "password", gossip_chatroom_get_password (chatroom));
 		xmlNewChild (node, NULL, "auto_connect", gossip_chatroom_get_auto_connect (chatroom) ? "yes" : "no");
-		xmlNewChild (node, NULL, "favourite", gossip_chatroom_get_favourite (chatroom) ? "yes" : "no");
 
 		account = gossip_chatroom_get_account (chatroom);
-		if (account) {
-			xmlNewTextChild (node, NULL, "account", gossip_account_get_name (account));
-		}
+		xmlNewTextChild (node, NULL, "account", gossip_account_get_name (account));
 	}
 
 	/* Make sure the XML is indented properly */

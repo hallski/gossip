@@ -26,6 +26,8 @@
 #include <glib/gi18n.h>
 
 #include "gossip-chatroom.h"
+#include "gossip-utils.h"
+#include "gossip-jid.h"
 
 #include "libgossip-marshal.h"
 
@@ -47,7 +49,7 @@ struct _GossipChatroomPriv {
 	gchar                 *room;
 	gchar                 *password;
 	gboolean               auto_connect;
-	gboolean               favourite;
+	gboolean               favorite;
 
 	GossipChatroomFeature  features;
 	GossipChatroomStatus   status;
@@ -57,6 +59,8 @@ struct _GossipChatroomPriv {
 	GossipChatroomError    last_error;
 
 	GHashTable            *contacts;
+	GossipContact         *own_contact;
+	gchar                 *own_contact_id_str;
 };
 
 static void gossip_chatroom_class_init (GossipChatroomClass *klass);
@@ -70,6 +74,7 @@ static void chatroom_set_property      (GObject             *object,
 					guint                param_id,
 					const GValue        *value,
 					GParamSpec          *pspec);
+static void chatroom_contact_info_free (gpointer             data);
 
 enum {
 	PROP_0,
@@ -84,11 +89,12 @@ enum {
 	PROP_ROOM,
 	PROP_PASSWORD,
 	PROP_AUTO_CONNECT,
-	PROP_FAVOURITE,
+	PROP_FAVORITE,
 	PROP_FEATURES,
 	PROP_STATUS,
 	PROP_OCCUPANTS,
 	PROP_LAST_ERROR,
+	PROP_OWN_CONTACT
 };
 
 enum {
@@ -170,6 +176,13 @@ gossip_chatroom_class_init (GossipChatroomClass *klass)
 	object_class->get_property = chatroom_get_property;
 	object_class->set_property = chatroom_set_property;
 
+	g_object_class_install_property (object_class,
+					 PROP_ACCOUNT,
+					 g_param_spec_object ("account",
+							      "Chatroom Account",
+							      "The account associated with an chatroom",
+							      GOSSIP_TYPE_ACCOUNT,
+							      G_PARAM_READWRITE));
 	g_object_class_install_property (object_class,
 					 PROP_ID,
 					 g_param_spec_int ("id",
@@ -253,10 +266,10 @@ gossip_chatroom_class_init (GossipChatroomClass *klass)
 							       G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class,
-					 PROP_FAVOURITE,
-					 g_param_spec_boolean ("favourite",
-							       "Chatroom Favourite",
-							       "Used to connect favourites quickly",
+					 PROP_FAVORITE,
+					 g_param_spec_boolean ("favorite",
+							       "Chatroom Favorite",
+							       "Used to connect favorites quickly",
 							       FALSE,
 							       G_PARAM_READWRITE));
 
@@ -300,11 +313,11 @@ gossip_chatroom_class_init (GossipChatroomClass *klass)
 							    G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class,
-					 PROP_ACCOUNT,
-					 g_param_spec_object ("account",
-							      "Chatroom Account",
-							      "The account associated with an chatroom",
-							      GOSSIP_TYPE_ACCOUNT,
+					 PROP_OWN_CONTACT,
+					 g_param_spec_object ("own-contact",
+							      "Chatroom Own Contact",
+							      "The contact you are in this chatroom",
+							      GOSSIP_TYPE_CONTACT,
 							      G_PARAM_READWRITE));
 
 	signals[CONTACT_JOINED] =
@@ -346,17 +359,17 @@ gossip_chatroom_init (GossipChatroom *chatroom)
 
 	priv = GET_PRIV (chatroom);
 
-	priv->id           = id++;
+	priv->id = id++;
 
 	priv->auto_connect = FALSE;
-	priv->favourite    = FALSE;
+	priv->favorite = FALSE;
 
-	priv->status       = GOSSIP_CHATROOM_STATUS_INACTIVE;
+	priv->status = GOSSIP_CHATROOM_STATUS_INACTIVE;
 
-	priv->contacts     = g_hash_table_new_full (gossip_contact_hash,
-						    gossip_contact_equal,
-						    (GDestroyNotify) g_object_unref,
-						    g_free);
+	priv->contacts = g_hash_table_new_full (gossip_contact_hash,
+						gossip_contact_equal,
+						(GDestroyNotify) g_object_unref,
+						chatroom_contact_info_free);
 }
 
 static void
@@ -366,6 +379,10 @@ chatroom_finalize (GObject *object)
 
 	priv = GET_PRIV (object);
 
+	if (priv->account) {
+		g_object_unref (priv->account);
+	}
+
 	g_free (priv->id_str);
 
 	g_free (priv->name);
@@ -374,11 +391,11 @@ chatroom_finalize (GObject *object)
 	g_free (priv->room);
 	g_free (priv->password);
 
-	if (priv->account) {
-		g_object_unref (priv->account);
-	}
-
 	g_hash_table_destroy (priv->contacts);
+
+	if (priv->own_contact) {
+		g_object_unref (priv->own_contact);
+	}
 
 	(G_OBJECT_CLASS (gossip_chatroom_parent_class)->finalize) (object);
 }
@@ -427,8 +444,8 @@ chatroom_get_property (GObject    *object,
 	case PROP_AUTO_CONNECT:
 		g_value_set_boolean (value, priv->auto_connect);
 		break;
-	case PROP_FAVOURITE:
-		g_value_set_boolean (value, priv->favourite);
+	case PROP_FAVORITE:
+		g_value_set_boolean (value, priv->favorite);
 		break;
 	case PROP_FEATURES:
 		g_value_set_int (value, priv->features);
@@ -441,6 +458,9 @@ chatroom_get_property (GObject    *object,
 		break;
 	case PROP_LAST_ERROR:
 		g_value_set_enum (value, priv->last_error);
+		break;
+	case PROP_OWN_CONTACT:
+		g_value_set_object (value, priv->own_contact);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
@@ -495,9 +515,9 @@ chatroom_set_property (GObject      *object,
 		gossip_chatroom_set_auto_connect (GOSSIP_CHATROOM (object),
 						 g_value_get_boolean (value));
 		break;
-	case PROP_FAVOURITE:
-		gossip_chatroom_set_favourite (GOSSIP_CHATROOM (object),
-					       g_value_get_boolean (value));
+	case PROP_FAVORITE:
+		gossip_chatroom_set_favorite (GOSSIP_CHATROOM (object),
+					      g_value_get_boolean (value));
 		break;
 	case PROP_FEATURES:
 		gossip_chatroom_set_features (GOSSIP_CHATROOM (object),
@@ -515,10 +535,98 @@ chatroom_set_property (GObject      *object,
 		gossip_chatroom_set_last_error (GOSSIP_CHATROOM (object),
 						g_value_get_enum (value));
 		break;
+	case PROP_OWN_CONTACT:
+		gossip_chatroom_set_own_contact (GOSSIP_CHATROOM (object),
+						 g_value_get_object (value));
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
 		break;
 	};
+}
+
+static void
+update_id_str (GossipChatroom *chatroom)
+{
+	GossipChatroomPriv *priv;
+
+	priv = GET_PRIV (chatroom);
+
+	if (priv->room && priv->server) {
+		g_free (priv->id_str);
+		priv->id_str = g_strconcat (priv->room, "@", priv->server, NULL);
+	}
+}
+
+static void
+update_own_contact_id_str (GossipChatroom *chatroom)
+{
+	GossipChatroomPriv *priv;
+
+	priv = GET_PRIV (chatroom);
+
+	if (priv->id_str && priv->nick) {
+		g_free (priv->own_contact_id_str);
+		priv->own_contact_id_str = g_strconcat (priv->id_str, "/", priv->nick, NULL);
+	}
+}
+
+static void
+update_own_contact (GossipChatroom *chatroom)
+{
+	GossipChatroomPriv *priv;
+
+	priv = GET_PRIV (chatroom);
+
+	/* We can't do anything without an account, own contact or
+	 * id_str (room and server) to generate the own
+	 * contact.
+	 */
+	if (!priv->account || 
+	    !priv->own_contact ||
+	    !priv->id_str ||
+	    !priv->own_contact_id_str) {
+		return;
+	}
+
+	/* First try the nick that we have saved in the Chatroom */
+	if (G_STR_EMPTY (priv->nick)) {
+		const gchar *account_id;
+		gchar       *part_name;
+
+		/* Second try to use the name part of the account ID */
+		account_id = gossip_account_get_id (priv->account);
+		part_name = gossip_jid_string_get_part_name (account_id);
+
+		/* Update nick if we don't have one */
+		gossip_chatroom_set_nick (chatroom, part_name);
+		g_free (part_name);
+	}
+
+	/* Update id and name */
+	gossip_contact_set_id (priv->own_contact, priv->own_contact_id_str);
+	gossip_contact_set_name (priv->own_contact, priv->nick);	
+}
+
+GossipChatroom *
+gossip_chatroom_new (GossipAccount *account,
+		     const gchar   *server,
+		     const gchar   *room)
+{
+	GossipChatroom *chatroom;
+
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
+	g_return_val_if_fail (server != NULL, NULL);
+	g_return_val_if_fail (room != NULL, NULL);
+
+	chatroom = g_object_new (GOSSIP_TYPE_CHATROOM, 
+				 "account", account,
+				 "server", server,
+				 "room", room,
+				 "name", room, /* Use the room as the name */
+				 NULL);
+
+	return chatroom;
 }
 
 GossipAccount *
@@ -653,7 +761,7 @@ gossip_chatroom_get_auto_connect (GossipChatroom *chatroom)
 }
 
 gboolean
-gossip_chatroom_get_favourite (GossipChatroom *chatroom)
+gossip_chatroom_get_favorite (GossipChatroom *chatroom)
 {
 	GossipChatroomPriv *priv;
 
@@ -661,7 +769,7 @@ gossip_chatroom_get_favourite (GossipChatroom *chatroom)
 
 	priv = GET_PRIV (chatroom);
 
-	return priv->favourite;
+	return priv->favorite;
 }
 
 GossipChatroomFeature
@@ -727,6 +835,46 @@ gossip_chatroom_get_contact_info (GossipChatroom *chatroom,
 	return g_hash_table_lookup (priv->contacts, contact);
 }
 
+GList *
+gossip_chatroom_get_contacts (GossipChatroom *chatroom)
+{
+	GossipChatroomPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
+
+	priv = GET_PRIV (chatroom);
+
+	return g_hash_table_get_keys (priv->contacts);
+}
+
+GossipContact *
+gossip_chatroom_get_own_contact (GossipChatroom *chatroom)
+{
+	GossipChatroomPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
+
+	priv = GET_PRIV (chatroom);
+
+	return priv->own_contact;
+}
+
+const gchar *
+gossip_chatroom_get_own_contact_id_str (GossipChatroom *chatroom)
+{
+	GossipChatroomPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
+
+	priv = GET_PRIV (chatroom);
+
+	if (!priv->own_contact_id_str) {
+		priv->own_contact_id_str = g_strdup ("");
+	}
+
+	return priv->own_contact_id_str;
+}
+
 void
 gossip_chatroom_set_account (GossipChatroom *chatroom,
 			     GossipAccount  *account)
@@ -742,6 +890,9 @@ gossip_chatroom_set_account (GossipChatroom *chatroom,
 	}
 
 	priv->account = g_object_ref (account);
+
+	/* Update dependencies, like own-contact */
+	update_own_contact (chatroom);
 
 	g_object_notify (G_OBJECT (chatroom), "account");
 }
@@ -811,6 +962,10 @@ gossip_chatroom_set_nick (GossipChatroom *chatroom,
 	g_free (priv->nick);
 	priv->nick = g_strdup (nick);
 
+	/* Update dependencies, like own-contact */
+	update_own_contact_id_str (chatroom);
+	update_own_contact (chatroom);
+
 	g_object_notify (G_OBJECT (chatroom), "nick");
 }
 
@@ -828,10 +983,10 @@ gossip_chatroom_set_server (GossipChatroom *chatroom,
 	g_free (priv->server);
 	priv->server = g_strdup (server);
 
-	if (priv->room && priv->server) {
-		g_free (priv->id_str);
-		priv->id_str = g_strdup_printf ("%s@%s", priv->room, priv->server);
-	}
+	/* Update dependencies, like own-contact */
+	update_id_str (chatroom);
+	update_own_contact_id_str (chatroom);
+	update_own_contact (chatroom);
 
 	g_object_notify (G_OBJECT (chatroom), "server");
 }
@@ -850,10 +1005,10 @@ gossip_chatroom_set_room (GossipChatroom *chatroom,
 	g_free (priv->room);
 	priv->room = g_strdup (room);
 
-	if (priv->room && priv->server) {
-		g_free (priv->id_str);
-		priv->id_str = g_strdup_printf ("%s@%s", priv->room, priv->server);
-	}
+	/* Update dependencies, like own-contact */
+	update_id_str (chatroom);
+	update_own_contact_id_str (chatroom);
+	update_own_contact (chatroom);
 
 	g_object_notify (G_OBJECT (chatroom), "room");
 }
@@ -890,17 +1045,17 @@ gossip_chatroom_set_auto_connect (GossipChatroom *chatroom,
 }
 
 void
-gossip_chatroom_set_favourite (GossipChatroom *chatroom,
-			       gboolean        favourite)
+gossip_chatroom_set_favorite (GossipChatroom *chatroom,
+			      gboolean        favorite)
 {
 	GossipChatroomPriv *priv;
 
 	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
 
 	priv = GET_PRIV (chatroom);
-	priv->favourite = favourite;
+	priv->favorite = favorite;
 
-	g_object_notify (G_OBJECT (chatroom), "favourite");
+	g_object_notify (G_OBJECT (chatroom), "favorite");
 }
 
 static void
@@ -977,6 +1132,12 @@ gossip_chatroom_set_last_error (GossipChatroom      *chatroom,
 	g_object_notify (G_OBJECT (chatroom), "last-error");
 }
 
+static void
+chatroom_contact_info_free (gpointer data)
+{
+	g_free (data);
+}
+
 void
 gossip_chatroom_set_contact_info (GossipChatroom            *chatroom,
 				  GossipContact             *contact,
@@ -1002,36 +1163,67 @@ gossip_chatroom_set_contact_info (GossipChatroom            *chatroom,
 	g_signal_emit (chatroom, signals[CONTACT_INFO_CHANGED], 0, contact);
 }
 
-guint
-gossip_chatroom_hash (gconstpointer key)
+void
+gossip_chatroom_set_own_contact (GossipChatroom *chatroom,
+				 GossipContact  *own_contact)
 {
 	GossipChatroomPriv *priv;
 
-	g_return_val_if_fail (GOSSIP_IS_CHATROOM (key), 0);
+	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
+	g_return_if_fail (GOSSIP_IS_CONTACT (own_contact));
 
-	priv = GET_PRIV (key);
+	priv = GET_PRIV (chatroom);
 
-	return g_int_hash (&priv->id);
+	if (priv->own_contact) {
+		g_object_unref (priv->own_contact);
+	}
+
+	priv->own_contact = g_object_ref (own_contact);
+
+	g_object_notify (G_OBJECT (chatroom), "own-contact");
+}
+
+guint
+gossip_chatroom_hash (gconstpointer key)
+{
+	const gchar *id_str;
+	guint        hash = 0;
+
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (key), +1);
+
+	id_str = gossip_chatroom_get_id_str (GOSSIP_CHATROOM (key));
+	g_return_val_if_fail (!G_STR_EMPTY (id_str), +1);
+
+	hash += gossip_account_hash (gossip_chatroom_get_account (GOSSIP_CHATROOM (key)));
+	hash += g_str_hash (id_str);
+
+	return hash;
 }
 
 gboolean
-gossip_chatroom_equal (gconstpointer a,
-		       gconstpointer b)
+gossip_chatroom_equal (gconstpointer v1,
+		       gconstpointer v2)
 {
-	GossipChatroomPriv *priv1;
-	GossipChatroomPriv *priv2;
+	GossipAccount *account_a;
+	GossipAccount *account_b;
+	const gchar   *id_a;
+	const gchar   *id_b;
+	gboolean       equal;
 
-	g_return_val_if_fail (GOSSIP_IS_CHATROOM (a), FALSE);
-	g_return_val_if_fail (GOSSIP_IS_CHATROOM (b), FALSE);
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (v1), FALSE);
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (v2), FALSE);
 
-	priv1 = GET_PRIV (a);
-	priv2 = GET_PRIV (b);
+	account_a = gossip_chatroom_get_account (GOSSIP_CHATROOM (v1));
+	account_b = gossip_chatroom_get_account (GOSSIP_CHATROOM (v2));
 
-	if (!priv1 || !priv2) {
-		return FALSE;
-	}
+	id_a = gossip_chatroom_get_id_str (GOSSIP_CHATROOM (v1));
+	id_b = gossip_chatroom_get_id_str (GOSSIP_CHATROOM (v2));
 
-	return (priv1->id == priv2->id);
+	equal  = TRUE;
+	equal &= gossip_account_equal (account_a, account_b);
+	equal &= g_str_equal (id_a, id_b);
+
+	return equal;
 }
 
 gboolean
@@ -1109,31 +1301,38 @@ const gchar *
 gossip_chatroom_error_to_string (GossipChatroomError error)
 {
 	switch (error) {
+	case GOSSIP_CHATROOM_ERROR_NONE: 
+		break;
 	case GOSSIP_CHATROOM_ERROR_PASSWORD_INVALID_OR_MISSING:
 		return _("The chat room you tried to join requires a password. "
-			 "You either failed to supply a password or the password you tried was incorrect.");
-	case GOSSIP_CHATROOM_ERROR_USER_BANNED:
-		return _("You have been banned from this chatroom.");
+			 "You either failed to supply a password or the password you tried was incorrect");	case GOSSIP_CHATROOM_ERROR_USER_BANNED:
+		return _("You have been banned from this chatroom");
 	case GOSSIP_CHATROOM_ERROR_ROOM_NOT_FOUND:
-		return _("The conference room you tried to join could not be found.");
+		return _("The conference room you tried to join could not be found");
 	case GOSSIP_CHATROOM_ERROR_ROOM_CREATION_RESTRICTED:
-		return _("Chatroom creation is restricted on this server.");
+		return _("Chatroom creation is restricted on this server");
 	case GOSSIP_CHATROOM_ERROR_USE_RESERVED_ROOM_NICK:
-		return _("Chatroom reserved nick names must be used on this server.");
+		return _("Chatroom reserved nick names must be used on this server");
 	case GOSSIP_CHATROOM_ERROR_NOT_ON_MEMBERS_LIST:
-		return _("You are not on the chatroom's members list.");
+		return _("You are not on the chatroom's members list");
 	case GOSSIP_CHATROOM_ERROR_NICK_IN_USE:
-		return _("The nickname you have chosen is already in use.");
+		return _("The nickname you have chosen is already in use");
 	case GOSSIP_CHATROOM_ERROR_MAXIMUM_USERS_REACHED:
-		return _("The maximum number of users for this chatroom has been reached.");
-	case GOSSIP_CHATROOM_ERROR_TIMED_OUT:
-		return _("The remote conference server did not respond in a sensible time.");
-	case GOSSIP_CHATROOM_ERROR_UNKNOWN:
-		return _("An unknown error occurred, check your details are correct.");
-	case GOSSIP_CHATROOM_ERROR_CANCELED:
-		return _("Joining the chatroom was canceled.");
-	default:
+		return _("The maximum number of users for this chatroom has been reached");
+	case GOSSIP_CHATROOM_ERROR_UNAUTHORIZED_REQUEST:
+		return _("Unauthorized request, you do not have privileges to do that");
+	case GOSSIP_CHATROOM_ERROR_FORBIDDEN:
+		return _("That action is forbidden");
+	case GOSSIP_CHATROOM_ERROR_ALREADY_OPEN: 
 		break;
+	case GOSSIP_CHATROOM_ERROR_TIMED_OUT:
+		return _("The remote conference server did not respond in a sensible time");
+	case GOSSIP_CHATROOM_ERROR_CANCELED:
+		return _("Joining the chatroom was canceled");
+	case GOSSIP_CHATROOM_ERROR_BAD_REQUEST:
+		return _("A bad request was sent to the server");
+	case GOSSIP_CHATROOM_ERROR_UNKNOWN:
+		return _("An unknown error occurred, check your details are correct");
 	}
 
 	return "";

@@ -122,7 +122,7 @@ gossip_jabber_ft_init (GossipJabber *jabber)
 
 	gossip_debug (DEBUG_DOMAIN, "Initializing GossipJabberFT");
 
-	connection = gossip_jabber_get_connection (jabber);
+	connection = _gossip_jabber_get_connection (jabber);
 
 	fts = g_new0 (GossipJabberFTs, 1);
 
@@ -213,7 +213,7 @@ jabber_ft_guess_id_by_sid_and_sender (GossipJabber *jabber,
 	GHashTable      *jids;
 	gpointer         id_ptr;
 	
-	fts = gossip_jabber_get_fts (jabber);
+	fts = _gossip_jabber_get_fts (jabber);
 	g_return_val_if_fail (fts, 0);
 
 	jids = g_hash_table_lookup (fts->jid_sids, jid);
@@ -239,7 +239,7 @@ jabber_ft_get_ft_from_id (GossipJabber *jabber,
 	GossipFT        *ft;
 	const gchar     *id_str;
 
-	fts = gossip_jabber_get_fts (jabber);
+	fts = _gossip_jabber_get_fts (jabber);
 	id_str = g_hash_table_lookup (fts->str_ids, GUINT_TO_POINTER (id));
 	ft = g_hash_table_lookup (fts->ft_ids, id_str);
 
@@ -254,7 +254,7 @@ jabber_ft_transfer_initiated_cb (LmBsSession  *session,
 	GossipJabberFTs *fts;
 	GossipFT        *ft;
 
-	fts = gossip_jabber_get_fts (jabber);
+	fts = _gossip_jabber_get_fts (jabber);
 	ft = jabber_ft_get_ft_from_id (jabber, id);
  
 	gossip_debug (DEBUG_DOMAIN, "ID[%d] Transfer initiated", id);
@@ -269,7 +269,7 @@ jabber_ft_transfer_complete_cb (LmBsSession  *session,
 	GossipJabberFTs *fts;
 	GossipFT        *ft;
 
-	fts = gossip_jabber_get_fts (jabber);
+	fts = _gossip_jabber_get_fts (jabber);
 	ft = jabber_ft_get_ft_from_id (jabber, id);
  
 	gossip_debug (DEBUG_DOMAIN, "ID[%d] Transfer complete", id);
@@ -285,7 +285,7 @@ jabber_ft_transfer_progress_cb (LmBsSession  *session,
 	GossipJabberFTs *fts;
 	GossipFT        *ft;
 
-	fts = gossip_jabber_get_fts (jabber);
+	fts = _gossip_jabber_get_fts (jabber);
 	ft = jabber_ft_get_ft_from_id (jabber, id);
 
 	gossip_debug (DEBUG_DOMAIN, "ID[%d] Progress: %f %%", id, progress * 100);
@@ -302,7 +302,7 @@ jabber_ft_transfer_error_cb (LmBsSession  *session,
 	GossipFT        *ft;
 	GossipFTError    error_code;
 
-	fts = gossip_jabber_get_fts (jabber);
+	fts = _gossip_jabber_get_fts (jabber);
 	ft = jabber_ft_get_ft_from_id (jabber, id);
 
 	switch (error->code) {
@@ -387,7 +387,7 @@ jabber_ft_iq_streamhost (LmConnection *conn,
 	}
 
 	iq_id = lm_message_node_get_attribute (m->node, "id");
-	fts = gossip_jabber_get_fts (jabber);
+	fts = _gossip_jabber_get_fts (jabber);
 	lm_bs_session_streamhost_activate (fts->bs_session, iq_id, attr);
 
 	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
@@ -438,7 +438,7 @@ jabber_ft_iq_query (LmConnection *conn,
 	}
 	
 	iq_id = lm_message_node_get_attribute (m->node, "id");
-	fts = gossip_jabber_get_fts (jabber);
+	fts = _gossip_jabber_get_fts (jabber);
 	lm_bs_session_set_iq_id (fts->bs_session, id, iq_id);
 
 	/* Get all children named "streamhost" */
@@ -484,7 +484,7 @@ jabber_ft_send_streamhosts (LmConnection *conn,
 	guint            id;
 	gchar           *jid_str;
 	
-	fts = gossip_jabber_get_fts (jabber);
+	fts = _gossip_jabber_get_fts (jabber);
 	g_return_if_fail (fts != NULL);
 
 	file_id = gossip_ft_get_id (ft);
@@ -549,7 +549,7 @@ jabber_ft_feature_result (LmConnection *conn,
 	LmMessageNode   *node;
 	const gchar     *attr;
 
-	fts = gossip_jabber_get_fts (jabber);
+	fts = _gossip_jabber_get_fts (jabber);
 	g_return_val_if_fail (fts != NULL, LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS);
 
 	node = lm_message_node_get_child (m->node, "si");
@@ -691,14 +691,14 @@ jabber_ft_handle_request (GossipJabber *jabber,
 	const gchar     *file_mime;
 	const gchar     *sid;
 
-	fts = gossip_jabber_get_fts (jabber);
+	fts = _gossip_jabber_get_fts (jabber);
 	g_return_if_fail (fts != NULL);
 
 	from_str = lm_message_node_get_attribute (m->node, "from");
 	id_str = lm_message_node_get_attribute (m->node, "id");
 	from = gossip_jabber_get_contact_from_jid (jabber, 
 						   from_str, 
-						   NULL, 
+						   FALSE,
 						   FALSE,
 						   TRUE);
 
@@ -755,7 +755,7 @@ jabber_ft_handle_error (GossipJabber *jabber,
 	GossipContact   *from;
 	LmMessageNode   *node;
 
-	fts = gossip_jabber_get_fts (jabber);
+	fts = _gossip_jabber_get_fts (jabber);
 	g_return_if_fail (fts != NULL);
 
 	id_str = lm_message_node_get_attribute (m->node, "id");
@@ -771,7 +771,7 @@ jabber_ft_handle_error (GossipJabber *jabber,
 	from_str = lm_message_node_get_attribute (m->node, "from");
 	from = gossip_jabber_get_contact_from_jid (jabber, 
 						   from_str, 
-						   NULL, 
+						   FALSE,
 						   FALSE, 
 						   TRUE);
 
@@ -965,7 +965,7 @@ gossip_jabber_ft_send (GossipJabberFTs *fts,
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
 	g_return_val_if_fail (file != NULL, NULL);
 
-	connection = gossip_jabber_get_connection (fts->jabber);
+	connection = _gossip_jabber_get_connection (fts->jabber);
 	own_contact = gossip_jabber_get_own_contact (fts->jabber);
 
 	to = jabber_ft_get_contact_last_jid (contact);
@@ -1096,7 +1096,7 @@ gossip_jabber_ft_accept (GossipJabberFTs *fts,
 
 	gossip_debug (DEBUG_DOMAIN, "ID[%d] Accepting file transfer", id);
 
-	connection = gossip_jabber_get_connection (fts->jabber);
+	connection = _gossip_jabber_get_connection (fts->jabber);
 	own_contact = gossip_jabber_get_own_contact (fts->jabber);
 	to_str = g_hash_table_lookup (fts->remote_ids, GUINT_TO_POINTER (id));
 	id_str = g_hash_table_lookup (fts->str_ids, GUINT_TO_POINTER (id));
@@ -1177,7 +1177,7 @@ gossip_jabber_ft_decline (GossipJabberFTs *fts,
 
 	gossip_debug (DEBUG_DOMAIN, "ID[%d] Declining file transfer", id);
 
-	connection = gossip_jabber_get_connection (fts->jabber);
+	connection = _gossip_jabber_get_connection (fts->jabber);
 	own_contact = gossip_jabber_get_own_contact (fts->jabber);
 
 	to_str = g_hash_table_lookup (fts->remote_ids, GUINT_TO_POINTER (id));
@@ -1265,7 +1265,7 @@ gossip_jabber_ft_iib_start (GossipJabber *jabber,
 
 	g_return_if_fail (to != NULL);
 
-	connection = gossip_jabber_get_connection (jabber);
+	connection = _gossip_jabber_get_connection (jabber);
 
 	m = lm_message_new_with_sub_type (to,
 					  LM_MESSAGE_TYPE_IQ,
@@ -1294,7 +1294,7 @@ gossip_jabber_ft_iib_start_response (GossipJabber *jabber,
 	g_return_if_fail (to != NULL);
 	g_return_if_fail (id != NULL);
 
-	connection = gossip_jabber_get_connection (jabber);
+	connection = _gossip_jabber_get_connection (jabber);
 
 	m = lm_message_new_with_sub_type (to,
 					  LM_MESSAGE_TYPE_IQ,
@@ -1323,7 +1323,7 @@ gossip_jabber_ft_iib_error (GossipJabber *jabber,
 	g_return_if_fail (error_code != NULL);
 	g_return_if_fail (error_type != NULL);
 
-	connection = gossip_jabber_get_connection (jabber);
+	connection = _gossip_jabber_get_connection (jabber);
 
 	m = lm_message_new_with_sub_type (to,
 					  LM_MESSAGE_TYPE_IQ,
@@ -1366,7 +1366,7 @@ gossip_jabber_ft_iib_send (GossipJabber *jabber,
 	g_return_if_fail (data != NULL);
 	g_return_if_fail (seq != NULL);
 
-	connection = gossip_jabber_get_connection (jabber);
+	connection = _gossip_jabber_get_connection (jabber);
 
 	m = lm_message_new (to, LM_MESSAGE_TYPE_MESSAGE);
 
@@ -1416,7 +1416,7 @@ gossip_jabber_ft_iib_finish (GossipJabber *jabber,
 	g_return_if_fail (to != NULL);
 	g_return_if_fail (sid != NULL);
 
-	connection = gossip_jabber_get_connection (jabber);
+	connection = _gossip_jabber_get_connection (jabber);
 
 	m = lm_message_new_with_sub_type (to,
 					  LM_MESSAGE_TYPE_IQ,
@@ -1445,7 +1445,7 @@ gossip_jabber_ft_iib_finish_response (GossipJabber *jabber,
 	g_return_if_fail (to != NULL);
 	g_return_if_fail (id != NULL);
 
-	connection = gossip_jabber_get_connection (jabber);
+	connection = _gossip_jabber_get_connection (jabber);
 
 	m = lm_message_new_with_sub_type (to,
 					  LM_MESSAGE_TYPE_IQ,

@@ -22,6 +22,7 @@
 #define __GOSSIP_JABBER_H__
 
 #include <glib-object.h>
+
 #include "gossip-async.h"
 #include "gossip-message.h"
 
@@ -57,6 +58,8 @@ GType          gossip_jabber_get_type                  (void) G_GNUC_CONST;
 
 GQuark         gossip_jabber_error_quark               (void) G_GNUC_CONST;
 
+GossipJabber * gossip_jabber_new                       (gpointer session);
+
 void           gossip_jabber_setup                     (GossipJabber        *jabber,
 							GossipAccount       *account);
 void           gossip_jabber_login                     (GossipJabber        *jabber);
@@ -66,7 +69,7 @@ GossipAccount *gossip_jabber_get_account               (GossipJabber        *jab
 GossipContact *gossip_jabber_get_own_contact           (GossipJabber        *jabber);
 GossipContact *gossip_jabber_get_contact_from_jid      (GossipJabber        *jabber,
 							const gchar         *jid,
-							gboolean            *new_item,
+							gboolean             own_contact,
 							gboolean             set_permanent,
 							gboolean             get_vcard);
 void           gossip_jabber_send_presence             (GossipJabber        *jabber,
@@ -81,9 +84,6 @@ GossipAccount *gossip_jabber_new_account               (void);
 gchar *        gossip_jabber_get_default_server        (const gchar    *username);
 guint          gossip_jabber_get_default_port          (gboolean        use_ssl);
 gboolean       gossip_jabber_is_ssl_supported          (void);
-GossipContact *gossip_jabber_new_contact               (GossipJabber        *jabber,
-							const gchar         *id,
-							const gchar         *name);
 gboolean       gossip_jabber_is_connected              (GossipJabber        *jabber);
 gboolean       gossip_jabber_is_connecting             (GossipJabber        *jabber);
 void           gossip_jabber_send_message              (GossipJabber        *jabber,
@@ -101,8 +101,6 @@ gboolean       gossip_jabber_set_vcard                 (GossipJabber        *jab
 							GossipCallback       callback,
 							gpointer             user_data,
 							GError             **error);
-GossipContact * gossip_jabber_find_contact             (GossipJabber        *jabber,
-							const gchar         *id);
 void            gossip_jabber_add_contact              (GossipJabber        *jabber,
 							const gchar         *id,
 							const gchar         *name,

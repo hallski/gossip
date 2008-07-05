@@ -1947,6 +1947,8 @@ contact_list_drag_data_received (GtkWidget         *widget,
 
 		g_strfreev (uri_strv);
 	} else if (info == DND_DRAG_TYPE_CONTACT_ID) {
+		GossipContactManager *contact_manager;
+
 		priv = GET_PRIV (widget);
 	
 		id = (const gchar*) selection->data;
@@ -1955,7 +1957,10 @@ contact_list_drag_data_received (GtkWidget         *widget,
 			      context->action == GDK_ACTION_COPY ? "copy" : "",
 			      id);
 
-		contact = gossip_session_find_contact (priv->session, id);
+
+		contact_manager = gossip_session_get_contact_manager (priv->session);
+		contact = gossip_contact_manager_find (contact_manager, NULL, id);
+
 		if (!contact) {
 			gossip_debug (DEBUG_DOMAIN, "No contact found associated with drag & drop");
 			goto out;
@@ -1977,6 +1982,7 @@ contact_list_drag_data_received (GtkWidget         *widget,
 			}
 
 			gossip_contact_set_groups (contact, NULL);
+			drag_success = TRUE;
 		} else {
 			GList    *l, *new_groups;
 			gchar    *name;
@@ -2146,19 +2152,22 @@ contact_list_drag_begin (GtkWidget      *widget,
 	GtkTreePath           *path;
 	GtkTreeIter            iter;
 
-	priv = GET_PRIV (widget);
-
-	GTK_WIDGET_CLASS (gossip_contact_list_parent_class)->drag_begin (widget,
-									 context);
-
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
 		return;
 	}
 
+
 	path = gtk_tree_model_get_path (model, &iter);
+	if (!path) {
+		return;
+	}
+
+	priv = GET_PRIV (widget);
 	priv->drag_row = gtk_tree_row_reference_new (model, path);
 	gtk_tree_path_free (path);
+
+	GTK_WIDGET_CLASS (gossip_contact_list_parent_class)->drag_begin (widget, context);
 }
 
 static void

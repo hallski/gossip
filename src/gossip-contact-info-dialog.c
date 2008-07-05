@@ -538,7 +538,7 @@ gossip_contact_info_dialog_show (GossipContact *contact,
 	}
 
 	session = gossip_app_get_session ();
-	account = gossip_session_find_account (session, contact);
+	account = gossip_contact_get_account (contact);
 
 	dialog = g_new0 (GossipContactInfoDialog, 1);
 

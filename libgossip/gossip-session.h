@@ -97,8 +97,6 @@ gboolean        gossip_session_add_account             (GossipSession          *
 							GossipAccount          *account);
 gboolean        gossip_session_remove_account          (GossipSession          *session,
 							GossipAccount          *account);
-GossipAccount * gossip_session_find_account            (GossipSession          *session,
-							GossipContact          *contact);
 GossipAccount * gossip_session_find_account_for_own_contact 
                                                        (GossipSession          *session,
 							GossipContact          *own_contact);
@@ -133,8 +131,6 @@ void            gossip_session_get_avatar_requirements (GossipSession          *
 							gsize                  *max_size,
 							gchar                 **format);
 /* Contact management */
-GossipContact * gossip_session_find_contact            (GossipSession          *session,
-							const gchar            *str);
 void            gossip_session_add_contact             (GossipSession          *session,
 							GossipAccount          *account,
 							const gchar            *id,

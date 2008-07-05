@@ -655,34 +655,10 @@ session_jabber_error (GossipJabber  *jabber,
 static GossipJabber *
 session_get_protocol (GossipSession *session, GossipContact *contact)
 {
-	GossipSessionPriv *priv;
-	GList             *l;
-	const gchar       *id;
-
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
 
-	priv = GET_PRIV (session);
-
-	id = gossip_contact_get_id (contact);
-
-	for (l = priv->protocols; l; l = l->next) {
-		GossipJabber  *jabber;
-		GossipContact *this_contact;
-
-		jabber = l->data;
-
-		this_contact = gossip_jabber_find_contact (jabber, id);
-		if (!this_contact) {
-			continue;
-		}
-
-		if (gossip_contact_equal (this_contact, contact)) {
-			return jabber;
-		}
-	}
-
-	return NULL;
+	return gossip_session_get_protocol (session, gossip_contact_get_account (contact));
 }
 
 GossipSession *
@@ -727,6 +703,7 @@ gossip_session_new (const gchar *accounts_file,
 
 	/* Set up chatroom manager */
 	priv->chatroom_manager = gossip_chatroom_manager_new (priv->account_manager, 
+							      priv->contact_manager,
 							      chatrooms_file);
 
 	/* Set up log manager */
@@ -926,7 +903,7 @@ gossip_session_new_account (GossipSession *session)
 
 	priv = GET_PRIV (session);
 
-	jabber = g_object_new (GOSSIP_TYPE_JABBER, NULL);
+	jabber = gossip_jabber_new (session);
 
 	account = gossip_jabber_new_account ();
 	priv->protocols = g_list_append (priv->protocols,
@@ -963,7 +940,7 @@ gossip_session_add_account (GossipSession *session,
 		return TRUE;
 	}
 
-	jabber = g_object_new (GOSSIP_TYPE_JABBER, NULL);
+	jabber = gossip_jabber_new (session);
 
 	priv->protocols = g_list_append (priv->protocols,
 					 g_object_ref (jabber));
@@ -1008,40 +985,6 @@ gossip_session_remove_account (GossipSession *session,
 	}
 
 	return g_hash_table_remove (priv->accounts, account);
-}
-
-static void
-session_find_account_foreach_cb (GossipAccount *account,
-				 GossipJabber  *jabber,
-				 FindAccount   *fa)
-{
-	const gchar *id;
-
-	id = gossip_contact_get_id (fa->contact);
-	if (gossip_jabber_find_contact (jabber, id)) {
-		fa->account = g_object_ref (account);
-	}
-}
-
-GossipAccount *
-gossip_session_find_account (GossipSession *session, GossipContact *contact)
-{
-	GossipSessionPriv *priv;
-	FindAccount        fa;
-
-	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
-	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
-
-	priv = GET_PRIV (session);
-
-	fa.contact = contact;
-	fa.account = NULL;
-
-	g_hash_table_foreach (priv->accounts,
-			      (GHFunc) session_find_account_foreach_cb,
-			      &fa);
-
-	return fa.account;
 }
 
 static void
@@ -1468,33 +1411,6 @@ gossip_session_get_ft_provider (GossipSession *session,
 	jabber = g_hash_table_lookup (priv->accounts, account);
 
 	return GOSSIP_FT_PROVIDER (jabber);
-}
-
-GossipContact *
-gossip_session_find_contact (GossipSession *session,
-			     const gchar   *id)
-{
-	GossipSessionPriv *priv;
-	GList             *l;
-
-	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
-	g_return_val_if_fail (id != NULL, NULL);
-
-	priv = GET_PRIV (session);
-
-	for (l = priv->protocols; l; l = l->next) {
-		GossipJabber  *jabber;
-		GossipContact *contact;
-
-		jabber = l->data;
-
-		contact = gossip_jabber_find_contact (jabber, id);
-		if (contact) {
-			return contact;
-		}
-	}
-
-	return NULL;
 }
 
 void
@@ -1954,18 +1870,17 @@ gossip_session_get_version (GossipSession          *session,
 	jabber = session_get_protocol (session, contact);
 
 	if (!jabber) {
-		/* Temporary contact. Use account */
-		GossipAccount           *account;
-		GossipSessionPriv        *priv = GET_PRIV (session);
+		GossipSessionPriv *priv;
+		GossipAccount     *account;
 
-		account = gossip_session_find_account (session, contact);
+		priv = GET_PRIV (session);
+
+		/* Temporary contact. Use account */
+		account = gossip_contact_get_account (contact);
 		g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), FALSE);
 
 		jabber = g_hash_table_lookup (priv->accounts, account);
- 		g_object_unref (account);
-
 		g_return_val_if_fail (jabber, FALSE);
-
 	}
 
 	return gossip_jabber_get_version (jabber, contact,
@@ -1993,7 +1908,7 @@ gossip_session_chatroom_join_favorites (GossipSession *session)
 
 		chatroom = l->data;
 
-		if (!gossip_chatroom_get_favourite (chatroom)) {
+		if (!gossip_chatroom_get_favorite (chatroom)) {
 			continue;
 		}
 

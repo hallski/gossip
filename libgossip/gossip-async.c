@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2005 Imendio AB
+ * Copyright (C) 2008 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -18,27 +18,34 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __GOSSIP_JABBER_PRIVATE_H__
-#define __GOSSIP_JABBER_PRIVATE_H__
+#include "gossip-async.h"
 
-#include <loudmouth/loudmouth.h>
+GossipCallbackData *
+gossip_callback_data_new (gpointer callback,
+                          gpointer user_data,
+                          gpointer data1,
+                          gpointer data2,
+                          gpointer data3)
+{
+	GossipCallbackData *data;
 
-#include "gossip-session.h"
-#include "gossip-jabber.h"
-#include "gossip-jabber-ft.h"
+	data = g_slice_new0 (GossipCallbackData);
 
-G_BEGIN_DECLS
+	data->callback = callback;
+	data->user_data = user_data;
+        data->data1 = data1;
+        data->data2 = data2;
+        data->data3 = data3;
+	
+	return data;
+}
 
-LmConnection *   _gossip_jabber_new_connection (GossipJabber  *jabber,
-						GossipAccount *account);
-gboolean         _gossip_jabber_set_connection (LmConnection  *connection,
-						GossipJabber  *jabber,
-						GossipAccount *account);
-LmConnection *   _gossip_jabber_get_connection (GossipJabber  *jabber);
-GossipSession *  _gossip_jabber_get_session    (GossipJabber  *jabber);
-GossipJabberFTs *_gossip_jabber_get_fts        (GossipJabber  *jabber);
+void
+gossip_callback_data_free (GossipCallbackData *data)
+{
+        if (!data) {
+                return;
+        }
 
-G_END_DECLS
-
-#endif /* __GOSSIP_JABBER_PRIVATE_H__ */
-
+        g_slice_free (GossipCallbackData, data);
+}

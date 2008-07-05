@@ -31,7 +31,8 @@ G_BEGIN_DECLS
 #include "gossip-chatroom-manager.h"
 #include "gossip-account-manager.h"
 
-GossipChatroomManager *gossip_chatroom_manager_new (GossipAccountManager  *manager,
+GossipChatroomManager *gossip_chatroom_manager_new (GossipAccountManager  *account_manager,
+						    GossipContactManager  *contact_manager,
 						    const gchar           *filename);
 GossipContactManager * gossip_contact_manager_new  (GossipSession         *session,
 						    const gchar           *filename);

@@ -461,15 +461,15 @@ gossip_theme_append_text (GossipTheme        *theme,
 			if (!link_tag) {
 				gtk_text_buffer_insert (buffer, &iter,
 							tmp, -1);
-			} 
-
-			gtk_text_buffer_insert_with_tags_by_name (buffer,
-								  &iter,
-								  tmp,
-								  -1,
-								  link_tag,
-								  "link",
-								  NULL);
+			} else {
+				gtk_text_buffer_insert_with_tags_by_name (buffer,
+									  &iter,
+									  tmp,
+									  -1,
+									  link_tag,
+									  "link",
+									  NULL);
+			}
 
 			g_free (tmp);
 

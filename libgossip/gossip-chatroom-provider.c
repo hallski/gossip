@@ -30,8 +30,8 @@
 static void chatroom_provider_base_init (gpointer g_class);
 
 enum {
-	CHATROOM_JOINED,
 	CHATROOM_KICKED,
+	CHATROOM_NICK_CHANGED,
 	CHATROOM_NEW_MESSAGE,
 	CHATROOM_NEW_EVENT,
 	CHATROOM_SUBJECT_CHANGED,
@@ -76,16 +76,6 @@ chatroom_provider_base_init (gpointer g_class)
 	static gboolean initialized = FALSE;
 
 	if (!initialized) {
-		signals[CHATROOM_JOINED] =
-			g_signal_new ("chatroom-joined",
-				      G_TYPE_FROM_CLASS (g_class),
-				      G_SIGNAL_RUN_LAST,
-				      0,
-				      NULL, NULL,
-				      libgossip_marshal_VOID__INT,
-				      G_TYPE_NONE,
-				      1, G_TYPE_INT);
-
 		signals[CHATROOM_KICKED] =
 			g_signal_new ("chatroom-kicked",
 				      G_TYPE_FROM_CLASS (g_class),
@@ -95,7 +85,15 @@ chatroom_provider_base_init (gpointer g_class)
 				      libgossip_marshal_VOID__INT,
 				      G_TYPE_NONE,
 				      1, G_TYPE_INT);
-
+		signals[CHATROOM_NICK_CHANGED] =
+			g_signal_new ("chatroom-nick-changed",
+				      G_TYPE_FROM_CLASS (g_class),
+				      G_SIGNAL_RUN_LAST,
+				      0,
+				      NULL, NULL,
+				      libgossip_marshal_VOID__INT_OBJECT_STRING,
+				      G_TYPE_NONE,
+				      3, G_TYPE_INT, GOSSIP_TYPE_CONTACT, G_TYPE_STRING);
 		signals[CHATROOM_NEW_MESSAGE] =
 			g_signal_new ("chatroom-new-message",
 				      G_TYPE_FROM_CLASS (g_class),
@@ -247,21 +245,6 @@ gossip_chatroom_provider_kick (GossipChatroomProvider *provider,
 								     contact,
 								     reason);
 	}
-}
-
-GSList *
-gossip_chatroom_provider_get_contacts (GossipChatroomProvider *provider,
-				       GossipChatroomId        id)
-{
-	g_return_val_if_fail (GOSSIP_IS_CHATROOM_PROVIDER (provider), NULL);
-	g_return_val_if_fail (id > 0, NULL);
-
-	if (GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->get_contacts) {
-		return GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->get_contacts (provider,
-										    id);
-	}
-
-	return NULL;
 }
 
 GossipChatroom *

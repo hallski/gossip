@@ -1,3 +1,104 @@
+2008-07-05  Martyn Russell  <martyn@imendio.com>
+
+	Fixes #347026 - groupchat topic is changed local even though user
+	have not the permission 
+
+	Fixes #350333 - Uncorrect displaying of received private messages
+	from another groupchat participant 
+
+	Fixes #541651 - Contacts are offline if they go offline and come
+	back online 
+	
+	* data/glade/chat.glade: Make the invite dialog default text
+	empty, instead make this up ourselves in the code since we can't
+	guarantee that the other end is using Gossip either and it is
+	easier to make up the invite in code than in glade.
+	
+	* libgossip/Makefile.am:
+	* libgossip/gossip-async.c: Added gossip_callback_data_new() and
+	gossip_callback_data_free() to create the typedef struct with
+	gslice and free it.
+	
+	* libgossip/gossip-chatroom-invite.[ch]: Fix spelling error
+	"invitor" to "inviter".
+	
+	* libgossip/gossip-chatroom-manager.[ch]: Rework this code so that
+	ALL chatrooms are stored and created here. ONLY favourites get
+	written to the chatrooms.xml file.
+	
+	* libgossip/gossip-chatroom-provider.[ch]: Removed the "joined"
+	signal since the Chatroom itself knows about that. Added
+	"nick-changed" signal since it is hard to know if it is a name
+	change or a real nick change on a contact.
+	
+	* libgossip/gossip-chatroom.[ch]: 
+	* src/gossip-app.c: 
+	* src/gossip-new-chatroom-dialog.c: Use American spelling of
+	"favourite", just for you Richard :) and add an own_contact to the
+	Chatroom object which represents our contact in the room. More
+	error conditions have been added to the error enum. 
+	
+	* libgossip/gossip-contact-manager.[ch]: 
+	* src/gossip-chat-window.c: 
+	* src/gossip-dbus.c: Rework this code so that ALL contacts are
+	stored and created here. Also, now there is an API to get our
+	own_contact from the account provided.  
+	
+	* libgossip/gossip-contact.[ch]: Removed some old unused APIs.
+	Made gossip_contact_set_presence_list() public. Updated the
+	gossip_contact_equal() and gossip_contact_hash() functions to
+	properly compare contacts based on type. This way chatroom
+	contacts are not treated the same way as roster contacts. Chatroom
+	contacts now are compared with their resource (their name) as well
+	as the chatroom JID too. This fixes Pia's bug #350333.
+	
+	* libgossip/gossip-jabber-chatrooms.c: Reworked this code to clean
+	things up a bit and to make chatrooms work more effectively.
+
+	* libgossip/gossip-jid.[ch]:
+	* libgossip/gossip-jabber-disco.c:
+
+	* libgossip/gossip-jabber.[ch]: 
+	* libgossip/gossip-jabber-ft.c: 
+	* libgossip/gossip-jabber-private.h: 
+	* libgossip/gossip-jabber-register.c:
+	* libgossip/gossip-jabber-vcard.c: Make all private functions
+	prefix _ so it is obvious.
+
+	* libgossip/gossip-jabber-utils.[ch]: Added functions to get error
+	codes from Jabber messages and to better choose a default name for
+	contacts.
+	
+	* libgossip/gossip-log.c: Use GossipChatroomManager and
+	GossipContactManager to get or create contacts.
+	
+	* libgossip/gossip-session.[ch]: Remove some API and make things
+	simpler here. 
+
+	* src/gossip-chat-view.c: Fixed up chatroom invitiations so we
+	show a nicer invitiation.
+	
+	* src/gossip-chatrooms-window.c: Don't show ALL chatroom manager
+	chatrooms, only favourites and fixed a g_warning() that occurred
+	here when loading the dialog.
+	
+	* src/gossip-contact-info-dialog.c: 
+	* src/gossip-edit-contact-dialog.c: Get account from the contact
+	not the session and the contact.
+	
+	* src/gossip-contact-list.c: Fixed a nasty drag and drop crash,
+	make sure we have a contact and GtkTreePath before calling a
+	function that requires it.
+	
+	* src/gossip-group-chat.c: Down include own_contact in priv since
+	the GossipChatroom now hosts it. Make sure we clean up signal
+	handlers for chatroom contacts when finalize the group chat. Plus
+	when the subject changes, cater for "who" being NULL, i.e. when we
+	don't know WHO changed the chatroom subject.
+	
+	* src/gossip-theme.c: Fixed a bug where we duplicated printing the
+	message to the GtkTextView.
+
 2008-06-28  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-preferences.c (preferences_radio_button_toggled_cb):

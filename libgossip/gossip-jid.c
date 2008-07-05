@@ -29,27 +29,114 @@
 
 #include "gossip-jid.h"
 
-struct GossipJID {
-	gchar *full;
-	gchar *no_resource;
-	const gchar *resource;
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_JID, GossipJIDPriv))
 
-	guint  ref_count;
+typedef struct _GossipJIDPriv GossipJIDPriv;
+
+struct _GossipJIDPriv {
+	gchar       *full;
+	gchar       *no_resource;
+	const gchar *resource;
 };
 
-void         jid_free            (GossipJID   *jid);
-const gchar *jid_locate_resource (const gchar *str);
+static void         gossip_jid_class_init (GossipJIDClass *class);
+static void         gossip_jid_init       (GossipJID      *jid);
+static void         gossip_jid_finalize   (GObject        *object);
+static void         jid_get_property      (GObject        *object,
+					   guint           param_id,
+					   GValue         *value,
+					   GParamSpec     *pspec);
+static const gchar *jid_locate_resource   (const gchar    *str);
 
-void
-jid_free (GossipJID *jid)
+enum {
+	PROP_0,
+	PROP_FULL,
+	PROP_WITHOUT_RESOURCE,
+	PROP_RESOURCE
+};
+
+G_DEFINE_TYPE (GossipJID, gossip_jid, G_TYPE_OBJECT);
+
+static void
+gossip_jid_class_init (GossipJIDClass *class)
 {
-	g_free (jid->full);
-	g_free (jid->no_resource);
+	GObjectClass *object_class;
 
-	g_slice_free (GossipJID, jid);
+	object_class = G_OBJECT_CLASS (class);
+
+	object_class->finalize     = gossip_jid_finalize;
+	object_class->get_property = jid_get_property;
+
+	g_object_class_install_property (object_class,
+					 PROP_FULL,
+					 g_param_spec_string ("full",
+							      "Full JID",
+							      "Full JID",
+							      NULL,
+							      G_PARAM_READABLE));
+	g_object_class_install_property (object_class,
+					 PROP_WITHOUT_RESOURCE,
+					 g_param_spec_string ("without-resource",
+							      "JID without the resource",
+							      "JID without the resource",
+							      NULL,
+							      G_PARAM_READABLE));
+	g_object_class_install_property (object_class,
+					 PROP_RESOURCE,
+					 g_param_spec_string ("resource",
+							      "Resource",
+							      "Resource",
+							      NULL,
+							      G_PARAM_READABLE));
+
+	g_type_class_add_private (object_class, sizeof (GossipJIDPriv));
 }
 
-const gchar *
+static void
+gossip_jid_init (GossipJID *jid)
+{
+}
+
+static void
+gossip_jid_finalize (GObject *object)
+{
+	GossipJIDPriv *priv;
+
+	priv = GET_PRIV (object);
+
+	g_free (priv->full);
+	g_free (priv->no_resource);
+
+	(G_OBJECT_CLASS (gossip_jid_parent_class)->finalize) (object);
+}
+
+static void
+jid_get_property (GObject    *object,
+		  guint       param_id,
+		  GValue     *value,
+		  GParamSpec *pspec)
+{
+	GossipJIDPriv *priv;
+
+	priv = GET_PRIV (object);
+
+	switch (param_id) {
+	case PROP_FULL:
+		g_value_set_string (value, priv->full);
+		break;
+	case PROP_WITHOUT_RESOURCE:
+		g_value_set_string (value, priv->no_resource);
+		break;
+	case PROP_RESOURCE:
+		g_value_set_string (value, priv->resource);
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
+		break;
+	}
+}
+
+static const gchar *
 jid_locate_resource (const gchar *str)
 {
 	gchar *ch;
@@ -83,91 +170,116 @@ jid_casefold_node (const gchar *str)
 }
 
 GossipJID *
-gossip_jid_new (const gchar *str_jid)
+gossip_jid_new (const gchar *id)
 {
-	GossipJID *jid;
+	GossipJID     *jid;
+	GossipJIDPriv *priv;
 
-	g_return_val_if_fail (str_jid != NULL, NULL);
+	g_return_val_if_fail (id != NULL, NULL);
 
-	jid = g_slice_new0 (GossipJID);
+	jid = g_object_new (GOSSIP_TYPE_JID, NULL);
+	
+	priv = GET_PRIV (jid);
 
-	jid->ref_count = 1;
-	jid->full = jid_casefold_node (str_jid);
+	priv->full = jid_casefold_node (id);
+	priv->resource = jid_locate_resource (priv->full);
 
-	jid->resource = jid_locate_resource (jid->full);
-	if (jid->resource) {
-		jid->no_resource = g_strndup (jid->full, jid->resource - 1 - jid->full);
+	if (priv->resource) {
+		priv->no_resource = g_strndup (priv->full, 
+					       priv->resource - 1 - priv->full);
 	} else {
-		jid->no_resource = g_strdup (jid->full);
+		priv->no_resource = g_strdup (priv->full);
 	}
 
 	return jid;
 }
 
 void
-gossip_jid_set_without_resource (GossipJID *jid, const gchar *str)
+gossip_jid_set_without_resource (GossipJID   *jid, 
+				 const gchar *str)
 {
-	gchar *resource = NULL;
+	GossipJIDPriv *priv;
+	gchar         *resource = NULL;
 
-	g_return_if_fail (jid != NULL);
+	g_return_if_fail (GOSSIP_IS_JID (jid));
 
-	if (jid->resource) {
-		resource = g_strdup (jid->resource);
+	priv = GET_PRIV (jid);
+
+	if (priv->resource) {
+		resource = g_strdup (priv->resource);
 	}
 
-	g_free (jid->full);
-	g_free (jid->no_resource);
+	g_free (priv->full);
+	g_free (priv->no_resource);
 
-	jid->no_resource = jid_casefold_node (str);
+	priv->no_resource = jid_casefold_node (str);
 
 	if (resource) {
-		jid->full = g_strdup_printf ("%s/%s",
-					     jid->no_resource, resource);
+		priv->full = g_strdup_printf ("%s/%s",
+					      priv->no_resource, 
+					      resource);
 		g_free (resource);
-		jid->resource = jid_locate_resource (jid->full);
+		priv->resource = jid_locate_resource (priv->full);
 	} else {
-		jid->full = g_strdup (jid->no_resource);
+		priv->full = g_strdup (priv->no_resource);
 	}
 }
 
 void
-gossip_jid_set_resource (GossipJID *jid, const gchar *resource)
+gossip_jid_set_resource (GossipJID   *jid, 
+			 const gchar *resource)
 {
-	g_return_if_fail (jid != NULL);
+	GossipJIDPriv *priv;
 
-	g_free (jid->full);
+	g_return_if_fail (GOSSIP_IS_JID (jid));
 
-	jid->full = g_strdup_printf ("%s/%s", jid->no_resource, resource);
-	jid->resource = jid_locate_resource (jid->full);
+	priv = GET_PRIV (jid);
+
+	g_free (priv->full);
+
+	priv->full = g_strdup_printf ("%s/%s", priv->no_resource, resource);
+	priv->resource = jid_locate_resource (priv->full);
 }
 
 const gchar *
 gossip_jid_get_full (GossipJID *jid)
 {
-	g_return_val_if_fail (jid != NULL, "");
+	GossipJIDPriv *priv;
 
-	return jid->full;
+	g_return_val_if_fail (GOSSIP_IS_JID (jid), "");
+
+	priv = GET_PRIV (jid);
+
+	return priv->full;
 }
 
 const gchar *
 gossip_jid_get_without_resource (GossipJID *jid)
 {
-	g_return_val_if_fail (jid != NULL, "");
+	GossipJIDPriv *priv;
 
-	if (jid->no_resource) {
-		return jid->no_resource;
+	g_return_val_if_fail (GOSSIP_IS_JID (jid), "");
+
+	priv = GET_PRIV (jid);
+
+	if (priv->no_resource) {
+		return priv->no_resource;
 	}
 
-	return jid->full;
+	return priv->full;
 }
 
 const gchar *
 gossip_jid_get_resource (GossipJID *jid)
 {
-	g_return_val_if_fail (jid != NULL, NULL);
+	GossipJIDPriv *priv;
 
-	if (jid->resource) {
-		return jid->resource;
+	g_return_val_if_fail (GOSSIP_IS_JID (jid), NULL);
+
+	priv = GET_PRIV (jid);
+
+	if (priv->resource) {
+		return priv->resource;
 	}
 
 	return NULL;
@@ -176,15 +288,19 @@ gossip_jid_get_resource (GossipJID *jid)
 gboolean
 gossip_jid_is_service (GossipJID *jid)
 {
-	gchar *ch;
+	GossipJIDPriv *priv;
+	gchar         *ch;
 
-	/* this basically checks to see if there is an '@'
-	   sign in the jid, if not, we assume it is a component
-	   or service (for example msn.jabber.org.uk) */
+	g_return_val_if_fail (GOSSIP_IS_JID (jid), FALSE);
 
-	g_return_val_if_fail (jid != NULL, FALSE);
+	/* This basically checks to see if there is an '@' sign in the
+	 * jid, if not, we assume it is a component or service (for
+	 * example msn.jabber.org.uk).
+	 */
 
-	ch = strchr (jid->full, '@');
+	priv = GET_PRIV (jid);
+
+	ch = strchr (priv->full, '@');
 	if (!ch) {
 		return TRUE;
 	} else {
@@ -195,13 +311,16 @@ gossip_jid_is_service (GossipJID *jid)
 gchar *
 gossip_jid_get_part_name (GossipJID *jid)
 {
-	gchar *ch;
+	GossipJIDPriv *priv;
+	gchar         *ch;
 
-	g_return_val_if_fail (jid != NULL, g_strdup (""));
+	g_return_val_if_fail (GOSSIP_IS_JID (jid), g_strdup (""));
 
-	for (ch = jid->full; *ch; ++ch) {
+	priv = GET_PRIV (jid);
+
+	for (ch = priv->full; *ch; ++ch) {
 		if (*ch == '@') {
-			return g_strndup (jid->full, ch - jid->full);
+			return g_strndup (priv->full, ch - priv->full);
 		}
 	}
 
@@ -213,7 +332,7 @@ gossip_jid_get_part_host (GossipJID *jid)
 {
 	const gchar *ch;
 
-	g_return_val_if_fail (jid != NULL, "");
+	g_return_val_if_fail (GOSSIP_IS_JID (jid), g_strdup (""));
 
 	for (ch = gossip_jid_get_without_resource (jid); *ch; ++ch) {
 		if (*ch == '@') {
@@ -224,39 +343,25 @@ gossip_jid_get_part_host (GossipJID *jid)
 	return "";
 }
 
-GossipJID *
-gossip_jid_ref (GossipJID *jid)
-{
-	g_return_val_if_fail (jid != NULL, NULL);
-
-	jid->ref_count++;
-
-	return jid;
-}
-
-void
-gossip_jid_unref (GossipJID *jid)
-{
-	g_return_if_fail (jid != NULL);
-
-	jid->ref_count--;
-	if (jid->ref_count <= 0) {
-		jid_free (jid);
-	}
-}
-
 gboolean
 gossip_jid_equals (GossipJID *jid_a,
 		   GossipJID *jid_b)
 {
-	g_return_val_if_fail (jid_a != NULL, FALSE);
-	g_return_val_if_fail (jid_b != NULL, FALSE);
+	GossipJIDPriv *priv_a;
+	GossipJIDPriv *priv_b;
+
+	g_return_val_if_fail (GOSSIP_IS_JID (jid_a), FALSE);
+	g_return_val_if_fail (GOSSIP_IS_JID (jid_b), FALSE);
 
 	/* NOTE: This is not strictly correct, since the node and resource are
 	 * UTF8, and the domain have other rules. The node is also already
 	 * casefolded.
 	 */
-	if (g_ascii_strcasecmp (jid_a->full, jid_b->full) == 0) {
+
+	priv_a = GET_PRIV (jid_a);
+	priv_b = GET_PRIV (jid_b);
+
+	if (g_ascii_strcasecmp (priv_a->full, priv_b->full) == 0) {
 		return TRUE;
 	}
 
@@ -269,8 +374,8 @@ gossip_jid_equals_without_resource (GossipJID *jid_a,
 {
 	const gchar *a, *b;
 
-	g_return_val_if_fail (jid_a != NULL, FALSE);
-	g_return_val_if_fail (jid_b != NULL, FALSE);
+	g_return_val_if_fail (GOSSIP_IS_JID (jid_a), FALSE);
+	g_return_val_if_fail (GOSSIP_IS_JID (jid_b), FALSE);
 
 	a = gossip_jid_get_without_resource (jid_a);
 	b = gossip_jid_get_without_resource (jid_b);
@@ -413,8 +518,8 @@ gossip_jid_equal (gconstpointer v1,
 	g_return_val_if_fail (v1 != NULL, FALSE);
 	g_return_val_if_fail (v2 != NULL, FALSE);
 
-	a = gossip_jid_get_without_resource ((GossipJID *) v1);
-	b = gossip_jid_get_without_resource ((GossipJID *) v2);
+	a = gossip_jid_get_full (GOSSIP_JID (v1));
+	b = gossip_jid_get_full (GOSSIP_JID (v2));
 
 	/* NOTE: This is not strictly correct, since the node and resource are
 	 * UTF8, and the domain have other rules. The node is also already
@@ -426,7 +531,7 @@ gossip_jid_equal (gconstpointer v1,
 guint
 gossip_jid_hash (gconstpointer key)
 {
-	GossipJID *jid = (GossipJID *) key;
+	GossipJID *jid;
 	gchar     *lower;
 	guint      ret_val;
 
@@ -434,6 +539,45 @@ gossip_jid_hash (gconstpointer key)
 	 * UTF8, and the domain have other rules. The node is also already
 	 * casefolded.
 	 */
+	jid = GOSSIP_JID (key);
+	lower = g_ascii_strdown (gossip_jid_get_full (jid), -1);
+	ret_val = g_str_hash (lower);
+	g_free (lower);
+
+	return ret_val;
+}
+
+gboolean
+gossip_jid_equal_without_resource (gconstpointer v1,
+				   gconstpointer v2)
+{
+	const gchar *a, *b;
+
+	g_return_val_if_fail (v1 != NULL, FALSE);
+	g_return_val_if_fail (v2 != NULL, FALSE);
+
+	a = gossip_jid_get_without_resource (GOSSIP_JID (v1));
+	b = gossip_jid_get_without_resource (GOSSIP_JID (v2));
+
+	/* NOTE: This is not strictly correct, since the node and resource are
+	 * UTF8, and the domain have other rules. The node is also already
+	 * casefolded.
+	 */
+	return g_ascii_strcasecmp (a, b) == 0;
+}
+
+guint
+gossip_jid_hash_without_resource (gconstpointer key)
+{
+	GossipJID *jid;
+	gchar     *lower;
+	guint      ret_val;
+
+	/* NOTE: This is not strictly correct, since the node and resource are
+	 * UTF8, and the domain have other rules. The node is also already
+	 * casefolded.
+	 */
+	jid = GOSSIP_JID (key);
 	lower = g_ascii_strdown (gossip_jid_get_without_resource (jid), -1);
 	ret_val = g_str_hash (lower);
 	g_free (lower);

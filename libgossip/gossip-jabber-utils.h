@@ -51,33 +51,39 @@ typedef struct {
 } GossipJabberAsyncData;
 
 /* Data utils */
-GossipJabberAsyncData *gossip_jabber_async_data_new           (GossipJabber          *jabber,
-							       GossipErrorCallback    callback,
-							       gpointer               user_data);
-void                   gossip_jabber_async_data_free          (GossipJabberAsyncData *ad);
+GossipJabberAsyncData *gossip_jabber_async_data_new              (GossipJabber           *jabber,
+								  GossipErrorCallback     callback,
+								  gpointer                user_data);
+void                   gossip_jabber_async_data_free             (GossipJabberAsyncData  *ad);
 
 /* Presence utils */
-const gchar *          gossip_jabber_presence_state_to_str    (GossipPresence        *presence);
-GossipPresenceState    gossip_jabber_presence_state_from_str  (const gchar           *str);
+const gchar *          gossip_jabber_presence_state_to_str       (GossipPresence         *presence);
+GossipPresenceState    gossip_jabber_presence_state_from_str     (const gchar            *str);
+
 
 /* Message utils */
-GossipTime             gossip_jabber_get_message_timestamp    (LmMessage             *m);
-GossipChatroomInvite * gossip_jabber_get_message_conference   (GossipJabber          *jabber,
-							       LmMessage             *m);
-gboolean               gossip_jabber_get_message_is_event     (LmMessage             *m);
-gboolean               gossip_jabber_get_message_is_composing (LmMessage             *m);
+GossipTime             gossip_jabber_get_message_timestamp       (LmMessage              *m);
+GossipChatroomInvite * gossip_jabber_get_message_conference      (GossipJabber           *jabber,
+								  LmMessage              *m);
+gboolean               gossip_jabber_get_message_is_event        (LmMessage              *m);
+gboolean               gossip_jabber_get_message_is_composing    (LmMessage              *m);
+gboolean               gossip_jabber_get_message_has_status      (LmMessage              *m,
+								  gint                    code);
+gboolean               gossip_jabber_get_message_is_muc_new_nick (LmMessage              *m,
+								  gchar                 **new_nick);
 
 /* Contact utils */
-gchar *                gossip_jabber_get_name_to_use          (const gchar           *jid_str,
-							       const gchar           *nickname,
-							       const gchar           *full_name);
+gchar *                gossip_jabber_get_name_to_use             (const gchar            *jid_str,
+								  const gchar            *nickname,
+								  const gchar            *full_name,
+								  const gchar            *current_name);
 
 /* Error utils */
-GError *               gossip_jabber_error_create             (GossipJabberError      code,
-							       const gchar           *reason);
-void                   gossip_jabber_error                    (GossipJabber          *jabber,
-							       GossipJabberError      code);
-const gchar *          gossip_jabber_error_to_string          (GossipJabberError      error);
+GError *               gossip_jabber_error_create                (GossipJabberError       code,
+								  const gchar            *reason);
+void                   gossip_jabber_error                       (GossipJabber           *jabber,
+								  GossipJabberError       code);
+const gchar *          gossip_jabber_error_to_string             (GossipJabberError       error);
 
 G_END_DECLS
 

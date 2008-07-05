@@ -233,7 +233,11 @@ gossip_dbus_get_presence (GossipDBus   *obj,
 		      id ? id : "SELF");
 
 	if (!G_STR_EMPTY (id)) {
-		contact = gossip_session_find_contact (saved_session, id);
+		GossipContactManager *contact_manager;
+
+		contact_manager = gossip_session_get_contact_manager (saved_session);
+		contact = gossip_contact_manager_find (contact_manager, NULL, id);
+
 		if (!contact) {
 			gossip_debug (DEBUG_DOMAIN, "Contact:'%s' not recognised", id);
 
@@ -297,7 +301,11 @@ gossip_dbus_get_name (GossipDBus   *obj,
 	*name = NULL;
 
 	if (!G_STR_EMPTY (id)) {
-		contact = gossip_session_find_contact (saved_session, id);
+		GossipContactManager *contact_manager;
+
+		contact_manager = gossip_session_get_contact_manager (saved_session);
+		contact = gossip_contact_manager_find (contact_manager, NULL, id);
+
 		if (!contact) {
 			gossip_debug (DEBUG_DOMAIN, "Contact:'%s' not recognised", id);
 
@@ -369,12 +377,15 @@ gossip_dbus_send_message (GossipDBus   *obj,
 			  const gchar  *contact_id,
 			  GError      **error)
 {
-	GossipChatManager *manager;
-	GossipContact     *contact;
+	GossipChatManager    *manager;
+	GossipContactManager *contact_manager;
+	GossipContact        *contact;
 
 	gossip_debug (DEBUG_DOMAIN, "Sending message to contact:'%s'", contact_id);
 
-	contact = gossip_session_find_contact (saved_session, contact_id);
+	contact_manager = gossip_session_get_contact_manager (saved_session);
+	contact = gossip_contact_manager_find (contact_manager, NULL, contact_id);
+
 	if (!contact) {
 		g_set_error (error, gossip_dbus_error_quark (), 0,
 			     "Contact:'%s' not found", contact_id);

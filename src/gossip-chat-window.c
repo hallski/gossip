@@ -854,7 +854,7 @@ chat_window_update_menu (GossipChatWindow *window)
 		gtk_widget_hide (priv->menu_conv_info);
 		gtk_widget_hide (priv->menu_conv_separator);
 
-		/* Can we add this room to our favourites and are we
+		/* Can we add this room to our favorites and are we
 		 * connected to the room?
 		 */
 		manager = gossip_app_get_chatroom_manager ();
@@ -1209,7 +1209,7 @@ chat_window_room_add_activate_cb (GtkWidget        *menuitem,
 
 	group_chat = GOSSIP_GROUP_CHAT (priv->current_chat);
 	chatroom = gossip_group_chat_get_chatroom (group_chat);
-	gossip_chatroom_set_favourite (chatroom, TRUE);
+	gossip_chatroom_set_favorite (chatroom, TRUE);
 
 	manager = gossip_app_get_chatroom_manager ();
 	gossip_chatroom_manager_add (manager, chatroom);
@@ -1817,11 +1817,12 @@ chat_window_drag_data_received (GtkWidget        *widget,
 				GossipChatWindow *window)
 {
 	if (info == DND_DRAG_TYPE_CONTACT_ID) {
-		GossipChatManager *manager;
-		GossipContact     *contact;
-		GossipChat        *chat;
-		GossipChatWindow  *old_window;
-		const gchar       *id = NULL;
+		GossipChatManager    *manager;
+		GossipContactManager *contact_manager;
+		GossipContact        *contact;
+		GossipChat           *chat;
+		GossipChatWindow     *old_window;
+		const gchar          *id = NULL;
 
 		if (selection) {
 			id = (const gchar*) selection->data;
@@ -1829,7 +1830,9 @@ chat_window_drag_data_received (GtkWidget        *widget,
 
 		gossip_debug (DEBUG_DOMAIN, "DND contact from roster with id:'%s'", id);
 		
-		contact = gossip_session_find_contact (gossip_app_get_session (), id);
+		contact_manager = gossip_session_get_contact_manager (gossip_app_get_session ());
+		contact = gossip_contact_manager_find (contact_manager, NULL, id);
+
 		if (!contact) {
 			gossip_debug (DEBUG_DOMAIN, "DND contact from roster not found");
 			return;

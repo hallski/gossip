@@ -37,7 +37,7 @@ GossipChatroomInvite *gossip_chatroom_invite_new         (GossipContact        *
 							  const gchar          *reason);
 GossipChatroomInvite *gossip_chatroom_invite_ref         (GossipChatroomInvite *invite);
 void                  gossip_chatroom_invite_unref       (GossipChatroomInvite *invite);
-GossipContact *       gossip_chatroom_invite_get_invitor (GossipChatroomInvite *invite);
+GossipContact *       gossip_chatroom_invite_get_inviter (GossipChatroomInvite *invite);
 const gchar *         gossip_chatroom_invite_get_id      (GossipChatroomInvite *invite);
 const gchar *         gossip_chatroom_invite_get_reason  (GossipChatroomInvite *invite);
 
