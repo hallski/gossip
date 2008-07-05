@@ -56,7 +56,7 @@
 	things up a bit and to make chatrooms work more effectively.
 
 	* libgossip/gossip-jid.[ch]:
-	* libgossip/gossip-jabber-disco.c:
+	* libgossip/gossip-jabber-disco.c: Make GossipJID into a GObject.
 
 	* libgossip/gossip-jabber.[ch]: 
 	* libgossip/gossip-jabber-ft.c: 
