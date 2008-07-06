@@ -859,7 +859,7 @@ chat_window_update_menu (GossipChatWindow *window)
 		 */
 		manager = gossip_app_get_chatroom_manager ();
 		id = gossip_chatroom_get_id (chatroom);
-		saved = gossip_chatroom_manager_find (manager, id) != NULL;
+		saved = gossip_chatroom_get_favorite (chatroom);
 
 		can_change_subject &= is_connected;
 		can_change_subject &= gossip_group_chat_contact_can_change_subject (group_chat, own_contact);

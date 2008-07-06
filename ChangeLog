@@ -1,5 +1,13 @@
 2008-07-07  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-chat-window.c: (chat_window_update_menu): Don't use
+	the _find() function of the chatroom manager to know if a chatroom
+	is a favourite, instead use the _get_favorite() API for the
+	chatroom. Now you can add chatrooms as favourites when in the room
+	from the menu.
+
+2008-07-07  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-jabber.c: (gossip_jabber_new_account): Make the
 	default port 5222 when creating an account. This is because we now
 	use STARTTLS and set up secure communications on that port with
