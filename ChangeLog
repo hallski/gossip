@@ -1,3 +1,11 @@
+2008-07-07  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-jabber.c: (gossip_jabber_new_account): Make the
+	default port 5222 when creating an account. This is because we now
+	use STARTTLS and set up secure communications on that port with
+	newer loudmouth versions. Port 5223 is only needed for legacy SSL
+	connections which are not enabled by default.
+
 2008-07-05  Martyn Russell  <martyn@imendio.com>
 
 	Fixes #347026 - groupchat topic is changed local even though user

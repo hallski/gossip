@@ -518,13 +518,15 @@ gossip_jabber_new_account (void)
 {
 	GossipAccount *account;
 	const gchar   *example_id;
-	guint          port;
 	GossipJID     *jid;
 	const gchar   *computer_name;
 
+	/* Note, we now assume the default non-ssl port since we use
+	 * STARTTLS once connected on the normal 5222 port. 5223 is
+	 * used for legacy old ssl support.
+	 */
 	example_id = gossip_jid_get_example_string ();
 	jid = gossip_jid_new (example_id);
-	port = gossip_jabber_get_default_port (gossip_jabber_is_ssl_supported ());
 	computer_name = g_get_host_name ();
 	
 	if (!computer_name) {
@@ -536,8 +538,10 @@ gossip_jabber_new_account (void)
 				"name", _("new account"),
 				"server", gossip_jid_get_part_host (jid),
 				"resource", computer_name,
-				"port", port, 
-				"use_ssl", gossip_jabber_is_ssl_supported (),
+				"port", gossip_jabber_get_default_port (FALSE), 
+				"use-ssl", gossip_jabber_is_ssl_supported (),
+				"force-old-ssl", FALSE,
+				"ignore-ssl-errors", TRUE,
 				NULL);
 
 	g_object_unref (jid);
