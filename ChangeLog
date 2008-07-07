@@ -1,5 +1,11 @@
 2008-07-07  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-app.c:
+	(app_main_window_key_press_event_cb): Use escape to hide the
+	filter entry in the roster, fixes bug #536683.
+
+2008-07-07  Martyn Russell  <martyn@imendio.com>
+
 	* data/glade/main.glade:
 	* src/Makefile.am:
 	* src/gossip-about-dialog.[ch]: Removed.

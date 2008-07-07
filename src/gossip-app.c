@@ -1128,6 +1128,26 @@ app_main_window_key_press_event_cb (GtkWidget   *window,
 				    GdkEventKey *event,
 				    GossipApp   *app)
 {
+	GossipAppPriv *priv;
+
+	priv = GET_PRIV (app);
+
+	/* Only do the following actions if escape is pressed */
+	if (event->keyval != GDK_Escape) {
+		return FALSE;
+	}
+
+	/* First if we have the find entry up, clear the filter and
+	 * hide the widgets.
+	 */
+	if (GTK_WIDGET_VISIBLE (priv->find_hbox)) {
+		gtk_entry_set_text (GTK_ENTRY (priv->find_entry), "");
+		gtk_widget_hide (priv->find_hbox);
+
+		return FALSE;
+	}
+
+	/* Second assume we want to hide the window */
 	if (event->keyval == GDK_Escape) {
 		gossip_app_toggle_visibility ();
 	}
