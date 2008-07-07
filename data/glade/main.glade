@@ -8261,4 +8261,39 @@ You can retrieve contact information from the server. </property>
   </child>
 </widget>
 
+<widget class="GtkAboutDialog" id="about_dialog">
+  <property name="border_width">5</property>
+  <property name="visible">True</property>
+  <property name="destroy_with_parent">True</property>
+  <property name="name">Gossip</property>
+  <property name="copyright">Imendio AB 2002-2008</property>
+  <property name="comments" translatable="yes">An Instant Messaging client for GNOME</property>
+  <property name="license">Gossip is free software; you can redistribute it and/or modify it under the terms of the GNU General Public Licence as published by the Free Software Foundation; either version 2 of the Licence, or (at your option) any later version.
+
+Gossip is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public Licence for more details.
+
+You should have received a copy of the GNU General Public Licence along with Gossip; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-130159 USA
+
+</property>
+  <property name="wrap_license">True</property>
+  <property name="website">http://developer.imendio.com/projects/gossip/</property>
+  <property name="website_label">http://developer.imendio.com/projects/gossip/</property>
+  <property name="authors">Mikael Hallendal
+Richard Hult
+Martyn Russell
+Geert-Jan Van den Bogaerde
+Kevin Dougherty
+Eitan Isaacson
+Xavier Claessens</property>
+  <property name="documenters">Daniel Taylor
+Keywan Najafi Tonekaboni
+Brian Pepple</property>
+  <property name="artists">Daniel Taylor
+Andreas Nilsson</property>
+  <property name="translator_credits">Abigail Brady
+Bastien Nocera
+Gareth Owen
+David Lodge</property>
+</widget>
+
 </glade-interface>

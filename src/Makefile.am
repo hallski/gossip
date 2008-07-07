@@ -42,7 +42,6 @@ gossip_SOURCES = 				                        	\
 	$(libnotify_sources)		     	                           	\
 	$(dock_sources)		     	       	                    		\
 	ephy-spinner.c                     ephy-spinner.h	  	   	\
-	gossip-about-dialog.c              gossip-about-dialog.h	   	\
 	gossip-accounts-dialog.c           gossip-accounts-dialog.h	   	\
 	gossip-account-chooser.c	   gossip-account-chooser.h        	\
 	gossip-account-widget-jabber.c	   gossip-account-widget-jabber.h  	\

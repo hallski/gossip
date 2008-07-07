@@ -46,7 +46,6 @@
 #include <libgossip/gossip-jabber.h>
 #include <libgossip/gossip-jabber-utils.h>
 
-#include "gossip-about-dialog.h"
 #include "gossip-accounts-dialog.h"
 #include "gossip-add-contact-dialog.h"
 #include "gossip-app.h"
@@ -1624,10 +1623,35 @@ app_help_about_cb (GtkWidget *window,
 		   GossipApp *app)
 {
 	GossipAppPriv *priv;
+	GladeXML      *glade;
+	GtkWidget     *about_dialog;
 
 	priv = GET_PRIV (app);
 
-	gossip_about_dialog_new (GTK_WINDOW (priv->window));
+	glade = gossip_glade_get_file ("main.glade",
+				       "about_dialog",
+				       NULL,
+				       "about_dialog", &about_dialog,
+				       NULL);
+
+	g_object_unref (glade);
+
+	if (!about_dialog) {
+		g_warning ("Could not find about dialog in main glade file");
+		return;
+	}
+
+
+	gtk_about_dialog_set_version (GTK_ABOUT_DIALOG (about_dialog),
+				      PACKAGE_VERSION);
+	gtk_about_dialog_set_logo_icon_name (GTK_ABOUT_DIALOG (about_dialog),
+					     PACKAGE_TARNAME);
+
+	g_signal_connect_swapped (about_dialog, "response", 
+				  G_CALLBACK (gtk_widget_destroy),
+				  about_dialog);
+
+	gtk_widget_show (about_dialog);
 }
 
 static void

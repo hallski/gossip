@@ -1,5 +1,12 @@
 2008-07-07  Martyn Russell  <martyn@imendio.com>
 
+	* data/glade/main.glade:
+	* src/Makefile.am:
+	* src/gossip-about-dialog.[ch]: Removed.
+	* src/gossip-app.c: Juse glade for about dialog.
+
+2008-07-07  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-chat-window.c: (chat_window_update_menu): Don't use
 	the _find() function of the chatroom manager to know if a chatroom
 	is a favourite, instead use the _get_favorite() API for the
