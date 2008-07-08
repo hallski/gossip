@@ -1,5 +1,14 @@
 2008-07-08  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-chatroom-manager.c: Make sure we sort by name
+	by when adding chatrooms to the chatroom manager. Then they appear
+	in alphabetical order by default.
+
+	* libgossip/gossip-jabber-disco.c: Fixed calling gossip_jid_new()
+	with NULL string.
+
+2008-07-08  Martyn Russell  <martyn@imendio.com>
+
 	* data/glade/main.glade:
 	* src/gossip-app.c:
 	* src/gossip-presence-chooser.[ch]: Don't put the status items in

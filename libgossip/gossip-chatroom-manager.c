@@ -62,6 +62,9 @@ static void     chatroom_manager_chatroom_enabled_cb  (GossipChatroom           
 static void     chatroom_manager_chatroom_favorite_cb (GossipChatroom           *chatroom,
 						       GParamSpec               *arg1,
 						       GossipChatroomManager    *manager);
+static void     chatroom_manager_chatroom_name_cb     (GossipChatroom           *chatroom,
+						       GParamSpec               *arg1,
+						       GossipChatroomManager    *manager);
 static gboolean chatroom_manager_get_all              (GossipChatroomManager    *manager);
 static gboolean chatroom_manager_file_parse           (GossipChatroomManager    *manager,
 						       const gchar              *filename);
@@ -200,6 +203,31 @@ gossip_chatroom_manager_new (GossipAccountManager *account_manager,
 	return manager;
 }
 
+static gint
+chatroom_sort_func (gconstpointer a,
+		    gconstpointer b)
+{
+	const gchar *name_a;
+	const gchar *name_b;
+
+	name_a = gossip_chatroom_get_name (GOSSIP_CHATROOM (a));
+	name_b = gossip_chatroom_get_name (GOSSIP_CHATROOM (b));
+
+	if (name_a && !name_b) {
+		return -1;
+	}
+
+	if (name_b && !name_a) {
+		return +1;
+	}
+
+	if (!name_a && !name_b) {
+		return 0;
+	}
+
+	return strcmp (name_a, name_b);
+}
+
 gboolean
 gossip_chatroom_manager_add (GossipChatroomManager *manager,
 			     GossipChatroom        *chatroom)
@@ -240,9 +268,14 @@ gossip_chatroom_manager_add (GossipChatroomManager *manager,
 	g_signal_connect (chatroom, "notify::favorite",
 			  G_CALLBACK (chatroom_manager_chatroom_favorite_cb),
 			  manager);
+
+	g_signal_connect (chatroom, "notify::name",
+			  G_CALLBACK (chatroom_manager_chatroom_name_cb),
+			  manager);
 	
-	priv->chatrooms = g_list_append (priv->chatrooms,
-					 g_object_ref (chatroom));
+	priv->chatrooms = g_list_insert_sorted (priv->chatrooms, 
+						g_object_ref (chatroom),
+						chatroom_sort_func);
 	
 	g_signal_emit (manager, signals[CHATROOM_ADDED], 0, chatroom);
 	
@@ -266,11 +299,15 @@ gossip_chatroom_manager_remove (GossipChatroomManager *manager,
 		      gossip_chatroom_get_name (chatroom));
 
 	g_signal_handlers_disconnect_by_func (chatroom,
-					      chatroom_manager_chatroom_enabled_cb,
+					      chatroom_manager_chatroom_name_cb,
 					      manager);
 
 	g_signal_handlers_disconnect_by_func (chatroom,
 					      chatroom_manager_chatroom_favorite_cb,
+					      manager);
+
+	g_signal_handlers_disconnect_by_func (chatroom,
+					      chatroom_manager_chatroom_enabled_cb,
 					      manager);
 
 	link = g_list_find (priv->chatrooms, chatroom);
@@ -311,10 +348,36 @@ chatroom_manager_chatroom_enabled_cb (GossipChatroom        *chatroom,
 
 static void
 chatroom_manager_chatroom_favorite_cb (GossipChatroom        *chatroom,
-					GParamSpec            *arg1,
-					GossipChatroomManager *manager)
+				       GParamSpec            *arg1,
+				       GossipChatroomManager *manager)
 {
+	GossipChatroomManagerPriv *priv;
+
+	/* We sort here so we resort the list when a chatroom is
+	 * marked as a favorite, this way, newly added favorites
+	 * appear correctly in the right order.
+	 */
+	priv = GET_PRIV (manager);
+
+	priv->chatrooms = g_list_sort (priv->chatrooms, chatroom_sort_func);
+
 	g_signal_emit (manager, signals[CHATROOM_FAVORITE_UPDATE], 0, chatroom);
+}
+
+static void
+chatroom_manager_chatroom_name_cb (GossipChatroom        *chatroom,
+				   GParamSpec            *arg1,
+				   GossipChatroomManager *manager)
+{
+	GossipChatroomManagerPriv *priv;
+
+	/* We sort here so we resort the list when a chatroom name 
+	 * changes, this way, the list in the favorites menu stays up
+	 * to date.
+	 */
+	priv = GET_PRIV (manager);
+
+	priv->chatrooms = g_list_sort (priv->chatrooms, chatroom_sort_func);
 }
 
 GList *
@@ -333,23 +396,24 @@ gossip_chatroom_manager_get_chatrooms (GossipChatroomManager *manager,
 	}
 
 	chatrooms = NULL;
+
 	for (l = priv->chatrooms; l; l = l->next) {
 		GossipChatroom *chatroom;
 		GossipAccount  *this_account;
 
 		chatroom = l->data;
-
 		this_account = gossip_chatroom_get_account (chatroom);
+
 		if (!this_account) {
 			continue;
 		}
 
 		if (gossip_account_equal (account, this_account)) {
-			chatrooms = g_list_append (chatrooms, chatroom);
+			chatrooms = g_list_prepend (chatrooms, chatroom);
 		}
 	}
 
-	return chatrooms;
+	return g_list_reverse (chatrooms);
 }
 
 guint

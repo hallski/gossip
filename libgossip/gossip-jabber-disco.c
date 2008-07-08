@@ -347,29 +347,30 @@ jabber_disco_message_handler (LmMessageHandler *handler,
 			      LmMessage        *m,
 			      gpointer          user_data)
 {
-	GossipJabberDisco *disco;
-	GossipJID         *from_jid;
+	GossipJabberDisco *disco = NULL;
 	const gchar       *from;
 	LmMessageNode     *node;
 	const char        *xmlns;
 
 	from = lm_message_node_get_attribute (m->node, "from");
-	from_jid = gossip_jid_new (from);
+	if (from) {
+		GossipJID *from_jid;
 
-	/* used for info look ups */
-	disco = g_hash_table_lookup (discos, from_jid);
+		from_jid = gossip_jid_new (from);
 
-	/* if not listed under the from jid, try the user data */
+		/* Used for info look ups */
+		disco = g_hash_table_lookup (discos, from_jid);
+		g_object_unref (from_jid);
+	}
+
+	/* If not listed under the from jid, try the user data */
 	if (!disco) {
 		disco = (GossipJabberDisco *) user_data;
 	}
 
 	if (lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_RESULT &&
 	    lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_ERROR) {
-		g_object_unref (from_jid);
-
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
-
 	}
 
 	node = lm_message_node_get_child (m->node, "query");
