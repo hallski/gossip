@@ -1,3 +1,11 @@
+2008-07-08  Martyn Russell  <martyn@imendio.com>
+
+	* data/glade/main.glade:
+	* src/gossip-app.c:
+	* src/gossip-presence-chooser.[ch]: Don't put the status items in
+	a submenu of the status icon, show them in the high level menu,
+	this fixes bug #435273.
+
 2008-07-07  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-app.c:

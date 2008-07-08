@@ -43,14 +43,21 @@ struct _GossipPresenceChooserClass {
 	GtkToggleButtonClass parent_class;
 };
 
-GType      gossip_presence_chooser_get_type           (void) G_GNUC_CONST;
-GtkWidget *gossip_presence_chooser_new                (void);
-GtkWidget *gossip_presence_chooser_create_menu        (GossipPresenceChooser *chooser);
-
-void       gossip_presence_chooser_set_state          (GossipPresenceChooser *chooser,
-						       GossipPresenceState    state);
-void       gossip_presence_chooser_set_status         (GossipPresenceChooser *chooser,
-						       const gchar           *status);
+GType      gossip_presence_chooser_get_type    (void) G_GNUC_CONST;
+GtkWidget *gossip_presence_chooser_new         (void);
+GtkWidget *gossip_presence_chooser_create_menu (GossipPresenceChooser *chooser,
+						gint                   position,
+						gboolean               sensitive,
+						gboolean               include_clear);
+void       gossip_presence_chooser_insert_menu (GossipPresenceChooser *chooser,
+						GtkWidget             *menu,
+						gint                   position,
+						gboolean               sensitive,
+						gboolean               include_clear);
+void       gossip_presence_chooser_set_state   (GossipPresenceChooser *chooser,
+						GossipPresenceState    state);
+void       gossip_presence_chooser_set_status  (GossipPresenceChooser *chooser,
+						const gchar           *status);
 
 G_END_DECLS
 

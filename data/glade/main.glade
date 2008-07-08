@@ -2230,15 +2230,13 @@
   </child>
 
   <child>
-    <widget class="GtkMenuItem" id="tray_status">
+    <widget class="GtkSeparatorMenuItem" id="tray_separator1">
       <property name="visible">True</property>
-      <property name="label" translatable="yes">Status</property>
-      <property name="use_underline">True</property>
     </widget>
   </child>
 
   <child>
-    <widget class="GtkSeparatorMenuItem" id="avskiljare6">
+    <widget class="GtkSeparatorMenuItem" id="tray_separator2">
       <property name="visible">True</property>
     </widget>
   </child>

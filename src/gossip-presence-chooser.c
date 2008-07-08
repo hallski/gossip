@@ -79,10 +79,12 @@ static void     presence_chooser_clear_response_cb      (GtkWidget             *
 							 gpointer               user_data);
 static void     presence_chooser_clear_activate_cb      (GtkWidget             *item,
 							 GossipPresenceChooser *chooser);
-static void     presence_chooser_menu_add_item          (GossipPresenceChooser *chooser,
+static GtkWidget *
+                presence_chooser_menu_add_item          (GossipPresenceChooser *chooser,
 							 GtkWidget             *menu,
 							 const gchar           *str,
 							 GossipPresenceState    state,
+							 gint                   position,
 							 gboolean               custom);
 static void     presence_chooser_menu_align_func        (GtkMenu               *menu,
 							 gint                  *x,
@@ -520,11 +522,12 @@ presence_chooser_clear_activate_cb (GtkWidget             *item,
 	gtk_widget_show (dialog);
 }
 
-static void
+static GtkWidget *
 presence_chooser_menu_add_item (GossipPresenceChooser *chooser,
 				GtkWidget             *menu,
 				const gchar           *str,
 				GossipPresenceState    state,
+				gint                   position,
 				gboolean               custom)
 {
 	GtkWidget   *item;
@@ -578,7 +581,13 @@ presence_chooser_menu_add_item (GossipPresenceChooser *chooser,
 
 	g_object_set_data (G_OBJECT (item), "state", GINT_TO_POINTER (state));
 
-	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+	if (position == -1) {
+		gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+	} else {
+		gtk_menu_shell_insert (GTK_MENU_SHELL (menu), item, position);
+	}
+
+	return item;
 }
 
 static void
@@ -665,7 +674,7 @@ presence_chooser_menu_popup (GossipPresenceChooser *chooser)
 		return;
 	}
 
-	menu = gossip_presence_chooser_create_menu (chooser);
+	menu = gossip_presence_chooser_create_menu (chooser, TRUE, TRUE, -1);
 
 	g_signal_connect_after (menu, "selection-done",
 				G_CALLBACK (presence_chooser_menu_selection_done_cb),
@@ -995,108 +1004,201 @@ gossip_presence_chooser_new (void)
 }
 
 GtkWidget *
-gossip_presence_chooser_create_menu (GossipPresenceChooser *chooser)
+gossip_presence_chooser_create_menu (GossipPresenceChooser *chooser,
+				     gint                   position,
+				     gboolean               sensitive,
+				     gboolean               include_clear)
 {
 	GtkWidget *menu;
-	GtkWidget *item;
-	GList     *list, *l;
+
+	g_return_val_if_fail (GOSSIP_IS_PRESENCE_CHOOSER (chooser), NULL);
 
 	menu = gtk_menu_new ();
 
-	presence_chooser_menu_add_item (chooser,
-					menu,
-					_("Available"),
-					GOSSIP_PRESENCE_STATE_AVAILABLE,
-					FALSE);
+	gossip_presence_chooser_insert_menu (chooser, 
+					     menu, 
+					     position,
+					     sensitive, 
+					     include_clear);
+
+	return menu;
+}
+
+void
+gossip_presence_chooser_insert_menu (GossipPresenceChooser *chooser,
+				     GtkWidget             *menu,
+				     gint                   position,
+				     gboolean               sensitive,
+				     gboolean               include_clear)
+{
+	GtkWidget *item;
+	GList     *list, *l;
+	gint       i;
+
+	g_return_if_fail (GOSSIP_IS_PRESENCE_CHOOSER (chooser));
+	g_return_if_fail (GTK_IS_MENU (menu));
+
+	i = position;
+
+	item = presence_chooser_menu_add_item (chooser,
+					       menu,
+					       _("Available"),
+					       GOSSIP_PRESENCE_STATE_AVAILABLE,
+					       i++,
+					       FALSE);
+	if (!sensitive) {
+		gtk_widget_set_sensitive (item, FALSE);
+	}
 
 	list = gossip_status_presets_get (GOSSIP_PRESENCE_STATE_AVAILABLE, 5);
 	for (l = list; l; l = l->next) {
-		presence_chooser_menu_add_item (chooser,
-						menu,
-						l->data,
-						GOSSIP_PRESENCE_STATE_AVAILABLE,
-						FALSE);
+		item = presence_chooser_menu_add_item (chooser,
+						       menu,
+						       l->data,
+						       GOSSIP_PRESENCE_STATE_AVAILABLE,
+						       i++,
+						       FALSE);
+		if (!sensitive) {
+			gtk_widget_set_sensitive (item, FALSE);
+		}
 	}
 
 	g_list_free (list);
 
-	presence_chooser_menu_add_item (chooser,
-					menu,
-					_("Custom message..."),
-					GOSSIP_PRESENCE_STATE_AVAILABLE,
-					TRUE);
+	item = presence_chooser_menu_add_item (chooser,
+					       menu,
+					       _("Custom message..."),
+					       GOSSIP_PRESENCE_STATE_AVAILABLE,
+					       i++,
+					       TRUE);
+	if (!sensitive) {
+		gtk_widget_set_sensitive (item, FALSE);
+	}
+
 
 	/* Separator. */
 	item = gtk_menu_item_new ();
-	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+
+	if (position == -1) {
+		gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+	} else {
+		gtk_menu_shell_insert (GTK_MENU_SHELL (menu), item, i++);
+	}
+
 	gtk_widget_show (item);
 
-	presence_chooser_menu_add_item (chooser,
-					menu,
-					_("Busy"),
-					GOSSIP_PRESENCE_STATE_BUSY,
-					FALSE);
-
+	item = presence_chooser_menu_add_item (chooser,
+					       menu,
+					       _("Busy"),
+					       GOSSIP_PRESENCE_STATE_BUSY,
+					       i++,
+					       FALSE);
+	if (!sensitive) {
+		gtk_widget_set_sensitive (item, FALSE);
+	}
+	
 	list = gossip_status_presets_get (GOSSIP_PRESENCE_STATE_BUSY, 5);
 	for (l = list; l; l = l->next) {
-		presence_chooser_menu_add_item (chooser,
-						menu,
-						l->data,
-						GOSSIP_PRESENCE_STATE_BUSY,
-						FALSE);
+		item = presence_chooser_menu_add_item (chooser,
+						       menu,
+						       l->data,
+						       GOSSIP_PRESENCE_STATE_BUSY,
+						       i++,
+						       FALSE);
+		if (!sensitive) {
+			gtk_widget_set_sensitive (item, FALSE);
+		}
 	}
 
 	g_list_free (list);
 
-	presence_chooser_menu_add_item (chooser,
-					menu,
-					_("Custom message..."),
-					GOSSIP_PRESENCE_STATE_BUSY,
-					TRUE);
+	item = presence_chooser_menu_add_item (chooser,
+					       menu,
+					       _("Custom message..."),
+					       GOSSIP_PRESENCE_STATE_BUSY,
+					       i++,
+					       TRUE);
+	if (!sensitive) {
+		gtk_widget_set_sensitive (item, FALSE);
+	}
 
 	/* Separator. */
 	item = gtk_menu_item_new ();
-	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+
+	if (position == -1) {
+		gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+	} else {
+		gtk_menu_shell_insert (GTK_MENU_SHELL (menu), item, i++);
+	}
+
 	gtk_widget_show (item);
 
-	presence_chooser_menu_add_item (chooser,
-					menu,
-					_("Away"),
-					GOSSIP_PRESENCE_STATE_AWAY,
-					FALSE);
+	item = presence_chooser_menu_add_item (chooser,
+					       menu,
+					       _("Away"),
+					       GOSSIP_PRESENCE_STATE_AWAY,
+					       i++,
+					       FALSE);
+	if (!sensitive) {
+		gtk_widget_set_sensitive (item, FALSE);
+	}
 
 	list = gossip_status_presets_get (GOSSIP_PRESENCE_STATE_AWAY, 5);
 	for (l = list; l; l = l->next) {
-		presence_chooser_menu_add_item (chooser,
-						menu,
-						l->data,
-						GOSSIP_PRESENCE_STATE_AWAY,
-						FALSE);
+		item = presence_chooser_menu_add_item (chooser,
+						       menu,
+						       l->data,
+						       GOSSIP_PRESENCE_STATE_AWAY,
+						       i++,
+						       FALSE);
+		if (!sensitive) {
+			gtk_widget_set_sensitive (item, FALSE);
+		}
 	}
 
 	g_list_free (list);
 
-	presence_chooser_menu_add_item (chooser,
-					menu,
-					_("Custom message..."),
-					GOSSIP_PRESENCE_STATE_AWAY,
-					TRUE);
+	item = presence_chooser_menu_add_item (chooser,
+					       menu,
+					       _("Custom message..."),
+					       GOSSIP_PRESENCE_STATE_AWAY,
+					       i++,
+					       TRUE);
+	if (!sensitive) {
+		gtk_widget_set_sensitive (item, FALSE);
+	}
 
-	/* Separator. */
-	item = gtk_menu_item_new ();
-	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-	gtk_widget_show (item);
+	if (include_clear) {
+		/* Separator. */
+		item = gtk_menu_item_new ();
 
-	item = gtk_menu_item_new_with_label (_("Clear List..."));
-	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-	gtk_widget_show (item);
+		if (position == -1) {
+			gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+		} else {
+			gtk_menu_shell_insert (GTK_MENU_SHELL (menu), item, i++);
+		}
 
-	g_signal_connect (item,
-			  "activate",
-			  G_CALLBACK (presence_chooser_clear_activate_cb),
-			  chooser);
+		gtk_widget_show (item);
+		
+		item = gtk_menu_item_new_with_label (_("Clear List..."));
 
-	return menu;
+		if (position == -1) {
+			gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+		} else {
+			gtk_menu_shell_insert (GTK_MENU_SHELL (menu), item, i++);
+		}
+
+		if (!sensitive) {
+			gtk_widget_set_sensitive (item, FALSE);
+		}
+
+		gtk_widget_show (item);
+		
+		g_signal_connect (item,
+				  "activate",
+				  G_CALLBACK (presence_chooser_clear_activate_cb),
+				  chooser);
+	}
 }
 
 void

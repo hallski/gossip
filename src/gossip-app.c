@@ -296,7 +296,8 @@ app_status_icon_popup_menu_cb                (GtkStatusIcon         *status_icon
 					      guint                  button,
 					      guint                  activate_time,
 					      GossipApp             *app);
-static void     app_status_icon_create_menu  (void);
+static GtkWidget *
+                app_status_icon_create_menu  (GossipApp             *app);
 static void     app_status_icon_create       (void);
 static void     app_setup_dock               (void);
 static gboolean 
@@ -903,7 +904,6 @@ app_setup (GossipSession *session)
 
 	/* Set up notification area / tray. */
 	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring notification area widgets");
-	app_status_icon_create_menu ();
 	app_status_icon_create ();
 
 	app_setup_presences ();
@@ -2108,37 +2108,24 @@ app_popup_new_message_cb (GtkWidget *widget,
 }
 
 static void
-app_status_icon_popup_menu_cb (GtkStatusIcon  *status_icon,
+app_status_icon_popup_menu_cb (GtkStatusIcon *status_icon,
 			       guint          button,
 			       guint          activate_time,
-			       GossipApp      *app)
+			       GossipApp     *app)
 {
 	GossipAppPriv *priv;
-	GtkWidget     *submenu;
-	gboolean       show;
+	GtkWidget     *menu;
 
 	priv = GET_PRIV (app);
 
-	if (!priv->popup_menu) {
+	menu = app_status_icon_create_menu (app);
+
+	if (!menu) {
 		/* On Mac, there is no menu (at least for now). */ 
 		return;
 	}
 
-	show = gossip_window_get_is_visible (GTK_WINDOW (priv->window));
-
-	g_signal_handlers_block_by_func (priv->popup_menu_show_list_item,
-					 app_show_hide_list_cb, app);
-	gtk_check_menu_item_set_active
-		(GTK_CHECK_MENU_ITEM (priv->popup_menu_show_list_item), show);
-	g_signal_handlers_unblock_by_func (priv->popup_menu_show_list_item,
-					   app_show_hide_list_cb, app);
-
-	submenu = gossip_presence_chooser_create_menu (
-		GOSSIP_PRESENCE_CHOOSER (priv->presence_chooser));
-	gtk_menu_item_set_submenu (GTK_MENU_ITEM (priv->popup_menu_status_item),
-				   submenu);
-
-	gtk_menu_popup (GTK_MENU (priv->popup_menu),
+	gtk_menu_popup (GTK_MENU (menu),
 			NULL, NULL,
 			gtk_status_icon_position_menu,
 			priv->status_icon,
@@ -2146,16 +2133,21 @@ app_status_icon_popup_menu_cb (GtkStatusIcon  *status_icon,
 			activate_time);
 }
 
-static void
-app_status_icon_create_menu (void)
+static GtkWidget *
+app_status_icon_create_menu (GossipApp *app)
 {
 	GossipAppPriv *priv;
 	GladeXML      *glade;
+	GtkWidget     *menu;
+	GtkWidget     *separator_item;
 	GtkWidget     *message_item;
+	GtkWidget     *show_list_item;
+	gint           connected;
+	gboolean       show;
 
 #ifdef GDK_WINDOWING_QUARTZ
 	/* Unused for now. */
-	return;
+	return NULL;
 #endif
 
 	priv = GET_PRIV (app);
@@ -2163,10 +2155,10 @@ app_status_icon_create_menu (void)
 	glade = gossip_glade_get_file ("main.glade",
 				       "tray_menu",
 				       NULL,
-				       "tray_menu", &priv->popup_menu,
-				       "tray_show_list", &priv->popup_menu_show_list_item,
+				       "tray_menu", &menu,
+				       "tray_show_list", &show_list_item,
 				       "tray_new_message", &message_item,
-				       "tray_status", &priv->popup_menu_status_item,
+				       "tray_separator1", &separator_item,
 				       NULL);
 
 	gossip_glade_connect (glade,
@@ -2175,16 +2167,33 @@ app_status_icon_create_menu (void)
 			      "tray_quit", "activate", app_chat_quit_cb,
 			      NULL);
 
-	g_signal_connect (priv->popup_menu_show_list_item, "toggled",
+	/* Status menu items */
+	gossip_session_count_accounts (priv->session,
+				       &connected,
+				       NULL,
+				       NULL);
+
+	gossip_presence_chooser_insert_menu (
+		GOSSIP_PRESENCE_CHOOSER (priv->presence_chooser),
+		menu, 
+		4, 
+		connected > 0,
+		FALSE);
+	gtk_widget_show_all (menu);
+	
+	/* New message item */
+	gtk_widget_set_sensitive (message_item, connected > 0);
+
+	/* Show/hide check menu item */
+	show = gossip_window_get_is_visible (GTK_WINDOW (priv->window));
+	gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (show_list_item), show);
+
+	g_signal_connect (show_list_item, "toggled",
 			  G_CALLBACK (app_show_hide_list_cb), app);
-
-	priv->widgets_connected = g_list_prepend (priv->widgets_connected,
-						  priv->popup_menu_status_item);
-
-	priv->widgets_connected = g_list_prepend (priv->widgets_connected,
-						  message_item);
-
+		
 	g_object_unref (glade);
+
+	return menu;
 }
 
 static void
