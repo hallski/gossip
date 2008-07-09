@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-06-27 14:47+0200\n"
-"PO-Revision-Date: 2008-06-27 14:52+0200\n"
+"POT-Creation-Date: 2008-07-09 23:32+0200\n"
+"PO-Revision-Date: 2008-07-09 23:33+0200\n"
 "Last-Translator: Sigurd Gartmann <sigurdga@yahoo-inc.com>\n"
 "Language-Team: Norwegian <i18n-nb@lister.ping.uio.no>\n"
 "MIME-Version: 1.0\n"
@@ -213,144 +213,169 @@ msgstr ""
 "sortere på kontaktenes navn, med «name». «state» kan brukes for å sortere "
 "listen etter kontaktenes status."
 
-#: ../libgossip/gossip-chatroom.c:1092
+#: ../libgossip/gossip-chatroom.c:1284
 msgid "Joining"
 msgstr "Blir med"
 
-#: ../libgossip/gossip-chatroom.c:1094
+#: ../libgossip/gossip-chatroom.c:1286
 msgid "Active"
 msgstr "Aktiv"
 
-#: ../libgossip/gossip-chatroom.c:1096
+#: ../libgossip/gossip-chatroom.c:1288
 msgid "Inactive"
 msgstr "Inaktiv"
 
-#: ../libgossip/gossip-chatroom.c:1098 ../src/gossip-log-window.c:1899
+#: ../libgossip/gossip-chatroom.c:1290 ../src/gossip-log-window.c:1899
 msgid "Unknown"
 msgstr "Ukjent"
 
-#: ../libgossip/gossip-chatroom.c:1100
+#: ../libgossip/gossip-chatroom.c:1292
 msgid "Error"
 msgstr "Problem"
 
-#: ../libgossip/gossip-chatroom.c:1113
+#: ../libgossip/gossip-chatroom.c:1307
+#, fuzzy
 msgid ""
 "The chat room you tried to join requires a password. You either failed to "
-"supply a password or the password you tried was incorrect."
+"supply a password or the password you tried was incorrect"
 msgstr ""
 "Samtalerommet du prøvde å bli med i krever et passord. Passordet du oppga "
 "var feil."
 
-#: ../libgossip/gossip-chatroom.c:1116
-msgid "You have been banned from this chatroom."
+#: ../libgossip/gossip-chatroom.c:1309
+#, fuzzy
+msgid "You have been banned from this chatroom"
 msgstr "Du har blitt kastet ut av dette samtalerommet."
 
-#: ../libgossip/gossip-chatroom.c:1118
-msgid "The conference room you tried to join could not be found."
+#: ../libgossip/gossip-chatroom.c:1311
+#, fuzzy
+msgid "The conference room you tried to join could not be found"
 msgstr "Samtalerommet du prøvde å bli med i finnes ikke."
 
-#: ../libgossip/gossip-chatroom.c:1120
-msgid "Chatroom creation is restricted on this server."
+#: ../libgossip/gossip-chatroom.c:1313
+#, fuzzy
+msgid "Chatroom creation is restricted on this server"
 msgstr "Opprettelse av samtalerom er begrenset på denne tjeneren."
 
-#: ../libgossip/gossip-chatroom.c:1122
-msgid "Chatroom reserved nick names must be used on this server."
+#: ../libgossip/gossip-chatroom.c:1315
+#, fuzzy
+msgid "Chatroom reserved nick names must be used on this server"
 msgstr "Reserverte kallenavn er påkrevd på denne tjeneren."
 
-#: ../libgossip/gossip-chatroom.c:1124
-msgid "You are not on the chatroom's members list."
+#: ../libgossip/gossip-chatroom.c:1317
+#, fuzzy
+msgid "You are not on the chatroom's members list"
 msgstr "Du er ikke i samtalerommets medlemsliste."
 
-#: ../libgossip/gossip-chatroom.c:1126
-msgid "The nickname you have chosen is already in use."
+#: ../libgossip/gossip-chatroom.c:1319
+#, fuzzy
+msgid "The nickname you have chosen is already in use"
 msgstr "Kallenavnet du valgte er allerede i bruk."
 
-#: ../libgossip/gossip-chatroom.c:1128
-msgid "The maximum number of users for this chatroom has been reached."
+#: ../libgossip/gossip-chatroom.c:1321
+#, fuzzy
+msgid "The maximum number of users for this chatroom has been reached"
 msgstr "Maksimalt antall brukere er nådd for samtalerommet."
 
-#: ../libgossip/gossip-chatroom.c:1130
-msgid "The remote conference server did not respond in a sensible time."
+#: ../libgossip/gossip-chatroom.c:1323
+#, fuzzy
+msgid "Unauthorized request, you do not have privileges to do that"
+msgstr "Uautorisert forespørsel til denne tjenesten"
+
+#: ../libgossip/gossip-chatroom.c:1325
+msgid "That action is forbidden"
+msgstr "Denne handlingen er forbudt"
+
+#: ../libgossip/gossip-chatroom.c:1329
+#, fuzzy
+msgid "The remote conference server did not respond in a sensible time"
 msgstr "Tjeneren svarte ikke innen rimelig tid."
 
-#: ../libgossip/gossip-chatroom.c:1132
-msgid "An unknown error occurred, check your details are correct."
-msgstr "En ukjent feil skjedde, kontroller at innstillingene er korrekte."
-
-#: ../libgossip/gossip-chatroom.c:1134
-msgid "Joining the chatroom was canceled."
+#: ../libgossip/gossip-chatroom.c:1331
+#, fuzzy
+msgid "Joining the chatroom was canceled"
 msgstr "Forsøket på å bli med i samtalerommet ble avbrutt."
 
-#: ../libgossip/gossip-chatroom.c:1148
+#: ../libgossip/gossip-chatroom.c:1333
+#, fuzzy
+msgid "A bad request was sent to the server"
+msgstr "Uakseptabel forespørsel sendt til denne tjenesten"
+
+#: ../libgossip/gossip-chatroom.c:1335
+#, fuzzy
+msgid "An unknown error occurred, check your details are correct"
+msgstr "En ukjent feil skjedde, kontroller at innstillingene er korrekte."
+
+#: ../libgossip/gossip-chatroom.c:1347
 msgid "Moderator"
 msgid_plural "Moderators"
 msgstr[0] "Moderator"
 msgstr[1] "Moderatorer"
 
-#: ../libgossip/gossip-chatroom.c:1150
+#: ../libgossip/gossip-chatroom.c:1349
 msgid "Participant"
 msgid_plural "Participants"
 msgstr[0] "Deltaker"
 msgstr[1] "Deltakere"
 
-#: ../libgossip/gossip-chatroom.c:1152
+#: ../libgossip/gossip-chatroom.c:1351
 msgid "Visitor"
 msgid_plural "Visitors"
 msgstr[0] "Besøkende"
 msgstr[1] "Besøkende"
 
-#: ../libgossip/gossip-chatroom.c:1154
+#: ../libgossip/gossip-chatroom.c:1353
 msgid "No role"
 msgstr "Ingen rolle"
 
-#: ../libgossip/gossip-chatroom.c:1168
+#: ../libgossip/gossip-chatroom.c:1367
 msgid "Owner"
 msgid_plural "Owners"
 msgstr[0] "Eier"
 msgstr[1] "Eiere"
 
-#: ../libgossip/gossip-chatroom.c:1170
+#: ../libgossip/gossip-chatroom.c:1369
 msgid "Administrator"
 msgid_plural "Administrators"
 msgstr[0] "Admininstrator"
 msgstr[1] "Administratorer"
 
-#: ../libgossip/gossip-chatroom.c:1172
+#: ../libgossip/gossip-chatroom.c:1371
 msgid "Member"
 msgid_plural "Members"
 msgstr[0] "Medlem"
 msgstr[1] "Medlemmer"
 
-#: ../libgossip/gossip-chatroom.c:1174
+#: ../libgossip/gossip-chatroom.c:1373
 msgid "Outcast"
 msgid_plural "Outcasts"
 msgstr[0] "Stakkar"
 msgstr[1] "Stakkarer"
 
-#: ../libgossip/gossip-chatroom.c:1176
+#: ../libgossip/gossip-chatroom.c:1375
 msgid "No affiliation"
 msgstr "Ingen tilknytning"
 
 #. i18n: The current state of the connection.
-#: ../libgossip/gossip-contact.c:963 ../libgossip/gossip-presence.c:242
-#: ../src/gossip-app.c:2830 ../src/gossip-contact-info-dialog.c:156
+#: ../libgossip/gossip-contact.c:949 ../libgossip/gossip-presence.c:242
+#: ../src/gossip-app.c:2883 ../src/gossip-contact-info-dialog.c:156
 #: ../src/gossip-galago.c:186 ../src/gossip-status-icon.c:363
 msgid "Offline"
 msgstr "Frakoblet"
 
 #: ../libgossip/gossip-presence.c:423 ../libgossip/gossip-presence.c:440
-#: ../src/gossip-presence-chooser.c:760 ../src/gossip-presence-chooser.c:959
-#: ../src/gossip-presence-chooser.c:1008
+#: ../src/gossip-presence-chooser.c:769 ../src/gossip-presence-chooser.c:968
+#: ../src/gossip-presence-chooser.c:1045
 msgid "Available"
 msgstr "Tilgjengelig"
 
-#: ../libgossip/gossip-presence.c:427 ../src/gossip-presence-chooser.c:772
-#: ../src/gossip-presence-chooser.c:1036
+#: ../libgossip/gossip-presence.c:427 ../src/gossip-presence-chooser.c:781
+#: ../src/gossip-presence-chooser.c:1092
 msgid "Busy"
 msgstr "Opptatt"
 
-#: ../libgossip/gossip-presence.c:432 ../src/gossip-presence-chooser.c:784
-#: ../src/gossip-presence-chooser.c:1064
+#: ../libgossip/gossip-presence.c:432 ../src/gossip-presence-chooser.c:793
+#: ../src/gossip-presence-chooser.c:1138
 msgid "Away"
 msgstr "Borte"
 
@@ -406,47 +431,47 @@ msgstr "Denne funksjonaliteten er ikke implementert"
 msgid "The remote service timed out"
 msgstr "Tjenesten overskred tidsgrensen"
 
-#: ../libgossip/gossip-jabber.c:518
+#: ../libgossip/gossip-jabber.c:533
 msgid "Home"
 msgstr "Hjem"
 
-#: ../libgossip/gossip-jabber.c:523
+#: ../libgossip/gossip-jabber.c:538
 msgid "new account"
 msgstr "ny konto"
 
-#: ../libgossip/gossip-jabber.c:813
+#: ../libgossip/gossip-jabber.c:800
 msgid "No certificate found"
 msgstr "Ingen sertifikat funnet"
 
-#: ../libgossip/gossip-jabber.c:815
+#: ../libgossip/gossip-jabber.c:802
 msgid "Untrusted certificate"
 msgstr "Stoler ikke på sertifikatet"
 
-#: ../libgossip/gossip-jabber.c:817
+#: ../libgossip/gossip-jabber.c:804
 msgid "Certificate expired"
 msgstr "Sertifikat utgått"
 
-#: ../libgossip/gossip-jabber.c:819
+#: ../libgossip/gossip-jabber.c:806
 msgid "Certificate not activated"
 msgstr "Sertifikat ikke aktivert"
 
-#: ../libgossip/gossip-jabber.c:821
+#: ../libgossip/gossip-jabber.c:808
 msgid "Certificate host mismatch"
 msgstr "Feil vert på sertifikat"
 
-#: ../libgossip/gossip-jabber.c:823
+#: ../libgossip/gossip-jabber.c:810
 msgid "Certificate fingerprint mismatch"
 msgstr "Feil ved sertifikatets fingeravtrykk"
 
-#: ../libgossip/gossip-jabber.c:825
+#: ../libgossip/gossip-jabber.c:812
 msgid "Unknown security error occurred"
 msgstr "En ukjent sikkerhetsfeil oppstod"
 
-#: ../libgossip/gossip-jabber.c:830 ../libloudermouth/lm-bs-transfer.c:363
+#: ../libgossip/gossip-jabber.c:817 ../libloudermouth/lm-bs-transfer.c:363
 msgid "Unknown error"
 msgstr "Ukjent feil"
 
-#: ../libgossip/gossip-jabber.c:1246 ../libgossip/gossip-jabber-register.c:214
+#: ../libgossip/gossip-jabber.c:1241 ../libgossip/gossip-jabber-register.c:214
 msgid "Couldn't send message!"
 msgstr "Kunne ikke sende melding!"
 
@@ -454,47 +479,47 @@ msgstr "Kunne ikke sende melding!"
 msgid "Connection could not be opened"
 msgstr "Tilkobling kunne ikke åpnes"
 
-#: ../libgossip/gossip-jabber-utils.c:304
+#: ../libgossip/gossip-jabber-utils.c:435
 msgid "An unknown error occurred."
 msgstr "En ukjent feil oppstod."
 
-#: ../libgossip/gossip-jabber-utils.c:308
+#: ../libgossip/gossip-jabber-utils.c:439
 msgid "Connection refused."
 msgstr "Tilkobling nektes."
 
-#: ../libgossip/gossip-jabber-utils.c:311
+#: ../libgossip/gossip-jabber-utils.c:442
 msgid "Server address could not be resolved."
 msgstr "Tjeneradressen kunne ikke slås opp."
 
-#: ../libgossip/gossip-jabber-utils.c:314
+#: ../libgossip/gossip-jabber-utils.c:445
 msgid "Account requires a password to authenticate and none was given."
 msgstr "Kontoen krever et passord, men ingen passord ble oppgitt."
 
-#: ../libgossip/gossip-jabber-utils.c:317
+#: ../libgossip/gossip-jabber-utils.c:448
 msgid "Connection timed out."
 msgstr "Tidsavbrudd på tilkobling."
 
-#: ../libgossip/gossip-jabber-utils.c:320
+#: ../libgossip/gossip-jabber-utils.c:451
 msgid "Authentication failed."
 msgstr "Autentisering mislykket."
 
-#: ../libgossip/gossip-jabber-utils.c:323
+#: ../libgossip/gossip-jabber-utils.c:454
 msgid "The username you are trying already exists."
 msgstr "Brukernavnet du prøver å bruke finnes allerede."
 
-#: ../libgossip/gossip-jabber-utils.c:326
+#: ../libgossip/gossip-jabber-utils.c:457
 msgid "The username you are trying is not valid."
 msgstr "Brukernavnet du prøver å bruke er ugyldig."
 
-#: ../libgossip/gossip-jabber-utils.c:329
+#: ../libgossip/gossip-jabber-utils.c:460
 msgid "This feature is unavailable."
 msgstr "Denne funksjonaliteten er utilgjengelig."
 
-#: ../libgossip/gossip-jabber-utils.c:332
+#: ../libgossip/gossip-jabber-utils.c:463
 msgid "This feature is unauthorized."
 msgstr "Denne funksjonaliteten er ikke godkjent."
 
-#: ../libgossip/gossip-jabber-utils.c:335
+#: ../libgossip/gossip-jabber-utils.c:466
 msgid "A specific protocol error occurred that was unexpected."
 msgstr "En uventet protokollfeil oppstod."
 
@@ -571,48 +596,6 @@ msgstr "Ingen slik enhet"
 #: ../libloudermouth/lm-bs-transfer.c:349
 msgid "File is too large"
 msgstr "Filen er for stor"
-
-#: ../src/gossip-about-dialog.c:64
-msgid ""
-"Gossip is free software; you can redistribute it and/or modify it under the "
-"terms of the GNU General Public License as published by the Free Software "
-"Foundation; either version 2 of the License, or (at your option) any later "
-"version."
-msgstr ""
-"Gossip er fri programvare. Du kan gi det videre eller endre det, som "
-"beskrevet i GNU General Public License utgitt av Free Software Foundation, "
-"versjon to eller en senere versjon, etter ditt ønske."
-
-#: ../src/gossip-about-dialog.c:68
-msgid ""
-"Gossip is distributed in the hope that it will be useful, but WITHOUT ANY "
-"WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
-"FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
-"details."
-msgstr ""
-"Gossip er distribuert i håp om at det bil være nyttig, men UTEN GARANTI, "
-"ikke engang forhandlergaranti eller garanti om at det passer en spesiell "
-"bruk. Se GNU General Public License for mer informasjon om dette. "
-
-#: ../src/gossip-about-dialog.c:72
-msgid ""
-"You should have received a copy of the GNU General Public License along with "
-"Gossip; if not, write to the Free Software Foundation, Inc., 51 Franklin "
-"Street, Fifth Floor, Boston, MA 02110-130159 USA"
-msgstr ""
-"Du skal ha mottatt en kopi av GNU General Public License sammen med Gossip. "
-"Hvis ikke, kontakt Free Software Foundation, Inc., 51 Franklin Street, Fifth "
-"Floor, Boston, MA 02110-130159 USA"
-
-#: ../src/gossip-about-dialog.c:100
-msgid "An Instant Messaging client for GNOME"
-msgstr "En meldingsklient for GNOME"
-
-#: ../src/gossip-about-dialog.c:106
-msgid "translator-credits"
-msgstr ""
-"Kjartan Maraas\n"
-"Sigurd Gartmann"
 
 #: ../src/gossip-accounts-dialog.c:373 ../data/glade/main.glade.h:13
 msgid "<b>No Account Selected</b>"
@@ -724,62 +707,62 @@ msgstr "Om Gossip"
 msgid "Preferences..."
 msgstr "Brukervalg"
 
-#: ../src/gossip-app.c:947
+#: ../src/gossip-app.c:946
 msgid "To summarize:"
 msgstr "Oppsummering:"
 
-#: ../src/gossip-app.c:974
+#: ../src/gossip-app.c:973
 #, c-format
 msgid "%d new message"
 msgid_plural "%d new messages"
 msgstr[0] "%d ny melding"
 msgstr[1] "%d nye meldinger"
 
-#: ../src/gossip-app.c:979
+#: ../src/gossip-app.c:978
 #, c-format
 msgid "%d subscription request"
 msgid_plural "%d subscription requests"
 msgstr[0] "%d abonnementsforespørsel"
 msgstr[1] "%d abonnementsforespørsler"
 
-#: ../src/gossip-app.c:984
+#: ../src/gossip-app.c:983
 #, c-format
 msgid "%d file transfer request"
 msgid_plural "%d file transfer requests"
 msgstr[0] "%d forespørsel om filoverføring"
 msgstr[1] "%d forespørsler om filoverføringer"
 
-#: ../src/gossip-app.c:989
+#: ../src/gossip-app.c:988
 #, c-format
 msgid "%d server message"
 msgid_plural "%d server messages"
 msgstr[0] "%d tjenermelding"
 msgstr[1] "%d tjenermeldinger"
 
-#: ../src/gossip-app.c:994
+#: ../src/gossip-app.c:993
 #, c-format
 msgid "%d error"
 msgid_plural "%d errors"
 msgstr[0] "%d feil"
 msgstr[1] "%d feil"
 
-#: ../src/gossip-app.c:1019
+#: ../src/gossip-app.c:1018
 msgid "If you quit, you will lose all unread information."
 msgstr "Hvis du avslutter vil du miste all ulest informasjon."
 
-#: ../src/gossip-app.c:1084
+#: ../src/gossip-app.c:1083
 msgid "Gossip is still running, it is just hidden."
 msgstr "Gossip kjører fortsatt, det er bare skjult."
 
-#: ../src/gossip-app.c:1085
+#: ../src/gossip-app.c:1084
 msgid "Click on the notification area icon to show Gossip."
 msgstr "Trykk på varslingsikonet for å vise Gossip."
 
-#: ../src/gossip-app.c:1100
+#: ../src/gossip-app.c:1099
 msgid "You were about to quit!"
 msgstr "Du holder på å avslutte."
 
-#: ../src/gossip-app.c:1101
+#: ../src/gossip-app.c:1100
 msgid ""
 "Since no system or notification tray has been found, this action would "
 "normally quit Gossip.\n"
@@ -793,29 +776,29 @@ msgstr ""
 "Dette er bare en påminnelse, og fra nå av vil Gossip avslutte når du gjør "
 "dette, med mindre du tar vekk krysset i boksen under."
 
-#: ../src/gossip-app.c:1556 ../src/gossip-edit-contact-dialog.c:231
+#: ../src/gossip-app.c:1575 ../src/gossip-edit-contact-dialog.c:231
 msgid "Group"
 msgstr "Gruppe"
 
-#: ../src/gossip-app.c:1577
+#: ../src/gossip-app.c:1596
 msgid "Contact"
 msgstr "Kontakt"
 
-#: ../src/gossip-app.c:1890
+#: ../src/gossip-app.c:1934
 #, c-format
 msgid "Please enter your %s account password"
 msgstr "Skriv inn passordet til %s-kontoen"
 
-#: ../src/gossip-app.c:1901
+#: ../src/gossip-app.c:1945
 #, c-format
 msgid "Logging in to account '%s'"
 msgstr "Logger på: %s"
 
-#: ../src/gossip-app.c:1905
+#: ../src/gossip-app.c:1949
 msgid "Remember Password?"
 msgstr "Husk passordet?"
 
-#: ../src/gossip-app.c:2755
+#: ../src/gossip-app.c:2808
 msgid "Edit Account _Details"
 msgstr "Rediger _kontoinformasjon"
 
@@ -873,20 +856,26 @@ msgstr "_Åpne lenke"
 msgid "Your invitation has been declined"
 msgstr "Din invitasjon har blitt avslått"
 
-#: ../src/gossip-chat-view.c:945 ../data/glade/chat.glade.h:16
-msgid "You have been invited to join a chat conference."
+#: ../src/gossip-chat-view.c:927
+#, fuzzy, c-format
+msgid ""
+"You have been invited to join a chat conference with '%s' in the room '%s'"
 msgstr "Du er invitert til etsamtalerom."
 
-#: ../src/gossip-chat-view.c:968
+#: ../src/gossip-chat-view.c:943
+msgid "Reason: "
+msgstr "Årsak: "
+
+#: ../src/gossip-chat-view.c:958
 msgid "Accept"
 msgstr "Godta"
 
-#: ../src/gossip-chat-view.c:984
+#: ../src/gossip-chat-view.c:974
 msgid "Decline"
 msgstr "Avslå"
 
 #: ../src/gossip-chat-window.c:745 ../src/gossip-chat-window.c:775
-#: ../data/glade/main.glade.h:73
+#: ../data/glade/main.glade.h:74
 msgid "New Message"
 msgid_plural "New Messages"
 msgstr[0] "Ny melding"
@@ -930,11 +919,11 @@ msgstr "Låst"
 msgid "Join"
 msgstr "Bli med"
 
-#: ../src/gossip-contact-info-dialog.c:636 ../data/glade/main.glade.h:65
+#: ../src/gossip-contact-info-dialog.c:636 ../data/glade/main.glade.h:66
 msgid "Information requested..."
 msgstr "Informasjon forespurt..."
 
-#: ../src/gossip-contact-list.c:336 ../data/glade/chat.glade.h:20
+#: ../src/gossip-contact-list.c:336 ../data/glade/chat.glade.h:19
 msgid "_Contact"
 msgstr "_Kontakt"
 
@@ -962,7 +951,7 @@ msgstr "Vis kontaktinformasjon"
 msgid "Re_name"
 msgstr "_Endre navn"
 
-#: ../src/gossip-contact-list.c:352 ../src/gossip-contact-list.c:3325
+#: ../src/gossip-contact-list.c:352 ../src/gossip-contact-list.c:3334
 msgid "Rename"
 msgstr "Endre navn"
 
@@ -1006,7 +995,7 @@ msgstr "_E-post..."
 msgid "Email contact"
 msgstr "Send e-post til kontakt"
 
-#: ../src/gossip-contact-list.c:376 ../data/glade/chat.glade.h:30
+#: ../src/gossip-contact-list.c:376 ../data/glade/chat.glade.h:29
 #: ../data/glade/main.glade.h:164
 msgid "_View Previous Conversations"
 msgstr "_Vis tidligere samtaler"
@@ -1015,11 +1004,11 @@ msgstr "_Vis tidligere samtaler"
 msgid "View previous conversations with this contact"
 msgstr "Vis tidligere samtaler med denne kontakten"
 
-#: ../src/gossip-contact-list.c:3235
+#: ../src/gossip-contact-list.c:3244
 msgid "Do you want to remove this contact from your roster?"
 msgstr "Vil du fjerne denne kontakten fra listen din?"
 
-#: ../src/gossip-contact-list.c:3318
+#: ../src/gossip-contact-list.c:3327
 msgid "Please enter a new name for the group:"
 msgstr "Vennligst skriv inn et nytt navn for gruppen:"
 
@@ -1124,62 +1113,72 @@ msgstr "Velg en fil"
 #. FIXME: Need special case for nickname to put an
 #. * entry in the chat view and to request a new nick.
 #.
-#: ../src/gossip-group-chat.c:547
+#: ../src/gossip-group-chat.c:560
 msgid "Retry connection"
 msgstr "Prøv å koble til på nytt"
 
 #. Send event to chat window
-#: ../src/gossip-group-chat.c:911
+#: ../src/gossip-group-chat.c:930
 #, c-format
 msgid "Invited %s to join this chat conference."
 msgstr "Inviterte %s til å bli med i samtalerommet."
 
-#: ../src/gossip-group-chat.c:989
+#: ../src/gossip-group-chat.c:1008
 msgid "<b>Subject:</b>"
 msgstr "<b>Emne:</b>"
 
-#: ../src/gossip-group-chat.c:1198
+#: ../src/gossip-group-chat.c:1230
 msgid "You have been kicked from this room"
 msgstr "Du har blitt sparket fra dette rommet"
 
-#: ../src/gossip-group-chat.c:1327
+#: ../src/gossip-group-chat.c:1262
+#, c-format
+msgid "%s is now known as %s"
+msgstr "%s er nå kjent som %s"
+
+#: ../src/gossip-group-chat.c:1398
 #, c-format
 msgid "%s has set the subject: %s"
 msgstr "%s har satt emnet: %s"
 
-#: ../src/gossip-group-chat.c:1910
+#: ../src/gossip-group-chat.c:1407
+#, c-format
+msgid "Subject is set as: %s"
+msgstr "Emne er satt til: %s"
+
+#: ../src/gossip-group-chat.c:2006
 #, c-format
 msgid "%s has joined the room"
 msgstr "%s har kommet inn i rommet"
 
-#: ../src/gossip-group-chat.c:1947
+#: ../src/gossip-group-chat.c:2048
 #, c-format
 msgid "%s has left the room"
 msgstr "%s har gått fra rommet"
 
-#: ../src/gossip-group-chat.c:2210
+#: ../src/gossip-group-chat.c:2312
 msgid "Nick was not recogized"
 msgstr "Kallenavnet ble ikke gjenkjent"
 
-#: ../src/gossip-group-chat.c:2341 ../src/gossip-private-chat.c:1150
+#: ../src/gossip-group-chat.c:2443 ../src/gossip-private-chat.c:1150
 #, c-format
 msgid "Subject: %s"
 msgstr "Emne: %s"
 
-#: ../src/gossip-group-chat.c:2751
+#: ../src/gossip-group-chat.c:2806
 msgid "Enter the new subject you want to set for this room:"
 msgstr "Skriv inn det nye emnet dette samtalerommet skal ha:"
 
-#: ../src/gossip-group-chat.c:2767
+#: ../src/gossip-group-chat.c:2822
 msgid "Enter the new nickname you want to be known by:"
 msgstr "Skriv inn et nytt kallenavn:"
 
-#: ../src/gossip-group-chat.c:2791
+#: ../src/gossip-group-chat.c:2846
 #, c-format
 msgid "Kicking %s"
 msgstr "Sparker %s"
 
-#: ../src/gossip-group-chat.c:2799
+#: ../src/gossip-group-chat.c:2854
 msgid "You have been removed from the room by an administrator."
 msgstr "Du har blitt fjernet fra samtalerommet av en administrator."
 
@@ -1268,18 +1267,18 @@ msgstr "Brukere"
 msgid "Description"
 msgstr "Beskrivelse"
 
-#: ../src/gossip-new-chatroom-dialog.c:827
+#: ../src/gossip-new-chatroom-dialog.c:830
 #, c-format
 msgid "Found %d conference room"
 msgid_plural "Found %d conference rooms"
 msgstr[0] "Fant %d samtalerom"
 msgstr[1] "Fant %d samtalerom"
 
-#: ../src/gossip-new-chatroom-dialog.c:866
+#: ../src/gossip-new-chatroom-dialog.c:869
 msgid "Browsing for conference rooms, please wait..."
 msgstr "Søker gjennom samtalerom. Vennligst vent..."
 
-#: ../src/gossip-new-chatroom-dialog.c:914
+#: ../src/gossip-new-chatroom-dialog.c:917
 msgid "Browsing cancelled!"
 msgstr "Gjennomsøking avbrutt!"
 
@@ -1362,11 +1361,11 @@ msgstr "Kontaktinformasjon"
 msgid "Language"
 msgstr "Språk"
 
-#: ../src/gossip-presence-chooser.c:502
+#: ../src/gossip-presence-chooser.c:504
 msgid "Are you sure you want to clear the list?"
 msgstr "Er du sikker på at du vil tømme listen?"
 
-#: ../src/gossip-presence-chooser.c:506
+#: ../src/gossip-presence-chooser.c:508
 msgid ""
 "This will remove any custom messages you have added to the list of preset "
 "status messages."
@@ -1374,16 +1373,16 @@ msgstr ""
 "Dette vil fjerne alle egendefinerte meldinger du har lagt til "
 "statusmeldingslisten."
 
-#: ../src/gossip-presence-chooser.c:511
+#: ../src/gossip-presence-chooser.c:513
 msgid "Clear List"
 msgstr "Tøm listen"
 
-#: ../src/gossip-presence-chooser.c:1025 ../src/gossip-presence-chooser.c:1053
-#: ../src/gossip-presence-chooser.c:1081
+#: ../src/gossip-presence-chooser.c:1070 ../src/gossip-presence-chooser.c:1117
+#: ../src/gossip-presence-chooser.c:1163
 msgid "Custom message..."
 msgstr "Egendefinert melding..."
 
-#: ../src/gossip-presence-chooser.c:1090
+#: ../src/gossip-presence-chooser.c:1183
 msgid "Clear List..."
 msgstr "Tøm listen..."
 
@@ -1490,7 +1489,7 @@ msgid "Try again later."
 msgstr "Prøv igjen senere."
 
 #. Birthday chooser
-#: ../src/gossip-vcard-dialog.c:966 ../data/glade/main.glade.h:34
+#: ../src/gossip-vcard-dialog.c:966 ../data/glade/main.glade.h:35
 msgid "C_hange"
 msgstr "_Endre"
 
@@ -1542,7 +1541,7 @@ msgstr "Invitasjons_melding:"
 msgid "Invite"
 msgstr "Inviter"
 
-#: ../data/glade/chat.glade.h:11 ../data/glade/main.glade.h:67
+#: ../data/glade/chat.glade.h:11 ../data/glade/main.glade.h:68
 msgid "Join _New..."
 msgstr "Bli med i _ny..."
 
@@ -1562,57 +1561,57 @@ msgstr "Velg hvem du vil invitere:"
 msgid "Send _Email..."
 msgstr "Send _e-post..."
 
-#: ../data/glade/chat.glade.h:17 ../data/glade/main.glade.h:132
+#: ../data/glade/chat.glade.h:16 ../data/glade/main.glade.h:132
 msgid "_Add Contact..."
 msgstr "_Legg til kontakt..."
 
-#: ../data/glade/chat.glade.h:18
+#: ../data/glade/chat.glade.h:17
 msgid "_Add To Favorites"
 msgstr "_Legg til i favoritter"
 
-#: ../data/glade/chat.glade.h:19
+#: ../data/glade/chat.glade.h:18
 msgid "_Close"
 msgstr "_Lukk"
 
-#: ../data/glade/chat.glade.h:21
+#: ../data/glade/chat.glade.h:20
 msgid "_Conversation"
 msgstr "_Samtale"
 
-#: ../data/glade/chat.glade.h:22
+#: ../data/glade/chat.glade.h:21
 msgid "_Copy"
 msgstr "_Kopier"
 
-#: ../data/glade/chat.glade.h:23
+#: ../data/glade/chat.glade.h:22
 msgid "_Detach Tab"
 msgstr "_Løsne fane"
 
-#: ../data/glade/chat.glade.h:24
+#: ../data/glade/chat.glade.h:23
 msgid "_Next Tab"
 msgstr "_Neste fane"
 
-#: ../data/glade/chat.glade.h:25
+#: ../data/glade/chat.glade.h:24
 msgid "_Paste"
 msgstr "_Lim inn"
 
-#: ../data/glade/chat.glade.h:26
+#: ../data/glade/chat.glade.h:25
 msgid "_Previous Tab"
 msgstr "_Forrige fane"
 
-#: ../data/glade/chat.glade.h:27 ../data/glade/main.glade.h:159
+#: ../data/glade/chat.glade.h:26 ../data/glade/main.glade.h:159
 msgid "_Room"
 msgstr "_Rom"
 
-#: ../data/glade/chat.glade.h:28
+#: ../data/glade/chat.glade.h:27
 msgid "_Show Contacts"
 msgstr "_Vis kontakter"
 
-#: ../data/glade/chat.glade.h:29
+#: ../data/glade/chat.glade.h:28
 msgid "_Tabs"
 msgstr "_Faner"
 
 #.
 #. This is the text that should appear on a menu title. Don't include the prefix 'menu title|' in the translation.
-#: ../data/glade/chat.glade.h:33 ../data/glade/main.glade.h:170
+#: ../data/glade/chat.glade.h:32 ../data/glade/main.glade.h:170
 msgid "menu title|_Edit"
 msgstr "_Rediger"
 
@@ -1624,7 +1623,7 @@ msgstr "KontaktID:"
 msgid "Location:"
 msgstr "Plassering:"
 
-#: ../data/glade/file-transfer.glade.h:5 ../data/glade/main.glade.h:72
+#: ../data/glade/file-transfer.glade.h:5 ../data/glade/main.glade.h:73
 msgid "Name:"
 msgstr "Navn:"
 
@@ -1684,7 +1683,7 @@ msgstr "Spark..."
 msgid "Manage Favorite Rooms"
 msgstr "Behandle favorittsamtalerom"
 
-#: ../data/glade/group-chat.glade.h:12 ../data/glade/main.glade.h:71
+#: ../data/glade/group-chat.glade.h:12 ../data/glade/main.glade.h:72
 msgid "N_ame:"
 msgstr "_Navn:"
 
@@ -1850,182 +1849,186 @@ msgid "Alia_s:"
 msgstr "_Alias:"
 
 #: ../data/glade/main.glade.h:32
+msgid "An Instant Messaging client for GNOME"
+msgstr "En meldingsklient for GNOME"
+
+#: ../data/glade/main.glade.h:33
 msgid "Avatars are user chosen images shown in the contact list"
 msgstr ""
 "Personbilder er bilder brukerne har valgt selv for å vise i hverandres "
 "kontaktlister"
 
-#: ../data/glade/main.glade.h:33
+#: ../data/glade/main.glade.h:34
 msgid "Birthday:"
 msgstr "Fødselsdag:"
 
-#: ../data/glade/main.glade.h:35
+#: ../data/glade/main.glade.h:36
 msgid "Ch_at"
 msgstr "_Snakk"
 
-#: ../data/glade/main.glade.h:36
+#: ../data/glade/main.glade.h:37
 msgid "Change Password"
 msgstr "Bytt passord"
 
-#: ../data/glade/main.glade.h:37
+#: ../data/glade/main.glade.h:38
 msgid "Chat Rooms"
 msgstr "Samtalerom"
 
-#: ../data/glade/main.glade.h:38
+#: ../data/glade/main.glade.h:39
 msgid "Chat Th_eme:"
 msgstr "Samtale_tema:"
 
-#: ../data/glade/main.glade.h:39
+#: ../data/glade/main.glade.h:40
 msgid "Client:"
 msgstr "Klient:"
 
-#: ../data/glade/main.glade.h:40
+#: ../data/glade/main.glade.h:41
 msgid "Con_firm:"
 msgstr "Bekre_ft:"
 
-#: ../data/glade/main.glade.h:41
+#: ../data/glade/main.glade.h:42
 msgid "Con_tact:"
 msgstr "_Kontakt:"
 
-#: ../data/glade/main.glade.h:42
+#: ../data/glade/main.glade.h:43
 msgid "Connect on S_tartup"
 msgstr "Koble til ved _oppstart"
 
-#: ../data/glade/main.glade.h:43
+#: ../data/glade/main.glade.h:44
 msgid "Connect/disconnect the selected account"
 msgstr "Koble til/frar valgt konto"
 
-#: ../data/glade/main.glade.h:44
+#: ../data/glade/main.glade.h:45
 msgid "Contact List - Gossip"
 msgstr "Kontaktliste"
 
-#: ../data/glade/main.glade.h:45
+#: ../data/glade/main.glade.h:46
 msgid "Contacts"
 msgstr "Kontakter"
 
-#: ../data/glade/main.glade.h:46
+#: ../data/glade/main.glade.h:47
 msgid "Context"
 msgstr "Sammenheng"
 
-#: ../data/glade/main.glade.h:47
+#: ../data/glade/main.glade.h:48
 msgid "Country:"
 msgstr "Land:"
 
-#: ../data/glade/main.glade.h:48
+#: ../data/glade/main.glade.h:49
 msgid "Cr_eate"
 msgstr "_Opprett"
 
-#: ../data/glade/main.glade.h:49
+#: ../data/glade/main.glade.h:50
 msgid "Decide _Later"
 msgstr "Avgjør _senere"
 
-#: ../data/glade/main.glade.h:50
+#: ../data/glade/main.glade.h:51
 msgid "Display notifications when contacts come _online"
 msgstr "Si fra når kontakter logger _på"
 
-#: ../data/glade/main.glade.h:51
+#: ../data/glade/main.glade.h:52
 msgid ""
 "Each account you create has a unique name associated with it (for example "
 "<b>Google</b>)."
 msgstr "Alle kontoer du oppretter har et unikt navn (for eksempel <b>Jobb</b>)"
 
-#: ../data/glade/main.glade.h:52
+#: ../data/glade/main.glade.h:53
 msgid "Edit Contact"
 msgstr "Rediger kontakt"
 
-#: ../data/glade/main.glade.h:53
+#: ../data/glade/main.glade.h:54
 msgid "Edit Groups"
 msgstr "Rediger grupper"
 
-#: ../data/glade/main.glade.h:54
+#: ../data/glade/main.glade.h:55
 msgid "Email:"
 msgstr "E-post:"
 
-#: ../data/glade/main.glade.h:55
+#: ../data/glade/main.glade.h:56
 msgid "Enable sounds when _away"
 msgstr "Spill av lyder når du er _borte"
 
-#: ../data/glade/main.glade.h:56
+#: ../data/glade/main.glade.h:57
 msgid "Enable sounds when _busy"
 msgstr "Spill av lyder når du er _opptatt"
 
-#: ../data/glade/main.glade.h:57
-msgid "Encrypt all data sent when communicating with the server"
-msgstr ""
-
 #: ../data/glade/main.glade.h:58
+msgid "Encrypt all data sent when communicating with the server"
+msgstr "Krypter alle data som sendes ved kommunikasjon med tjeneren"
+
+#: ../data/glade/main.glade.h:59
 msgid "Enter status message:"
 msgstr "Skriv inn statusmelding:"
 
-#: ../data/glade/main.glade.h:59
+#: ../data/glade/main.glade.h:60
 msgid "Forget password"
 msgstr "Glem passord"
 
-#: ../data/glade/main.glade.h:60
+#: ../data/glade/main.glade.h:61
 msgid "General"
 msgstr "Generelt"
 
-#: ../data/glade/main.glade.h:61
+#: ../data/glade/main.glade.h:62
 msgid "ID:"
 msgstr "ID:"
 
-#: ../data/glade/main.glade.h:62
+#: ../data/glade/main.glade.h:63
 msgid "I_gnore security warnings"
 msgstr "I_gnorer sikkerhetsvarsel"
 
-#: ../data/glade/main.glade.h:63
+#: ../data/glade/main.glade.h:64
 msgid ""
 "If you chose to decide later you will be asked the next time you log on."
 msgstr ""
 "Dersom du velger å avgjøre dette senere, vil du bli spurt om dette neste "
 "gang du logger på."
 
-#: ../data/glade/main.glade.h:64
+#: ../data/glade/main.glade.h:65
 msgid ""
 "Import your personal information from your desktop settings and use it here"
 msgstr ""
 
-#: ../data/glade/main.glade.h:66
+#: ../data/glade/main.glade.h:67
 msgid "Join _Favorites"
 msgstr "Bli med i _favorittene"
 
-#: ../data/glade/main.glade.h:68
+#: ../data/glade/main.glade.h:69
 msgid "Links"
 msgstr "Lenker"
 
-#: ../data/glade/main.glade.h:69
+#: ../data/glade/main.glade.h:70
 msgid "Logi_n ID:"
 msgstr "Innloggings-_ID:"
 
-#: ../data/glade/main.glade.h:70
+#: ../data/glade/main.glade.h:71
 msgid "Manage Favorites..."
 msgstr "Rediger favoritter..."
 
-#: ../data/glade/main.glade.h:74
+#: ../data/glade/main.glade.h:75
 msgid "Notifications"
 msgstr "Varslinger"
 
-#: ../data/glade/main.glade.h:75
+#: ../data/glade/main.glade.h:76
 msgid "OS:"
 msgstr "OS:"
 
-#: ../data/glade/main.glade.h:76
+#: ../data/glade/main.glade.h:77
 msgid "Pass_word:"
 msgstr "_Passord:"
 
-#: ../data/glade/main.glade.h:77
+#: ../data/glade/main.glade.h:78
 msgid "Personal Details"
 msgstr "Personlig informasjon"
 
-#: ../data/glade/main.glade.h:78
+#: ../data/glade/main.glade.h:79
 msgid "Preferences"
 msgstr "Brukervalg"
 
-#: ../data/glade/main.glade.h:79
+#: ../data/glade/main.glade.h:80
 msgid "R_egister"
 msgstr "_Registrer"
 
-#: ../data/glade/main.glade.h:80
+#: ../data/glade/main.glade.h:81
 #, fuzzy
 msgid ""
 "Register account with the Jabber server. If this is a new account, you will "
@@ -2034,23 +2037,23 @@ msgstr ""
 "Registrer denne kontoen på Jabber-tjeneren. Hvis dette er en ny konto, er "
 "det nødvendig å gjøre dette før du kobler til."
 
-#: ../data/glade/main.glade.h:81
+#: ../data/glade/main.glade.h:82
 msgid "Remove the selected account"
 msgstr "Fjern valgt konto"
 
-#: ../data/glade/main.glade.h:82
+#: ../data/glade/main.glade.h:83
 msgid "S_how Offline Contacts"
 msgstr "Vis _frakoblede kontakter"
 
-#: ../data/glade/main.glade.h:83
+#: ../data/glade/main.glade.h:84
 msgid "Search"
 msgstr "Søk"
 
-#: ../data/glade/main.glade.h:84
+#: ../data/glade/main.glade.h:85
 msgid "Search the log and press enter to continue on to the next item found"
 msgstr "Søk i loggen og trykk linjeskift for å gå videre til neste treff"
 
-#: ../data/glade/main.glade.h:85
+#: ../data/glade/main.glade.h:86
 msgid ""
 "Select the groups you want this contact to appear in, you can select more "
 "than one group or no groups."
@@ -2058,15 +2061,15 @@ msgstr ""
 "Velg gruppene du vil at denne kontakten skal vises i. Du kan velge én, flere "
 "eller ingen grupper."
 
-#: ../data/glade/main.glade.h:86
+#: ../data/glade/main.glade.h:87
 msgid "Select the name you want to use for this account:"
 msgstr "Hvilket kallenavn vil du bruke for kontakten:"
 
-#: ../data/glade/main.glade.h:87
+#: ../data/glade/main.glade.h:88
 msgid "Ser_ver:"
 msgstr "_Tjener:"
 
-#: ../data/glade/main.glade.h:88
+#: ../data/glade/main.glade.h:89
 msgid ""
 "Set the alias you want to use for:\n"
 "<b>foo@bar.baz</b>\n"
@@ -2078,37 +2081,33 @@ msgstr ""
 "\n"
 "Du kan hente kontaktinformasjon fra tjeneren. "
 
-#: ../data/glade/main.glade.h:92
+#: ../data/glade/main.glade.h:93
 msgid "Show _avatars"
 msgstr "Vis person_bilder"
 
-#: ../data/glade/main.glade.h:93
+#: ../data/glade/main.glade.h:94
 msgid "Show _smileys as images"
 msgstr "Vis _smilefjes som bilder"
 
-#: ../data/glade/main.glade.h:94
+#: ../data/glade/main.glade.h:95
 msgid "Show co_mpact contact list"
 msgstr "Vis _kompakt kontaktliste"
 
-#: ../data/glade/main.glade.h:95
+#: ../data/glade/main.glade.h:96
 msgid "Sort by _name"
 msgstr "Sorter på _navn"
 
-#: ../data/glade/main.glade.h:96
+#: ../data/glade/main.glade.h:97
 msgid "Sort by s_tate"
 msgstr "Sorter på _status"
 
-#: ../data/glade/main.glade.h:97
+#: ../data/glade/main.glade.h:98
 msgid "Spell Checker"
 msgstr "Stavekontroll"
 
-#: ../data/glade/main.glade.h:98
+#: ../data/glade/main.glade.h:99
 msgid "Spell Checking"
 msgstr "Stavekontroll"
-
-#: ../data/glade/main.glade.h:99
-msgid "Status"
-msgstr "Status"
 
 #: ../data/glade/main.glade.h:100
 msgid "Status Message Presets"

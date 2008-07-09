@@ -19,7 +19,6 @@ libloudermouth/lm-bs-receiver.c
 libloudermouth/lm-bs-sender.c
 libloudermouth/lm-bs-transfer.c
 
-src/gossip-about-dialog.c
 src/gossip-accounts-dialog.c
 src/gossip-account-chooser.c
 src/gossip-account-widget-jabber.c
