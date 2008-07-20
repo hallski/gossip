@@ -305,7 +305,8 @@ preferences_languages_add (GossipPreferences *preferences)
 				    -1);
 	}
 
-	gossip_spell_free_language_codes (codes);
+	g_list_foreach (codes, (GFunc) g_free, NULL);
+	g_list_free (codes);
 }
 
 static void

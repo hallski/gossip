@@ -225,7 +225,7 @@ spell_setup_languages (void)
 
 			lang = g_slice_new0 (SpellLanguage);
 
-			lang->spell_config = new_aspell_config();
+			lang->spell_config = new_aspell_config ();
 
 			aspell_config_replace (lang->spell_config, "encoding", "utf-8");
 			aspell_config_replace (lang->spell_config, "lang", strv[i++]);
@@ -295,13 +295,6 @@ gossip_spell_get_language_codes (void)
 	return codes;
 }
 
-void
-gossip_spell_free_language_codes (GList *codes)
-{
-	g_list_foreach (codes, (GFunc) g_free, NULL);
-	g_list_free (codes);
-}
-
 gboolean
 gossip_spell_check (const gchar *word)
 {
@@ -351,7 +344,8 @@ gossip_spell_check (const gchar *word)
 }
 
 GList *
-gossip_spell_get_suggestions (const gchar *word)
+gossip_spell_get_suggestions (const gchar *word,
+			      const gchar *code)
 {
 	GList                   *l1;
 	GList                   *l2 = NULL;
@@ -368,8 +362,14 @@ gossip_spell_get_suggestions (const gchar *word)
 
 	for (l1 = languages; l1; l1 = l1->next) {
 		SpellLanguage *lang;
+		const gchar   *this_code;
 
 		lang = l1->data;
+
+		this_code = aspell_config_retrieve (lang->spell_config, "lang");
+		if (!this_code || (code && strcmp (code, this_code) != 0)) {
+			continue;
+		}
 
 		suggestions = aspell_speller_suggest (lang->spell_checker,
 						      word, len);
@@ -441,18 +441,5 @@ gossip_spell_get_language_codes (void)
 	return NULL;
 }
 
-void
-gossip_spell_free_language_codes (GList *codes)
-{
-}
-
 #endif /* HAVE_ASPELL */
-
-
-void
-gossip_spell_free_suggestions (GList *suggestions)
-{
-	g_list_foreach (suggestions, (GFunc) g_free, NULL);
-	g_list_free (suggestions);
-}
 

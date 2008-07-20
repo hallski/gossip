@@ -29,10 +29,10 @@ G_BEGIN_DECLS
 gboolean     gossip_spell_supported           (void);
 const gchar *gossip_spell_get_language_name   (const gchar *code);
 GList       *gossip_spell_get_language_codes  (void);
-void         gossip_spell_free_language_codes (GList       *codes);
+
 gboolean     gossip_spell_check               (const gchar *word);
-GList *      gossip_spell_get_suggestions     (const gchar *word);
-void         gossip_spell_free_suggestions    (GList        *suggestions);
+GList *      gossip_spell_get_suggestions     (const gchar *word,
+					       const gchar *code);
 
 G_END_DECLS
 

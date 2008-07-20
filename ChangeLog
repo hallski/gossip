@@ -1,3 +1,11 @@
+2008-07-20  Martyn Russell  <martyn@imendio.com>
+
+	* data/glade/main.glade:
+	* src/gossip-preferences.c:
+	* src/gossip-spell-dialog.c:
+	* src/gossip-spell.[ch]: Make it possible to filter the spelling
+	corrections by language.
+
 2008-07-08  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-chatroom-manager.c: Make sure we sort by name
