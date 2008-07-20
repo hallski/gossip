@@ -1,5 +1,9 @@
 2008-07-20  Martyn Russell  <martyn@imendio.com>
 
+	* Release 0.30.
+
+2008-07-20  Martyn Russell  <martyn@imendio.com>
+
 	* data/glade/main.glade:
 	* src/gossip-preferences.c:
 	* src/gossip-spell-dialog.c:

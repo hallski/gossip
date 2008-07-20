@@ -1,3 +1,22 @@
+NEW in 0.30:
+==============
+- Fixed #347026, groupchat topic is changed local even though user have not the permission (Martyn Russell)
+- Fixed #350333, Uncorrect displaying of received private messages from another groupchat participant (Martyn Russell)
+- Fixed #435273, Usability issue: merge status submenu into task icon menu (Martyn Russell)
+- Fixed #522388, Add context menu to groupchat contact list (Igor Stepura, Martyn Russell)
+- Fixed #536683, Find entry behavior a little bit confusing (Martyn Russell)
+- Fixed #541651, Contacts are offline if they go offline and come back online (Martyn Russell)
+
+Translations:
+- Updated ca: Jordi Mallach
+- Updated cs: Petr Kovar
+- Updated es: Jorge González, Jorge Gonzalez
+- Updated nb: Sigurd Gartmann, Kjartan Maraas
+- Updated sv: Daniel Nylander
+
+Help Manual Translations:
+None
+
 NEW in 0.29:
 ==============
 - Fixed #514977, crash in Gossip Instant Messenger: (Loudmouth)
