@@ -410,7 +410,8 @@ gossip_spell_supported (void)
 }
 
 GList *
-gossip_spell_get_suggestions (const gchar *word)
+gossip_spell_get_suggestions (const gchar *word,
+			      const gchar *code)
 {
 	gossip_debug (DEBUG_DOMAIN, "Support disabled, could not get suggestions");
 

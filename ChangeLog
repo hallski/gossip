@@ -1,3 +1,8 @@
+2008-07-21  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-spell.c: (gossip_spell_supported): Fix build without
+	aspell.
+
 2008-07-20  Martyn Russell  <martyn@imendio.com>
 
 	* configure.ac: Bumped version
