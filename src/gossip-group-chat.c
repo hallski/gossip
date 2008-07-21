@@ -1522,7 +1522,10 @@ group_chat_dialog_new (GossipGroupChat *chat,
 					 0,
 					 GTK_MESSAGE_QUESTION,
 					 GTK_BUTTONS_OK_CANCEL,
-					 message);
+					 NULL);
+
+	gtk_message_dialog_set_markup (GTK_MESSAGE_DIALOG (dialog),
+				       message);
 
 	hbox = gtk_hbox_new (FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox),
@@ -1534,7 +1537,6 @@ group_chat_dialog_new (GossipGroupChat *chat,
 		    
 	gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 4);
 
-	g_object_set (GTK_MESSAGE_DIALOG (dialog)->label, "use-markup", TRUE, NULL);
 	g_object_set_data (G_OBJECT (dialog), "entry", entry);
 	g_object_set_data_full (G_OBJECT (dialog), "action", g_strdup (action), g_free);
 

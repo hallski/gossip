@@ -1,5 +1,10 @@
 2008-07-21  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-group-chat.c: (group_chat_dialog_new): Use set_markup
+	instead of poking at ->label in the message dialog.
+
+2008-07-21  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-spell.c: (gossip_spell_supported): Fix build without
 	aspell.
 
