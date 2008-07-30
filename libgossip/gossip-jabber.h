@@ -35,7 +35,7 @@ G_BEGIN_DECLS
 #define GOSSIP_IS_JABBER_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_JABBER))
 #define GOSSIP_JABBER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_JABBER, GossipJabberClass))
 
-#define GOSSIP_JABBER_ERROR        gnome_jabber_error_quark ()
+#define GOSSIP_JABBER_ERROR        gossip_jabber_error_quark ()
 
 typedef struct _GossipJabber      GossipJabber;
 typedef struct _GossipJabberClass GossipJabberClass;
