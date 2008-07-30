@@ -88,7 +88,6 @@ struct _GossipJabberPriv {
 
 	GossipAccount         *account;
 	GossipPresence        *presence;
-	GossipVCard           *vcard;
 
 	GHashTable            *contact_list;
 
@@ -113,6 +112,8 @@ struct _GossipJabberPriv {
 	GHashTable            *composing_timeouts;
 	GHashTable            *composing_requests;
 
+	GHashTable            *vcards;
+
 	/* Transport stuff... is this in the right place? */
 #ifdef USE_TRANSPORTS
 	GossipTransportAccountList *account_list;
@@ -134,7 +135,8 @@ typedef struct {
 
 static void             gossip_jabber_class_init            (GossipJabberClass          *klass);
 static void             gossip_jabber_init                  (GossipJabber               *jabber);
-static void             jabber_finalize                     (GObject                    *object);
+static void             gossip_jabber_finalize              (GObject                    *object);
+static void             jabber_vcard_destroy_notify_func    (gpointer                    data);
 static gboolean         jabber_login_timeout_cb             (GossipJabber               *jabber);
 static gboolean         jabber_logout_contact_foreach       (gpointer                    key,
 							     gpointer                    value,
@@ -152,18 +154,13 @@ static LmSSLResponse    jabber_ssl_status_cb                (LmConnection       
 							     LmSSLStatus                 status,
 							     GossipJabber               *jabber);
 static gboolean         jabber_composing_timeout_cb         (JabberData                 *data);
-static void             jabber_contact_is_avatar_latest_cb  (GossipResult                result,
-							     GossipVCard                *vcard,
-							     JabberData                 *data);
 static void		jabber_contact_is_avatar_latest	    (GossipJabber	        *jabber,
 							     GossipContact	        *contact,
 							     LmMessageNode   	        *m,
 							     gboolean                    force_update);
-static void             jabber_contact_vcard                (GossipJabber               *jabber,
-							     GossipContact              *contact);
-static void             jabber_contact_vcard_cb             (GossipResult                result,
-							     GossipVCard                *vcard,
-							     JabberData                 *data);
+static void             jabber_contact_get_vcard            (GossipJabber               *jabber,
+							     GossipContact              *contact,
+							     gboolean                    force_update);
 static void             jabber_group_rename_foreach_cb      (gpointer                    key,
 							     gpointer                    value,
 							     gpointer                    user_data);
@@ -297,7 +294,7 @@ gossip_jabber_class_init (GossipJabberClass *klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-	object_class->finalize = jabber_finalize;
+	object_class->finalize = gossip_jabber_finalize;
 
 	signals[CONNECTING] =
 		g_signal_new ("connecting",
@@ -443,10 +440,16 @@ gossip_jabber_init (GossipJabber *jabber)
 				       gossip_contact_equal,
 				       g_object_unref,
 				       NULL);
+
+	priv->vcards = 
+		g_hash_table_new_full (gossip_contact_hash,
+				       gossip_contact_equal,
+				       g_object_unref,
+				       jabber_vcard_destroy_notify_func);
 }
 
 static void
-jabber_finalize (GObject *object)
+gossip_jabber_finalize (GObject *object)
 {
 	GossipJabber     *jabber;
 	GossipJabberPriv *priv;
@@ -458,10 +461,6 @@ jabber_finalize (GObject *object)
 		g_object_unref (priv->account);
 	}
 
-	if (priv->vcard) {
-		g_object_unref (priv->vcard);
-	}
-
 	if (priv->presence) {
 		g_object_unref (priv->presence);
 	}
@@ -470,17 +469,19 @@ jabber_finalize (GObject *object)
 		g_object_unref (priv->session);
 	}
 
-	g_hash_table_unref (priv->contact_list);
-
 	/* finalize extended modules */
 	gossip_jabber_chatrooms_finalize (priv->chatrooms);
 	if (priv->fts) {
 		gossip_jabber_ft_finalize (priv->fts);
 	}
 
-	g_hash_table_destroy (priv->composing_ids);
-	g_hash_table_destroy (priv->composing_timeouts);
-	g_hash_table_destroy (priv->composing_requests);
+	g_hash_table_unref (priv->vcards);
+
+	g_hash_table_unref (priv->composing_requests);
+	g_hash_table_unref (priv->composing_timeouts);
+	g_hash_table_unref (priv->composing_ids);
+
+	g_hash_table_unref (priv->contact_list);
 
 	if (priv->connection_timeout_id != 0) {
 		g_source_remove (priv->connection_timeout_id);
@@ -495,6 +496,19 @@ jabber_finalize (GObject *object)
 	}
 
 	(G_OBJECT_CLASS (gossip_jabber_parent_class)->finalize) (object);
+}
+
+static void
+jabber_vcard_destroy_notify_func (gpointer data)
+{
+	if (!data) {
+		/* Nothing to do, NULL was used as a place holder so
+		 * we don't request the vcard more than once.
+		 */
+		return;
+	}
+
+	g_object_unref (data);
 }
 
 GossipJabber *
@@ -1019,33 +1033,10 @@ jabber_auth_cb (LmConnection *connection,
 							  FALSE,
 							  FALSE);
 
-	if (priv->vcard) {
-		gchar *name;
-
-		name = gossip_jabber_get_name_to_use
-			(gossip_contact_get_id (own_contact),
-			 gossip_vcard_get_nickname (priv->vcard),
-			 gossip_vcard_get_name (priv->vcard), 
-			 gossip_contact_get_name (own_contact));
-
-		gossip_contact_set_name (own_contact, name);
-		g_free (name);
-
-		/* Set the vcard waiting to be sent to our jabber server once
-		 * connected.
-		 */
-		gossip_jabber_vcard_set (jabber,
-					 priv->vcard,
-					 NULL, NULL, NULL);
-
-		g_object_unref (priv->vcard);
-		priv->vcard = NULL;
-	} else {
-		/* Request our vcard so we know what our nick name is to use
-		 * in chats windows, etc.
-		 */
-		jabber_contact_vcard (jabber, own_contact);
-	}
+	/* Request our vcard so we know what our nick name is to use
+	 * in chats windows, etc.
+	 */
+	jabber_contact_get_vcard (jabber, own_contact, TRUE);
 }
 
 static void
@@ -1815,68 +1806,16 @@ gossip_jabber_update_contact (GossipJabber *jabber, GossipContact *contact)
 }
 
 static void
-jabber_contact_is_avatar_latest_cb (GossipResult  result,
-				    GossipVCard  *vcard,
-				    JabberData   *data)
+jabber_contact_get_vcard_cb (GossipResult  result,
+			     GossipVCard  *vcard,
+			     gpointer      user_data)
 {
-	if (result == GOSSIP_RESULT_OK) {
-		GossipAvatar *avatar;
+	GossipJabberPriv *priv;
+	JabberData       *data;
+	 
+	data = user_data;
+	priv = GET_PRIV (data->jabber);
 
-		avatar = gossip_vcard_get_avatar (vcard);
-		gossip_contact_set_avatar (data->contact, avatar);
-		gossip_contact_set_vcard (data->contact, vcard);
-	}
-
-	jabber_data_free (data);
-}
-
-static void
-jabber_contact_is_avatar_latest (GossipJabber  *jabber,
-				 GossipContact *contact,
-				 LmMessageNode *m,
-				 gboolean       force_update)
-{
-	JabberData    *data;
-	LmMessageNode *avatar_node;
-	GossipAvatar  *avatar;
-	gchar         *sha1;
-	gboolean       same;
-
-	if (!force_update) {
-		avatar_node = lm_message_node_find_child (m, "photo");
-		if (!avatar_node || !avatar_node->value) {
-			gossip_contact_set_avatar (contact, NULL);
-			return;
-		}
-
-		avatar = gossip_contact_get_avatar (contact);
-		if (avatar) {
-			sha1 = gossip_sha_hash (avatar->data, avatar->len);
-		} else {
-			sha1 = gossip_sha_hash (NULL, 0);
-		}
-
-		same = g_ascii_strcasecmp (sha1, avatar_node->value) == 0;
-		g_free (sha1);
-
-		if (same) {
-			return;
-		}
-	}
-
-	data = jabber_data_new (jabber, contact, NULL);
-	gossip_jabber_vcard_get (jabber,
-				 gossip_contact_get_id (contact),
-				 (GossipVCardCallback) jabber_contact_is_avatar_latest_cb,
-				 data,
-				 NULL);
-}
-
-static void
-jabber_contact_vcard_cb (GossipResult  result,
-			 GossipVCard  *vcard,
-			 JabberData   *data)
-{
 	if (result == GOSSIP_RESULT_OK) {
 		GossipContact *own_contact;
 		gchar         *name;
@@ -1902,24 +1841,90 @@ jabber_contact_vcard_cb (GossipResult  result,
 		if (gossip_contact_equal (own_contact, data->contact)) {
 			gossip_jabber_send_presence (data->jabber, NULL);
 		}
+
+		if (vcard) {
+			g_object_ref (vcard);
+		}
+
+		g_hash_table_replace (priv->vcards, 
+				      g_object_ref (data->contact),
+				      vcard);
 	}
 
 	jabber_data_free (data);
 }
 
 static void
-jabber_contact_vcard (GossipJabber  *jabber,
-		      GossipContact *contact)
+jabber_contact_get_vcard (GossipJabber  *jabber,
+			  GossipContact *contact,
+			  gboolean       force_update)
 {
-	JabberData *data;
+	GossipJabberPriv *priv;
+	JabberData       *data;
+
+	priv = GET_PRIV (jabber);
+
+	if (!force_update) {
+		/* We use this instead of the regular lookup because
+		 * the VCard can be NULL, i.e. if we have requested
+		 * it already and are waiting for a response from the
+		 * server.
+		 */
+		if (g_hash_table_lookup_extended (priv->vcards, contact, NULL, NULL)) {
+			gossip_debug (DEBUG_DOMAIN, 
+				      "Already requested vcard for:'%s'",
+				      gossip_contact_get_id (contact));
+			return;
+		}
+	}
+
+	g_hash_table_replace (priv->vcards, 
+			      g_object_ref (contact),
+			      NULL);
 
 	data = jabber_data_new (jabber, contact, NULL);
 
 	gossip_jabber_vcard_get (jabber,
 				 gossip_contact_get_id (contact),
-				 (GossipVCardCallback) jabber_contact_vcard_cb,
+				 jabber_contact_get_vcard_cb,
 				 data,
 				 NULL);
+}
+
+static void
+jabber_contact_is_avatar_latest (GossipJabber  *jabber,
+				 GossipContact *contact,
+				 LmMessageNode *m,
+				 gboolean       force_update)
+{
+	if (!force_update) {
+		LmMessageNode *avatar_node;
+		GossipAvatar  *avatar;
+		gchar         *sha1;
+		gboolean       same;
+
+		avatar_node = lm_message_node_find_child (m, "photo");
+		if (!avatar_node || !avatar_node->value) {
+			gossip_contact_set_avatar (contact, NULL);
+			return;
+		}
+
+		avatar = gossip_contact_get_avatar (contact);
+		if (avatar) {
+			sha1 = gossip_sha_hash (avatar->data, avatar->len);
+		} else {
+			sha1 = gossip_sha_hash (NULL, 0);
+		}
+
+		same = g_ascii_strcasecmp (sha1, avatar_node->value) == 0;
+		g_free (sha1);
+
+		if (same) {
+			return;
+		}
+	}
+
+	jabber_contact_get_vcard (jabber, contact, force_update);
 }
 
 static void
@@ -2151,7 +2156,9 @@ gossip_jabber_get_vcard (GossipJabber         *jabber,
 
 	return gossip_jabber_vcard_get (jabber,
 					jid_str,
-					callback, user_data, error);
+					callback, 
+					user_data, 
+					error);
 }
 
 gboolean
@@ -3332,7 +3339,7 @@ gossip_jabber_get_contact_from_jid (GossipJabber *jabber,
 			/* Request contacts VCard details so we can get the
 			 * real name for them for chat windows, etc
 			 */
-			jabber_contact_vcard (jabber, contact);
+			jabber_contact_get_vcard (jabber, contact, FALSE);
 		}
 	}
 

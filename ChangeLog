@@ -1,3 +1,18 @@
+2008-07-30  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-avatar.c: Try to fix up the format if some
+	rogue clients write just "png" instead of "image/png" as the mime
+	type for the image.
+	
+	* libgossip/gossip-jabber.[ch]: Hold a hash table of VCards so we
+	don't just constantly request new vcards on every message and
+	presence, only if we don't already have the vcard. This fixes a
+	very nasty bug released in 0.30 where network traffic is
+	constantly used with the client requesting vcards. This fixes bug
+	#545451.
+	
+	* libgossip/gossip-vcard.h: Code clean ups.
+
 2008-07-21  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-group-chat.c: (group_chat_dialog_new): Use set_markup

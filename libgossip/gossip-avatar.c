@@ -20,6 +20,8 @@
 
 #include "config.h"
 
+#include "string.h"
+
 #include "gossip-avatar.h"
 
 #define DEBUG_DOMAIN "Avatar"
@@ -32,10 +34,10 @@ static void       avatar_pixbuf_roundify  (GdkPixbuf *pixbuf);
 static gboolean
 avatar_pixbuf_is_opaque (GdkPixbuf *pixbuf)
 {
-	int            width;
-	int            height;
-	int            rowstride; 
-	int            i;
+	gint           width;
+	gint           height;
+	gint           rowstride; 
+	gint           i;
         unsigned char *pixels;
         unsigned char *row;
 
@@ -76,9 +78,9 @@ avatar_pixbuf_is_opaque (GdkPixbuf *pixbuf)
 static void
 avatar_pixbuf_roundify (GdkPixbuf *pixbuf)
 {
-	int     width;
-	int     height;
-	int     rowstride;
+        gint    width;
+	gint    height;
+	gint    rowstride;
 	guchar *pixels;
 
 	if (!gdk_pixbuf_get_has_alpha(pixbuf)) {
@@ -159,20 +161,34 @@ gossip_avatar_new (guchar      *data,
 static GdkPixbuf *
 avatar_create_pixbuf (GossipAvatar *avatar, gint size)
 {
-	GdkPixbuf        *tmp_pixbuf;
-	GdkPixbuf        *ret_pixbuf;
-	GdkPixbufLoader	 *loader;
-	GError           *error = NULL;
-	gint              orig_width;
-	gint              orig_height;
-	gint              scale_width;
-	gint              scale_height;
+	GdkPixbuf       *tmp_pixbuf;
+	GdkPixbuf       *ret_pixbuf;
+	GdkPixbufLoader *loader;
+	GError          *error = NULL;
+	gint             orig_width;
+	gint             orig_height;
+	gint             scale_width;
+	gint             scale_height;
 
 	if (!avatar) {
 		return NULL;
 	}
 
 	if (avatar->format) {
+		/* Some avatars are written by crap clients. This is just to
+		 * help things along here.
+		 */
+		if (G_UNLIKELY (!strchr (avatar->format, '/'))) {
+			gchar *old_format;
+
+			/* This is obviously wrong, so we try to
+			 * correct it.
+			 */
+			old_format = avatar->format;
+			avatar->format = g_strdup_printf ("image/%s", old_format);
+			g_free (old_format);
+		}
+
 		loader = gdk_pixbuf_loader_new_with_mime_type (avatar->format, &error);
 
 		if (error) {

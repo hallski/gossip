@@ -35,7 +35,7 @@ G_BEGIN_DECLS
 #define GOSSIP_IS_JABBER_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_JABBER))
 #define GOSSIP_JABBER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_JABBER, GossipJabberClass))
 
-#define GOSSIP_JABBER_ERROR        gnome_jabber_error_quark()
+#define GOSSIP_JABBER_ERROR        gnome_jabber_error_quark ()
 
 typedef struct _GossipJabber      GossipJabber;
 typedef struct _GossipJabberClass GossipJabberClass;
@@ -81,8 +81,8 @@ void           gossip_jabber_send_unsubscribed         (GossipJabber        *jab
 void           gossip_jabber_subscription_allow_all    (GossipJabber        *jabber);
 void           gossip_jabber_subscription_disallow_all (GossipJabber        *jabber);
 GossipAccount *gossip_jabber_new_account               (void);
-gchar *        gossip_jabber_get_default_server        (const gchar    *username);
-guint          gossip_jabber_get_default_port          (gboolean        use_ssl);
+gchar *        gossip_jabber_get_default_server        (const gchar         *username);
+guint          gossip_jabber_get_default_port          (gboolean             use_ssl);
 gboolean       gossip_jabber_is_ssl_supported          (void);
 gboolean       gossip_jabber_is_connected              (GossipJabber        *jabber);
 gboolean       gossip_jabber_is_connecting             (GossipJabber        *jabber);
