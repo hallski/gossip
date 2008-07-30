@@ -1825,14 +1825,22 @@ jabber_contact_get_vcard_cb (GossipResult  result,
 		gossip_contact_set_avatar (data->contact, avatar);
 		gossip_contact_set_vcard (data->contact, vcard);
 
-		name = gossip_jabber_get_name_to_use
-			(gossip_contact_get_id (data->contact),
-			 gossip_vcard_get_nickname (vcard),
-			 gossip_vcard_get_name (vcard),
-			 gossip_contact_get_name (data->contact));
+		/* Don't set the name if we are a contact list contact
+		 * and the name is already set because the name used
+		 * will be exactly what we personally set it to be
+		 * ourselves already.
+		 */
+		if (gossip_contact_get_type (data->contact) != GOSSIP_CONTACT_TYPE_CONTACTLIST || 
+		    gossip_contact_get_name (data->contact) == NULL) {
+			name = gossip_jabber_get_name_to_use
+				(gossip_contact_get_id (data->contact),
+				 gossip_vcard_get_nickname (vcard),
+				 gossip_vcard_get_name (vcard),
+				 gossip_contact_get_name (data->contact));
 
-		gossip_contact_set_name (data->contact, name);
-		g_free (name);
+			gossip_contact_set_name (data->contact, name);
+			g_free (name);
+		}
 
 		/* Send presence if this is the user's VCard
 		 * (Avatar support, JEP-0153)

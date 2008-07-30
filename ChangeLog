@@ -1,5 +1,13 @@
 2008-07-30  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-jabber.c:
+	(jabber_contact_get_vcard_cb): Don't try to guess a good name for
+	a contact if they are already on the roster and have a name, this
+	name is the name we have already choosen for the contact. Fixes
+	bug #544346.
+
+2008-07-30  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-avatar.c: Try to fix up the format if some
 	rogue clients write just "png" instead of "image/png" as the mime
 	type for the image.
