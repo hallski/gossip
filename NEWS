@@ -1,3 +1,17 @@
+NEW in 0.31:
+==============
+- Fixed #544346, Roster contact name changes (Martyn Russell)
+- Fixed #545451, Network traffic is incredibly high due to constant vcard requests (Martyn Russell)
+
+Translations:
+- Updated ar: Djihed Afifi
+- Updated ca: Jordi Mallach
+- Updated es: Daniel Mustieles, Jorge González
+- Updated sv: Daniel Nylander
+
+Help Manual Translations:
+None
+
 NEW in 0.30:
 ==============
 - Fixed #347026, groupchat topic is changed local even though user have not the permission (Martyn Russell)

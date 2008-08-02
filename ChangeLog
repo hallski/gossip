@@ -1,5 +1,9 @@
 2008-08-02  Martyn Russell  <martyn@imendio.com>
 
+	* NEWS: Updated for 0.31 release.
+
+2008-08-02  Martyn Russell  <martyn@imendio.com>
+
 	* configure.ac: Bumped version requirement of Loudmouth to 1.4.1.
 	Since it has the TCP keep alive fix by default configured.
 
