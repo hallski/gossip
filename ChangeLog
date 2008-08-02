@@ -1,3 +1,9 @@
+2008-08-02  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-chatroom-manager.c:
+	(chatroom_manager_parse_chatroom): Require account tag from
+	chatrooms.xml. If it doesn't exist, no Chatroom is created.
+
 2008-07-30  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-jabber.h: Fixed typo s/gnome_jabber/gossip_jabber/

@@ -737,8 +737,8 @@ chatroom_manager_parse_chatroom (GossipChatroomManager *manager,
 		child = child->next;
 	}
 
-	if (name && server && room) {
-		GossipAccount *account = NULL;
+	if (account_name && name && server && room) {
+		GossipAccount *account;
 		
 		account = gossip_account_manager_find (priv->account_manager,
 						       account_name);
