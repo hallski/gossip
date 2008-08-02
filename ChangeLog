@@ -1,5 +1,10 @@
 2008-08-02  Martyn Russell  <martyn@imendio.com>
 
+	* configure.ac: Bumped version requirement of Loudmouth to 1.4.1.
+	Since it has the TCP keep alive fix by default configured.
+
+2008-08-02  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-chatroom-manager.c:
 	(chatroom_manager_parse_chatroom): Require account tag from
 	chatrooms.xml. If it doesn't exist, no Chatroom is created.
