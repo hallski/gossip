@@ -488,7 +488,7 @@ vcard_dialog_birthday_button_popdown_cb (GossipPopupButton *button,
 					 gboolean           ok,
 					 GossipVCardDialog *dialog)
 {
-	gint         year, month, day;
+	guint        year, month, day;
 	GDate       *date;
 	const gchar *format = "%x"; /* Keep in variable get rid of warning. */
 	gchar        buf[128];

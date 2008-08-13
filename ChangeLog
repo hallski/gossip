@@ -1,3 +1,12 @@
+2008-08-13  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c: (app_session_protocol_connected_cb),
+	(app_session_protocol_disconnected_cb),
+	(app_session_protocol_error_cb), (app_status_icon_create_menu):
+	* src/gossip-vcard-dialog.c:
+	(vcard_dialog_birthday_button_popdown_cb): Fix some type issues
+	spotted by clang.
+
 2008-08-02  Martyn Russell  <martyn@imendio.com>
 
 	* Bumped version to 0.32.

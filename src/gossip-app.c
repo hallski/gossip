@@ -1733,7 +1733,7 @@ app_session_protocol_connected_cb (GossipSession *session,
 				   gpointer       user_data)
 {
 	GossipAppPriv *priv;
-	gboolean       connecting;
+	guint          connecting;
 	const gchar   *name;
 
 	priv = GET_PRIV (app);
@@ -1789,7 +1789,7 @@ app_session_protocol_disconnected_cb (GossipSession *session,
 				      gpointer       user_data)
 {
 	GossipAppPriv *priv;
-	gboolean       connecting;
+	guint          connecting;
 	gboolean       should_reconnect;
 	const gchar   *name;
 #ifdef HAVE_DBUS
@@ -1848,7 +1848,7 @@ app_session_protocol_error_cb (GossipSession  *session,
 			       gpointer        user_data)
 {
 	GossipAppPriv *priv;
-	gboolean       connecting;
+	guint          connecting;
 	const gchar   *name;
 
 	priv = GET_PRIV (app);
@@ -2142,7 +2142,7 @@ app_status_icon_create_menu (GossipApp *app)
 	GtkWidget     *separator_item;
 	GtkWidget     *message_item;
 	GtkWidget     *show_list_item;
-	gint           connected;
+	guint          connected;
 	gboolean       show;
 
 #ifdef GDK_WINDOWING_QUARTZ
