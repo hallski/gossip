@@ -110,10 +110,10 @@ static void     preferences_notify_bool_cb               (GossipConf            
 static void     preferences_notify_sensitivity_cb        (GossipConf             *conf,
 							  const gchar            *key,
 							  gpointer                user_data);
-static void     preferences_hookup_spin_button           (GossipPreferences      *preferences,
+G_GNUC_UNUSED static void     preferences_hookup_spin_button           (GossipPreferences      *preferences,
 							  const gchar            *key,
 							  GtkWidget              *widget);
-static void     preferences_hookup_entry                 (GossipPreferences      *preferences,
+G_GNUC_UNUSED static void     preferences_hookup_entry                 (GossipPreferences      *preferences,
 							  const gchar            *key,
 							  GtkWidget              *widget);
 static void     preferences_hookup_toggle_button         (GossipPreferences      *preferences,
@@ -676,11 +676,6 @@ preferences_hookup_spin_button (GossipPreferences *preferences,
 {
 	guint id;
 
-	/* Silence warning. */
-	if (0) {
-		preferences_hookup_spin_button (preferences, key, widget);
-	}
-
 	preferences_widget_sync_int (key, widget);
 
 	g_object_set_data_full (G_OBJECT (widget), "key",
@@ -706,10 +701,6 @@ preferences_hookup_entry (GossipPreferences *preferences,
 			  GtkWidget         *widget)
 {
 	guint id;
-
-	if (0) {  /* Silent warning before we use this function. */
-		preferences_hookup_entry (preferences, key, widget);
-	}
 
 	preferences_widget_sync_string (key, widget);
 
