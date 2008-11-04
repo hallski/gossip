@@ -32,8 +32,7 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
-#include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-utils.h>
+#include <libgossip/gossip.h>
 
 #include "gossip-contact-groups.h"
 

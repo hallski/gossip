@@ -26,8 +26,7 @@
 #ifndef __GOSSIP_PRIVATE_CHAT_H__
 #define __GOSSIP_PRIVATE_CHAT_H__
 
-#include <libgossip/gossip-contact.h>
-#include <libgossip/gossip-message.h>
+#include <libgossip/gossip.h>
 
 #include "gossip-group-chat.h"
 

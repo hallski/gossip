@@ -22,9 +22,6 @@
 
 #include <string.h>
 
-#include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-stock.h>
-
 #include "gossip-app.h"
 #include "gossip-idle.h"
 #include "gossip-marshal.h"

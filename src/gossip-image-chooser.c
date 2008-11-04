@@ -29,7 +29,7 @@
 #include <libgnomevfs/gnome-vfs-ops.h>
 #endif
 
-#include <libgossip/gossip-debug.h>
+#include <libgossip/gossip.h>
 
 #include "gossip-marshal.h"
 #include "gossip-image-chooser.h"

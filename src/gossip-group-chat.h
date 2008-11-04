@@ -25,8 +25,7 @@
 #ifndef __GOSSIP_GROUP_CHAT_H__
 #define __GOSSIP_GROUP_CHAT_H__
 
-#include <libgossip/gossip-chatroom.h>
-#include <libgossip/gossip-chatroom-provider.h>
+#include <libgossip/gossip.h>
 
 #include "gossip-chat.h"
 

@@ -20,8 +20,6 @@
 
 #include "config.h"
 
-#include <libgossip/gossip-vcard.h>
-
 #include "gossip-ui-utils.h"
 #include "gossip-email.h"
 

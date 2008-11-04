@@ -26,14 +26,6 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 
-#include <libgossip/gossip-account.h>
-#include <libgossip/gossip-version-info.h>
-#include <libgossip/gossip-presence.h>
-#include <libgossip/gossip-session.h>
-#include <libgossip/gossip-utils.h>
-#include <libgossip/gossip-vcard.h>
-#include <libgossip/gossip-paths.h>
-
 #include "gossip-app.h"
 #include "gossip-avatar-image.h"
 #include "gossip-glade.h"

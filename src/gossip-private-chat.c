@@ -27,13 +27,6 @@
 #include <glade/glade.h>
 #include <glib/gi18n.h>
 
-#include <libgossip/gossip-account.h>
-#include <libgossip/gossip-chatroom.h>
-#include <libgossip/gossip-session.h>
-#include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-log.h>
-#include <libgossip/gossip-stock.h>
-
 #include "gossip-app.h"
 #include "gossip-chat-window.h"
 #include "gossip-chat-view.h"

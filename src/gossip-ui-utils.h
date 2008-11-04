@@ -27,12 +27,7 @@
 
 #include <gtk/gtk.h>
 
-#include <libgossip/gossip-account.h>
-#include <libgossip/gossip-contact.h>
-#include <libgossip/gossip-vcard.h>
-#include <libgossip/gossip-presence.h>
-#include <libgossip/gossip-chatroom.h>
-#include <libgossip/gossip-avatar.h>
+#include <libgossip/gossip.h>
 
 G_BEGIN_DECLS
 

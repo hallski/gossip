@@ -41,6 +41,7 @@ endif
 
 libgossip_la_SOURCES =             			\
 	$(ebook_sources)				\
+	gossip.h                                        \
 	gossip-account.c           			\
 	gossip-account.h           			\
 	gossip-account-manager.c   			\

@@ -28,10 +28,7 @@
 #include <glade/glade.h>
 #include <glib/gi18n.h>
 
-#include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-session.h>
-#include <libgossip/gossip-utils.h>
-#include <libgossip/gossip-account-manager.h>
+#include <libgossip/gossip.h>
 
 #include "gossip-change-password-dialog.h"
 #include "gossip-app.h"

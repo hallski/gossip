@@ -25,8 +25,7 @@
 
 #include <gtk/gtk.h>
 
-#include <libgossip/gossip-account.h>
-#include <libgossip/gossip-session.h>
+#include <libgossip/gossip.h>
 
 G_BEGIN_DECLS
 

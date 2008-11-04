@@ -25,6 +25,8 @@
 #ifndef __GOSSIP_CHATROOMS_WINDOW_H__
 #define __GOSSIP_CHATROOMS_WINDOW_H__
 
+#include <gtk/gtk.h>
+
 G_BEGIN_DECLS
 
 void gossip_chatrooms_window_show    (GtkWindow      *parent,

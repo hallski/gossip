@@ -37,11 +37,7 @@
 #include <libgnomeui/gnome-ui-init.h>
 #endif
 
-#include <libgossip/gossip-account.h>
-#include <libgossip/gossip-session.h>
-#include <libgossip/gossip-account-manager.h>
-#include <libgossip/gossip-paths.h>
-#include <libgossip/gossip-stock.h>
+#include <libgossip/gossip.h>
 
 #ifdef HAVE_DBUS
 #include "gossip-dbus.h"

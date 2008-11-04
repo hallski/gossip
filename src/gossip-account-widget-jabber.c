@@ -27,18 +27,6 @@
 #include <glib/gi18n.h>
 #include <glade/glade.h>
 
-#include <libgossip/gossip-jabber.h>
-#include <libgossip/gossip-jid.h>
-#include <libgossip/gossip-session.h>
-#include <libgossip/gossip-utils.h>
-#include <libgossip/gossip-vcard.h>
-#include <libgossip/gossip-account-manager.h>
-#include <libgossip/gossip-debug.h>
-
-#ifdef HAVE_EBOOK
-#include <libgossip/gossip-ebook.h>
-#endif
-
 #include "gossip-account-widget-jabber.h"
 #include "gossip-change-password-dialog.h"
 #include "gossip-app.h"

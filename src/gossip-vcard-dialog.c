@@ -32,20 +32,7 @@
 #include <libgnomevfs/gnome-vfs-mime-utils.h>
 #endif
 
-#include <libgossip/gossip-session.h>
-#include <libgossip/gossip-async.h>
-#include <libgossip/gossip-jabber.h>
-#include <libgossip/gossip-contact.h>
-#include <libgossip/gossip-avatar.h>
-#include <libgossip/gossip-utils.h>
-#include <libgossip/gossip-vcard.h>
-#include <libgossip/gossip-conf.h>
-#include <libgossip/gossip-account.h>
-#include <libgossip/gossip-debug.h>
-
-#ifdef HAVE_EBOOK
-#include <libgossip/gossip-ebook.h>
-#endif
+#include <libgossip/gossip.h>
 
 #include "gossip-account-chooser.h"
 #include "gossip-app.h"

@@ -32,13 +32,7 @@
 #import <AppKit/AppKit.h>
 #endif
 
-#include <libgossip/gossip-contact.h>
-#include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-chatroom.h>
-#include <libgossip/gossip-message.h>
-#include <libgossip/gossip-chatroom-manager.h>
-#include <libgossip/gossip-conf.h>
-#include <libgossip/gossip-stock.h>
+#include <libgossip/gossip.h>
 
 #include "gossip-add-contact-dialog.h"
 #include "gossip-app.h"

@@ -23,6 +23,8 @@
 #ifndef __GOSSIP_CONTACT_GROUPS_H__
 #define __GOSSIP_CONTACT_GROUPS_H__
 
+#include <glib.h>
+
 G_BEGIN_DECLS
 
 void     gossip_contact_groups_get_all     (void);

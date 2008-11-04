@@ -26,11 +26,6 @@
 #include <glib/gi18n.h>
 #include <libgalago/galago.h>
 
-#include <libgossip/gossip-account.h>
-#include <libgossip/gossip-contact.h>
-#include <libgossip/gossip-presence.h>
-#include <libgossip/gossip-debug.h>
-
 #include "gossip-app.h"
 #include "gossip-contact-list.h"
 #include "gossip-galago.h"

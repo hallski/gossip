@@ -24,7 +24,7 @@
 #ifndef __GOSSIP_GALAGO_H__
 #define __GOSSIP_GALAGO_H__
 
-#include <libgossip/gossip-session.h>
+#include <libgossip/gossip.h>
 
 G_BEGIN_DECLS
 

@@ -32,8 +32,7 @@
 #include <aspell.h>
 #endif
 
-#include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-conf.h>
+#include <libgossip/gossip.h>
 
 #include "gossip-spell.h"
 #include "gossip-app.h"

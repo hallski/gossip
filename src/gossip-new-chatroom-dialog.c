@@ -28,14 +28,7 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 
-#include <libgossip/gossip-account.h>
-#include <libgossip/gossip-chatroom.h>
-#include <libgossip/gossip-jabber.h>
-#include <libgossip/gossip-session.h>
-#include <libgossip/gossip-chatroom-provider.h>
-#include <libgossip/gossip-utils.h>
-#include <libgossip/gossip-chatroom-manager.h>
-#include <libgossip/gossip-stock.h>
+#include <libgossip/gossip.h>
 
 #include "gossip-account-chooser.h"
 #include "gossip-app.h"

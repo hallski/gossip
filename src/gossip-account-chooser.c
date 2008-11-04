@@ -27,9 +27,6 @@
 #include <glib/gi18n.h>
 #include <glade/glade.h>
 
-#include <libgossip/gossip-jabber.h>
-#include <libgossip/gossip-account-manager.h>
-
 #include "gossip-ui-utils.h"
 #include "gossip-account-chooser.h"
 

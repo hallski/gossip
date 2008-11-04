@@ -23,15 +23,8 @@
 #include <string.h>
 
 #include <glib/gi18n.h>
-#include <gtk/gtk.h>
 #include <glade/glade.h>
-
-#include <libgossip/gossip-account.h>
-#include <libgossip/gossip-jid.h>
-#include <libgossip/gossip-session.h>
-#include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-utils.h>
-#include <libgossip/gossip-vcard.h>
+#include <gtk/gtk.h>
 
 #include "gossip-account-chooser.h"
 #include "gossip-add-contact-dialog.h"

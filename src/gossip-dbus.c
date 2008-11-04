@@ -28,11 +28,6 @@
 #include <dbus/dbus-glib-bindings.h>
 #include <dbus/dbus-glib-lowlevel.h>
 
-#include <libgossip/gossip-contact.h>
-#include <libgossip/gossip-presence.h>
-#include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-utils.h>
-
 #include "gossip-chat-manager.h"
 #include "gossip-app.h"
 #include "gossip-dbus.h"

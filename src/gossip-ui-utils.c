@@ -44,13 +44,6 @@
 #endif /* HAVE_SHELLAPI_H */
 #endif
 
-#include <libgossip/gossip-session.h>
-#include <libgossip/gossip-account-manager.h>
-#include <libgossip/gossip-conf.h>
-#include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-paths.h>
-#include <libgossip/gossip-stock.h>
-
 #ifdef HAVE_LIBNOTIFY
 #include "gossip-notify.h"
 #endif

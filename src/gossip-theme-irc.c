@@ -21,7 +21,7 @@
 #include "config.h"
 
 #include <glib/gi18n.h>
-#include <libgossip/gossip-debug.h>
+#include <libgossip/gossip.h>
 
 #include "gossip-chat.h"
 #include "gossip-theme-utils.h"

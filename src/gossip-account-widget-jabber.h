@@ -23,8 +23,8 @@
 #ifndef __GOSSIP_ACCOUNT_WIDGET_JABBER_H__
 #define __GOSSIP_ACCOUNT_WIDGET_JABBER_H__
 
-#include <libgossip/gossip-account.h>
 #include <gtk/gtk.h>
+#include <libgossip/gossip.h>
 
 G_BEGIN_DECLS
 

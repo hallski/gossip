@@ -24,7 +24,7 @@
 #ifndef __GOSSIP_EDIT_CHATROOMS_WINDOW_H__
 #define __GOSSIP_EDIT_CHATROOMS_WINDOW_H__
 
-#include <libgossip/gossip-chatroom.h>
+#include <libgossip/gossip.h>
 
 G_BEGIN_DECLS
 

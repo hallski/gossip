@@ -22,8 +22,6 @@
 
 #include <glib/gi18n.h>
 
-#include <libgossip/gossip-stock.h>
-
 #include "gossip-app.h"
 #include "gossip-ui-utils.h"
 #include "gossip-status-icon.h"

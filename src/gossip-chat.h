@@ -28,9 +28,7 @@
 
 #include <glib-object.h>
 
-#include <libgossip/gossip-chatroom.h>
-#include <libgossip/gossip-contact.h>
-#include <libgossip/gossip-message.h>
+#include <libgossip/gossip.h>
 
 G_BEGIN_DECLS
 

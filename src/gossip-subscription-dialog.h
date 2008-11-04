@@ -23,7 +23,7 @@
 #ifndef __GOSSIP_SUBSCRIPTION_DIALOG_H__
 #define __GOSSIP_SUBSCRIPTION_DIALOG_H__
 
-#include <libgossip/gossip-session.h>
+#include <libgossip/gossip.h>
 
 G_BEGIN_DECLS
 

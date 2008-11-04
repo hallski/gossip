@@ -25,7 +25,7 @@
 #ifndef __GOSSIP_CONTACT_INFO_DIALOG_H__
 #define __GOSSIP_CONTACT_INFO_DIALOG_H__
 
-#include <libgossip/gossip-contact.h>
+#include <libgossip/gossip.h>
 
 G_BEGIN_DECLS
 

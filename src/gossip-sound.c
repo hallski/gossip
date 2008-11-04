@@ -36,12 +36,7 @@
 #endif /* HAVE_MMSYSTEM_H */
 #endif /* HAVE_PLATFORM_X11 */
 
-#include <libgossip/gossip-account.h>
-#include <libgossip/gossip-contact.h>
-#include <libgossip/gossip-presence.h>
-#include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-conf.h>
-#include <libgossip/gossip-paths.h>
+#include <libgossip/gossip.h>
 
 #include "gossip-preferences.h"
 #include "gossip-app.h"

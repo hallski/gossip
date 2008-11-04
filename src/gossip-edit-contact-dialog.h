@@ -23,7 +23,7 @@
 #ifndef __GOSSIP_EDIT_CONTACT_DIALOG_H__
 #define __GOSSIP_EDIT_CONTACT_DIALOG_H__
 
-#include <libgossip/gossip-contact.h>
+#include <libgossip/gossip.h>
 
 G_BEGIN_DECLS
 

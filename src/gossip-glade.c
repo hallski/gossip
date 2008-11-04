@@ -20,8 +20,7 @@
 
 #include <glib/gi18n.h>
 
-#include <libgossip/gossip-conf.h>
-#include <libgossip/gossip-paths.h>
+#include <libgossip/gossip.h>
 
 #include "gossip-glade.h"
 

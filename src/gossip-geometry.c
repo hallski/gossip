@@ -26,9 +26,7 @@
 
 #include <glib.h>
 
-#include <libgossip/gossip-chatroom.h>
-#include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-contact.h>
+#include <libgossip/gossip.h>
 
 #include "gossip-chat.h"
 #include "gossip-geometry.h"

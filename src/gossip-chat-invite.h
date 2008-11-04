@@ -23,7 +23,7 @@
 #ifndef __GOSSIP_CHAT_INVITE_H__
 #define __GOSSIP_CHAT_INVITE_H__
 
-#include <libgossip/gossip-contact.h>
+#include <libgossip/gossip.h>
 
 G_BEGIN_DECLS
 

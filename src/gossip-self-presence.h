@@ -24,7 +24,7 @@
 #include <glib-object.h>
 #include <gdk/gdkpixbuf.h>
 
-#include <libgossip/gossip-presence.h>
+#include <libgossip/gossip.h>
 
 G_BEGIN_DECLS
 

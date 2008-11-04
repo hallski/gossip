@@ -30,8 +30,7 @@
 #include <glade/glade.h>
 #include <glib/gi18n.h>
 
-#include <libgossip/gossip-conf.h>
-#include <libgossip/gossip-stock.h>
+#include <libgossip/gossip.h>
 
 #include "gossip-app.h"
 #include "gossip-glade.h"

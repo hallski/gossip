@@ -24,7 +24,7 @@
 #include <glib-object.h>
 #include <gtk/gtk.h>
 
-#include <libgossip/gossip-event.h>
+#include <libgossip/gossip.h>
 
 G_BEGIN_DECLS
 

@@ -26,14 +26,6 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 
-#include <libgossip/gossip-account.h>
-#include <libgossip/gossip-event.h>
-#include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-event-manager.h>
-#include <libgossip/gossip-utils.h>
-#include <libgossip/gossip-vcard.h>
-#include <libgossip/gossip-conf.h>
-
 #include "gossip-ft-dialog.h"
 #include "gossip-glade.h"
 #include "gossip-ui-utils.h"

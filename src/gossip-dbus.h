@@ -25,7 +25,7 @@
 
 #include <dbus/dbus-glib.h>
 
-#include <libgossip/gossip-session.h>
+#include <libgossip/gossip.h>
 
 G_BEGIN_DECLS
 

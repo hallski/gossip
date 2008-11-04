@@ -23,7 +23,7 @@
 #ifndef __GOSSIP_STATUS_PRESETS_H__
 #define __GOSSIP_STATUS_PRESETS_H__
 
-#include <libgossip/gossip-presence.h>
+#include <libgossip/gossip.h>
 
 G_BEGIN_DECLS
 

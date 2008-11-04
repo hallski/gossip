@@ -23,8 +23,7 @@
 #ifndef __GOSSIP_LOG_WINDOW_H__
 #define __GOSSIP_LOG_WINDOW_H__
 
-#include <libgossip/gossip-chatroom.h>
-#include <libgossip/gossip-contact.h>
+#include <libgossip/gossip.h>
 
 G_BEGIN_DECLS
 

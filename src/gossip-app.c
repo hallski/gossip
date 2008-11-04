@@ -34,18 +34,6 @@
 #include <ige-mac-integration.h>
 #endif
 
-#include <libgossip/gossip-chatroom.h>
-#include <libgossip/gossip-contact.h>
-#include <libgossip/gossip-event.h>
-#include <libgossip/gossip-presence.h>
-#include <libgossip/gossip-chatroom-provider.h>
-#include <libgossip/gossip-account-manager.h>
-#include <libgossip/gossip-conf.h>
-#include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-stock.h>
-#include <libgossip/gossip-jabber.h>
-#include <libgossip/gossip-jabber-utils.h>
-
 #include "gossip-accounts-dialog.h"
 #include "gossip-add-contact-dialog.h"
 #include "gossip-app.h"

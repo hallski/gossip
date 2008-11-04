@@ -26,13 +26,6 @@
 
 #include <glib/gi18n.h>
 
-#include <libgossip/gossip-account.h>
-#include <libgossip/gossip-event.h>
-#include <libgossip/gossip-session.h>
-#include <libgossip/gossip-message.h>
-#include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-event-manager.h>
-
 #include "gossip-app.h"
 #include "gossip-chat.h"
 #include "gossip-chat-manager.h"

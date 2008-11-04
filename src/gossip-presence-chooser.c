@@ -26,8 +26,7 @@
 #include <glib/gi18n.h>
 #include <glade/glade.h>
 
-#include <libgossip/gossip-utils.h>
-#include <libgossip/gossip-stock.h>
+#include <libgossip/gossip.h>
 
 #include "gossip-marshal.h"
 #include "gossip-app.h"

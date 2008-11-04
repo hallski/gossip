@@ -2,6 +2,13 @@
 
 	* libgossip/*.[ch]:
 	* src/*.[ch]: 
+	- Created libgossip/gossip.h which includes the rest of libgossip. Use
+	  this in src files.
+	
+2008-11-04  Mikael Hallendal  <micke@imendio.com>
+
+	* libgossip/*.[ch]:
+	* src/*.[ch]: 
 	- Make sure to only include <gtk/gtk.h> and not specific headers.
 
 2008-11-04  Mikael Hallendal  <micke@imendio.com>

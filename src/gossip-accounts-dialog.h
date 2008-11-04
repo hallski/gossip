@@ -23,7 +23,7 @@
 #ifndef __GOSSIP_ACCOUNTS_DIALOG_H__
 #define __GOSSIP_ACCOUNTS_DIALOG_H__
 
-#include <libgossip/gossip-account.h>
+#include <libgossip/gossip.h>
 
 G_BEGIN_DECLS
 
