@@ -762,21 +762,22 @@ account_widget_jabber_register_cb (GossipResult               result,
 					     GTK_DIALOG_MODAL,
 					     GTK_MESSAGE_INFO,
 					     GTK_BUTTONS_CLOSE,
-					     str);
+					     "%s", str);
 
 		str = _("You should now be able to connect to your new account.");
-		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (md), str);
+		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (md), 
+							  "%s", str);
 	} else {
 		str = _("Failed to register your new account settings.");
 		md = gtk_message_dialog_new (GTK_WINDOW (toplevel),
 					     GTK_DIALOG_MODAL,
 					     GTK_MESSAGE_ERROR,
 					     GTK_BUTTONS_CLOSE,
-					     str);
+					     "%s", str);
 		
 		if (error && error->message) {
 			gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (md),
-								  error->message);
+								  "%s", error->message);
 		}
 	}
 

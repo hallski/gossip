@@ -426,7 +426,7 @@ bs_transfer_error (LmBsTransfer *transfer,
 {
 	GError *error;
 
-	error = g_error_new (lm_error_quark (),
+	error = g_error_new_literal (lm_error_quark (),
 			     LM_BS_TRANSFER_ERROR_UNABLE_TO_CONNECT,
 			     error_msg);
 	lm_bs_transfer_error (transfer, error);

@@ -1,3 +1,11 @@
+2008-11-04  Mikael Hallendal  <micke@imendio.com>
+
+	* libloudermouth/lm-bs-transfer.c:
+	* src/gossip-account-widget-jabber.c:
+	* src/gossip-change-password-dialog.c:
+	- Fixed warnings due to calling printf-like functions without a format
+	  string.
+
 2008-09-07  Wouter Bolsterlee  <wbolster@svn.gnome.org>
 
 	* src/gossip-preferences.c (preferences_hookup_spin_button),
