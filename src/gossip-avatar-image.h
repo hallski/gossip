@@ -21,7 +21,7 @@
 #ifndef __GOSSIP_AVATAR_IMAGE_H__
 #define __GOSSIP_AVATAR_IMAGE_H__
 
-#include <gtk/gtkeventbox.h>
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS
 

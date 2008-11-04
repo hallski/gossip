@@ -25,14 +25,6 @@
 #include <time.h>
 
 #include <glib/gi18n.h>
-#include <gtk/gtkbutton.h>
-#include <gtk/gtkimage.h>
-#include <gtk/gtkmenu.h>
-#include <gtk/gtkmenuitem.h>
-#include <gtk/gtkimagemenuitem.h>
-#include <gtk/gtkstock.h>
-#include <gtk/gtkscrolledwindow.h>
-#include <gtk/gtksizegroup.h>
 #include <glade/glade.h>
 
 #include <libgossip/gossip-utils.h>

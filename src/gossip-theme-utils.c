@@ -20,8 +20,6 @@
 
 #include <config.h>
 
-#include <gtk/gtktexttag.h>
-
 #include "gossip-theme-utils.h"
 
 void

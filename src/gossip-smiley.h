@@ -21,7 +21,7 @@
 #ifndef __GOSSIP_SMILEY_H__
 #define __GOSSIP_SMILEY_H__
 
-#include <gtk/gtktooltips.h>
+#include <gtk/gtk.h>
 
 typedef enum {
 	GOSSIP_SMILEY_NORMAL,       /*  :)   */

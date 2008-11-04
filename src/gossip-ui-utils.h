@@ -25,7 +25,7 @@
 #ifndef __GOSSIP_UI_UTILS_H__
 #define __GOSSIP_UI_UTILS_H__
 
-#include <gtk/gtkwindow.h>
+#include <gtk/gtk.h>
 
 #include <libgossip/gossip-account.h>
 #include <libgossip/gossip-contact.h>

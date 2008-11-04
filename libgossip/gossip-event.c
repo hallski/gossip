@@ -20,7 +20,7 @@
 
 #include "config.h"
 
-#include <gtk/gtkstock.h>
+#include <gtk/gtk.h>
 
 #include "gossip-contact.h"
 #include "gossip-message.h"

@@ -21,8 +21,6 @@
 #include "config.h"
 
 #include <glib/gi18n.h>
-#include <gtk/gtkstatusicon.h>
-#include <gtk/gtkstock.h>
 
 #include <libgossip/gossip-stock.h>
 

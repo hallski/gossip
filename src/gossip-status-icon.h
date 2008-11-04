@@ -22,7 +22,7 @@
 #define __GOSSIP_STATUS_ICON_H__
 
 #include <glib-object.h>
-#include <gtk/gtkstatusicon.h>
+#include <gtk/gtk.h>
 
 #include <libgossip/gossip-event.h>
 

@@ -24,8 +24,6 @@
 
 #include "config.h"
 
-#include <gtk/gtk.h>
-
 #include <libgossip/gossip-paths.h>
 
 #include "gossip-stock.h"

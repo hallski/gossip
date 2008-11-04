@@ -22,7 +22,7 @@
 #define __GOSSIP_THEME_H__
 
 #include <glib-object.h>
-#include <gtk/gtktextbuffer.h>
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS
 

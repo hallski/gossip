@@ -27,9 +27,6 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 
-#include <gtk/gtkicontheme.h>
-#include <gtk/gtkstock.h>
-
 #include "gossip-account.h"
 #include "gossip-debug.h"
 #include "gossip-jid.h"

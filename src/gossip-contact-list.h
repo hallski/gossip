@@ -21,7 +21,7 @@
 #ifndef __GOSSIP_CONTACT_LIST_H__
 #define __GOSSIP_CONTACT_LIST_H__
 
-#include <gtk/gtktreeview.h>
+#include <gtk/gtk.h>
 
 #include <libgossip/gossip-contact.h>
 

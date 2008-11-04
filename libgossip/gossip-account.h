@@ -24,7 +24,7 @@
 #define __GOSSIP_ACCOUNT_H__
 
 #include <glib-object.h>
-#include <gtk/gtkiconfactory.h>
+#include <gtk/gtk.h>
 
 #define GOSSIP_TYPE_ACCOUNT         (gossip_account_get_type ())
 #define GOSSIP_ACCOUNT(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_ACCOUNT, GossipAccount))

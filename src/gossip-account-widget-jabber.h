@@ -24,7 +24,7 @@
 #define __GOSSIP_ACCOUNT_WIDGET_JABBER_H__
 
 #include <libgossip/gossip-account.h>
-#include <gtk/gtkwidget.h>
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS
 

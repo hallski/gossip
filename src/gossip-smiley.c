@@ -20,8 +20,6 @@
 
 #include <config.h>
 
-#include <gtk/gtk.h>
-
 #include "gossip-smiley.h"
 
 GdkPixbuf *

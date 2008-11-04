@@ -22,7 +22,7 @@
 #define __GOSSIP_GLADE_H__
 
 #include <glade/glade.h>
-#include <gtk/gtksizegroup.h>
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS
 

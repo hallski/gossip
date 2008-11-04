@@ -23,7 +23,7 @@
 #ifndef __GOSSIP_POPUP_BUTTON_H__
 #define __GOSSIP_POPUP_BUTTON_H__
 
-#include <gtk/gtktogglebutton.h>
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS
 

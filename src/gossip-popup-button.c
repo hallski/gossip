@@ -25,7 +25,6 @@
 #include <stdlib.h>
 
 #include <gdk/gdkkeysyms.h>
-#include <gtk/gtk.h>
 #include <glib/gi18n.h>
 
 #include "gossip-popup-button.h"

@@ -21,8 +21,7 @@
 #ifndef __GOSSIP_THEME_UTILS_H__
 #define __GOSSIP_THEME_UTILS_H__
 
-#include <gtk/gtktextbuffer.h>
-#include <gtk/gtktexttag.h>
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS
 

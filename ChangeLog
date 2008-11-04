@@ -1,5 +1,11 @@
 2008-11-04  Mikael Hallendal  <micke@imendio.com>
 
+	* libgossip/*.[ch]:
+	* src/*.[ch]: 
+	- Make sure to only include <gtk/gtk.h> and not specific headers.
+
+2008-11-04  Mikael Hallendal  <micke@imendio.com>
+
 	* libloudermouth/lm-bs-transfer.c:
 	* src/gossip-account-widget-jabber.c:
 	* src/gossip-change-password-dialog.c:

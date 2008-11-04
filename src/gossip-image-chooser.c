@@ -24,9 +24,6 @@
 #include <string.h>
 
 #include <glib/gi18n.h>
-#include <gtk/gtkimage.h>
-#include <gtk/gtkbutton.h>
-#include <gtk/gtkdnd.h>
 
 #ifdef HAVE_PLATFORM_X11
 #include <libgnomevfs/gnome-vfs-ops.h>

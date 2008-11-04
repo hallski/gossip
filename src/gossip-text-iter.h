@@ -26,7 +26,7 @@
 #define __GOSSIP_TEXT_ITER_H__
 
 #include <glib.h>
-#include <gtk/gtktextiter.h>
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS
 

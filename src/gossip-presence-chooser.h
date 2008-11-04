@@ -21,7 +21,7 @@
 #ifndef __GOSSIP_PRESENCE_CHOOSER_H__
 #define __GOSSIP_PRESENCE_CHOOSER_H__
 
-#include <gtk/gtktogglebutton.h>
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS
 

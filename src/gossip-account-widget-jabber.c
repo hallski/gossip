@@ -25,7 +25,6 @@
 #include <string.h>
 
 #include <glib/gi18n.h>
-#include <gtk/gtk.h>
 #include <glade/glade.h>
 
 #include <libgossip/gossip-jabber.h>

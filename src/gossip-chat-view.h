@@ -21,8 +21,7 @@
 #ifndef __GOSSIP_CHAT_VIEW_H__
 #define __GOSSIP_CHAT_VIEW_H__
 
-#include <gtk/gtktextview.h>
-#include <gtk/gtktooltips.h>
+#include <gtk/gtk.h>
 
 #include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-message.h>

@@ -26,7 +26,7 @@
 #define __GOSSIP_STOCK_H__
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
-#include <gtk/gtkwidget.h>
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS
 
