@@ -2145,6 +2145,7 @@ gossip_log_get_messages_for_chatroom (GossipLogManager *manager,
 		gchar          *time;
 		GossipTime      t;
 		gchar          *who;
+		gchar          *who_display;
 		gchar          *name;
 		gchar          *body;
 
@@ -2155,6 +2156,13 @@ gossip_log_get_messages_for_chatroom (GossipLogManager *manager,
 		who = xmlGetProp (node, "from");
 		if (!who) {
 			continue;
+		}
+
+		who_display = xmlGetProp (node, "from-display");
+		if (!who_display) {
+			gossip_debug (DEBUG_DOMAIN, 
+				      "Couldn't find display name for '%s'",
+				      who);
 		}
 
 		name = xmlGetProp (node, "nick");
@@ -2170,7 +2178,9 @@ gossip_log_get_messages_for_chatroom (GossipLogManager *manager,
 		
 		contact = gossip_contact_new_full (GOSSIP_CONTACT_TYPE_CHATROOM,
 						   gossip_chatroom_get_account (chatroom),
-						   who, name);
+						   who, 
+						   who_display,
+						   name);
 
 		message = gossip_message_new (GOSSIP_MESSAGE_TYPE_CHAT_ROOM,
 					      own_contact);
@@ -2185,6 +2195,7 @@ gossip_log_get_messages_for_chatroom (GossipLogManager *manager,
 
 		xmlFree (time);
 		xmlFree (who);
+		xmlFree (who_display);
 		xmlFree (name);
 		xmlFree (body);
 	}

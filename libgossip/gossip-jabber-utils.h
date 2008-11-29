@@ -77,6 +77,7 @@ gchar *                gossip_jabber_get_name_to_use             (const gchar   
 								  const gchar            *nickname,
 								  const gchar            *full_name,
 								  const gchar            *current_name);
+gchar *                gossip_jabber_get_display_id              (const gchar            *jid_str);
 
 /* Error utils */
 GError *               gossip_jabber_error_create                (GossipJabberError       code,

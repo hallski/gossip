@@ -39,6 +39,7 @@ struct _GossipContactPrivate {
 	GossipContactType   type;
 
 	gchar              *id;
+	gchar              *display_id;
 	gchar              *name;
 
 	GList              *presences;
@@ -68,6 +69,7 @@ enum {
 	PROP_TYPE,
 	PROP_NAME,
 	PROP_ID,
+	PROP_DISPLAY_ID,
 	PROP_PRESENCES,
 	PROP_GROUPS,
 	PROP_SUBSCRIPTION,
@@ -133,29 +135,32 @@ contact_class_init (GossipContactClass *class)
 							      "The name of the contact",
 							      NULL,
 							      G_PARAM_READWRITE));
-
 	g_object_class_install_property (object_class,
 					 PROP_ID,
 					 g_param_spec_string ("id",
 							      "Contact id",
-							      "String identifying contact",
+							      "String identifying the Jabber ID",
 							      NULL,
 							      G_PARAM_READWRITE));
-
+	g_object_class_install_property (object_class,
+					 PROP_DISPLAY_ID,
+					 g_param_spec_string ("display-id",
+							      "Display id",
+							      "String identifying the REAL ID",
+							      NULL,
+							      G_PARAM_READWRITE));
 	g_object_class_install_property (object_class,
 					 PROP_PRESENCES,
 					 g_param_spec_pointer ("presences",
 							       "Contact presences",
 							       "Presences of contact",
 							       G_PARAM_READWRITE));
-
 	g_object_class_install_property (object_class,
 					 PROP_GROUPS,
 					 g_param_spec_pointer ("groups",
 							       "Contact groups",
 							       "Groups of contact",
 							       G_PARAM_READWRITE));
-
 	g_object_class_install_property (object_class,
 					 PROP_SUBSCRIPTION,
 					 g_param_spec_int ("subscription",
@@ -165,7 +170,6 @@ contact_class_init (GossipContactClass *class)
 							   GOSSIP_SUBSCRIPTION_BOTH,
 							   GOSSIP_SUBSCRIPTION_NONE,
 							   G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
-
 	g_object_class_install_property (object_class,
 					 PROP_AVATAR,
 					 g_param_spec_boxed ("avatar",
@@ -173,7 +177,6 @@ contact_class_init (GossipContactClass *class)
 							     "The avatar image",
 							     GOSSIP_TYPE_AVATAR,
 							     G_PARAM_READWRITE));
-
 	g_object_class_install_property (object_class,
 					 PROP_ACCOUNT,
 					 g_param_spec_object ("account",
@@ -205,6 +208,7 @@ contact_finalize (GObject *object)
 	priv = GOSSIP_CONTACT_GET_PRIVATE (object);
 
 	g_free (priv->name);
+	g_free (priv->display_id);
 	g_free (priv->id);
 
 	if (priv->avatar) {
@@ -255,6 +259,9 @@ contact_get_property (GObject    *object,
 	case PROP_ID:
 		g_value_set_string (value, priv->id);
 		break;
+	case PROP_DISPLAY_ID:
+		g_value_set_string (value, priv->display_id);
+		break;
 	case PROP_PRESENCES:
 		g_value_set_pointer (value, priv->presences);
 		break;
@@ -302,6 +309,10 @@ contact_set_property (GObject      *object,
 		gossip_contact_set_id (GOSSIP_CONTACT (object),
 				       g_value_get_string (value));
 		break;
+	case PROP_DISPLAY_ID:
+		gossip_contact_set_display_id (GOSSIP_CONTACT (object),
+					       g_value_get_string (value));
+		break;
 	case PROP_PRESENCES:
 		gossip_contact_set_presence_list (GOSSIP_CONTACT (object),
 						  g_value_get_pointer (value));
@@ -346,6 +357,7 @@ GossipContact *
 gossip_contact_new_full (GossipContactType  type,
 			 GossipAccount     *account,
 			 const gchar       *id,
+			 const gchar       *display_id,
 			 const gchar       *name)
 {
 	return g_object_new (GOSSIP_TYPE_CONTACT,
@@ -353,6 +365,7 @@ gossip_contact_new_full (GossipContactType  type,
 			     "account", account,
 			     "name", name,
 			     "id", id,
+			     "display-id", display_id,
 			     NULL);
 }
 
@@ -369,6 +382,7 @@ gossip_contact_copy (GossipContact *contact)
 	new_contact = gossip_contact_new_full (gossip_contact_get_type (contact),
 					       priv->account,
 					       priv->id,
+					       priv->display_id,
 					       priv->name);
 
 	gossip_contact_set_subscription (new_contact, priv->subscription);
@@ -403,6 +417,22 @@ gossip_contact_get_id (GossipContact *contact)
 
 	if (priv->id) {
 		return priv->id;
+	}
+
+	return "";
+}
+
+const gchar *
+gossip_contact_get_display_id (GossipContact *contact)
+{
+	GossipContactPrivate *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), "");
+
+	priv = GOSSIP_CONTACT_GET_PRIVATE (contact);
+
+	if (priv->display_id) {
+		return priv->display_id;
 	}
 
 	return "";
@@ -607,6 +637,23 @@ gossip_contact_set_id (GossipContact *contact,
 	priv->id = g_strdup (id);
 
 	g_object_notify (G_OBJECT (contact), "id");
+}
+
+void
+gossip_contact_set_display_id (GossipContact *contact,
+			       const gchar   *display_id)
+{
+	GossipContactPrivate *priv;
+
+	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
+	g_return_if_fail (display_id != NULL);
+
+	priv = GOSSIP_CONTACT_GET_PRIVATE (contact);
+
+	g_free (priv->display_id);
+	priv->display_id = g_strdup (display_id);
+
+	g_object_notify (G_OBJECT (contact), "display-id");
 }
 
 void

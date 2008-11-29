@@ -1,5 +1,27 @@
 2008-11-29  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-contact-manager.c:
+	* libgossip/gossip-contact.[ch]:
+	* libgossip/gossip-jabber-utils.[ch]:
+	* libgossip/gossip-jabber.c: 
+	* libgossip/gossip-jid.[ch]: 
+	* libgossip/gossip-log.c:
+	* src/gossip-chat-manager.c: 
+	* src/gossip-contact-info-dialog.c:
+	* src/gossip-contact-list.c: 
+	* src/gossip-edit-contact-dialog.c:
+	* src/gossip-ft-dialog.c:
+	* src/gossip-group-chat.c:
+	* src/gossip-notify.c:
+	* src/gossip-private-chat.c:
+	* src/gossip-subscription-dialog.c: Added
+	gossip_contact_get_display_id() and added backend functions to
+	escape and unescape Jabber IDs according to XEP-0106: JID
+	Escaping. This means that now in the UI we show "foo@hotmail.com"
+	instead of addresses like "foo\40hotmail.com@msn.jabber.org".
+
+2008-11-29  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-contact-manager.c: When using
 	xmlNodeSetContent() make sure we escape strings first, since this
 	function doesn't do that for us.

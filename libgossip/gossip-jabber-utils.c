@@ -394,6 +394,46 @@ gossip_jabber_get_name_to_use (const gchar *jid_str,
 	return g_strdup ("");
 }
 
+gchar *
+gossip_jabber_get_display_id (const gchar *jid_str)
+{
+	gchar *unescaped;
+	gchar *at;
+
+	/* For more information about this,
+	 * see XEP-0106: JID Escaping. 
+	 */
+	
+	if (G_STR_EMPTY (jid_str)) {
+		return g_strdup (jid_str);
+	}
+
+	unescaped = gossip_jid_string_unescape (jid_str);
+	
+	/* Find first '@' */
+	at = strchr (unescaped, '@');
+
+	if (!at) {
+		return unescaped;
+	}
+
+	/* If we find another '@', it is likely the ID is something
+	 * like "martyn@hotmail.com@msn.jabber.org". In this case, we
+	 * drop anything after the second '@'. 
+	 *
+	 * This feels like a hack, not sure if there is a better way
+	 * round it. I thought you could query the service itself for
+	 * this stuff - msn.jabber.org for example.
+	 */
+	at = strchr (at + 1, '@');
+	
+	if (at) {	
+		*at = '\0';
+	}
+
+	return unescaped;
+}
+
 GError *
 gossip_jabber_error_create (GossipJabberError  code,
 			    const gchar       *reason)
@@ -469,3 +509,4 @@ gossip_jabber_error_to_string (GossipJabberError error)
 
 	return str;
 }
+

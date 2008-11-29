@@ -918,7 +918,7 @@ group_chat_drag_data_received (GtkWidget        *widget,
 		
 		/* Send event to chat window */
 		str = g_strdup_printf (_("Invited %s to join this chat conference."),
-				       gossip_contact_get_id (contact));
+				       gossip_contact_get_name (contact));
 
 		group_chat_set_scrolling_for_events (chat, TRUE);
 		gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, str);
@@ -1974,7 +1974,8 @@ group_chat_contact_joined_cb (GossipChatroom  *chatroom,
 
 	priv = GET_PRIV (chat);
 
-	gossip_debug (DEBUG_DOMAIN, "Contact joined:'%s' (refs:%d)",
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Contact joined:'%s' (refs:%d)",
 		      gossip_contact_get_id (contact),
 		      G_OBJECT (contact)->ref_count);
 
@@ -2016,7 +2017,8 @@ group_chat_contact_left_cb (GossipChatroom  *chatroom,
 
 	priv = GET_PRIV (chat);
 
-	gossip_debug (DEBUG_DOMAIN, "Contact left:'%s' (refs:%d)",
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Contact left:'%s' (refs:%d)",
 		      gossip_contact_get_id (contact),
 		      G_OBJECT (contact)->ref_count);
 
@@ -2132,7 +2134,8 @@ group_chat_contact_presence_updated_cb (GossipContact   *contact,
 
 	priv = GET_PRIV (chat);
 
-	gossip_debug (DEBUG_DOMAIN, "Contact Presence Updated:'%s'",
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Contact Presence Updated:'%s'",
 		      gossip_contact_get_id (contact));
 
 	if (group_chat_cl_find (chat, contact, &iter)) {

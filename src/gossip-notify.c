@@ -191,7 +191,8 @@ notify_contact_online (GossipContact *contact)
 		return;
 	}
 
-	gossip_debug (DEBUG_DOMAIN, "Setting up notification for online contact:'%s'",
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Setting up notification for online contact:'%s'",
 		      gossip_contact_get_id (contact));
 
 	presence = gossip_contact_get_active_presence (contact);
@@ -496,13 +497,15 @@ notify_new_message (GossipEventManager *event_manager,
 
 	len = g_utf8_strlen (body_stripped, -1);
 	if (len < 1) {
-		gossip_debug (DEBUG_DOMAIN, "Ignoring new message from:'%s', no message content",
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Ignoring new message from:'%s', no message content",
 			      gossip_contact_get_id (contact));
 		g_free (body_copy);
 		return NULL;
 	}
 
-	gossip_debug (DEBUG_DOMAIN, "Setting up notification for new message from:'%s'",
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Setting up notification for new message from:'%s'",
 		      gossip_contact_get_id (contact));
 
 	show_avatars = FALSE;
@@ -678,7 +681,8 @@ notify_contact_presence_updated_cb (GossipContact *contact,
 	presence = gossip_contact_get_active_presence (contact);
 	if (!presence) {
 		if (g_hash_table_lookup (contact_states, contact)) {
-			gossip_debug (DEBUG_DOMAIN, "Presence update, contact:'%s' is now offline",
+			gossip_debug (DEBUG_DOMAIN, 
+				      "Presence update, contact:'%s' is now offline",
 				      gossip_contact_get_id (contact));
 		}
 

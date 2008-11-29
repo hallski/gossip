@@ -350,19 +350,25 @@ gossip_contact_manager_find_or_create (GossipContactManager *manager,
 
 		return contact;
 	} else {
+		gchar *display_id;
 		gchar *name;
 
-		gossip_debug (DEBUG_DOMAIN,
-			      "New contact:'%s' (%s)",
-			      contact_id,
-			      gossip_contact_type_to_string (contact_type));
-
+		display_id = gossip_jabber_get_display_id (contact_id);
 		name = gossip_jabber_get_name_to_use (contact_id, NULL, NULL, NULL);
+
+		gossip_debug (DEBUG_DOMAIN,
+			      "New contact:'%s' (%s), display ID:'%s'",
+			      contact_id,
+			      gossip_contact_type_to_string (contact_type),
+			      display_id);
 
 		/* Create the contact using a default name as the ID */
 		contact = gossip_contact_new (contact_type, account);
 		gossip_contact_set_id (contact, contact_id);
+		gossip_contact_set_display_id (contact, display_id);
 		gossip_contact_set_name (contact, name);
+
+		g_free (display_id);
 		g_free (name);
 
 		gossip_contact_manager_add (manager, contact);

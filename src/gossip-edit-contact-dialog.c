@@ -715,7 +715,7 @@ gossip_edit_contact_dialog_show (GossipContact *contact,
 					 "<b>%s</b>\n"
 					 "\n"
 					 "You can retrieve contact information from the server."),
-				       gossip_contact_get_id (contact));
+				       gossip_contact_get_display_id (contact));
 	gtk_label_set_markup (GTK_LABEL (dialog->label_name), str);
 	g_free (str);
 

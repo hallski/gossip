@@ -593,8 +593,8 @@ ft_dialog_show (GossipJabber *jabber,
 	gtk_size_group_add_widget (size_group, label_location_stub);
 	g_object_unref (size_group);
 
-	gtk_label_set_text (GTK_LABEL (label_id), gossip_contact_get_id (contact));
-
+	gtk_label_set_text (GTK_LABEL (label_id), 
+			    gossip_contact_get_display_id (contact));
 
 	if (gossip_ft_get_type (dialog->ft) == GOSSIP_FT_TYPE_RECEIVING) {
 		if (name) {

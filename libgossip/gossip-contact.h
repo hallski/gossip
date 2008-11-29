@@ -70,11 +70,13 @@ GossipContact *    gossip_contact_new                       (GossipContactType  
 GossipContact *    gossip_contact_new_full                  (GossipContactType   type,
 							     GossipAccount      *account,
 							     const gchar        *id,
+							     const gchar        *display_id,
 							     const gchar        *name);
 GossipContact *    gossip_contact_copy                      (GossipContact      *contact);
 
 GossipContactType  gossip_contact_get_type                  (GossipContact      *contact);
 const gchar *      gossip_contact_get_id                    (GossipContact      *contact);
+const gchar *      gossip_contact_get_display_id            (GossipContact      *contact);
 const gchar *      gossip_contact_get_name                  (GossipContact      *contact);
 GossipAvatar *     gossip_contact_get_avatar                (GossipContact      *contact);
 GdkPixbuf *        gossip_contact_get_avatar_pixbuf         (GossipContact      *contact);
@@ -87,6 +89,8 @@ void               gossip_contact_set_type                  (GossipContact      
 							     GossipContactType   type);
 void               gossip_contact_set_id                    (GossipContact      *contact,
 							     const gchar        *id);
+void               gossip_contact_set_display_id            (GossipContact      *contact,
+							     const gchar        *display_id);
 void               gossip_contact_set_name                  (GossipContact      *contact,
 							     const gchar        *name);
 void               gossip_contact_set_avatar                (GossipContact      *contact,

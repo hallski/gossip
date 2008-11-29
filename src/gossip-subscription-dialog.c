@@ -155,7 +155,8 @@ subscription_dialog_request_cb (GossipJabber *jabber,
 	GossipSubscription  subscription;
 	gchar              *str;
 
-	gossip_debug (DEBUG_DOMAIN, "New request from:'%s'",
+	gossip_debug (DEBUG_DOMAIN, 
+		      "New request from:'%s'",
 		      gossip_contact_get_id (contact));
 
 	type = gossip_contact_get_type (contact);
@@ -263,7 +264,7 @@ subscription_dialog_show (GossipSubscriptionDialog *dialog)
 	g_object_unref (size_group);
 
 	gtk_entry_set_text (GTK_ENTRY (dialog->name_entry),
-			    gossip_contact_get_id (dialog->contact));
+			    gossip_contact_get_display_id (dialog->contact));
 
 	session = gossip_app_get_session ();
 	account_manager = gossip_session_get_account_manager (session);
@@ -301,7 +302,7 @@ subscription_dialog_show (GossipSubscriptionDialog *dialog)
 	g_free (question);
 
 	gtk_label_set_text (GTK_LABEL (dialog->id_label_value),
-			    gossip_contact_get_id (dialog->contact));
+			    gossip_contact_get_display_id (dialog->contact));
 
 	gtk_widget_hide (dialog->website_label);
 

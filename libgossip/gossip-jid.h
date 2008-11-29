@@ -69,6 +69,8 @@ gboolean     gossip_jid_string_is_valid          (const gchar   *str,
 gchar *      gossip_jid_string_get_part_name     (const gchar   *str);
 gchar *      gossip_jid_string_get_part_host     (const gchar   *str);
 const gchar *gossip_jid_string_get_part_resource (const gchar   *str);
+gchar *      gossip_jid_string_escape            (const gchar   *jid_str);
+gchar *      gossip_jid_string_unescape          (const gchar   *jid_str);
 
 gint         gossip_jid_case_compare             (gconstpointer  a,
 						  gconstpointer  b);

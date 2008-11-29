@@ -871,7 +871,7 @@ private_chat_get_tooltip (GossipChat *chat)
 	status = gossip_contact_get_status (contact);
 
 	return g_strdup_printf ("%s\n%s",
-				gossip_contact_get_id (contact),
+				gossip_contact_get_display_id (contact),
 				status);
 }
 

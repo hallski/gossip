@@ -3233,7 +3233,7 @@ contact_list_action_remove_selected (GossipContactList *list)
 				       "%s\n",
 				       _("Do you want to remove this contact from your roster?"),
 				       gossip_contact_get_name (contact),
-				       gossip_contact_get_id (contact));
+				       gossip_contact_get_display_id (contact));
 	gtk_message_dialog_set_markup (GTK_MESSAGE_DIALOG (dialog), str);
 	g_free (str);
 

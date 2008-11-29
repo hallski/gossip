@@ -126,7 +126,8 @@ chat_manager_new_message_cb (GossipSession     *session,
 
 	/* Add event to event manager if one doesn't exist already. */
 	if (!chat) {
-		gossip_debug (DEBUG_DOMAIN, "New chat for: %s",
+		gossip_debug (DEBUG_DOMAIN, 
+			      "New chat for: %s",
 			      gossip_contact_get_id (sender));
 		chat = gossip_chat_manager_get_chat (manager, sender);
 

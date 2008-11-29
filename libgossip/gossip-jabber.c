@@ -184,13 +184,13 @@ static LmHandlerResult  jabber_subscription_message_handler (LmMessageHandler   
 							     LmConnection               *connection,
 							     LmMessage                  *m,
 							     GossipJabber               *jabber);
-static void             jabber_request_version              (GossipJabber               *jabber,
+static void             jabber_request_for_version          (GossipJabber               *jabber,
 							     LmMessage                  *m);
-static void             jabber_request_ping                 (GossipJabber               *jabber,
+static void             jabber_request_for_ping             (GossipJabber               *jabber,
 							     LmMessage                  *m);
-static void             jabber_request_roster               (GossipJabber               *jabber,
+static void             jabber_request_for_roster           (GossipJabber               *jabber,
 							     LmMessage                  *m);
-static void             jabber_request_unknown              (GossipJabber               *jabber,
+static void             jabber_request_for_unknown          (GossipJabber               *jabber,
 							     LmMessage                  *m);
 
 /* Chatrooms */
@@ -2521,7 +2521,7 @@ jabber_iq_query_handler (LmMessageHandler *handler,
 	if (node) {
 		xmlns = lm_message_node_get_attribute (node, "xmlns");
 		if (xmlns && strcmp (xmlns, XMPP_PING_XMLNS) == 0) {
-			jabber_request_ping (jabber, m);
+			jabber_request_for_ping (jabber, m);
 			return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 		}	
 	}
@@ -2533,7 +2533,7 @@ jabber_iq_query_handler (LmMessageHandler *handler,
 
 	xmlns = lm_message_node_get_attribute (node, "xmlns");
 	if (xmlns && strcmp (xmlns, XMPP_ROSTER_XMLNS) == 0) {
-		jabber_request_roster (jabber, m);
+		jabber_request_for_roster (jabber, m);
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 
@@ -2543,14 +2543,14 @@ jabber_iq_query_handler (LmMessageHandler *handler,
 	}
 
 	if (xmlns && strcmp (xmlns, XMPP_VERSION_XMLNS) == 0) {
-		jabber_request_version (jabber, m);
+		jabber_request_for_version (jabber, m);
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 
 	/* If a get, return error for unsupported IQ */
 	if (lm_message_get_sub_type (m) == LM_MESSAGE_SUB_TYPE_GET ||
 	    lm_message_get_sub_type (m) == LM_MESSAGE_SUB_TYPE_SET) {
-		jabber_request_unknown (jabber, m);
+		jabber_request_for_unknown (jabber, m);
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 
@@ -2611,8 +2611,8 @@ jabber_subscription_message_handler (LmMessageHandler  *handler,
  * Requests
  */
 static void
-jabber_request_version (GossipJabber *jabber,
-			LmMessage    *m)
+jabber_request_for_version (GossipJabber *jabber,
+			    LmMessage    *m)
 {
 	GossipJabberPrivate  *priv;
 	LmMessage         *r;
@@ -2665,7 +2665,8 @@ jabber_request_version (GossipJabber *jabber,
 }
 
 static void
-jabber_request_ping (GossipJabber *jabber, LmMessage *m)
+jabber_request_for_ping (GossipJabber *jabber, 
+			 LmMessage    *m)
 {
 	GossipJabberPrivate *priv;
 	LmMessage        *reply;
@@ -2693,8 +2694,8 @@ jabber_request_ping (GossipJabber *jabber, LmMessage *m)
 }
 
 static void
-jabber_request_roster (GossipJabber *jabber,
-		       LmMessage    *m)
+jabber_request_for_roster (GossipJabber *jabber,
+			   LmMessage    *m)
 {
 	GossipJabberPrivate *priv;
 	LmMessageNode    *node;
@@ -2709,18 +2710,20 @@ jabber_request_roster (GossipJabber *jabber,
 	for (node = node->children; node; node = node->next) {
 		GossipContact     *contact;
 		GossipContactType  type;
-		const gchar       *jid_str;
 		const gchar       *subscription;
 		gboolean           added_item = FALSE;
 		LmMessageNode     *child;
 		GList             *groups;
 		const gchar       *name;
+		const gchar       *jid_str;
 
 		if (strcmp (node->name, "item") != 0) {
 			continue;
 		}
 
+		/* This is before it has been converted */
 		jid_str = lm_message_node_get_attribute (node, "jid");
+
 		if (!jid_str) {
 			continue;
 		}
@@ -2812,8 +2815,8 @@ jabber_request_roster (GossipJabber *jabber,
 }
 
 static void
-jabber_request_unknown (GossipJabber *jabber,
-			LmMessage    *m)
+jabber_request_for_unknown (GossipJabber *jabber,
+			    LmMessage    *m)
 {
 	GossipJabberPrivate *priv;
 	LmMessageNode    *node;

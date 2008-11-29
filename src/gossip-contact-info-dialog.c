@@ -604,7 +604,7 @@ gossip_contact_info_dialog_show (GossipContact *contact,
 
 	/* Set labels */
 	gtk_label_set_text (GTK_LABEL (dialog->id_label),
-			    gossip_contact_get_id (contact));
+			    gossip_contact_get_display_id (contact));
 
 	gtk_label_set_text (GTK_LABEL (dialog->name_label),
 			    gossip_contact_get_name (contact));

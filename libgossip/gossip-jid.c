@@ -511,6 +511,143 @@ gossip_jid_string_get_part_resource (const gchar *str)
 	return NULL;
 }
 
+gchar *                
+gossip_jid_string_escape (const gchar *jid_str)
+{
+	GString *s;
+	gchar    c;
+
+	/* Conversions are:
+	 *
+	 *   <space>  \20 *
+	 *   "	      \22
+	 *   &	      \26
+	 *   '	      \27
+	 *   /	      \2f
+	 *   :	      \3a
+	 *   <	      \3c
+	 *   >	      \3e
+	 *   @	      \40
+	 *   \	      \5c
+	 */
+	
+	if (!jid_str) {
+		return NULL;
+	}
+	
+	s = g_string_new_len ("", strlen (jid_str) + 1);
+	
+	while ((c = *jid_str++)) {
+		switch (c) {
+		case ' ':
+			s = g_string_append (s, "\20");
+			break;
+		case '"':
+			s = g_string_append (s, "\22");
+			break;
+		case '&':
+			s = g_string_append (s, "\26");
+			break;
+		case '\'':
+			s = g_string_append (s, "\27");
+			break;
+		case '/':
+			s = g_string_append (s, "\2f");
+			break;
+		case ':':
+			s = g_string_append (s, "\3a");
+			break;
+		case '<':
+			s = g_string_append (s, "\3c");
+			break;
+		case '>':
+			s = g_string_append (s, "\3e");
+			break;
+		case '@':
+			s = g_string_append (s, "\40");
+			break;
+		case '\\':
+			s = g_string_append (s, "\5c");
+			break;
+		default:
+			s = g_string_append_c (s, c);
+			break;
+		}
+
+	}
+	
+	return g_string_free (s, FALSE);
+}
+
+gchar *                
+gossip_jid_string_unescape (const gchar *jid_str)
+{
+	gchar *text, *p, c;
+
+	/* Conversions are:
+	 *
+	 *   <space>  \20 *
+	 *   "	      \22
+	 *   &	      \26
+	 *   '	      \27
+	 *   /	      \2f
+	 *   :	      \3a
+	 *   <	      \3c
+	 *   >	      \3e
+	 *   @	      \40
+	 *   \	      \5c
+	 */
+	
+	if (!jid_str) {
+		return NULL;
+	}
+	
+	p = text = g_malloc (strlen (jid_str) + 1);
+	
+	while ((c = *jid_str++)) {
+		if (G_LIKELY (c != '\\')) {
+			*p++ = c;
+			continue;
+		}
+
+		if (!memcmp (jid_str, "20", 2)) {
+			*p++ = ' ';
+			jid_str += 2;
+		} else if (!memcmp (jid_str, "22", 2)) {
+			*p++ = '"';
+			jid_str += 2;
+		} else if (!memcmp (jid_str, "26", 2)) {
+			*p++ = '&';
+			jid_str += 2;
+		} else if (!memcmp (jid_str, "27", 2)) {
+			*p++ = '\'';
+			jid_str += 2;
+		} else if (!memcmp (jid_str, "2f", 2)) {
+			*p++ = '/';
+			jid_str += 2;
+		} else if (!memcmp (jid_str, "3a", 2)) {
+			*p++ = ':';
+			jid_str += 2;
+		} else if (!memcmp (jid_str, "3c", 2)) {
+			*p++ = '<';
+			jid_str += 2;
+		} else if (!memcmp (jid_str, "3e", 2)) {
+			*p++ = '>';
+			jid_str += 2;
+		} else if (!memcmp (jid_str, "40", 2)) {
+			*p++ = '@';
+			jid_str += 2;
+		} else if (!memcmp (jid_str, "5c", 2)) {
+			*p++ = '\\';
+			jid_str += 2;
+		}
+	}
+
+	*p = 0;
+	
+	return text;
+}
+
 gint
 gossip_jid_case_compare (gconstpointer a,
 			 gconstpointer b)
@@ -604,4 +741,3 @@ gossip_jid_get_example_string (void)
 {
 	return "user@jabber.org";
 }
-
