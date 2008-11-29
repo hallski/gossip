@@ -1,5 +1,26 @@
 2008-11-29  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-contact-manager.c: When using
+	xmlNodeSetContent() make sure we escape strings first, since this
+	function doesn't do that for us.
+
+	* libgossip/gossip-jabber.c: 
+	* libgossip/gossip-utils.[ch]: Added gossip_markup_unescape_text()
+	to handle unescaped strings returned to us from Loudmouth. More
+	specifially groups and contact names. So now if you save a contact
+	as "Foo & Bar", it will not return it when you restart Gossip as
+	"Foo &amp; Bar". 
+
+	* src/gossip-status-presets.c: Code improvements.
+
+	* src/gossip-chat-invite.c:
+	* src/gossip-contact-list.c:
+	* src/gossip-edit-contact-dialog.c:
+	* src/gossip-theme-boxes.c: Make use of g_markup_printf_escaped()
+	and fixed a couple of crashers too.
+
+2008-11-29  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-account-manager.c:
 	* libgossip/gossip-account.c:
 	* libgossip/gossip-avatar.[ch]:

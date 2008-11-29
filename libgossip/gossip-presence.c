@@ -43,15 +43,15 @@ struct _GossipPresencePrivate {
 	GossipTime           timestamp;
 };
 
-static void         presence_finalize           (GObject             *object);
-static void         presence_get_property       (GObject             *object,
-						 guint                param_id,
-						 GValue              *value,
-						 GParamSpec          *pspec);
-static void         presence_set_property       (GObject             *object,
-						 guint                param_id,
-						 const GValue        *value,
-						 GParamSpec          *pspec);
+static void presence_finalize     (GObject      *object);
+static void presence_get_property (GObject      *object,
+				   guint         param_id,
+				   GValue       *value,
+				   GParamSpec   *pspec);
+static void presence_set_property (GObject      *object,
+				   guint         param_id,
+				   const GValue *value,
+				   GParamSpec   *pspec);
 
 enum {
 	PROP_0,

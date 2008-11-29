@@ -2607,11 +2607,9 @@ jabber_subscription_message_handler (LmMessageHandler  *handler,
 	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
 
-
 /*
  * Requests
  */
-
 static void
 jabber_request_version (GossipJabber *jabber,
 			LmMessage    *m)
@@ -2666,7 +2664,6 @@ jabber_request_version (GossipJabber *jabber,
 	lm_message_unref (r);
 }
 
-
 static void
 jabber_request_ping (GossipJabber *jabber, LmMessage *m)
 {
@@ -2694,7 +2691,6 @@ jabber_request_ping (GossipJabber *jabber, LmMessage *m)
 	lm_connection_send (priv->connection, reply, NULL);
 	lm_message_unref (reply);
 }
-
 
 static void
 jabber_request_roster (GossipJabber *jabber,
@@ -2784,20 +2780,28 @@ jabber_request_roster (GossipJabber *jabber,
 
 		name = lm_message_node_get_attribute (node, "name");
 		if (name) {
-			gossip_contact_set_name (contact, name);
+			gchar *str;
+
+			str = gossip_markup_unescape_text (name);
+			gossip_contact_set_name (contact, str);
+			g_free (str);
 		}
 
 		groups = NULL;
 		for (child = node->children; child; child = child->next) {
 			/* FIXME: unescape the markup here: #342927 */
 			if (strcmp (child->name, "group") == 0 && child->value) {
-				groups = g_list_prepend (groups, child->value);
+				gchar *str;
+
+				str  = gossip_markup_unescape_text (child->value);
+				groups = g_list_prepend (groups, str);
 			}
 		}
 
 		if (groups) {
 			groups = g_list_reverse (groups);
 			gossip_contact_set_groups (contact, groups);
+			g_list_foreach (groups, (GFunc) g_free, NULL);
 			g_list_free (groups);
 		}
 

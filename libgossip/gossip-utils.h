@@ -66,6 +66,9 @@ xmlNodePtr   gossip_xml_node_find_child_prop_value (xmlNodePtr       node,
 						    const gchar     *prop_name,
 						    const gchar     *prop_value);
 
+/* Markup */
+gchar *      gossip_markup_unescape_text           (const gchar     *markup);
+
 G_END_DECLS
 
 #endif /*  __GOSSIP_UTILS_H__ */

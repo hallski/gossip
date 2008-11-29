@@ -52,7 +52,6 @@ static StatusPreset *status_preset_new               (GossipPresenceState  state
 static void          status_preset_free              (StatusPreset        *status);
 static void          status_presets_file_parse       (const gchar         *filename);
 static gboolean      status_presets_file_save        (void);
-const gchar *        status_presets_get_state_as_str (GossipPresenceState  state);
 static void          status_presets_set_default      (GossipPresenceState  state,
 						      const gchar         *status);
 
@@ -114,49 +113,46 @@ status_presets_file_parse (const gchar *filename)
 	while (node) {
 		if (strcmp ((gchar *) node->name, "status") == 0 ||
 		    strcmp ((gchar *) node->name, "default") == 0) {
-			GossipPresenceState  state;
-			gchar               *status;
-			gchar               *state_str;
-			StatusPreset        *preset;
-			gboolean             is_default = FALSE;
+			StatusPreset *preset;
+			gchar        *str;
+			gboolean      is_default = FALSE;
 
 			if (strcmp ((gchar *) node->name, "default") == 0) {
 				is_default = TRUE;
 			}
 
-			status = (gchar *) xmlNodeGetContent (node);
-			state_str = (gchar *) xmlGetProp (node, "presence");
+			str = (gchar *) xmlGetProp (node, "presence");
 
-			if (state_str) {
-				if (strcmp (state_str, "available") == 0) {
+			if (str) {
+				GossipPresenceState state;
+			
+				/* Now get the state */
+				if (strcmp (str, "available") == 0) {
 					state = GOSSIP_PRESENCE_STATE_AVAILABLE;
-				}
-				else if (strcmp (state_str, "busy") == 0) {
+				} else if (strcmp (str, "busy") == 0) {
 					state = GOSSIP_PRESENCE_STATE_BUSY;
-				}
-				else if (strcmp (state_str, "away") == 0) {
+				} else if (strcmp (str, "away") == 0) {
 					state = GOSSIP_PRESENCE_STATE_AWAY;
-				}
-				else if (strcmp (state_str, "ext_away") == 0) {
+				} else if (strcmp (str, "ext_away") == 0) {
 					state = GOSSIP_PRESENCE_STATE_EXT_AWAY;
 				} else {
 					state = GOSSIP_PRESENCE_STATE_AVAILABLE;
 				}
 
-				if (is_default) {
-					gossip_debug (DEBUG_DOMAIN,
-						      "Default status preset state is:'%s', status:'%s'",
-						      state_str, status);
+				xmlFree (str);
 
-					status_presets_set_default (state, status);
+				/* Now get the status text */
+				str = (gchar *) xmlNodeGetContent (node);
+
+				if (is_default) {
+					status_presets_set_default (state, str);
 				} else {
-					preset = status_preset_new (state, status);
+					preset = status_preset_new (state, str);
 					presets = g_list_append (presets, preset);
 				}
-			}
 
-			xmlFree (status);
-			xmlFree (state_str);
+				xmlFree (str);
+			}
 		}
 
 		node = node->next;
@@ -198,8 +194,8 @@ gossip_status_presets_get_all (void)
 	g_free (file_with_path);
 }
 
-const gchar *
-status_presets_get_state_as_str (GossipPresenceState state)
+static const gchar *
+status_presets_state_to_string (GossipPresenceState state)
 {
 	switch (state) {
 	case GOSSIP_PRESENCE_STATE_AVAILABLE:
@@ -235,32 +231,25 @@ status_presets_file_save (void)
 	xmlDocSetRootElement (doc, root);
 
 	if (default_preset) {
-		xmlNodePtr  subnode;
-		xmlChar    *state;
+		xmlNodePtr subnode;
 
-		state = (gchar*) status_presets_get_state_as_str (default_preset->state);
-
-		subnode = xmlNewTextChild (root, NULL, "default",
-					   default_preset->status);
-		xmlNewProp (subnode, "presence", state);
+		subnode = xmlNewTextChild (root, NULL, "default", default_preset->status);
+		xmlNewProp (subnode, "presence", status_presets_state_to_string (default_preset->state));
 	}
 
 	for (l = presets; l; l = l->next) {
 		StatusPreset *sp;
 		xmlNodePtr    subnode;
-		xmlChar      *state;
 
 		sp = l->data;
-		state = (gchar*) status_presets_get_state_as_str (sp->state);
 
 		count[sp->state]++;
 		if (count[sp->state] > STATUS_PRESETS_MAX_EACH) {
 			continue;
 		}
 
-		subnode = xmlNewTextChild (root, NULL,
-					   "status", sp->status);
-		xmlNewProp (subnode, "presence", state);
+		subnode = xmlNewTextChild (root, NULL, "status", sp->status);
+		xmlNewProp (subnode, "presence", status_presets_state_to_string (sp->state));
 	}
 
 	/* Make sure the XML is indented properly */

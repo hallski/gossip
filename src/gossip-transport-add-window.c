@@ -692,7 +692,6 @@ transport_add_window_requirements_cb (GossipJID                *jid,
 				       _("Unable to Register"),
 				       error_reason);
 		gtk_label_set_markup (GTK_LABEL (window->label_requirements_result), str);
-
 		g_free (str);
 		return;
 	}

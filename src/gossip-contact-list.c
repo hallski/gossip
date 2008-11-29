@@ -3228,12 +3228,12 @@ contact_list_action_remove_selected (GossipContactList *list)
 					 GTK_BUTTONS_NONE,
 					 NULL);
 
-	str = g_strdup_printf ("%s\n\n"
-			       "<b>%s</b>\n"
-			       "%s\n",
-			       _("Do you want to remove this contact from your roster?"),
-			       gossip_contact_get_name (contact),
-			       gossip_contact_get_id (contact));
+	str = g_markup_printf_escaped ("%s\n\n"
+				       "<b>%s</b>\n"
+				       "%s\n",
+				       _("Do you want to remove this contact from your roster?"),
+				       gossip_contact_get_name (contact),
+				       gossip_contact_get_id (contact));
 	gtk_message_dialog_set_markup (GTK_MESSAGE_DIALOG (dialog), str);
 	g_free (str);
 
@@ -3313,9 +3313,9 @@ contact_list_action_rename_group_selected (GossipContactList *list)
 					 GTK_BUTTONS_NONE,
 					 NULL);
 
-	str = g_strdup_printf ("%s\n<b>%s</b>",
-			       _("Please enter a new name for the group:"),
-			       group);
+	str = g_markup_printf_escaped ("%s\n<b>%s</b>",
+				       _("Please enter a new name for the group:"),
+				       group);
 	gtk_message_dialog_set_markup (GTK_MESSAGE_DIALOG (dialog), str);
 	g_free (str);
 

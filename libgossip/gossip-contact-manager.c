@@ -550,10 +550,10 @@ contact_manager_parse_self (GossipContactManager *manager,
 			    xmlNodePtr            node)
 {
 	GossipContactManagerPrivate *priv;
-	GossipContact            *own_contact;
-	const gchar              *id;
-	const gchar              *name;
-	gchar                    *new_name;
+	GossipContact               *own_contact;
+	const gchar                 *id;
+	const gchar                 *name;
+	gchar                       *new_name;
 	
 	new_name = gossip_xml_node_get_child_content (node, "name");
 	if (!new_name) {
@@ -806,11 +806,11 @@ contact_manager_file_save (GossipContactManager *manager)
 		xmlNodePtr     node, child, p;
 		GossipContact *own_contact;
 		const gchar   *name; 
+		gchar         *str;
 
 		account = l->data;
 		
 		own_contact = gossip_contact_manager_get_own_contact (manager, account);
-	
 		name = gossip_contact_get_name (own_contact);
 
 		node = g_hash_table_lookup (nodes, account);
@@ -830,7 +830,9 @@ contact_manager_file_save (GossipContactManager *manager)
 			child = p;
 		}	
 	
-		xmlNodeSetContent (child, name);
+		str = g_markup_escape_text (name, -1);
+		xmlNodeSetContent (child, str);
+		g_free (str);
 	}
 
 	contacts = g_hash_table_get_keys (priv->contacts);
@@ -841,6 +843,7 @@ contact_manager_file_save (GossipContactManager *manager)
 		GossipContactType  type;
 		const gchar       *id;
 		const gchar       *name; 
+		gchar             *str;
 
 		contact = l->data;
 
@@ -888,8 +891,10 @@ contact_manager_file_save (GossipContactManager *manager)
 		} else {
 			child = p;
 		}
-			
-		xmlNodeSetContent (child, name);
+		
+		str = g_markup_escape_text (name, -1);
+		xmlNodeSetContent (child, str);
+		g_free (str);
 	}
 
 	g_list_free (contacts);

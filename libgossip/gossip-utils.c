@@ -286,3 +286,42 @@ gossip_xml_node_find_child_prop_value (xmlNodePtr   node,
 	return found;
 }
 
+gchar *
+gossip_markup_unescape_text (const gchar *markup)
+{
+	gchar *text, *p, c;
+	
+	if (!markup) {
+		return NULL;
+	}
+	
+	p = text = g_malloc (strlen (markup) + 1);
+	
+	while ((c = *markup++)) {
+		if (G_LIKELY (c != '&')) {
+			*p++ = c;
+			continue;
+		}
+
+		if (!memcmp (markup, "amp;", 4)) {
+			*p++ = '&';
+			markup += 4;
+		} else if (!memcmp (markup, "lt;", 3)) {
+			*p++ = '<';
+			markup += 3;
+		} else if (!memcmp (markup, "gt;", 3)) {
+			*p++ = '>';
+			markup += 3;
+		} else if (!memcmp (markup, "quot;", 5)) {
+			*p++ = '"';
+			markup += 5;
+		} else if (!memcmp (markup, "apos;", 5)) {
+			*p++ = '\'';
+			markup += 5;
+		}
+	}
+
+	*p = 0;
+	
+	return text;
+}

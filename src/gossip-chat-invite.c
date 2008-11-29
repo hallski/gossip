@@ -293,7 +293,6 @@ gossip_chat_invite_dialog_show (GossipContact    *contact,
 {
 	GossipChatInviteDialog *dialog;
 	GladeXML               *gui;
-	gchar                  *name;
 	gchar                  *str;
 
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
@@ -333,21 +332,17 @@ gossip_chat_invite_dialog_show (GossipContact    *contact,
 		provider = gossip_session_get_chatroom_provider (session, account);
 		chatroom = gossip_chatroom_provider_find_by_id (provider, dialog->chatroom_id);
 
-		name = g_markup_escape_text (gossip_chatroom_get_name (chatroom), -1);
-		str = g_strdup_printf ("%s\n<b>%s</b>",
-				       _("Select who would you like to invite to room:"),
-				       name);
+		str = g_markup_printf_escaped ("%s\n<b>%s</b>",
+					       _("Select who would you like to invite to room:"),
+					       gossip_chatroom_get_name (chatroom));
 	} else {
 		/* Show a list of rooms */
-		name = g_markup_escape_text (gossip_contact_get_name (dialog->contact), -1);
-		str = g_strdup_printf ("%s\n<b>%s</b>",
-				       _("Select which room you would like to invite:"),
-				       name);
+		str = g_markup_printf_escaped ("%s\n<b>%s</b>",
+					       _("Select which room you would like to invite:"),
+					       gossip_contact_get_name (dialog->contact));
 	}
 
 	gtk_label_set_markup (GTK_LABEL (dialog->label), str);
-
-	g_free (name);
 	g_free (str);
 
 	chat_invite_dialog_model_setup (dialog);

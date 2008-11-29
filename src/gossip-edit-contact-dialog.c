@@ -658,7 +658,6 @@ gossip_edit_contact_dialog_show (GossipContact *contact,
 	GladeXML                *glade;
 	GList                   *groups;
 	GtkSizeGroup            *size_group;
-	gchar                   *id_escaped;
 	gchar                   *str;
 
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
@@ -712,14 +711,11 @@ gossip_edit_contact_dialog_show (GossipContact *contact,
 			    gossip_contact_get_name (dialog->contact));
 	gtk_editable_select_region (GTK_EDITABLE (dialog->entry_name), 0, -1);
 
-	id_escaped = g_markup_escape_text (gossip_contact_get_id (contact), -1);
-	str = g_strdup_printf (_("Set the alias you want to use for:\n"
-				 "<b>%s</b>\n"
-				 "\n"
-				 "You can retrieve contact information from the server."),
-			       id_escaped);
-	g_free (id_escaped);
-
+	str = g_markup_printf_escaped (_("Set the alias you want to use for:\n"
+					 "<b>%s</b>\n"
+					 "\n"
+					 "You can retrieve contact information from the server."),
+				       gossip_contact_get_id (contact));
 	gtk_label_set_markup (GTK_LABEL (dialog->label_name), str);
 	g_free (str);
 
