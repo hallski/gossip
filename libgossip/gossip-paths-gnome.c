@@ -20,7 +20,7 @@
  * Authors: Richard Hult <richard@imendio.com>
  */
 
-#include "config.h"
+#include <config.h>
 
 #include "gossip-paths.h"
 

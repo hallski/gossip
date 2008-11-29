@@ -18,7 +18,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "config.h"
+#include <config.h>
 
 #include <string.h>
 
@@ -28,14 +28,14 @@
 #include "gossip-jid.h"
 #include "gossip-utils.h"
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CONTACT, GossipContactPriv))
+#define GOSSIP_CONTACT_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CONTACT, GossipContactPrivate))
 
 /* Make sure any additions to the private contact structure are copied
  * in the gossip_contact_copy_values() function further down.
  */
-typedef struct _GossipContactPriv GossipContactPriv;
+typedef struct _GossipContactPrivate GossipContactPrivate;
 
-struct _GossipContactPriv {
+struct _GossipContactPrivate {
 	GossipContactType   type;
 
 	gchar              *id;
@@ -123,8 +123,8 @@ contact_class_init (GossipContactClass *class)
 							   "The type of the contact",
 							   GOSSIP_CONTACT_TYPE_TEMPORARY,
 							   GOSSIP_CONTACT_TYPE_USER,
-							   GOSSIP_CONTACT_TYPE_CONTACTLIST,
-							   G_PARAM_READWRITE));
+							   GOSSIP_CONTACT_TYPE_TEMPORARY,
+							   G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 
 	g_object_class_install_property (object_class,
 					 PROP_NAME,
@@ -164,7 +164,7 @@ contact_class_init (GossipContactClass *class)
 							   GOSSIP_SUBSCRIPTION_NONE,
 							   GOSSIP_SUBSCRIPTION_BOTH,
 							   GOSSIP_SUBSCRIPTION_NONE,
-							   G_PARAM_READWRITE));
+							   G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 
 	g_object_class_install_property (object_class,
 					 PROP_AVATAR,
@@ -189,25 +189,20 @@ contact_class_init (GossipContactClass *class)
 							      GOSSIP_TYPE_VCARD,
 							      G_PARAM_READWRITE));
 
-	g_type_class_add_private (object_class, sizeof (GossipContactPriv));
+	g_type_class_add_private (object_class, sizeof (GossipContactPrivate));
 }
 
 static void
 contact_init (GossipContact *contact)
 {
-	GossipContactPriv *priv;
-
-	priv = GET_PRIV (contact);
-
-	priv->type        = GOSSIP_CONTACT_TYPE_TEMPORARY;
 }
 
 static void
 contact_finalize (GObject *object)
 {
-	GossipContactPriv *priv;
+	GossipContactPrivate *priv;
 
-	priv = GET_PRIV (object);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (object);
 
 	g_free (priv->name);
 	g_free (priv->id);
@@ -243,9 +238,9 @@ contact_get_property (GObject    *object,
 		      GValue     *value,
 		      GParamSpec *pspec)
 {
-	GossipContactPriv *priv;
+	GossipContactPrivate *priv;
 
-	priv = GET_PRIV (object);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (object);
 
 	switch (param_id) {
 	case PROP_TYPE:
@@ -290,9 +285,9 @@ contact_set_property (GObject      *object,
 		      const GValue *value,
 		      GParamSpec   *pspec)
 {
-	GossipContactPriv *priv;
+	GossipContactPrivate *priv;
 
-	priv = GET_PRIV (object);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (object);
 
 	switch (param_id) {
 	case PROP_TYPE:
@@ -365,11 +360,11 @@ GossipContact *
 gossip_contact_copy (GossipContact *contact)
 {
 	GossipContact     *new_contact;
-	GossipContactPriv *priv;
+	GossipContactPrivate *priv;
 	
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
 
-	priv = GET_PRIV (contact);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (contact);
 
 	new_contact = gossip_contact_new_full (gossip_contact_get_type (contact),
 					       priv->account,
@@ -387,12 +382,12 @@ gossip_contact_copy (GossipContact *contact)
 GossipContactType
 gossip_contact_get_type (GossipContact *contact)
 {
-	GossipContactPriv *priv;
+	GossipContactPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact),
 			      GOSSIP_CONTACT_TYPE_TEMPORARY);
 
-	priv = GET_PRIV (contact);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (contact);
 
 	return priv->type;
 }
@@ -400,11 +395,11 @@ gossip_contact_get_type (GossipContact *contact)
 const gchar *
 gossip_contact_get_id (GossipContact *contact)
 {
-	GossipContactPriv *priv;
+	GossipContactPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), "");
 
-	priv = GET_PRIV (contact);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (contact);
 
 	if (priv->id) {
 		return priv->id;
@@ -416,11 +411,11 @@ gossip_contact_get_id (GossipContact *contact)
 const gchar *
 gossip_contact_get_name (GossipContact *contact)
 {
-	GossipContactPriv *priv;
+	GossipContactPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), "");
 
-	priv = GET_PRIV (contact);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (contact);
 
 	if (priv->name == NULL) {
 		return gossip_contact_get_id (contact);
@@ -432,11 +427,11 @@ gossip_contact_get_name (GossipContact *contact)
 GossipAvatar *
 gossip_contact_get_avatar (GossipContact *contact)
 {
-	GossipContactPriv *priv;
+	GossipContactPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
 
-	priv = GET_PRIV (contact);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (contact);
 
 	return priv->avatar;
 }
@@ -444,11 +439,11 @@ gossip_contact_get_avatar (GossipContact *contact)
 GdkPixbuf *
 gossip_contact_get_avatar_pixbuf (GossipContact *contact)
 {
-	GossipContactPriv *priv;
+	GossipContactPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
 
-	priv = GET_PRIV (contact);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (contact);
 
 	if (!priv->avatar) {
 		return NULL;
@@ -460,11 +455,11 @@ gossip_contact_get_avatar_pixbuf (GossipContact *contact)
 GossipAccount *
 gossip_contact_get_account (GossipContact *contact)
 {
-	GossipContactPriv *priv;
+	GossipContactPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
 
-	priv = GET_PRIV (contact);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (contact);
 
 	return priv->account;
 }
@@ -472,11 +467,11 @@ gossip_contact_get_account (GossipContact *contact)
 GossipVCard *
 gossip_contact_get_vcard (GossipContact *contact)
 {
-	GossipContactPriv *priv;
+	GossipContactPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
 
-	priv = GET_PRIV (contact);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (contact);
 
 	return priv->vcard;
 }
@@ -484,11 +479,11 @@ gossip_contact_get_vcard (GossipContact *contact)
 GossipPresence *
 gossip_contact_get_active_presence (GossipContact *contact)
 {
-	GossipContactPriv *priv;
+	GossipContactPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
 
-	priv = GET_PRIV (contact);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (contact);
 
 	if (priv->presences) {
 		/* Highest priority of the presences is first */
@@ -502,13 +497,13 @@ GossipPresence *
 gossip_contact_get_presence_for_resource (GossipContact *contact,
 					  const gchar   *resource)
 {
-	GossipContactPriv *priv;
+	GossipContactPrivate *priv;
 	GList             *l;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
 	g_return_val_if_fail (resource != NULL, NULL);
 
-	priv = GET_PRIV (contact);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (contact);
 
 	for (l = priv->presences; l; l = l->next) {
 		const gchar *p_res;
@@ -525,11 +520,11 @@ gossip_contact_get_presence_for_resource (GossipContact *contact,
 GList *
 gossip_contact_get_presence_list (GossipContact *contact)
 {
-	GossipContactPriv *priv;
+	GossipContactPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
 
-	priv = GET_PRIV (contact);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (contact);
 
 	return priv->presences;
 }
@@ -538,11 +533,11 @@ void
 gossip_contact_set_presence_list (GossipContact *contact,
 				  GList         *presences)
 {
-	GossipContactPriv *priv;
+	GossipContactPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 
-	priv = GET_PRIV (contact);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (contact);
 
 	if (priv->presences) {
 		g_list_foreach (priv->presences, (GFunc) g_object_unref, NULL);
@@ -562,11 +557,11 @@ gossip_contact_set_presence_list (GossipContact *contact,
 GList *
 gossip_contact_get_groups (GossipContact *contact)
 {
-	GossipContactPriv *priv;
+	GossipContactPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
 
-	priv = GET_PRIV (contact);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (contact);
 
 	return priv->groups;
 }
@@ -574,12 +569,12 @@ gossip_contact_get_groups (GossipContact *contact)
 GossipSubscription
 gossip_contact_get_subscription (GossipContact *contact)
 {
-	GossipContactPriv *priv;
+	GossipContactPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact),
 			      GOSSIP_SUBSCRIPTION_NONE);
 
-	priv = GET_PRIV (contact);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (contact);
 
 	return priv->subscription;
 }
@@ -588,9 +583,9 @@ void
 gossip_contact_set_type (GossipContact     *contact,
 			 GossipContactType  type)
 {
-	GossipContactPriv *priv;
+	GossipContactPrivate *priv;
 
-	priv = GET_PRIV (contact);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (contact);
 
 	priv->type = type;
 
@@ -601,12 +596,12 @@ void
 gossip_contact_set_id (GossipContact *contact,
 		       const gchar   *id)
 {
-	GossipContactPriv *priv;
+	GossipContactPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 	g_return_if_fail (id != NULL);
 
-	priv = GET_PRIV (contact);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (contact);
 
 	g_free (priv->id);
 	priv->id = g_strdup (id);
@@ -618,12 +613,12 @@ void
 gossip_contact_set_name (GossipContact *contact,
 			 const gchar   *name)
 {
-	GossipContactPriv *priv;
+	GossipContactPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 	g_return_if_fail (name != NULL);
 
-	priv = GET_PRIV (contact);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (contact);
 
 	g_free (priv->name);
 	priv->name = g_strdup (name);
@@ -635,11 +630,11 @@ void
 gossip_contact_set_avatar (GossipContact *contact,
 			   GossipAvatar  *avatar)
 {
-	GossipContactPriv *priv;
+	GossipContactPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 
-	priv = GET_PRIV (contact);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (contact);
 
 	if (priv->avatar) {
 		gossip_avatar_unref (priv->avatar);
@@ -657,12 +652,12 @@ void
 gossip_contact_set_account (GossipContact *contact,
 			    GossipAccount *account)
 {
-	GossipContactPriv *priv;
+	GossipContactPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 
-	priv = GET_PRIV (contact);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (contact);
 
 	if (priv->account) {
 		g_object_unref (priv->account);
@@ -680,12 +675,12 @@ gossip_contact_set_account (GossipContact *contact,
 void 
 gossip_contact_set_vcard (GossipContact *contact, GossipVCard *vcard)
 {
-	GossipContactPriv *priv;
+	GossipContactPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 	g_return_if_fail (GOSSIP_IS_VCARD (vcard));
 
-	priv = GET_PRIV (contact);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (contact);
 
 	if (priv->vcard) {
 		g_object_unref (priv->vcard);
@@ -700,14 +695,14 @@ void
 gossip_contact_add_presence (GossipContact  *contact,
 			     GossipPresence *presence)
 {
-	GossipContactPriv *priv;
+	GossipContactPrivate *priv;
 	GossipPresence    *this_presence;
 	GList             *l;
 
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 	g_return_if_fail (GOSSIP_IS_PRESENCE (presence));
 
-	priv = GET_PRIV (contact);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (contact);
 
 	for (l = priv->presences; l && presence; l = l->next) {
 		this_presence = l->data;
@@ -748,14 +743,14 @@ void
 gossip_contact_remove_presence (GossipContact  *contact,
 				GossipPresence *presence)
 {
-	GossipContactPriv *priv;
+	GossipContactPrivate *priv;
 	GossipPresence    *this_presence;
 	GList             *l;
 
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 	g_return_if_fail (GOSSIP_IS_PRESENCE (presence));
 
-	priv = GET_PRIV (contact);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (contact);
 
 	for (l = priv->presences; l; l = l->next) {
 		this_presence = l->data;
@@ -794,12 +789,12 @@ void
 gossip_contact_set_groups (GossipContact *contact,
 			   GList         *groups)
 {
-	GossipContactPriv *priv;
+	GossipContactPrivate *priv;
 	GList             *old_groups, *l;
 
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 
-	priv = GET_PRIV (contact);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (contact);
 
 	old_groups = priv->groups;
 	priv->groups = NULL;
@@ -819,11 +814,11 @@ void
 gossip_contact_set_subscription (GossipContact      *contact,
 				 GossipSubscription  subscription)
 {
-	GossipContactPriv *priv;
+	GossipContactPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 
-	priv = GET_PRIV (contact);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (contact);
 
 	priv->subscription = subscription;
 
@@ -833,12 +828,12 @@ gossip_contact_set_subscription (GossipContact      *contact,
 guint
 gossip_contact_hash (gconstpointer key)
 {
-	GossipContactPriv *priv;
+	GossipContactPrivate *priv;
 	guint              hash = 0;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (key), +1);
 
-	priv = GET_PRIV (key);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (key);
 
 	hash += gossip_account_hash (gossip_contact_get_account (GOSSIP_CONTACT (key)));
 
@@ -895,11 +890,11 @@ gossip_contact_equal (gconstpointer v1,
 gboolean
 gossip_contact_is_online (GossipContact *contact)
 {
-	GossipContactPriv *priv;
+	GossipContactPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), FALSE);
 
-	priv = GET_PRIV (contact);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (contact);
 
 	if (priv->presences == NULL) {
 		return FALSE;
@@ -912,12 +907,12 @@ gboolean
 gossip_contact_is_in_group (GossipContact *contact,
 			    const gchar   *group)
 {
-	GossipContactPriv *priv;
+	GossipContactPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), FALSE);
 	g_return_val_if_fail (!G_STR_EMPTY (group), FALSE);
 
-	priv = GET_PRIV (contact);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (contact);
 
 	if (g_list_find_custom (priv->groups, group, (GCompareFunc) strcmp)) {
 		return TRUE;
@@ -929,11 +924,11 @@ gossip_contact_is_in_group (GossipContact *contact,
 const gchar *
 gossip_contact_get_status (GossipContact *contact)
 {
-	GossipContactPriv *priv;
+	GossipContactPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), "");
 
-	priv = GET_PRIV (contact);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (contact);
 
 	if (priv->presences) {
 		GossipPresence *p;

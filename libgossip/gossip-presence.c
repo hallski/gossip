@@ -20,7 +20,7 @@
  * Authors: Mikael Hallendal <micke@imendio.com>
  */
 
-#include "config.h"
+#include <config.h>
 
 #include <string.h>
 
@@ -29,11 +29,11 @@
 #include "gossip-presence.h"
 #include "gossip-time.h"
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_PRESENCE, GossipPresencePriv))
+#define GOSSIP_PRESENCE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_PRESENCE, GossipPresencePrivate))
 
-typedef struct _GossipPresencePriv GossipPresencePriv;
+typedef struct _GossipPresencePrivate GossipPresencePrivate;
 
-struct _GossipPresencePriv {
+struct _GossipPresencePrivate {
 	GossipPresenceState  state;
 
 	gchar               *status;
@@ -107,15 +107,15 @@ gossip_presence_class_init (GossipPresenceClass *class)
 							   0,
 							   G_PARAM_READWRITE));
 
-	g_type_class_add_private (object_class, sizeof (GossipPresencePriv));
+	g_type_class_add_private (object_class, sizeof (GossipPresencePrivate));
 }
 
 static void
 gossip_presence_init (GossipPresence *presence)
 {
-	GossipPresencePriv *priv;
+	GossipPresencePrivate *priv;
 
-	priv = GET_PRIV (presence);
+	priv = GOSSIP_PRESENCE_GET_PRIVATE (presence);
 
 	priv->state = GOSSIP_PRESENCE_STATE_AVAILABLE;
 
@@ -130,9 +130,9 @@ gossip_presence_init (GossipPresence *presence)
 static void
 presence_finalize (GObject *object)
 {
-	GossipPresencePriv *priv;
+	GossipPresencePrivate *priv;
 
-	priv = GET_PRIV (object);
+	priv = GOSSIP_PRESENCE_GET_PRIVATE (object);
 
 	g_free (priv->status);
 	g_free (priv->resource);
@@ -146,9 +146,9 @@ presence_get_property (GObject    *object,
 		       GValue     *value,
 		       GParamSpec *pspec)
 {
-	GossipPresencePriv *priv;
+	GossipPresencePrivate *priv;
 
-	priv = GET_PRIV (object);
+	priv = GOSSIP_PRESENCE_GET_PRIVATE (object);
 
 	switch (param_id) {
 	case PROP_STATE:
@@ -176,9 +176,9 @@ presence_set_property (GObject      *object,
 		       const GValue *value,
 		       GParamSpec   *pspec)
 {
-	GossipPresencePriv *priv;
+	GossipPresencePrivate *priv;
 
-	priv = GET_PRIV (object);
+	priv = GOSSIP_PRESENCE_GET_PRIVATE (object);
 
 	switch (param_id) {
 	case PROP_STATE:
@@ -220,11 +220,11 @@ gossip_presence_new_full (GossipPresenceState  state,
 const gchar *
 gossip_presence_get_resource (GossipPresence *presence)
 {
-	GossipPresencePriv *priv;
+	GossipPresencePrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_PRESENCE (presence), NULL);
 
-	priv = GET_PRIV (presence);
+	priv = GOSSIP_PRESENCE_GET_PRIVATE (presence);
 
 	if (priv->resource) {
 		return priv->resource;
@@ -236,12 +236,12 @@ gossip_presence_get_resource (GossipPresence *presence)
 const gchar *
 gossip_presence_get_status (GossipPresence *presence)
 {
-	GossipPresencePriv *priv;
+	GossipPresencePrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_PRESENCE (presence),
 			      _("Offline"));
 
-	priv = GET_PRIV (presence);
+	priv = GOSSIP_PRESENCE_GET_PRIVATE (presence);
 
 	return priv->status;
 }
@@ -249,9 +249,9 @@ gossip_presence_get_status (GossipPresence *presence)
 gint
 gossip_presence_get_priority (GossipPresence *presence)
 {
-	GossipPresencePriv *priv;
+	GossipPresencePrivate *priv;
 
-	priv = GET_PRIV (presence);
+	priv = GOSSIP_PRESENCE_GET_PRIVATE (presence);
 	g_return_val_if_fail (GOSSIP_IS_PRESENCE (presence), 0);
 
 	return priv->priority;
@@ -261,12 +261,12 @@ void
 gossip_presence_set_resource (GossipPresence *presence,
 			      const gchar    *resource)
 {
-	GossipPresencePriv *priv;
+	GossipPresencePrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_PRESENCE (presence));
 	g_return_if_fail (resource != NULL);
 
-	priv = GET_PRIV (presence);
+	priv = GOSSIP_PRESENCE_GET_PRIVATE (presence);
 
 	g_free (priv->resource);
 	priv->resource = g_strdup (resource);
@@ -277,12 +277,12 @@ gossip_presence_set_resource (GossipPresence *presence,
 GossipPresenceState
 gossip_presence_get_state (GossipPresence *presence)
 {
-	GossipPresencePriv *priv;
+	GossipPresencePrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_PRESENCE (presence),
 			      GOSSIP_PRESENCE_STATE_AVAILABLE);
 
-	priv = GET_PRIV (presence);
+	priv = GOSSIP_PRESENCE_GET_PRIVATE (presence);
 
 	return priv->state;
 }
@@ -291,11 +291,11 @@ void
 gossip_presence_set_state (GossipPresence      *presence,
 			   GossipPresenceState  state)
 {
-	GossipPresencePriv *priv;
+	GossipPresencePrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_PRESENCE (presence));
 
-	priv = GET_PRIV (presence);
+	priv = GOSSIP_PRESENCE_GET_PRIVATE (presence);
 
 	priv->state = state;
 
@@ -306,9 +306,9 @@ void
 gossip_presence_set_status (GossipPresence *presence,
 			    const gchar    *status)
 {
-	GossipPresencePriv *priv;
+	GossipPresencePrivate *priv;
 
-	priv = GET_PRIV (presence);
+	priv = GOSSIP_PRESENCE_GET_PRIVATE (presence);
 	g_return_if_fail (GOSSIP_IS_PRESENCE (presence));
 
 	g_free (priv->status);
@@ -326,11 +326,11 @@ void
 gossip_presence_set_priority (GossipPresence *presence,
 			      gint            priority)
 {
-	GossipPresencePriv *priv;
+	GossipPresencePrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_PRESENCE (presence));
 
-	priv = GET_PRIV (presence);
+	priv = GOSSIP_PRESENCE_GET_PRIVATE (presence);
 
 	priv->priority = priority;
 
@@ -341,14 +341,14 @@ gboolean
 gossip_presence_resource_equal (gconstpointer a,
 				gconstpointer b)
 {
-	GossipPresencePriv *priv1;
-	GossipPresencePriv *priv2;
+	GossipPresencePrivate *priv1;
+	GossipPresencePrivate *priv2;
 
 	g_return_val_if_fail (GOSSIP_IS_PRESENCE (a), FALSE);
 	g_return_val_if_fail (GOSSIP_IS_PRESENCE (b), FALSE);
 
-	priv1 = GET_PRIV (a);
-	priv2 = GET_PRIV (b);
+	priv1 = GOSSIP_PRESENCE_GET_PRIVATE (a);
+	priv2 = GOSSIP_PRESENCE_GET_PRIVATE (b);
 
 	if (!priv1->resource) {
 		if (!priv2->resource) {
@@ -373,8 +373,8 @@ gint
 gossip_presence_sort_func (gconstpointer a,
 			   gconstpointer b)
 {
-	GossipPresencePriv *priv_a;
-	GossipPresencePriv *priv_b;
+	GossipPresencePrivate *priv_a;
+	GossipPresencePrivate *priv_b;
 	gint                diff;
 
 	g_return_val_if_fail (GOSSIP_IS_PRESENCE (a), 0);
@@ -390,8 +390,8 @@ gossip_presence_sort_func (gconstpointer a,
 	 *    3. Time it was set (most recent first).
 	 */
 	 
-	priv_a = GET_PRIV (a);
-	priv_b = GET_PRIV (b);
+	priv_a = GOSSIP_PRESENCE_GET_PRIVATE (a);
+	priv_b = GOSSIP_PRESENCE_GET_PRIVATE (b);
 
 	/* 1. State */
 	diff = priv_a->state - priv_b->state;

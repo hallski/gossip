@@ -18,7 +18,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "config.h"
+#include <config.h>
 
 #include <string.h>
 #include <sys/types.h>
@@ -42,11 +42,11 @@
 #define CONTACTS_XML_FILENAME "contacts.xml"
 #define CONTACTS_DTD_FILENAME "gossip-contact.dtd"
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CONTACT_MANAGER, GossipContactManagerPriv))
+#define GOSSIP_CONTACT_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CONTACT_MANAGER, GossipContactManagerPrivate))
 
-typedef struct _GossipContactManagerPriv GossipContactManagerPriv;
+typedef struct _GossipContactManagerPrivate GossipContactManagerPrivate;
 
-struct _GossipContactManagerPriv {
+struct _GossipContactManagerPrivate {
 	GossipSession *session;
 
 	GHashTable    *contacts;
@@ -74,7 +74,7 @@ gossip_contact_manager_class_init (GossipContactManagerClass *klass)
 
 	object_class->finalize = contact_manager_finalize;
 
-	g_type_class_add_private (object_class, sizeof (GossipContactManagerPriv));
+	g_type_class_add_private (object_class, sizeof (GossipContactManagerPrivate));
 }
 
 static void
@@ -85,9 +85,9 @@ gossip_contact_manager_init (GossipContactManager *manager)
 static void
 contact_manager_finalize (GObject *object)
 {
-	GossipContactManagerPriv *priv;
+	GossipContactManagerPrivate *priv;
 
-	priv = GET_PRIV (object);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (object);
 
 	g_hash_table_unref (priv->contacts);
 
@@ -113,14 +113,14 @@ GossipContactManager *
 gossip_contact_manager_new (GossipSession *session,
 			    const gchar   *filename)
 {
-	GossipContactManagerPriv *priv;
+	GossipContactManagerPrivate *priv;
 	GossipContactManager     *manager;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
 
 	manager = g_object_new (GOSSIP_TYPE_CONTACT_MANAGER, NULL);
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (manager);
 
 	priv->session = g_object_ref (session);
 
@@ -147,14 +147,14 @@ gboolean
 gossip_contact_manager_add (GossipContactManager *manager,
 			    GossipContact        *contact)
 {
-	GossipContactManagerPriv *priv;
+	GossipContactManagerPrivate *priv;
 	GossipAccount            *account;
 	GossipContact            *own_contact;
 	
 	g_return_val_if_fail (GOSSIP_IS_CONTACT_MANAGER (manager), FALSE);
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), FALSE);
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (manager);
 
 	account = gossip_contact_get_account (contact);
 	own_contact = gossip_contact_manager_get_own_contact (manager, account);
@@ -185,13 +185,13 @@ void
 gossip_contact_manager_remove (GossipContactManager *manager,
 			       GossipContact        *contact)
 {
-	GossipContactManagerPriv *priv;
+	GossipContactManagerPrivate *priv;
 	GossipAccount            *account;
 
 	g_return_if_fail (GOSSIP_IS_CONTACT_MANAGER (manager));
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (manager);
 
 	account = gossip_contact_get_account (contact);
 	gossip_debug (DEBUG_DOMAIN, 
@@ -207,7 +207,7 @@ gossip_contact_manager_find (GossipContactManager *manager,
 			     GossipAccount        *account,
 			     const gchar          *contact_id)
 {
-	GossipContactManagerPriv *priv;
+	GossipContactManagerPrivate *priv;
 	GossipContact            *found = NULL;
 	GList                    *contacts;
 	GList                    *l;
@@ -215,7 +215,7 @@ gossip_contact_manager_find (GossipContactManager *manager,
 	g_return_val_if_fail (GOSSIP_IS_CONTACT_MANAGER (manager), NULL);
 	g_return_val_if_fail (contact_id != NULL, NULL);
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (manager);
 
 	contacts = g_hash_table_get_keys (priv->contacts);
 
@@ -258,7 +258,7 @@ gossip_contact_manager_find_extended (GossipContactManager *manager,
 				      GossipContactType     contact_type,
 				      const gchar          *contact_id)
 {
-	GossipContactManagerPriv *priv;
+	GossipContactManagerPrivate *priv;
 	GossipContact            *found = NULL;
 	GList                    *contacts;
 	GList                    *l;
@@ -267,7 +267,7 @@ gossip_contact_manager_find_extended (GossipContactManager *manager,
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
 	g_return_val_if_fail (contact_id != NULL, NULL);
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (manager);
 
 	contacts = g_hash_table_get_keys (priv->contacts);
 
@@ -399,7 +399,7 @@ gossip_contact_manager_get_own_contact (GossipContactManager *manager,
 
 		return contact;
 	} else {
-		GossipContactManagerPriv *priv;
+		GossipContactManagerPrivate *priv;
 		gchar                    *name;
 
 		gossip_debug (DEBUG_DOMAIN,
@@ -416,7 +416,7 @@ gossip_contact_manager_get_own_contact (GossipContactManager *manager,
 		g_free (name);
 
 		/* Don't use _manager_add() - recursive loop */
-		priv = GET_PRIV (manager);
+		priv = GOSSIP_CONTACT_GET_PRIVATE (manager);
 		
 		g_hash_table_insert (priv->contacts, 
 				     contact,
@@ -431,9 +431,9 @@ gossip_contact_manager_get_own_contact (GossipContactManager *manager,
 static gboolean
 contact_manager_store_cb (GossipContactManager *manager)
 {
-	GossipContactManagerPriv *priv;
+	GossipContactManagerPrivate *priv;
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (manager);
 
 	gossip_debug (DEBUG_DOMAIN, "Saving contacts");
 
@@ -449,11 +449,11 @@ contact_manager_store_cb (GossipContactManager *manager)
 gboolean
 gossip_contact_manager_store (GossipContactManager *manager)
 {
-	GossipContactManagerPriv *priv;
+	GossipContactManagerPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT_MANAGER (manager), FALSE);
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (manager);
 
 	if (priv->store_timeout_id) {
 		g_source_remove (priv->store_timeout_id);
@@ -482,11 +482,11 @@ contact_manager_contact_added_cb (GossipSession        *session,
 static gboolean
 contact_manager_get_all (GossipContactManager *manager)
 {
-	GossipContactManagerPriv *priv;
+	GossipContactManagerPrivate *priv;
 	gchar                    *directory;
 	gchar                    *filename = NULL;
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (manager);
 
 	gossip_debug (DEBUG_DOMAIN, "Loading contacts");
 
@@ -549,7 +549,7 @@ contact_manager_parse_self (GossipContactManager *manager,
 			    GossipAccount        *account,
 			    xmlNodePtr            node)
 {
-	GossipContactManagerPriv *priv;
+	GossipContactManagerPrivate *priv;
 	GossipContact            *own_contact;
 	const gchar              *id;
 	const gchar              *name;
@@ -560,7 +560,7 @@ contact_manager_parse_self (GossipContactManager *manager,
 		return;
 	}
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (manager);
 
 	own_contact = gossip_contact_manager_get_own_contact (manager, account);
 
@@ -584,14 +584,14 @@ static gboolean
 contact_manager_file_parse (GossipContactManager *manager,
 			    const gchar          *filename)
 {
-	GossipContactManagerPriv *priv;
+	GossipContactManagerPrivate *priv;
 	GossipAccountManager     *account_manager;
 	xmlParserCtxtPtr          ctxt;
 	xmlDocPtr                 doc;
 	xmlNodePtr                contacts;
 	xmlNodePtr                node, child;
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (manager);
 
 	gossip_debug (DEBUG_DOMAIN,
 		      "Attempting to parse file:'%s'...",
@@ -681,7 +681,7 @@ contact_manager_file_parse (GossipContactManager *manager,
 static gboolean
 contact_manager_file_save (GossipContactManager *manager)
 {
-	GossipContactManagerPriv *priv;
+	GossipContactManagerPrivate *priv;
 	GossipAccountManager     *account_manager;
 	GossipAccount            *account;
 	gchar                    *directory;
@@ -698,7 +698,7 @@ contact_manager_file_save (GossipContactManager *manager)
 	GHashTable               *nodes;
 	gboolean                  create_file = FALSE;
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_CONTACT_GET_PRIVATE (manager);
 
 	gossip_debug (DEBUG_DOMAIN, "Attempting to save...");
 

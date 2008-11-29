@@ -31,11 +31,11 @@
 #define POOL_ALLOC   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init]
 #define POOL_RELEASE [pool release]
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CONF, GossipConfPriv))
+#define GOSSIP_CONF_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CONF, GossipConfPrivate))
 
 typedef struct {
 	NSUserDefaults *defaults;
-} GossipConfPriv;
+} GossipConfPrivate;
 
 typedef struct {
 	GossipConf           *conf;
@@ -58,16 +58,16 @@ gossip_conf_class_init (GossipConfClass *class)
 
 	object_class->finalize = conf_finalize;
 
-	g_type_class_add_private (object_class, sizeof (GossipConfPriv));
+	g_type_class_add_private (object_class, sizeof (GossipConfPrivate));
 }
 
 static void
 gossip_conf_init (GossipConf *conf)
 {
-	GossipConfPriv *priv;
+	GossipConfPrivate *priv;
 	NSDictionary   *dict;
 
-	priv = GET_PRIV (conf);
+	priv = GOSSIP_CONF_GET_PRIVATE (conf);
 
 	priv->defaults = [NSUserDefaults standardUserDefaults];
 
@@ -137,9 +137,9 @@ gossip_conf_init (GossipConf *conf)
 static void
 conf_finalize (GObject *object)
 {
-	GossipConfPriv *priv;
+	GossipConfPrivate *priv;
 
-	priv = GET_PRIV (object);
+	priv = GOSSIP_CONF_GET_PRIVATE (object);
 
 	/*	gconf_client_remove_dir (priv->gconf_client,
 				 GOSSIP_CONF_ROOT,
@@ -181,12 +181,12 @@ gossip_conf_set_int (GossipConf  *conf,
 		     const gchar *key,
 		     gint         value)
 {
-	GossipConfPriv *priv;
+	GossipConfPrivate *priv;
 	NSString       *string;
 
 	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
 
-	priv = GET_PRIV (conf);
+	priv = GOSSIP_CONF_GET_PRIVATE (conf);
 
 	POOL_ALLOC;
 
@@ -203,12 +203,12 @@ gossip_conf_get_int (GossipConf  *conf,
 		     const gchar *key,
 		     gint        *value)
 {
-	GossipConfPriv *priv;
+	GossipConfPrivate *priv;
 	NSString       *string;
 
 	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
 
-	priv = GET_PRIV (conf);
+	priv = GOSSIP_CONF_GET_PRIVATE (conf);
 
 	POOL_ALLOC;
 
@@ -227,12 +227,12 @@ gossip_conf_set_bool (GossipConf  *conf,
 		      const gchar *key,
 		      gboolean     value)
 {
-	GossipConfPriv *priv;
+	GossipConfPrivate *priv;
 	NSString       *string;
 
 	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
 
-	priv = GET_PRIV (conf);
+	priv = GOSSIP_CONF_GET_PRIVATE (conf);
 
 	POOL_ALLOC;
 
@@ -251,12 +251,12 @@ gossip_conf_get_bool (GossipConf  *conf,
 		      const gchar *key,
 		      gboolean    *value)
 {
-	GossipConfPriv *priv;
+	GossipConfPrivate *priv;
 	NSString       *string;
 
 	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
 
-	priv = GET_PRIV (conf);
+	priv = GOSSIP_CONF_GET_PRIVATE (conf);
 
 	POOL_ALLOC;
 
@@ -273,12 +273,12 @@ gossip_conf_set_string (GossipConf  *conf,
 			const gchar *key,
 			const gchar *value)
 {
-	GossipConfPriv *priv;
+	GossipConfPrivate *priv;
 	NSString       *string, *nsvalue;
 
 	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
 
-	priv = GET_PRIV (conf);
+	priv = GOSSIP_CONF_GET_PRIVATE (conf);
 
 	POOL_ALLOC;
 
@@ -298,12 +298,12 @@ gossip_conf_get_string (GossipConf   *conf,
 			const gchar  *key,
 			gchar       **value)
 {
-	GossipConfPriv *priv;
+	GossipConfPrivate *priv;
 	NSString       *string, *nsvalue;
 
 	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
 
-	priv = GET_PRIV (conf);
+	priv = GOSSIP_CONF_GET_PRIVATE (conf);
 
 	POOL_ALLOC;
 
@@ -322,11 +322,11 @@ gossip_conf_set_string_list (GossipConf  *conf,
 			     const gchar *key,
 			     GSList      *value)
 {
-	GossipConfPriv *priv;
+	GossipConfPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
 
-	priv = GET_PRIV (conf);
+	priv = GOSSIP_CONF_GET_PRIVATE (conf);
 
 	return TRUE; /*gconf_client_set_string_list (priv->gconf_client,
 					     key,
@@ -340,11 +340,11 @@ gossip_conf_get_string_list (GossipConf   *conf,
 			     const gchar  *key,
 			     GSList      **value)
 {
-	GossipConfPriv *priv;
+	GossipConfPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
 
-	priv = GET_PRIV (conf);
+	priv = GOSSIP_CONF_GET_PRIVATE (conf);
 
 	*value = NULL; /*gconf_client_get_string_list (priv->gconf_client,
 					       key,
@@ -383,13 +383,13 @@ gossip_conf_notify_add (GossipConf           *conf,
 			GossipConfNotifyFunc func,
 			gpointer              user_data)
 {
-	GossipConfPriv       *priv;
+	GossipConfPrivate     *priv;
 	guint                  id;
 	GossipConfNotifyData *data;
 
 	g_return_val_if_fail (GOSSIP_IS_CONF (conf), 0);
 
-	priv = GET_PRIV (conf);
+	priv = GOSSIP_CONF_GET_PRIVATE (conf);
 
 	data = g_slice_new (GossipConfNotifyData);
 	data->func = func;
@@ -410,11 +410,11 @@ gboolean
 gossip_conf_notify_remove (GossipConf *conf,
 			   guint       id)
 {
-	GossipConfPriv *priv;
+	GossipConfPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
 
-	priv = GET_PRIV (conf);
+	priv = GOSSIP_CONF_GET_PRIVATE (conf);
 
 	/*gconf_client_notify_remove (priv->gconf_client, id);*/
 
@@ -432,11 +432,12 @@ gossip_conf_get_http_proxy (GossipConf  *conf,
 			    gchar      **username,
 			    gchar      **password)
 {
-	GossipConfPriv *priv;
+	GossipConfPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
 
-	priv = GET_PRIV (conf);
+	priv = GOSSIP_CONF_GET_PRIVATE (conf);
+
 	/*
 	*use_http_proxy = gconf_client_get_bool (priv->gconf_client,
 						 HTTP_PROXY_ROOT "/use_http_proxy",

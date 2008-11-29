@@ -18,18 +18,15 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "config.h"
+#include <config.h>
 
-#include "string.h"
+#include <string.h>
 
 #include "gossip-avatar.h"
 
 #define DEBUG_DOMAIN "Avatar"
 
 #define AVATAR_SIZE 32
-
-static gboolean   avatar_pixbuf_is_opaque (GdkPixbuf *pixbuf);
-static void       avatar_pixbuf_roundify  (GdkPixbuf *pixbuf);
 
 static gboolean
 avatar_pixbuf_is_opaque (GdkPixbuf *pixbuf)

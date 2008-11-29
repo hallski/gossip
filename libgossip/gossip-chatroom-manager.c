@@ -16,10 +16,9 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- * 
  */
 
-#include "config.h"
+#include <config.h>
 
 #include <string.h>
 #include <sys/types.h>
@@ -38,14 +37,14 @@
 
 #define DEBUG_DOMAIN "ChatroomManager"
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHATROOM_MANAGER, GossipChatroomManagerPriv))
+#define GOSSIP_CHATROOM_MANAGER_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHATROOM_MANAGER, GossipChatroomManagerPrivate))
 
 #define CHATROOMS_XML_FILENAME "chatrooms.xml"
 #define CHATROOMS_DTD_FILENAME "gossip-chatroom.dtd"
 
-typedef struct _GossipChatroomManagerPriv GossipChatroomManagerPriv;
+typedef struct _GossipChatroomManagerPrivate GossipChatroomManagerPrivate;
 
-struct _GossipChatroomManagerPriv {
+struct _GossipChatroomManagerPrivate {
 	GossipAccountManager *account_manager;
 	GossipContactManager *contact_manager;
 
@@ -137,7 +136,7 @@ gossip_chatroom_manager_class_init (GossipChatroomManagerClass *klass)
 			      1, GOSSIP_TYPE_CHATROOM);
 
 	g_type_class_add_private (object_class,
-				  sizeof (GossipChatroomManagerPriv));
+				  sizeof (GossipChatroomManagerPrivate));
 }
 
 static void
@@ -148,9 +147,9 @@ gossip_chatroom_manager_init (GossipChatroomManager *manager)
 static void
 chatroom_manager_finalize (GObject *object)
 {
-	GossipChatroomManagerPriv *priv;
+	GossipChatroomManagerPrivate *priv;
 
-	priv = GET_PRIV (object);
+	priv = GOSSIP_CHATROOM_MANAGER_GET_PRIVATE (object);
 
 	g_free (priv->chatrooms_file_name);
 	g_free (priv->default_name);
@@ -176,14 +175,14 @@ gossip_chatroom_manager_new (GossipAccountManager *account_manager,
 {
 
 	GossipChatroomManager     *manager;
-	GossipChatroomManagerPriv *priv;
+	GossipChatroomManagerPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (account_manager), NULL);
 	g_return_val_if_fail (GOSSIP_IS_CONTACT_MANAGER (contact_manager), NULL);
 
 	manager = g_object_new (GOSSIP_TYPE_CHATROOM_MANAGER, NULL);
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_CHATROOM_MANAGER_GET_PRIVATE (manager);
 
 	if (account_manager) {
 		priv->account_manager = g_object_ref (account_manager);
@@ -232,14 +231,14 @@ gboolean
 gossip_chatroom_manager_add (GossipChatroomManager *manager,
 			     GossipChatroom        *chatroom)
 {
-	GossipChatroomManagerPriv *priv;
+	GossipChatroomManagerPrivate *priv;
 	GossipContact             *own_contact;
 	const gchar               *name;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM_MANAGER (manager), FALSE);
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), FALSE);
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_CHATROOM_MANAGER_GET_PRIVATE (manager);
 
 	/* Don't add more than once */
 	if (gossip_chatroom_manager_find (manager, gossip_chatroom_get_id (chatroom))) {
@@ -286,13 +285,13 @@ void
 gossip_chatroom_manager_remove (GossipChatroomManager *manager,
 				GossipChatroom        *chatroom)
 {
-	GossipChatroomManagerPriv *priv;
+	GossipChatroomManagerPrivate *priv;
 	GList                     *link;
 
 	g_return_if_fail (GOSSIP_IS_CHATROOM_MANAGER (manager));
 	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_CHATROOM_MANAGER_GET_PRIVATE (manager);
 
 	gossip_debug (DEBUG_DOMAIN,
 		      "Removing chatroom with name:'%s'",
@@ -323,12 +322,12 @@ gossip_chatroom_manager_set_index (GossipChatroomManager *manager,
 				   GossipChatroom        *chatroom,
 				   gint                   index)
 {
-	GossipChatroomManagerPriv *priv;
+	GossipChatroomManagerPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_CHATROOM_MANAGER (manager));
 	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_CHATROOM_MANAGER_GET_PRIVATE (manager);
 
 	gossip_debug (DEBUG_DOMAIN,
 		      "Indexing chatroom with name:'%s' to position %d",
@@ -351,13 +350,13 @@ chatroom_manager_chatroom_favorite_cb (GossipChatroom        *chatroom,
 				       GParamSpec            *arg1,
 				       GossipChatroomManager *manager)
 {
-	GossipChatroomManagerPriv *priv;
+	GossipChatroomManagerPrivate *priv;
 
 	/* We sort here so we resort the list when a chatroom is
 	 * marked as a favorite, this way, newly added favorites
 	 * appear correctly in the right order.
 	 */
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_CHATROOM_MANAGER_GET_PRIVATE (manager);
 
 	priv->chatrooms = g_list_sort (priv->chatrooms, chatroom_sort_func);
 
@@ -369,13 +368,13 @@ chatroom_manager_chatroom_name_cb (GossipChatroom        *chatroom,
 				   GParamSpec            *arg1,
 				   GossipChatroomManager *manager)
 {
-	GossipChatroomManagerPriv *priv;
+	GossipChatroomManagerPrivate *priv;
 
 	/* We sort here so we resort the list when a chatroom name 
 	 * changes, this way, the list in the favorites menu stays up
 	 * to date.
 	 */
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_CHATROOM_MANAGER_GET_PRIVATE (manager);
 
 	priv->chatrooms = g_list_sort (priv->chatrooms, chatroom_sort_func);
 }
@@ -384,12 +383,12 @@ GList *
 gossip_chatroom_manager_get_chatrooms (GossipChatroomManager *manager,
 				       GossipAccount         *account)
 {
-	GossipChatroomManagerPriv *priv;
+	GossipChatroomManagerPrivate *priv;
 	GList                     *chatrooms, *l;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM_MANAGER (manager), NULL);
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_CHATROOM_MANAGER_GET_PRIVATE (manager);
 
 	if (!account) {
 		return g_list_copy (priv->chatrooms);
@@ -420,13 +419,13 @@ guint
 gossip_chatroom_manager_get_count (GossipChatroomManager *manager,
 				   GossipAccount         *account)
 {
-	GossipChatroomManagerPriv *priv;
+	GossipChatroomManagerPrivate *priv;
 	GList                     *l;
 	guint                      count = 0;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM_MANAGER (manager), 0);
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_CHATROOM_MANAGER_GET_PRIVATE (manager);
 
 	if (!account) {
 		return g_list_length (priv->chatrooms);
@@ -455,13 +454,13 @@ GossipChatroom *
 gossip_chatroom_manager_find (GossipChatroomManager *manager,
 			      GossipChatroomId       id)
 {
-	GossipChatroomManagerPriv *priv;
+	GossipChatroomManagerPrivate *priv;
 	GList                     *l;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM_MANAGER (manager), NULL);
 	g_return_val_if_fail (id >= 1, NULL);
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_CHATROOM_MANAGER_GET_PRIVATE (manager);
 
 	for (l = priv->chatrooms; l; l = l->next) {
 		GossipChatroom *chatroom;
@@ -482,7 +481,7 @@ gossip_chatroom_manager_find_extended (GossipChatroomManager *manager,
 				       const gchar           *server,
 				       const gchar           *room)
 {
-	GossipChatroomManagerPriv *priv;
+	GossipChatroomManagerPrivate *priv;
 	GList                     *found = NULL;
 	GList                     *l;
 
@@ -490,7 +489,7 @@ gossip_chatroom_manager_find_extended (GossipChatroomManager *manager,
 	g_return_val_if_fail (server != NULL, NULL);
 	g_return_val_if_fail (room != NULL, NULL);
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_CHATROOM_MANAGER_GET_PRIVATE (manager);
 
 	for (l = priv->chatrooms; l; l = l->next) {
 		GossipChatroom *chatroom;
@@ -566,13 +565,13 @@ void
 gossip_chatroom_manager_set_default (GossipChatroomManager *manager,
 				     GossipChatroom        *chatroom)
 {
-	GossipChatroomManagerPriv *priv;
+	GossipChatroomManagerPrivate *priv;
 	const gchar              *name;
 
 	g_return_if_fail (GOSSIP_IS_CHATROOM_MANAGER (manager));
 	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_CHATROOM_MANAGER_GET_PRIVATE (manager);
 
 	gossip_debug (DEBUG_DOMAIN,
 		      "Setting default chatroom with name:'%s'",
@@ -593,12 +592,12 @@ gossip_chatroom_manager_set_default (GossipChatroomManager *manager,
 GossipChatroom *
 gossip_chatroom_manager_get_default (GossipChatroomManager *manager)
 {
-	GossipChatroomManagerPriv *priv;
+	GossipChatroomManagerPrivate *priv;
 	GList                     *l;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM_MANAGER (manager), FALSE);
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_CHATROOM_MANAGER_GET_PRIVATE (manager);
 
 	for (l = priv->chatrooms; l && priv->default_name; l = l->next) {
 		GossipChatroom *chatroom;
@@ -636,11 +635,11 @@ gossip_chatroom_manager_store (GossipChatroomManager *manager)
 static gboolean
 chatroom_manager_get_all (GossipChatroomManager *manager)
 {
-	GossipChatroomManagerPriv *priv;
+	GossipChatroomManagerPrivate *priv;
 	gchar                     *dir;
 	gchar                     *file_with_path = NULL;
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_CHATROOM_MANAGER_GET_PRIVATE (manager);
 
 	/* Use default if no file specified. */
 	if (!priv->chatrooms_file_name) {
@@ -671,7 +670,7 @@ static void
 chatroom_manager_parse_chatroom (GossipChatroomManager *manager,
 				 xmlNodePtr             node)
 {
-	GossipChatroomManagerPriv *priv;
+	GossipChatroomManagerPrivate *priv;
 	GossipChatroom            *chatroom;
 	xmlNodePtr                 child;
 	gchar                     *str;
@@ -679,7 +678,7 @@ chatroom_manager_parse_chatroom (GossipChatroomManager *manager,
 	gchar                     *room, *password, *account_name;
 	gboolean                   auto_connect;
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_CHATROOM_MANAGER_GET_PRIVATE (manager);
 
 	/* Default values. */
 	name = NULL;
@@ -773,14 +772,14 @@ static gboolean
 chatroom_manager_file_parse (GossipChatroomManager *manager,
 			     const gchar          *filename)
 {
-	GossipChatroomManagerPriv *priv;
+	GossipChatroomManagerPrivate *priv;
 	xmlParserCtxtPtr          ctxt;
 	xmlDocPtr                 doc;
 	xmlNodePtr                chatrooms;
 	xmlNodePtr                node;
 	gchar                    *str;
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_CHATROOM_MANAGER_GET_PRIVATE (manager);
 
 	gossip_debug (DEBUG_DOMAIN, "Attempting to parse file:'%s'...", filename);
 
@@ -838,7 +837,7 @@ chatroom_manager_file_parse (GossipChatroomManager *manager,
 static gboolean
 chatroom_manager_file_save (GossipChatroomManager *manager)
 {
-	GossipChatroomManagerPriv *priv;
+	GossipChatroomManagerPrivate *priv;
 	xmlDocPtr                 doc;
 	xmlNodePtr                root;
 	GList                    *chatrooms;
@@ -846,7 +845,7 @@ chatroom_manager_file_save (GossipChatroomManager *manager)
 	gchar                    *dir;
 	gchar                    *file;
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_CHATROOM_MANAGER_GET_PRIVATE (manager);
 
 	if (priv->chatrooms_file_name) {
 		file = g_strdup (priv->chatrooms_file_name);

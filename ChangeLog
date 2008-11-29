@@ -1,3 +1,50 @@
+2008-11-29  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-account-manager.c:
+	* libgossip/gossip-account.c:
+	* libgossip/gossip-avatar.[ch]:
+	* libgossip/gossip-chatroom-invite.[ch]: 
+	* libgossip/gossip-chatroom-manager.c:
+	* libgossip/gossip-chatroom-provider.c:
+	* libgossip/gossip-chatroom.c: 
+	* libgossip/gossip-conf-cocoa.c:
+	* libgossip/gossip-conf-gnome.c:
+	* libgossip/gossip-conf-windows.c: 
+	* libgossip/gossip-contact-manager.c:
+	* libgossip/gossip-contact.c:
+	* libgossip/gossip-debug.c:
+	* libgossip/gossip-ebook.[ch]:
+	* libgossip/gossip-event-manager.c: 
+	* libgossip/gossip-event.c:
+	* libgossip/gossip-ft-provider.c:
+	* libgossip/gossip-ft.c:
+	* libgossip/gossip-jabber-chatrooms.c:
+	* libgossip/gossip-jabber-ft.c:
+	* libgossip/gossip-jabber-register.c:
+	* libgossip/gossip-jabber-services.c:
+	* libgossip/gossip-jabber-vcard.c:
+	* libgossip/gossip-jabber.[ch]: 
+	* libgossip/gossip-jid.c: 
+	* libgossip/gossip-log.c: 
+	* libgossip/gossip-message.c:
+	* libgossip/gossip-paths-gnome.c:
+	* libgossip/gossip-presence.c:
+	* libgossip/gossip-session.c:
+	* libgossip/gossip-sha.c:
+	* libgossip/gossip-stock.c:
+	* libgossip/gossip-time.c:
+	* libgossip/gossip-transport-protocol.c:
+	* libgossip/gossip-utils.c:
+	* libgossip/gossip-vcard.c:
+	* libgossip/gossip-version-info.c:
+	* src/gossip-account-widget-jabber.c: Code cleanups and
+	consistency. Also fixed places where we weren't using g_object_notify().
+
+2008-11-16  Martyn Russell  <marty@imendio.com>
+
+	* src/gossip-account-widget-jabber.c:
+	(account_widget_jabber_button_import_clicked_cb): Fixed build warnings.
+
 2008-11-04  Mikael Hallendal  <micke@imendio.com>
 
 	* libgossip/*.[ch]:

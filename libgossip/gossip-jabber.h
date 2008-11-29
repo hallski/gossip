@@ -39,7 +39,7 @@ G_BEGIN_DECLS
 
 typedef struct _GossipJabber      GossipJabber;
 typedef struct _GossipJabberClass GossipJabberClass;
-typedef struct _GossipJabberPriv  GossipJabberPriv;
+typedef struct _GossipJabberPrivate  GossipJabberPrivate;
 
 struct _GossipJabber {
 	GObject parent;

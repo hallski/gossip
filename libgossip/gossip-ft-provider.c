@@ -20,7 +20,7 @@
  * Authors: Martyn Russell <martyn@imendio.com>
  */
 
-#include "config.h"
+#include <config.h>
 
 #include "gossip-ft-provider.h"
 

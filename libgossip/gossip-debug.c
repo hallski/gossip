@@ -20,7 +20,7 @@
  * Authors: Richard Hult <richard@imendio.com>
  */
 
-#include "config.h"
+#include <config.h>
 
 #include <stdarg.h>
 #include <string.h>
@@ -90,4 +90,3 @@ gossip_debug_impl (const gchar *domain, const gchar *msg, ...)
 	}
 }
 
-#include "gossip-debug.h"

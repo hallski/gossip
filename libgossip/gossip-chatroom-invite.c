@@ -18,7 +18,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "config.h"
+#include <config.h>
 
 #include <glib.h>
 
@@ -63,17 +63,16 @@ gossip_chatroom_invite_new (GossipContact *inviter,
 
 	invite->inviter = g_object_ref (inviter);
 	invite->id = g_strdup (id);
-
-	if (reason) {
 		invite->reason = g_strdup (reason);
-	}
 
 	return invite;
 }
 
 GossipChatroomInvite *
-gossip_chatroom_invite_ref (GossipChatroomInvite *invite)
+gossip_chatroom_invite_ref (gpointer data)
 {
+	GossipChatroomInvite *invite = data;
+
 	g_return_val_if_fail (invite != NULL, NULL);
 	g_return_val_if_fail (invite->ref_count > 0, NULL);
 
@@ -83,8 +82,10 @@ gossip_chatroom_invite_ref (GossipChatroomInvite *invite)
 }
 
 void
-gossip_chatroom_invite_unref (GossipChatroomInvite *invite)
+gossip_chatroom_invite_unref (gpointer data)
 {
+	GossipChatroomInvite *invite = data;
+	
 	g_return_if_fail (invite != NULL);
 	g_return_if_fail (invite->ref_count > 0);
 

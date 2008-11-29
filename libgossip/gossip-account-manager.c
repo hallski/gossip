@@ -18,7 +18,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "config.h"
+#include <config.h>
 
 #include <string.h>
 #include <sys/types.h>
@@ -40,11 +40,11 @@
 #define ACCOUNTS_XML_FILENAME "accounts.xml"
 #define ACCOUNTS_DTD_FILENAME "gossip-account.dtd"
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_ACCOUNT_MANAGER, GossipAccountManagerPriv))
+#define GOSSIP_ACCOUNT_MANAGER_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_ACCOUNT_MANAGER, GossipAccountManagerPrivate))
 
-typedef struct _GossipAccountManagerPriv GossipAccountManagerPriv;
+typedef struct _GossipAccountManagerPrivate GossipAccountManagerPrivate;
 
-struct _GossipAccountManagerPriv {
+struct _GossipAccountManagerPrivate {
 	GList *accounts;
 
 	gchar *accounts_file_name;
@@ -105,8 +105,7 @@ gossip_account_manager_class_init (GossipAccountManagerClass *klass)
 			      G_TYPE_NONE,
 			      1, GOSSIP_TYPE_ACCOUNT);
 
-	g_type_class_add_private (object_class,
-				  sizeof (GossipAccountManagerPriv));
+	g_type_class_add_private (object_class, sizeof (GossipAccountManagerPrivate));
 }
 
 static void
@@ -117,9 +116,9 @@ gossip_account_manager_init (GossipAccountManager *manager)
 static void
 account_manager_finalize (GObject *object)
 {
-	GossipAccountManagerPriv *priv;
+	GossipAccountManagerPrivate *priv;
 
-	priv = GET_PRIV (object);
+	priv = GOSSIP_ACCOUNT_MANAGER_GET_PRIVATE (object);
 
 	g_list_foreach (priv->accounts, (GFunc) g_object_unref, NULL);
 	g_list_free (priv->accounts);
@@ -137,11 +136,11 @@ gossip_account_manager_new (const gchar *filename)
 {
 
 	GossipAccountManager     *manager;
-	GossipAccountManagerPriv *priv;
+	GossipAccountManagerPrivate *priv;
 
 	manager = g_object_new (GOSSIP_TYPE_ACCOUNT_MANAGER, NULL);
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_ACCOUNT_MANAGER_GET_PRIVATE (manager);
 
 	if (filename) {
 		priv->accounts_file_name = g_strdup (filename);
@@ -157,14 +156,14 @@ gboolean
 gossip_account_manager_add (GossipAccountManager *manager,
 			    GossipAccount        *account)
 {
-	GossipAccountManagerPriv *priv;
+	GossipAccountManagerPrivate *priv;
 	GList                    *l;
 	const gchar              *name;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager), FALSE);
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), FALSE);
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_ACCOUNT_MANAGER_GET_PRIVATE (manager);
 
 	/* Don't add more than once */
 	for (l = priv->accounts; l; l = l->next) {
@@ -188,12 +187,12 @@ void
 gossip_account_manager_remove (GossipAccountManager *manager,
 			       GossipAccount        *account)
 {
-	GossipAccountManagerPriv *priv;
+	GossipAccountManagerPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager));
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_ACCOUNT_MANAGER_GET_PRIVATE (manager);
 
 	gossip_debug (DEBUG_DOMAIN,
 		      "Removing account with name:'%s'",
@@ -209,12 +208,12 @@ gossip_account_manager_remove (GossipAccountManager *manager,
 GList *
 gossip_account_manager_get_accounts (GossipAccountManager *manager)
 {
-	GossipAccountManagerPriv *priv;
+	GossipAccountManagerPrivate *priv;
 	GList                    *accounts;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager), NULL);
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_ACCOUNT_MANAGER_GET_PRIVATE (manager);
 
 	accounts = g_list_copy (priv->accounts);
 	g_list_foreach (accounts, (GFunc) g_object_ref, NULL);
@@ -225,11 +224,11 @@ gossip_account_manager_get_accounts (GossipAccountManager *manager)
 guint
 gossip_account_manager_get_count (GossipAccountManager *manager)
 {
-	GossipAccountManagerPriv *priv;
+	GossipAccountManagerPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager), 0);
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_ACCOUNT_MANAGER_GET_PRIVATE (manager);
 
 	return g_list_length (priv->accounts);
 }
@@ -239,13 +238,13 @@ GossipAccount *
 gossip_account_manager_find (GossipAccountManager *manager,
 			     const gchar          *name)
 {
-	GossipAccountManagerPriv *priv;
+	GossipAccountManagerPrivate *priv;
 	GList                    *l;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager), NULL);
 	g_return_val_if_fail (name != NULL, NULL);
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_ACCOUNT_MANAGER_GET_PRIVATE (manager);
 
 	for (l = priv->accounts; l; l = l->next) {
 		GossipAccount *account;
@@ -266,13 +265,13 @@ GossipAccount *
 gossip_account_manager_find_by_id (GossipAccountManager *manager,
 				   const gchar          *id)
 {
-	GossipAccountManagerPriv *priv;
+	GossipAccountManagerPrivate *priv;
 	GList                    *l;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager), NULL);
 	g_return_val_if_fail (!G_STR_EMPTY (id), NULL);
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_ACCOUNT_MANAGER_GET_PRIVATE (manager);
 
 	for (l = priv->accounts; l; l = l->next) {
 		GossipAccount *account;
@@ -294,12 +293,12 @@ void
 gossip_account_manager_set_overridden_default (GossipAccountManager *manager,
 					       const gchar          *name)
 {
-	GossipAccountManagerPriv *priv;
+	GossipAccountManagerPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager));
 	g_return_if_fail (name != NULL);
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_ACCOUNT_MANAGER_GET_PRIVATE (manager);
 
 	gossip_debug (DEBUG_DOMAIN,
 		      "Setting overriding default account with name:'%s'",
@@ -313,13 +312,13 @@ void
 gossip_account_manager_set_default (GossipAccountManager *manager,
 				    GossipAccount        *account)
 {
-	GossipAccountManagerPriv *priv;
+	GossipAccountManagerPrivate *priv;
 	const gchar              *name;
 
 	g_return_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager));
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_ACCOUNT_MANAGER_GET_PRIVATE (manager);
 
 	gossip_debug (DEBUG_DOMAIN,
 		      "Setting default account with name:'%s'",
@@ -340,12 +339,12 @@ gossip_account_manager_set_default (GossipAccountManager *manager,
 GossipAccount *
 gossip_account_manager_get_default (GossipAccountManager *manager)
 {
-	GossipAccountManagerPriv *priv;
+	GossipAccountManagerPrivate *priv;
 	const gchar              *name;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager), FALSE);
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_ACCOUNT_MANAGER_GET_PRIVATE (manager);
 
 	/* use override name first */
 	name = priv->default_name_override;
@@ -397,11 +396,11 @@ gossip_account_manager_store (GossipAccountManager *manager)
 static gboolean
 account_manager_get_all (GossipAccountManager *manager)
 {
-	GossipAccountManagerPriv *priv;
+	GossipAccountManagerPrivate *priv;
 	gchar                    *dir;
 	gchar                    *file_with_path = NULL;
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_ACCOUNT_MANAGER_GET_PRIVATE (manager);
 
 	/* Use default if no file specified. */
 	if (!priv->accounts_file_name) {
@@ -507,14 +506,14 @@ static gboolean
 account_manager_file_parse (GossipAccountManager *manager,
 			    const gchar          *filename)
 {
-	GossipAccountManagerPriv *priv;
+	GossipAccountManagerPrivate *priv;
 	xmlParserCtxtPtr          ctxt;
 	xmlDocPtr                 doc;
 	xmlNodePtr                accounts;
 	xmlNodePtr                node;
 	gchar                    *str;
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_ACCOUNT_MANAGER_GET_PRIVATE (manager);
 
 	gossip_debug (DEBUG_DOMAIN,
 		      "Attempting to parse file:'%s'...",
@@ -575,7 +574,7 @@ account_manager_file_parse (GossipAccountManager *manager,
 static gboolean
 account_manager_file_save (GossipAccountManager *manager)
 {
-	GossipAccountManagerPriv *priv;
+	GossipAccountManagerPrivate *priv;
 	xmlDocPtr                 doc;
 	xmlDocPtr                 old_doc;
 	xmlNodePtr                root;
@@ -588,7 +587,7 @@ account_manager_file_save (GossipAccountManager *manager)
 	mode_t                    old_mask;
 #endif /* G_OS_WIN32 */
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_ACCOUNT_MANAGER_GET_PRIVATE (manager);
 
 	if (priv->accounts_file_name) {
 		xml_file = g_strdup (priv->accounts_file_name);
@@ -699,13 +698,13 @@ gboolean
 gossip_account_manager_set_unique_name (GossipAccountManager *manager,
 					GossipAccount        *account)
 {
-	GossipAccountManagerPriv *priv;
+	GossipAccountManagerPrivate *priv;
 	GList                    *l;
 	gchar                    *new_name;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager), FALSE);
 
-	priv = GET_PRIV (manager);
+	priv = GOSSIP_ACCOUNT_MANAGER_GET_PRIVATE (manager);
 
 	new_name = g_strdup (gossip_account_get_name (account));
 	l = priv->accounts;

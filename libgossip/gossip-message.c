@@ -20,15 +20,15 @@
  * Authors: Mikael Hallendal <micke@imendio.com>
  */
 
-#include "config.h"
+#include <config.h>
 
 #include "gossip-message.h"
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_MESSAGE, GossipMessagePriv))
+#define GOSSIP_MESSAGE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_MESSAGE, GossipMessagePrivate))
 
-typedef struct _GossipMessagePriv GossipMessagePriv;
+typedef struct _GossipMessagePrivate GossipMessagePrivate;
 
-struct _GossipMessagePriv {
+struct _GossipMessagePrivate {
 	GossipContact        *recipient;
 	gchar                *resource;
 
@@ -194,16 +194,16 @@ gossip_message_class_init (GossipMessageClass *class)
 							     GOSSIP_TYPE_CHATROOM_INVITE,
 							     G_PARAM_READWRITE));
 
-	g_type_class_add_private (object_class, sizeof (GossipMessagePriv));
+	g_type_class_add_private (object_class, sizeof (GossipMessagePrivate));
 
 }
 
 static void
 gossip_message_init (GossipMessage *message)
 {
-	GossipMessagePriv *priv;
+	GossipMessagePrivate *priv;
 
-	priv = GET_PRIV (message);
+	priv = GOSSIP_MESSAGE_GET_PRIVATE (message);
 
 	priv->recipient = NULL;
 	priv->sender = NULL;
@@ -223,9 +223,9 @@ gossip_message_init (GossipMessage *message)
 static void
 gossip_message_finalize (GObject *object)
 {
-	GossipMessagePriv *priv;
+	GossipMessagePrivate *priv;
 
-	priv = GET_PRIV (object);
+	priv = GOSSIP_MESSAGE_GET_PRIVATE (object);
 
 	if (priv->recipient) {
 		g_object_unref (priv->recipient);
@@ -254,9 +254,9 @@ message_get_property (GObject    *object,
 		      GValue     *value,
 		      GParamSpec *pspec)
 {
-	GossipMessagePriv *priv;
+	GossipMessagePrivate *priv;
 
-	priv = GET_PRIV (object);
+	priv = GOSSIP_MESSAGE_GET_PRIVATE (object);
 
 	switch (param_id) {
 	case PROP_RECIPIENT:
@@ -298,9 +298,9 @@ message_set_property (GObject      *object,
 		      const GValue *value,
 		      GParamSpec   *pspec)
 {
-	GossipMessagePriv *priv;
+	GossipMessagePrivate *priv;
 
-	priv = GET_PRIV (object);
+	priv = GOSSIP_MESSAGE_GET_PRIVATE (object);
 
 	switch (param_id) {
 	case PROP_RECIPIENT:
@@ -356,12 +356,12 @@ gossip_message_new (GossipMessageType  type,
 GossipMessageType
 gossip_message_get_type (GossipMessage *message)
 {
-	GossipMessagePriv *priv;
+	GossipMessagePrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_MESSAGE (message),
 			      GOSSIP_MESSAGE_TYPE_NORMAL);
 
-	priv = GET_PRIV (message);
+	priv = GOSSIP_MESSAGE_GET_PRIVATE (message);
 
 	return priv->type;
 }
@@ -369,11 +369,11 @@ gossip_message_get_type (GossipMessage *message)
 GossipContact *
 gossip_message_get_recipient (GossipMessage *message)
 {
-	GossipMessagePriv *priv;
+	GossipMessagePrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_MESSAGE (message), NULL);
 
-	priv = GET_PRIV (message);
+	priv = GOSSIP_MESSAGE_GET_PRIVATE (message);
 
 	return priv->recipient;
 }
@@ -381,13 +381,13 @@ gossip_message_get_recipient (GossipMessage *message)
 void
 gossip_message_set_recipient (GossipMessage *message, GossipContact *contact)
 {
-	GossipMessagePriv *priv;
+	GossipMessagePrivate *priv;
 	GossipContact     *old_recipient;
 
 	g_return_if_fail (GOSSIP_IS_MESSAGE (message));
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 
-	priv = GET_PRIV (message);
+	priv = GOSSIP_MESSAGE_GET_PRIVATE (message);
 
 	old_recipient = priv->recipient;
 	priv->recipient = g_object_ref (contact);
@@ -402,11 +402,11 @@ gossip_message_set_recipient (GossipMessage *message, GossipContact *contact)
 const gchar *
 gossip_message_get_explicit_resource (GossipMessage *message)
 {
-	GossipMessagePriv *priv;
+	GossipMessagePrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_MESSAGE (message), "");
 
-	priv = GET_PRIV (message);
+	priv = GOSSIP_MESSAGE_GET_PRIVATE (message);
 
 	return priv->resource;
 }
@@ -415,19 +415,14 @@ void
 gossip_message_set_explicit_resource (GossipMessage *message,
 				      const gchar   *resource)
 {
-	GossipMessagePriv *priv;
+	GossipMessagePrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_MESSAGE (message));
 
-	priv = GET_PRIV (message);
+	priv = GOSSIP_MESSAGE_GET_PRIVATE (message);
 
 	g_free (priv->resource);
-
-	if (resource) {
 		priv->resource = g_strdup (resource);
-	} else {
-		priv->resource = g_strdup ("");
-	}
 
 	g_object_notify (G_OBJECT (message), "resource");
 }
@@ -435,11 +430,11 @@ gossip_message_set_explicit_resource (GossipMessage *message,
 GossipContact *
 gossip_message_get_sender (GossipMessage *message)
 {
-	GossipMessagePriv *priv;
+	GossipMessagePrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_MESSAGE (message), NULL);
 
-	priv = GET_PRIV (message);
+	priv = GOSSIP_MESSAGE_GET_PRIVATE (message);
 
 	return priv->sender;
 }
@@ -447,13 +442,13 @@ gossip_message_get_sender (GossipMessage *message)
 void
 gossip_message_set_sender (GossipMessage *message, GossipContact *contact)
 {
-	GossipMessagePriv *priv;
+	GossipMessagePrivate *priv;
 	GossipContact     *old_sender;
 
 	g_return_if_fail (GOSSIP_IS_MESSAGE (message));
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 
-	priv = GET_PRIV (message);
+	priv = GOSSIP_MESSAGE_GET_PRIVATE (message);
 
 	old_sender = priv->sender;
 	priv->sender = g_object_ref (contact);
@@ -468,11 +463,11 @@ gossip_message_set_sender (GossipMessage *message, GossipContact *contact)
 const gchar *
 gossip_message_get_subject (GossipMessage *message)
 {
-	GossipMessagePriv *priv;
+	GossipMessagePrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_MESSAGE (message), NULL);
 
-	priv = GET_PRIV (message);
+	priv = GOSSIP_MESSAGE_GET_PRIVATE (message);
 
 	return priv->subject;
 }
@@ -481,19 +476,14 @@ void
 gossip_message_set_subject (GossipMessage *message,
 			    const gchar   *subject)
 {
-	GossipMessagePriv *priv;
+	GossipMessagePrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_MESSAGE (message));
 
-	priv = GET_PRIV (message);
+	priv = GOSSIP_MESSAGE_GET_PRIVATE (message);
 
 	g_free (priv->subject);
-
-	if (subject) {
 		priv->subject = g_strdup (subject);
-	} else {
-		priv->subject = NULL;
-	}
 
 	g_object_notify (G_OBJECT (message), "subject");
 }
@@ -501,11 +491,11 @@ gossip_message_set_subject (GossipMessage *message,
 const gchar *
 gossip_message_get_body (GossipMessage *message)
 {
-	GossipMessagePriv *priv;
+	GossipMessagePrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_MESSAGE (message), NULL);
 
-	priv = GET_PRIV (message);
+	priv = GOSSIP_MESSAGE_GET_PRIVATE (message);
 
 	return priv->body;
 }
@@ -514,19 +504,14 @@ void
 gossip_message_set_body (GossipMessage *message,
 			 const gchar   *body)
 {
-	GossipMessagePriv *priv;
+	GossipMessagePrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_MESSAGE (message));
 
-	priv = GET_PRIV (message);
+	priv = GOSSIP_MESSAGE_GET_PRIVATE (message);
 
 	g_free (priv->body);
-
-	if (body) {
 		priv->body = g_strdup (body);
-	} else {
-		priv->body = NULL;
-	}
 
 	g_object_notify (G_OBJECT (message), "body");
 }
@@ -534,11 +519,11 @@ gossip_message_set_body (GossipMessage *message,
 const gchar *
 gossip_message_get_thread (GossipMessage *message)
 {
-	GossipMessagePriv *priv;
+	GossipMessagePrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_MESSAGE (message), NULL);
 
-	priv = GET_PRIV (message);
+	priv = GOSSIP_MESSAGE_GET_PRIVATE (message);
 
 	return priv->thread;
 }
@@ -547,19 +532,14 @@ void
 gossip_message_set_thread (GossipMessage *message,
 			   const gchar   *thread)
 {
-	GossipMessagePriv *priv;
+	GossipMessagePrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_MESSAGE (message));
 
-	priv = GET_PRIV (message);
+	priv = GOSSIP_MESSAGE_GET_PRIVATE (message);
 
 	g_free (priv->thread);
-
-	if (thread) {
 		priv->thread = g_strdup (thread);
-	} else {
-		priv->thread = NULL;
-	}
 
 	g_object_notify (G_OBJECT (message), "thread");
 }
@@ -567,11 +547,11 @@ gossip_message_set_thread (GossipMessage *message,
 GossipTime
 gossip_message_get_timestamp (GossipMessage *message)
 {
-	GossipMessagePriv *priv;
+	GossipMessagePrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_MESSAGE (message), -1);
 
-	priv = GET_PRIV (message);
+	priv = GOSSIP_MESSAGE_GET_PRIVATE (message);
 
 	return priv->timestamp;
 }
@@ -580,12 +560,12 @@ void
 gossip_message_set_timestamp (GossipMessage *message,
 			      GossipTime     timestamp)
 {
-	GossipMessagePriv *priv;
+	GossipMessagePrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_MESSAGE (message));
 	g_return_if_fail (timestamp >= -1);
 
-	priv = GET_PRIV (message);
+	priv = GOSSIP_MESSAGE_GET_PRIVATE (message);
 
 	if (timestamp <= 0) {
 		priv->timestamp = gossip_time_get_current ();
@@ -620,11 +600,11 @@ gossip_message_get_date_and_time (GossipMessage *message, time_t *timestamp)
 GossipChatroomInvite *
 gossip_message_get_invite (GossipMessage *message)
 {
-	GossipMessagePriv *priv;
+	GossipMessagePrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_MESSAGE (message), NULL);
 
-	priv = GET_PRIV (message);
+	priv = GOSSIP_MESSAGE_GET_PRIVATE (message);
 
 	return priv->invite;
 }
@@ -633,11 +613,11 @@ void
 gossip_message_set_invite (GossipMessage        *message,
 			   GossipChatroomInvite *invite)
 {
-	GossipMessagePriv *priv;
+	GossipMessagePrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_MESSAGE (message));
 
-	priv = GET_PRIV (message);
+	priv = GOSSIP_MESSAGE_GET_PRIVATE (message);
 
 	if (priv->invite) {
 		gossip_chatroom_invite_unref (priv->invite);
@@ -655,25 +635,25 @@ gossip_message_set_invite (GossipMessage        *message,
 void
 gossip_message_request_composing (GossipMessage *message)
 {
-	GossipMessagePriv *priv;
+	GossipMessagePrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_MESSAGE (message));
 
-	priv = GET_PRIV (message);
+	priv = GOSSIP_MESSAGE_GET_PRIVATE (message);
 
 	priv->request_composing = TRUE;
 
-	g_object_notify (G_OBJECT (message), "request_composing");
+	g_object_notify (G_OBJECT (message), "request-composing");
 }
 
 gboolean
 gossip_message_is_requesting_composing (GossipMessage *message)
 {
-	GossipMessagePriv *priv;
+	GossipMessagePrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_MESSAGE (message), FALSE);
 
-	priv = GET_PRIV (message);
+	priv = GOSSIP_MESSAGE_GET_PRIVATE (message);
 
 	return priv->request_composing;
 }
@@ -684,11 +664,11 @@ gossip_message_is_requesting_composing (GossipMessage *message)
 gboolean
 gossip_message_is_action (GossipMessage *message)
 {
-	GossipMessagePriv *priv;
+	GossipMessagePrivate *priv;
 	
 	g_return_val_if_fail (GOSSIP_IS_MESSAGE (message), FALSE);
 
-	priv = GET_PRIV (message);
+	priv = GOSSIP_MESSAGE_GET_PRIVATE (message);
 
 	if (g_str_has_prefix (priv->body, "/me")) {
 		return TRUE;
@@ -700,11 +680,11 @@ gossip_message_is_action (GossipMessage *message)
 gchar *
 gossip_message_get_action_string (GossipMessage *message)
 {
-	GossipMessagePriv *priv;
+	GossipMessagePrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_MESSAGE (message), NULL);
 
-	priv = GET_PRIV (message);
+	priv = GOSSIP_MESSAGE_GET_PRIVATE (message);
 
 	return g_strdup_printf (" * %s %s", 
 				gossip_contact_get_name (priv->sender),

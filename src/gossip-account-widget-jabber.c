@@ -808,8 +808,10 @@ account_widget_jabber_button_import_clicked_cb (GtkWidget                 *butto
 					     GTK_DIALOG_MODAL,
 					     GTK_MESSAGE_INFO,
 					     GTK_BUTTONS_CLOSE,
+					     "%s",
 					     msg1);
 		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (md),
+							  "%s",
 							  msg2);
 
 		g_signal_connect_swapped (md, "response", 

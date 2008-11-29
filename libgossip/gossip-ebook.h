@@ -65,4 +65,4 @@ gboolean      gossip_ebook_set_avatar    (GossipAvatar *avatar);
 
 G_END_DECLS
 
-#endif
+#endif /* __GOSSIP_EBOOK_H__ */

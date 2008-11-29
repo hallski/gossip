@@ -41,11 +41,11 @@
 
 #define DEBUG_DOMAIN "Account"
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_ACCOUNT, GossipAccountPriv))
+#define GOSSIP_ACCOUNT_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_ACCOUNT, GossipAccountPrivate))
 
-typedef struct _GossipAccountPriv GossipAccountPriv;
+typedef struct _GossipAccountPrivate GossipAccountPrivate;
 
-struct _GossipAccountPriv {
+struct _GossipAccountPrivate {
 	gchar    *name;
 	gchar    *id;
 	gchar    *password;
@@ -200,7 +200,7 @@ gossip_account_class_init (GossipAccountClass *klass)
 							       TRUE,
 							       G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 	
-	g_type_class_add_private (object_class, sizeof (GossipAccountPriv));
+	g_type_class_add_private (object_class, sizeof (GossipAccountPrivate));
 }
 
 static void
@@ -211,9 +211,9 @@ gossip_account_init (GossipAccount *account)
 static void
 account_finalize (GObject *object)
 {
-	GossipAccountPriv *priv;
+	GossipAccountPrivate *priv;
 	
-	priv = GET_PRIV (object);
+	priv = GOSSIP_ACCOUNT_GET_PRIVATE (object);
 	
 	g_free (priv->name);
 
@@ -232,9 +232,9 @@ account_get_property (GObject    *object,
 		      GValue     *value,
 		      GParamSpec *pspec)
 {
-	GossipAccountPriv *priv;
+	GossipAccountPrivate *priv;
 	
-	priv = GET_PRIV (object);
+	priv = GOSSIP_ACCOUNT_GET_PRIVATE (object);
 
 	switch (param_id) {
 	case PROP_NAME:
@@ -288,9 +288,9 @@ account_set_property (GObject      *object,
 		      const GValue *value,
 		      GParamSpec   *pspec)
 {
-	GossipAccountPriv *priv;
+	GossipAccountPrivate *priv;
 	
-	priv = GET_PRIV (object);
+	priv = GOSSIP_ACCOUNT_GET_PRIVATE (object);
 	
 	switch (param_id) {
 	case PROP_NAME:
@@ -373,22 +373,23 @@ account_gnome_keyring_result_to_string (GnomeKeyringResult result)
 const gchar *
 gossip_account_get_name (GossipAccount *account)
 {
-	GossipAccountPriv *priv;
+	GossipAccountPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
 
-	priv = GET_PRIV (account);
+	priv = GOSSIP_ACCOUNT_GET_PRIVATE (account);
 	return priv->name;
 }
 
 const gchar *
 gossip_account_get_id (GossipAccount *account)
 {
-	GossipAccountPriv *priv;
+	GossipAccountPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
 
-	priv = GET_PRIV (account);
+	priv = GOSSIP_ACCOUNT_GET_PRIVATE (account);
+
 	return priv->id;
 }
 
@@ -397,7 +398,7 @@ gossip_account_get_id (GossipAccount *account)
 const gchar *
 gossip_account_get_password (GossipAccount *account)
 {
-	GossipAccountPriv                *priv;
+	GossipAccountPrivate                *priv;
 	GnomeKeyringNetworkPasswordData  *data;
 	GnomeKeyringResult                result;
 	GList                            *passwords;
@@ -406,7 +407,7 @@ gossip_account_get_password (GossipAccount *account)
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
 
-	priv = GET_PRIV (account);
+	priv = GOSSIP_ACCOUNT_GET_PRIVATE (account);
 
 	/* Note: We don't use the port because usually that just
 	 * defines a secure or insecure method of using the same
@@ -474,11 +475,11 @@ gossip_account_get_password (GossipAccount *account)
 const gchar *
 gossip_account_get_password (GossipAccount *account)
 {
-	GossipAccountPriv *priv;
+	GossipAccountPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
 
-	priv = GET_PRIV (account);
+	priv = GOSSIP_ACCOUNT_GET_PRIVATE (account);
 
 	return priv->password;
 }
@@ -488,11 +489,11 @@ gossip_account_get_password (GossipAccount *account)
 const gchar *
 gossip_account_get_password_tmp (GossipAccount *account)
 {
-	GossipAccountPriv *priv;
+	GossipAccountPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
 
-	priv = GET_PRIV (account);
+	priv = GOSSIP_ACCOUNT_GET_PRIVATE (account);
 
 	return priv->password_tmp;
 }
@@ -500,88 +501,96 @@ gossip_account_get_password_tmp (GossipAccount *account)
 const gchar *
 gossip_account_get_resource (GossipAccount *account)
 {
-	GossipAccountPriv *priv;
+	GossipAccountPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
 
-	priv = GET_PRIV (account);
+	priv = GOSSIP_ACCOUNT_GET_PRIVATE (account);
+
 	return priv->resource;
 }
 
 const gchar *
 gossip_account_get_server (GossipAccount *account)
 {
-	GossipAccountPriv *priv;
+	GossipAccountPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
 
-	priv = GET_PRIV (account);
+	priv = GOSSIP_ACCOUNT_GET_PRIVATE (account);
+
 	return priv->server;
 }
 
 guint16
 gossip_account_get_port (GossipAccount *account)
 {
-	GossipAccountPriv *priv;
+	GossipAccountPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), 0);
 
-	priv = GET_PRIV (account);
+	priv = GOSSIP_ACCOUNT_GET_PRIVATE (account);
+
 	return priv->port;
 }
 
 gboolean
 gossip_account_get_auto_connect (GossipAccount *account)
 {
-	GossipAccountPriv *priv;
+	GossipAccountPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), TRUE);
 
-	priv = GET_PRIV (account);
+	priv = GOSSIP_ACCOUNT_GET_PRIVATE (account);
+
 	return priv->auto_connect;
 }
 
 gboolean
 gossip_account_get_use_ssl (GossipAccount *account)
 {
-	GossipAccountPriv *priv;
+	GossipAccountPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), FALSE);
 
-	priv = GET_PRIV (account);
+	priv = GOSSIP_ACCOUNT_GET_PRIVATE (account);
+
 	return priv->use_ssl;
 }
 
 gboolean
 gossip_account_get_use_proxy (GossipAccount *account)
 {
-	GossipAccountPriv *priv;
+	GossipAccountPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), FALSE);
 
-	priv = GET_PRIV (account);
+	priv = GOSSIP_ACCOUNT_GET_PRIVATE (account);
+
 	return priv->use_proxy;
 }
 
 gboolean
 gossip_account_get_force_old_ssl (GossipAccount *account)
 {
-	GossipAccountPriv *priv;
+	GossipAccountPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), FALSE);
 
-	priv = GET_PRIV (account);
+	priv = GOSSIP_ACCOUNT_GET_PRIVATE (account);
+
 	return priv->force_old_ssl;
 }
 
 gboolean
 gossip_account_get_ignore_ssl_errors (GossipAccount *account)
 {
-	GossipAccountPriv *priv;
+	GossipAccountPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), TRUE);
 
-	priv = GET_PRIV (account);
+	priv = GOSSIP_ACCOUNT_GET_PRIVATE (account);
+
 	return priv->ignore_ssl_errors;
 }
 
@@ -589,12 +598,12 @@ void
 gossip_account_set_name (GossipAccount *account,
 			 const gchar   *name)
 {
-	GossipAccountPriv *priv;
+	GossipAccountPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 	g_return_if_fail (name != NULL);
 	
-	priv = GET_PRIV (account);
+	priv = GOSSIP_ACCOUNT_GET_PRIVATE (account);
 	
 	g_free (priv->name);
 	priv->name = g_strdup (name);
@@ -606,12 +615,12 @@ void
 gossip_account_set_id (GossipAccount *account,
 		       const gchar   *id)
 {
-	GossipAccountPriv *priv;
+	GossipAccountPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 	g_return_if_fail (id != NULL);
 	
-	priv = GET_PRIV (account);
+	priv = GOSSIP_ACCOUNT_GET_PRIVATE (account);
 
 	g_free (priv->id);
 	priv->id = g_strdup (id);
@@ -625,7 +634,7 @@ void
 gossip_account_set_password (GossipAccount *account,
 			     const gchar   *password)
 {
-	GossipAccountPriv  *priv;
+	GossipAccountPrivate  *priv;
 	GnomeKeyringResult  result;
 	gchar              *user;
 	gchar              *server;
@@ -634,7 +643,7 @@ gossip_account_set_password (GossipAccount *account,
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 	g_return_if_fail (password != NULL);
 
-	priv = GET_PRIV (account);
+	priv = GOSSIP_ACCOUNT_GET_PRIVATE (account);
 
 	/* Note: We don't use the port because usually that just
 	 * defines a secure or insecure method of using the same
@@ -692,12 +701,12 @@ void
 gossip_account_set_password (GossipAccount *account,
 			     const gchar   *password)
 {
-	GossipAccountPriv *priv;
+	GossipAccountPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 	g_return_if_fail (password != NULL);
 	
-	priv = GET_PRIV (account);
+	priv = GOSSIP_ACCOUNT_GET_PRIVATE (account);
 	
 	g_free (priv->password);
 	priv->password = g_strdup (password);
@@ -711,11 +720,11 @@ void
 gossip_account_set_password_tmp (GossipAccount *account,
 				 const gchar   *password)
 {
-	GossipAccountPriv *priv;
+	GossipAccountPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 	
-	priv = GET_PRIV (account);
+	priv = GOSSIP_ACCOUNT_GET_PRIVATE (account);
 	
 	g_free (priv->password_tmp);
 
@@ -732,12 +741,12 @@ void
 gossip_account_set_resource (GossipAccount *account,
 			     const gchar   *resource)
 {
-	GossipAccountPriv *priv;
+	GossipAccountPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 	g_return_if_fail (resource != NULL);
 
-	priv = GET_PRIV (account);
+	priv = GOSSIP_ACCOUNT_GET_PRIVATE (account);
 	
 	g_free (priv->resource);
 	priv->resource = g_strdup (resource);
@@ -749,12 +758,12 @@ void
 gossip_account_set_server (GossipAccount *account,
 			   const gchar   *server)
 {
-	GossipAccountPriv *priv;
+	GossipAccountPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 	g_return_if_fail (server != NULL);
 
-	priv = GET_PRIV (account);
+	priv = GOSSIP_ACCOUNT_GET_PRIVATE (account);
 	
 	g_free (priv->server);
 	priv->server = g_strdup (server);
@@ -766,11 +775,11 @@ void
 gossip_account_set_port (GossipAccount *account,
 			 guint16        port)
 {
-	GossipAccountPriv *priv;
+	GossipAccountPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 
-	priv = GET_PRIV (account);
+	priv = GOSSIP_ACCOUNT_GET_PRIVATE (account);
 	priv->port = port;
 
 	g_object_notify (G_OBJECT (account), "port");
@@ -780,11 +789,11 @@ void
 gossip_account_set_auto_connect (GossipAccount *account,
 				 gboolean       auto_connect)
 {
-	GossipAccountPriv *priv;
+	GossipAccountPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 
-	priv = GET_PRIV (account);
+	priv = GOSSIP_ACCOUNT_GET_PRIVATE (account);
 	priv->auto_connect = auto_connect;
 
 	g_object_notify (G_OBJECT (account), "auto-connect");
@@ -794,11 +803,11 @@ void
 gossip_account_set_use_ssl (GossipAccount *account,
  			    gboolean       use_ssl)
 {
-	GossipAccountPriv *priv;
+	GossipAccountPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 
-	priv = GET_PRIV (account);
+	priv = GOSSIP_ACCOUNT_GET_PRIVATE (account);
 	priv->use_ssl = use_ssl;
 
 	g_object_notify (G_OBJECT (account), "use-ssl");
@@ -808,11 +817,11 @@ void
 gossip_account_set_use_proxy (GossipAccount *account,
 			      gboolean       use_proxy)
 {
-	GossipAccountPriv *priv;
+	GossipAccountPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 
-	priv = GET_PRIV (account);
+	priv = GOSSIP_ACCOUNT_GET_PRIVATE (account);
 	priv->use_proxy = use_proxy;
 
 	g_object_notify (G_OBJECT (account), "use-proxy");
@@ -822,11 +831,11 @@ void
 gossip_account_set_force_old_ssl (GossipAccount *account,
 				  gboolean       force_old_ssl)
 {
-	GossipAccountPriv *priv;
+	GossipAccountPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 
-	priv = GET_PRIV (account);
+	priv = GOSSIP_ACCOUNT_GET_PRIVATE (account);
 	priv->force_old_ssl = force_old_ssl;
 
 	g_object_notify (G_OBJECT (account), "force-old-ssl");
@@ -836,11 +845,11 @@ void
 gossip_account_set_ignore_ssl_errors (GossipAccount *account,
 				      gboolean       ignore_ssl_errors)
 {
-	GossipAccountPriv *priv;
+	GossipAccountPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 
-	priv = GET_PRIV (account);
+	priv = GOSSIP_ACCOUNT_GET_PRIVATE (account);
 	priv->ignore_ssl_errors = ignore_ssl_errors;
 
 	g_object_notify (G_OBJECT (account), "ignore-ssl-errors");

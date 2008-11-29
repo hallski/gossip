@@ -18,7 +18,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "config.h"
+#include <config.h>
 
 #include <gtk/gtk.h>
 
@@ -31,11 +31,11 @@
 
 #define DEBUG_DOMAIN "Event"
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_EVENT, GossipEventPriv))
+#define GOSSIP_EVENT_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_EVENT, GossipEventPrivate))
 
-typedef struct _GossipEventPriv GossipEventPriv;
+typedef struct _GossipEventPrivate GossipEventPrivate;
 
-struct _GossipEventPriv {
+struct _GossipEventPrivate {
 	GossipEventId    id;
 	GossipEventType  type;
 
@@ -144,16 +144,16 @@ gossip_event_class_init (GossipEventClass *klass)
 							      G_TYPE_OBJECT,
 							      G_PARAM_READWRITE));
 
-	g_type_class_add_private (object_class, sizeof (GossipEventPriv));
+	g_type_class_add_private (object_class, sizeof (GossipEventPrivate));
 }
 
 static void
 gossip_event_init (GossipEvent *event)
 {
-	GossipEventPriv      *priv;
+	GossipEventPrivate   *priv;
 	static GossipEventId  id = 0;
 
-	priv = GET_PRIV (event);
+	priv = GOSSIP_EVENT_GET_PRIVATE (event);
 
 	priv->msg = NULL;
 	priv->data = NULL;
@@ -164,9 +164,9 @@ gossip_event_init (GossipEvent *event)
 static void
 gossip_event_finalize (GObject *object)
 {
-	GossipEventPriv *priv;
+	GossipEventPrivate *priv;
 
-	priv = GET_PRIV (object);
+	priv = GOSSIP_EVENT_GET_PRIVATE (object);
 
 	g_free (priv->msg);
 	if (priv->data) {
@@ -182,9 +182,9 @@ event_get_property (GObject    *object,
 		    GValue     *value,
 		    GParamSpec *pspec)
 {
-	GossipEventPriv *priv;
+	GossipEventPrivate *priv;
 
-	priv = GET_PRIV (object);
+	priv = GOSSIP_EVENT_GET_PRIVATE (object);
 
 	switch (param_id) {
 	case PROP_ID:
@@ -217,9 +217,9 @@ event_set_property (GObject      *object,
 		    const GValue *value,
 		    GParamSpec   *pspec)
 {
-	GossipEventPriv *priv;
+	GossipEventPrivate *priv;
 
-	priv = GET_PRIV (object);
+	priv = GOSSIP_EVENT_GET_PRIVATE (object);
 
 	switch (param_id) {
 	case PROP_TYPE:
@@ -255,11 +255,11 @@ gossip_event_new (GossipEventType type)
 GossipEventId
 gossip_event_get_id (GossipEvent *event)
 {
-	GossipEventPriv *priv;
+	GossipEventPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_EVENT (event), -1);
 
-	priv = GET_PRIV (event);
+	priv = GOSSIP_EVENT_GET_PRIVATE (event);
 
 	return priv->id;
 }
@@ -267,11 +267,11 @@ gossip_event_get_id (GossipEvent *event)
 const gchar *
 gossip_event_get_message (GossipEvent *event)
 {
-	GossipEventPriv *priv;
+	GossipEventPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_EVENT (event), "");
 
-	priv = GET_PRIV (event);
+	priv = GOSSIP_EVENT_GET_PRIVATE (event);
 
 	return priv->msg;
 }
@@ -312,11 +312,11 @@ gossip_event_get_contact (GossipEvent *event)
 GossipEventType
 gossip_event_get_type (GossipEvent *event)
 {
-	GossipEventPriv *priv;
+	GossipEventPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_EVENT (event), -1);
 
-	priv = GET_PRIV (event);
+	priv = GOSSIP_EVENT_GET_PRIVATE (event);
 
 	return priv->type;
 }
@@ -324,11 +324,11 @@ gossip_event_get_type (GossipEvent *event)
 GObject *
 gossip_event_get_data (GossipEvent *event)
 {
-	GossipEventPriv *priv;
+	GossipEventPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_EVENT (event), NULL);
 
-	priv = GET_PRIV (event);
+	priv = GOSSIP_EVENT_GET_PRIVATE (event);
 
 	return priv->data;
 }
@@ -337,11 +337,11 @@ void
 gossip_event_set_data (GossipEvent *event,
 		       GObject     *data)
 {
-	GossipEventPriv *priv;
+	GossipEventPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_EVENT (event));
 
-	priv = GET_PRIV (event);
+	priv = GOSSIP_EVENT_GET_PRIVATE (event);
 
 	if (priv->data) {
 		g_object_unref (priv->data);

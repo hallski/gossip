@@ -20,7 +20,7 @@
  * Authors: Martyn Russell <martyn@imendio.com>
  */
 
-#include "config.h"
+#include <config.h>
 
 #ifdef HAVE_PLATFORM_X11
 #include <libgnomevfs/gnome-vfs.h>
@@ -31,11 +31,11 @@
 
 #define DEBUG_DOMAIN "GossipFT"
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_FT, GossipFTPriv))
+#define GOSSIP_FT_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_FT, GossipFTPrivate))
 
-typedef struct _GossipFTPriv GossipFTPriv;
+typedef struct _GossipFTPrivate GossipFTPrivate;
 
-struct _GossipFTPriv {
+struct _GossipFTPrivate {
 	GossipFTId     id;
 
 	GossipFTType   type;
@@ -183,16 +183,16 @@ ft_class_init (GossipFTClass *class)
 							      NULL,
 							      G_PARAM_READWRITE));
 
-	g_type_class_add_private (object_class, sizeof (GossipFTPriv));
+	g_type_class_add_private (object_class, sizeof (GossipFTPrivate));
 }
 
 static void
 ft_init (GossipFT *ft)
 {
 	static GossipFTId  id = 1;
-	GossipFTPriv      *priv;
+	GossipFTPrivate   *priv;
 
-	priv = GET_PRIV (ft);
+	priv = GOSSIP_FT_GET_PRIVATE (ft);
 
 	priv->id             = id++;
 
@@ -213,9 +213,9 @@ ft_init (GossipFT *ft)
 static void
 ft_finalize (GObject *object)
 {
-	GossipFTPriv *priv;
+	GossipFTPrivate *priv;
 
-	priv = GET_PRIV (object);
+	priv = GOSSIP_FT_GET_PRIVATE (object);
 
 	gossip_debug (DEBUG_DOMAIN, "Finalizing GossipFT with id:%d", priv->id);
 
@@ -237,9 +237,9 @@ ft_get_property (GObject    *object,
 		      GValue     *value,
 		      GParamSpec *pspec)
 {
-	GossipFTPriv *priv;
+	GossipFTPrivate *priv;
 
-	priv = GET_PRIV (object);
+	priv = GOSSIP_FT_GET_PRIVATE (object);
 
 	switch (param_id) {
 	case PROP_ID:
@@ -278,9 +278,9 @@ ft_set_property (GObject      *object,
 		 const GValue *value,
 		 GParamSpec   *pspec)
 {
-	GossipFTPriv *priv;
+	GossipFTPrivate *priv;
 
-	priv = GET_PRIV (object);
+	priv = GOSSIP_FT_GET_PRIVATE (object);
 
 	switch (param_id) {
 	case PROP_TYPE:
@@ -326,11 +326,11 @@ gossip_ft_new (void)
 GossipFTId
 gossip_ft_get_id (GossipFT *ft)
 {
-	GossipFTPriv *priv;
+	GossipFTPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_FT (ft), 0);
 
-	priv = GET_PRIV (ft);
+	priv = GOSSIP_FT_GET_PRIVATE (ft);
 
 	return priv->id;
 }
@@ -338,11 +338,11 @@ gossip_ft_get_id (GossipFT *ft)
 GossipFTType
 gossip_ft_get_type (GossipFT *ft)
 {
-	GossipFTPriv *priv;
+	GossipFTPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_FT (ft), 0);
 
-	priv = GET_PRIV (ft);
+	priv = GOSSIP_FT_GET_PRIVATE (ft);
 
 	return priv->type;
 }
@@ -351,13 +351,13 @@ void
 gossip_ft_set_type (GossipFT     *ft,
 		    GossipFTType  type)
 {
-	GossipFTPriv *priv;
+	GossipFTPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_FT (ft));
 	g_return_if_fail (type >= GOSSIP_FT_TYPE_RECEIVING ||
 			  type <= GOSSIP_FT_TYPE_SENDING);
 
-	priv = GET_PRIV (ft);
+	priv = GOSSIP_FT_GET_PRIVATE (ft);
 
 	priv->type = type;
 }
@@ -365,11 +365,11 @@ gossip_ft_set_type (GossipFT     *ft,
 GossipContact *
 gossip_ft_get_contact (GossipFT *ft)
 {
-	GossipFTPriv *priv;
+	GossipFTPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_FT (ft), NULL);
 
-	priv = GET_PRIV (ft);
+	priv = GOSSIP_FT_GET_PRIVATE (ft);
 
 	return priv->contact;
 }
@@ -378,12 +378,12 @@ void
 gossip_ft_set_contact (GossipFT      *ft,
 		       GossipContact *contact)
 {
-	GossipFTPriv *priv;
+	GossipFTPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_FT (ft));
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 
-	priv = GET_PRIV (ft);
+	priv = GOSSIP_FT_GET_PRIVATE (ft);
 
 	if (priv->contact) {
 		g_object_unref (priv->contact);
@@ -395,11 +395,11 @@ gossip_ft_set_contact (GossipFT      *ft,
 const gchar *
 gossip_ft_get_file_name (GossipFT *ft)
 {
-	GossipFTPriv *priv;
+	GossipFTPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_FT (ft), NULL);
 
-	priv = GET_PRIV (ft);
+	priv = GOSSIP_FT_GET_PRIVATE (ft);
 
 	return priv->file_name;
 }
@@ -408,11 +408,11 @@ void
 gossip_ft_set_file_name (GossipFT    *ft,
 			 const gchar *file_name)
 {
-	GossipFTPriv *priv;
+	GossipFTPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_FT (ft));
 
-	priv = GET_PRIV (ft);
+	priv = GOSSIP_FT_GET_PRIVATE (ft);
 
 	g_free (priv->file_name);
 	priv->file_name = g_strdup (file_name);
@@ -421,11 +421,11 @@ gossip_ft_set_file_name (GossipFT    *ft,
 guint64
 gossip_ft_get_file_size (GossipFT *ft)
 {
-	GossipFTPriv *priv;
+	GossipFTPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_FT (ft), 0);
 
-	priv = GET_PRIV (ft);
+	priv = GOSSIP_FT_GET_PRIVATE (ft);
 
 	return priv->file_size;
 }
@@ -434,11 +434,11 @@ void
 gossip_ft_set_file_size (GossipFT *ft,
 			 guint64   file_size)
 {
-	GossipFTPriv *priv;
+	GossipFTPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_FT (ft));
 
-	priv = GET_PRIV (ft);
+	priv = GOSSIP_FT_GET_PRIVATE (ft);
 
 	priv->file_size = file_size;
 }
@@ -446,11 +446,11 @@ gossip_ft_set_file_size (GossipFT *ft,
 gchar *
 gossip_ft_get_file_size_for_display (GossipFT *ft)
 {
-	GossipFTPriv *priv;
+	GossipFTPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_FT (ft), NULL);
 
-	priv = GET_PRIV (ft);
+	priv = GOSSIP_FT_GET_PRIVATE (ft);
 
 #ifdef HAVE_PLATFORM_X11
 	return gnome_vfs_format_file_size_for_display (priv->file_size);
@@ -459,102 +459,102 @@ gossip_ft_get_file_size_for_display (GossipFT *ft)
 #endif
 }
 
-const gchar *
-gossip_ft_get_file_mime_type (GossipFT *ft)
-{
-	GossipFTPriv *priv;
+	const gchar *
+		gossip_ft_get_file_mime_type (GossipFT *ft)
+	{
+		GossipFTPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_FT (ft), NULL);
 
-	priv = GET_PRIV (ft);
+		priv = GOSSIP_FT_GET_PRIVATE (ft);
 
 	return priv->file_mime_type;
-}
+	}
 
-void
-gossip_ft_set_file_mime_type (GossipFT    *ft,
+	void
+		gossip_ft_set_file_mime_type (GossipFT    *ft,
 			      const gchar *file_mime_type)
-{
-	GossipFTPriv *priv;
+	{
+		GossipFTPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_FT (ft));
 
-	priv = GET_PRIV (ft);
+		priv = GOSSIP_FT_GET_PRIVATE (ft);
 
 	g_free (priv->file_mime_type);
 	priv->file_mime_type = g_strdup (file_mime_type);
-}
+	}
 
-const gchar *
-gossip_ft_get_sid (GossipFT *ft)
-{
-	GossipFTPriv *priv;
+	const gchar *
+		gossip_ft_get_sid (GossipFT *ft)
+	{
+		GossipFTPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_FT (ft), NULL);
 
-	priv = GET_PRIV (ft);
+		priv = GOSSIP_FT_GET_PRIVATE (ft);
 
 	return priv->sid;
-}
+	}
 
-void
-gossip_ft_set_sid (GossipFT    *ft,
+	void
+		gossip_ft_set_sid (GossipFT    *ft,
 		   const gchar *sid)
-{
-	GossipFTPriv *priv;
+	{
+		GossipFTPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_FT (ft));
 
-	priv = GET_PRIV (ft);
+		priv = GOSSIP_FT_GET_PRIVATE (ft);
 
 	g_free (priv->sid);
 	priv->sid = g_strdup (sid);
-}
+	}
 
-const gchar *
-gossip_ft_get_location (GossipFT *ft)
-{
-	GossipFTPriv *priv;
+	const gchar *
+		gossip_ft_get_location (GossipFT *ft)
+	{
+		GossipFTPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_FT (ft), NULL);
 
-	priv = GET_PRIV (ft);
+		priv = GOSSIP_FT_GET_PRIVATE (ft);
 
 	return priv->location;
-}
+	}
 
-void
-gossip_ft_set_location (GossipFT    *ft,
+	void
+		gossip_ft_set_location (GossipFT    *ft,
 			const gchar *location)
-{
-	GossipFTPriv *priv;
+	{
+		GossipFTPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_FT (ft));
 
-	priv = GET_PRIV (ft);
+		priv = GOSSIP_FT_GET_PRIVATE (ft);
 
 	g_free (priv->location);
 	priv->location = g_strdup (location);
-}
+	}
 
-gboolean
-gossip_ft_equal (gconstpointer a,
+	gboolean
+		gossip_ft_equal (gconstpointer a,
 		 gconstpointer b)
-{
-	GossipFTPriv *priv1;
-	GossipFTPriv *priv2;
+	{
+		GossipFTPrivate *priv1;
+		GossipFTPrivate *priv2;
 
 	g_return_val_if_fail (GOSSIP_IS_FT (a), FALSE);
 	g_return_val_if_fail (GOSSIP_IS_FT (b), FALSE);
 
-	priv1 = GET_PRIV (a);
-	priv2 = GET_PRIV (b);
+		priv1 = GOSSIP_FT_GET_PRIVATE (a);
+		priv2 = GOSSIP_FT_GET_PRIVATE (b);
 
 	if (priv1->id == priv2->id) {
 		return TRUE;
 	}
 
 	return FALSE;
-}
+	}
 
 

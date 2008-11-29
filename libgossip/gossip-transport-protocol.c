@@ -18,6 +18,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include <config.h>
+
 #include <string.h>
 
 #include <glib.h>
@@ -25,9 +27,8 @@
 #include <libxml/xmlreader.h>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
-#include <loudmouth/loudmouth.h>
 
-#include <config.h>
+#include <loudmouth/loudmouth.h>
 
 #include "gossip-jabber-private.h"
 #include "gossip-transport-accounts.h"

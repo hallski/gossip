@@ -18,7 +18,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "config.h"
+#include <config.h>
 
 #include <string.h>
 
@@ -31,11 +31,11 @@
 
 #include "libgossip-marshal.h"
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHATROOM, GossipChatroomPriv))
+#define GOSSIP_CHATROOM_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHATROOM, GossipChatroomPrivate))
 
-typedef struct _GossipChatroomPriv GossipChatroomPriv;
+typedef struct _GossipChatroomPrivate GossipChatroomPrivate;
 
-struct _GossipChatroomPriv {
+struct _GossipChatroomPrivate {
 	GossipAccount         *account;
 
 	GossipChatroomId       id;
@@ -348,16 +348,16 @@ gossip_chatroom_class_init (GossipChatroomClass *klass)
 			      G_TYPE_NONE,
 			      1, GOSSIP_TYPE_CONTACT);
 
-	g_type_class_add_private (object_class, sizeof (GossipChatroomPriv));
+	g_type_class_add_private (object_class, sizeof (GossipChatroomPrivate));
 }
 
 static void
 gossip_chatroom_init (GossipChatroom *chatroom)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 	static guint        id = 1;
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	priv->id = id++;
 
@@ -375,9 +375,9 @@ gossip_chatroom_init (GossipChatroom *chatroom)
 static void
 chatroom_finalize (GObject *object)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
-	priv = GET_PRIV (object);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (object);
 
 	if (priv->account) {
 		g_object_unref (priv->account);
@@ -406,9 +406,9 @@ chatroom_get_property (GObject    *object,
 		       GValue     *value,
 		       GParamSpec *pspec)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
-	priv = GET_PRIV (object);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (object);
 
 	switch (param_id) {
 	case PROP_ACCOUNT:
@@ -474,9 +474,9 @@ chatroom_set_property (GObject      *object,
 		       const GValue *value,
 		       GParamSpec   *pspec)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
-	priv = GET_PRIV (object);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (object);
 
 	switch (param_id) {
 	case PROP_ACCOUNT:
@@ -548,9 +548,9 @@ chatroom_set_property (GObject      *object,
 static void
 update_id_str (GossipChatroom *chatroom)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	if (priv->room && priv->server) {
 		g_free (priv->id_str);
@@ -561,9 +561,9 @@ update_id_str (GossipChatroom *chatroom)
 static void
 update_own_contact_id_str (GossipChatroom *chatroom)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	if (priv->id_str && priv->nick) {
 		g_free (priv->own_contact_id_str);
@@ -574,9 +574,9 @@ update_own_contact_id_str (GossipChatroom *chatroom)
 static void
 update_own_contact (GossipChatroom *chatroom)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	/* We can't do anything without an account, own contact or
 	 * id_str (room and server) to generate the own
@@ -632,11 +632,11 @@ gossip_chatroom_new (GossipAccount *account,
 GossipAccount *
 gossip_chatroom_get_account (GossipChatroom *chatroom)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	if (!priv->account) {
 		return NULL;
@@ -648,22 +648,23 @@ gossip_chatroom_get_account (GossipChatroom *chatroom)
 GossipChatroomId
 gossip_chatroom_get_id (GossipChatroom *chatroom)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), 0);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
+
 	return priv->id;
 }
 
 const gchar *
 gossip_chatroom_get_id_str (GossipChatroom *chatroom)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	if (!priv->id_str) {
 		priv->id_str = g_strdup ("");
@@ -675,99 +676,107 @@ gossip_chatroom_get_id_str (GossipChatroom *chatroom)
 const gchar *
 gossip_chatroom_get_name (GossipChatroom *chatroom)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
+
 	return priv->name;
 }
 
 const gchar *
 gossip_chatroom_get_description (GossipChatroom *chatroom)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
+
 	return priv->description;
 }
 
 const gchar *
 gossip_chatroom_get_subject (GossipChatroom *chatroom)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
+
 	return priv->subject;
 }
 
 const gchar *
 gossip_chatroom_get_nick (GossipChatroom *chatroom)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
+
 	return priv->nick;
 }
 
 const gchar *
 gossip_chatroom_get_server (GossipChatroom *chatroom)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
+
 	return priv->server;
 }
 
 const gchar *
 gossip_chatroom_get_room (GossipChatroom *chatroom)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
+
 	return priv->room;
 }
 
 const gchar *
 gossip_chatroom_get_password (GossipChatroom *chatroom)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
+
 	return priv->password;
 }
 
 gboolean
 gossip_chatroom_get_auto_connect (GossipChatroom *chatroom)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), FALSE);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
+
 	return priv->auto_connect;
 }
 
 gboolean
 gossip_chatroom_get_favorite (GossipChatroom *chatroom)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), FALSE);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	return priv->favorite;
 }
@@ -775,11 +784,11 @@ gossip_chatroom_get_favorite (GossipChatroom *chatroom)
 GossipChatroomFeature
 gossip_chatroom_get_features (GossipChatroom *chatroom)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), 0);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	return priv->features;
 }
@@ -787,12 +796,12 @@ gossip_chatroom_get_features (GossipChatroom *chatroom)
 GossipChatroomStatus
 gossip_chatroom_get_status (GossipChatroom *chatroom)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom),
 			      GOSSIP_CHATROOM_STATUS_UNKNOWN);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	return priv->status;
 }
@@ -800,11 +809,11 @@ gossip_chatroom_get_status (GossipChatroom *chatroom)
 GossipChatroomStatus
 gossip_chatroom_get_occupants (GossipChatroom *chatroom)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), 0);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	return priv->occupants;
 }
@@ -812,11 +821,11 @@ gossip_chatroom_get_occupants (GossipChatroom *chatroom)
 GossipChatroomError
 gossip_chatroom_get_last_error (GossipChatroom *chatroom)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), GOSSIP_CHATROOM_ERROR_NONE);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	return priv->last_error;
 }
@@ -825,12 +834,12 @@ GossipChatroomContactInfo *
 gossip_chatroom_get_contact_info (GossipChatroom *chatroom,
 				  GossipContact  *contact)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	return g_hash_table_lookup (priv->contacts, contact);
 }
@@ -838,11 +847,11 @@ gossip_chatroom_get_contact_info (GossipChatroom *chatroom,
 GList *
 gossip_chatroom_get_contacts (GossipChatroom *chatroom)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	return g_hash_table_get_keys (priv->contacts);
 }
@@ -850,11 +859,11 @@ gossip_chatroom_get_contacts (GossipChatroom *chatroom)
 GossipContact *
 gossip_chatroom_get_own_contact (GossipChatroom *chatroom)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	return priv->own_contact;
 }
@@ -862,11 +871,11 @@ gossip_chatroom_get_own_contact (GossipChatroom *chatroom)
 const gchar *
 gossip_chatroom_get_own_contact_id_str (GossipChatroom *chatroom)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	if (!priv->own_contact_id_str) {
 		priv->own_contact_id_str = g_strdup ("");
@@ -879,12 +888,12 @@ void
 gossip_chatroom_set_account (GossipChatroom *chatroom,
 			     GossipAccount  *account)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 	if (priv->account) {
 		g_object_unref (priv->account);
 	}
@@ -901,12 +910,12 @@ void
 gossip_chatroom_set_name (GossipChatroom *chatroom,
 			  const gchar    *name)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
 	g_return_if_fail (name != NULL);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	g_free (priv->name);
 	priv->name = g_strdup (name);
@@ -918,12 +927,12 @@ void
 gossip_chatroom_set_description (GossipChatroom *chatroom,
 				 const gchar    *description)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
 	g_return_if_fail (description != NULL);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	g_free (priv->description);
 	priv->description = g_strdup (description);
@@ -935,12 +944,12 @@ void
 gossip_chatroom_set_subject (GossipChatroom *chatroom,
 			     const gchar    *subject)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
 	g_return_if_fail (subject != NULL);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	g_free (priv->subject);
 	priv->subject = g_strdup (subject);
@@ -952,12 +961,12 @@ void
 gossip_chatroom_set_nick (GossipChatroom *chatroom,
 			  const gchar    *nick)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
 	g_return_if_fail (nick != NULL);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	g_free (priv->nick);
 	priv->nick = g_strdup (nick);
@@ -973,12 +982,12 @@ void
 gossip_chatroom_set_server (GossipChatroom *chatroom,
 			    const gchar    *server)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
 	g_return_if_fail (server != NULL);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	g_free (priv->server);
 	priv->server = g_strdup (server);
@@ -995,12 +1004,12 @@ void
 gossip_chatroom_set_room (GossipChatroom *chatroom,
 			  const gchar    *room)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
 	g_return_if_fail (room != NULL);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	g_free (priv->room);
 	priv->room = g_strdup (room);
@@ -1017,12 +1026,12 @@ void
 gossip_chatroom_set_password (GossipChatroom *chatroom,
 			      const gchar    *password)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
 	g_return_if_fail (password != NULL);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	g_free (priv->password);
 	priv->password = g_strdup (password);
@@ -1034,11 +1043,11 @@ void
 gossip_chatroom_set_auto_connect (GossipChatroom *chatroom,
 				  gboolean        auto_connect)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 	priv->auto_connect = auto_connect;
 
 	g_object_notify (G_OBJECT (chatroom), "auto-connect");
@@ -1048,11 +1057,11 @@ void
 gossip_chatroom_set_favorite (GossipChatroom *chatroom,
 			      gboolean        favorite)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 	priv->favorite = favorite;
 
 	g_object_notify (G_OBJECT (chatroom), "favorite");
@@ -1061,9 +1070,9 @@ gossip_chatroom_set_favorite (GossipChatroom *chatroom,
 static void
 chatroom_clear_contacts (GossipChatroom *chatroom)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	g_hash_table_remove_all (priv->contacts);
 }
@@ -1072,11 +1081,11 @@ void
 gossip_chatroom_set_features (GossipChatroom         *chatroom,
 			      GossipChatroomFeature   features)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	priv->features = features;
 
@@ -1087,11 +1096,11 @@ void
 gossip_chatroom_set_status (GossipChatroom       *chatroom,
 			    GossipChatroomStatus  status)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	priv->status = status;
 
@@ -1106,11 +1115,11 @@ void
 gossip_chatroom_set_occupants (GossipChatroom *chatroom,
 			       guint           occupants)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	priv->occupants = occupants;
 
@@ -1121,11 +1130,11 @@ void
 gossip_chatroom_set_last_error (GossipChatroom      *chatroom,
 				GossipChatroomError  last_error)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	priv->last_error = last_error;
 
@@ -1143,14 +1152,14 @@ gossip_chatroom_set_contact_info (GossipChatroom            *chatroom,
 				  GossipContact             *contact,
 				  GossipChatroomContactInfo *info)
 {
-	GossipChatroomPriv        *priv;
+	GossipChatroomPrivate        *priv;
 	GossipChatroomContactInfo *chatroom_contact;
 
 	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 	g_return_if_fail (info != NULL);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	chatroom_contact = g_new0 (GossipChatroomContactInfo, 1);
 	chatroom_contact->role = info->role;
@@ -1167,12 +1176,12 @@ void
 gossip_chatroom_set_own_contact (GossipChatroom *chatroom,
 				 GossipContact  *own_contact)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
 	g_return_if_fail (GOSSIP_IS_CONTACT (own_contact));
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	if (priv->own_contact) {
 		g_object_unref (priv->own_contact);
@@ -1230,14 +1239,14 @@ gboolean
 gossip_chatroom_equal_full (gconstpointer a,
 			    gconstpointer b)
 {
-	GossipChatroomPriv *priv1;
-	GossipChatroomPriv *priv2;
+	GossipChatroomPrivate *priv1;
+	GossipChatroomPrivate *priv2;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (a), FALSE);
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (b), FALSE);
 
-	priv1 = GET_PRIV (a);
-	priv2 = GET_PRIV (b);
+	priv1 = GOSSIP_CHATROOM_GET_PRIVATE (a);
+	priv2 = GOSSIP_CHATROOM_GET_PRIVATE (b);
 
 	if (!priv1 || !priv2) {
 		return FALSE;
@@ -1385,13 +1394,13 @@ gossip_chatroom_contact_joined (GossipChatroom            *chatroom,
 				GossipContact             *contact,
 				GossipChatroomContactInfo *info)
 {
-	GossipChatroomPriv        *priv;
+	GossipChatroomPrivate     *priv;
 	GossipChatroomContactInfo *chatroom_contact;
 
 	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	chatroom_contact = g_new0 (GossipChatroomContactInfo, 1);
 	if (info) {
@@ -1414,12 +1423,12 @@ void
 gossip_chatroom_contact_left (GossipChatroom *chatroom,
 			      GossipContact  *contact)
 {
-	GossipChatroomPriv *priv;
+	GossipChatroomPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	if (g_hash_table_lookup (priv->contacts, contact)) {
 		g_signal_emit (chatroom, signals[CONTACT_LEFT], 0, contact);
@@ -1431,13 +1440,13 @@ gboolean
 gossip_chatroom_contact_can_message_all (GossipChatroom *chatroom,
 					 GossipContact  *contact)
 {
-	GossipChatroomPriv        *priv;
+	GossipChatroomPrivate     *priv;
 	GossipChatroomContactInfo *info;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), FALSE);
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), FALSE);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	info = gossip_chatroom_get_contact_info	(chatroom, contact);
 	if (!info) {
@@ -1456,13 +1465,13 @@ gboolean
 gossip_chatroom_contact_can_change_subject (GossipChatroom *chatroom,
 					    GossipContact  *contact)
 {
-	GossipChatroomPriv        *priv;
+	GossipChatroomPrivate     *priv;
 	GossipChatroomContactInfo *info;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), FALSE);
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), FALSE);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	info = gossip_chatroom_get_contact_info	(chatroom, contact);
 	if (!info) {
@@ -1481,13 +1490,13 @@ gboolean
 gossip_chatroom_contact_can_kick (GossipChatroom *chatroom,
 				  GossipContact  *contact)
 {
-	GossipChatroomPriv        *priv;
+	GossipChatroomPrivate     *priv;
 	GossipChatroomContactInfo *info;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), FALSE);
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), FALSE);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	info = gossip_chatroom_get_contact_info	(chatroom, contact);
 	if (!info) {
@@ -1505,13 +1514,13 @@ gboolean
 gossip_chatroom_contact_can_change_role (GossipChatroom *chatroom,
 					 GossipContact  *contact)
 {
-	GossipChatroomPriv        *priv;
+	GossipChatroomPrivate     *priv;
 	GossipChatroomContactInfo *info;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), FALSE);
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), FALSE);
 
-	priv = GET_PRIV (chatroom);
+	priv = GOSSIP_CHATROOM_GET_PRIVATE (chatroom);
 
 	info = gossip_chatroom_get_contact_info	(chatroom, contact);
 	if (!info) {

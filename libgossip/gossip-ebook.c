@@ -35,8 +35,8 @@
 
 #define EVO_UNKNOWN_IMAGE "image/X-EVOLUTION-UNKNOWN"
 
-static EContact *me = NULL;
-static EBook    *book = NULL;
+static EContact *me;
+static EBook    *book;
 
 static void
 ebook_init (void)

@@ -18,7 +18,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "config.h"
+#include <config.h>
 
 #include <string.h>
 
@@ -33,11 +33,11 @@
 
 #define DEBUG_DOMAIN "Session"
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_SESSION, GossipSessionPriv))
+#define GOSSIP_SESSION_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_SESSION, GossipSessionPrivate))
 
-typedef struct _GossipSessionPriv  GossipSessionPriv;
+typedef struct _GossipSessionPrivate GossipSessionPrivate;
 
-struct _GossipSessionPriv {
+struct _GossipSessionPrivate {
 	GossipAccountManager  *account_manager;
 	GossipContactManager  *contact_manager;
 	GossipChatroomManager *chatroom_manager;
@@ -318,15 +318,15 @@ gossip_session_class_init (GossipSessionClass *klass)
 			      G_TYPE_STRING,
 			      1, GOSSIP_TYPE_ACCOUNT);
 
-	g_type_class_add_private (object_class, sizeof (GossipSessionPriv));
+	g_type_class_add_private (object_class, sizeof (GossipSessionPrivate));
 }
 
 static void
 gossip_session_init (GossipSession *session)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	priv->accounts = g_hash_table_new_full (gossip_account_hash,
 						gossip_account_equal,
@@ -346,9 +346,9 @@ gossip_session_init (GossipSession *session)
 static void
 session_finalize (GObject *object)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 
-	priv = GET_PRIV (object);
+	priv = GOSSIP_SESSION_GET_PRIVATE (object);
 
 	g_hash_table_destroy (priv->accounts);
 
@@ -422,13 +422,13 @@ session_jabber_connecting (GossipJabber  *jabber,
 			   GossipAccount *account,
 			   GossipSession *session)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 
 	gossip_debug (DEBUG_DOMAIN, 
 		      "Protocol connecting for account:'%s'",
 		      gossip_account_get_name (account));
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	g_signal_emit (session, signals[PROTOCOL_CONNECTING], 0, 
 		       account, jabber);
@@ -441,12 +441,12 @@ session_jabber_connected (GossipJabber  *jabber,
 			  GossipAccount *account,
 			  GossipSession *session)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GList             *chatrooms, *l;
 
 	gossip_debug (DEBUG_DOMAIN, "Protocol Connected");
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	g_hash_table_insert (priv->timers,
 			     g_object_ref (account),
@@ -511,7 +511,7 @@ session_jabber_disconnected (GossipJabber  *jabber,
 			     gint           reason,
 			     GossipSession *session)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	gdouble            seconds;
 
 	seconds = gossip_session_get_connected_time (session, account);
@@ -519,7 +519,7 @@ session_jabber_disconnected (GossipJabber  *jabber,
 		      "Protocol disconnected (after %.2f seconds)",
 		      seconds);
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	/* Reset the temporary password, it is only valid per connect */
 	gossip_account_set_password_tmp (account, NULL);
@@ -565,12 +565,12 @@ session_jabber_contact_added (GossipJabber  *jabber,
 			      GossipContact *contact,
 			      GossipSession *session)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 
 	gossip_debug (DEBUG_DOMAIN, "Contact added '%s'",
 		      gossip_contact_get_name (contact));
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	priv->contacts = g_list_prepend (priv->contacts,
 					 g_object_ref (contact));
@@ -583,13 +583,13 @@ session_jabber_contact_removed (GossipJabber  *jabber,
 				GossipContact *contact,
 				GossipSession *session)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GList             *link;
 
 	gossip_debug (DEBUG_DOMAIN, "Contact removed '%s'",
 		   gossip_contact_get_name (contact));
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	g_signal_emit (session, signals[CONTACT_REMOVED], 0, contact);
 
@@ -606,13 +606,13 @@ session_jabber_composing (GossipJabber  *jabber,
 			  gboolean       composing,
 			  GossipSession *session)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 
 	gossip_debug (DEBUG_DOMAIN, "Contact %s composing:'%s'",
 		      composing ? "is" : "is not",
 		      gossip_contact_get_name (contact));
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	g_signal_emit (session, signals[COMPOSING], 0, contact, composing);
 }
@@ -637,12 +637,12 @@ session_jabber_error (GossipJabber  *jabber,
 		      GError        *error,
 		      GossipSession *session)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 
 	gossip_debug (DEBUG_DOMAIN, "Error:%d->'%s'",
 		      error->code, error->message);
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	if (priv->connecting_counter > 0) {
 		priv->connecting_counter--;
@@ -666,13 +666,13 @@ gossip_session_new (const gchar *accounts_file,
 		    const gchar *contacts_file,
 		    const gchar *chatrooms_file)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GossipSession     *session;
 	GList             *accounts, *l;
 
 	session = g_object_new (GOSSIP_TYPE_SESSION, NULL);
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	/* Set up account manager */
 	priv->account_manager = gossip_account_manager_new (accounts_file);
@@ -716,12 +716,12 @@ GossipJabber *
 gossip_session_get_protocol (GossipSession *session,
 			     GossipAccount *account)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	return g_hash_table_lookup (priv->accounts, account);
 }
@@ -729,11 +729,11 @@ gossip_session_get_protocol (GossipSession *session,
 GossipAccountManager *
 gossip_session_get_account_manager (GossipSession *session)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	return priv->account_manager;
 }
@@ -741,11 +741,11 @@ gossip_session_get_account_manager (GossipSession *session)
 GossipContactManager *
 gossip_session_get_contact_manager (GossipSession *session)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	return priv->contact_manager;
 }
@@ -753,11 +753,11 @@ gossip_session_get_contact_manager (GossipSession *session)
 GossipChatroomManager *
 gossip_session_get_chatroom_manager (GossipSession *session)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	return priv->chatroom_manager;
 }
@@ -765,11 +765,11 @@ gossip_session_get_chatroom_manager (GossipSession *session)
 GossipLogManager *
 gossip_session_get_log_manager (GossipSession *session)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	return priv->log_manager;
 }
@@ -779,9 +779,9 @@ session_get_accounts_foreach_cb (GossipAccount *account,
 				 GossipJabber  *jabber,
 				 GetAccounts   *ga)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 
-	priv = GET_PRIV (ga->session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (ga->session);
 
 	ga->accounts = g_list_append (ga->accounts, g_object_ref (account));
 }
@@ -789,13 +789,13 @@ session_get_accounts_foreach_cb (GossipAccount *account,
 GList *
 gossip_session_get_accounts (GossipSession *session)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GetAccounts        ga;
 	GList             *list;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	ga.session = session;
 	ga.accounts = NULL;
@@ -813,14 +813,14 @@ gdouble
 gossip_session_get_connected_time (GossipSession *session,
 				   GossipAccount *account)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GTimer            *timer;
 	gulong             ms;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), 0);
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), 0);
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	timer = g_hash_table_lookup (priv->timers, account);
 	if (!timer) {
@@ -835,9 +835,9 @@ session_count_accounts_foreach_cb (GossipAccount *account,
 				   GossipJabber  *jabber,
 				   CountAccounts *ca)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 
-	priv = GET_PRIV (ca->session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (ca->session);
 
 	if (gossip_jabber_is_connected (jabber)) {
 		ca->connected++;
@@ -856,12 +856,12 @@ gossip_session_count_accounts (GossipSession *session,
 			       guint         *connecting,
 			       guint         *disconnected)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	CountAccounts      ca;
 
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	ca.session = session;
 
@@ -895,13 +895,13 @@ gossip_session_count_accounts (GossipSession *session,
 GossipAccount *
 gossip_session_new_account (GossipSession *session)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GossipJabber      *jabber;
 	GossipAccount     *account;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	jabber = gossip_jabber_new (session);
 
@@ -926,13 +926,13 @@ gboolean
 gossip_session_add_account (GossipSession *session,
 			    GossipAccount *account)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GossipJabber      *jabber;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), FALSE);
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), FALSE);
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	jabber = g_hash_table_lookup (priv->accounts, account);
 	if (jabber) {
@@ -962,14 +962,14 @@ gboolean
 gossip_session_remove_account (GossipSession *session,
 			       GossipAccount *account)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GossipJabber      *jabber;
 	GList             *link;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), FALSE);
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), FALSE);
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	jabber = g_hash_table_lookup (priv->accounts, account);
 
@@ -1008,13 +1008,13 @@ GossipAccount *
 gossip_session_find_account_for_own_contact (GossipSession *session,
 					     GossipContact *own_contact)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	FindAccount        fa;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (own_contact), NULL);
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	fa.contact = own_contact;
 	fa.account = NULL;
@@ -1045,10 +1045,10 @@ session_account_removed_cb (GossipAccountManager *manager,
 static void
 session_connect (GossipSession *session, GossipAccount *account)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GossipJabber      *jabber;
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	jabber = g_hash_table_lookup (priv->accounts, account);
 
@@ -1111,13 +1111,13 @@ gossip_session_connect (GossipSession *session,
 			GossipAccount *account,
 			gboolean       startup)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	ConnectFind        cf;
 	ConnectData        cd;
 
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	g_signal_emit (session, signals[CONNECTING], 0);
 
@@ -1159,10 +1159,10 @@ static void
 session_disconnect (GossipSession *session,
 		    GossipAccount *account)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GossipJabber      *jabber;
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 
@@ -1178,9 +1178,9 @@ session_disconnect_foreach_cb (GossipAccount *account,
 			       GossipJabber  *jabber,
 			       GossipSession *session)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	session_disconnect (session, account);
 }
@@ -1189,11 +1189,11 @@ void
 gossip_session_disconnect (GossipSession *session,
 			   GossipAccount *account)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	g_signal_emit (session, signals[DISCONNECTING], 0);
 
@@ -1213,7 +1213,7 @@ void
 gossip_session_send_message (GossipSession *session,
 			     GossipMessage *message)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GossipContact     *contact;
 	GossipAccount     *account;
 	GossipJabber      *jabber;
@@ -1221,7 +1221,7 @@ gossip_session_send_message (GossipSession *session,
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 	g_return_if_fail (message != NULL);
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	contact = gossip_message_get_sender (message);
 	account = gossip_session_find_account_for_own_contact (session, contact);
@@ -1241,12 +1241,12 @@ gossip_session_send_composing (GossipSession  *session,
 			       GossipContact  *contact,
 			       gboolean        composing)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GossipJabber      *jabber;
 
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	jabber = session_get_protocol (session, contact);
 	if (!jabber) {
@@ -1268,11 +1268,11 @@ gossip_session_send_composing (GossipSession  *session,
 GossipPresence *
 gossip_session_get_presence (GossipSession *session)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	return priv->presence;
 }
@@ -1281,13 +1281,13 @@ void
 gossip_session_set_presence (GossipSession  *session,
 			     GossipPresence *presence)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GList            *l;
 
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 	g_return_if_fail (GOSSIP_IS_PRESENCE (presence));
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	if (priv->presence) {
 		g_object_unref (priv->presence);
@@ -1311,11 +1311,11 @@ gboolean
 gossip_session_is_connected (GossipSession *session,
 			     GossipAccount *account)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), FALSE);
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	if (account) {
 		GossipJabber *jabber;
@@ -1334,11 +1334,11 @@ gboolean
 gossip_session_is_connecting (GossipSession *session,
 			      GossipAccount *account)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), FALSE);
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	if (account) {
 		GossipJabber *jabber;
@@ -1358,7 +1358,7 @@ const gchar *
 gossip_session_get_active_resource (GossipSession *session,
 				    GossipContact *contact)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GossipJabber      *jabber;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
@@ -1367,7 +1367,7 @@ gossip_session_get_active_resource (GossipSession *session,
 	 * chat against a certain resource.
 	 */
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	jabber = session_get_protocol (session, contact);
 	if (!jabber) {
@@ -1381,13 +1381,13 @@ GossipChatroomProvider *
 gossip_session_get_chatroom_provider (GossipSession *session,
 				      GossipAccount *account)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GossipJabber      *jabber;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	jabber = g_hash_table_lookup (priv->accounts, account);
 
@@ -1400,13 +1400,13 @@ GossipFTProvider *
 gossip_session_get_ft_provider (GossipSession *session,
 				GossipAccount *account)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GossipJabber      *jabber;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	jabber = g_hash_table_lookup (priv->accounts, account);
 
@@ -1421,7 +1421,7 @@ gossip_session_add_contact (GossipSession *session,
 			    const gchar   *group,
 			    const gchar   *message)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GossipJabber      *jabber;
 
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
@@ -1430,7 +1430,7 @@ gossip_session_add_contact (GossipSession *session,
 	g_return_if_fail (name != NULL);
 	g_return_if_fail (message != NULL);
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	jabber = g_hash_table_lookup (priv->accounts, account);
 
@@ -1442,7 +1442,7 @@ gossip_session_rename_contact (GossipSession *session,
 			       GossipContact *contact,
 			       const gchar   *new_name)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GossipJabber      *jabber;
 
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
@@ -1452,7 +1452,7 @@ gossip_session_rename_contact (GossipSession *session,
 	/* get the activate resource, needed to be able to lock the
 	   chat against a certain resource */
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	jabber = session_get_protocol (session, contact);
 	if (!jabber) {
@@ -1466,7 +1466,7 @@ void
 gossip_session_remove_contact (GossipSession *session,
 			       GossipContact *contact)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GossipJabber      *jabber;
 
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
@@ -1476,7 +1476,7 @@ gossip_session_remove_contact (GossipSession *session,
 	 * chat against a certain resource.
 	 */
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	jabber = session_get_protocol (session, contact);
 	if (!jabber) {
@@ -1490,13 +1490,13 @@ void
 gossip_session_update_contact (GossipSession *session,
 			       GossipContact *contact)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GossipJabber      *jabber;
 
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 	g_return_if_fail (contact != NULL);
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	jabber = session_get_protocol (session, contact);
 	if (!jabber) {
@@ -1511,14 +1511,14 @@ gossip_session_rename_group (GossipSession *session,
 			     const gchar   *group,
 			     const gchar   *new_name)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GList             *l;
 
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 	g_return_if_fail (group != NULL);
 	g_return_if_fail (new_name != NULL);
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	/* FIXME: don't just blindly do this across all protocols
 	 * actually pass the protocol in some how from the contact
@@ -1535,11 +1535,11 @@ gossip_session_rename_group (GossipSession *session,
 const GList *
 gossip_session_get_contacts (GossipSession *session)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	return priv->contacts;
 }
@@ -1548,13 +1548,13 @@ GList *
 gossip_session_get_contacts_by_account (GossipSession *session,
 					GossipAccount *account)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GList             *l, *list = NULL;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	for (l = priv->contacts; l; l = l->next) {
 		GossipContact *contact;
@@ -1578,13 +1578,13 @@ GossipContact *
 gossip_session_get_own_contact (GossipSession *session,
 				GossipAccount *account)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GossipJabber      *jabber;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	jabber = g_hash_table_lookup (priv->accounts, account);
 
@@ -1594,13 +1594,13 @@ gossip_session_get_own_contact (GossipSession *session,
 GList *
 gossip_session_get_groups (GossipSession *session)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GList             *l, *j;
 	GList             *all_groups = NULL;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	for (l = priv->protocols; l; l = l->next) {
 		GossipJabber *jabber;
@@ -1625,14 +1625,14 @@ const gchar *
 gossip_session_get_nickname (GossipSession *session,
 			     GossipAccount *account)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GossipJabber      *jabber;
 	GossipContact     *contact;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), "");
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), "");
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	jabber = g_hash_table_lookup (priv->accounts, account);
 
@@ -1648,14 +1648,14 @@ gossip_session_register_account (GossipSession       *session,
 				 GossipErrorCallback  callback,
 				 gpointer             user_data)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GossipJabber      *jabber;
 
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 	g_return_if_fail (callback != NULL);
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	/* make sure we have added the account to our list */
 	gossip_session_add_account (session, account);
@@ -1672,13 +1672,13 @@ void
 gossip_session_register_cancel (GossipSession *session,
 				GossipAccount *account)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GossipJabber      *jabber;
 
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	jabber = g_hash_table_lookup (priv->accounts, account);
 
@@ -1692,7 +1692,7 @@ gossip_session_change_password (GossipSession       *session,
 				GossipErrorCallback  callback,
 				gpointer             user_data)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GossipJabber      *jabber;
 
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
@@ -1700,7 +1700,7 @@ gossip_session_change_password (GossipSession       *session,
 	g_return_if_fail (new_password != NULL);
 	g_return_if_fail (callback != NULL);
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	jabber = g_hash_table_lookup (priv->accounts, account);
 
@@ -1712,13 +1712,13 @@ void
 gossip_session_change_password_cancel (GossipSession *session,
 				       GossipAccount *account)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GossipJabber      *jabber;
 
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	jabber = g_hash_table_lookup (priv->accounts, account);
 
@@ -1733,12 +1733,12 @@ gossip_session_get_vcard (GossipSession        *session,
 			  gpointer              user_data,
 			  GError              **error)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), FALSE);
 	g_return_val_if_fail (callback != NULL, FALSE);
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	if (!account && !contact) {
 		g_warning ("No GossipAccount and no GossipContact to use for vcard request");
@@ -1786,7 +1786,7 @@ gossip_session_set_vcard (GossipSession   *session,
 			  gpointer         user_data,
 			  GError         **error)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GList             *l;
 	gboolean           ok = TRUE;
 
@@ -1794,7 +1794,7 @@ gossip_session_set_vcard (GossipSession   *session,
 	g_return_val_if_fail (GOSSIP_IS_VCARD (vcard), FALSE);
 	g_return_val_if_fail (callback != NULL, FALSE);
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	/* if account is supplied set the vcard for that account only! */
 	if (account) {
@@ -1839,12 +1839,12 @@ gossip_session_get_avatar_requirements (GossipSession *session,
 					gsize         *max_size,
 					gchar        **format)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GossipJabber      *jabber;
 
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	jabber = g_hash_table_lookup (priv->accounts, account);
 	
@@ -1870,10 +1870,10 @@ gossip_session_get_version (GossipSession          *session,
 	jabber = session_get_protocol (session, contact);
 
 	if (!jabber) {
-		GossipSessionPriv *priv;
+		GossipSessionPrivate *priv;
 		GossipAccount     *account;
 
-		priv = GET_PRIV (session);
+		priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 		/* Temporary contact. Use account */
 		account = gossip_contact_get_account (contact);
@@ -1891,13 +1891,13 @@ gossip_session_get_version (GossipSession          *session,
 void
 gossip_session_chatroom_join_favorites (GossipSession *session)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPrivate *priv;
 	GList             *chatrooms;
 	GList             *l;
 
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 
-	priv = GET_PRIV (session);
+	priv = GOSSIP_SESSION_GET_PRIVATE (session);
 
 	chatrooms = gossip_chatroom_manager_get_chatrooms (priv->chatroom_manager, NULL);
 

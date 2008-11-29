@@ -21,13 +21,13 @@
  *          Richard Hult <richard@imendio.com>
  */
 
-#include "config.h"
-
-#include <glib.h>
+#include <config.h>
 
 #ifndef G_OS_WIN32
 #include <sys/utsname.h>
 #endif /* G_OS_WIN32 */
+
+#include <glib.h>
 
 #include "gossip-version-info.h"
 
@@ -195,7 +195,8 @@ gossip_version_info_get_name (GossipVersionInfo *info)
 }
 
 void
-gossip_version_info_set_name (GossipVersionInfo *info, const gchar *name)
+gossip_version_info_set_name (GossipVersionInfo *info,
+			      const gchar       *name)
 {
 	GossipVersionInfoPriv *priv;
 
@@ -206,6 +207,8 @@ gossip_version_info_set_name (GossipVersionInfo *info, const gchar *name)
 
 	g_free (priv->name);
 	priv->name = g_strdup (name);
+
+	g_object_notify (G_OBJECT (info), "name");
 }
 
 const gchar *
@@ -221,7 +224,8 @@ gossip_version_info_get_version (GossipVersionInfo *info)
 }
 
 void
-gossip_version_info_set_version (GossipVersionInfo *info, const gchar *version)
+gossip_version_info_set_version (GossipVersionInfo *info, 
+				 const gchar       *version)
 {
 	GossipVersionInfoPriv *priv;
 
@@ -232,6 +236,8 @@ gossip_version_info_set_version (GossipVersionInfo *info, const gchar *version)
 
 	g_free (priv->version);
 	priv->version = g_strdup (version);
+
+	g_object_notify (G_OBJECT (info), "version");
 }
 
 const gchar *
@@ -247,7 +253,8 @@ gossip_version_info_get_os (GossipVersionInfo *info)
 }
 
 void
-gossip_version_info_set_os (GossipVersionInfo *info, const gchar *os)
+gossip_version_info_set_os (GossipVersionInfo *info, 
+			    const gchar       *os)
 {
 	GossipVersionInfoPriv *priv;
 
@@ -258,6 +265,8 @@ gossip_version_info_set_os (GossipVersionInfo *info, const gchar *os)
 
 	g_free (priv->os);
 	priv->os = g_strdup (os);
+
+	g_object_notify (G_OBJECT (info), "os");
 }
 
 GossipVersionInfo *
