@@ -2259,6 +2259,8 @@ group_chat_send (GossipGroupChat *chat)
 		return;
 	}
 
+	gossip_app_set_not_away ();
+
 	/* Clear the input field. */
 	gtk_text_buffer_set_text (buffer, "", -1);
 

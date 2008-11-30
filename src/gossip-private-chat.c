@@ -366,7 +366,7 @@ private_chat_send (GossipPrivateChat *chat,
 	
 	priv = GET_PRIV (chat);
 
-	if (msg == NULL || msg[0] == '\0') {
+	if (G_STR_EMPTY (msg)) {
 		return;
 	}
 

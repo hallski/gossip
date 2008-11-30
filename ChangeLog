@@ -1,3 +1,10 @@
+2008-11-30  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-group-chat.c: (group_chat_send): Set _not_ away when
+	we send a message. This was only done in private chats until now. 
+	
+	* src/gossip-private-chat.c: (private_chat_send): Use G_STR_EMPTY.
+
 2008-11-29  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-contact-manager.c:
