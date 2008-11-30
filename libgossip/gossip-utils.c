@@ -325,3 +325,25 @@ gossip_markup_unescape_text (const gchar *markup)
 	
 	return text;
 }
+
+gchar *
+gossip_locale_get_code (void)
+{
+	const gchar *env;
+
+	/* First check LC_ALL, then LC_MESSAGES */
+	env = g_getenv ("LC_ALL");
+
+	if (!G_STR_EMPTY (env) && strlen (env) >= 2) {
+		return g_strndup (env, 2);
+	}
+
+	env = g_getenv ("LC_MESSAGES");
+
+	if (!G_STR_EMPTY (env) && strlen (env) >= 2) {
+		return g_strndup (env, 2);
+	}
+
+	/* Default to "en" */
+	return g_strdup ("en");
+}

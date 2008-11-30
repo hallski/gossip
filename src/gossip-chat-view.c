@@ -24,6 +24,7 @@
 #include <string.h>
 #include <time.h>
 
+#include <glib.h>
 #include <glib/gi18n.h>
 #include <glade/glade.h>
 
@@ -106,6 +107,12 @@ static gboolean chat_view_url_event_cb               (GtkTextTag               *
 						      GdkEvent                 *event,
 						      GtkTextIter              *iter,
 						      GtkTextBuffer            *buffer);
+static void     chat_view_web_services_google_cb     (GtkMenuItem              *menuitem, 
+						      const gchar              *text);
+static void     chat_view_web_services_wikipedia_cb  (GtkMenuItem              *menuitem, 
+						      const gchar              *text);
+static void     chat_view_web_services_youtube_cb    (GtkMenuItem              *menuitem, 
+						      const gchar              *text);
 static void     chat_view_open_address_cb            (GtkMenuItem              *menuitem,
 						      const gchar              *url);
 static void     chat_view_copy_address_cb            (GtkMenuItem              *menuitem,
@@ -452,10 +459,7 @@ chat_view_populate_popup (GossipChatView *view,
 				  view);
 	}
 
-	/* Link context menu items */
-	table = gtk_text_buffer_get_tag_table (priv->buffer);
-	tag = gtk_text_tag_table_lookup (table, "link");
-
+	/* Get iters at mouse location */
 	gtk_widget_get_pointer (GTK_WIDGET (view), &x, &y);
 
 	gtk_text_view_window_to_buffer_coords (GTK_TEXT_VIEW (view),
@@ -467,41 +471,118 @@ chat_view_populate_popup (GossipChatView *view,
 
 	start = end = iter;
 
+	/* Web Services context menu items */
+	if (!gtk_text_iter_starts_word (&start)) {
+		gtk_text_iter_backward_visible_word_start (&start);
+	}
+
+	if (!gtk_text_iter_ends_word (&end)) {
+		gtk_text_iter_forward_visible_word_end (&end);
+	}
+
+	str = gtk_text_buffer_get_text (priv->buffer, &start, &end, FALSE);
+	
+	if (!G_STR_EMPTY (str)) {
+		GtkWidget *submenu;
+		gchar     *item_str;
+
+		/* NOTE: Set data just to get the string freed when
+		 * not needed.
+		 */
+		g_object_set_data_full (G_OBJECT (menu),
+					"text", str,
+					(GDestroyNotify) g_free);
+
+		item = gtk_separator_menu_item_new ();
+		gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
+		gtk_widget_show (item);
+		
+		item_str = g_strdup_printf (_("_Internet Services for '%s'"), str);
+		item = gtk_menu_item_new_with_mnemonic (item_str);
+		gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
+		gtk_widget_show (item);
+		g_free (item_str);
+		
+		submenu = gtk_menu_new ();
+		gtk_widget_show (submenu);
+		gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), submenu);
+
+		/* TODO: Generate services menu from text file in config */
+		item = gtk_menu_item_new_with_mnemonic (_("_Youtube"));
+		gtk_menu_shell_prepend (GTK_MENU_SHELL (submenu), item);
+		gtk_widget_show (item);
+
+		g_signal_connect (item,
+				  "activate",
+				  G_CALLBACK (chat_view_web_services_youtube_cb),
+				  str);
+
+		item = gtk_menu_item_new_with_mnemonic (_("_Wikipedia"));
+		gtk_menu_shell_prepend (GTK_MENU_SHELL (submenu), item);
+		gtk_widget_show (item);
+		
+		g_signal_connect (item,
+				  "activate",
+				  G_CALLBACK (chat_view_web_services_wikipedia_cb),
+				  str);
+
+		item = gtk_menu_item_new_with_mnemonic (_("_Google"));
+		gtk_menu_shell_prepend (GTK_MENU_SHELL (submenu), item);
+		gtk_widget_show (item);
+
+		g_signal_connect (item,
+				  "activate",
+				  G_CALLBACK (chat_view_web_services_google_cb),
+				  str);
+	} else {
+		g_free (str);
+	}
+
+	str = NULL;
+
+	/* Link context menu items */
+	table = gtk_text_buffer_get_tag_table (priv->buffer);
+	tag = gtk_text_tag_table_lookup (table, "link");
+
 	if (gtk_text_iter_backward_to_tag_toggle (&start, tag) &&
 	    gtk_text_iter_forward_to_tag_toggle (&end, tag)) {
-		str = gtk_text_buffer_get_text (priv->buffer,
-						&start, &end, FALSE);
+		str = gtk_text_buffer_get_text (priv->buffer, &start, &end, FALSE);
 	}
 
-	if (G_STR_EMPTY (str)) {
+	if (!G_STR_EMPTY (str)) {
+		/* NOTE: Set data just to get the string freed when
+		 * not needed.
+		 */
+		g_object_set_data_full (G_OBJECT (menu),
+					"url", str,
+					(GDestroyNotify) g_free);
+		
+		item = gtk_menu_item_new ();
+		gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
+		gtk_widget_show (item);
+		
+		item = gtk_menu_item_new_with_mnemonic (_("_Copy Link Address"));
+		gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
+		gtk_widget_show (item);
+		
+		g_signal_connect (item,
+				  "activate",
+				  G_CALLBACK (chat_view_copy_address_cb),
+				  str);
+
+		item = gtk_menu_item_new_with_mnemonic (_("_Open Link"));
+		gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
+		gtk_widget_show (item);	
+
+		g_signal_connect (item,
+				  "activate",
+				  G_CALLBACK (chat_view_open_address_cb),
+				  str);
+	} else {
 		g_free (str);
-		return;
 	}
 
-	/* NOTE: Set data just to get the string freed when not needed. */
-	g_object_set_data_full (G_OBJECT (menu),
-				"url", str,
-				(GDestroyNotify) g_free);
-
-	item = gtk_menu_item_new ();
-	gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
-	gtk_widget_show (item);
-
-	item = gtk_menu_item_new_with_mnemonic (_("_Copy Link Address"));
-	g_signal_connect (item,
-			  "activate",
-			  G_CALLBACK (chat_view_copy_address_cb),
-			  str);
-	gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
-	gtk_widget_show (item);
-
-	item = gtk_menu_item_new_with_mnemonic (_("_Open Link"));
-	g_signal_connect (item,
-			  "activate",
-			  G_CALLBACK (chat_view_open_address_cb),
-			  str);
-	gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
-	gtk_widget_show (item);
+	str = NULL;
 }
 
 static gboolean
@@ -591,13 +672,100 @@ chat_view_url_event_cb (GtkTextTag    *tag,
 }
 
 static void
-chat_view_open_address_cb (GtkMenuItem *menuitem, const gchar *url)
+chat_view_web_services_google_cb (GtkMenuItem *menuitem, 
+				  const gchar *text)
+{
+	gchar *locale_code;
+	gchar *url;
+	gchar *escaped;
+
+	locale_code = gossip_locale_get_code ();
+	escaped = g_uri_escape_string (text, NULL, TRUE);
+
+	url = g_strconcat ("http://www.google.com/search?hl=",
+			   locale_code,
+			   "&q=",
+			   escaped,
+			   "&btnG=Google+Search&meta=",
+			   NULL);
+
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Trying to find Wikipedia page for '%s', using URL:'%s'",
+		      text, 
+		      url);
+
+	gossip_url_show (url);
+
+	g_free (escaped);
+	g_free (url);
+	g_free (locale_code);
+}
+
+static void
+chat_view_web_services_wikipedia_cb (GtkMenuItem *menuitem, 
+				     const gchar *text)
+{
+	gchar *locale_code;
+	gchar *url;
+	gchar *escaped;
+
+	locale_code = gossip_locale_get_code ();
+	escaped = g_uri_escape_string (text, NULL, TRUE);
+
+	url = g_strconcat ("http://",
+			   locale_code,
+			   ".wikipedia.org/wiki/Special:Search?search=",
+			   escaped,
+			   "&go=Go",
+			   NULL);
+
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Trying to find Wikipedia page for '%s', using URL:'%s'",
+		      text, 
+		      url);
+
+	gossip_url_show (url);
+
+	g_free (escaped);
+	g_free (url);
+	g_free (locale_code);
+}
+
+static void
+chat_view_web_services_youtube_cb (GtkMenuItem *menuitem, 
+				   const gchar *text)
+{
+	gchar *url;
+	gchar *escaped;
+
+	escaped = g_uri_escape_string (text, NULL, TRUE);
+
+	url = g_strconcat ("http://www.youtube.com/results?search_query=",
+			   escaped,
+			   "&search_type=&aq=f",
+			   NULL);
+
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Trying to find Wikipedia page for '%s', using URL:'%s'",
+		      text, 
+		      url);
+
+	gossip_url_show (url);
+
+	g_free (escaped);
+	g_free (url);
+}
+
+static void
+chat_view_open_address_cb (GtkMenuItem *menuitem, 
+			   const gchar *url)
 {
 	gossip_url_show (url);
 }
 
 static void
-chat_view_copy_address_cb (GtkMenuItem *menuitem, const gchar *url)
+chat_view_copy_address_cb (GtkMenuItem *menuitem, 
+			   const gchar *url)
 {
 	GtkClipboard *clipboard;
 
@@ -609,7 +777,8 @@ chat_view_copy_address_cb (GtkMenuItem *menuitem, const gchar *url)
 }
 
 static void
-chat_view_clear_view_cb (GtkMenuItem *menuitem, GossipChatView *view)
+chat_view_clear_view_cb (GtkMenuItem    *menuitem, 
+			 GossipChatView *view)
 {
 	gossip_chat_view_clear (view);
 }

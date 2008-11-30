@@ -624,7 +624,6 @@ chat_text_populate_popup_cb (GtkTextView *view,
 
 	if (gtk_text_iter_backward_to_tag_toggle (&start, tag) &&
 	    gtk_text_iter_forward_to_tag_toggle (&end, tag)) {
-
 		str = gtk_text_buffer_get_text (buffer,
 						&start, &end, FALSE);
 	}
@@ -639,6 +638,7 @@ chat_text_populate_popup_cb (GtkTextView *view,
 				"chat_spell", chat_spell,
 				(GDestroyNotify) chat_spell_free);
 
+	/* Add spell check option */
 	item = gtk_separator_menu_item_new ();
 	gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
 	gtk_widget_show (item);

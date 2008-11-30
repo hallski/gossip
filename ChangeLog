@@ -1,5 +1,14 @@
 2008-11-30  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-utils.[ch]: Added function to get locale code
+	from environment variables.
+	
+	* src/gossip-chat-view.c: Added a new feature to search with
+	Google, Wikipedia or Youtube for the word under the mouse cursor
+	in chat windows.
+
+2008-11-30  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-group-chat.c: (group_chat_send): Set _not_ away when
 	we send a message. This was only done in private chats until now. 
 	
