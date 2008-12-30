@@ -422,6 +422,22 @@ if test $IGE_PLATFORM = win32; then
    fi
 fi
 
+#
+# For more information see:
+#
+#   http://live.gnome.org/GnomeGoals/CleanupGTKIncludes
+#   http://bugzilla.gnome.org/show_bug.cgi?id=564368
+# 
+# Right now the includes which cause problems are:
+#
+#  include <panel-applet-gconf.h>
+#  include <glade/glade.h>
+#
+# These are currently broken, so this is currently disabled, the rest
+# of the build works with these exceptions.
+#
+# CFLAGS+=" -DG_DISABLE_SINGLE_INCLUDES -DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES -DGTK_DISABLE_SINGLE_INCLUDES"
+#
 
 AC_OUTPUT([
   Makefile

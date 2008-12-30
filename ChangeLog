@@ -1,6 +1,16 @@
 2008-12-30  Martyn Russell  <martyn@imendio.com>
 
 	* configure.ac:
+	* src/gossip-self-presence.h: Added blurb about
+	http://live.gnome.org/GnomeGoals/CleanupGTKIncludes in
+	configure.ac and also checked Gossip builds with those CFLAGS.
+	Right now it doesn't because of the glade and panel-applet-gconf
+	includes which need fixing so it is disabled for now. This fixes
+	bug #564368 (Przemysław Grzegorczyk).
+
+2008-12-30  Martyn Russell  <martyn@imendio.com>
+
+	* configure.ac:
 	* libgossip/gossip-ft.c: 
 	* libgossip/gossip-jabber-ft.c:
 	* libgossip/gossip-log.c: 
@@ -12,8 +22,8 @@
 	* src/gossip-ui-utils.c:
 	* src/gossip-vcard-dialog.c: Removed libgnomeui and libgnomevfs
 	deps from Gossip. Now we use libcanberra-gtk for Sound support,
-	the rest is done with GTK+ and GIO. This patch was provided by
-	Christian Dywan and fixes bug #565498.
+	the rest is done with GTK+ and GIO. This fixes bug #565498
+	(Christian Dywan, Martyn Russell). 
 
 2008-11-30  Martyn Russell  <martyn@imendio.com>
 

@@ -22,7 +22,7 @@
 #define __GOSSIP_SELF_PRESENCE_H__
 
 #include <glib-object.h>
-#include <gdk/gdkpixbuf.h>
+#include <gdk/gdk.h>
 
 #include <libgossip/gossip.h>
 
