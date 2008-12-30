@@ -28,7 +28,7 @@ IDT_COMPILE_WARNINGS
 
 LIBXML_REQUIRED=2.6.16
 GLIB_REQUIRED=2.12.0
-GTK_REQUIRED=2.10.0
+GTK_REQUIRED=2.14.0
 LIBGLADE_REQUIRED=2.0.0
 LOUDMOUTH_REQUIRED=1.4.1
 GCONF_REQUIRED=1.2.0
@@ -45,29 +45,21 @@ dnl -----------------------------------------------------------
 IGE_PLATFORM_CHECK
 if test "x$IGE_PLATFORM" = xx11; then
    gconf_pkgconfig=gconf-2.0
-   gnome_vfs_pkgconfig=gnome-vfs-2.0
-   libgnomeui_pkgconfig=libgnomeui-2.0
    platform_pkgconfig=
    PLATFORM_CFLAGS=
    PLATFORM_LDFLAGS=
 elif test "x$IGE_PLATFORM" = xosx; then
    gconf_pkgconfig=
-   gnome_vfs_pkgconfig=
-   libgnomeui_pkgconfig=
    platform_pkgconfig="ige-mac-integration >= 0.8.2"
    PLATFORM_CFLAGS="-xobjective-c"
    PLATFORM_LDFLAGS="-framework Carbon -framework AppKit -framework IOKit -lobjc"
 elif test "x$IGE_PLATFORM" = xwin32; then
    gconf_pkgconfig=
-   gnome_vfs_pkgconfig=
-   libgnomeui_pkgconfig=
    platform_pkgconfig=
    PLATFORM_CFLAGS="-mms-bitfields"
    PLATFORM_LDFLAGS="-no-undefined -mwindows"
 else
    gconf_pkgconfig=
-   gnome_vfs_pkgconfig=
-   libgnomeui_pkgconfig=
    PLATFORM_CFLAGS=
    PLATFORM_LDFLAGS=
 fi
@@ -238,6 +230,20 @@ fi
 
 AC_DEFINE_UNQUOTED([ISO_CODES_PREFIX],["$iso_codes_prefix"],[ISO codes prefix])
 
+gio_pkgconfig_tmp="gio-2.0 >= 2.16"
+PKG_CHECK_MODULES(GIO, $gio_pkgconfig_tmp, have_gio=yes, have_gio=no)
+if test x$have_gio = xyes; then
+  AC_DEFINE(HAVE_GIO, 1, [GIO support])
+  gio_pkgconfig=$gio_pkgconfig_tmp
+fi
+
+libcanberra_gtk_pkgconfig_tmp="libcanberra-gtk >= 0.3"
+PKG_CHECK_MODULES(LIBCANBERRA_GTK, $libcanberra_gtk_pkgconfig_tmp, have_libcanberra_gtk=yes, have_libcanberra_gtk=no)
+if test x$have_libcanberra_gtk = xyes; then
+  AC_DEFINE(HAVE_LIBCANBERRA_GTK, 1, [libCanberraGtk support])
+  libcanberra_gtk_pkgconfig=$libcanberra_gtk_pkgconfig_tmp
+fi
+
 dnl -----------------------------------------------------------
 dnl Pkg-Config dependency checks
 dnl -----------------------------------------------------------
@@ -249,7 +255,8 @@ PKG_CHECK_MODULES(LIBGOSSIP,
    gobject-2.0
    $gconf_pkgconfig
    $dbus_pkgconfig
-   $gnome_vfs_pkgconfig
+   $gio_pkgconfig
+   $libcanberra_gtk_pkgconfig
    $gnome_keyring_pkgconfig
    $ebook_pkgconfig
 ])
@@ -274,8 +281,6 @@ PKG_CHECK_MODULES(GOSSIP,
    $dbus_pkgconfig
    $galago_pkgconfig
    $libnotify_pkgconfig
-   $libgnomeui_pkgconfig
-   $gnome_vfs_pkgconfig
    $platform_pkgconfig
 ])
 
@@ -285,13 +290,12 @@ PKG_CHECK_MODULES(GOSSIP_JABBER,
    gobject-2.0
    loudmouth-1.0 >= $LOUDMOUTH_REQUIRED
    libxml-2.0 >= $LIBXML_REQUIRED
-   $gnome_vfs_pkgconfig
 ])
 
 if test x$have_dbus = xyes; then
    PKG_CHECK_MODULES(PEEKABOO, 
    [
-      libgnomeui-2.0 
+      libgnomeui-2.0
       libpanelapplet-2.0 >= $LIBPANELAPPLET_REQUIRED
       gconf-2.0 >= $GCONF_REQUIRED
       glib-2.0 >= $GLIB_REQUIRED
@@ -447,6 +451,7 @@ echo "  Platform:      $IGE_PLATFORM_NAME"
 echo
 echo "Extras:"
 echo "  DBUS:          $have_dbus"
+echo "  Sound:         $have_libcanberra_gtk (libcanberra-gtk)"
 echo "  Galago:        $have_galago"
 echo "  Notify:        $have_libnotify"
 echo "  GNOME Keyring: $have_gnome_keyring (only with GNOME)"

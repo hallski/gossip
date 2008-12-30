@@ -1,6 +1,7 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
  * Copyright (C) 2004-2007 Imendio AB
+ * Copyright (C) 2002 Red Hat, Inc.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -27,9 +28,8 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 
-#ifdef HAVE_PLATFORM_X11
-#include <libgnomeui/libgnomeui.h>
-#include <libgnomevfs/gnome-vfs-mime-utils.h>
+#if HAVE_PLATFORM_X11 && HAVE_GIO
+#include <gio/gio.h>
 #endif
 
 #include <libgossip/gossip.h>
@@ -45,11 +45,13 @@
 
 #define DEBUG_DOMAIN "VCardDialog"
 
-#define VCARD_TIMEOUT     20000
-#define SAVED_TIMEOUT     10000
+#define VCARD_TIMEOUT       20000
+#define SAVED_TIMEOUT       10000
 
-#define AVATAR_MAX_HEIGHT 96
-#define AVATAR_MAX_WIDTH  96
+#define AVATAR_MAX_HEIGHT   96
+#define AVATAR_MAX_WIDTH    96
+
+#define AVATAR_PREVIEW_SIZE 128
 
 #define RESPONSE_IMPORT   1
 
@@ -91,10 +93,6 @@ typedef struct {
 	gboolean   requesting_vcard;
 	gint       last_account_selected;
 	gchar     *avatar_format;
-
-#ifdef HAVE_PLATFORM_X11
-	GnomeThumbnailFactory *thumbs;
-#endif
 } GossipVCardDialog;
 
 static void       vcard_dialog_create_avatar_chooser       (GossipVCardDialog *dialog);
@@ -311,79 +309,49 @@ vcard_dialog_import (GossipVCardDialog *dialog)
 						     (gchar*) avatar->data, avatar->len);
 		gossip_avatar_unref (avatar);
 	}
-#endif
+#endif /* HAVE_EBOOK */
 }
-
-#ifdef HAVE_PLATFORM_X11
-
-static GdkPixbuf *
-vcard_dialog_scale_down_to_width (GdkPixbuf *pixbuf, gint wanted_width)
-{
-	gint      width, height;
-	gdouble   factor;
-
-	width = gdk_pixbuf_get_width (pixbuf);
-	height = gdk_pixbuf_get_height (pixbuf);
-
-	if (width > wanted_width) {
-		factor = (gdouble) wanted_width / MAX (width, height);
-
-		width = width * factor;
-		height = height * factor;
-
-		return gdk_pixbuf_scale_simple (pixbuf,
-						width, height,
-						GDK_INTERP_BILINEAR);
-	}
-
-	return g_object_ref (pixbuf);
-}
-
-#endif
 
 static void
 vcard_dialog_avatar_update_preview_cb (GtkFileChooser    *chooser,
 				       GossipVCardDialog *dialog)
 {
-#ifdef HAVE_PLATFORM_X11
-	gchar *uri;
+#if HAVE_PLATFORM_X11 && HAVE_GIO
+	gchar *filename;
 
-	uri = gtk_file_chooser_get_preview_uri (chooser);
-
-	if (uri) {
+	/* We are only interested in local filenames */
+	filename = gtk_file_chooser_get_preview_filename (chooser);
+	
+	if (filename) {
 		GtkWidget *image;
 		GdkPixbuf *pixbuf;
-		GdkPixbuf *scaled_pixbuf;
-		gchar     *mime_type;
+		GError    *error = NULL;
 
-		if (!dialog->thumbs) {
-			dialog->thumbs =
-				gnome_thumbnail_factory_new (GNOME_THUMBNAIL_SIZE_NORMAL);
-		}
+		pixbuf = gdk_pixbuf_new_from_file_at_scale (filename,
+							    AVATAR_PREVIEW_SIZE, 
+							    AVATAR_PREVIEW_SIZE,
+							    TRUE,
+							    &error);
 
-		mime_type = gnome_vfs_get_mime_type (uri);
-		pixbuf = gnome_thumbnail_factory_generate_thumbnail (dialog->thumbs,
-								     uri,
-								     mime_type);
 		image = gtk_file_chooser_get_preview_widget (chooser);
 
 		if (pixbuf) {
-			scaled_pixbuf = vcard_dialog_scale_down_to_width (
-				pixbuf, AVATAR_MAX_WIDTH);
-			gtk_image_set_from_pixbuf (GTK_IMAGE (image), scaled_pixbuf);
-			g_object_unref (scaled_pixbuf);
+			gtk_image_set_from_pixbuf (GTK_IMAGE (image), pixbuf);
 			g_object_unref (pixbuf);
 		} else {
+			gossip_debug (DEBUG_DOMAIN, 
+				      "Couldn't load GdkPixbuf from file scaled (%d²), %s",
+				      AVATAR_PREVIEW_SIZE, 
+				      error ? error->message : "no error given");
+ 
 			gtk_image_set_from_stock (GTK_IMAGE (image),
 						  "gtk-dialog-question",
 						  GTK_ICON_SIZE_DIALOG);
 		}
-
-		g_free (mime_type);
 	}
 
 	gtk_file_chooser_set_preview_widget_active (chooser, TRUE);
-#endif
+#endif /* HAVE_PLATFORM_X11 && HAVE_GIO */
 }
 
 static void

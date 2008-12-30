@@ -32,11 +32,6 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 
-#ifdef HAVE_PLATFORM_X11
-#include <libgnome/gnome-program.h>
-#include <libgnomeui/gnome-ui-init.h>
-#endif
-
 #include <libgossip/gossip.h>
 
 #ifdef HAVE_DBUS
@@ -60,11 +55,7 @@ int
 main (int argc, char *argv[])
 {
 	gchar                *localedir;
-#ifdef HAVE_PLATFORM_X11
-	GnomeProgram         *program;
-#else
 	GError               *error = NULL;
-#endif
 	gboolean              init_galago;
 	GossipSession        *session;
 	GossipAccountManager *account_manager;
@@ -109,17 +100,9 @@ main (int argc, char *argv[])
 	 * GNOME_PROGRAM_STANDARD_PROPERTIES which needs it. So we simply add
 	 * this hack below to keep everyone happy.
 	 */
-#define DATADIR SHAREDIR
+// #define DATADIR SHAREDIR
+#endif
 
-	program = gnome_program_init (PACKAGE_TARNAME, 
-				      PACKAGE_VERSION,
-				      LIBGNOMEUI_MODULE,
-				      argc, argv,
-				      GNOME_PROGRAM_STANDARD_PROPERTIES,
-				      "goption-context", context,
-				      GNOME_PARAM_HUMAN_READABLE_NAME, PACKAGE_NAME,
-				      NULL);
-#else
 	if (!gtk_init_with_args (&argc, &argv,
 				 _("- Gossip Instant Messenger"),
 				 options,
@@ -128,7 +111,6 @@ main (int argc, char *argv[])
 		g_printerr ("%s\n", error->message);
 		return 1;
 	}
-#endif
 
 	gossip_window_set_default_icon_name (PACKAGE_TARNAME);
 
@@ -218,10 +200,6 @@ main (int argc, char *argv[])
 	g_object_unref (gossip_app_get ());
 
 	gossip_stock_finalize ();
-
-#ifdef HAVE_PLATFORM_X11
-	g_object_unref (program);
-#endif
 
 	return EXIT_SUCCESS;
 }

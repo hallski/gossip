@@ -24,9 +24,9 @@
 
 #include "config.h"
 
-#ifdef HAVE_PLATFORM_X11
-#include <libgnome/gnome-sound.h>
-#include <libgnome/gnome-triggers.h>
+#ifdef HAVE_LIBCANBERRA_GTK
+#include <canberra-gtk.h>
+#include <glib/gi18n.h>
 #elif  HAVE_PLATFORM_WIN32
 #ifdef HAVE_WINDOWS_H
 #include <windows.h>
@@ -34,7 +34,7 @@
 #ifdef HAVE_MMSYSTEM_H
 #include <mmsystem.h>
 #endif /* HAVE_MMSYSTEM_H */
-#endif /* HAVE_PLATFORM_X11 */
+#endif /* HAVE_LIBCANBERRA_GTK */
 
 #include <libgossip/gossip.h>
 
@@ -201,6 +201,25 @@ sound_contact_removed_cb (GossipSession *session,
 	g_hash_table_remove (contact_states, contact);
 }
 
+#ifdef HAVE_LIBCANBERRA_GTK
+
+#if 0
+
+static void 
+callback (ca_context *c, 
+	  uint32_t    id, 
+	  int         error, 
+	  void       *userdata)
+{
+        gossip_debug (DEBUG_DOMAIN,
+		      "Callback called, error '%s'\n", 
+		      ca_strerror (error));
+}
+
+#endif
+
+#endif /* HAVE_LIBCANBERRA_GTK */
+
 gboolean
 gossip_sound_play (GossipSound sound)
 {
@@ -244,23 +263,44 @@ gossip_sound_play (GossipSound sound)
 		return FALSE;
 	}
 
-#ifdef HAVE_PLATFORM_X11
+#ifdef HAVE_LIBCANBERRA_GTK
+	{
+	int result;
+	
 	switch (sound) {
 	case GOSSIP_SOUND_CHAT:
-		gossip_debug (DEBUG_DOMAIN, "Triggering 'Chat' sound.");
-		gnome_triggers_do (NULL, NULL, PACKAGE_TARNAME, "Chat", NULL);
+		gossip_debug (DEBUG_DOMAIN, "Triggering 'Chat' sound...");
+		result = ca_context_play (ca_gtk_context_get (), 0,
+					  CA_PROP_APPLICATION_NAME, _("Gossip Instant Messenger"),
+					  CA_PROP_EVENT_ID, PACKAGE_TARNAME G_DIR_SEPARATOR_S "chat1", 
+					  CA_PROP_EVENT_DESCRIPTION, _("Chat"), 
+					  NULL); 
 		break;
 	case GOSSIP_SOUND_ONLINE:
-		gossip_debug (DEBUG_DOMAIN, "Triggering 'Online' sound.");
-		gnome_triggers_do (NULL, NULL, PACKAGE_TARNAME, "Online", NULL);
+		gossip_debug (DEBUG_DOMAIN, "Triggering 'Online' sound...");
+		result = ca_context_play (ca_gtk_context_get (), 0,
+					  CA_PROP_APPLICATION_NAME, _("Gossip Instant Messenger"),
+					  CA_PROP_EVENT_ID, PACKAGE_TARNAME G_DIR_SEPARATOR_S "online",
+					  CA_PROP_EVENT_DESCRIPTION, _("Online"),
+					  NULL);
 		break;
 	case GOSSIP_SOUND_OFFLINE:
-		gossip_debug (DEBUG_DOMAIN, "Triggering 'Offline' sound.");
-		gnome_triggers_do (NULL, NULL, PACKAGE_TARNAME, "Offline", NULL);
+		gossip_debug (DEBUG_DOMAIN, "Triggering 'Offline' sound...");
+		result = ca_context_play (ca_gtk_context_get (), 0,
+					  CA_PROP_APPLICATION_NAME, _("Gossip Instant Messenger"),
+					  CA_PROP_EVENT_ID, PACKAGE_TARNAME G_DIR_SEPARATOR_S "offline",
+					  CA_PROP_EVENT_DESCRIPTION, _("Offline"),
+					  NULL);
 		break;
 	}
 
-	success = TRUE;
+	gossip_debug (DEBUG_DOMAIN,
+		      "Trigger result: %d->%s\n", 
+		      result,
+		      ca_strerror (result));
+	
+	success = result == 0;
+	}
 #elif HAVE_PLATFORM_WIN32
 	switch (sound) {
 	case GOSSIP_SOUND_CHAT:
@@ -291,29 +331,9 @@ gossip_sound_play (GossipSound sound)
 void
 gossip_sound_init (GossipSession *session)
 {
-#ifdef HAVE_PLATFORM_X11
-	gchar *filename;
-#endif /* HAVE_PLATFORM_X11 */
-
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 
 	g_assert (saved_session == NULL);
-
-#ifdef HAVE_PLATFORM_X11
-	gnome_sound_init (NULL);
-
-	filename = gossip_paths_get_sound_path ("chat1.wav");
-	gnome_sound_sample_load ("gossip/Chat", filename);
-	g_free (filename);
-
-	filename = gossip_paths_get_sound_path ("online.wav");
-	gnome_sound_sample_load ("gossip/Online", filename);
-	g_free (filename);
-
-	filename = gossip_paths_get_sound_path ("offline.wav");
-	gnome_sound_sample_load ("gossip/Offline", filename);
-	g_free (filename);
-#endif
 
 	saved_session = g_object_ref (session);
 
@@ -345,10 +365,6 @@ void
 gossip_sound_finalize (void)
 {
 	g_assert (saved_session != NULL);
-
-#ifdef HAVE_PLATFORM_X11
-	gnome_sound_shutdown ();
-#endif
 
 	g_signal_handlers_disconnect_by_func (saved_session,
 					      sound_protocol_connected_cb,

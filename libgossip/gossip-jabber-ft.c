@@ -29,10 +29,6 @@
 
 #include <libloudermouth/loudermouth.h>
 
-#ifdef HAVE_PLATFORM_X11
-#include <libgnomevfs/gnome-vfs.h>
-#endif
-
 #include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-presence.h>
@@ -41,6 +37,10 @@
 #include "gossip-jabber-ft.h"
 #include "gossip-jabber-private.h"
 #include "gossip-jid.h"
+
+#ifdef HAVE_GIO
+#include <gio/gio.h>
+#endif
 
 #define DEBUG_DOMAIN "JabberFT"
 
@@ -832,43 +832,54 @@ jabber_ft_get_file_details (const gchar  *uri,
 			    gchar       **file_size,
 			    gchar       **mime_type)
 {
-#ifdef HAVE_PLATFORM_X11
-	GnomeVFSFileInfo *file_info;
-	GnomeVFSResult    result;
+#ifdef HAVE_GIO
+	GFile       *file;
+	GFileInfo   *file_info;
+	const gchar *attributes;
 
 	gossip_debug (DEBUG_DOMAIN, "Getting file info for URI:'%s'", uri);
+	
+	file = g_file_new_for_uri (uri);
 
-	file_info = gnome_vfs_file_info_new ();
+	attributes = 
+		G_FILE_ATTRIBUTE_STANDARD_NAME ","
+		G_FILE_ATTRIBUTE_STANDARD_SIZE ","
+		G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE;
 
-	result = gnome_vfs_get_file_info (uri,
-					  file_info,
-					  GNOME_VFS_FILE_INFO_DEFAULT);
+	file_info = g_file_query_info (file, 
+				       attributes,
+				       G_FILE_QUERY_INFO_NONE, 
+				       NULL, 
+				       NULL);
 
-	if (result != GNOME_VFS_OK) {
-		g_warning ("Could not get file info for URI:'%s'", uri);
+	if (file_info == NULL) {
+		g_warning ("Could not obtain file info for URI:'%s'", uri);
 		return FALSE;
 	}
 
 	if (file_name) {
-		*file_name = g_strdup (file_info->name);
+		*file_name = g_strdup (g_file_info_get_name (file_info));
 	}
 
 	if (file_size) {
-		*file_size = g_strdup_printf ("%d", (guint) file_info->size);
+		*file_size = g_strdup_printf ("%u",
+					      (guint) g_file_info_get_size (file_info));
 	}
 
 	if (mime_type) {
-		gchar *s;
+		const gchar *content_type;
 
-		s = gnome_vfs_get_mime_type (uri);
-		*mime_type = s;
+		/* FIXME: Does this return a MIME type on Win32 and OSX? */
+		content_type = g_file_info_get_content_type (file_info);
+		*mime_type = g_strdup (content_type);
 
-		if (!s) {
-			*mime_type = g_strdup (GNOME_VFS_MIME_TYPE_UNKNOWN);
+		if (!content_type) {
+			*mime_type = g_strdup ("application/octet-stream");
 		}
 	}
 
-	gnome_vfs_file_info_unref (file_info);
+	g_object_unref (file_info);
+	g_object_unref (file);
 
 	return TRUE;
 #else
@@ -876,7 +887,7 @@ jabber_ft_get_file_details (const gchar  *uri,
 		struct stat buf;
 
 		/* This is not that nice but at least makes
-		 * filetransfer work without GnomeVFS.
+		 * filetransfer work without GIO.
 		 */
 		if (!g_str_has_prefix (uri, "file://")) {
 			return FALSE;

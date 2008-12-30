@@ -25,8 +25,8 @@
 
 #include <glib/gi18n.h>
 
-#ifdef HAVE_PLATFORM_X11
-#include <libgnomevfs/gnome-vfs-ops.h>
+#ifdef HAVE_GIO
+#include <gio/gio.h>
 #endif
 
 #include <libgossip/gossip.h>
@@ -140,7 +140,7 @@ gossip_image_chooser_init (GossipImageChooser *chooser)
 	priv->image_min_height = -1;
 	priv->image_max_width = -1;
 	priv->image_max_height = -1;
-	priv->image_max_size = 8*1024;
+	priv->image_max_size = 8 * 1024;
 	priv->image_format = g_strdup ("image/png");
 
 	gtk_box_set_homogeneous (GTK_BOX (chooser), FALSE);
@@ -460,13 +460,11 @@ image_chooser_drag_data_received_cb (GtkWidget          *widget,
 	target_type = gdk_atom_name (selection_data->target);
 
 	if (!strcmp (target_type, URI_LIST_TYPE)) {
-#ifdef HAVE_PLATFORM_X11
-		GnomeVFSHandle   *handle;
-		GnomeVFSResult    result;
-		GnomeVFSFileInfo  info;
-		gchar            *uri;
-		gchar            *nl;
-		gchar            *data = NULL;
+		GError *error = NULL;
+		gchar  *uri;
+		gchar  *nl;
+		gchar  *data = NULL;
+		gsize   data_size;
 
 		nl = strstr (selection_data->data, "\r\n");
 		if (nl) {
@@ -476,35 +474,23 @@ image_chooser_drag_data_received_cb (GtkWidget          *widget,
 			uri = g_strdup (selection_data->data);
 		}
 
-		result = gnome_vfs_open (&handle, uri, GNOME_VFS_OPEN_READ);
-		if (result == GNOME_VFS_OK) {
-			result = gnome_vfs_get_file_info_from_handle (handle,
-								      &info,
-								      GNOME_VFS_FILE_INFO_DEFAULT);
-			if (result == GNOME_VFS_OK) {
-				GnomeVFSFileSize data_size;
-
-				data = g_malloc (info.size);
-
-				result = gnome_vfs_read (handle, data, info.size, &data_size);
-				if (result == GNOME_VFS_OK) {
-					if (image_chooser_set_image_from_data (chooser,
-									       data,
-									       data_size)) {
-						handled = TRUE;
-					} else {
-						g_free (data);
-					}
-				} else {
-					g_free (data);
-				}
+		if (g_file_get_contents (uri, &data, &data_size, &error)) {
+			if (image_chooser_set_image_from_data (chooser,
+							       data,
+							       data_size)) {
+				/* FIXME: Why don't we free data? */
+				handled = TRUE;
+			} else {
+				g_free (data);
 			}
-
-			gnome_vfs_close (handle);
+		} else {
+			g_warning ("Could not obtain file contents for URI:'%s', %s", 
+				   uri,
+				   error->message);
 		}
-
+		
+		g_clear_error (&error);
 		g_free (uri);
-#endif
 	}
 
 	gtk_drag_finish (context, handled, FALSE, time);

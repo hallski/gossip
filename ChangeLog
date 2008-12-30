@@ -1,3 +1,20 @@
+2008-12-30  Martyn Russell  <martyn@imendio.com>
+
+	* configure.ac:
+	* libgossip/gossip-ft.c: 
+	* libgossip/gossip-jabber-ft.c:
+	* libgossip/gossip-log.c: 
+	* src/gossip-accounts-dialog.c:
+	* src/gossip-app.c:
+	* src/gossip-image-chooser.c:
+	* src/gossip-main.c:
+	* src/gossip-sound.c:
+	* src/gossip-ui-utils.c:
+	* src/gossip-vcard-dialog.c: Removed libgnomeui and libgnomevfs
+	deps from Gossip. Now we use libcanberra-gtk for Sound support,
+	the rest is done with GTK+ and GIO. This patch was provided by
+	Christian Dywan and fixes bug #565498.
+
 2008-11-30  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-utils.[ch]: Added function to get locale code

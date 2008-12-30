@@ -541,7 +541,10 @@ accounts_dialog_model_pixbuf_data_func (GtkTreeViewColumn    *tree_column,
 		      NULL);
 
 	g_object_unref (account);
-	g_object_unref (pixbuf);
+
+	if (pixbuf) {
+		g_object_unref (pixbuf);
+	}
 }
 
 static GossipAccount *

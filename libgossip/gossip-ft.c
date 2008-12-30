@@ -22,8 +22,8 @@
 
 #include <config.h>
 
-#ifdef HAVE_PLATFORM_X11
-#include <libgnomevfs/gnome-vfs.h>
+#ifdef HAVE_GIO
+#include <gio/gio.h>
 #endif
 
 #include "gossip-ft.h"
@@ -452,8 +452,8 @@ gossip_ft_get_file_size_for_display (GossipFT *ft)
 
 	priv = GOSSIP_FT_GET_PRIVATE (ft);
 
-#ifdef HAVE_PLATFORM_X11
-	return gnome_vfs_format_file_size_for_display (priv->file_size);
+#ifdef HAVE_GIO
+	return g_format_size_for_display (priv->file_size);
 #else
 	return g_strdup_printf ("%d kB", priv->file_size / 1024);
 #endif

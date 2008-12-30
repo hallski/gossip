@@ -68,8 +68,8 @@
 #include "gossip-private.h"
 #include "gossip-utils.h"
 
-#ifdef HAVE_PLATFORM_X11
-#include <libgnomevfs/gnome-vfs.h>
+#ifdef HAVE_GIO
+#include <gio/gio.h>
 #endif
 
 #define DEBUG_DOMAIN "Log"
@@ -154,7 +154,7 @@ typedef enum {
 static void            gossip_log_manager_class_init           (GossipLogManagerClass *klass);
 static void            gossip_log_manager_init                 (GossipLogManager      *manager);
 static void            log_manager_finalize                    (GObject               *object);
-#ifdef HAVE_PLATFORM_X11
+#ifdef HAVE_GIO
 static void            log_move_contact_dirs                   (GossipLogManager      *manager,
 								const gchar           *log_directory,
 								const gchar           *filename,
@@ -181,7 +181,7 @@ static void            log_handlers_notify_all                 (GossipLogManager
 								GossipChatroom        *chatroom,
 								GossipMessage         *message);
 static gboolean        log_check_dir                           (gchar                **directory);
-#ifdef HAVE_PLATFORM_X11
+#ifdef HAVE_GIO
 static LogVersion      log_check_version                       (void);
 #endif
 static gboolean        log_check_dir                           (gchar **directory);
@@ -278,7 +278,7 @@ gossip_log_manager_new (GossipSession *session)
 	GossipLogManagerPrivate *priv;
 	GossipLogManager     *manager;
 	GossipAccountManager *account_manager;
-#ifdef HAVE_PLATFORM_X11
+#ifdef HAVE_GIO
 	LogVersion            version;
 #endif
 	GList                *accounts, *l;
@@ -307,7 +307,7 @@ gossip_log_manager_new (GossipSession *session)
 			  NULL);
 
 	/* We only support this when running GNOME. */
-#ifdef HAVE_PLATFORM_X11
+#ifdef HAVE_GIO
 
 	/* Check for new log protocol version, and if so we fix the
 	 * differences here.
@@ -376,12 +376,12 @@ gossip_log_manager_new (GossipSession *session)
 		g_dir_close (dir);
 		g_free (log_directory);
 	}
-#endif /* HAVE_PLATFORM_X11 */
+#endif /* HAVE_GIO */
 
 	return manager;
 }
 
-#ifdef HAVE_PLATFORM_X11
+#ifdef HAVE_GIO
 static void
 log_move_contact_dirs (GossipLogManager *manager,
 		       const gchar      *log_directory,
@@ -389,24 +389,25 @@ log_move_contact_dirs (GossipLogManager *manager,
 		       const gchar      *type_str)
 {
 	GossipLogManagerPrivate *priv;
-	GnomeVFSResult        result = GNOME_VFS_OK;
-	GnomeVFSURI          *new_uri, *old_uri;
-	GnomeVFSURI          *new_uri_unknown;
-	GossipAccount        *account;
-	gchar                *basename;
+	
+	gchar         *new_uri, *old_uri;
+	gchar         *new_uri_unknown;
+	gint           result;
+	GossipAccount *account;
+	gchar         *basename;
 
 	priv = GOSSIP_LOG_GET_PRIVATE (manager);
 
-	new_uri_unknown = gnome_vfs_uri_new (log_directory);
-	new_uri_unknown = gnome_vfs_uri_append_path (new_uri_unknown, "Unknown");
+	new_uri_unknown = g_build_filename (log_directory, "Unknown", NULL);
 	basename = g_path_get_basename (filename);
 
 	if (strcmp (basename, LOG_DIR_CHATROOMS) == 0) {
 		/* Special case */
-		old_uri = gnome_vfs_uri_new (filename);
-		new_uri = gnome_vfs_uri_ref (new_uri_unknown);
-		g_mkdir_with_parents (gnome_vfs_uri_get_path (new_uri), LOG_DIR_CREATE_MODE);
-		new_uri = gnome_vfs_uri_append_path (new_uri, basename);
+		old_uri = g_strdup (filename);
+		new_uri = g_strdup (new_uri_unknown);
+		g_mkdir_with_parents (new_uri, LOG_DIR_CREATE_MODE);
+		g_free (new_uri);
+		new_uri = g_build_filename (new_uri_unknown, basename, NULL);
 	} else if (strcmp (basename, LOG_KEY_FILENAME) == 0) {
 		/* Remove this file since it can't be
 		 * placed anywhere and it will be
@@ -417,7 +418,7 @@ log_move_contact_dirs (GossipLogManager *manager,
 			      filename);
 		g_remove (filename);
 		g_free (basename);
-		gnome_vfs_uri_unref (new_uri_unknown);
+		g_free (new_uri_unknown);
 		return;
 	} else {
 		GossipAccountManager *account_manager;
@@ -433,35 +434,35 @@ log_move_contact_dirs (GossipLogManager *manager,
 			gossip_debug (DEBUG_DOMAIN, 
 				      "No account related to filename:'%s'",
 				      filename);
-			old_uri = gnome_vfs_uri_new (filename);
-			new_uri = gnome_vfs_uri_dup (new_uri_unknown);
-			g_mkdir_with_parents (gnome_vfs_uri_get_path (new_uri), LOG_DIR_CREATE_MODE);
-			new_uri = gnome_vfs_uri_append_path (new_uri, basename);
+			old_uri = g_strdup (filename);
+			new_uri = g_strdup (new_uri_unknown);
+			g_mkdir_with_parents (new_uri, LOG_DIR_CREATE_MODE);
+			g_free (new_uri);
+			new_uri = g_build_filename (new_uri_unknown, basename, NULL);
 		} else {
 			const gchar *account_name;
 
-			old_uri = gnome_vfs_uri_new (filename);
-			new_uri = gnome_vfs_uri_new (log_directory);
+			old_uri = g_strdup (filename);
 
 			account_name = gossip_account_get_name (account);
-			new_uri = gnome_vfs_uri_append_path (new_uri, account_name);
-			g_mkdir_with_parents (gnome_vfs_uri_get_path (new_uri), LOG_DIR_CREATE_MODE);
+			new_uri = g_build_filename (log_directory, account_name, NULL);
+			g_mkdir_with_parents (new_uri, LOG_DIR_CREATE_MODE);
 		}
 	}
 
-	result = gnome_vfs_move_uri (old_uri, new_uri, TRUE);
+	result = g_rename (old_uri, new_uri);
 			
 	gossip_debug (DEBUG_DOMAIN,
 		      "Transfering old URI:'%s' to new URI:'%s' returned:%d->'%s'",
-		      gnome_vfs_uri_get_path (old_uri),
-		      gnome_vfs_uri_get_path (new_uri),
-		      result, 
-		      gnome_vfs_result_to_string (result));
+		      old_uri,
+		      new_uri,
+		      result,
+		      result == -1 ? "Failed" : "Succeeded");
 			
 	g_free (basename);
-	gnome_vfs_uri_unref (old_uri);
-	gnome_vfs_uri_unref (new_uri);
-	gnome_vfs_uri_unref (new_uri_unknown);
+	g_free (old_uri);
+	g_free (new_uri);
+	g_free (new_uri_unknown);
 }
 #endif
 
@@ -493,13 +494,13 @@ log_account_renamed_cb (GossipAccount *account,
 			GParamSpec    *param,
 			gpointer       user_data)
 {
-#ifdef HAVE_PLATFORM_X11
+#ifdef HAVE_GIO
 	const gchar    *old_name;
 	const gchar    *new_name;
 	gchar          *log_directory;
 	gchar          *new_uri;
 	gchar          *old_uri;
-	GnomeVFSResult  result;
+	gint            result;
 
 	old_name = g_object_get_data (G_OBJECT (account), "log-name");
 	new_name = gossip_account_get_name (account);
@@ -516,12 +517,12 @@ log_account_renamed_cb (GossipAccount *account,
 
 	old_uri = g_build_filename (log_directory, old_name, NULL);
 	new_uri = g_build_filename (log_directory, new_name, NULL);
-	result = gnome_vfs_move (old_uri, new_uri, TRUE);
+	result = g_rename (old_uri, new_uri);
 
 	gossip_debug (DEBUG_DOMAIN,
 		      "Transfering logs from:'%s' to:'%s' returned:%d->'%s'",
 		      old_uri, new_uri, result, 
-		      gnome_vfs_result_to_string (result));
+		      result == -1 ? "Failed" : "Succeeded");
 
 	g_object_set_data_full (G_OBJECT (account), "log-name",
 				g_strdup (new_name),
@@ -536,8 +537,8 @@ log_account_renamed_cb (GossipAccount *account,
 static gchar *
 log_escape (const gchar *str)
 {
-#ifdef HAVE_PLATFORM_X11
-	return gnome_vfs_escape_host_and_path_string (str);
+#ifdef HAVE_GIO
+	return g_uri_escape_string (str, NULL, FALSE);
 #else
 	return g_strdup (str);
 #endif
@@ -546,8 +547,8 @@ log_escape (const gchar *str)
 static gchar *
 log_unescape (const gchar *str)
 {
-#ifdef HAVE_PLATFORM_X11
-	return gnome_vfs_unescape_string_for_display (str);
+#ifdef HAVE_GIO
+	return g_uri_unescape_string (str, NULL);
 #else
 	return g_strdup (str);
 #endif
@@ -687,7 +688,7 @@ log_handlers_notify_all (GossipLogManager *manager,
 	g_list_free (handlers);
 }
 
-#ifdef HAVE_PLATFORM_X11
+#ifdef HAVE_GIO
 static LogVersion
 log_check_version (void)
 {
@@ -780,7 +781,7 @@ log_check_version (void)
 	
 	return LOG_VERSION_LAST;
 }
-#endif /* HAVE_PLATFORM_X11 */
+#endif /* HAVE_GIO */
 
 static gboolean
 log_check_dir (gchar **directory)

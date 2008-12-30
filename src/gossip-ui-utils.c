@@ -31,8 +31,7 @@
 
 #ifdef HAVE_PLATFORM_X11
 #include <gdk/gdkx.h>
-#include <libgnome/gnome-url.h>
-#include <libgnomeui/libgnomeui.h>
+#include <gtk/gtk.h>
 #elif defined (HAVE_PLATFORM_OSX)
 #include <Cocoa/Cocoa.h>
 #elif defined (HAVE_PLATFORM_WIN32)
@@ -249,7 +248,8 @@ url_fixup (const gchar *url)
 	return real_url;
 }
 
-#ifdef HAVE_PLATFORM_X11
+#if GTK_CHECK_VERSION (2, 14, 0)
+
 gboolean
 gossip_url_show (const char *url)
 {
@@ -259,7 +259,7 @@ gossip_url_show (const char *url)
 	gossip_debug (DEBUG_DOMAIN, "Opening URL:'%s'...", url);
 
 	real_url = url_fixup (url);
-	gnome_url_show (real_url, &error);
+	gtk_show_uri (NULL, real_url, GDK_CURRENT_TIME, &error);
 
 	if (error) {
 		g_warning ("Couldn't show URL:'%s'", real_url);
@@ -273,7 +273,9 @@ gossip_url_show (const char *url)
 
 	return TRUE;
 }
+
 #elif defined(HAVE_PLATFORM_OSX)
+
 gboolean
 gossip_url_show (const char *url)
 {
@@ -294,8 +296,11 @@ gossip_url_show (const char *url)
 
 	return TRUE;
 }
+
 #elif defined(HAVE_PLATFORM_WIN32)
+
 #ifdef HAVE_SHELLAPI_H
+
 static const char *
 url_show_error_string (gint error)
 {
@@ -381,28 +386,64 @@ gossip_url_show (const gchar *url)
 
 	return success;
 }
-#else
+
+#else /* GTK 2.14.0|HAVE_PLATFORM_{OSX|WIN32) */ 
+
 void
-gossip_url_show (const char *url)
+gossip_url_show (const gchar *url)
 {
 	gchar *real_url;
+	gchar *command;
+
 	real_url = url_fixup (url);
+
+	command = g_strconcat ("xdg-open ", real_url, NULL);
+        if (!g_spawn_command_line_async (command, NULL)) {
+		g_free (command);
+
+		if (!command = g_strconcat ("gnome-open ", real_url, NULL)) {
+			g_free (command);
+
+			if (!command = g_strconcat ("exo-open ", real_url, NULL)) {
+				g_warning ("Failed to open url:'%s'", real_url);
+			}
+		}
+	}
+
+        g_free (command);
 	g_free (real_url);
 }
-#endif
+
+#endif /* GTK 2.14.0|HAVE_PLATFORM_{OSX|WIN32) */ 
 
 void
 gossip_help_show (void)
 {
-#ifdef HAVE_PLATFORM_X11
-	gboolean   ok;
 	GtkWidget *dialog;
+	gchar *message;
+#if GTK_CHECK_VERSION (2, 14, 0)
 	GError    *err = NULL;
 
-	ok = gnome_help_display ("gossip.xml", NULL, &err);
-	if (ok) {
+	if (gtk_show_uri (NULL, "ghelp:gossip", GDK_CURRENT_TIME, &err)) {
 		return;
 	}
+
+	message = g_strdup (err->message);
+	g_error_free (err);
+#else  /* GTK_CHECK_VERSION (2, 14, 0) */
+	gchar     *command;
+	GError    *err = NULL;
+
+	command = g_strconcat ("gnome-open ", "ghelp:gossip", NULL);
+        if (g_spawn_command_line_async (command, &error)) {
+		g_free (command);
+		return;
+	}
+
+	g_free (command);
+
+	message = g_strdup (_("Online help is not supported on this platform."));
+#endif  /* GTK_CHECK_VERSION (2, 14, 0) */
 
 	dialog = gtk_message_dialog_new_with_markup (GTK_WINDOW (gossip_app_get_window ()),
 						     GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -410,7 +451,7 @@ gossip_help_show (void)
 						     GTK_BUTTONS_CLOSE,
 						     "<b>%s</b>\n\n%s",
 						     _("Could not display the help contents."),
-						     err->message);
+						     message);
 
 	g_signal_connect_swapped (dialog, "response",
 				  G_CALLBACK (gtk_widget_destroy),
@@ -418,10 +459,7 @@ gossip_help_show (void)
 
 	gtk_widget_show (dialog);
 
-	g_error_free (err);
-#elif defined(HAVE_PLATFORM_OSX)
-	/* Nothing for now. */
-#endif
+	g_free (message);
 }
 
 static void

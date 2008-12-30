@@ -875,9 +875,9 @@ app_setup (GossipSession *session)
 	gtk_widget_hide (priv->chat_context);
 	gtk_widget_hide (priv->chat_context_separator);
 
-#ifndef HAVE_HELP
-	gtk_widget_hide (help_contents);
-#endif
+/* #ifndef HAVE_HELP */
+	/* gtk_widget_hide (help_contents); */
+/* #endif */
 
 	/* Set up connection related widgets. */
 	app_connection_items_setup (glade);
