@@ -1,3 +1,7 @@
+2009-01-02  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-sound.c: (gossip_sound_play): Fixed compilation warning.
+
 2008-12-30  Martyn Russell  <martyn@imendio.com>
 
 	* configure.ac:

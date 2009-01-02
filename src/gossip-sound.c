@@ -265,7 +265,7 @@ gossip_sound_play (GossipSound sound)
 
 #ifdef HAVE_LIBCANBERRA_GTK
 	{
-	int result;
+	int result = 0;
 	
 	switch (sound) {
 	case GOSSIP_SOUND_CHAT:
