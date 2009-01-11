@@ -591,7 +591,7 @@ gossip_message_get_date_and_time (GossipMessage *message, time_t *timestamp)
 	}
 
 	date = g_date_new ();
-	g_date_set_time (date, *timestamp);
+	g_date_set_time_t (date, *timestamp);
 
 	return date;
 }

@@ -1,3 +1,12 @@
+2009-01-11  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-account-manager.c:
+	* libgossip/gossip-chatroom-manager.c:
+	* libgossip/gossip-message.c: 
+	* src/gossip-theme.c: Use g_date_set_time_t() and return NULL not
+	FALSE for a Gossip type pointer. Fixes bug #559657 (Kjartan
+	Maraas, Christian Dywan). 
+
 2009-01-02  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-sound.c: (gossip_sound_play): Fixed compilation warning.

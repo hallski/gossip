@@ -342,7 +342,7 @@ gossip_account_manager_get_default (GossipAccountManager *manager)
 	GossipAccountManagerPrivate *priv;
 	const gchar              *name;
 
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager), FALSE);
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager), NULL);
 
 	priv = GOSSIP_ACCOUNT_MANAGER_GET_PRIVATE (manager);
 

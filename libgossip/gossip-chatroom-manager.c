@@ -595,7 +595,7 @@ gossip_chatroom_manager_get_default (GossipChatroomManager *manager)
 	GossipChatroomManagerPrivate *priv;
 	GList                     *l;
 
-	g_return_val_if_fail (GOSSIP_IS_CHATROOM_MANAGER (manager), FALSE);
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM_MANAGER (manager), NULL);
 
 	priv = GOSSIP_CHATROOM_MANAGER_GET_PRIVATE (manager);
 
