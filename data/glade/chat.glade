@@ -698,7 +698,6 @@ This is the text that should appear on a menu title. Don't include the prefix 'm
 		  <property name="max_length">0</property>
 		  <property name="text" translatable="yes"></property>
 		  <property name="has_frame">True</property>
-		  <property name="invisible_char">*</property>
 		  <property name="activates_default">True</property>
 		  <property name="width_chars">40</property>
 		</widget>

@@ -1,3 +1,11 @@
+2009-01-27  Martyn Russell  <martyn@imendio.com>
+
+	* data/glade/chat.glade:
+	* data/glade/group-chat.glade:
+	* data/glade/main.glade:
+	* data/glade/transports.glade: Don't hardcode invisible character
+	as "*" in glade files. Fixes bug #524901 (Christian Dywan).
+
 2009-01-11  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-account-manager.c:
