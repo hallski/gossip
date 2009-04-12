@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: gossip.HEAD\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gossip&component=general\n"
-"POT-Creation-Date: 2008-12-30 02:31+0000\n"
-"PO-Revision-Date: 2009-01-02 20:48+0100\n"
+"POT-Creation-Date: 2009-01-02 21:01+0000\n"
+"PO-Revision-Date: 2009-04-12 17:11+0200\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -2309,7 +2309,7 @@ msgstr "_Cumpleaños:"
 
 #: ../data/glade/main.glade.h:137
 msgid "_Contents"
-msgstr "_Índice"
+msgstr "Índ_ice"
 
 #: ../data/glade/main.glade.h:138
 msgid "_Deny"
