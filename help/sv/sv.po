@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2006-08-20 14:01+0200\n"
-"PO-Revision-Date: 2006-08-20 18:00+0100\n"
+"POT-Creation-Date: 2009-04-17 15:25+0000\n"
+"PO-Revision-Date: 2009-04-21 11:21+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -11,928 +11,980 @@ msgstr ""
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:259(None)
-msgid "@@image: 'figures/gossip_first_start_window.png'; md5=17632cd7156fa2b2e6d6d56b423bd239"
-msgstr "@@image: 'figures/gossip_first_start_window.png'; md5=17632cd7156fa2b2e6d6d56b423bd239"
+#: C/gossip.xml:338(None)
+#| msgid ""
+#| "@@image: 'figures/gossip_roster.png'; md5=eb10a0f748c6f8091ec64c2b0889e67b"
+msgid "@@image: 'figures/gossip-roster.png'; md5=a1f1cd0f7e9263cc0d2f39271f32fd27"
+msgstr "@@image: 'figures/gossip-roster.png'; md5=a1f1cd0f7e9263cc0d2f39271f32fd27"
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:413(None)
-msgid "@@image: 'figures/gossip_roster.png'; md5=eb10a0f748c6f8091ec64c2b0889e67b"
-msgstr "@@image: 'figures/gossip_roster.png'; md5=eb10a0f748c6f8091ec64c2b0889e67b"
+#: C/gossip.xml:528(None)
+#| msgid ""
+#| "@@image: 'figures/gossip_personal_details.png'; "
+#| "md5=fc9da7ea371249f38a6fa37e126b74cc"
+msgid "@@image: 'figures/gossip-personal-details.png'; md5=465af899b847da95f9689422c4f27daf"
+msgstr "@@image: 'figures/gossip-personal-details.png'; md5=465af899b847da95f9689422c4f27daf"
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:589(None)
-msgid "@@image: 'figures/gossip_personal_details.png'; md5=fc9da7ea371249f38a6fa37e126b74cc"
-msgstr "@@image: 'figures/gossip_personal_details.png'; md5=fc9da7ea371249f38a6fa37e126b74cc"
-
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:817(None)
+#: C/gossip.xml:803(None)
 msgid "@@image: 'figures/gossip-available.png'; md5=e5242ca2eaafc3fa131308a2dc11a796"
 msgstr "@@image: 'figures/gossip-available.png'; md5=e5242ca2eaafc3fa131308a2dc11a796"
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:832(None)
+#: C/gossip.xml:818(None)
 msgid "@@image: 'figures/gossip-busy.png'; md5=9fa99b5e46e4f2b9a04f44569a6f3cd0"
 msgstr "@@image: 'figures/gossip-busy.png'; md5=9fa99b5e46e4f2b9a04f44569a6f3cd0"
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:847(None)
+#: C/gossip.xml:833(None)
 msgid "@@image: 'figures/gossip-away.png'; md5=33e81e2227fdb79c56fadb022b2e10bc"
 msgstr "@@image: 'figures/gossip-away.png'; md5=33e81e2227fdb79c56fadb022b2e10bc"
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:862(None)
+#: C/gossip.xml:848(None)
 msgid "@@image: 'figures/gossip-extended-away.png'; md5=9c4f1cc2bc56703b626ad6ed3cf7dd2c"
 msgstr "@@image: 'figures/gossip-extended-away.png'; md5=9c4f1cc2bc56703b626ad6ed3cf7dd2c"
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:877(None)
+#: C/gossip.xml:863(None)
 msgid "@@image: 'figures/gossip-offline.png'; md5=de3339a395ece40fdbfcabab2ce09bc9"
 msgstr "@@image: 'figures/gossip-offline.png'; md5=de3339a395ece40fdbfcabab2ce09bc9"
 
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:991(None)
-msgid "@@image: 'figures/gossip_new_chat_room.png'; md5=a34fabbba2f7a52dac8ab96486d0a165"
-msgstr "@@image: 'figures/gossip_new_chat_room.png'; md5=a34fabbba2f7a52dac8ab96486d0a165"
+#: C/gossip.xml:22(title)
+#: C/gossip.xml:114(revnumber)
+#| msgid "Gossip Manual V2.2"
+msgid "Gossip Manual V2.4"
+msgstr "Handbok för Gossip v2.4"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:22(title)
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:114(revnumber)
-msgid "Gossip Manual V2.2"
-msgstr "Handbok för Gossip v2.2"
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:25(year)
+#: C/gossip.xml:25(year)
 msgid "2004"
 msgstr "2004"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:26(holder)
+#: C/gossip.xml:26(holder)
 msgid "Daniel Taylor"
 msgstr "Daniel Taylor"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:29(year)
+#: C/gossip.xml:29(year)
 msgid "2004, 2006"
 msgstr "2004, 2006"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:30(holder)
+#: C/gossip.xml:30(holder)
 msgid "Keywan Najafi Tonekaboni"
 msgstr "Keywan Najafi Tonekaboni"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:33(year)
+#: C/gossip.xml:33(year)
 msgid "2005-2006"
 msgstr "2005-2006"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:34(holder)
+#: C/gossip.xml:34(holder)
 msgid "Brian Pepple"
 msgstr "Brian Pepple"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:49(publishername)
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:62(orgname)
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:70(orgname)
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:123(para)
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:133(para)
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:144(para)
+#: C/gossip.xml:49(publishername)
+#: C/gossip.xml:62(orgname)
+#: C/gossip.xml:70(orgname)
+#: C/gossip.xml:120(para)
+#: C/gossip.xml:130(para)
+#: C/gossip.xml:143(para)
+#: C/gossip.xml:153(para)
+#: C/gossip.xml:164(para)
 msgid "GNOME Documentation Project"
 msgstr "Dokumentationsprojekt för GNOME"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:2(para)
+#: C/gossip.xml:2(para)
 msgid "Permission is granted to copy, distribute and/or modify this document under the terms of the GNU Free Documentation License (GFDL), Version 1.1 or any later version published by the Free Software Foundation with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts. You can find a copy of the GFDL at this <ulink type=\"help\" url=\"ghelp:fdl\">link</ulink> or in the file COPYING-DOCS distributed with this manual."
 msgstr "Tillstånd att kopiera, distribuera och/eller modifiera detta dokument ges under villkoren i GNU Free Documentation License (GFDL), version 1.1 eller senare, utgivet av Free Software Foundation utan standardavsnitt och omslagstexter.  En kopia av GFDL finns att hämta på denna <ulink type=\"help\" url=\"ghelp:fdl\">länk</ulink> eller i filen COPYING-DOCS som medföljer denna handbok."
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:12(para)
+#: C/gossip.xml:12(para)
 msgid "This manual is part of a collection of GNOME manuals distributed under the GFDL. If you want to distribute this manual separately from the collection, you can do so by adding a copy of the license to the manual, as described in section 6 of the license."
 msgstr "Denna handbok utgör en av flera GNOME-handböcker som distribueras under villkoren i GFDL.  Om du vill distribuera denna handbok separat från övriga handböcker kan du göra detta genom att lägga till en kopia av licensavtalet i handboken enligt instruktionerna i avsnitt 6 i licensavtalet."
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:19(para)
+#: C/gossip.xml:19(para)
 msgid "Many of the names used by companies to distinguish their products and services are claimed as trademarks. Where those names appear in any GNOME documentation, and the members of the GNOME Documentation Project are made aware of those trademarks, then the names are in capital letters or initial capital letters."
 msgstr "Flera namn på produkter och tjänster är registrerade varumärken. I de fall dessa namn förekommer i GNOME-dokumentation - och medlemmarna i GNOME-dokumentationsprojektet är medvetna om dessa varumärken - är de skrivna med versaler eller med inledande versal."
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:35(para)
+#: C/gossip.xml:35(para)
 msgid "DOCUMENT IS PROVIDED ON AN \"AS IS\" BASIS, WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, WITHOUT LIMITATION, WARRANTIES THAT THE DOCUMENT OR MODIFIED VERSION OF THE DOCUMENT IS FREE OF DEFECTS MERCHANTABLE, FIT FOR A PARTICULAR PURPOSE OR NON-INFRINGING. THE ENTIRE RISK AS TO THE QUALITY, ACCURACY, AND PERFORMANCE OF THE DOCUMENT OR MODIFIED VERSION OF THE DOCUMENT IS WITH YOU. SHOULD ANY DOCUMENT OR MODIFIED VERSION PROVE DEFECTIVE IN ANY RESPECT, YOU (NOT THE INITIAL WRITER, AUTHOR OR ANY CONTRIBUTOR) ASSUME THE COST OF ANY NECESSARY SERVICING, REPAIR OR CORRECTION. THIS DISCLAIMER OF WARRANTY CONSTITUTES AN ESSENTIAL PART OF THIS LICENSE. NO USE OF ANY DOCUMENT OR MODIFIED VERSION OF THE DOCUMENT IS AUTHORIZED HEREUNDER EXCEPT UNDER THIS DISCLAIMER; AND"
 msgstr "DOKUMENTET TILLHANDAHÅLLS I \"BEFINTLIGT SKICK\" UTAN NÅGRA SOM HELST GARANTIER, VARE SIG UTTRYCKLIGA ELLER UNDERFÖRSTÅDDA, INKLUSIVE, MEN INTE BEGRÄNSAT TILL, GARANTIER ATT DOKUMENTET ELLER EN MODIFIERAD VERSION AV DOKUMENTET INTE INNEHÅLLER NÅGRA FELAKTIGHETER, ÄR LÄMPLIGT FÖR ETT VISST ÄNDAMÅL ELLER INTE STRIDER MOT LAG. HELA RISKEN VAD GÄLLER KVALITET, EXAKTHET OCH UTFÖRANDE AV DOKUMENTET OCH MODIFIERADE VERSIONER AV DOKUMENTET LIGGER HELT OCH HÅLLET PÅ ANVÄNDAREN. OM ETT DOKUMENT ELLER EN MODIFIERAD VERSION AV ETT DOKUMENT SKULLE VISA SIG INNEHÅLLA FELAKTIGHETER I NÅGOT HÄNSEENDE ÄR DET DU (INTE DEN URSPRUNGLIGA SKRIBENTEN, FÖRFATTAREN ELLER NÅGON ANNAN MEDARBETARE) SOM FÅR STÅ FÖR ALLA EVENTUELLA KOSTNADER FÖR SERVICE, REPARATIONER ELLER KORRIGERINGAR. DENNA GARANTIFRISKRIVNING UTGÖR EN VÄSENTLIG DEL AV DETTA LICENSAVTAL. DETTA INNEBÄR ATT ALL ANVÄNDNING AV ETT DOKUMENT ELLER EN MODIFIERAD VERSION AV ETT DOKUMENT BEVILJAS ENDAST UNDER DENNA ANSVARSFRISKRIVNING;"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:55(para)
+#: C/gossip.xml:55(para)
 msgid "UNDER NO CIRCUMSTANCES AND UNDER NO LEGAL THEORY, WHETHER IN TORT (INCLUDING NEGLIGENCE), CONTRACT, OR OTHERWISE, SHALL THE AUTHOR, INITIAL WRITER, ANY CONTRIBUTOR, OR ANY DISTRIBUTOR OF THE DOCUMENT OR MODIFIED VERSION OF THE DOCUMENT, OR ANY SUPPLIER OF ANY OF SUCH PARTIES, BE LIABLE TO ANY PERSON FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES OF ANY CHARACTER INCLUDING, WITHOUT LIMITATION, DAMAGES FOR LOSS OF GOODWILL, WORK STOPPAGE, COMPUTER FAILURE OR MALFUNCTION, OR ANY AND ALL OTHER DAMAGES OR LOSSES ARISING OUT OF OR RELATING TO USE OF THE DOCUMENT AND MODIFIED VERSIONS OF THE DOCUMENT, EVEN IF SUCH PARTY SHALL HAVE BEEN INFORMED OF THE POSSIBILITY OF SUCH DAMAGES."
 msgstr "UNDER INGA OMSTÄNDIGHETER ELLER INOM RAMEN FÖR NÅGON LAGSTIFTNING, OAVSETT OM DET GÄLLER KRÄNKNING (INKLUSIVE VÅRDSLÖSHET), KONTRAKT ELLER DYLIKT, SKA FÖRFATTAREN, DEN URSPRUNGLIGA SKRIBENTEN ELLER ANNAN MEDARBETARE ELLER ÅTERFÖRSÄLJARE AV DOKUMENTET ELLER AV EN MODIFIERAD VERSION AV DOKUMENTET ELLER NÅGON LEVERANTÖR TILL NÅGON AV NÄMNDA PARTER STÄLLAS ANSVARIG GENTEMOT NÅGON FÖR NÅGRA DIREKTA, INDIREKTA, SÄRSKILDA ELLER OFÖRUTSEDDA SKADOR ELLER FÖLJDSKADOR AV NÅGOT SLAG, INKLUSIVE, MEN INTE BEGRÄNSAT TILL, SKADOR BETRÄFFANDE FÖRLORAD GOODWILL, HINDER I ARBETET, DATORHAVERI ELLER NÅGRA ANDRA TÄNKBARA SKADOR ELLER FÖRLUSTER SOM KAN UPPKOMMA PÅ GRUND AV ELLER RELATERAT TILL ANVÄNDNINGEN AV DOKUMENTET ELLER MODIFIERADE VERSIONER AV DOKUMENTET, ÄVEN OM PART SKA HA BLIVIT INFORMERAD OM MÖJLIGHETEN TILL SÅDANA SKADOR."
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:28(para)
+#: C/gossip.xml:28(para)
 msgid "DOCUMENT AND MODIFIED VERSIONS OF THE DOCUMENT ARE PROVIDED UNDER THE TERMS OF THE GNU FREE DOCUMENTATION LICENSE WITH THE FURTHER UNDERSTANDING THAT: <placeholder-1/>"
 msgstr "DOKUMENTET OCH MODIFIERADE VERSIONER AV DOKUMENTET TILLHANDAHÅLLS UNDER VILLKOREN I GNU FREE DOCUMENTATION LICENSE ENDAST UNDER FÖLJANDE FÖRUTSÄTTNINGAR: <placeholder-1/>"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:59(firstname)
+#: C/gossip.xml:59(firstname)
 msgid "Daniel"
 msgstr "Daniel"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:60(surname)
+#: C/gossip.xml:60(surname)
 msgid "Taylor"
 msgstr "Taylor"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:63(email)
+#: C/gossip.xml:63(email)
 msgid "dantaylor@web.de"
 msgstr "dantaylor@web.de"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:67(firstname)
+#: C/gossip.xml:67(firstname)
 msgid "Keywan"
 msgstr "Keywan"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:68(surname)
+#: C/gossip.xml:68(surname)
 msgid "Najafi Tonekaboni"
 msgstr "Najafi Tonekaboni"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:71(email)
+#: C/gossip.xml:71(email)
 msgid "keywan@uni-duisburg.de"
 msgstr "keywan@uni-duisburg.de"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:75(firstname)
+#: C/gossip.xml:75(firstname)
 msgid "Brian"
 msgstr "Brian"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:76(surname)
+#: C/gossip.xml:76(surname)
 msgid "Pepple"
 msgstr "Pepple"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:78(orgname)
-msgid "Fedora Extras Project"
-msgstr "Fedora Extras Project"
+#: C/gossip.xml:78(orgname)
+#| msgid "Fedora Extras Project"
+msgid "Fedora Project"
+msgstr "Fedora-projektet"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:79(email)
+#: C/gossip.xml:79(email)
 msgid "bpepple@fedoraproject.org"
 msgstr "bpepple@fedoraproject.org"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:115(date)
-msgid "June 2006"
-msgstr "Juni 2006"
+#: C/gossip.xml:115(date)
+#| msgid "November 2005"
+msgid "December 2006"
+msgstr "December 2006"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:117(para)
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:130(para)
+#: C/gossip.xml:117(para)
+#: C/gossip.xml:127(para)
+#: C/gossip.xml:137(para)
+#: C/gossip.xml:150(para)
 msgid "Brian Pepple <email>bpepple@fedoraproject.org</email>"
 msgstr "Brian Pepple <email>bpepple@fedoraproject.org</email>"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:120(para)
+#: C/gossip.xml:124(revnumber)
+#| msgid "Gossip Manual V2.2"
+msgid "Gossip Manual V2.3"
+msgstr "Handbok för Gossip v2.3"
+
+#: C/gossip.xml:125(date)
+#| msgid "November 2005"
+msgid "November 2006"
+msgstr "November 2006"
+
+#: C/gossip.xml:134(revnumber)
+msgid "Gossip Manual V2.2"
+msgstr "Handbok för Gossip v2.2"
+
+#: C/gossip.xml:135(date)
+msgid "June 2006"
+msgstr "Juni 2006"
+
+#: C/gossip.xml:140(para)
 msgid "Keywan Najafi Tonekaboni <email>keywan@uni-duisburg.de</email>"
 msgstr "Keywan Najafi Tonekaboni <email>keywan@uni-duisburg.de</email>"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:127(revnumber)
+#: C/gossip.xml:147(revnumber)
 msgid "Gossip Manual V2.1"
 msgstr "Handbok för Gossip v2.1"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:128(date)
+#: C/gossip.xml:148(date)
 msgid "November 2005"
 msgstr "November 2005"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:138(revnumber)
+#: C/gossip.xml:158(revnumber)
 msgid "Gossip Manual V2.0"
 msgstr "Handbok för Gossip v2.0"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:139(date)
+#: C/gossip.xml:159(date)
 msgid "October 2004"
 msgstr "Oktober 2004"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:141(para)
+#: C/gossip.xml:161(para)
 msgid "Daniel Taylor <email>dantaylor@web.de</email>"
 msgstr "Daniel Taylor <email>dantaylor@web.de</email>"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:150(para)
+#: C/gossip.xml:170(para)
 msgid "This manual describes the use of Gossip."
 msgstr "Denna handbok beskriver användningen av Gossip."
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:153(releaseinfo)
-msgid "This manual describes version 0.12 of Gossip."
-msgstr "Denna handbok beskriver version 0.12 av Gossip."
+#: C/gossip.xml:173(releaseinfo)
+#| msgid "This manual describes version 0.12 of Gossip."
+msgid "This manual describes version 0.21 of Gossip."
+msgstr "Denna handbok beskriver version 0.21 av Gossip."
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:156(title)
+#: C/gossip.xml:176(title)
 msgid "Feedback"
 msgstr "Återkoppling"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:157(para)
-msgid "To report a bug or make a suggestion regarding the Gossip application or this manual, follow the directions in the <ulink url=\"ghelp:gnome-feedback\" type=\"help\">GNOME Feedback Page</ulink>."
-msgstr "För att rapportera ett fel eller komma med förslag angående programmet Gossip eller denna handbok, följ anvisningarna på <ulink url=\"ghelp:gnome-feedback\" type=\"help\">GNOME:s återkopplingssida</ulink>."
+#: C/gossip.xml:177(para)
+#| msgid ""
+#| "To report a bug or make a suggestion regarding the Gossip application or "
+#| "this manual, follow the directions in the <ulink url=\"ghelp:gnome-"
+#| "feedback\" type=\"help\">GNOME Feedback Page</ulink>."
+msgid "To report a bug or make a suggestion regarding the <application>Gossip</application> application or this manual, follow the directions in the Feedback section of the <ulink url=\"ghelp:user-guide?feedback-bugs\" type=\"help\">GNOME User Guide</ulink>."
+msgstr "För att rapportera ett fel eller komma med förslag angående programmet <application>Gossip</application> eller denna handbok, följ anvisningarna i <ulink url=\"ghelp:user-guide?feedback-bugs\" type=\"help\">Användarguide för GNOME</ulink>."
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:166(primary)
+#: C/gossip.xml:187(primary)
 msgid "Gossip"
 msgstr "Gossip"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:174(title)
+#: C/gossip.xml:195(title)
 msgid "Introduction"
 msgstr "Introduktion"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:177(title)
+#: C/gossip.xml:198(title)
 msgid "What is Gossip"
 msgstr "Vad är Gossip"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:178(para)
+#: C/gossip.xml:199(para)
 msgid "Gossip is an instant messaging program for the GNOME Desktop. It allows instant communication across a network using Jabber. Gossip is written to be as simple to use as possible and to allow users of the GNOME Desktop to keep in touch with friends."
 msgstr "Gossip är ett snabbmeddelandeprogram för GNOME-skrivbordet. Den erbjuder snabbkommunicering över ett nätverk via Jabber. Gossip skrevs för att vara så enkel att använda som möjligt och för att låta användare av GNOME-skrivbordet hålla kontakten med sina vänner."
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:186(title)
+#: C/gossip.xml:207(title)
 msgid "What is Instant Messaging"
 msgstr "Vad är snabbmeddelanden"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:187(para)
-msgid "Instant messaging lets people send text messages to each other over a network, such as the internet. They can add each other to a list, to see if their <emphasis>contacts</emphasis> are available."
+#: C/gossip.xml:208(para)
+msgid "Instant messaging lets people send text messages to each other over a network, such as the Internet. They can add each other to a list, to see if their <emphasis>contacts</emphasis> are available."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:194(title)
+#: C/gossip.xml:215(title)
 msgid "What is Jabber"
 msgstr "Vad är Jabber"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:195(para)
+#: C/gossip.xml:216(para)
 msgid "Jabber is an open instant messaging system which allows a group of interconnected servers to pass messages to one another in a similar fashion to email."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:199(para)
-msgid "The Jabber protocol is an open, free and public standard, which was accepted by Internet Engineering Task Force (IETF) under the name XMPP in 2004. It's decentralized and extensible with cusom functionality."
+#: C/gossip.xml:220(para)
+msgid "The Jabber protocol is an open, free and public standard, which was accepted by Internet Engineering Task Force (IETF) under the name XMPP in 2004. It's decentralized and extensible with custom functionality."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:204(para)
+#: C/gossip.xml:225(para)
 msgid "More information on the Jabber protocol can be found on the Website of the <ulink url=\"http://www.jabber.org\">Jabber Software Foundation</ulink> and in the <ulink url=\"http://en.wikipedia.org/wiki/Jabber\">Wikipedia</ulink>."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:222(title)
+#: C/gossip.xml:243(title)
 msgid "Getting Started"
 msgstr "Komma igång"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:225(title)
+#: C/gossip.xml:246(title)
 msgid "To Start Gossip"
 msgstr "Starta Gossip"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:226(para)
+#: C/gossip.xml:247(para)
 msgid "You can start <application>Gossip</application> in the following ways:"
 msgstr "Du kan starta <application>Gossip</application> på följande sätt:"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:230(term)
+#: C/gossip.xml:251(term)
 msgid "<guimenu>Applications</guimenu> menu"
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:232(para)
+#: C/gossip.xml:253(para)
 msgid "Choose <menuchoice><guisubmenu>Internet</guisubmenu><guimenuitem>Gossip Instant Messenger</guimenuitem></menuchoice>."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:241(term)
+#: C/gossip.xml:262(term)
 msgid "Command line"
 msgstr "Kommandorad"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:243(para)
+#: C/gossip.xml:264(para)
 msgid "To start <application>Gossip</application> from a command line, type <command>gossip</command> and then press <keycap>Return</keycap>."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:250(title)
+#: C/gossip.xml:271(title)
 msgid "When You Start Gossip the First Time"
 msgstr "När du startar Gossip för första gången"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:251(para)
-msgid "When you start <application>Gossip</application> the first time, the following window is displayed."
+#: C/gossip.xml:272(para)
+#| msgid ""
+#| "You can start <application>Gossip</application> in the following ways:"
+msgid "When you start <application>Gossip</application> the first time, you will be prompted to configure a Jabber account."
+msgstr "När du startar <application>Gossip</application> för första gången så kommer du att bli tillfrågad om att konfigurera ett Jabber-konto."
+
+#: C/gossip.xml:276(para)
+msgid "Click <guibutton>Add</guibutton>, to add an account. Then complete the following information:"
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:255(title)
-msgid "Gossip First Start Up Window"
+#: C/gossip.xml:282(para)
+msgid "Give the account the <guilabel>Name</guilabel> you wish to be displayed."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:268(phrase)
-msgid "Shows Gossips first start window which is an assistant to set up Gossip."
+#: C/gossip.xml:285(para)
+msgid "Select <guilabel>Connect on Startup</guilabel>, if you wish to have the account automatically connect when Gossip starts."
 msgstr ""
 
-#. for example, the items on the menubar and on the toolbar. This section is optional.
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:278(para)
-msgid "This window is an assistant to set up Gossip. With this assistant you can set up Gossip in few steps. You can use it to get a new Jabber account or setting up Gossip for using an existing Jabber account."
+#: C/gossip.xml:291(para)
+msgid "Select <guilabel>Use system proxy</guilabel> if you wish to connect using a system proxy."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:286(title)
-msgid "Getting a Jabber Account"
-msgstr "Skaffa ett Jabber-konto"
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:287(para)
-msgid "Gossip will help set up a new Jabber account:"
+#: C/gossip.xml:297(para)
+msgid "Enter the <guilabel>Login ID</guilabel>."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:290(para)
-msgid "When first running Gossip, answer <guibutton>No</guibutton> to the <guilabel>\"Do you already have an account on a Jabber server?\" </guilabel> question and click <guibutton>Next</guibutton>."
+#: C/gossip.xml:300(para)
+msgid "Enter the <guilabel>Password</guilabel>."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:297(para)
-msgid "Fill in desired user name and actual name and click <guibutton>Next</guibutton>."
-msgstr "Fyll i önskat användarnamn och fullständigt namn, klicka sedan på <guibutton>Nästa</guibutton>."
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:303(para)
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:362(para)
-msgid "Add the server information."
-msgstr "Lägg till serverinformationen."
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:307(para)
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:366(para)
-msgid "Choose the correct server for the account from the list, or type in a custom server if needed."
+#: C/gossip.xml:303(para)
+msgid "Enter the <guilabel>Resource</guilabel>."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:313(para)
-msgid "Select the <guilabel>Use encryption (SSL)</guilabel> option if your server supports it or requires it."
+#: C/gossip.xml:306(para)
+msgid "Enter the <guilabel>Server</guilabel> that you wish to connect to."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:319(para)
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:378(para)
-msgid "Select the <guilabel>Use system proxy</guilabel> option if you use a proxy."
+#: C/gossip.xml:309(para)
+msgid "Enter the <guilabel>Port</guilabel> that you wish to use."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:324(para)
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:383(para)
-msgid "Once all options are set, click <guibutton>Next</guibutton>."
+#: C/gossip.xml:312(para)
+msgid "Select <guilabel>Use encryption (SSL)</guilabel> if your server supports encryption."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:332(para)
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:391(para)
-msgid "Review the information and click <guibutton>Apply</guibutton>."
+#: C/gossip.xml:320(para)
+msgid "If this is a new Jabber account, then press <guibutton>Register</guibutton>. Otherwise, press <guibutton>Connect</guibutton>."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:337(para)
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:396(para)
-msgid "When prompted on first connection with the account, enter desired password."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:346(title)
-msgid "Setting Up Gossip to use an Existing Jabber Account"
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:347(para)
-msgid "Gossip will let you use an existing Jabber account:"
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:350(para)
-msgid "When first running Gossip, answer <guibutton>Yes</guibutton> to the <guilabel>\"Do you already have an account set up on a server?\"</guilabel> question and click <guibutton>Next</guibutton>."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:357(para)
-msgid "Fill in the user name of the account and click <guibutton>Next</guibutton>."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:372(para)
-msgid "Select the <guilabel>Use encryption (SSL)</guilabel> option if your server requires it."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:404(title)
+#: C/gossip.xml:329(title)
 msgid "When You Start Gossip"
 msgstr "När du startar Gossip"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:405(para)
+#: C/gossip.xml:330(para)
 msgid "When you start <application>Gossip</application>, the following window is displayed."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:409(title)
+#: C/gossip.xml:334(title)
 msgid "Gossip Main Window"
 msgstr "Gossips huvudfönster"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:422(phrase)
+#: C/gossip.xml:347(phrase)
 msgid "Shows Gossip main window. Contains titlebar, menubar, contact list, status icon and status arrow button list. Menubar contains Chat, Edit and Help menus."
 msgstr ""
 
 #. for example, the items on the menubar and on the toolbar. This section is optional.
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:434(para)
-msgid "The Gossip window contains the following elements:"
+#: C/gossip.xml:359(para)
+msgid "<xref linkend=\"gossip-TBL-1\"/> describes the components of a browser window."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:438(term)
-msgid "Menubar."
-msgstr "Menyrad."
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:440(para)
-msgid "The menus on the menubar contain all of the commands you needed to connect to servers and manage accounts, contacts, and preferences in <application>Gossip</application>."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:447(term)
-msgid "Accounts Toolbar"
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:449(para)
-msgid "The buttons on the account toolbar allow you, depending on account state, to connect, disconnect, and edit an account."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:454(para)
-msgid "The accounts toolbar is only visible if you have two or more Jabbers accounts set-up in Gossip."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:462(term)
-msgid "Status Drop-Down List."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:464(para)
-msgid "You can use this selector to change your online state."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:468(term)
-msgid "Contact List"
-msgstr "Kontaktlista"
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:470(para)
-msgid "The Contact List shows all available contacts and their associated statuses."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:480(title)
-msgid "Basic Usage"
-msgstr ""
-
-#. TODO: Maybe the next sentence is obsolote, because usage is splitted in
-#.       different sections
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:483(para)
-msgid "You can use the Gossip application to perform the following tasks:"
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:486(title)
-msgid "Connect to a Jabber Server"
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:487(para)
-msgid "To connect to a Jabber server, choose <menuchoice><guimenu>Chat</guimenu><guimenuitem>Connect</guimenuitem></menuchoice> from the Menubar."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:497(title)
-msgid "Disconnect from a Jabber Server"
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:498(para)
-msgid "To disconnect from a Jabber server, choose <menuchoice><guimenu>Chat</guimenu><guimenuitem>Disconnect</guimenuitem></menuchoice> from the Menubar."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:508(title)
-msgid "Sending An Instant Message"
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:509(para)
-msgid "You can send instant messages to a contact, in the following ways:"
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:512(para)
-msgid "Double click on the contact's nickname in the Contact List, to open the chat window."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:515(para)
-msgid "Choose <menuchoice><shortcut><keycombo><keycap>Ctrl</keycap><keycap>N</keycap></keycombo></shortcut><guimenu>Chat</guimenu><guimenuitem>New Message</guimenuitem></menuchoice> . A <interface>question</interface> dialog will be displayed, asking for the user ID or of the person you wish to send an instant message to. Type in the name or the contact ID and click <guibutton>Chat</guibutton>. You can also choose the name from the list."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:532(para)
-msgid "If you are online with more than one account, you can also choose from which of your accounts you want send the message."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:539(para)
-msgid "Right click on Gossip's Notification Area icon, and select <guilabel>New Message</guilabel>. A <interface>question</interface> dialog will be displayed, asking for the user ID or of the person you wish to send an instant message to. Type in the name or the contact ID and click <guibutton>Chat</guibutton>. You can also choose the name from the list."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:550(title)
-msgid "Receiving An Instant Message"
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:551(para)
-msgid "When you receive an instant messages, Gossip notifies you with a blinking balloon icon in the Notification Area and beside the nickname in the Contact List. You can read the message, in the following ways:"
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:558(para)
-msgid "Double click on the contact's nickname in the <interface>Contact List</interface>, to open the chat window with the new message."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:565(para)
-msgid "Click on the Gossip icon in the Notification Area. A chat window with the new message will open."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:574(title)
-msgid "Edit Account Personal Information"
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:575(para)
-msgid "To edit an accounts personal information, choose <menuchoice><guimenu>Edit</guimenu><guimenuitem>Personal Information</guimenuitem></menuchoice> from the Menubar."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:585(title)
-msgid "Gossip Personal Details Window"
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:598(phrase)
-msgid "Shows Gossips Personal Details windo, where the user can edit his personal information."
-msgstr ""
-
-#. ==== End of Figure ====
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:606(para)
-msgid "This will open the <interface>Personal Details</interface> dialog, which will allow you to provide the following information:"
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:612(para)
-msgid "Select the <guilabel>Account</guilabel> you wish to edit from the drop-down list box."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:618(para)
-msgid "To add your name, edit the contents of the <guilabel>Name</guilabel> text box."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:623(para)
-msgid "To add your nickname, edit the contents of the <guilabel>Nickname</guilabel> text box."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:629(para)
-msgid "To add your e-mail address, edit the contents of the <guilabel>Email</guilabel> text box."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:635(para)
-msgid "To add your web address, edit the contents of the <guilabel>Web site</guilabel> text box."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:641(para)
-msgid "To add a description about you, edit the contents of the <guilabel>Description</guilabel> text box."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:647(para)
-msgid "To add an avatar, click the <guibutton>Avatar</guibutton> image chooser button and select the image you wish to use."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:653(para)
-msgid "After reviewing the information, click <guibutton>Save</guibutton> to publish your information."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:662(title)
-msgid "Working With Contacts"
-msgstr "Arbeta med kontakter"
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:663(para)
-msgid "TODO: Describe briefly what the idea of contacts is in one or two sentence."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:669(title)
-msgid "Adding a Contact"
-msgstr "Lägga till en kontakt"
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:670(para)
-msgid "If you add a contact to your contact list, you can see when this person is online. To add a contact, perform the following steps:"
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:676(para)
-msgid "Choose <menuchoice><guimenu>Chat</guimenu><guimenuitem>Add Contact</guimenuitem></menuchoice> from the Menubar, to open the <interface>Add Contact</interface> dialog."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:686(para)
-msgid "Use the <guilabel>Which account do you want to add this contact to?</guilabel> arrow button to specify which account to add a contact to."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:692(para)
-msgid "Enter the <guilabel>Jabber ID of new contact</guilabel>, and then click <guibutton>Forward</guibutton>."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:697(para)
-msgid "The Jabber ID (JID) looks like an email-address. Example: name@host.domain"
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:703(para)
-msgid "Enter <guilabel>What nickname do you want to use for this contact?</guilabel>, this is the nickname that will be displayed in the Contact List."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:709(para)
-msgid "Use the <guilabel>In which group do you want to place this contact?</guilabel> arrow button to choose a group for this contact. The contact will be displayed in the Contact List under the chosen group name. Click <guibutton>Forward</guibutton> when finished."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:717(para)
-msgid "Review the information displayed and click <guibutton>Apply.</guibutton>."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:721(para)
-msgid "A request will sent to the contact, asking to subscribe to their presence notifications. Until this request is approved, the user will be shown as \"Offline\" in your Contact List. In addition, everybody who wants to add you to their Contact List, needs your authorization."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:733(title)
-msgid "Show Offline Contact's"
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:734(para)
-msgid "To show offline contact's in the Contact list, choose <menuchoice><shortcut><keycombo><keycap>Ctrl</keycap><keycap>H</keycap></keycombo></shortcut><guimenu>Chat</guimenu><guimenuitem>Show Offline Contacts</guimenuitem></menuchoice>"
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:749(title)
-msgid "Accessing a Contact's Information"
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:750(para)
-msgid "To access a contact's information, right click a contact's nickname in the Contact List and select <guimenuitem>Contact Information</guimenuitem>."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:757(title)
-msgid "Renaming a Contact"
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:758(para)
-msgid "To rename a contact in the Contact List, perform the following steps:"
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:761(para)
-msgid "Right click a contact's nickname in the Contact List and select <guimenuitem>Rename Contact</guimenuitem>."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:767(para)
-msgid "Enter a new name and click <guibutton>OK</guibutton> to apply, or <guibutton>Cancel</guibutton> to discard all changes."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:776(title)
-msgid "Removing a Contact"
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:777(para)
-msgid "To remove a contact, right click a contact's nickname in the Contact List and select <guilabel>Remove Contact</guilabel>. Click <guibutton>Remove</guibutton> when prompted to finish removal."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:787(title)
-msgid "Using Online Status"
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:788(para)
-msgid "You can use online status to show other users, if you are available for chat, busy or away. You can check the online status of your contacts in the contact list. In addition to your online status you can save a <emphasis>status message</emphasis>, e.g <emphasis>Out for shopping</emphasis>."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:797(title)
-msgid "Different Online Status"
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:807(para)
-msgid "Status Icon"
-msgstr "Statusikon"
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:809(para)
+#: C/gossip.xml:363(title)
+#| msgid "Gossip Main Window"
+msgid "Gossip Main Components"
+msgstr "Gossips huvudkomponenter"
+
+#: C/gossip.xml:370(para)
+msgid "Component"
+msgstr "Komponent"
+
+#: C/gossip.xml:373(para)
+#: C/gossip.xml:795(para)
 msgid "Description"
 msgstr "Beskrivning"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:820(phrase)
-msgid "Shows a green circle."
+#: C/gossip.xml:380(para)
+#| msgid "Menubar."
+msgid "Menubar"
+msgstr "Menyrad"
+
+#: C/gossip.xml:383(para)
+msgid "Contains menus that are used to perform tasks in Gossip."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:825(para)
-msgid "Available"
-msgstr "Tillgänglig"
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:835(phrase)
-msgid "Shows a yellow circle with a sheet of paper."
+#: C/gossip.xml:388(para)
+msgid "Status Drop-Down List"
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:840(para)
-msgid "Busy"
-msgstr "Upptagen"
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:850(phrase)
-msgid "Shows a red triangle."
-msgstr "Visar en röd triangel."
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:855(para)
-msgid "Away"
+#: C/gossip.xml:391(para)
+msgid "A drop-down list that allows the user to update their status."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:865(phrase)
-msgid "Shows a red triangle with a question mark."
+#: C/gossip.xml:396(para)
+msgid "Account Button"
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:870(para)
-msgid "Extended away"
+#: C/gossip.xml:399(para)
+msgid "Opens the <interface>Accounts</interface> dialog."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:880(phrase)
-msgid "Shows a grey square."
+#: C/gossip.xml:404(para)
+msgid "Contact List"
+msgstr "Kontaktlista"
+
+#: C/gossip.xml:407(para)
+msgid "Shows all available contacts and their associated statuses."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:885(para)
-msgid "Offline"
-msgstr "Frånkopplad"
+#: C/gossip.xml:419(title)
+msgid "Basic Usage"
+msgstr "Grundläggande användning"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:798(para)
-msgid "Gossip knows following online statuses: <informaltable frame=\"all\"><tgroup cols=\"2\" colsep=\"1\" rowsep=\"1\"><colspec colname=\"ICON\" colwidth=\"50*\"/><colspec colname=\"DESCRIPTION\" colwidth=\"50*\"/><thead><row valign=\"top\"><entry colname=\"ICON\"><placeholder-1/></entry><entry colname=\"DESCRIPTION\"><placeholder-2/></entry></row></thead><tbody><row valign=\"top\"><entry><placeholder-3/></entry><entry><placeholder-4/></entry></row><row valign=\"top\"><entry><placeholder-5/></entry><entry><placeholder-6/></entry></row><row valign=\"top\"><entry><placeholder-7/></entry><entry><placeholder-8/></entry></row><row valign=\"top\"><entry><placeholder-9/></entry><entry><placeholder-10/></entry></row><row valign=\"top\"><entry><placeholder-11/></entry><entry><placeholder-12/></entry></row></tbody></tgroup></informaltable>"
+#. TODO: Maybe the next sentence is obsolete, because usage is splitted in
+#.       different sections
+#: C/gossip.xml:422(para)
+msgid "You can use the Gossip application to perform the following tasks:"
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:896(title)
-msgid "Change Online Status"
+#: C/gossip.xml:425(title)
+msgid "Connect to a Jabber Server"
+msgstr "Anslut till en Jabber-server"
+
+#: C/gossip.xml:426(para)
+msgid "To connect to a Jabber server, choose <menuchoice><guimenu>Chat</guimenu><guimenuitem>Connect</guimenuitem></menuchoice> from the Menubar."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:897(para)
-msgid "You can change your online status, in the following ways:"
+#: C/gossip.xml:436(title)
+msgid "Disconnect from a Jabber Server"
+msgstr "Koppla från en Jabber-server"
+
+#: C/gossip.xml:437(para)
+msgid "To disconnect from a Jabber server, choose <menuchoice><guimenu>Chat</guimenu><guimenuitem>Disconnect</guimenuitem></menuchoice> from the Menubar."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:902(para)
-msgid "Click on the <guibutton>status button</guibutton> at the top of the <interface>contact list</interface> and choose one of the statuses."
+#: C/gossip.xml:447(title)
+msgid "Sending An Instant Message"
+msgstr "Skicka ett snabbmeddelande"
+
+#: C/gossip.xml:448(para)
+msgid "You can send instant messages to a contact, in the following ways:"
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:909(para)
-msgid "Click with the right mouse button on <interface>Gossip's notification area icon</interface> and select in <guisubmenu>Status</guisubmenu> one of the <guimenuitem>status messages</guimenuitem>."
+#: C/gossip.xml:451(para)
+msgid "Double click on the contact's nickname in the Contact List, to open the chat window."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:920(title)
-msgid "Automatic Online Status"
+#: C/gossip.xml:454(para)
+msgid "Choose <menuchoice><shortcut><keycombo><keycap>Ctrl</keycap><keycap>N</keycap></keycombo></shortcut><guimenu>Chat</guimenu><guimenuitem>New Message</guimenuitem></menuchoice> . A <interface>question</interface> dialog will be displayed, asking for the user ID or of the person you wish to send an instant message to. Type in the name or the contact ID and click <guibutton>Chat</guibutton>. You can also choose the name from the list."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:921(para)
-msgid "If you didn't use your computer for five minutes, Gossip will switch your online status from <guilabel>Available</guilabel> to <guilabel>Away</guilabel>. If you didn't use your computer for 30 minutes, Gossip will switch from <guilabel>Away</guilabel> to <guilabel>Extended away</guilabel>."
+#: C/gossip.xml:471(para)
+msgid "If you are online with more than one account, you can also choose from which of your accounts you want send the message."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:928(para)
-msgid "If you use your computer again , Gossip will switch after 15 seconds from <guilabel>Away</guilabel> or <guilabel>Extended away</guilabel> to <guilabel>Available</guilabel>. Also when you send a message, Gossip switchs back to <guilabel>Available</guilabel>."
+#: C/gossip.xml:478(para)
+msgid "Right click on Gossip's Notification Area icon, and select <guilabel>New Message</guilabel>. A <interface>question</interface> dialog will be displayed, asking for the user ID or of the person you wish to send an instant message to. Type in the name or the contact ID and click <guibutton>Chat</guibutton>. You can also choose the name from the list."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:937(title)
-msgid "Clean Saved Statuses"
+#: C/gossip.xml:489(title)
+msgid "Receiving An Instant Message"
+msgstr "Ta emot ett snabbmeddelande"
+
+#: C/gossip.xml:490(para)
+msgid "When you receive an instant messages, Gossip notifies you with a blinking balloon icon in the Notification Area and beside the nickname in the Contact List. You can read the message, in the following ways:"
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:943(para)
-msgid "Click on the <guibutton>status arrow button</guibutton> at the top of the <interface>contact list</interface> and choose <guimenuitem>Clear List</guimenuitem>."
+#: C/gossip.xml:497(para)
+msgid "Double click on the contact's nickname in the <interface>Contact List</interface>, to open the chat window with the new message."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:949(para)
-msgid "All your saved status messages will irrevocable be deleted."
+#: C/gossip.xml:504(para)
+msgid "Click on the Gossip icon in the Notification Area. A chat window with the new message will open."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:955(para)
-msgid "Click with the right mouse button on the <interface>Gossip's notification area icon</interface> and select in <guisubmenu>Status</guisubmenu> and choose <guimenuitem>Clear List</guimenuitem>."
+#: C/gossip.xml:513(title)
+msgid "Edit Account Personal Information"
+msgstr "Redigera personlig information för kontot"
+
+#: C/gossip.xml:514(para)
+msgid "To edit an accounts personal information, choose <menuchoice><guimenu>Edit</guimenu><guimenuitem>Personal Information</guimenuitem></menuchoice> from the Menubar."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:938(para)
-msgid "You can delete all saved customized status messages, in the following ways: <placeholder-1/>"
+#: C/gossip.xml:524(title)
+msgid "Gossip Personal Details Window"
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:969(title)
-msgid "Using Group Chats"
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:970(para)
-msgid "You can use a group chat to chat with more than one person in the same room."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:977(title)
-msgid "Joining A New Group Chat Room"
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:978(para)
-msgid "To join a new Group Chat Room, choose <menuchoice><guimenu>Chat</guimenu><guimenuitem>Group Chat</guimenuitem><guimenuitem>Join New</guimenuitem></menuchoice> from the MenuBar."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:987(title)
-msgid "Gossip New Chat Room Dialog"
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1000(phrase)
-msgid "Shows Gossip New Chat Room dialog."
+#: C/gossip.xml:537(phrase)
+msgid "Shows Gossips Personal Details window, where the user can edit his personal information."
 msgstr ""
 
 #. ==== End of Figure ====
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1006(para)
-msgid "This will open the <interface>New Chat Room</interface> dialog, in which you will need to complete the following information:"
+#: C/gossip.xml:545(para)
+msgid "This will open the <interface>Personal Details</interface> dialog, which will allow you to provide the following information:"
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1012(para)
-msgid "Select the Jabber account you wish to use from the <guilabel>Account</guilabel> drop-down box."
+#: C/gossip.xml:551(para)
+msgid "Select the <guilabel>Account</guilabel> you wish to edit from the drop-down list box."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1018(para)
-msgid "Enter the <guilabel>Nickname</guilabel> you wish to use."
+#: C/gossip.xml:556(para)
+#: C/gossip.xml:640(para)
+#: C/gossip.xml:978(para)
+msgid "This drop-down box will only be shown if you have more than one account set-up in Gossip."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1023(para)
-msgid "Enter the <guilabel>Server</guilabel> that you wish to connect."
+#: C/gossip.xml:562(para)
+msgid "To add your name, edit the contents of the <guilabel>Name</guilabel> text box."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1028(para)
-msgid "Enter the <guilabel>Room</guilabel> that you wish to join."
+#: C/gossip.xml:567(para)
+msgid "To add your nickname, edit the contents of the <guilabel>Nickname</guilabel> text box."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1033(para)
+#: C/gossip.xml:573(para)
+msgid "To add your e-mail address, edit the contents of the <guilabel>Email</guilabel> text box."
+msgstr ""
+
+#: C/gossip.xml:579(para)
+msgid "To add your web address, edit the contents of the <guilabel>Web site</guilabel> text box."
+msgstr ""
+
+#: C/gossip.xml:585(para)
+msgid "To add an avatar, click the <guibutton>Avatar</guibutton> image chooser button and select the image you wish to use."
+msgstr ""
+
+#: C/gossip.xml:591(para)
+msgid "To add a description about you, edit the contents of the <guilabel>Description</guilabel> text box."
+msgstr ""
+
+#: C/gossip.xml:597(para)
+msgid "To add your birthday, uncheck the <guilabel>Don't save</guilabel> checkbox in the <guilabel>Birthday</guilabel> section, and use the calendar to set your birthday."
+msgstr ""
+
+#: C/gossip.xml:603(para)
+msgid "After reviewing the information, click <guibutton>Save</guibutton> to publish your information."
+msgstr ""
+
+#: C/gossip.xml:612(title)
+msgid "Working With Contacts"
+msgstr "Arbeta med kontakter"
+
+#: C/gossip.xml:619(title)
+msgid "Adding a Contact"
+msgstr "Lägga till en kontakt"
+
+#: C/gossip.xml:620(para)
+msgid "If you add a contact to your contact list, you can see when this person is online. To add a contact, perform the following steps:"
+msgstr ""
+
+#: C/gossip.xml:626(para)
+msgid "Choose <menuchoice><guimenu>Chat</guimenu><guimenuitem>Add Contact</guimenuitem></menuchoice> from the Menubar, to open the <interface>Add Contact</interface> dialog."
+msgstr ""
+
+#: C/gossip.xml:636(para)
+msgid "Select the <guilabel>Account</guilabel> you wish to add the contact to."
+msgstr ""
+
+#: C/gossip.xml:646(para)
+msgid "Enter the <guilabel>Contact</guilabel> identity."
+msgstr ""
+
+#: C/gossip.xml:650(para)
+msgid "The Contact identity looks like an email-address. Example: user@jabber.org"
+msgstr ""
+
+#: C/gossip.xml:656(para)
+msgid "Enter the <guilabel>Alias</guilabel>, you wish to display in the Contact List."
+msgstr ""
+
+#: C/gossip.xml:661(para)
+msgid "Select the <guilabel>Group</guilabel> to associate with this contact from the drop-down list."
+msgstr ""
+
+#: C/gossip.xml:667(para)
+#| msgid ""
+#| "Fill in desired user name and actual name and click <guibutton>Next</"
+#| "guibutton>."
+msgid "Review the information displayed and click <guibutton>Add</guibutton>."
+msgstr "Granska informationen som visas och klicka på <guibutton>Lägg till</guibutton>."
+
+#: C/gossip.xml:671(para)
+msgid "A request will sent to the contact, asking to subscribe to their presence notifications. Until this request is approved, the user will be shown as \"Offline\" in your Contact List. In addition, everybody who wants to add you to their Contact List, needs your authorization."
+msgstr ""
+
+#: C/gossip.xml:683(title)
+msgid "Show Offline Contact's"
+msgstr ""
+
+#: C/gossip.xml:684(para)
+msgid "To show offline contact's in the Contact list, choose <menuchoice><shortcut><keycombo><keycap>Ctrl</keycap><keycap>H</keycap></keycombo></shortcut><guimenu>Chat</guimenu><guimenuitem>Show Offline Contacts</guimenuitem></menuchoice>"
+msgstr ""
+
+#: C/gossip.xml:699(title)
+msgid "Accessing a Contact's Information"
+msgstr ""
+
+#: C/gossip.xml:700(para)
+msgid "A contact's information can be accessed with the following methods:"
+msgstr ""
+
+#: C/gossip.xml:703(para)
+msgid "Right click a contact's alias in the Contact List and select <guimenuitem>Information</guimenuitem>."
+msgstr ""
+
+#: C/gossip.xml:709(para)
+msgid "With the contact selected in the Contact List, choose <menuchoice><guimenu>Edit</guimenu><guimenuitem>Contact</guimenuitem><guimenuitem>Information</guimenuitem></menuchoice>"
+msgstr ""
+
+#: C/gossip.xml:721(title)
+#| msgid "Adding a Contact"
+msgid "Editing a Contact"
+msgstr "Redigera en kontakt"
+
+#: C/gossip.xml:722(para)
+msgid "The <interface>Edit Contact</interface> dialog can be open with the following methods:"
+msgstr ""
+
+#: C/gossip.xml:727(para)
+msgid "Right click a contact's alias in the Contact List and select <guimenuitem>Edit</guimenuitem>."
+msgstr ""
+
+#: C/gossip.xml:733(para)
+msgid "With the contact selected in the Contact List, choose <menuchoice><guimenu>Edit</guimenu><guimenuitem>Contact</guimenuitem><guimenuitem>Edit</guimenuitem></menuchoice>"
+msgstr ""
+
+#: C/gossip.xml:746(title)
+msgid "Removing a Contact"
+msgstr "Ta bort en kontakt"
+
+#: C/gossip.xml:747(para)
+msgid "A contact can be removed with the following methods:"
+msgstr ""
+
+#: C/gossip.xml:752(para)
+msgid "Right click a contact's alias in the Contact List and select <guimenuitem>Remove</guimenuitem>."
+msgstr ""
+
+#: C/gossip.xml:758(para)
+msgid "With the contact selected in the in the Contact list, choose <menuchoice><guimenu>Edit</guimenu><guimenuitem>Contact</guimenuitem><guimenuitem>Remove</guimenuitem></menuchoice>"
+msgstr ""
+
+#: C/gossip.xml:773(title)
+msgid "Using Online Status"
+msgstr ""
+
+#: C/gossip.xml:774(para)
+msgid "You can use online status to show other users, if you are available for chat, busy or away. You can check the online status of your contacts in the contact list. In addition to your online status you can save a <emphasis>status message</emphasis>, e.g <emphasis>Out for shopping</emphasis>."
+msgstr ""
+
+#: C/gossip.xml:783(title)
+msgid "Different Online Status"
+msgstr ""
+
+#: C/gossip.xml:793(para)
+msgid "Status Icon"
+msgstr "Statusikon"
+
+#: C/gossip.xml:806(phrase)
+msgid "Shows a green circle."
+msgstr ""
+
+#: C/gossip.xml:811(para)
+msgid "Available"
+msgstr "Tillgänglig"
+
+#: C/gossip.xml:821(phrase)
+msgid "Shows a yellow circle with a sheet of paper."
+msgstr ""
+
+#: C/gossip.xml:826(para)
+msgid "Busy"
+msgstr "Upptagen"
+
+#: C/gossip.xml:836(phrase)
+msgid "Shows a red triangle."
+msgstr "Visar en röd triangel."
+
+#: C/gossip.xml:841(para)
+msgid "Away"
+msgstr ""
+
+#: C/gossip.xml:851(phrase)
+msgid "Shows a red triangle with a question mark."
+msgstr ""
+
+#: C/gossip.xml:856(para)
+msgid "Extended away"
+msgstr ""
+
+#: C/gossip.xml:866(phrase)
+msgid "Shows a grey square."
+msgstr ""
+
+#: C/gossip.xml:871(para)
+msgid "Offline"
+msgstr "Frånkopplad"
+
+#: C/gossip.xml:784(para)
+msgid "Gossip knows following online statuses: <informaltable frame=\"all\"><tgroup cols=\"2\" colsep=\"1\" rowsep=\"1\"><colspec colname=\"ICON\" colwidth=\"50*\"/><colspec colname=\"DESCRIPTION\" colwidth=\"50*\"/><placeholder-1/><placeholder-2/></tgroup></informaltable>"
+msgstr ""
+
+#: C/gossip.xml:882(title)
+msgid "Change Online Status"
+msgstr ""
+
+#: C/gossip.xml:883(para)
+msgid "You can change your online status, in the following ways:"
+msgstr ""
+
+#: C/gossip.xml:888(para)
+msgid "Click on the <guibutton>status button</guibutton> at the top of the <interface>contact list</interface> and choose one of the statuses."
+msgstr ""
+
+#: C/gossip.xml:895(para)
+msgid "Click with the right mouse button on <interface>Gossip's notification area icon</interface> and select in <guisubmenu>Status</guisubmenu> one of the <guimenuitem>status messages</guimenuitem>."
+msgstr ""
+
+#: C/gossip.xml:906(title)
+msgid "Automatic Online Status"
+msgstr ""
+
+#: C/gossip.xml:907(para)
+msgid "If your computer is inactive for five minutes, Gossip will switch your online status from <guilabel>Available</guilabel> to <guilabel>Away</guilabel>. If your computer remains inactive for 30 minutes, Gossip will switch from <guilabel>Away</guilabel> to <guilabel>Extended away</guilabel>."
+msgstr ""
+
+#: C/gossip.xml:914(para)
+msgid "Once your computer becomes active again , Gossip will switch after 15 seconds from <guilabel>Away</guilabel> or <guilabel>Extended away</guilabel> to <guilabel>Available</guilabel>. Also when you send a message, Gossip switches back to <guilabel>Available</guilabel>."
+msgstr ""
+
+#: C/gossip.xml:923(title)
+msgid "Clean Saved Statuses"
+msgstr ""
+
+#: C/gossip.xml:929(para)
+msgid "Click on the <guibutton>status arrow button</guibutton> at the top of the <interface>contact list</interface> and choose <guimenuitem>Clear List</guimenuitem>."
+msgstr ""
+
+#: C/gossip.xml:935(para)
+msgid "All your saved status messages will irrevocable be deleted."
+msgstr ""
+
+#: C/gossip.xml:941(para)
+msgid "Click with the right mouse button on the <interface>Gossip's notification area icon</interface> and select in <guisubmenu>Status</guisubmenu> and choose <guimenuitem>Clear List</guimenuitem>."
+msgstr ""
+
+#: C/gossip.xml:924(para)
+msgid "You can delete all saved customized status messages, in the following ways: <placeholder-1/>"
+msgstr ""
+
+#: C/gossip.xml:955(title)
+msgid "Using Group Chats"
+msgstr "Användning av gruppchatt"
+
+#: C/gossip.xml:956(para)
+msgid "Group chat can be used to have a conversation with more than one person."
+msgstr ""
+
+#: C/gossip.xml:961(title)
+msgid "Joining A New Group Chat Room"
+msgstr "Gå in i en ny gruppchatt"
+
+#: C/gossip.xml:962(para)
+msgid "To join a new Group Chat Room, choose <menuchoice><guimenu>Room</guimenu><guimenuitem>Join New</guimenuitem></menuchoice> from the MenuBar."
+msgstr ""
+
+#: C/gossip.xml:968(para)
+msgid "This will open the <interface>Join New</interface> dialog, in which the following information will need to be completed:"
+msgstr ""
+
+#: C/gossip.xml:974(para)
+msgid "Select the Jabber account to use from the <guilabel>Account</guilabel> drop-down box."
+msgstr ""
+
+#: C/gossip.xml:984(para)
+msgid "Enter the <guilabel>Server</guilabel> to connect to."
+msgstr "Ange en <guilabel>Server</guilabel> att ansluta till."
+
+#: C/gossip.xml:989(para)
+msgid "Enter the <guilabel>Room</guilabel> to join."
+msgstr ""
+
+#: C/gossip.xml:994(para)
+msgid "Enter your <guilabel>Nickname</guilabel>."
+msgstr "Ange ditt <guilabel>Smeknamn</guilabel>."
+
+#: C/gossip.xml:999(para)
 msgid "After completing the necessary information, click <guibutton>Join</guibutton> to enter the Chat Room."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1040(title)
-msgid "Managing Group chat"
+#: C/gossip.xml:1006(title)
+msgid "Managing Favorite Group Chats"
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1041(para)
-msgid "TODO"
-msgstr "ATTGÖRA"
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1047(title)
-msgid "Joining A Existing Group Chat"
+#: C/gossip.xml:1007(para)
+msgid "To manage a users favorite group chats, choose <menuchoice><guimenu>Room</guimenu><guimenuitem>Manage Favorites...</guimenuitem></menuchoice> from the MenuBar."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1048(para)
-msgid "TODO."
-msgstr "ATTGÖRA."
-
-#. TODO: better title needed
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1055(title)
-msgid "Using A Group Chat"
+#: C/gossip.xml:1013(para)
+msgid "This will open the <interface>Manage Favorite Rooms</interface> dialog, which will allow the user to edit their favorite chat rooms."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1056(para)
-msgid "TODO: Group Chat window, close, group and single chat"
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1062(title)
+#: C/gossip.xml:1034(title)
 msgid "Invite A Contact To A Group Chat"
+msgstr "Bjud in en kontakt till en gruppchatt"
+
+#: C/gossip.xml:1035(para)
+msgid "To open the <interface>Invite</interface> dialog, which allows the user to invite contacts to a group chat. Perform one of the following methods:"
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1063(para)
-msgid "TODO: How to invite a contact to a group chat"
+#: C/gossip.xml:1041(para)
+msgid "Right click a contact's alias in the Contact List, and select <guimenuitem>Invite to Chat Room</guimenuitem>"
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1071(title)
+#: C/gossip.xml:1047(para)
+msgid "With the contact selected in the in the Contact list, choose <menuchoice><guimenu>Edit</guimenu><guimenuitem>Contact</guimenuitem><guimenuitem>Invite to Chat Room</guimenuitem></menuchoice>"
+msgstr ""
+
+#: C/gossip.xml:1062(title)
 msgid "Settings"
 msgstr "Inställningar"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1072(para)
+#: C/gossip.xml:1063(para)
 msgid "To configure Gossip, choose <menuchoice><guimenu>Edit</guimenu><guimenuitem>Preferences</guimenuitem></menuchoice>. The <guilabel>Preferences</guilabel> dialog contains the following tabbed sections:"
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1101(title)
+#: C/gossip.xml:1097(title)
 msgid "General"
 msgstr "Allmänt"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1104(guilabel)
+#: C/gossip.xml:1100(guilabel)
+#: C/gossip.xml:1223(guilabel)
 msgid "Appearance"
 msgstr "Utseende"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1108(para)
+#: C/gossip.xml:1104(para)
 msgid "Select the <guilabel>Show avatars</guilabel> option, to enable avatar support in the contact list area."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1113(para)
+#: C/gossip.xml:1110(para)
+msgid "Select <guilabel>Show compact contact list</guilabel> option, to not show the contact's presence status message in the Contact List."
+msgstr ""
+
+#: C/gossip.xml:1116(para)
 msgid "Select the <guilabel>Show smileys as images</guilabel> option, to enable graphical images. This will replace text-smileys like \":)\" by corresponding images."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1119(para)
-msgid "Select the <guilabel>Chat Theme</guilabel>, that you wish to use in the chat windows."
-msgstr ""
-
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1127(guilabel)
+#: C/gossip.xml:1125(guilabel)
 msgid "Behavior"
 msgstr "Beteende"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1131(para)
-msgid "Select the <guilabel>Open new chats in separate windows</guilabel> option, to open chats in separate windows. If you didn't select this option, new chats will open in tabs in the last opened chat window."
+#: C/gossip.xml:1129(para)
+msgid "Select the <guilabel>Open new chats in separate windows</guilabel> option, to open chats in separate windows. If you did not select this option, new chats will open in tabs in the last opened chat window."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1144(title)
+#: C/gossip.xml:1142(title)
 msgid "Notifications"
 msgstr "Notifieringar"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1147(guilabel)
+#: C/gossip.xml:1145(guilabel)
 msgid "Audio"
 msgstr "Ljud"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1151(para)
+#: C/gossip.xml:1149(para)
 msgid "Select the <guilabel>Play sound when messages arrive</guilabel> option to enable sounds."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1155(para)
+#: C/gossip.xml:1153(para)
 msgid "Select the <guilabel>Enable sounds when busy</guilabel> option to get notified about new messages when busy."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1159(para)
+#: C/gossip.xml:1157(para)
 msgid "Select the <guilabel>Enable sounds when away</guilabel> option to get notified about new messages when away."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1166(guilabel)
+#: C/gossip.xml:1164(guilabel)
 msgid "Visual"
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1170(para)
+#: C/gossip.xml:1168(para)
 msgid "Select <guilabel>Display notifications when contact come online</guilabel> to get visual cues when contacts come online."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1182(title)
+#: C/gossip.xml:1180(title)
 msgid "Spell Checking"
 msgstr "Stavningskontroll"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1184(para)
+#: C/gossip.xml:1182(para)
 msgid "These setting might not be available if spell checking capabilities were not compiled into Gossip."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1191(guilabel)
+#: C/gossip.xml:1189(guilabel)
 msgid "Languages"
 msgstr "Språk"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1195(para)
+#: C/gossip.xml:1193(para)
 msgid "Select the languages you wish to enable for spell checking"
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1199(para)
+#: C/gossip.xml:1197(para)
 msgid "The list of languages only reflect the languages that have a dictionary installed."
 msgstr ""
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1239(title)
+#: C/gossip.xml:1204(guilabel)
+#: C/gossip.xml:1236(guilabel)
+msgid "Options"
+msgstr "Alternativ"
+
+#: C/gossip.xml:1208(para)
+msgid "Select <guilabel>Enable spell checking</guilabel>, if desired."
+msgstr ""
+
+#: C/gossip.xml:1220(title)
+msgid "Themes"
+msgstr "Teman"
+
+#: C/gossip.xml:1227(para)
+msgid "Select the desired <guilabel>Chat Theme</guilabel> from the drop-down list."
+msgstr ""
+
+#: C/gossip.xml:1240(para)
+msgid "Select <guilabel>Use for chat rooms</guilabel>, if desired."
+msgstr ""
+
+#: C/gossip.xml:1279(title)
 msgid "About Gossip"
 msgstr "Om Gossip"
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1240(para)
+#: C/gossip.xml:1280(para)
 msgid "Gossip was written by Mikael Hallendal, Richard Hult, Martyn Russell, Geert-Jan Van den Bogaerde, and Kevin Dougherty. To find more information about Gossip, please visit the <ulink url=\"http://developer.imendio.com/wiki/Gossip\" type=\"http\">Gossip Developer Page</ulink>."
 msgstr "Gossip skrevs av Mikael Hallendal, Richard Hult, Martyn Russell, Geert-Jan Van den Bogaerde och Kevin Dougherty. För mer information om Gossip, besök <ulink url=\"http://developer.imendio.com/wiki/Gossip\" type=\"http\">Gossip Developer Page</ulink>."
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1247(para)
-msgid "To report a bug or make a suggestion regarding this application or this manual, follow the directions in this <ulink url=\"ghelp:gnome-feedback\" type=\"help\">document</ulink>."
-msgstr ""
+#: C/gossip.xml:1287(para)
+#| msgid ""
+#| "To report a bug or make a suggestion regarding the Gossip application or "
+#| "this manual, follow the directions in the <ulink url=\"ghelp:gnome-"
+#| "feedback\" type=\"help\">GNOME Feedback Page</ulink>."
+msgid "To report a bug or make a suggestion regarding this application or this manual, see the Feedback section of the <ulink url=\"ghelp:user-guide?feedback-bugs\" type=\"help\">GNOME User Guide</ulink>."
+msgstr "För att rapportera ett fel eller komma med förslag angående detta programmet eller denna handbok, se avsnittet Återkoppling i <ulink url=\"ghelp:user-guide?feedback-bugs\" type=\"help\">Användarguide för GNOME</ulink>."
 
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:1253(para)
+#: C/gossip.xml:1293(para)
 msgid "This program is distributed under the terms of the GNU General Public license as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version. A copy of this license can be found at this <ulink url=\"ghelp:gpl\" type=\"help\">link</ulink>, or in the file COPYING included with the source code of this program."
 msgstr ""
 
 #. Put one translator per line, in the form of NAME <EMAIL>, YEAR1, YEAR2.
-#: /tmp/doc-l10n/cvs/gossip.HEAD/C/gossip.xml:0(None)
+#: C/gossip.xml:0(None)
 msgid "translator-credits"
 msgstr "Daniel Nylander <po@danielnylander.se>, 2006."
+
+#~ msgid ""
+#~ "@@image: 'figures/gossip_first_start_window.png'; "
+#~ "md5=17632cd7156fa2b2e6d6d56b423bd239"
+#~ msgstr ""
+#~ "@@image: 'figures/gossip_first_start_window.png'; "
+#~ "md5=17632cd7156fa2b2e6d6d56b423bd239"
+#~ msgid ""
+#~ "@@image: 'figures/gossip_new_chat_room.png'; "
+#~ "md5=a34fabbba2f7a52dac8ab96486d0a165"
+#~ msgstr ""
+#~ "@@image: 'figures/gossip_new_chat_room.png'; "
+#~ "md5=a34fabbba2f7a52dac8ab96486d0a165"
+#~ msgid "Getting a Jabber Account"
+#~ msgstr "Skaffa ett Jabber-konto"
+#~ msgid "Add the server information."
+#~ msgstr "Lägg till serverinformationen."
+#~ msgid "TODO"
+#~ msgstr "ATTGÖRA"
+#~ msgid "TODO."
+#~ msgstr "ATTGÖRA."
 
