@@ -1,3 +1,8 @@
+2009-04-22  Mario Blättermann  <mariobl@gnome.org>
+
+	* Makefile.am: Added de to LINGUAS.
+	* de/de.po: Added German translation.
+
 2008-03-03  Martyn Russell  <martyn@imendio.com>
 
 	* ChangeLog: Fixed Jorge's spacing issues.
