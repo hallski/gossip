@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "POT-Creation-Date: 2009-04-21 09:21+0000\n"
-"PO-Revision-Date: 2009-04-22 16:52+0100\n"
+"PO-Revision-Date: 2009-05-25 21:54+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -353,6 +353,10 @@ msgid ""
 "network, such as the Internet. They can add each other to a list, to see if "
 "their <emphasis>contacts</emphasis> are available."
 msgstr ""
+"Ein Sofortnachrichtendienst ermöglicht das Senden von Textnachrichten von "
+"Person zu Person über ein Netzwerk, beispielsweise über das Internet. Die "
+"Teilnehmer können einander zu einer Liste hinzufügen, um zu sehen, ob ihre "
+"<emphasis>Kontakte</emphasis> verfügbar sind."
 
 #: C/gossip.xml:215(title)
 msgid "What is Jabber"
@@ -364,6 +368,9 @@ msgid ""
 "interconnected servers to pass messages to one another in a similar fashion "
 "to email."
 msgstr ""
+"Jabber ist ein offenes Sofortnachrichtensystem, das einer Gruppe "
+"untereinander verbundener Server das Übergeben von Meldungen ermöglichen, "
+"ähnlich wie E-Mails."
 
 #: C/gossip.xml:220(para)
 msgid ""
@@ -371,6 +378,10 @@ msgid ""
 "by Internet Engineering Task Force (IETF) under the name XMPP in 2004. It's "
 "decentralized and extensible with custom functionality."
 msgstr ""
+"Das Jabber-Protokoll ist ein offener, freier und öffentlicher Standard, der "
+"vom »Internet Engineering Task Force (IETF)« unter dem Namen XMPP im Jahre "
+"2004 verabschiedet wurde. Das Protokoll ist dezentral organisiert und lässt "
+"sich mit benutzerdefinierter Funktionalität erweitern."
 
 #: C/gossip.xml:225(para)
 msgid ""
@@ -430,6 +441,8 @@ msgid ""
 "When you start <application>Gossip</application> the first time, you will be "
 "prompted to configure a Jabber account."
 msgstr ""
+"Wenn Sie <application>Gossip</application> zum ersten Mal starten, werden Sie "
+"um die Konfiguration eines Jabber-Kontos gebeten."
 
 #: C/gossip.xml:276(para)
 msgid ""
@@ -442,50 +455,64 @@ msgstr ""
 #: C/gossip.xml:282(para)
 msgid "Give the account the <guilabel>Name</guilabel> you wish to be displayed."
 msgstr ""
+"Geben Sie dem Konto einen <guilabel>Namen</guilabel>, unter dem Sie es "
+"anzeigen lassen wollen."
 
 #: C/gossip.xml:285(para)
 msgid ""
 "Select <guilabel>Connect on Startup</guilabel>, if you wish to have the "
 "account automatically connect when Gossip starts."
 msgstr ""
+"Wählen Sie <guilabel>Beim Start verbinden</guilabel>, wenn Sie für dieses "
+"Konto automatisch eine Verbindung aufbauen lassen wollen, wenn "
+"<application>Gossip</application> startet."
 
 #: C/gossip.xml:291(para)
 msgid ""
 "Select <guilabel>Use system proxy</guilabel> if you wish to connect using a "
 "system proxy."
 msgstr ""
+"Wählen Sie <guilabel>System-Proxy verwenden</guilabel>, wenn Sie die "
+"Verbindung über einen System-Proxy herstellen wollen."
 
 #: C/gossip.xml:297(para)
 msgid "Enter the <guilabel>Login ID</guilabel>."
-msgstr ""
+msgstr "Geben Sie die <guilabel>Anmeldekennung</guilabel> ein."
 
 #: C/gossip.xml:300(para)
 msgid "Enter the <guilabel>Password</guilabel>."
-msgstr ""
+msgstr "Geben Sie das <guilabel>Passwort</guilabel> ein."
 
 #: C/gossip.xml:303(para)
 msgid "Enter the <guilabel>Resource</guilabel>."
-msgstr ""
+msgstr "Geben Sie die <guilabel>Ressource</guilabel> ein."
 
 #: C/gossip.xml:306(para)
 msgid "Enter the <guilabel>Server</guilabel> that you wish to connect to."
 msgstr ""
+"Geben Sie den <guilabel>Server</guilabel> ein, mit dem Sie sich verbinden "
+"wollen."
 
 #: C/gossip.xml:309(para)
 msgid "Enter the <guilabel>Port</guilabel> that you wish to use."
-msgstr ""
+msgstr "Geben Sie den zu verwendenden <guilabel>Port</guilabel> ein."
 
 #: C/gossip.xml:312(para)
 msgid ""
 "Select <guilabel>Use encryption (SSL)</guilabel> if your server supports "
 "encryption."
 msgstr ""
+"Wählen Sie <guilabel>Verschlüsselung verwenden (SSL)</guilabel>, falls Ihr "
+"Server Verschlüsselung unterstützt."
 
 #: C/gossip.xml:320(para)
 msgid ""
 "If this is a new Jabber account, then press <guibutton>Register</guibutton>. "
 "Otherwise, press <guibutton>Connect</guibutton>."
 msgstr ""
+"Falls es sich um ein neues Jabber-Konto handelt, klicken Sie auf "
+"<guibutton>Registrieren</guibutton>. Anderenfalls klicken Sie auf "
+"<guibutton>Verbinden</guibutton>."
 
 #: C/gossip.xml:329(title)
 msgid "When You Start Gossip"
@@ -545,11 +572,13 @@ msgstr ""
 
 #: C/gossip.xml:388(para)
 msgid "Status Drop-Down List"
-msgstr ""
+msgstr "Status-Auswahlliste"
 
 #: C/gossip.xml:391(para)
 msgid "A drop-down list that allows the user to update their status."
 msgstr ""
+"Eine ausklappbare Liste, die dem Benutzer die Aktualisierung seines Status "
+"ermöglicht."
 
 #: C/gossip.xml:396(para)
 msgid "Account Button"
@@ -588,6 +617,9 @@ msgid ""
 "To connect to a Jabber server, choose <menuchoice><guimenu>Chat</"
 "guimenu><guimenuitem>Connect</guimenuitem></menuchoice> from the Menubar."
 msgstr ""
+"Um eine Verbindung zu einem Jabber-Server herzustellen, wählen Sie "
+"<menuchoice><guimenu>Unterhaltung</guimenu><guimenuitem>Verbinden</"
+"guimenuitem></menuchoice> in der Menüleiste."
 
 #: C/gossip.xml:436(title)
 msgid "Disconnect from a Jabber Server"
@@ -598,6 +630,9 @@ msgid ""
 "To disconnect from a Jabber server, choose <menuchoice><guimenu>Chat</"
 "guimenu><guimenuitem>Disconnect</guimenuitem></menuchoice> from the Menubar."
 msgstr ""
+"Um eine Verbindung zu einem Jabber-Server zu trennen, wählen Sie "
+"<menuchoice><guimenu>Unterhaltung</guimenu><guimenuitem>Verbindung trennen</"
+"guimenuitem></menuchoice> in der Menüleiste."
 
 #: C/gossip.xml:447(title)
 msgid "Sending An Instant Message"
@@ -613,6 +648,8 @@ msgid ""
 "Double click on the contact's nickname in the Contact List, to open the chat "
 "window."
 msgstr ""
+"Doppelklicken Sie auf den Spitznamen des Kontakts in der Kontaktliste, um das "
+"Unterhaltungsfenster zu öffnen."
 
 #: C/gossip.xml:454(para)
 msgid ""
@@ -629,6 +666,8 @@ msgid ""
 "If you are online with more than one account, you can also choose from which "
 "of your accounts you want send the message."
 msgstr ""
+"Falls Sie mit mehr als einem Kontakt verbunden sind, können Sie wählen, an "
+"welchen Ihrer Kontakte die Nachricht gesendet werden soll."
 
 #: C/gossip.xml:478(para)
 msgid ""
@@ -655,6 +694,9 @@ msgid ""
 "Double click on the contact's nickname in the <interface>Contact List</"
 "interface>, to open the chat window with the new message."
 msgstr ""
+"Doppelklicken Sie auf den Spitznamen des Kontakts in der "
+"<interface>Kontaktliste</interface>, um das Unterhaltungsfenster mit einer "
+"neuen Nachricht zu öffnen."
 
 #: C/gossip.xml:504(para)
 msgid ""
@@ -674,6 +716,9 @@ msgid ""
 "guimenu><guimenuitem>Personal Information</guimenuitem></menuchoice> from the "
 "Menubar."
 msgstr ""
+"Um die persönlichen Informationen eines Kontakts zu bearbeiten, wählen Sie "
+"<menuchoice><guimenu>Bearbeiten</guimenu>Persönliche "
+"Informationen<guimenuitem></guimenuitem></menuchoice> in der Menüleiste."
 
 #: C/gossip.xml:524(title)
 msgid "Gossip Personal Details Window"
@@ -736,6 +781,8 @@ msgid ""
 "To add an avatar, click the <guibutton>Avatar</guibutton> image chooser "
 "button and select the image you wish to use."
 msgstr ""
+"Um ein Benutzerbild hinzuzufügen, klicken Sie auf den Auswahlknopf "
+"<guibutton>Benutzerbild</guibutton> und wählen Sie das gewünschte Bild aus."
 
 #: C/gossip.xml:591(para)
 msgid ""
@@ -789,6 +836,8 @@ msgstr ""
 msgid ""
 "The Contact identity looks like an email-address. Example: user@jabber.org"
 msgstr ""
+"Die Identität eines Kontakts sieht wie eine E-Mail-Adresse aus.Beispiel: "
+"user@jabber.org"
 
 #: C/gossip.xml:656(para)
 msgid ""
@@ -827,11 +876,13 @@ msgstr ""
 
 #: C/gossip.xml:699(title)
 msgid "Accessing a Contact's Information"
-msgstr ""
+msgstr "Zugriff auf die Informationen eines Kontakts"
 
 #: C/gossip.xml:700(para)
 msgid "A contact's information can be accessed with the following methods:"
 msgstr ""
+"Für den Zugriff auf die Informationen eines Kontakts haben Sie folgende "
+"Möglichkeiten:"
 
 #: C/gossip.xml:703(para)
 msgid ""
@@ -855,6 +906,8 @@ msgid ""
 "The <interface>Edit Contact</interface> dialog can be open with the following "
 "methods:"
 msgstr ""
+"Der Dialog <interface>Kontakt bearbeiten</interface> kann folgendermaßen "
+"geöffnet werden:"
 
 #: C/gossip.xml:727(para)
 msgid ""
@@ -892,7 +945,7 @@ msgstr ""
 
 #: C/gossip.xml:773(title)
 msgid "Using Online Status"
-msgstr ""
+msgstr "Verwendung des Online-Status"
 
 #: C/gossip.xml:774(para)
 msgid ""
@@ -912,31 +965,31 @@ msgstr "Statussymbol"
 
 #: C/gossip.xml:806(phrase)
 msgid "Shows a green circle."
-msgstr ""
+msgstr "Zeigt einen grünen Kreis."
 
 #: C/gossip.xml:811(para)
 msgid "Available"
-msgstr ""
+msgstr "Verfügbar"
 
 #: C/gossip.xml:821(phrase)
 msgid "Shows a yellow circle with a sheet of paper."
-msgstr ""
+msgstr "Zeigt einen gelben Kreis mit einem Blatt Papier."
 
 #: C/gossip.xml:826(para)
 msgid "Busy"
-msgstr ""
+msgstr "Beschäftigt"
 
 #: C/gossip.xml:836(phrase)
 msgid "Shows a red triangle."
-msgstr ""
+msgstr "Zeigt ein rotes Dreieck."
 
 #: C/gossip.xml:841(para)
 msgid "Away"
-msgstr ""
+msgstr "Abwesend"
 
 #: C/gossip.xml:851(phrase)
 msgid "Shows a red triangle with a question mark."
-msgstr ""
+msgstr "Zeigt ein rotes Dreieck mit einem Fragezeichen."
 
 #: C/gossip.xml:856(para)
 msgid "Extended away"
@@ -944,7 +997,7 @@ msgstr ""
 
 #: C/gossip.xml:866(phrase)
 msgid "Shows a grey square."
-msgstr ""
+msgstr "Zeigt ein graues Quadrat."
 
 #: C/gossip.xml:871(para)
 msgid "Offline"
@@ -960,7 +1013,7 @@ msgstr ""
 
 #: C/gossip.xml:882(title)
 msgid "Change Online Status"
-msgstr ""
+msgstr "Ändern des Online-Status"
 
 #: C/gossip.xml:883(para)
 msgid "You can change your online status, in the following ways:"
@@ -981,7 +1034,7 @@ msgstr ""
 
 #: C/gossip.xml:906(title)
 msgid "Automatic Online Status"
-msgstr ""
+msgstr "Automatischer Online-Status"
 
 #: C/gossip.xml:907(para)
 msgid ""
@@ -1013,6 +1066,7 @@ msgstr ""
 #: C/gossip.xml:935(para)
 msgid "All your saved status messages will irrevocable be deleted."
 msgstr ""
+"Alle Ihre gespeicherten Statusnachrichten werden unwiderruflich gelöscht."
 
 #: C/gossip.xml:941(para)
 msgid ""
@@ -1029,7 +1083,7 @@ msgstr ""
 
 #: C/gossip.xml:955(title)
 msgid "Using Group Chats"
-msgstr ""
+msgstr "Gruppenunterhaltungen"
 
 #: C/gossip.xml:956(para)
 msgid "Group chat can be used to have a conversation with more than one person."
@@ -1037,7 +1091,7 @@ msgstr ""
 
 #: C/gossip.xml:961(title)
 msgid "Joining A New Group Chat Room"
-msgstr ""
+msgstr "Betreten eines neuen Gruppenunterhaltungsraumes"
 
 #: C/gossip.xml:962(para)
 msgid ""
@@ -1077,7 +1131,7 @@ msgstr ""
 
 #: C/gossip.xml:1006(title)
 msgid "Managing Favorite Group Chats"
-msgstr ""
+msgstr "Verwalten bevorzugter Gruppenunterhaltungen"
 
 #: C/gossip.xml:1007(para)
 msgid ""
@@ -1094,7 +1148,7 @@ msgstr ""
 
 #: C/gossip.xml:1034(title)
 msgid "Invite A Contact To A Group Chat"
-msgstr ""
+msgstr "Einladen eines Kontakts zu einer Gruppenunterhaltung"
 
 #: C/gossip.xml:1035(para)
 msgid ""
@@ -1126,6 +1180,10 @@ msgid ""
 "<guilabel>Preferences</guilabel> dialog contains the following tabbed "
 "sections:"
 msgstr ""
+"Um <application>Gossip</application> zu konfigurieren, wählen Sie "
+"<menuchoice><guimenu>Bearbeiten</guimenu><guimenuitem>Einstellungen</"
+"guimenuitem></menuchoice>. Der Dialog <guilabel>Einstellungen</guilabel> "
+"enthält die folgenden Reiter:"
 
 #: C/gossip.xml:1097(title)
 msgid "General"
@@ -1133,7 +1191,7 @@ msgstr "Allgemein"
 
 #: C/gossip.xml:1100(guilabel) C/gossip.xml:1223(guilabel)
 msgid "Appearance"
-msgstr ""
+msgstr "Erscheinungsbild"
 
 #: C/gossip.xml:1104(para)
 msgid ""
@@ -1190,10 +1248,12 @@ msgid ""
 "Select the <guilabel>Enable sounds when away</guilabel> option to get "
 "notified about new messages when away."
 msgstr ""
+"Wählen Sie <guilabel>Klänge bei Abwesenheit aktivieren</guilabel>, um "
+"Benachrichtigungen über neue Nachrichten bei Abwesenheit zu erhalten."
 
 #: C/gossip.xml:1164(guilabel)
 msgid "Visual"
-msgstr ""
+msgstr "Visuell"
 
 #: C/gossip.xml:1168(para)
 msgid ""
