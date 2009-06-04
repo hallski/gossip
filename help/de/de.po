@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "POT-Creation-Date: 2009-04-21 09:21+0000\n"
-"PO-Revision-Date: 2009-05-25 21:54+0100\n"
+"PO-Revision-Date: 2009-06-04 21:42+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -660,6 +660,14 @@ msgid ""
 "instant message to. Type in the name or the contact ID and click "
 "<guibutton>Chat</guibutton>. You can also choose the name from the list."
 msgstr ""
+"Wählen Sie <menuchoice><shortcut><keycombo><keycap>Strg</keycap><keycap>N</"
+"keycap></keycombo></shortcut><guimenu>Unterhaltung</guimenu><guimenuitem>Neue "
+"Nachricht</guimenuitem></menuchoice> . Ein <interface>Fragedialog</interface> "
+"wird angezeigt, in welchem Sie nach der Benutzerkennung oder nach der Person "
+"gefragt werden, an die Sie eine Sofortnachricht senden wollen. Geben Sie den "
+"Namen oder die Kennung des Kontakts ein und klicken Sie auf "
+"<guibutton>Unterhaltung</guibutton>. Sie können den Namen auch aus der Liste "
+"wählen."
 
 #: C/gossip.xml:471(para)
 msgid ""
@@ -677,6 +685,13 @@ msgid ""
 "instant message to. Type in the name or the contact ID and click "
 "<guibutton>Chat</guibutton>. You can also choose the name from the list."
 msgstr ""
+"Klicken Sie mit der rechten Maustaste auf das Symbol von Gossip im "
+"Benachrichtigungsfeld und wählen Sie <guilabel>Neue Nachricht</guilabel>. Ein "
+"<interface>Fragedialog</interface> wird angezeigt, in welchem Sie nach der "
+"Benutzerkennung oder nach der Person gefragt werden, an die Sie eine "
+"Sofortnachricht senden wollen. Geben Sie den Namen oder die Kennung des "
+"Kontakts ein und klicken Sie auf <guibutton>Unterhaltung</guibutton>. Sie "
+"können den Namen auch aus der Liste wählen."
 
 #: C/gossip.xml:489(title)
 msgid "Receiving An Instant Message"
@@ -688,6 +703,9 @@ msgid ""
 "balloon icon in the Notification Area and beside the nickname in the Contact "
 "List. You can read the message, in the following ways:"
 msgstr ""
+"Wenn Sie Sofortnachrichten empfangen, benachrichtigt Sie Gossip mit einem "
+"blinkenden Ballon-Symbol sowohl im Benachrichtigungsfeld als auch in der "
+"Kontaktliste. Sie können die Nachricht folgendermaßen lesen:"
 
 #: C/gossip.xml:497(para)
 msgid ""
@@ -722,13 +740,15 @@ msgstr ""
 
 #: C/gossip.xml:524(title)
 msgid "Gossip Personal Details Window"
-msgstr ""
+msgstr "Das Fenster »Persönliche Details« von Gossip"
 
 #: C/gossip.xml:537(phrase)
 msgid ""
 "Shows Gossips Personal Details window, where the user can edit his personal "
 "information."
 msgstr ""
+"Zeigt das Fenster »Persönliche Details« von Gossip. Hier kann der Benutzer "
+"seine persönlichen Informationen anpassen."
 
 #. ==== End of Figure ====
 #: C/gossip.xml:545(para)
@@ -736,6 +756,8 @@ msgid ""
 "This will open the <interface>Personal Details</interface> dialog, which will "
 "allow you to provide the following information:"
 msgstr ""
+"Der Dialog <interface>Persönliche Details</interface> wird geöffnet, welcher "
+"die folgenden Informationen bereitstellt:"
 
 #: C/gossip.xml:551(para)
 msgid ""
@@ -750,6 +772,8 @@ msgid ""
 "This drop-down box will only be shown if you have more than one account set-"
 "up in Gossip."
 msgstr ""
+"Diese Auswahlliste wird nur dann angezeigt, wenn Sie mehr als ein Konto in "
+"Gossip angelegt haben."
 
 #: C/gossip.xml:562(para)
 msgid ""
@@ -763,18 +787,24 @@ msgid ""
 "To add your nickname, edit the contents of the <guilabel>Nickname</guilabel> "
 "text box."
 msgstr ""
+"Um Ihren Spitznamen zu bearbeiten, bearbeiten Sie den Inhalt des Textfeldes "
+"<guilabel>Spitzname</guilabel>."
 
 #: C/gossip.xml:573(para)
 msgid ""
 "To add your e-mail address, edit the contents of the <guilabel>Email</"
 "guilabel> text box."
 msgstr ""
+"Um Ihre E-Mail-Adresse zu bearbeiten, bearbeiten Sie den Inhalt des "
+"Textfeldes <guilabel>E-Mail</guilabel>."
 
 #: C/gossip.xml:579(para)
 msgid ""
 "To add your web address, edit the contents of the <guilabel>Web site</"
 "guilabel> text box."
 msgstr ""
+"Um Ihre Adresse im Web zu bearbeiten, bearbeiten Sie den Inhalt des "
+"Textfeldes <guilabel>Webseite</guilabel>."
 
 #: C/gossip.xml:585(para)
 msgid ""
@@ -789,6 +819,8 @@ msgid ""
 "To add a description about you, edit the contents of the "
 "<guilabel>Description</guilabel> text box."
 msgstr ""
+"Um eine Beschreibung von Ihnen selbst hinzuzufügen, bearbeiten Sie den Inhalt "
+"des Textfeldes <guilabel>Beschreibung</guilabel>."
 
 #: C/gossip.xml:597(para)
 msgid ""
@@ -796,12 +828,18 @@ msgid ""
 "the <guilabel>Birthday</guilabel> section, and use the calendar to set your "
 "birthday."
 msgstr ""
+"Um Ihren Geburtstag hinzuzufügen, deaktivieren Sie das Ankreuzfeld "
+"<guilabel>Nicht speichern</guilabel> im Abschnitt <guilabel>Geburtstag</"
+"guilabel>. Danach können Sie den Kalender zum Angeben Ihres Geburtstags "
+"benutzen."
 
 #: C/gossip.xml:603(para)
 msgid ""
 "After reviewing the information, click <guibutton>Save</guibutton> to publish "
 "your information."
 msgstr ""
+"Nach dem Prüfen der Informationen klicken Sie auf <guibutton>Speichern</"
+"guibutton>, um Ihre Informationen zu veröffentlichen."
 
 #: C/gossip.xml:612(title)
 msgid "Working With Contacts"
@@ -816,6 +854,9 @@ msgid ""
 "If you add a contact to your contact list, you can see when this person is "
 "online. To add a contact, perform the following steps:"
 msgstr ""
+"Falls Sie einen Kontakt zu Ihrer Kontaktliste hinzugefügt haben, können Sie "
+"sehen, wenn die jeweilige Person verfügbar ist. Um einen Kontakt "
+"hinzuzufügen, gehen Sie folgendermaßen vor:"
 
 #: C/gossip.xml:626(para)
 msgid ""
@@ -823,14 +864,19 @@ msgid ""
 "guimenuitem></menuchoice> from the Menubar, to open the <interface>Add "
 "Contact</interface> dialog."
 msgstr ""
+"Wählen Sie <menuchoice><guimenu>Unterhaltung</guimenu><guimenuitem>Kontakt "
+"hinzufügen</guimenuitem></menuchoice> in der Menüleiste, um den Dialog "
+"<interface>Kontakt hinzufügen</interface> zu öffnen."
 
 #: C/gossip.xml:636(para)
 msgid "Select the <guilabel>Account</guilabel> you wish to add the contact to."
 msgstr ""
+"Wählen Sie das <guilabel>Konto</guilabel> aus, zu welchem Sie den Kontakt "
+"hinzufügen wollen."
 
 #: C/gossip.xml:646(para)
 msgid "Enter the <guilabel>Contact</guilabel> identity."
-msgstr ""
+msgstr "Geben Sie die Identität des <guilabel>Kontakts</guilabel> ein."
 
 #: C/gossip.xml:650(para)
 msgid ""
@@ -843,16 +889,22 @@ msgstr ""
 msgid ""
 "Enter the <guilabel>Alias</guilabel>, you wish to display in the Contact List."
 msgstr ""
+"Geben Sie den <guilabel>Alias</guilabel> ein, der in der Kontaktliste "
+"angezeigt werden soll."
 
 #: C/gossip.xml:661(para)
 msgid ""
 "Select the <guilabel>Group</guilabel> to associate with this contact from the "
 "drop-down list."
 msgstr ""
+"Wählen Sie in der Auswahlliste die <guilabel>Gruppe</guilabel> aus, der Sie "
+"diesen Kontakt zuordnen wollen."
 
 #: C/gossip.xml:667(para)
 msgid "Review the information displayed and click <guibutton>Add</guibutton>."
 msgstr ""
+"Prüfen Sie die angezeigten Informationen und klicken Sie auf "
+"<guibutton>Hinzufügen</guibutton>."
 
 #: C/gossip.xml:671(para)
 msgid ""
@@ -864,7 +916,7 @@ msgstr ""
 
 #: C/gossip.xml:683(title)
 msgid "Show Offline Contact's"
-msgstr ""
+msgstr "Abgemeldete Kontakte zeigen"
 
 #: C/gossip.xml:684(para)
 msgid ""
@@ -928,7 +980,7 @@ msgstr "Entfernen eines Kontakts"
 
 #: C/gossip.xml:747(para)
 msgid "A contact can be removed with the following methods:"
-msgstr ""
+msgstr "Ein Kontakt kann auf folgende Arten gelöscht werden:"
 
 #: C/gossip.xml:752(para)
 msgid ""
