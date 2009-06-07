@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "POT-Creation-Date: 2009-04-21 09:21+0000\n"
-"PO-Revision-Date: 2009-06-04 21:42+0100\n"
+"PO-Revision-Date: 2009-06-07 14:31+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -19,7 +19,7 @@ msgstr ""
 #: C/gossip.xml:338(None)
 msgid ""
 "@@image: 'figures/gossip-roster.png'; md5=a1f1cd0f7e9263cc0d2f39271f32fd27"
-msgstr ""
+msgstr "translated"
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
@@ -27,26 +27,26 @@ msgstr ""
 msgid ""
 "@@image: 'figures/gossip-personal-details.png'; "
 "md5=465af899b847da95f9689422c4f27daf"
-msgstr ""
+msgstr "translated"
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: C/gossip.xml:803(None)
 msgid ""
 "@@image: 'figures/gossip-available.png'; md5=e5242ca2eaafc3fa131308a2dc11a796"
-msgstr ""
+msgstr "translated"
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: C/gossip.xml:818(None)
 msgid "@@image: 'figures/gossip-busy.png'; md5=9fa99b5e46e4f2b9a04f44569a6f3cd0"
-msgstr ""
+msgstr "translated"
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: C/gossip.xml:833(None)
 msgid "@@image: 'figures/gossip-away.png'; md5=33e81e2227fdb79c56fadb022b2e10bc"
-msgstr ""
+msgstr "translated"
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
@@ -54,14 +54,14 @@ msgstr ""
 msgid ""
 "@@image: 'figures/gossip-extended-away.png'; "
 "md5=9c4f1cc2bc56703b626ad6ed3cf7dd2c"
-msgstr ""
+msgstr "translated"
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
 #: C/gossip.xml:863(None)
 msgid ""
 "@@image: 'figures/gossip-offline.png'; md5=de3339a395ece40fdbfcabab2ce09bc9"
-msgstr ""
+msgstr "translated"
 
 #: C/gossip.xml:22(title) C/gossip.xml:114(revnumber)
 msgid "Gossip Manual V2.4"
@@ -913,6 +913,11 @@ msgid ""
 "\"Offline\" in your Contact List. In addition, everybody who wants to add you "
 "to their Contact List, needs your authorization."
 msgstr ""
+"Eine Anfrage wird an den Kontakt gesendet, in der um das Hinzufügen zur "
+"Anwesenheitsbenachrichtigung gebeten wird. Bis diese Anfrage genehmigt ist, "
+"wird dieser Benutzer als »Abwesend« in Ihrer Kontaktliste angezeigt. "
+"Zusätzlich benötigt jeder, der Sie zu seiner Kontaktliste hinzufügen will, "
+"Ihre Genehmigung."
 
 #: C/gossip.xml:683(title)
 msgid "Show Offline Contact's"
@@ -925,6 +930,10 @@ msgid ""
 "keycombo></shortcut><guimenu>Chat</guimenu><guimenuitem>Show Offline "
 "Contacts</guimenuitem></menuchoice>"
 msgstr ""
+"Um abwesende Kontakte in der Kontaktliste anzuzeigen, wählen Sie "
+"<menuchoice><shortcut><keycombo><keycap>Strg</keycap><keycap>H</keycap></"
+"keycombo></shortcut><guimenu>Unterhaltung</guimenu><guimenuitem>Abgemeldete "
+"Kontakte anzeigen</guimenuitem></menuchoice>."
 
 #: C/gossip.xml:699(title)
 msgid "Accessing a Contact's Information"
@@ -941,6 +950,8 @@ msgid ""
 "Right click a contact's alias in the Contact List and select "
 "<guimenuitem>Information</guimenuitem>."
 msgstr ""
+"Klicken Sie mit der rechten Maustaste auf den Alias eines Kontakts in der "
+"Kontaktliste und wählen Sie <guimenuitem>Information</guimenuitem>."
 
 #: C/gossip.xml:709(para)
 msgid ""
@@ -948,6 +959,9 @@ msgid ""
 "<menuchoice><guimenu>Edit</guimenu><guimenuitem>Contact</"
 "guimenuitem><guimenuitem>Information</guimenuitem></menuchoice>"
 msgstr ""
+"Während der Kontakt in der Kontaktliste ausgewählt ist, wählen Sie "
+"<menuchoice><guimenu>Bearbeiten</guimenu><guimenuitem>Kontakt</"
+"guimenuitem><guimenuitem>Information</guimenuitem></menuchoice>."
 
 #: C/gossip.xml:721(title)
 msgid "Editing a Contact"
@@ -966,6 +980,8 @@ msgid ""
 "Right click a contact's alias in the Contact List and select "
 "<guimenuitem>Edit</guimenuitem>."
 msgstr ""
+"Klicken Sie mit der rechten Maustaste auf den Alias eines Kontakts in der "
+"Kontaktliste und wählen Sie <guimenuitem>Bearbeiten</guimenuitem>."
 
 #: C/gossip.xml:733(para)
 msgid ""
@@ -973,6 +989,9 @@ msgid ""
 "<menuchoice><guimenu>Edit</guimenu><guimenuitem>Contact</"
 "guimenuitem><guimenuitem>Edit</guimenuitem></menuchoice>"
 msgstr ""
+"Während der Kontakt in der Kontaktliste ausgewählt ist, wählen Sie "
+"<menuchoice><guimenu>Bearbeiten</guimenu><guimenuitem>Kontakt</"
+"guimenuitem><guimenuitem>Bearbeiten</guimenuitem></menuchoice>."
 
 #: C/gossip.xml:746(title)
 msgid "Removing a Contact"
@@ -987,6 +1006,8 @@ msgid ""
 "Right click a contact's alias in the Contact List and select "
 "<guimenuitem>Remove</guimenuitem>."
 msgstr ""
+"Klicken Sie mit der rechten Maustaste auf den Alias eines Kontakts in der "
+"Kontaktliste und wählen Sie <guimenuitem>Entfernen</guimenuitem>."
 
 #: C/gossip.xml:758(para)
 msgid ""
@@ -994,6 +1015,9 @@ msgid ""
 "<menuchoice><guimenu>Edit</guimenu><guimenuitem>Contact</"
 "guimenuitem><guimenuitem>Remove</guimenuitem></menuchoice>"
 msgstr ""
+"Während der Kontakt in der Kontaktliste ausgewählt ist, wählen Sie "
+"<menuchoice><guimenu>Bearbeiten</guimenu><guimenuitem>Kontakt</"
+"guimenuitem><guimenuitem>Entfernen</guimenuitem></menuchoice>."
 
 #: C/gossip.xml:773(title)
 msgid "Using Online Status"
@@ -1006,10 +1030,14 @@ msgid ""
 "list. In addition to your online status you can save a <emphasis>status "
 "message</emphasis>, e.g <emphasis>Out for shopping</emphasis>."
 msgstr ""
+"Sie können anderen Benutzern mit Hilfe des Online-Status anzeigen, ob Sie für "
+"eine Unterhaltung verfügbar, beschäftigt oder abwesend sind. Zusätzlich zu "
+"Ihrem Online-Status können Sie eine <emphasis>Statusmeldung</emphasis>, z.B. "
+"<emphasis>Unterwegs zum Einkaufen</emphasis>."
 
 #: C/gossip.xml:783(title)
 msgid "Different Online Status"
-msgstr ""
+msgstr "Verschiedene Online-Zustände"
 
 #: C/gossip.xml:793(para)
 msgid "Status Icon"
@@ -1045,7 +1073,7 @@ msgstr "Zeigt ein rotes Dreieck mit einem Fragezeichen."
 
 #: C/gossip.xml:856(para)
 msgid "Extended away"
-msgstr ""
+msgstr "Erweiterte Abwesenheit"
 
 #: C/gossip.xml:866(phrase)
 msgid "Shows a grey square."
@@ -1053,7 +1081,7 @@ msgstr "Zeigt ein graues Quadrat."
 
 #: C/gossip.xml:871(para)
 msgid "Offline"
-msgstr ""
+msgstr "Abgemeldet"
 
 #: C/gossip.xml:784(para)
 msgid ""
@@ -1062,6 +1090,10 @@ msgid ""
 "\"/><colspec colname=\"DESCRIPTION\" colwidth=\"50*\"/><placeholder-1/"
 "><placeholder-2/></tgroup></informaltable>"
 msgstr ""
+"Gossip kann mit folgenden Zuständen der Anwesenheit umgehen: <informaltable "
+"frame=\"all\"><tgroup cols=\"2\" colsep=\"1\" rowsep=\"1\"><colspec colname="
+"\"ICON\" colwidth=\"50*\"/><colspec colname=\"DESCRIPTION\" colwidth=\"50*\"/"
+"><placeholder-1/><placeholder-2/></tgroup></informaltable>"
 
 #: C/gossip.xml:882(title)
 msgid "Change Online Status"
@@ -1069,13 +1101,15 @@ msgstr "Ändern des Online-Status"
 
 #: C/gossip.xml:883(para)
 msgid "You can change your online status, in the following ways:"
-msgstr ""
+msgstr "Sie können Ihren Online-Status folgendermaßen ändern:"
 
 #: C/gossip.xml:888(para)
 msgid ""
 "Click on the <guibutton>status button</guibutton> at the top of the "
 "<interface>contact list</interface> and choose one of the statuses."
 msgstr ""
+"Klicken Sie auf den <guibutton>Statusknopf</guibutton> am oberen Rand der "
+"<interface>Kontaktliste</interface> und wählen Sie einen der Zustände aus."
 
 #: C/gossip.xml:895(para)
 msgid ""
@@ -1083,6 +1117,10 @@ msgid ""
 "icon</interface> and select in <guisubmenu>Status</guisubmenu> one of the "
 "<guimenuitem>status messages</guimenuitem>."
 msgstr ""
+"Klicken Sie mit der rechten Maustaste auf das "
+"<interface>Benachrichtigungsfeld-Symbol</interface> von <application>Gossip</"
+"application> und wählen Sie in <guisubmenu>Status</guisubmenu> eine der "
+"<guimenuitem>Statusmeldungen</guimenuitem> aus."
 
 #: C/gossip.xml:906(title)
 msgid "Automatic Online Status"
@@ -1095,6 +1133,12 @@ msgid ""
 "your computer remains inactive for 30 minutes, Gossip will switch from "
 "<guilabel>Away</guilabel> to <guilabel>Extended away</guilabel>."
 msgstr ""
+"Falls Ihr Rechner für mehr als fünf Minuten nicht aktiv ist, ändert "
+"<application>Gossip</application> Ihren Online-Status von "
+"<guilabel>Verfügbar</guilabel> in <guilabel>Abwesend</guilabel>. Falls Ihr "
+"Rechner für mehr als dreißig Minuten nicht aktiv ist, ändert "
+"<application>Gossip</application> Ihren Online-Status von "
+"<guilabel>Verfügbar</guilabel> in <guilabel>Erweitert abwesend</guilabel>. "
 
 #: C/gossip.xml:914(para)
 msgid ""
@@ -1103,10 +1147,15 @@ msgid ""
 "<guilabel>Available</guilabel>. Also when you send a message, Gossip switches "
 "back to <guilabel>Available</guilabel>."
 msgstr ""
+"Sobald Ihr Rechner wieder aktiv ist , wechselt <application>Gossip</"
+"application> nach 15 Sekunden von <guilabel>Abwesend</guilabel> oder "
+"<guilabel>Erweitert abwesend</guilabel> zu <guilabel>Verfügbar</guilabel>. "
+"Auch wenn Sie eine Nachricht senden, wechselt <application>Gossip</"
+"application> zurück zu <guilabel>Verfügbar</guilabel>."
 
 #: C/gossip.xml:923(title)
 msgid "Clean Saved Statuses"
-msgstr ""
+msgstr "Löschen gespeicherter Statusmeldungen"
 
 #: C/gossip.xml:929(para)
 msgid ""
@@ -1114,6 +1163,9 @@ msgid ""
 "<interface>contact list</interface> and choose <guimenuitem>Clear List</"
 "guimenuitem>."
 msgstr ""
+"Klicken Sie auf den <guibutton>Status-Pfeilknopf</guibutton> oben in der "
+"<interface>Kontaktliste</interface> und wählen Sie <guimenuitem>Liste "
+"löschen</guimenuitem>."
 
 #: C/gossip.xml:935(para)
 msgid "All your saved status messages will irrevocable be deleted."
@@ -1126,12 +1178,18 @@ msgid ""
 "area icon</interface> and select in <guisubmenu>Status</guisubmenu> and "
 "choose <guimenuitem>Clear List</guimenuitem>."
 msgstr ""
+"Klicken Sie mit der rechten Maustaste auf das "
+"<interface>Benachrichtigungsfeld-Symbol</interface> von <application>Gossip</"
+"application> und wählen Sie in <guisubmenu>Status</guisubmenu> den Eintrag "
+"<guimenuitem>Liste löschen</guimenuitem>."
 
 #: C/gossip.xml:924(para)
 msgid ""
 "You can delete all saved customized status messages, in the following ways: "
 "<placeholder-1/>"
 msgstr ""
+"Sie können folgendermaßen alle gespeicherten benutzerdefinierten "
+"Statusmeldungen löschen: <placeholder-1/>"
 
 #: C/gossip.xml:955(title)
 msgid "Using Group Chats"
@@ -1140,6 +1198,8 @@ msgstr "Gruppenunterhaltungen"
 #: C/gossip.xml:956(para)
 msgid "Group chat can be used to have a conversation with more than one person."
 msgstr ""
+"Gruppenunterhaltungen werden benutzt, um eine Unterhaltung mit mehr als einer "
+"Person zu führen."
 
 #: C/gossip.xml:961(title)
 msgid "Joining A New Group Chat Room"
@@ -1150,36 +1210,47 @@ msgid ""
 "To join a new Group Chat Room, choose <menuchoice><guimenu>Room</"
 "guimenu><guimenuitem>Join New</guimenuitem></menuchoice> from the MenuBar."
 msgstr ""
+"Um einen neuen Gruppenunterhaltungsraum zu betreten, wählen Sie "
+"<menuchoice><guimenu>Raum</guimenu><guimenuitem>Neuen Raum betreten</"
+"guimenuitem></menuchoice> in der Menüleiste."
 
 #: C/gossip.xml:968(para)
 msgid ""
 "This will open the <interface>Join New</interface> dialog, in which the "
 "following information will need to be completed:"
 msgstr ""
+"Dadurch wird der Dialog <interface>Neuen Raum betreten</interface> geöffnet, "
+"in welchem Sie die folgenden Informationen vervollständigen müssen:"
 
 #: C/gossip.xml:974(para)
 msgid ""
 "Select the Jabber account to use from the <guilabel>Account</guilabel> drop-"
 "down box."
 msgstr ""
+"Wählen Sie das zu verwendende Jabber-Konto in der Auswahlliste "
+"<guilabel>Konto</guilabel> aus."
 
 #: C/gossip.xml:984(para)
 msgid "Enter the <guilabel>Server</guilabel> to connect to."
 msgstr ""
+"Geben Sie den <guilabel>Server</guilabel> an, zu dem eine Verbindung "
+"hergestellt werden soll."
 
 #: C/gossip.xml:989(para)
 msgid "Enter the <guilabel>Room</guilabel> to join."
-msgstr ""
+msgstr "Geben Sie den zu betretenden <guilabel>Raum</guilabel> an."
 
 #: C/gossip.xml:994(para)
 msgid "Enter your <guilabel>Nickname</guilabel>."
-msgstr ""
+msgstr "Geben Sie Ihren <guilabel>Spitznamen</guilabel> ein."
 
 #: C/gossip.xml:999(para)
 msgid ""
 "After completing the necessary information, click <guibutton>Join</guibutton> "
 "to enter the Chat Room."
 msgstr ""
+"Nach dem Vervollständigen der benötigten Informationen klicken Sie auf "
+"<guibutton>Betreten</guibutton>, um den Unterhaltungsraum zu betreten."
 
 #: C/gossip.xml:1006(title)
 msgid "Managing Favorite Group Chats"
@@ -1191,12 +1262,18 @@ msgid ""
 "guimenu><guimenuitem>Manage Favorites...</guimenuitem></menuchoice> from the "
 "MenuBar."
 msgstr ""
+"Um die bevorzugten Gruppenunterhaltungen eines Benutzers zu verwalten, wählen "
+"Sie <menuchoice><guimenu>Raum</guimenu><guimenuitem>Favoriten verwalten</"
+"guimenuitem></menuchoice> in der Menüleiste."
 
 #: C/gossip.xml:1013(para)
 msgid ""
 "This will open the <interface>Manage Favorite Rooms</interface> dialog, which "
 "will allow the user to edit their favorite chat rooms."
 msgstr ""
+"Dadurch wird der Dialog <interface>Bevorzugte Räume verwalten</interface> "
+"geöffnet, in dem Ihnen das Bearbeiten Ihrer bevorzugten Unterhaltungsräume "
+"ermöglicht wird."
 
 #: C/gossip.xml:1034(title)
 msgid "Invite A Contact To A Group Chat"
@@ -1207,12 +1284,18 @@ msgid ""
 "To open the <interface>Invite</interface> dialog, which allows the user to "
 "invite contacts to a group chat. Perform one of the following methods:"
 msgstr ""
+"Um den <interface>Einladungsdialog</interface> zu öffnen, der dem Benutzer "
+"die Einladung von Kontakten zu einer Gruppenunterhaltung ermöglicht, gehen "
+"Sie wie folgt vor:"
 
 #: C/gossip.xml:1041(para)
 msgid ""
 "Right click a contact's alias in the Contact List, and select "
 "<guimenuitem>Invite to Chat Room</guimenuitem>"
 msgstr ""
+"Klicken Sie mit der rechten Maustaste auf den Alias eines Kontakts in der "
+"Kontaktliste und wählen Sie <guimenuitem>Zur Unterhaltung einladen</"
+"guimenuitem>."
 
 #: C/gossip.xml:1047(para)
 msgid ""
@@ -1220,6 +1303,9 @@ msgid ""
 "<menuchoice><guimenu>Edit</guimenu><guimenuitem>Contact</"
 "guimenuitem><guimenuitem>Invite to Chat Room</guimenuitem></menuchoice>"
 msgstr ""
+"Während der Kontakt in der Kontaktliste ausgewählt ist, wählen Sie "
+"<menuchoice><guimenu>Bearbeiten</guimenu><guimenuitem>Kontakt</"
+"guimenuitem><guimenuitem>Zur Unterhaltung einladen</guimenuitem></menuchoice>."
 
 #: C/gossip.xml:1062(title)
 msgid "Settings"
@@ -1250,12 +1336,16 @@ msgid ""
 "Select the <guilabel>Show avatars</guilabel> option, to enable avatar support "
 "in the contact list area."
 msgstr ""
+"Wählen Sie die Option <guilabel>Benutzerbilder anzeigen</guilabel>, um die "
+"Unterstützung für Benutzerbilder in der Kontaktliste zu aktivieren."
 
 #: C/gossip.xml:1110(para)
 msgid ""
 "Select <guilabel>Show compact contact list</guilabel> option, to not show the "
 "contact's presence status message in the Contact List."
 msgstr ""
+"Wählen Sie die Option <guilabel>Kompakte Kontaktliste</guilabel>, um den "
+"Anwesenheitsstatus nicht in der Kontaktliste anzuzeigen."
 
 #: C/gossip.xml:1116(para)
 msgid ""
@@ -1263,6 +1353,9 @@ msgid ""
 "graphical images. This will replace text-smileys like \":)\" by corresponding "
 "images."
 msgstr ""
+"Wählen Sie die Option <guilabel>Smilies als Bilder zeigen</guilabel>, um "
+"grafische Bilder zu aktivieren. Die Text-Smileys wie »:)« werden dann durch "
+"die entsprechenden Bilder ersetzt."
 
 #: C/gossip.xml:1125(guilabel)
 msgid "Behavior"
@@ -1274,6 +1367,10 @@ msgid ""
 "open chats in separate windows. If you did not select this option, new chats "
 "will open in tabs in the last opened chat window."
 msgstr ""
+"Wählen Sie die Option <guilabel>Neue Unterhaltungen in separaten Fenstern "
+"öffnen</guilabel>, um Unterhaltungen in separaten Fenstern zu öffnen. Wenn "
+"Sie diese Option nicht wählen, werden neue Unterhaltungen in Reitern im "
+"zuletzt geöffneten Unterhaltungsfenster geöffnet."
 
 #: C/gossip.xml:1142(title)
 msgid "Notifications"
@@ -1288,12 +1385,17 @@ msgid ""
 "Select the <guilabel>Play sound when messages arrive</guilabel> option to "
 "enable sounds."
 msgstr ""
+"Wählen Sie die Option <guilabel>Bei neuer Nachricht Klang abspielen</"
+"guilabel>, um Klänge zu aktivieren."
 
 #: C/gossip.xml:1153(para)
 msgid ""
 "Select the <guilabel>Enable sounds when busy</guilabel> option to get "
 "notified about new messages when busy."
 msgstr ""
+"Wählen Sie die Option <guilabel>Klänge bei Beschäftigung aktivieren</"
+"guilabel>, um über neue Nachrichten benachrichtigt zu werden, wenn Sie "
+"beschäftigt sind."
 
 #: C/gossip.xml:1157(para)
 msgid ""
@@ -1312,6 +1414,9 @@ msgid ""
 "Select <guilabel>Display notifications when contact come online</guilabel> to "
 "get visual cues when contacts come online."
 msgstr ""
+"Wählen Sie <guilabel>Beim Anmelden von Kontakten Benachrichtigungen anzeigen</"
+"guilabel>, um visuelle Benachrichtigungen zu erhalten, wenn sich ein Kontakt "
+"anmeldet."
 
 #: C/gossip.xml:1180(title)
 msgid "Spell Checking"
@@ -1322,6 +1427,9 @@ msgid ""
 "These setting might not be available if spell checking capabilities were not "
 "compiled into Gossip."
 msgstr ""
+"Diese Einstellung könnte eventuell nicht verfügbar sein, wenn die Fähigkeit "
+"zur Rechtschreibprüfung beim Kompilieren von <application>Gossip</"
+"application> nicht berücksichtigt wurde."
 
 #: C/gossip.xml:1189(guilabel)
 msgid "Languages"
@@ -1330,6 +1438,8 @@ msgstr "Sprachen"
 #: C/gossip.xml:1193(para)
 msgid "Select the languages you wish to enable for spell checking"
 msgstr ""
+"Wählen Sie die Sprachen aus, für die Sie die Rechtschreibprüfung aktivieren "
+"wollen."
 
 #: C/gossip.xml:1197(para)
 msgid ""
@@ -1346,6 +1456,8 @@ msgstr "Optionen"
 #: C/gossip.xml:1208(para)
 msgid "Select <guilabel>Enable spell checking</guilabel>, if desired."
 msgstr ""
+"Wählen Sie <guilabel>Rechtschreibprüfung aktivieren</guilabel>, falls "
+"gewünscht."
 
 #: C/gossip.xml:1220(title)
 msgid "Themes"
@@ -1355,10 +1467,13 @@ msgstr "Themen"
 msgid ""
 "Select the desired <guilabel>Chat Theme</guilabel> from the drop-down list."
 msgstr ""
+"Wählen Sie das gewünschte <guilabel>Thema</guilabel> in der Auswahlliste aus."
 
 #: C/gossip.xml:1240(para)
 msgid "Select <guilabel>Use for chat rooms</guilabel>, if desired."
 msgstr ""
+"Wählen Sie <guilabel>In Unterhaltungsräumen verwenden</guilabel>, falls "
+"gewünscht."
 
 #: C/gossip.xml:1279(title)
 msgid "About Gossip"
