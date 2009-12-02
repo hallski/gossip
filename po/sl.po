@@ -1,0 +1,2354 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Andrej Žnidaršič <andrej.znidarsic@gmail.com>, 2009.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Gossip\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gossip&component=general\n"
+"POT-Creation-Date: 2009-09-13 14:38+0000\n"
+"PO-Revision-Date: 2009-12-01 19:06+0100\n"
+"Last-Translator: Andrej Žnidaršič <andrej.znidarsic@gmail.com>\n"
+"Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n%100==4 ? 3 : 0);\n"
+"X-Poedit-Country: SLOVENIA\n"
+"X-Poedit-Language: Slovenian\n"
+"X-Poedit-SourceCharset: utf-8\n"
+
+#: ../gossip.desktop.in.in.h:1
+msgid "Gossip Instant Messenger"
+msgstr "Gossip trenutna sporočila"
+
+#: ../gossip.desktop.in.in.h:2
+msgid "Instant Messenger"
+msgstr "Trenutno sporočanje"
+
+#: ../gossip.schemas.in.h:1
+msgid "Always open a separate chat window for new chats."
+msgstr "Vedno odpri ločeno pogovorno okno za nove klepete."
+
+#: ../gossip.schemas.in.h:2
+msgid "Chat window theme"
+msgstr "Tema klepetalnega okna"
+
+#: ../gossip.schemas.in.h:3
+msgid "Comma separated list of spell checker languages to use (e.g. en, fr, nl)."
+msgstr "Z vejico ločen seznam uporabljenih črkovalnikov (primer: sl, en, fr,)."
+
+#: ../gossip.schemas.in.h:4
+msgid "Compact contact list"
+msgstr "Skrčen seznam stikov"
+
+#: ../gossip.schemas.in.h:5
+msgid "Contact list sort criterium"
+msgstr "Kriterij razvrščanja seznama prijateljev"
+
+#: ../gossip.schemas.in.h:6
+msgid "Default directory to select an avatar image from"
+msgstr "Privzeta mapa za izbiro slik podob"
+
+#: ../gossip.schemas.in.h:7
+msgid "Enable popup when contact is available"
+msgstr "Omogoči pojavno okno, ko je stik razpoložljiv"
+
+#: ../gossip.schemas.in.h:8
+msgid "Enable sound when away"
+msgstr "Omogoči zvok ob odsotnosti"
+
+#: ../gossip.schemas.in.h:9
+msgid "Enable sound when busy"
+msgstr "Omogoči zvok ob zaposlenosti"
+
+#: ../gossip.schemas.in.h:10
+msgid "Enable spell checker"
+msgstr "Omogoči črkovalnik"
+
+#: ../gossip.schemas.in.h:11
+msgid "Font name to use"
+msgstr "Ime pisave za uporabo"
+
+#: ../gossip.schemas.in.h:12
+msgid "Font name to use instead of the system document font. Only applied when NOT using the system document font."
+msgstr "Ime pisave za uporabo namesto pisave sistemske dokumentacije. Uporabljeno samo ko NI uporabljena sistemska pisava."
+
+#: ../gossip.schemas.in.h:13
+msgid "Hide main window"
+msgstr "Skrij glavno okno"
+
+#: ../gossip.schemas.in.h:14
+msgid "Hide the main window."
+msgstr "Skrij glavno okno."
+
+#: ../gossip.schemas.in.h:15
+msgid "Open new chats in separate windows"
+msgstr "Odpri nove klepete v ločenih oknih"
+
+#: ../gossip.schemas.in.h:16
+msgid "Show avatars"
+msgstr "Pokaži podobe"
+
+#: ../gossip.schemas.in.h:17
+msgid "Show hint about closing the main window"
+msgstr "Prikaži namig ob zapiranju glavnega okna"
+
+#: ../gossip.schemas.in.h:18
+msgid "Show offline contacts"
+msgstr "Pokaži nepovezane stike"
+
+#: ../gossip.schemas.in.h:19
+msgid "Spell checking languages"
+msgstr "Jeziki za črkovanje"
+
+#: ../gossip.schemas.in.h:20
+msgid "The default location for file transfers to be saved to"
+msgstr "Privzeto mesto za shranjevanje prenosov datotek"
+
+#: ../gossip.schemas.in.h:21
+msgid "The last directory that an avatar image was chosen from."
+msgstr "Zadnja mapa iz katere je bila izbrana podoba."
+
+#: ../gossip.schemas.in.h:22
+msgid "The theme that is used to display the conversation in chat windows."
+msgstr "Tema, ki je uporabljena za prikaz pogovora v klepetalnih oknih."
+
+#: ../gossip.schemas.in.h:23
+msgid "This is updated each time the user changes the location they wish to save the file to so that the last location used to save file transfers can be used without prompting the user each time."
+msgstr "Posodobi se vsakič, ko uporabnik spremeni mesto kamor želi shraniti datoteko, zato da je uporabljeno mesto zadnjega shranjevanja prenosov datotek brez vsakokratnega opozarjanja uporabnika."
+
+#: ../gossip.schemas.in.h:24
+msgid "Use graphical smileys"
+msgstr "Uporabi grafične smeške"
+
+#: ../gossip.schemas.in.h:25
+msgid "Use notification sounds"
+msgstr "Uporabi obvestilne zvoke"
+
+#: ../gossip.schemas.in.h:26
+msgid "Use system document font"
+msgstr "Uporabi pisavo sistemskih dokumentov"
+
+#: ../gossip.schemas.in.h:27
+msgid "Use theme for chat rooms"
+msgstr "Uporabi temo za klepetalnice"
+
+#: ../gossip.schemas.in.h:28
+msgid "Whether or not to check words typed against the languages you want to check with."
+msgstr "Ali naj se preverja črkovanje besed v določenem jeziku?"
+
+#: ../gossip.schemas.in.h:29
+msgid "Whether or not to convert smileys into graphical images in conversations."
+msgstr "Ali naj se smeški v pogovorih pretvorijo v sličice?"
+
+#: ../gossip.schemas.in.h:30
+msgid "Whether or not to play a sound when messages arrive."
+msgstr "Ali naj se predvajajo zvoki ob prejemu novih sporočil?"
+
+#: ../gossip.schemas.in.h:31
+msgid "Whether or not to play sounds when away."
+msgstr "Ali naj se predvajajo zvoki ob odsotnosti?"
+
+#: ../gossip.schemas.in.h:32
+msgid "Whether or not to play sounds when busy."
+msgstr "Ali naj se predvajajo zvoki ob zasedenosti?"
+
+#: ../gossip.schemas.in.h:33
+msgid "Whether or not to show a popup when a contact becomes available."
+msgstr "Ali naj bo prikazano pojavno okno ko postane stik na voljo?"
+
+#: ../gossip.schemas.in.h:34
+msgid "Whether or not to show avatars for contacts in the contact list and chat windows."
+msgstr "Ali naj bo podoba za stike prikazana na seznamu stikov in v oknih klepeta?"
+
+#: ../gossip.schemas.in.h:35
+msgid "Whether or not to show contacts that are offline in the contact list."
+msgstr "Ali naj bodo nepovezani stiki prikazani na seznamu stikov?"
+
+#: ../gossip.schemas.in.h:36
+msgid "Whether or not to show the message dialog about closing the main window with the 'x' button in the title bar."
+msgstr "Ali naj bo prikazano pogovorno okno sporočila o zapiranju glavnega okna preko 'x' gumba v naslovni vrstici?"
+
+#: ../gossip.schemas.in.h:37
+msgid "Whether to show the contact list in compact mode or not."
+msgstr "Ali naj bo seznam stikov prikazan v skrčenem načinu?"
+
+#: ../gossip.schemas.in.h:38
+msgid "Whether to use the system document font theme or a user specified font."
+msgstr "Ali naj bo uporabljena pisava sistemske dokumentacije ali uporabniško določena pisava?"
+
+#: ../gossip.schemas.in.h:39
+msgid "Whether to use the theme for chat rooms or not."
+msgstr "Ali naj bo za klepetalnice uporabljena tema?"
+
+#: ../gossip.schemas.in.h:40
+msgid "Which criterium to use when sorting the contact list. Default is to use sort by the contact's name with the value \"name\". A value of \"state\" will sort the contact list by state."
+msgstr "Kateri kriterij naj bo uporabljen za razvrščanje seznama stikov. Privzeto je uporabljeno razvrščanje po imenu stika z vrednostjo \"ime\". Vrednost \"stanje\" razvrsti seznam glede na to lastnost."
+
+#: ../libgossip/gossip-chatroom.c:1293
+msgid "Joining"
+msgstr "Pridruževanje"
+
+#: ../libgossip/gossip-chatroom.c:1295
+msgid "Active"
+msgstr "Dejavno"
+
+#: ../libgossip/gossip-chatroom.c:1297
+msgid "Inactive"
+msgstr "Nedejavno"
+
+#: ../libgossip/gossip-chatroom.c:1299
+#: ../src/gossip-log-window.c:1891
+msgid "Unknown"
+msgstr "Neznano"
+
+#: ../libgossip/gossip-chatroom.c:1301
+msgid "Error"
+msgstr "Napaka"
+
+#: ../libgossip/gossip-chatroom.c:1316
+msgid "The chat room you tried to join requires a password. You either failed to supply a password or the password you tried was incorrect"
+msgstr "Klepetalnica, ki se ji želite pridružiti, zahteva geslo. Gesla niste vnesli, ali pa je bilo napačno."
+
+#: ../libgossip/gossip-chatroom.c:1318
+msgid "You have been banned from this chatroom"
+msgstr "Bili ste izobčeni iz te klepetalnice"
+
+#: ../libgossip/gossip-chatroom.c:1320
+msgid "The conference room you tried to join could not be found"
+msgstr "Koferenčne sobe, h kateri ste se želeli pridružiti, ni mogoče najti"
+
+#: ../libgossip/gossip-chatroom.c:1322
+msgid "Chatroom creation is restricted on this server"
+msgstr "Ustvarjanje klepetalnic na tem strežniku je omejeno"
+
+#: ../libgossip/gossip-chatroom.c:1324
+msgid "Chatroom reserved nick names must be used on this server"
+msgstr "V klepetalnicah na tem strežniku morajo biti uporabljeni rezervirani vzdevki "
+
+#: ../libgossip/gossip-chatroom.c:1326
+msgid "You are not on the chatroom's members list"
+msgstr "Niste na seznamu članov klepetalnice"
+
+#: ../libgossip/gossip-chatroom.c:1328
+msgid "The nickname you have chosen is already in use"
+msgstr "Izbrani vzdevek je že v uporabi"
+
+#: ../libgossip/gossip-chatroom.c:1330
+msgid "The maximum number of users for this chatroom has been reached"
+msgstr "Največje število uporabnikov v klepetalnici je bilo doseženo"
+
+#: ../libgossip/gossip-chatroom.c:1332
+msgid "Unauthorized request, you do not have privileges to do that"
+msgstr "Nepooblaščena zahteva, nimate dovoljenj za to dejanje "
+
+#: ../libgossip/gossip-chatroom.c:1334
+msgid "That action is forbidden"
+msgstr "To dejanje je prepovedano"
+
+#: ../libgossip/gossip-chatroom.c:1338
+msgid "The remote conference server did not respond in a sensible time"
+msgstr "Oddaljeni konferenčni strežnik se ni odzval v predvidenem času"
+
+#: ../libgossip/gossip-chatroom.c:1340
+msgid "Joining the chatroom was canceled"
+msgstr "Pridruževanje klepetalnici je bilo preklicano"
+
+#: ../libgossip/gossip-chatroom.c:1342
+msgid "A bad request was sent to the server"
+msgstr "Strežniku je bila poslana slaba zahteva"
+
+#: ../libgossip/gossip-chatroom.c:1344
+msgid "An unknown error occurred, check your details are correct"
+msgstr "Prišlo je do neznane napake; preverite, da so vaše podatki pravilni"
+
+#: ../libgossip/gossip-chatroom.c:1356
+msgid "Moderator"
+msgid_plural "Moderators"
+msgstr[0] "Povezovalcev"
+msgstr[1] "Povezovalec"
+msgstr[2] "Povezovalca"
+msgstr[3] "Povezovalci"
+
+#: ../libgossip/gossip-chatroom.c:1358
+msgid "Participant"
+msgid_plural "Participants"
+msgstr[0] "Sodelujočih"
+msgstr[1] "Sodelujoč"
+msgstr[2] "Sodelujoča"
+msgstr[3] "Sodelujoči"
+
+#: ../libgossip/gossip-chatroom.c:1360
+msgid "Visitor"
+msgid_plural "Visitors"
+msgstr[0] "Obiskovalcev"
+msgstr[1] "Obiskovalec"
+msgstr[2] "Obiskovalca"
+msgstr[3] "Obiskovalci"
+
+#: ../libgossip/gossip-chatroom.c:1362
+msgid "No role"
+msgstr "Ni vloge"
+
+#: ../libgossip/gossip-chatroom.c:1376
+msgid "Owner"
+msgid_plural "Owners"
+msgstr[0] "Lastnikov"
+msgstr[1] "Lastnik"
+msgstr[2] "Lastnika"
+msgstr[3] "Lastniki"
+
+#: ../libgossip/gossip-chatroom.c:1378
+msgid "Administrator"
+msgid_plural "Administrators"
+msgstr[0] "Skrbnikov"
+msgstr[1] "Skrbnik"
+msgstr[2] "Skrbnika"
+msgstr[3] "Skrbniki"
+
+#: ../libgossip/gossip-chatroom.c:1380
+msgid "Member"
+msgid_plural "Members"
+msgstr[0] "Članov"
+msgstr[1] "Član"
+msgstr[2] "Člana"
+msgstr[3] "Člani"
+
+#: ../libgossip/gossip-chatroom.c:1382
+msgid "Outcast"
+msgid_plural "Outcasts"
+msgstr[0] "Izobčencev"
+msgstr[1] "Izobčenec"
+msgstr[2] "Izobčenca"
+msgstr[3] "Izobčenci"
+
+#: ../libgossip/gossip-chatroom.c:1384
+msgid "No affiliation"
+msgstr "Brez pripadnosti"
+
+#. i18n: The current state of the connection.
+#: ../libgossip/gossip-contact.c:991
+#: ../libgossip/gossip-presence.c:242
+#: ../src/gossip-app.c:2871
+#: ../src/gossip-contact-info-dialog.c:148
+#: ../src/gossip-galago.c:181
+#: ../src/gossip-status-icon.c:359
+msgid "Offline"
+msgstr "Nepovezan"
+
+#: ../libgossip/gossip-presence.c:423
+#: ../libgossip/gossip-presence.c:440
+#: ../src/gossip-presence-chooser.c:767
+#: ../src/gossip-presence-chooser.c:966
+#: ../src/gossip-presence-chooser.c:1043
+msgid "Available"
+msgstr "Na voljo"
+
+#: ../libgossip/gossip-presence.c:427
+#: ../src/gossip-presence-chooser.c:779
+#: ../src/gossip-presence-chooser.c:1090
+msgid "Busy"
+msgstr "Zaseden"
+
+#: ../libgossip/gossip-presence.c:432
+#: ../src/gossip-presence-chooser.c:791
+#: ../src/gossip-presence-chooser.c:1136
+msgid "Away"
+msgstr "Odsoten"
+
+#: ../libgossip/gossip-presence.c:437
+msgid "Unavailable"
+msgstr "Nerazpoložljvo "
+
+#: ../libgossip/gossip-jabber-disco.c:286
+msgid "Service has gone and is no longer available"
+msgstr "Storitev ni več na voljo"
+
+#: ../libgossip/gossip-jabber-disco.c:289
+msgid "Bad or malformed request to this service"
+msgstr "Slaba ali slabo oblikovana zahteva za to storitev"
+
+#: ../libgossip/gossip-jabber-disco.c:292
+msgid "Unauthorized request to this service"
+msgstr "Nepooblaščena zahteva za to storitev "
+
+#: ../libgossip/gossip-jabber-disco.c:295
+msgid "Payment is required for this service"
+msgstr "Za to storitev je zahtevano plačilo"
+
+#: ../libgossip/gossip-jabber-disco.c:299
+msgid "This service is forbidden"
+msgstr "Storitev je prepovedana"
+
+#: ../libgossip/gossip-jabber-disco.c:303
+msgid "This service is unavailable or not found"
+msgstr "Storitve ni mogoče najti ali pa je nedostopna"
+
+#: ../libgossip/gossip-jabber-disco.c:306
+msgid "Unacceptable request sent to this services"
+msgstr "Storitvam je bila poslana nesprejemljiva zahteva"
+
+#: ../libgossip/gossip-jabber-disco.c:309
+msgid "Registration is required"
+msgstr "Zahtevan je vpis"
+
+#: ../libgossip/gossip-jabber-disco.c:312
+msgid "There was a conflict of interest trying to use this service"
+msgstr "Prišlo je do spora pri uporabi storitve"
+
+#: ../libgossip/gossip-jabber-disco.c:315
+msgid "There was an internal service error"
+msgstr "Prišlo je do notranje napake storitve"
+
+#: ../libgossip/gossip-jabber-disco.c:318
+msgid "This feature is not implemented"
+msgstr "Ta zmožnost ni podprta"
+
+#: ../libgossip/gossip-jabber-disco.c:321
+msgid "The remote service timed out"
+msgstr "Oddaljena storitev je potekla"
+
+#: ../libgossip/gossip-jabber.c:547
+msgid "Home"
+msgstr "Domov"
+
+#: ../libgossip/gossip-jabber.c:552
+msgid "new account"
+msgstr "nov račun"
+
+#: ../libgossip/gossip-jabber.c:814
+msgid "No certificate found"
+msgstr "Potrdila ni mogoče najti"
+
+#: ../libgossip/gossip-jabber.c:816
+msgid "Untrusted certificate"
+msgstr "Potrdilo ni overjeno"
+
+#: ../libgossip/gossip-jabber.c:818
+msgid "Certificate expired"
+msgstr "Potrdilo je preteklo"
+
+#: ../libgossip/gossip-jabber.c:820
+msgid "Certificate not activated"
+msgstr "Potrdilo ni dejavno"
+
+#: ../libgossip/gossip-jabber.c:822
+msgid "Certificate host mismatch"
+msgstr "Neskladje potrdil gostitelja"
+
+#: ../libgossip/gossip-jabber.c:824
+msgid "Certificate fingerprint mismatch"
+msgstr "Neskladje potrdil prstnega odtisa"
+
+#: ../libgossip/gossip-jabber.c:826
+msgid "Unknown security error occurred"
+msgstr "Prišlo je do neznane varnostne napake"
+
+#: ../libgossip/gossip-jabber.c:831
+#: ../libloudermouth/lm-bs-transfer.c:363
+msgid "Unknown error"
+msgstr "Neznana napaka"
+
+#: ../libgossip/gossip-jabber.c:1232
+#: ../libgossip/gossip-jabber-register.c:214
+msgid "Couldn't send message!"
+msgstr "Sporočila ni mogoče poslati!"
+
+#: ../libgossip/gossip-jabber-register.c:159
+msgid "Connection could not be opened"
+msgstr "Povezave ni mogoče odpreti"
+
+#: ../libgossip/gossip-jabber-utils.c:475
+msgid "An unknown error occurred."
+msgstr "Prišlo je do neznane napake."
+
+#: ../libgossip/gossip-jabber-utils.c:479
+msgid "Connection refused."
+msgstr "Povezava je zavrnjena."
+
+#: ../libgossip/gossip-jabber-utils.c:482
+msgid "Server address could not be resolved."
+msgstr "Naslova strežnika ni mogoče razrešiti."
+
+#: ../libgossip/gossip-jabber-utils.c:485
+msgid "Account requires a password to authenticate and none was given."
+msgstr "Račun zahteva geslo za overitev, ki ni bilo podano."
+
+#: ../libgossip/gossip-jabber-utils.c:488
+msgid "Connection timed out."
+msgstr "Časovna omejitev povezave je potekla."
+
+#: ../libgossip/gossip-jabber-utils.c:491
+msgid "Authentication failed."
+msgstr "Overjanje je spodletelo."
+
+#: ../libgossip/gossip-jabber-utils.c:494
+msgid "The username you are trying already exists."
+msgstr "Uporabniško ime, ki ga poskušate, že obstaja."
+
+#: ../libgossip/gossip-jabber-utils.c:497
+msgid "The username you are trying is not valid."
+msgstr "Uporabniško ime, ki ga poskušate, je neveljavno."
+
+#: ../libgossip/gossip-jabber-utils.c:500
+msgid "This feature is unavailable."
+msgstr "Ta zmožnost ni na voljo."
+
+#: ../libgossip/gossip-jabber-utils.c:503
+msgid "This feature is unauthorized."
+msgstr "Ta zmožnost ni pooblaščena."
+
+#: ../libgossip/gossip-jabber-utils.c:506
+msgid "A specific protocol error occurred that was unexpected."
+msgstr "Pojavila se je nepričakovana določena napaka protokola."
+
+#: ../libloudermouth/lm-bs-receiver.c:90
+#: ../libloudermouth/lm-bs-sender.c:251
+#, c-format
+msgid "The other party disconnected"
+msgstr "Stik je prekinil povezavo"
+
+#: ../libloudermouth/lm-bs-receiver.c:116
+#, c-format
+msgid "A protocol error occurred during the transfer"
+msgstr "Med prenosom je prišlo do napake protokola"
+
+#: ../libloudermouth/lm-bs-transfer.c:250
+msgid "Unable to connect to the other party"
+msgstr "S stikom se ni mogoče povezati"
+
+#: ../libloudermouth/lm-bs-transfer.c:316
+msgid "Permission denied"
+msgstr "Dovoljenje je zavrnjeno"
+
+#: ../libloudermouth/lm-bs-transfer.c:318
+msgid "File name is too long"
+msgstr "Ime datoteke je predolgo"
+
+#: ../libloudermouth/lm-bs-transfer.c:320
+msgid "File doesn't exist"
+msgstr "Datoteka ne obstaja"
+
+#: ../libloudermouth/lm-bs-transfer.c:322
+#: ../libloudermouth/lm-bs-transfer.c:353
+msgid "File is a directory"
+msgstr "Datoteka je mapa"
+
+#: ../libloudermouth/lm-bs-transfer.c:324
+msgid "Read only file system"
+msgstr "Datotečni sistem le za branje"
+
+#: ../libloudermouth/lm-bs-transfer.c:326
+msgid "File is busy"
+msgstr "Datoteka je zaposlena"
+
+#: ../libloudermouth/lm-bs-transfer.c:328
+msgid "Bad memory"
+msgstr "Slab spomin"
+
+#: ../libloudermouth/lm-bs-transfer.c:330
+msgid "Too many levels of symbolic links"
+msgstr "Preveč ravni simbolnih povezav"
+
+#: ../libloudermouth/lm-bs-transfer.c:332
+#: ../libloudermouth/lm-bs-transfer.c:355
+msgid "No space is available"
+msgstr "Prostor ni na voljo"
+
+#: ../libloudermouth/lm-bs-transfer.c:334
+msgid "Virtual memory exhausted"
+msgstr "Navidezni spomin je izčrpan"
+
+#: ../libloudermouth/lm-bs-transfer.c:336
+msgid "Too many open files"
+msgstr "Preveč odprtih datotek"
+
+#: ../libloudermouth/lm-bs-transfer.c:339
+#: ../libloudermouth/lm-bs-transfer.c:351
+msgid "Input/output error"
+msgstr "Napaka vhoda/odvoda"
+
+#: ../libloudermouth/lm-bs-transfer.c:342
+#: ../libloudermouth/lm-bs-transfer.c:357
+msgid "No such device"
+msgstr "Ni takšne naprave"
+
+#: ../libloudermouth/lm-bs-transfer.c:349
+msgid "File is too large"
+msgstr "Datoteka je prevelika"
+
+#: ../src/gossip-accounts-dialog.c:368
+#: ../data/glade/main.glade.h:13
+msgid "<b>No Account Selected</b>"
+msgstr "<b>Ni izbranega računa</b>"
+
+#: ../src/gossip-accounts-dialog.c:370
+#: ../data/glade/main.glade.h:115
+msgid ""
+"To add a new account, you can click on the 'Add' button and a new entry will be created for you to start configuring.\n"
+"\n"
+"If you do not want to add an account, simply click on the account you want to configure in the list on the left."
+msgstr ""
+"Za dodajanje novega računa, lahko kliknite gumb 'Dodaj'. Ustvarjen bo nov vnos za začetek nastavljanja.\n"
+"\n"
+"V primeru da računa ne želite dodati, kliknite račun s seznama na levi, ki ga želite nastaviti."
+
+#: ../src/gossip-accounts-dialog.c:379
+msgid "<b>No Accounts Configured</b>"
+msgstr "<b>Ni nastavljenih računov</b>"
+
+#: ../src/gossip-accounts-dialog.c:381
+msgid "To add a new account, you can click on the 'Add' button and a new entry will be created for you to start configuring."
+msgstr "Za dodajanje novega računa kliknite gumb 'Dodaj'. Ustvarjen bo nov vnos za začetek nastavljanja."
+
+#: ../src/gossip-accounts-dialog.c:454
+#: ../data/glade/main.glade.h:28
+msgid "Accounts"
+msgstr "Računi"
+
+#: ../src/gossip-accounts-dialog.c:1184
+#, c-format
+msgid ""
+"You are about to remove your %s account!\n"
+"Are you sure you want to proceed?"
+msgstr ""
+"Odstranili boste vaš račun %s!\n"
+"Ali ste prepričani, da želite nadaljevati?"
+
+#: ../src/gossip-accounts-dialog.c:1190
+msgid ""
+"Any associated conversations and chat rooms will NOT be removed if you decide to proceed.\n"
+"\n"
+"Should you decide to add the account back at a later time, they will still be available."
+msgstr ""
+"Vsi pogovori in vse izbrane sobe NE bodo izbrisane, če se odločite nadaljevati.\n"
+"\n"
+"V primeru da kasneje ponovno dodate račun, bodo podatki še vedno na voljo."
+
+#: ../src/gossip-account-chooser.c:835
+#: ../src/gossip-spell-dialog.c:110
+#: ../src/gossip-spell-dialog.c:116
+msgid "All"
+msgstr "Vse"
+
+#: ../src/gossip-account-widget-jabber.c:747
+msgid "Successfully registered your new account settings."
+msgstr "Vpis nastavitev vašega novega računa je uspel."
+
+#: ../src/gossip-account-widget-jabber.c:754
+msgid "You should now be able to connect to your new account."
+msgstr "Sedaj se lahko povežete z vašim novim računom."
+
+#: ../src/gossip-account-widget-jabber.c:758
+msgid "Failed to register your new account settings."
+msgstr "Vpis nastavitev vašega novega računa je spodletel."
+
+#: ../src/gossip-account-widget-jabber.c:800
+msgid "No Jabber account details available"
+msgstr "Ni podatkov računa Jabber"
+
+#: ../src/gossip-account-widget-jabber.c:801
+msgid ""
+"Your desktop settings don't include any information about your Jabber account.\n"
+"\n"
+"To set your Jabber information, use the 'About Me' application"
+msgstr ""
+"Vaše nastavitve namizja ne vključujejo podatkov o vašem računu Jabber.\n"
+"\n"
+"Za nastavitev vaših podatkov Jabber uporabite program 'O meni'"
+
+#: ../src/gossip-add-contact-dialog.c:116
+msgid "No information is available for this contact."
+msgstr "Podrobnosti o tem stiku niso na voljo."
+
+#: ../src/gossip-add-contact-dialog.c:229
+msgid "Information requested, please wait..."
+msgstr "Zahtevanje podrobnosti, počakajte ..."
+
+#: ../src/gossip-add-contact-dialog.c:323
+#: ../src/gossip-edit-contact-dialog.c:609
+#: ../src/gossip-subscription-dialog.c:491
+msgid "I would like to add you to my contact list."
+msgstr "Želim vas dodati na svoj seznam stikov."
+
+#: ../src/gossip-app.c:524
+msgid "Show and edit accounts"
+msgstr "Prikaz in urejanje računov"
+
+#: ../src/gossip-app.c:857
+msgid "About Gossip"
+msgstr "O programu"
+
+#: ../src/gossip-app.c:862
+msgid "Preferences..."
+msgstr "Možnosti ..."
+
+#: ../src/gossip-app.c:934
+msgid "To summarize:"
+msgstr "Povzetek:"
+
+#: ../src/gossip-app.c:961
+#, c-format
+msgid "%d new message"
+msgid_plural "%d new messages"
+msgstr[0] "%d novih sporočil"
+msgstr[1] "%d novo sporočilo"
+msgstr[2] "%d novi sporočili"
+msgstr[3] "%d nova sporočila"
+
+#: ../src/gossip-app.c:966
+#, c-format
+msgid "%d subscription request"
+msgid_plural "%d subscription requests"
+msgstr[0] "%d zahtev za naročilo"
+msgstr[1] "%d zahteva za naročilo"
+msgstr[2] "%d zahtevi za naročilo"
+msgstr[3] "%d zahteve za naročilo"
+
+#: ../src/gossip-app.c:971
+#, c-format
+msgid "%d file transfer request"
+msgid_plural "%d file transfer requests"
+msgstr[0] "%d zahtev za prenos datotek"
+msgstr[1] "%d zahteva za prenos datotek"
+msgstr[2] "%d zahtevi za prenos datotek"
+msgstr[3] "%d zahteve za prenos datotek"
+
+#: ../src/gossip-app.c:976
+#, c-format
+msgid "%d server message"
+msgid_plural "%d server messages"
+msgstr[0] "%d sporočil strežnika"
+msgstr[1] "%d sporočilo strežnika"
+msgstr[2] "%d sporočili strežnika"
+msgstr[3] "%d sporočila strežnika"
+
+#: ../src/gossip-app.c:981
+#, c-format
+msgid "%d error"
+msgid_plural "%d errors"
+msgstr[0] "%d napak"
+msgstr[1] "%d napaka"
+msgstr[2] "%d napaki"
+msgstr[3] "%d napake"
+
+#: ../src/gossip-app.c:1006
+msgid "If you quit, you will lose all unread information."
+msgstr "V primeru da končate, boste izgubili vse neprebrane podatke."
+
+#: ../src/gossip-app.c:1071
+msgid "Gossip is still running, it is just hidden."
+msgstr "Gossip še vedno teče, je samo skrit."
+
+#: ../src/gossip-app.c:1072
+msgid "Click on the notification area icon to show Gossip."
+msgstr "Kliknite na ikono v obvestilnem področju za prikaz Gossip."
+
+#: ../src/gossip-app.c:1087
+msgid "You were about to quit!"
+msgstr "Želeli ste končati!"
+
+#: ../src/gossip-app.c:1088
+msgid ""
+"Since no system or notification tray has been found, this action would normally quit Gossip.\n"
+"\n"
+"This is just a reminder, from now on, Gossip will quit when performing this action unless you uncheck the option below."
+msgstr ""
+"Ker ni bilo mogoče najti sistemske ali obvestilne vrstice, se bo program končal.\n"
+"\n"
+"To je samo obvestilo, od sedaj naprej se bo ob izvedbi tega dejanja Gossip vedno končal, razen če odkljukate možnost spodaj."
+
+#: ../src/gossip-app.c:1563
+#: ../src/gossip-edit-contact-dialog.c:228
+msgid "Group"
+msgstr "Skupina"
+
+#: ../src/gossip-app.c:1584
+msgid "Contact"
+msgstr "Stik"
+
+#: ../src/gossip-app.c:1922
+#, c-format
+msgid "Please enter your %s account password"
+msgstr "Vnesite geslo računa %s"
+
+#: ../src/gossip-app.c:1933
+#, c-format
+msgid "Logging in to account '%s'"
+msgstr "Prijavljanje v račun '%s'"
+
+#: ../src/gossip-app.c:1937
+msgid "Remember Password?"
+msgstr "Pomnjenje gesla?"
+
+#: ../src/gossip-app.c:2796
+msgid "Edit Account _Details"
+msgstr "Urejanje _podrobnosti računa"
+
+#: ../src/gossip-avatar-image.c:328
+msgid "Click to enlarge"
+msgstr "Kliknite za povečavo"
+
+#. Show success dialog
+#: ../src/gossip-change-password-dialog.c:81
+msgid "Successfully changed your account password."
+msgstr "Sprememba gesla vašega računa je bila uspešna."
+
+#: ../src/gossip-change-password-dialog.c:88
+msgid "You should now be able to connect with your new password."
+msgstr "Sedaj se lahko povežete z vašim novim geslom."
+
+#: ../src/gossip-change-password-dialog.c:92
+msgid "Failed to change your account password."
+msgstr "Sprememba gesla vašega računa je spodletela."
+
+#: ../src/gossip-chat.c:598
+msgid "Insert Smiley"
+msgstr "Vstavi smeška"
+
+#: ../src/gossip-chat.c:646
+msgid "_Check Word Spelling..."
+msgstr "_Preveri črkovanje besed ..."
+
+#: ../src/gossip-chat-invite.c:81
+#: ../src/gossip-spell-dialog.c:287
+msgid "Word"
+msgstr "Beseda"
+
+#: ../src/gossip-chat-invite.c:336
+msgid "Select who would you like to invite to room:"
+msgstr "Izberite osebo, ki jo želite povabiti v sobo:"
+
+#: ../src/gossip-chat-invite.c:341
+msgid "Select which room you would like to invite:"
+msgstr "Izberite sobo, ki bi jo radi povabili:"
+
+#: ../src/gossip-chat-manager.c:152
+#, c-format
+msgid "New message from %s"
+msgstr "Novo sporočilo od %s"
+
+#: ../src/gossip-chat-view.c:500
+#, c-format
+msgid "_Internet Services for '%s'"
+msgstr "_Spletne storitve za '%s'"
+
+#. TODO: Generate services menu from text file in config
+#: ../src/gossip-chat-view.c:511
+msgid "_Youtube"
+msgstr "_Youtube"
+
+#: ../src/gossip-chat-view.c:520
+msgid "_Wikipedia"
+msgstr "_Wikipedija"
+
+#: ../src/gossip-chat-view.c:529
+msgid "_Google"
+msgstr "_Google"
+
+#: ../src/gossip-chat-view.c:564
+msgid "_Copy Link Address"
+msgstr "_Kopiraj naslov povezave"
+
+#: ../src/gossip-chat-view.c:573
+msgid "_Open Link"
+msgstr "_Odpri povezavo"
+
+#: ../src/gossip-chat-view.c:906
+msgid "Your invitation has been declined"
+msgstr "Vaše povabilo je bilo zavrnjeno."
+
+#: ../src/gossip-chat-view.c:1080
+#, c-format
+msgid "You have been invited to join a chat conference with '%s' in the room '%s'"
+msgstr "Povabljeni ste bili na klepet z '%s' v sobi '%s'"
+
+#: ../src/gossip-chat-view.c:1096
+msgid "Reason: "
+msgstr "Razlog:"
+
+#: ../src/gossip-chat-view.c:1111
+msgid "Accept"
+msgstr "Sprejmi"
+
+#: ../src/gossip-chat-view.c:1127
+msgid "Decline"
+msgstr "Zavrni"
+
+#: ../src/gossip-chat-window.c:739
+#: ../src/gossip-chat-window.c:769
+#: ../data/glade/main.glade.h:75
+msgid "New Message"
+msgid_plural "New Messages"
+msgstr[0] "Novih sporočil"
+msgstr[1] "Novo sporočilo"
+msgstr[2] "Novi sporočili"
+msgstr[3] "Nova sporočila"
+
+#: ../src/gossip-chat-window.c:745
+msgid "Chat Room"
+msgstr "Klepetelnica"
+
+#: ../src/gossip-chat-window.c:750
+#: ../src/gossip-chat-window.c:773
+#, c-format
+msgid "Conversation"
+msgid_plural "Conversations (%d)"
+msgstr[0] "Pogovorov (%d)"
+msgstr[1] "Pogovor (%d)"
+msgstr[2] "Pogovora (%d)"
+msgstr[3] "Pogovori (%d)"
+
+#: ../src/gossip-chat-window.c:1439
+msgid "Typing a message."
+msgstr "Pisanje sporočila."
+
+#: ../src/gossip-chatrooms-window.c:141
+msgid "Name"
+msgstr "Ime"
+
+#: ../src/gossip-chatrooms-window.c:148
+msgid "Room"
+msgstr "Soba"
+
+#: ../src/gossip-chatrooms-window.c:156
+msgid "Server"
+msgstr "Strežnik"
+
+#: ../src/gossip-chatrooms-window.c:169
+#: ../src/gossip-new-chatroom-dialog.c:599
+msgid "Locked"
+msgstr "Zaklenjeno"
+
+#: ../src/gossip-chatrooms-window.c:186
+#: ../src/gossip-new-chatroom-dialog.c:193
+#: ../src/gossip-new-chatroom-dialog.c:206
+#: ../data/glade/group-chat.glade.h:6
+msgid "Join"
+msgstr "Pridruži se"
+
+#: ../src/gossip-contact-info-dialog.c:628
+#: ../data/glade/main.glade.h:66
+msgid "Information requested..."
+msgstr "Zahtevane podrobnosti ..."
+
+#: ../src/gossip-contact-list.c:326
+#: ../data/glade/chat.glade.h:19
+msgid "_Contact"
+msgstr "S_tik"
+
+#: ../src/gossip-contact-list.c:330
+msgid "_Group"
+msgstr "_Skupina"
+
+#: ../src/gossip-contact-list.c:334
+msgid "_Chat"
+msgstr "_Klepetaj"
+
+#: ../src/gossip-contact-list.c:334
+msgid "Chat with contact"
+msgstr "Klepet s stikom"
+
+#: ../src/gossip-contact-list.c:338
+msgid "Infor_mation"
+msgstr "Po_drobnosti"
+
+#: ../src/gossip-contact-list.c:338
+msgid "View contact information"
+msgstr "Ogled podrobnosti stika"
+
+#: ../src/gossip-contact-list.c:342
+msgid "Re_name"
+msgstr "Preime_nuj"
+
+#: ../src/gossip-contact-list.c:342
+#: ../src/gossip-contact-list.c:3324
+msgid "Rename"
+msgstr "Preimenovanje"
+
+#: ../src/gossip-contact-list.c:346
+msgid "_Edit"
+msgstr "_Uredi"
+
+#: ../src/gossip-contact-list.c:346
+msgid "Edit the groups and name for this contact"
+msgstr "Urejanje skupine in imena za ta stik"
+
+#: ../src/gossip-contact-list.c:350
+msgid "_Remove"
+msgstr "_Odstrani"
+
+#: ../src/gossip-contact-list.c:350
+msgid "Remove contact"
+msgstr "Odstranitev stika"
+
+#: ../src/gossip-contact-list.c:354
+msgid "_Invite to Chat Room"
+msgstr "P_ovabi v klepetalnico"
+
+#: ../src/gossip-contact-list.c:354
+msgid "Invite to a currently open chat room"
+msgstr "Povabi v trenutno odprto klepetalnico"
+
+#: ../src/gossip-contact-list.c:358
+msgid "_Send File..."
+msgstr "_Pošlji datoteko ..."
+
+#: ../src/gossip-contact-list.c:358
+msgid "Send a file"
+msgstr "Pošlji datoteko"
+
+#: ../src/gossip-contact-list.c:362
+msgid "Emai_l..."
+msgstr "E-pošt_a ..."
+
+#: ../src/gossip-contact-list.c:362
+msgid "Email contact"
+msgstr "E-pošta stika"
+
+#: ../src/gossip-contact-list.c:366
+#: ../data/glade/chat.glade.h:29
+#: ../data/glade/main.glade.h:165
+msgid "_View Previous Conversations"
+msgstr "Po_glej predhodne pogovore"
+
+#: ../src/gossip-contact-list.c:366
+msgid "View previous conversations with this contact"
+msgstr "Ogled predhodnih pogovorov s tem stikom"
+
+#: ../src/gossip-contact-list.c:3234
+msgid "Do you want to remove this contact from your roster?"
+msgstr "Ali ste prepričani, da želite odstraniti stik s svojega seznama stikov?"
+
+#: ../src/gossip-contact-list.c:3317
+msgid "Please enter a new name for the group:"
+msgstr "Vnesite novo ime za skupino:"
+
+#: ../src/gossip-edit-contact-dialog.c:218
+msgid "Select"
+msgstr "Izberi"
+
+#: ../src/gossip-edit-contact-dialog.c:268
+#: ../src/gossip-edit-contact-dialog.c:278
+#: ../src/gossip-subscription-dialog.c:436
+msgid "Unsorted"
+msgstr "Nerazvrščeno"
+
+#: ../src/gossip-edit-contact-dialog.c:714
+#, c-format
+msgid ""
+"Set the alias you want to use for:\n"
+"<b>%s</b>\n"
+"\n"
+"You can retrieve contact information from the server."
+msgstr ""
+"Nastavite vzdevek, ki ga želite uporabiti za:\n"
+"<b>%s</b>\n"
+"\n"
+"S strežnika lahko pridobite podrobnosti stika."
+
+#: ../src/gossip-ft-dialog.c:215
+#, c-format
+msgid "New file transfer request from %s"
+msgstr "Nova zahteva po prenosu datoteke od %s"
+
+#: ../src/gossip-ft-dialog.c:300
+msgid "Your file transfer offer declined."
+msgstr "Vaša ponudba za prenos datoteke je bila zavrnjena."
+
+#: ../src/gossip-ft-dialog.c:301
+msgid "The other user decided not to continue."
+msgstr "Drugi uporabnik se je odločil, da ne bo nadaljeval"
+
+#: ../src/gossip-ft-dialog.c:306
+msgid "Unable to complete the file transfer."
+msgstr "Prenosa datoteke ni mogoče zaključiti."
+
+#: ../src/gossip-ft-dialog.c:311
+msgid "Unable to start the file transfer."
+msgstr "Prenosa datoteke ni mogoče zagnati."
+
+#: ../src/gossip-ft-dialog.c:316
+msgid "File transfer is not supported by both parties."
+msgstr "Oba odjemalca ne podpirata prenosa datotek."
+
+#: ../src/gossip-ft-dialog.c:320
+msgid "An unknown error occurred during file transfer."
+msgstr "Med prenosom datoteke je prišlo do neznane napake."
+
+#: ../src/gossip-ft-dialog.c:484
+msgid "Transfer complete"
+msgstr "Prenos je končan"
+
+#: ../src/gossip-ft-dialog.c:490
+msgid "The file has been transfered successfully."
+msgstr "Datoteka je bila uspešno prenesena."
+
+#: ../src/gossip-ft-dialog.c:525
+msgid "Transferring file"
+msgstr "Prenašanje datoteke"
+
+#: ../src/gossip-ft-dialog.c:531
+msgid "Please wait while the file is transferred"
+msgstr "Počakajte medtem ko se datoteka prenaša"
+
+#: ../src/gossip-ft-dialog.c:601
+#, c-format
+msgid "%s would like to send you a file"
+msgstr "%s vam želi poslati datoteko"
+
+#: ../src/gossip-ft-dialog.c:603
+msgid "Someone would like to send you a file"
+msgstr "Nekdo vam želi poslati datoteko"
+
+#: ../src/gossip-ft-dialog.c:606
+#: ../data/glade/file-transfer.glade.h:2
+msgid "Do you want to accept this file?"
+msgstr "Ali želite sprejeti to datoteko?"
+
+#: ../src/gossip-ft-dialog.c:609
+#, c-format
+msgid "Attempting to send file to %s"
+msgstr "Poskus pošiljanja datoteke %s"
+
+#: ../src/gossip-ft-dialog.c:611
+msgid "Attempting to send file"
+msgstr "Poskus pošiljanja datoteke"
+
+#: ../src/gossip-ft-dialog.c:614
+msgid "Please wait while the other participant responds"
+msgstr "Počakajte, da se drugi sodelujoči odzove"
+
+#: ../src/gossip-ft-dialog.c:737
+msgid "Select a file"
+msgstr "Izbor datoteke"
+
+#. FIXME: Need special case for nickname to put an
+#. * entry in the chat view and to request a new nick.
+#.
+#: ../src/gossip-group-chat.c:550
+msgid "Retry connection"
+msgstr "Ponova povezava"
+
+#. Send event to chat window
+#: ../src/gossip-group-chat.c:920
+#, c-format
+msgid "Invited %s to join this chat conference."
+msgstr "Neveljaven %s za pridružitev tej konferenci klepeta"
+
+#: ../src/gossip-group-chat.c:998
+msgid "<b>Subject:</b>"
+msgstr "<b>Zadeva:</b>"
+
+#: ../src/gossip-group-chat.c:1220
+msgid "You have been kicked from this room"
+msgstr "Bili ste brcnjeni iz te sobe"
+
+#: ../src/gossip-group-chat.c:1252
+#, c-format
+msgid "%s is now known as %s"
+msgstr "%s je sedaj poznan kot %s"
+
+#: ../src/gossip-group-chat.c:1388
+#, c-format
+msgid "%s has set the subject: %s"
+msgstr "%s je spremenil zadevo na: %s"
+
+#: ../src/gossip-group-chat.c:1397
+#, c-format
+msgid "Subject is set as: %s"
+msgstr "Zadeva je nastavljena kot: %s"
+
+#: ../src/gossip-group-chat.c:1999
+#, c-format
+msgid "%s has joined the room"
+msgstr "%s se je pridružil sobi"
+
+#: ../src/gossip-group-chat.c:2042
+#, c-format
+msgid "%s has left the room"
+msgstr "%s je zapustil sobo"
+
+#: ../src/gossip-group-chat.c:2309
+msgid "Nick was not recogized"
+msgstr "Vzdevek ni bil prepoznan"
+
+#: ../src/gossip-group-chat.c:2440
+#: ../src/gossip-private-chat.c:1143
+#, c-format
+msgid "Subject: %s"
+msgstr "Zadeva: %s"
+
+#: ../src/gossip-group-chat.c:2803
+msgid "Enter the new subject you want to set for this room:"
+msgstr "Vnesite novo temo za to sobo:"
+
+#: ../src/gossip-group-chat.c:2819
+msgid "Enter the new nickname you want to be known by:"
+msgstr "Vnesite nov vzdevek, po katerem želite biti poznani:"
+
+#: ../src/gossip-group-chat.c:2843
+#, c-format
+msgid "Kicking %s"
+msgstr "Brca %s"
+
+#: ../src/gossip-group-chat.c:2851
+msgid "You have been removed from the room by an administrator."
+msgstr "Skrbnik vas je odstranil iz sobe."
+
+#: ../src/gossip-hint.c:86
+msgid "Do not show this again"
+msgstr "Tega ne prikaži več"
+
+#: ../src/gossip-log-window.c:522
+#: ../src/gossip-log-window.c:1990
+msgid "Account"
+msgstr "Račun"
+
+#: ../src/gossip-log-window.c:529
+#: ../src/gossip-log-window.c:1999
+msgid "Conversation With"
+msgstr "Pogovor z"
+
+#: ../src/gossip-log-window.c:539
+#: ../src/gossip-log-window.c:2010
+msgid "Date"
+msgstr "Datum"
+
+#: ../src/gossip-log-window.c:2022
+msgid "Link"
+msgstr "Povezava"
+
+#: ../src/gossip-main.c:68
+msgid "Don't connect on startup"
+msgstr "Brez samodejne povezave ob zagonu"
+
+#: ../src/gossip-main.c:72
+msgid "Allow multiple instances of the application to run at the same time"
+msgstr "Dovoli poganjanje več primerov programa istočasno"
+
+#: ../src/gossip-main.c:76
+msgid "List the available accounts"
+msgstr "Izpiši račune na voljo"
+
+#: ../src/gossip-main.c:80
+msgid "Which account to connect to on startup"
+msgstr "Račun za samodejno povezavo na zagonu"
+
+#: ../src/gossip-main.c:81
+msgid "ACCOUNT-NAME"
+msgstr "IME-RAČUNA"
+
+#: ../src/gossip-main.c:91
+#: ../src/gossip-main.c:107
+msgid "- Gossip Instant Messenger"
+msgstr "- Gossip trenutno sporočanje"
+
+#: ../src/gossip-main.c:122
+#, c-format
+msgid "You can not use --no-connect together with --account"
+msgstr "Možnosti --no-connect ne morete uporabiti skupaj z --account"
+
+#: ../src/gossip-main.c:134
+#, c-format
+msgid "No accounts available."
+msgstr "Ni računov na voljo."
+
+#: ../src/gossip-main.c:139
+#, c-format
+msgid "Available accounts:"
+msgstr "Računi na voljo:"
+
+#: ../src/gossip-main.c:149
+#, c-format
+msgid "[default]"
+msgstr "[privzeto]"
+
+#: ../src/gossip-main.c:165
+#, c-format
+msgid "There is no account with the name '%s'."
+msgstr "Ni računa z imenom '%s'."
+
+#: ../src/gossip-new-chatroom-dialog.c:200
+msgid "Create"
+msgstr "Ustvari"
+
+#: ../src/gossip-new-chatroom-dialog.c:546
+msgid "Rooms"
+msgstr "Sob"
+
+#: ../src/gossip-new-chatroom-dialog.c:583
+msgid "Users"
+msgstr "Uporabnikov"
+
+#: ../src/gossip-new-chatroom-dialog.c:616
+msgid "Description"
+msgstr "Opis"
+
+#: ../src/gossip-new-chatroom-dialog.c:823
+#, c-format
+msgid "Found %d conference room"
+msgid_plural "Found %d conference rooms"
+msgstr[0] "Najdenih %d konferenčnih sob"
+msgstr[1] "Najdena %d konferenčna soba"
+msgstr[2] "Najdeni %d konferenčni sobi"
+msgstr[3] "Najdene %d konferenčne sobe"
+
+#: ../src/gossip-new-chatroom-dialog.c:862
+msgid "Browsing for conference rooms, please wait..."
+msgstr "Brskanje za konferenčne sobe, počakajte ..."
+
+#: ../src/gossip-new-chatroom-dialog.c:910
+msgid "Browsing cancelled!"
+msgstr "Brskanje je preklicano!"
+
+#: ../src/gossip-notify.c:216
+#, c-format
+msgid "%s is %s"
+msgstr "%s je %s"
+
+#: ../src/gossip-notify.c:220
+msgid "Contact Online"
+msgstr "Stik je povezan"
+
+#: ../src/gossip-notify.c:233
+#: ../src/gossip-notify.c:341
+#: ../src/gossip-notify.c:557
+msgid "Default"
+msgstr "Privzeto"
+
+#: ../src/gossip-notify.c:236
+msgid "Chat!"
+msgstr "Klepetaj!"
+
+#: ../src/gossip-notify.c:288
+#, c-format
+msgid "%s wants to be added to your contact list for your “%s” account"
+msgstr "%s želi biti dodan na vaš seznam stikov za račun “%s”"
+
+#: ../src/gossip-notify.c:292
+#, c-format
+msgid "Someone wants to be added to your contact list for your “%s” account"
+msgstr "Nekdo želi biti dodan na vaš seznam stikov za račun “%s” "
+
+#: ../src/gossip-notify.c:298
+#, c-format
+msgid "%s wants to be added to your contact list"
+msgstr "%s želi biti dodan na vaš seznam stikov"
+
+#: ../src/gossip-notify.c:302
+#, c-format
+msgid "Someone wants to be added to your contact list"
+msgstr "Nekdo želi biti dodan na vaš seznam stikov"
+
+#: ../src/gossip-notify.c:323
+#: ../data/glade/main.glade.h:102
+msgid "Subscription Request"
+msgstr "Zahteva po naročilu"
+
+#. These messages copy (more-or-less) the ones found in the file transfer dialogue.
+#: ../src/gossip-notify.c:367
+#, c-format
+msgid "%s would like to send you “%s”"
+msgstr "%s vam želi poslati “%s”"
+
+#: ../src/gossip-notify.c:370
+#: ../data/glade/file-transfer.glade.h:3
+msgid "File Transfer"
+msgstr "Prenos datotek"
+
+#: ../src/gossip-notify.c:529
+#, c-format
+msgid "New Message from %s"
+msgstr "Novo sporočilo od %s"
+
+#: ../src/gossip-notify.c:538
+#, c-format
+msgid "“%s...”"
+msgstr "“%s ...”"
+
+#: ../src/gossip-notify.c:540
+#, c-format
+msgid "“%s”"
+msgstr "“%s”"
+
+#: ../src/gossip-notify.c:560
+msgid "Show"
+msgstr "Pokaži"
+
+#: ../src/gossip-notify.c:566
+#: ../data/glade/group-chat.glade.h:3
+msgid "Contact Information"
+msgstr "Podrobnosti stika"
+
+#: ../src/gossip-preferences.c:262
+msgid "Language"
+msgstr "Jezik"
+
+#: ../src/gossip-presence-chooser.c:502
+msgid "Are you sure you want to clear the list?"
+msgstr "Ali ste prepričani, da želite počistiti seznam?"
+
+#: ../src/gossip-presence-chooser.c:506
+msgid "This will remove any custom messages you have added to the list of preset status messages."
+msgstr "To bo odstranilo morebitna sporočila po meri, ki ste jih dodali na seznam prednastavljenih sporočil stanja."
+
+#: ../src/gossip-presence-chooser.c:511
+msgid "Clear List"
+msgstr "Počisti seznam"
+
+#: ../src/gossip-presence-chooser.c:1068
+#: ../src/gossip-presence-chooser.c:1115
+#: ../src/gossip-presence-chooser.c:1161
+msgid "Custom message..."
+msgstr "Sporočilo po meri ..."
+
+#: ../src/gossip-presence-chooser.c:1181
+msgid "Clear List..."
+msgstr "Počisti seznam ..."
+
+#: ../src/gossip-private-chat.c:487
+#, c-format
+msgid "%s went offline"
+msgstr "%s je sedaj nepovezan"
+
+#: ../src/gossip-private-chat.c:501
+#, c-format
+msgid "%s has come online"
+msgstr "%s je sedaj povezan"
+
+#. i18n: An event, as in "has now been connected".
+#: ../src/gossip-private-chat.c:582
+msgid "Contact has been removed"
+msgstr "Stik je bil odstranjen"
+
+#. i18n: An event, as in "has now been connected".
+#: ../src/gossip-private-chat.c:605
+msgid "Connected"
+msgstr "Povezan"
+
+#: ../src/gossip-private-chat.c:631
+msgid "Disconnected"
+msgstr "Ni povezave"
+
+#: ../src/gossip-spell-dialog.c:380
+msgid "Suggestions for the word"
+msgstr "Predlogi za besedo"
+
+#: ../src/gossip-subscription-dialog.c:180
+#, c-format
+msgid "New subscription request from %s"
+msgstr "Nova zahteva po naročilu od %s"
+
+#: ../src/gossip-subscription-dialog.c:281
+#, c-format
+msgid "Someone wants to be added to your contact list for your '%s' account."
+msgstr "Nekdo želi biti dodan na vaš seznam stikov za račun '%s'."
+
+#: ../src/gossip-subscription-dialog.c:285
+#, c-format
+msgid "Someone wants to be added to your contact list."
+msgstr "Nekdo želi biti dodan na vaš seznam stikov."
+
+#: ../src/gossip-subscription-dialog.c:288
+msgid "Do you want to add this person to your contact list?"
+msgstr "Ali želite dodati to osebo na vaš seznam stikov?"
+
+#: ../src/gossip-subscription-dialog.c:363
+#, c-format
+msgid "%s wants to be added to your contact list for your '%s' account."
+msgstr "%s želi biti dodan na vaš seznam stikov za račun '%s'."
+
+#: ../src/gossip-subscription-dialog.c:367
+#, c-format
+msgid "%s wants to be added to your contact list."
+msgstr "%s želi biti dodan na vaš seznam stikov."
+
+#: ../src/gossip-subscription-dialog.c:373
+#, c-format
+msgid "Do you want to add %s to your contact list?"
+msgstr "Ali želite dodati %s na svoj seznam stikov?"
+
+#: ../src/gossip-ui-utils.c:445
+msgid "Online help is not supported on this platform."
+msgstr "Spletna pomoč na tem sistemu ni dostopna."
+
+#: ../src/gossip-ui-utils.c:453
+msgid "Could not display the help contents."
+msgstr "Vsebine pomoči ni mogoče prikazati."
+
+#: ../src/gossip-theme-boxes.c:887
+#: ../src/gossip-theme-irc.c:456
+msgid "%A %d %B %Y"
+msgstr "%d. %m. %Y"
+
+#: ../src/gossip-theme-manager.c:78
+msgid "Classic"
+msgstr "Klasična"
+
+#: ../src/gossip-theme-manager.c:79
+msgid "Simple"
+msgstr "Enostavna"
+
+#: ../src/gossip-theme-manager.c:80
+msgid "Clean"
+msgstr "Čista"
+
+#: ../src/gossip-theme-manager.c:81
+msgid "Blue"
+msgstr "Modra"
+
+#: ../src/gossip-vcard-dialog.c:220
+msgid "Select Your Avatar Image"
+msgstr "Izberite sliko podobe"
+
+#: ../src/gossip-vcard-dialog.c:223
+msgid "No Image"
+msgstr "Brez slike"
+
+#: ../src/gossip-vcard-dialog.c:788
+msgid "The server does not seem to be responding."
+msgstr "Kaže da se strežnik ne odziva."
+
+#: ../src/gossip-vcard-dialog.c:789
+msgid "Try again later."
+msgstr "Poskusite ponovno kasneje."
+
+#. Birthday chooser
+#: ../src/gossip-vcard-dialog.c:921
+#: ../data/glade/main.glade.h:35
+msgid "C_hange"
+msgstr "Spre_meni"
+
+#: ../src/sounds/gossip.soundlist.in.h:1
+#: ../data/glade/chat.glade.h:4
+msgid "Chat"
+msgstr "Klepet"
+
+#: ../src/sounds/gossip.soundlist.in.h:2
+msgid "Contact goes offline"
+msgstr "Stik ni povezan"
+
+#: ../src/sounds/gossip.soundlist.in.h:3
+msgid "Contact goes online"
+msgstr "Stik je povezan"
+
+#: ../data/glade/chat.glade.h:1
+msgid "C_lear"
+msgstr "Po_čisti"
+
+#: ../data/glade/chat.glade.h:2
+msgid "Change Na_me..."
+msgstr "Spremeni i_me ..."
+
+#: ../data/glade/chat.glade.h:3
+msgid "Change Subjec_t..."
+msgstr "Spremeni _temo ..."
+
+#: ../data/glade/chat.glade.h:5
+msgid "Contact Infor_mation"
+msgstr "Po_drobnosti stika"
+
+#: ../data/glade/chat.glade.h:6
+msgid "Cu_t"
+msgstr "_Izreži"
+
+#: ../data/glade/chat.glade.h:7
+msgid "In_vite..."
+msgstr "Pova_bi ..."
+
+#: ../data/glade/chat.glade.h:8
+msgid "Insert _Smiley"
+msgstr "Vstavi _smeška"
+
+#: ../data/glade/chat.glade.h:9
+msgid "Invitation _message:"
+msgstr "_Sporočilo povabila:"
+
+#: ../data/glade/chat.glade.h:10
+msgid "Invite"
+msgstr "Povabi"
+
+#: ../data/glade/chat.glade.h:11
+#: ../data/glade/main.glade.h:68
+msgid "Join _New..."
+msgstr "Pridruži se _novim ..."
+
+#: ../data/glade/chat.glade.h:12
+msgid "Move Tab _Left"
+msgstr "Premakni zavihek _levo"
+
+#: ../data/glade/chat.glade.h:13
+msgid "Move Tab _Right"
+msgstr "Premakni zavihek _desno"
+
+#: ../data/glade/chat.glade.h:14
+msgid "Select who would you like to invite:"
+msgstr "Izberite osebe, ki bi jih radi povabili:"
+
+#: ../data/glade/chat.glade.h:15
+msgid "Send _Email..."
+msgstr "Pošlji _e-sporočilo ..."
+
+#: ../data/glade/chat.glade.h:16
+#: ../data/glade/main.glade.h:133
+msgid "_Add Contact..."
+msgstr "_Dodaj stik ..."
+
+#: ../data/glade/chat.glade.h:17
+msgid "_Add To Favorites"
+msgstr "_Dodaj med priljubljene"
+
+#: ../data/glade/chat.glade.h:18
+msgid "_Close"
+msgstr "_Zapri"
+
+#: ../data/glade/chat.glade.h:20
+msgid "_Conversation"
+msgstr "_Pogovori"
+
+#: ../data/glade/chat.glade.h:21
+msgid "_Copy"
+msgstr "_Kopiraj"
+
+#: ../data/glade/chat.glade.h:22
+msgid "_Detach Tab"
+msgstr "_Odpni zavihek"
+
+#: ../data/glade/chat.glade.h:23
+msgid "_Next Tab"
+msgstr "_Naslednji zavihek"
+
+#: ../data/glade/chat.glade.h:24
+msgid "_Paste"
+msgstr "_Prilepi"
+
+#: ../data/glade/chat.glade.h:25
+msgid "_Previous Tab"
+msgstr "_Predhodni zavihek"
+
+#: ../data/glade/chat.glade.h:26
+#: ../data/glade/main.glade.h:160
+msgid "_Room"
+msgstr "_Soba"
+
+#: ../data/glade/chat.glade.h:27
+msgid "_Show Contacts"
+msgstr "_Pokaži stike"
+
+#: ../data/glade/chat.glade.h:28
+msgid "_Tabs"
+msgstr "_Zavihki"
+
+#.
+#. This is the text that should appear on a menu title. Don't include the prefix 'menu title|' in the translation.
+#: ../data/glade/chat.glade.h:32
+#: ../data/glade/main.glade.h:171
+msgid "menu title|_Edit"
+msgstr "_Uredi"
+
+#: ../data/glade/file-transfer.glade.h:1
+msgid "Contact ID:"
+msgstr "ID stika:"
+
+#: ../data/glade/file-transfer.glade.h:4
+msgid "Location:"
+msgstr "Mesto:"
+
+#: ../data/glade/file-transfer.glade.h:5
+#: ../data/glade/main.glade.h:74
+msgid "Name:"
+msgstr "Ime:"
+
+#: ../data/glade/file-transfer.glade.h:6
+msgid "Not supported yet"
+msgstr "Še ni podprto"
+
+#: ../data/glade/file-transfer.glade.h:7
+msgid "Open _Folder"
+msgstr "Odpri _mapo"
+
+#: ../data/glade/file-transfer.glade.h:8
+msgid "Select A File"
+msgstr "Izbor datoteke"
+
+#: ../data/glade/file-transfer.glade.h:9
+msgid "Size:"
+msgstr "Velikost:"
+
+#: ../data/glade/group-chat.glade.h:1
+#: ../data/glade/main.glade.h:27
+msgid "Account:"
+msgstr "Račun:"
+
+#: ../data/glade/group-chat.glade.h:2
+msgid "Browse:"
+msgstr "Prebrskaj:"
+
+#: ../data/glade/group-chat.glade.h:4
+msgid "Edit Favorite Room"
+msgstr "Uredi priljubljeno sobo"
+
+#: ../data/glade/group-chat.glade.h:5
+msgid "Enter the room name to join here or click on one or more rooms in the list."
+msgstr "Vnesite ime sobe za pridružitev ali pa se s klikom pridružite eni ali več sobam s seznama."
+
+#: ../data/glade/group-chat.glade.h:7
+msgid "Join New"
+msgstr "Nova pridružitev"
+
+#: ../data/glade/group-chat.glade.h:8
+msgid "Join room on start_up"
+msgstr "Pridruži se sobi ob _zagonu"
+
+#: ../data/glade/group-chat.glade.h:9
+msgid "Join this chat room when Gossip starts and you are connected"
+msgstr "Pridruži se tej klepetalnici, kadar je Gossip zagnan in je povezava vzpostavljena"
+
+#: ../data/glade/group-chat.glade.h:10
+msgid "Kick..."
+msgstr "Brcni ..."
+
+#: ../data/glade/group-chat.glade.h:11
+msgid "Manage Favorite Rooms"
+msgstr "Upravljanje priljubljenih sob"
+
+#: ../data/glade/group-chat.glade.h:12
+#: ../data/glade/main.glade.h:73
+msgid "N_ame:"
+msgstr "_Ime:"
+
+#: ../data/glade/group-chat.glade.h:13
+msgid "Private Chat"
+msgstr "Zasebni klepet"
+
+#: ../data/glade/group-chat.glade.h:14
+msgid "Re_fresh"
+msgstr "_Osveži"
+
+#: ../data/glade/group-chat.glade.h:15
+msgid "S_erver:"
+msgstr "Str_ežnik:"
+
+#: ../data/glade/group-chat.glade.h:16
+msgid "Show more information about chatrooms found and make the window resizable."
+msgstr "Prikaži več podrobnosti o najdenih klepetalnicah in naredi okna spremenljive velikosti."
+
+#: ../data/glade/group-chat.glade.h:17
+msgid "This list represents all chat rooms hosted on the server you have entered."
+msgstr "Seznam predstavlja vse klepetalnice, ki gostujejo na trenutno obiskanem strežniku."
+
+#: ../data/glade/group-chat.glade.h:18
+#: ../data/glade/main.glade.h:150
+msgid "_Nickname:"
+msgstr "_Vzdevek:"
+
+#: ../data/glade/group-chat.glade.h:19
+msgid "_Password"
+msgstr "_Geslo"
+
+#: ../data/glade/group-chat.glade.h:20
+msgid "_Room:"
+msgstr "So_ba:"
+
+#: ../data/glade/group-chat.glade.h:21
+msgid "_Server:"
+msgstr "_Strežnik:"
+
+#: ../data/glade/main.glade.h:1
+msgid "-"
+msgstr "-"
+
+#: ../data/glade/main.glade.h:2
+msgid "<b>About</b>"
+msgstr "O programu"
+
+#: ../data/glade/main.glade.h:3
+msgid "<b>Appearance</b>"
+msgstr "<b>Videz</b>"
+
+#: ../data/glade/main.glade.h:4
+msgid "<b>Audio</b>"
+msgstr "<b>Zvok</b>"
+
+#: ../data/glade/main.glade.h:5
+msgid "<b>Behaviour</b>"
+msgstr "<b>Vedenje</b>"
+
+#: ../data/glade/main.glade.h:6
+msgid "<b>Chat</b>"
+msgstr "<b>Klepet</b>"
+
+#: ../data/glade/main.glade.h:7
+msgid "<b>Client Information</b>"
+msgstr "<b>Podrobnosti odjemalca</b>"
+
+#: ../data/glade/main.glade.h:8
+msgid "<b>Contact List</b>"
+msgstr "<b>Seznam stikov</b>"
+
+#: ../data/glade/main.glade.h:9
+msgid "<b>Groups</b>"
+msgstr "<b>Skupine</b>"
+
+#: ../data/glade/main.glade.h:10
+msgid "<b>Languages</b>"
+msgstr "<b>Jeziki</b>"
+
+#: ../data/glade/main.glade.h:11
+msgid "<b>Name</b>"
+msgstr "<b>Ime</b>"
+
+#: ../data/glade/main.glade.h:12
+msgid "<b>New Account</b>"
+msgstr "<b>Nov račun</b>"
+
+#: ../data/glade/main.glade.h:14
+msgid "<b>Options</b>"
+msgstr "<b>Možnosti</b>"
+
+#: ../data/glade/main.glade.h:15
+msgid "<b>Passwords do not match!</b>"
+msgstr "<b>Gesli se ne ujemata!</b>"
+
+#: ../data/glade/main.glade.h:16
+msgid "<b>Personal Details</b>"
+msgstr "<b>Osebni podatki</b>"
+
+#: ../data/glade/main.glade.h:17
+msgid "<b>Settings</b>"
+msgstr "<b>Nastavitve</b>"
+
+#: ../data/glade/main.glade.h:18
+msgid "<b>Status</b>"
+msgstr "<b>Stanje</b>"
+
+#: ../data/glade/main.glade.h:19
+msgid "<b>Subscription</b>"
+msgstr "<b>Naročilo</b>"
+
+#: ../data/glade/main.glade.h:20
+msgid "<b>Visual</b>"
+msgstr "<b>Vidno</b>"
+
+#: ../data/glade/main.glade.h:21
+msgid "<small>The list of languages reflects only the languages for which you have a dictionary installed.</small>"
+msgstr "<small>Seznam jezikov kaže samo jezike za katere je nameščen slovar.</small>"
+
+#: ../data/glade/main.glade.h:22
+msgid "<span size=\"smaller\">Example: Mikael or user@server.org</span>"
+msgstr "<span size=\"smaller\">Primer: Miha ali uporabnik@strežnik.org</span>"
+
+#: ../data/glade/main.glade.h:23
+msgid "<span size=\"smaller\">Note: You must select an account if the contact is unknown</span>"
+msgstr "<span size=\"smaller\">Opomba: Izbrati morate račun, če je stik neznan</span>"
+
+#: ../data/glade/main.glade.h:24
+msgid "A unique name for this account to identify it personally to you."
+msgstr "Edinstveno ime za ta račun za vašo osebno določitev."
+
+#: ../data/glade/main.glade.h:25
+msgid "A_vatar:"
+msgstr "P_odoba:"
+
+#: ../data/glade/main.glade.h:26
+msgid "Accou_nt:"
+msgstr "Raču_n:"
+
+#: ../data/glade/main.glade.h:29
+msgid "Add Contact"
+msgstr "Dodaj stik"
+
+#: ../data/glade/main.glade.h:30
+msgid "Add an account"
+msgstr "Dodaj račun"
+
+#: ../data/glade/main.glade.h:31
+msgid "Alia_s:"
+msgstr "_Vzdevek:"
+
+#: ../data/glade/main.glade.h:32
+msgid "An Instant Messaging client for GNOME"
+msgstr "Odjemalec trenutnega sporočanja za GNOME"
+
+#: ../data/glade/main.glade.h:33
+msgid "Avatars are user chosen images shown in the contact list"
+msgstr "Podobe so izbrane slike uporabnikov, ki so prikazane na seznamu stikov"
+
+#: ../data/glade/main.glade.h:34
+msgid "Birthday:"
+msgstr "Rojstni dan:"
+
+#: ../data/glade/main.glade.h:36
+msgid "Ch_at"
+msgstr "K_lepetaj"
+
+#: ../data/glade/main.glade.h:37
+msgid "Change Password"
+msgstr "Spremeni geslo"
+
+#: ../data/glade/main.glade.h:38
+msgid "Chat Rooms"
+msgstr "Klepetalnice"
+
+#: ../data/glade/main.glade.h:39
+msgid "Chat Th_eme:"
+msgstr "T_ema klepetanja:"
+
+#: ../data/glade/main.glade.h:40
+msgid "Client:"
+msgstr "Odjemalec:"
+
+#: ../data/glade/main.glade.h:41
+msgid "Con_firm:"
+msgstr "Po_trdi:"
+
+#: ../data/glade/main.glade.h:42
+msgid "Con_tact:"
+msgstr "S_tik:"
+
+#: ../data/glade/main.glade.h:43
+msgid "Connect on S_tartup"
+msgstr "Poveži se ob _zagonu"
+
+#: ../data/glade/main.glade.h:44
+msgid "Connect/disconnect the selected account"
+msgstr "Povezava/prekinitev povezave izbranega računa"
+
+#: ../data/glade/main.glade.h:45
+msgid "Contact List - Gossip"
+msgstr "Seznam stikov - Gossip"
+
+#: ../data/glade/main.glade.h:46
+msgid "Contacts"
+msgstr "Stiki"
+
+#: ../data/glade/main.glade.h:47
+msgid "Context"
+msgstr "Vsebina"
+
+#: ../data/glade/main.glade.h:48
+msgid "Country:"
+msgstr "Država:"
+
+#: ../data/glade/main.glade.h:49
+msgid "Cr_eate"
+msgstr "_Ustvari"
+
+#: ../data/glade/main.glade.h:50
+msgid "Decide _Later"
+msgstr "Odloči se _kasneje"
+
+#: ../data/glade/main.glade.h:51
+msgid "Display notifications when contacts come _online"
+msgstr "Prikazi obvestila, ko se stiki _povežejo"
+
+#: ../data/glade/main.glade.h:52
+msgid "Each account you create has a unique name associated with it (for example <b>Google</b>)."
+msgstr "Vsak ustvarjen račun ima z njim povezano edinstveno ime (na primer <b>Google</b>)."
+
+#: ../data/glade/main.glade.h:53
+msgid "Edit Contact"
+msgstr "Urejanje stika"
+
+#: ../data/glade/main.glade.h:54
+msgid "Edit Groups"
+msgstr "Urejanje skupin"
+
+#: ../data/glade/main.glade.h:55
+msgid "Email:"
+msgstr "E-pošta:"
+
+#: ../data/glade/main.glade.h:56
+msgid "Enable sounds when _away"
+msgstr "Omogoči zvoke ob _odsotnosti"
+
+#: ../data/glade/main.glade.h:57
+msgid "Enable sounds when _busy"
+msgstr "Omogoči zvoke ob z_aposlenosti"
+
+#: ../data/glade/main.glade.h:58
+msgid "Encrypt all data sent when communicating with the server"
+msgstr "Šifriraj vse poslane podatke pri komunikaciji s strežnikom"
+
+#: ../data/glade/main.glade.h:59
+msgid "Enter status message:"
+msgstr "Vnesite sporočilo stanja:"
+
+#: ../data/glade/main.glade.h:60
+msgid "Forget password"
+msgstr "Pozabi geslo"
+
+#: ../data/glade/main.glade.h:61
+msgid "General"
+msgstr "Splošno"
+
+#: ../data/glade/main.glade.h:62
+msgid "ID:"
+msgstr "ID:"
+
+#: ../data/glade/main.glade.h:63
+msgid "I_gnore security warnings"
+msgstr "Pr_ezri varnostna opozorila"
+
+#: ../data/glade/main.glade.h:64
+msgid "If you chose to decide later you will be asked the next time you log on."
+msgstr "V primeru da se odločite kasneje, boste vprašani ob naslednji prijavi."
+
+#: ../data/glade/main.glade.h:65
+msgid "Import your personal information from your desktop settings and use it here"
+msgstr "Uvozi vaše osebne podatke in nastavitev namizja in jih uporabi tukaj"
+
+#: ../data/glade/main.glade.h:67
+msgid "Join _Favorites"
+msgstr "Pridruži se _priljubljenim"
+
+#: ../data/glade/main.glade.h:69
+msgid "Language:"
+msgstr "Jezik:"
+
+#: ../data/glade/main.glade.h:70
+msgid "Links"
+msgstr "Povezave"
+
+#: ../data/glade/main.glade.h:71
+msgid "Logi_n ID:"
+msgstr "ID p_rijave:"
+
+#: ../data/glade/main.glade.h:72
+msgid "Manage Favorites..."
+msgstr "Upravljaj priljubljene ..."
+
+#: ../data/glade/main.glade.h:76
+msgid "Notifications"
+msgstr "Obvestila"
+
+#: ../data/glade/main.glade.h:77
+msgid "OS:"
+msgstr "OS:"
+
+#: ../data/glade/main.glade.h:78
+msgid "Pass_word:"
+msgstr "_Geslo:"
+
+#: ../data/glade/main.glade.h:79
+msgid "Personal Details"
+msgstr "Osebni podatki"
+
+#: ../data/glade/main.glade.h:80
+msgid "Preferences"
+msgstr "Možnosti"
+
+#: ../data/glade/main.glade.h:81
+msgid "R_egister"
+msgstr "V_pis"
+
+#: ../data/glade/main.glade.h:82
+msgid "Register account with the Jabber server. If this is a new account, you will need to register it before connecting."
+msgstr "Vpis računa s strežnikom Jabber. V primeru da je to nov račun, se boste pred povezavo morali vpisati."
+
+#: ../data/glade/main.glade.h:83
+msgid "Remove the selected account"
+msgstr "Odstrani izbran račun"
+
+#: ../data/glade/main.glade.h:84
+msgid "S_how Offline Contacts"
+msgstr "Pokaži _nepovezane stike"
+
+#: ../data/glade/main.glade.h:85
+msgid "Search"
+msgstr "Iskanje"
+
+#: ../data/glade/main.glade.h:86
+msgid "Search the log and press enter to continue on to the next item found"
+msgstr "Iskanje po dnevniku. Za nadaljevanje na naslednji najden predmet pritisnite vnosno tipko"
+
+#: ../data/glade/main.glade.h:87
+msgid "Select the groups you want this contact to appear in, you can select more than one group or no groups."
+msgstr "Izberite skupino v kateri želite, da se pojavi stik. Izberete lahko eno, več ali nobene skupine."
+
+#: ../data/glade/main.glade.h:88
+msgid "Select the name you want to use for this account:"
+msgstr "Nastavite ime, ki ga želite uporabljati za ta račun:"
+
+#: ../data/glade/main.glade.h:89
+msgid "Ser_ver:"
+msgstr "_Strežnik:"
+
+#: ../data/glade/main.glade.h:90
+msgid ""
+"Set the alias you want to use for:\n"
+"<b>foo@bar.baz</b>\n"
+"\n"
+"You can retrieve contact information from the server. "
+msgstr ""
+"Nastavite vzdevek, ki ga želite uporabiti za:\n"
+"<b>foo@bar.baz</b>\n"
+"\n"
+"S strežnika lahko pridobite seznam stikov."
+
+#: ../data/glade/main.glade.h:94
+msgid "Show _avatars"
+msgstr "Prikaži _podobe"
+
+#: ../data/glade/main.glade.h:95
+msgid "Show _smileys as images"
+msgstr "Prikaži _smeške kot slike"
+
+#: ../data/glade/main.glade.h:96
+msgid "Show co_mpact contact list"
+msgstr "Prikaži s_krčen seznam stikov"
+
+#: ../data/glade/main.glade.h:97
+msgid "Sort by _name"
+msgstr "Razvrsti po _imenu"
+
+#: ../data/glade/main.glade.h:98
+msgid "Sort by s_tate"
+msgstr "Razvrsti po s_tanju"
+
+#: ../data/glade/main.glade.h:99
+msgid "Spell Checker"
+msgstr "Črkovalnik"
+
+#: ../data/glade/main.glade.h:100
+msgid "Spell Checking"
+msgstr "Preverjanje črkovanja"
+
+#: ../data/glade/main.glade.h:101
+msgid "Status Message Presets"
+msgstr "Stanje prednastavljenih sporočil"
+
+#: ../data/glade/main.glade.h:103
+msgid "Suggestions for the word:"
+msgstr "Predlogi za besedo:"
+
+#: ../data/glade/main.glade.h:104
+msgid "Themes"
+msgstr "Teme"
+
+#: ../data/glade/main.glade.h:105
+msgid ""
+"This acts as a filter to the contact list below.\n"
+"\n"
+"You can use segments of contact's name or ID, for example, \"jabber.org\" will list everyone using that server.\n"
+"\n"
+"You can also use the name of a group to show only contacts in a specific group."
+msgstr ""
+"To je filter za seznam stikov spodaj.\n"
+"\n"
+"Lahko uporabite dele ID ali imena stika, na primer \"jabber.org\" bo prikazal vse, ki uporabljajo ta strežnik.\n"
+"\n"
+"Lahko uporabite ime skupine za prikaz le stikov določene skupine."
+
+#: ../data/glade/main.glade.h:110
+msgid "This acts as a filter to the contact list below. You can use segments of contact's name or ID, for example, \"jabber.org\" will list everyone using that server"
+msgstr "To je filter za seznam stikov spodaj. Lahko uporabite dele ID ali imena stika, na primer \"jabber.org\" bo prikazal vse, ki uporabljajo ta strežnik"
+
+#: ../data/glade/main.glade.h:111
+msgid "This is a legacy option required for supporting older servers which use a different port (5223) to communicate securely. With newer encryption techniques, the same port (5222) can be used for both"
+msgstr "To je stara možnost zahtevana za podporo starejših strežnikov, ki uporabljajo druga vrata (5223) za varno komunikacijo. Z novejšimi tehnikami šifriranje so lahko ista vrata (5222) uporabljena za oba načina povezovanja"
+
+#: ../data/glade/main.glade.h:112
+msgid "This is the name that will be used on your roster for this contact"
+msgstr "To je ime, ki bo za ta stik uporabljeno na vašem seznamu stikov"
+
+#: ../data/glade/main.glade.h:113
+msgid "This name will be used to identify you in chat windows"
+msgstr "Ime bo uporabljeno za vašo določitev v oknih klepeta"
+
+#: ../data/glade/main.glade.h:114
+msgid "This name will be used to identify you when new contacts lookup your details"
+msgstr "Ime bo uporabljeno za vašo določitev, ko nov stik pogleda vaše podrobnosti"
+
+#: ../data/glade/main.glade.h:118
+msgid "To make sure your password is set correctly, enter your password and then confirm it below."
+msgstr "Za zagotovitev pravilno nastavljenega gesla, ga vnesite in potrdite spodaj."
+
+#: ../data/glade/main.glade.h:119
+msgid "Use _system document font"
+msgstr "Uporabi pisavo _sistemske dokumentacije"
+
+#: ../data/glade/main.glade.h:120
+msgid "Use default name here from the contact's VCard."
+msgstr "Tukaj uporabi privzeto ime z VCard stika."
+
+#: ../data/glade/main.glade.h:121
+msgid "Use system pro_xy"
+msgstr "Uporabi sistemski posredniški strežnik"
+
+#: ../data/glade/main.glade.h:122
+msgid "Use this f_ont:"
+msgstr "Uporabi to _pisavo:"
+
+#: ../data/glade/main.glade.h:123
+msgid "Use this to filter the links found"
+msgstr "Uporabi to za filtriranje najdenih povezav"
+
+#: ../data/glade/main.glade.h:124
+msgid "Version:"
+msgstr "Različica:"
+
+#: ../data/glade/main.glade.h:125
+msgid "View Previous Conversations"
+msgstr "Ogled predhodnih pogovorov"
+
+#: ../data/glade/main.glade.h:126
+msgid "Web site:"
+msgstr "Spletišče:"
+
+#: ../data/glade/main.glade.h:127
+msgid "When checked, any certification errors will stop the connection attempt. For example, if the server's certificate has expired or the server simply doesn't have one, it is considered unsafe and the connection attempt will stop."
+msgstr "Izbrana možnost določi da napake potrdila zaustavijo poskus povezave. Na primer, če je potrdilo strežnika poteklo ali strežnik nima potrdila, je povezava predpostavljena za nevarno in se bo poskus povezave zaustavil."
+
+#: ../data/glade/main.glade.h:128
+msgid "Which account do you want to use?"
+msgstr "Kateri račun želite uporabljati?"
+
+#: ../data/glade/main.glade.h:129
+msgid "You are not subscribed to this contact."
+msgstr "Na ta stik niste naročeni."
+
+#: ../data/glade/main.glade.h:130
+msgid "_About"
+msgstr "_O Programu"
+
+#: ../data/glade/main.glade.h:131
+msgid "_Accept"
+msgstr "_Sprejmi"
+
+#: ../data/glade/main.glade.h:132
+msgid "_Accounts"
+msgstr "_Računi"
+
+#: ../data/glade/main.glade.h:134
+msgid "_Add to status message list"
+msgstr "_Dodaj na seznam sporočil stanja"
+
+#: ../data/glade/main.glade.h:135
+msgid "_Advanced"
+msgstr "_Napredno"
+
+#: ../data/glade/main.glade.h:136
+msgid "_Birthday:"
+msgstr "_Rojstni dan:"
+
+#: ../data/glade/main.glade.h:137
+msgid "_Contents"
+msgstr "_Vsebina"
+
+#: ../data/glade/main.glade.h:138
+msgid "_Deny"
+msgstr "_Zavrni"
+
+#: ../data/glade/main.glade.h:139
+msgid "_Description:"
+msgstr "O_pis:"
+
+#: ../data/glade/main.glade.h:140
+msgid "_Email:"
+msgstr "_E-pošta:"
+
+#: ../data/glade/main.glade.h:141
+msgid "_Enable spell checking"
+msgstr "_Omogoči preverjanje črkovanja"
+
+#: ../data/glade/main.glade.h:142
+msgid "_Enter the name or contact ID of the person you want to chat to below:"
+msgstr "Spodaj _vnesite ime ali ID osebe s katero želite klepetati:"
+
+#: ../data/glade/main.glade.h:143
+msgid "_For"
+msgstr "_Za"
+
+#: ../data/glade/main.glade.h:144
+msgid "_Force older secure connection method"
+msgstr "_Prisili uporabo starejšega načina varnega povezovanja"
+
+#: ../data/glade/main.glade.h:145
+msgid "_Group:"
+msgstr "_Skupina:"
+
+#: ../data/glade/main.glade.h:146
+msgid "_Help"
+msgstr "Pomo_č"
+
+#: ../data/glade/main.glade.h:147
+msgid "_Location:"
+msgstr "_Mesto:"
+
+#: ../data/glade/main.glade.h:148
+msgid "_Name:"
+msgstr "_Ime:"
+
+#: ../data/glade/main.glade.h:149
+msgid "_New Message..."
+msgstr "Novo s_poročilo ..."
+
+#: ../data/glade/main.glade.h:151
+msgid "_Open"
+msgstr "_Odpri"
+
+#: ../data/glade/main.glade.h:152
+msgid "_Open new chats in separate windows"
+msgstr "_Odpri nove klepete v ločenih oknih"
+
+#: ../data/glade/main.glade.h:153
+msgid "_Password:"
+msgstr "_Geslo:"
+
+#: ../data/glade/main.glade.h:154
+msgid "_Personal Information"
+msgstr "_Osebni podatki"
+
+#: ../data/glade/main.glade.h:155
+msgid "_Play sound when messages arrive"
+msgstr "Predvajaj _zvok ob prejemu novega sporočila"
+
+#: ../data/glade/main.glade.h:156
+msgid "_Port:"
+msgstr "_Vrata:"
+
+#: ../data/glade/main.glade.h:157
+msgid "_Preferences"
+msgstr "_Možnosti"
+
+#: ../data/glade/main.glade.h:158
+msgid "_Quit"
+msgstr "_Končaj"
+
+#: ../data/glade/main.glade.h:159
+msgid "_Retrieve"
+msgstr "P_ridobi"
+
+#: ../data/glade/main.glade.h:161
+msgid "_Show Contact List"
+msgstr "Pokaži _seznam stikov"
+
+#: ../data/glade/main.glade.h:162
+msgid "_Subscribe"
+msgstr "_Naroči se"
+
+#: ../data/glade/main.glade.h:163
+msgid "_Use encryption"
+msgstr "_Uporabi šifriranje"
+
+#: ../data/glade/main.glade.h:164
+msgid "_Use for chat rooms"
+msgstr "_Uporabi za klepetalnice"
+
+#: ../data/glade/main.glade.h:166
+msgid "_Web site:"
+msgstr "_Spletišče:"
+
+#: ../data/glade/main.glade.h:167
+msgid "jabber account settings"
+msgstr "nastavitve jabber računa"
+
+#. This is the text that should appear on a menu title. Don't include the prefix 'menu title|' in the translation.
+#: ../data/glade/main.glade.h:169
+msgid "menu title|_Chat"
+msgstr "_Klepet"
+
