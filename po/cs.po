@@ -3,82 +3,86 @@
 # Copyright (C) 2003, 2004 Miloslav Trmac <mitr@volny.cz>.
 # This file is distributed under the same license as the gossip package.
 # Miloslav Trmac <mitr@volny.cz>, 2003, 2004.
+# Marek Černocký <marek@manet.cz>, 2010.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-10 02:40+0200\n"
-"PO-Revision-Date: 2008-07-10 02:39+0100\n"
-"Last-Translator: Petr Kovar <pknbe@volny.cz>\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=gossip&component=general\n"
+"POT-Creation-Date: 2009-12-14 21:57+0000\n"
+"PO-Revision-Date: 2010-02-21 15:11+0100\n"
+"Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"X-Poedit-Language: Czech\n"
+"X-Poedit-SourceCharset: utf-8\n"
 
 #: ../gossip.desktop.in.in.h:1
-#, fuzzy
 msgid "Gossip Instant Messenger"
-msgstr "Instant Messenger"
+msgstr "Komunikátor Gossip"
 
 #: ../gossip.desktop.in.in.h:2
 msgid "Instant Messenger"
-msgstr "Instant Messenger"
+msgstr "Komunikátor"
 
 #: ../gossip.schemas.in.h:1
 msgid "Always open a separate chat window for new chats."
-msgstr ""
+msgstr "Pro nové diskuze vždy otevírat samostatná diskuzní okna."
 
 #: ../gossip.schemas.in.h:2
 msgid "Chat window theme"
-msgstr ""
+msgstr "Motiv diskuzního okna"
 
 #: ../gossip.schemas.in.h:3
 msgid ""
 "Comma separated list of spell checker languages to use (e.g. en, fr, nl)."
 msgstr ""
+"Čárkou oddělovaný seznam jazyků, které se mají použít pro kontrolu pravopisu "
+"(např. cs, en, sk)."
 
 #: ../gossip.schemas.in.h:4
-#, fuzzy
 msgid "Compact contact list"
-msgstr "Přidat do vašeho seznamu kontaktů"
+msgstr "Kompaktní seznamu kontaktů"
 
 #: ../gossip.schemas.in.h:5
 msgid "Contact list sort criterium"
-msgstr ""
+msgstr "Kritérium řazení seznamu kontaktů"
 
 #: ../gossip.schemas.in.h:6
 msgid "Default directory to select an avatar image from"
-msgstr ""
+msgstr "Výchozí složka pro výběr obrázků avatarů"
 
 #: ../gossip.schemas.in.h:7
 msgid "Enable popup when contact is available"
-msgstr ""
+msgstr "Povolit oznámení, když je kontakt dostupný"
 
 #: ../gossip.schemas.in.h:8
-#, fuzzy
 msgid "Enable sound when away"
-msgstr "Zakázat zvuky, když jsem _pryč"
+msgstr "Povolit zvuky, když jsem pryč"
 
 #: ../gossip.schemas.in.h:9
-#, fuzzy
 msgid "Enable sound when busy"
-msgstr "Zakázat zvuky, když jsem _zaneprázdněn"
+msgstr "Povolit zvuky, když jsem zaneprázdněn"
 
 #: ../gossip.schemas.in.h:10
-#, fuzzy
 msgid "Enable spell checker"
-msgstr "Gossip - Odeslat zprávu"
+msgstr "Zapnout kontrolu pravopisu"
 
 #: ../gossip.schemas.in.h:11
 msgid "Font name to use"
-msgstr ""
+msgstr "Název písma, které se má použít"
 
 #: ../gossip.schemas.in.h:12
 msgid ""
 "Font name to use instead of the system document font. Only applied when NOT "
 "using the system document font."
 msgstr ""
+"Název písma, které se má použít místo systémového písma dokumentů. Použije "
+"se jen v případě, že se NEPOUŽÍVÁ systémové písmo dokumentů."
 
 #: ../gossip.schemas.in.h:13
 msgid "Hide main window"
@@ -90,17 +94,15 @@ msgstr "Skrýt hlavní okno."
 
 #: ../gossip.schemas.in.h:15
 msgid "Open new chats in separate windows"
-msgstr ""
+msgstr "Novou diskuzi otevřít v samostatném okně"
 
 #: ../gossip.schemas.in.h:16
-#, fuzzy
 msgid "Show avatars"
-msgstr "_Zobrazit seznam kontaktů"
+msgstr "Zobrazovat avatary"
 
 #: ../gossip.schemas.in.h:17
-#, fuzzy
 msgid "Show hint about closing the main window"
-msgstr "Výška hlavního okna."
+msgstr "Upozornit na zavírání hlavního okna"
 
 #: ../gossip.schemas.in.h:18
 msgid "Show offline contacts"
@@ -108,20 +110,20 @@ msgstr "Zobrazovat odpojené kontakty"
 
 #: ../gossip.schemas.in.h:19
 msgid "Spell checking languages"
-msgstr ""
+msgstr "Jazyky pro kontrolu pravopisu"
 
 #: ../gossip.schemas.in.h:20
 msgid "The default location for file transfers to be saved to"
-msgstr ""
+msgstr "Výchozí umístění, kam se mají ukládat přenesené soubory"
 
 #: ../gossip.schemas.in.h:21
 msgid "The last directory that an avatar image was chosen from."
-msgstr ""
+msgstr "Složka, ze které byl naposledy vybrán obrázek avatara."
 
 #: ../gossip.schemas.in.h:22
-#, fuzzy
 msgid "The theme that is used to display the conversation in chat windows."
-msgstr "Toto jméno se bude používat pro vaši identifikaci v oknech diskusí."
+msgstr ""
+"Motiv, který se má použít pro zobrazení konverzace v diskuzních oknech."
 
 #: ../gossip.schemas.in.h:23
 msgid ""
@@ -129,6 +131,9 @@ msgid ""
 "the file to so that the last location used to save file transfers can be "
 "used without prompting the user each time."
 msgstr ""
+"Toto se aktualizuje pokaždé, když uživatel změní umístění, kde si přeje "
+"ukládat soubory, takže poslední umístění použité k ukládání přenesených "
+"souborů může být použité, aniž by musel být uživatel pokaždé dotazován."
 
 #: ../gossip.schemas.in.h:24
 msgid "Use graphical smileys"
@@ -136,73 +141,77 @@ msgstr "Používat grafické smajlíky"
 
 #: ../gossip.schemas.in.h:25
 msgid "Use notification sounds"
-msgstr "Používat zvuky upozornění"
+msgstr "Používat zvuková upozornění"
 
 #: ../gossip.schemas.in.h:26
 msgid "Use system document font"
-msgstr ""
+msgstr "Použít systémové písmo dokumentů"
 
 #: ../gossip.schemas.in.h:27
 msgid "Use theme for chat rooms"
-msgstr ""
+msgstr "Použít motiv pro diskuzní místnost"
 
 #: ../gossip.schemas.in.h:28
 msgid ""
 "Whether or not to check words typed against the languages you want to check "
 "with."
 msgstr ""
+"Zda kontrolovat, nebo nekontrolovat, pravopis v jazyce, který si zvolíte."
 
 #: ../gossip.schemas.in.h:29
 msgid ""
 "Whether or not to convert smileys into graphical images in conversations."
-msgstr "Jestli převádět smajlíky v konverzacích na grafické smajlíky."
+msgstr "Zda v konverzacích převádět textové smajlíky na grafické smajlíky."
 
 #: ../gossip.schemas.in.h:30
 msgid "Whether or not to play a sound when messages arrive."
-msgstr "Jestli přehrávat zvuk, když přijdou zprávy."
+msgstr "Zda přehrát zvuk, když přijdou zprávy."
 
 #: ../gossip.schemas.in.h:31
 msgid "Whether or not to play sounds when away."
-msgstr "Jestli přehrávat zvuky, když jsem pryč."
+msgstr "Zda přehrávat zvuky, když jsem pryč."
 
 #: ../gossip.schemas.in.h:32
 msgid "Whether or not to play sounds when busy."
-msgstr "Jestli přehrávat zvuky, když jsem zaneprázdněn."
+msgstr "Zda přehrávat zvuky, když jsem zaneprázdněn."
 
 #: ../gossip.schemas.in.h:33
-#, fuzzy
 msgid "Whether or not to show a popup when a contact becomes available."
-msgstr "Jestli přehrávat zvuk, když přijdou zprávy."
+msgstr ""
+"Zda zobrazovat, nebo nezobrazovat, vyskakovací oznámení, když kontakt začne "
+"být dostupný."
 
 #: ../gossip.schemas.in.h:34
-#, fuzzy
 msgid ""
 "Whether or not to show avatars for contacts in the contact list and chat "
 "windows."
-msgstr "Jestli zobrazovat odpojené kontakty v seznamu kontaktů."
+msgstr ""
+"Zda zobrazovat, nebo nezobrazovat, avatary u kontaktů v seznamu kontaktů a v "
+"diskuzních oknech."
 
 #: ../gossip.schemas.in.h:35
 msgid "Whether or not to show contacts that are offline in the contact list."
-msgstr "Jestli zobrazovat odpojené kontakty v seznamu kontaktů."
+msgstr "Zda zobrazovat odpojené kontakty v seznamu kontaktů."
 
 #: ../gossip.schemas.in.h:36
 msgid ""
 "Whether or not to show the message dialog about closing the main window with "
 "the 'x' button in the title bar."
 msgstr ""
+"Zda zobrazovat, nebo nezobrazovat, dialogové okno se zprávou o zavírání "
+"hlavního okna tlačítkem „X“ v záhlaví okna."
 
 #: ../gossip.schemas.in.h:37
-#, fuzzy
 msgid "Whether to show the contact list in compact mode or not."
-msgstr "Jestli zobrazovat odpojené kontakty v seznamu kontaktů."
+msgstr "Zda zobrazovat seznam kontaktů v kompaktním režimu nebo ne."
 
 #: ../gossip.schemas.in.h:38
 msgid "Whether to use the system document font theme or a user specified font."
-msgstr ""
+msgstr "Zda použít systémové písmo dokumentů nebo jiné vybrané písmo."
 
 #: ../gossip.schemas.in.h:39
 msgid "Whether to use the theme for chat rooms or not."
-msgstr ""
+msgstr "Zda použít, nebo ne, motiv pro diskuzní místnost."
 
 #: ../gossip.schemas.in.h:40
 msgid ""
@@ -210,396 +219,393 @@ msgid ""
 "by the contact's name with the value \"name\". A value of \"state\" will "
 "sort the contact list by state."
 msgstr ""
+"Jaké kritérium se má použít k řazení seznamu kontaktů. Výchozí je řazení "
+"podle jména kontaktu, čemuž odpovídá hodnota „name“. Hodnota „state“ určuje "
+"řazení seznamu kontaktů podle stavu."
 
-#: ../libgossip/gossip-chatroom.c:1284
-#, fuzzy
+#: ../libgossip/gossip-chatroom.c:1293
 msgid "Joining"
-msgstr "_Připojit"
+msgstr "Vstupuje se"
 
-#: ../libgossip/gossip-chatroom.c:1286
+#: ../libgossip/gossip-chatroom.c:1295
 msgid "Active"
-msgstr ""
+msgstr "Aktivní"
 
-#: ../libgossip/gossip-chatroom.c:1288
+#: ../libgossip/gossip-chatroom.c:1297
 msgid "Inactive"
-msgstr ""
+msgstr "Neaktivní"
 
-#: ../libgossip/gossip-chatroom.c:1290 ../src/gossip-log-window.c:1899
-#, fuzzy
+#: ../libgossip/gossip-chatroom.c:1299 ../src/gossip-log-window.c:1891
 msgid "Unknown"
-msgstr "Neznámá chyba"
+msgstr "Neznámo"
 
-#: ../libgossip/gossip-chatroom.c:1292
+#: ../libgossip/gossip-chatroom.c:1301
 msgid "Error"
-msgstr ""
+msgstr "Chyba"
 
-#: ../libgossip/gossip-chatroom.c:1307
+#: ../libgossip/gossip-chatroom.c:1316
 msgid ""
 "The chat room you tried to join requires a password. You either failed to "
 "supply a password or the password you tried was incorrect"
 msgstr ""
+"Místnost, do které se pokoušíte vstoupit, vyžaduje heslo. Buďto jste jej "
+"zapomněli uvést nebo jste zadali nesprávné."
 
-#: ../libgossip/gossip-chatroom.c:1309
+#: ../libgossip/gossip-chatroom.c:1318
 msgid "You have been banned from this chatroom"
-msgstr ""
+msgstr "Pro tuto diskuzní místnost vám byl udělen zákaz"
 
-#: ../libgossip/gossip-chatroom.c:1311
+#: ../libgossip/gossip-chatroom.c:1320
 msgid "The conference room you tried to join could not be found"
-msgstr ""
+msgstr "Konferenční místnost, do které zkoušíte vstoupit, nebyla nalezena"
 
-#: ../libgossip/gossip-chatroom.c:1313
+#: ../libgossip/gossip-chatroom.c:1322
 msgid "Chatroom creation is restricted on this server"
-msgstr ""
+msgstr "Vytváření diskuzních místností je na tomto serveru omezeno"
 
-#: ../libgossip/gossip-chatroom.c:1315
+#: ../libgossip/gossip-chatroom.c:1324
 msgid "Chatroom reserved nick names must be used on this server"
-msgstr ""
+msgstr "Na tomto serveru musí být použité vyhrazené názvy diskuzních místností"
 
-#: ../libgossip/gossip-chatroom.c:1317
+#: ../libgossip/gossip-chatroom.c:1326
 msgid "You are not on the chatroom's members list"
-msgstr ""
+msgstr "Nejste na seznamu členů diskuzní místnosti"
 
-#: ../libgossip/gossip-chatroom.c:1319
+#: ../libgossip/gossip-chatroom.c:1328
 msgid "The nickname you have chosen is already in use"
-msgstr ""
+msgstr "Přezdívka, kterou jste si zvolili, je již použita"
 
-#: ../libgossip/gossip-chatroom.c:1321
+#: ../libgossip/gossip-chatroom.c:1330
 msgid "The maximum number of users for this chatroom has been reached"
-msgstr ""
+msgstr "Byl naplněn maximální počet uživatelů pro tuto diskuzní místnost"
 
-#: ../libgossip/gossip-chatroom.c:1323
+#: ../libgossip/gossip-chatroom.c:1332
 msgid "Unauthorized request, you do not have privileges to do that"
-msgstr ""
+msgstr "Neschválený požadavek, nemáte oprávnění toto provádět"
 
-#: ../libgossip/gossip-chatroom.c:1325
+#: ../libgossip/gossip-chatroom.c:1334
 msgid "That action is forbidden"
-msgstr ""
+msgstr "Akce je nepovolená"
 
-#: ../libgossip/gossip-chatroom.c:1329
+#: ../libgossip/gossip-chatroom.c:1338
 msgid "The remote conference server did not respond in a sensible time"
-msgstr ""
+msgstr "Vzdálený konferenční server neodpověděl v rozumě použitelném čase"
 
-#: ../libgossip/gossip-chatroom.c:1331
+#: ../libgossip/gossip-chatroom.c:1340
 msgid "Joining the chatroom was canceled"
-msgstr ""
+msgstr "Vstup do diskuzní místnosti byl zrušen"
 
-#: ../libgossip/gossip-chatroom.c:1333
+#: ../libgossip/gossip-chatroom.c:1342
 msgid "A bad request was sent to the server"
-msgstr ""
+msgstr "Na server byl zaslán chybný požadavek"
 
-#: ../libgossip/gossip-chatroom.c:1335
-#, fuzzy
+#: ../libgossip/gossip-chatroom.c:1344
 msgid "An unknown error occurred, check your details are correct"
-msgstr "Neznámá chyba"
+msgstr "Vyskytla se neznámá chyba, zkontrolujte své údaje, zda jsou v pořádku"
 
-#: ../libgossip/gossip-chatroom.c:1347
+#: ../libgossip/gossip-chatroom.c:1356
 msgid "Moderator"
 msgid_plural "Moderators"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Moderátor"
+msgstr[1] "Moderátoři"
+msgstr[2] "Moderátoři"
 
-#: ../libgossip/gossip-chatroom.c:1349
+#: ../libgossip/gossip-chatroom.c:1358
 msgid "Participant"
 msgid_plural "Participants"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Účastník"
+msgstr[1] "Účastníci"
+msgstr[2] "Účastníci"
 
-#: ../libgossip/gossip-chatroom.c:1351
+#: ../libgossip/gossip-chatroom.c:1360
 msgid "Visitor"
 msgid_plural "Visitors"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Návštěvník"
+msgstr[1] "Návštěvníci"
+msgstr[2] "Návštěvníci"
 
-#: ../libgossip/gossip-chatroom.c:1353
+#: ../libgossip/gossip-chatroom.c:1362
 msgid "No role"
-msgstr ""
+msgstr "Bez role"
 
-#: ../libgossip/gossip-chatroom.c:1367
+#: ../libgossip/gossip-chatroom.c:1376
 msgid "Owner"
 msgid_plural "Owners"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Vlastník"
+msgstr[1] "Vlastníci"
+msgstr[2] "Vlastníci"
 
-#: ../libgossip/gossip-chatroom.c:1369
+#: ../libgossip/gossip-chatroom.c:1378
 msgid "Administrator"
 msgid_plural "Administrators"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Správce"
+msgstr[1] "Správci"
+msgstr[2] "Správci"
 
-#: ../libgossip/gossip-chatroom.c:1371
+#: ../libgossip/gossip-chatroom.c:1380
 msgid "Member"
 msgid_plural "Members"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Člen"
+msgstr[1] "Členové"
+msgstr[2] "Členové"
 
-#: ../libgossip/gossip-chatroom.c:1373
+#: ../libgossip/gossip-chatroom.c:1382
 msgid "Outcast"
 msgid_plural "Outcasts"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Vyloučený"
+msgstr[1] "Vyloučení"
+msgstr[2] "Vyloučení"
 
-#: ../libgossip/gossip-chatroom.c:1375
-#, fuzzy
+#: ../libgossip/gossip-chatroom.c:1384
 msgid "No affiliation"
-msgstr "Používat zvuky upozornění"
+msgstr "Bez vztahu"
 
 #. i18n: The current state of the connection.
-#: ../libgossip/gossip-contact.c:949 ../libgossip/gossip-presence.c:242
-#: ../src/gossip-app.c:2883 ../src/gossip-contact-info-dialog.c:156
-#: ../src/gossip-galago.c:186 ../src/gossip-status-icon.c:363
+#: ../libgossip/gossip-contact.c:991 ../libgossip/gossip-presence.c:242
+#: ../src/gossip-app.c:2871 ../src/gossip-contact-info-dialog.c:148
+#: ../src/gossip-galago.c:181 ../src/gossip-status-icon.c:359
 msgid "Offline"
 msgstr "Odpojen"
 
 #: ../libgossip/gossip-presence.c:423 ../libgossip/gossip-presence.c:440
-#: ../src/gossip-presence-chooser.c:769 ../src/gossip-presence-chooser.c:968
-#: ../src/gossip-presence-chooser.c:1045
+#: ../src/gossip-presence-chooser.c:767 ../src/gossip-presence-chooser.c:966
+#: ../src/gossip-presence-chooser.c:1043
 msgid "Available"
 msgstr "K dispozici"
 
-#: ../libgossip/gossip-presence.c:427 ../src/gossip-presence-chooser.c:781
-#: ../src/gossip-presence-chooser.c:1092
+#: ../libgossip/gossip-presence.c:427 ../src/gossip-presence-chooser.c:779
+#: ../src/gossip-presence-chooser.c:1090
 msgid "Busy"
 msgstr "Zaneprázdněn"
 
-#: ../libgossip/gossip-presence.c:432 ../src/gossip-presence-chooser.c:793
-#: ../src/gossip-presence-chooser.c:1138
+#: ../libgossip/gossip-presence.c:432 ../src/gossip-presence-chooser.c:791
+#: ../src/gossip-presence-chooser.c:1136
 msgid "Away"
 msgstr "Pryč"
 
 #: ../libgossip/gossip-presence.c:437
-#, fuzzy
 msgid "Unavailable"
-msgstr "K dispozici"
+msgstr "Nedostupný"
 
 #: ../libgossip/gossip-jabber-disco.c:286
 msgid "Service has gone and is no longer available"
-msgstr ""
+msgstr "Služba byla ukončena a není již nadále dostupná"
 
 #: ../libgossip/gossip-jabber-disco.c:289
 msgid "Bad or malformed request to this service"
-msgstr ""
+msgstr "Chybný nebo poškozený požadavek na tuto službu"
 
 #: ../libgossip/gossip-jabber-disco.c:292
 msgid "Unauthorized request to this service"
-msgstr ""
+msgstr "Neschválený požadavek na tuto službu"
 
 #: ../libgossip/gossip-jabber-disco.c:295
 msgid "Payment is required for this service"
-msgstr ""
+msgstr "Tato služba je placená"
 
 #: ../libgossip/gossip-jabber-disco.c:299
 msgid "This service is forbidden"
-msgstr ""
+msgstr "Tato služba není povolená"
 
 #: ../libgossip/gossip-jabber-disco.c:303
 msgid "This service is unavailable or not found"
-msgstr ""
+msgstr "Tato služba je nedostupná nebo nebyla nalezena"
 
 #: ../libgossip/gossip-jabber-disco.c:306
 msgid "Unacceptable request sent to this services"
-msgstr ""
+msgstr "Na službu byl zaslán nepřijatelný požadavek"
 
 #: ../libgossip/gossip-jabber-disco.c:309
-#, fuzzy
 msgid "Registration is required"
-msgstr "Registruji účet"
+msgstr "Je požadovaná registrace"
 
 #: ../libgossip/gossip-jabber-disco.c:312
 msgid "There was a conflict of interest trying to use this service"
-msgstr ""
+msgstr "Vznikl konflikt zájmů při pokusu použít tuto službu"
 
 #: ../libgossip/gossip-jabber-disco.c:315
 msgid "There was an internal service error"
-msgstr ""
+msgstr "Vyskytla se interní chyba služby"
 
 #: ../libgossip/gossip-jabber-disco.c:318
 msgid "This feature is not implemented"
-msgstr ""
+msgstr "Tato funkce není implementovaná"
 
 #: ../libgossip/gossip-jabber-disco.c:321
 msgid "The remote service timed out"
-msgstr ""
+msgstr "Vypršel časový limit pro vzdálenou službu"
 
-#: ../libgossip/gossip-jabber.c:533
+#: ../libgossip/gossip-jabber.c:547
 msgid "Home"
 msgstr "Domů"
 
-#: ../libgossip/gossip-jabber.c:538
-#, fuzzy
+#: ../libgossip/gossip-jabber.c:552
 msgid "new account"
-msgstr "Účet Jabberu"
+msgstr "nový účet"
 
-#: ../libgossip/gossip-jabber.c:800
-#, fuzzy
+#: ../libgossip/gossip-jabber.c:814
 msgid "No certificate found"
-msgstr "Používat zvuky upozornění"
+msgstr "Nenalezen žádný certifikát"
 
-#: ../libgossip/gossip-jabber.c:802
+#: ../libgossip/gossip-jabber.c:816
 msgid "Untrusted certificate"
-msgstr ""
+msgstr "Nedůvěryhodný certifikát"
 
-#: ../libgossip/gossip-jabber.c:804
+#: ../libgossip/gossip-jabber.c:818
 msgid "Certificate expired"
-msgstr ""
+msgstr "Certifikátu vypršela platnost"
 
-#: ../libgossip/gossip-jabber.c:806
+#: ../libgossip/gossip-jabber.c:820
 msgid "Certificate not activated"
-msgstr ""
+msgstr "Certifikát není aktivovaný"
 
-#: ../libgossip/gossip-jabber.c:808
+#: ../libgossip/gossip-jabber.c:822
 msgid "Certificate host mismatch"
-msgstr ""
+msgstr "Neodpovídá hostitel certifikátu"
 
-#: ../libgossip/gossip-jabber.c:810
+#: ../libgossip/gossip-jabber.c:824
 msgid "Certificate fingerprint mismatch"
-msgstr ""
+msgstr "Neodpovídá otisk certifikátu"
 
-#: ../libgossip/gossip-jabber.c:812
-#, fuzzy
+#: ../libgossip/gossip-jabber.c:826
 msgid "Unknown security error occurred"
-msgstr "Neznámá chyba"
+msgstr "Vyskytla se neznámá bezpečnostní chyba"
 
-#: ../libgossip/gossip-jabber.c:817 ../libloudermouth/lm-bs-transfer.c:363
-#, fuzzy
+#: ../libgossip/gossip-jabber.c:831 ../libloudermouth/lm-bs-transfer.c:363
 msgid "Unknown error"
 msgstr "Neznámá chyba"
 
-#: ../libgossip/gossip-jabber.c:1241 ../libgossip/gossip-jabber-register.c:214
+#: ../libgossip/gossip-jabber.c:1232 ../libgossip/gossip-jabber-register.c:214
 msgid "Couldn't send message!"
-msgstr ""
+msgstr "Nelze poslat zprávu!"
 
 #: ../libgossip/gossip-jabber-register.c:159
 msgid "Connection could not be opened"
-msgstr ""
+msgstr "Spojení nelze otevřít"
 
-#: ../libgossip/gossip-jabber-utils.c:435
-#, fuzzy
+#: ../libgossip/gossip-jabber-utils.c:475
 msgid "An unknown error occurred."
-msgstr "Neznámá chyba"
+msgstr "Vyskytla se neznámá chyba."
 
-#: ../libgossip/gossip-jabber-utils.c:439
-#, fuzzy
+#: ../libgossip/gossip-jabber-utils.c:479
 msgid "Connection refused."
-msgstr "Připojen"
+msgstr "Připojení odmítnuto."
 
-#: ../libgossip/gossip-jabber-utils.c:442
+#: ../libgossip/gossip-jabber-utils.c:482
 msgid "Server address could not be resolved."
-msgstr ""
+msgstr "Nelze zjistit adresu serveru."
 
-#: ../libgossip/gossip-jabber-utils.c:445
+#: ../libgossip/gossip-jabber-utils.c:485
 msgid "Account requires a password to authenticate and none was given."
-msgstr ""
+msgstr "Účet vyžaduje k ověření heslo a žádné nebylo zadáno."
 
-#: ../libgossip/gossip-jabber-utils.c:448
-#, fuzzy
+#: ../libgossip/gossip-jabber-utils.c:488
 msgid "Connection timed out."
-msgstr "Připojen"
+msgstr "Vypršel časový limit připojení."
 
-#: ../libgossip/gossip-jabber-utils.c:451
+#: ../libgossip/gossip-jabber-utils.c:491
 msgid "Authentication failed."
-msgstr ""
+msgstr "Ověření selhalo."
 
-#: ../libgossip/gossip-jabber-utils.c:454
+#: ../libgossip/gossip-jabber-utils.c:494
 msgid "The username you are trying already exists."
-msgstr ""
+msgstr "Jméno uživatele, které zkoušíte, již existuje."
 
-#: ../libgossip/gossip-jabber-utils.c:457
+#: ../libgossip/gossip-jabber-utils.c:497
 msgid "The username you are trying is not valid."
-msgstr ""
+msgstr "Jméno uživatele, které zkoušíte, není platné."
 
-#: ../libgossip/gossip-jabber-utils.c:460
+#: ../libgossip/gossip-jabber-utils.c:500
 msgid "This feature is unavailable."
-msgstr ""
+msgstr "Tato funkce není dostupná."
 
-#: ../libgossip/gossip-jabber-utils.c:463
+#: ../libgossip/gossip-jabber-utils.c:503
 msgid "This feature is unauthorized."
-msgstr ""
+msgstr "Tato funkce není schválená."
 
-#: ../libgossip/gossip-jabber-utils.c:466
+#: ../libgossip/gossip-jabber-utils.c:506
 msgid "A specific protocol error occurred that was unexpected."
-msgstr ""
+msgstr "Vyskytla se specifická chyba protokolu, která nebyla očekávána."
 
 #: ../libloudermouth/lm-bs-receiver.c:90 ../libloudermouth/lm-bs-sender.c:251
 #, c-format
 msgid "The other party disconnected"
-msgstr ""
+msgstr "Protější strana se odpojila"
 
 #: ../libloudermouth/lm-bs-receiver.c:116
-#, fuzzy, c-format
+#, c-format
 msgid "A protocol error occurred during the transfer"
-msgstr "Neznámá chyba"
+msgstr "Během přenosu se vyskytla chyba protokolu"
 
 #: ../libloudermouth/lm-bs-transfer.c:250
-#, fuzzy
 msgid "Unable to connect to the other party"
-msgstr "Nemohu vstoupit do skupinové diskuse %s."
+msgstr "Nelze se spojit s protější stranou"
 
 #: ../libloudermouth/lm-bs-transfer.c:316
 msgid "Permission denied"
-msgstr ""
+msgstr "Neoprávněný přístup"
 
 #: ../libloudermouth/lm-bs-transfer.c:318
 msgid "File name is too long"
-msgstr ""
+msgstr "Název souboru je příliš dlouhý"
 
 #: ../libloudermouth/lm-bs-transfer.c:320
 msgid "File doesn't exist"
-msgstr ""
+msgstr "Soubor neexistuje"
 
 #: ../libloudermouth/lm-bs-transfer.c:322
 #: ../libloudermouth/lm-bs-transfer.c:353
 msgid "File is a directory"
-msgstr ""
+msgstr "Soubor je složka"
 
 #: ../libloudermouth/lm-bs-transfer.c:324
 msgid "Read only file system"
-msgstr ""
+msgstr "Souborový systém pouze ke čtení"
 
 #: ../libloudermouth/lm-bs-transfer.c:326
 msgid "File is busy"
-msgstr ""
+msgstr "Soubor je používán"
 
 #: ../libloudermouth/lm-bs-transfer.c:328
 msgid "Bad memory"
-msgstr ""
+msgstr "Chybná paměť"
 
 #: ../libloudermouth/lm-bs-transfer.c:330
 msgid "Too many levels of symbolic links"
-msgstr ""
+msgstr "Příliš mnoho zanoření symbolických odkazů"
 
 #: ../libloudermouth/lm-bs-transfer.c:332
 #: ../libloudermouth/lm-bs-transfer.c:355
 msgid "No space is available"
-msgstr ""
+msgstr "Není k dispozici žádné místo"
 
 #: ../libloudermouth/lm-bs-transfer.c:334
 msgid "Virtual memory exhausted"
-msgstr ""
+msgstr "Vyčerpána virtuální paměť"
 
 #: ../libloudermouth/lm-bs-transfer.c:336
 msgid "Too many open files"
-msgstr ""
+msgstr "Příliš mnoho otevřených souborů"
 
 #: ../libloudermouth/lm-bs-transfer.c:339
 #: ../libloudermouth/lm-bs-transfer.c:351
 msgid "Input/output error"
-msgstr ""
+msgstr "Chyba vstupu/výstupu"
 
 #: ../libloudermouth/lm-bs-transfer.c:342
 #: ../libloudermouth/lm-bs-transfer.c:357
 msgid "No such device"
-msgstr ""
+msgstr "Takové zařízení neexistuje"
 
 #: ../libloudermouth/lm-bs-transfer.c:349
 msgid "File is too large"
-msgstr ""
+msgstr "Soubor je příliš velký"
 
-#: ../src/gossip-accounts-dialog.c:373 ../data/glade/main.glade.h:13
-#, fuzzy
+#: ../src/gossip-accounts-dialog.c:368 ../data/glade/main.glade.h:13
 msgid "<b>No Account Selected</b>"
-msgstr "<b>Nastavení účtu</b>"
+msgstr "<b>Není vybraný žádný účet</b>"
 
-#: ../src/gossip-accounts-dialog.c:375 ../data/glade/main.glade.h:114
+#: ../src/gossip-accounts-dialog.c:370 ../data/glade/main.glade.h:115
 msgid ""
 "To add a new account, you can click on the 'Add' button and a new entry will "
 "be created for you to start configuring.\n"
@@ -607,31 +613,38 @@ msgid ""
 "If you do not want to add an account, simply click on the account you want "
 "to configure in the list on the left."
 msgstr ""
+"Nový účet přidáte kliknutím na tlačítko „Přidat“. Vytvoří se nový záznam, ve "
+"kterém upravíte nastavení.\n"
+"\n"
+"Pokud nechcete přidat nový účet, ale upravit nastavení stávajícího, "
+"jednoduše na něj klikněte v seznamu nalevo."
 
-#: ../src/gossip-accounts-dialog.c:384
-#, fuzzy
+#: ../src/gossip-accounts-dialog.c:379
 msgid "<b>No Accounts Configured</b>"
-msgstr "<b>Nastavení účtu</b>"
+msgstr "<b>Není nastavený žádný účet</b>"
 
-#: ../src/gossip-accounts-dialog.c:386
+#: ../src/gossip-accounts-dialog.c:381
 msgid ""
 "To add a new account, you can click on the 'Add' button and a new entry will "
 "be created for you to start configuring."
 msgstr ""
+"Nový účet přidáte kliknutím na tlačítko „Přidat“. Vytvoří se nový záznam, ve "
+"kterém upravíte nastavení."
 
-#: ../src/gossip-accounts-dialog.c:459 ../data/glade/main.glade.h:28
-#, fuzzy
+#: ../src/gossip-accounts-dialog.c:454 ../data/glade/main.glade.h:28
 msgid "Accounts"
-msgstr "Účet Jabberu"
+msgstr "Účty"
 
-#: ../src/gossip-accounts-dialog.c:1186
+#: ../src/gossip-accounts-dialog.c:1184
 #, c-format
 msgid ""
 "You are about to remove your %s account!\n"
 "Are you sure you want to proceed?"
 msgstr ""
+"Chystáte se odstranit svůj účet %s!\n"
+"Opravdu chcete pokračovat?"
 
-#: ../src/gossip-accounts-dialog.c:1192
+#: ../src/gossip-accounts-dialog.c:1190
 msgid ""
 "Any associated conversations and chat rooms will NOT be removed if you "
 "decide to proceed.\n"
@@ -639,124 +652,131 @@ msgid ""
 "Should you decide to add the account back at a later time, they will still "
 "be available."
 msgstr ""
+"Konverzace a diskuzní místnosti vztahující se k tomuto účtu odstraněny "
+"NEBUDOU i když se rozhodnete pokračovat.\n"
+"\n"
+"Pokud se později rozhodnete přidat účet zpět, budou vám stále k dispozici."
 
-#: ../src/gossip-account-chooser.c:839
+#: ../src/gossip-account-chooser.c:835 ../src/gossip-spell-dialog.c:110
+#: ../src/gossip-spell-dialog.c:116
 msgid "All"
-msgstr ""
+msgstr "Vše"
 
-#: ../src/gossip-account-widget-jabber.c:760
-#, fuzzy
+#: ../src/gossip-account-widget-jabber.c:747
 msgid "Successfully registered your new account settings."
-msgstr "Účet úspěšně zaregistrován"
+msgstr "Nastavení vašeho nového účtu bylo úspěšně zaregistrováno."
 
-#: ../src/gossip-account-widget-jabber.c:767
+#: ../src/gossip-account-widget-jabber.c:754
 msgid "You should now be able to connect to your new account."
-msgstr ""
+msgstr "Nyní byste měli být schopni se připojit ke svému novému účtu."
 
-#: ../src/gossip-account-widget-jabber.c:770
-#, fuzzy
+#: ../src/gossip-account-widget-jabber.c:758
 msgid "Failed to register your new account settings."
-msgstr "Nemohu zaregistrovat účet"
+msgstr "Registrace vašeho nastavení nového účtu selhala."
 
-#: ../src/gossip-account-widget-jabber.c:812
-#, fuzzy
+#: ../src/gossip-account-widget-jabber.c:800
 msgid "No Jabber account details available"
-msgstr "<b>Nastavení účtu</b>"
+msgstr "Nejsou dostupné žádné podrobnosti o účtu Jabber"
 
-#: ../src/gossip-account-widget-jabber.c:813
+#: ../src/gossip-account-widget-jabber.c:801
 msgid ""
 "Your desktop settings don't include any information about your Jabber "
 "account.\n"
 "\n"
 "To set your Jabber information, use the 'About Me' application"
 msgstr ""
+"Vaše nastavení pracovního prostředí neobsahuje některé z informací "
+"potřebných pro váš účet Jabber.\n"
+"\n"
+"K nastavení svých informací pro Jabber použijte aplikaci „O mě“"
 
-#: ../src/gossip-add-contact-dialog.c:123
+#: ../src/gossip-add-contact-dialog.c:116
 msgid "No information is available for this contact."
-msgstr ""
+msgstr "Pro tento kontakt nejsou dostupné žádné informace."
 
-#: ../src/gossip-add-contact-dialog.c:236
-#, fuzzy
+#: ../src/gossip-add-contact-dialog.c:229
 msgid "Information requested, please wait..."
-msgstr "<b>Požádal jsem o informace, čekejte prosím...</b>"
+msgstr "Zaslána žádost o informace, čekejte prosím…"
 
-#: ../src/gossip-add-contact-dialog.c:330
-#: ../src/gossip-edit-contact-dialog.c:612
-#: ../src/gossip-subscription-dialog.c:497
+#: ../src/gossip-add-contact-dialog.c:323
+#: ../src/gossip-edit-contact-dialog.c:609
+#: ../src/gossip-subscription-dialog.c:491
 msgid "I would like to add you to my contact list."
 msgstr "Rád bych vás přidal do svého seznamu kontaktů."
 
-#: ../src/gossip-app.c:536
-#, fuzzy
+#: ../src/gossip-app.c:524
 msgid "Show and edit accounts"
-msgstr "_Zobrazit seznam kontaktů"
+msgstr "Zobrazit a upravit účty"
 
-#: ../src/gossip-app.c:869
-#, fuzzy
+#: ../src/gossip-app.c:857
 msgid "About Gossip"
-msgstr "Gossip"
+msgstr "O aplikaci Gossip"
 
-#: ../src/gossip-app.c:874
-#, fuzzy
+#: ../src/gossip-app.c:862
 msgid "Preferences..."
-msgstr "_Nastavení"
+msgstr "Předvolby…"
 
-#: ../src/gossip-app.c:946
+#: ../src/gossip-app.c:934
 msgid "To summarize:"
-msgstr ""
+msgstr "Souhrnné údaje:"
 
-#: ../src/gossip-app.c:973
-#, fuzzy, c-format
+#: ../src/gossip-app.c:961
+#, c-format
 msgid "%d new message"
 msgid_plural "%d new messages"
-msgstr[0] "_Nová zpráva..."
-msgstr[1] "_Nová zpráva..."
+msgstr[0] "%d nová zpráva"
+msgstr[1] "%d nové zprávy"
+msgstr[2] "%d nových zpráv"
 
-#: ../src/gossip-app.c:978
-#, fuzzy, c-format
+#: ../src/gossip-app.c:966
+#, c-format
 msgid "%d subscription request"
 msgid_plural "%d subscription requests"
-msgstr[0] "Požadavek na přihlášení"
-msgstr[1] "Požadavek na přihlášení"
+msgstr[0] "%d požadavek na schválení"
+msgstr[1] "%d požadavky na schválení"
+msgstr[2] "%d požadavků na schválení"
 
-#: ../src/gossip-app.c:983
+#: ../src/gossip-app.c:971
 #, c-format
 msgid "%d file transfer request"
 msgid_plural "%d file transfer requests"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d požadavek na přenos souboru"
+msgstr[1] "%d požadavky na přenos souboru"
+msgstr[2] "%d požadavků na přenos souboru"
 
-#: ../src/gossip-app.c:988
+#: ../src/gossip-app.c:976
 #, c-format
 msgid "%d server message"
 msgid_plural "%d server messages"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d zpráva serveru"
+msgstr[1] "%d zprávy serveru"
+msgstr[2] "%d zpráv serveru"
 
-#: ../src/gossip-app.c:993
+#: ../src/gossip-app.c:981
 #, c-format
 msgid "%d error"
 msgid_plural "%d errors"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d chyba"
+msgstr[1] "%d chyby"
+msgstr[2] "%d chyb"
 
-#: ../src/gossip-app.c:1018
+#: ../src/gossip-app.c:1006
 msgid "If you quit, you will lose all unread information."
-msgstr ""
+msgstr "Pokud skončíte, přijdete o všechny nepřečtené informace."
 
-#: ../src/gossip-app.c:1083
+#: ../src/gossip-app.c:1071
 msgid "Gossip is still running, it is just hidden."
-msgstr ""
+msgstr "Aplikace Gossip stále běží, akorát je skrytá."
 
-#: ../src/gossip-app.c:1084
+#: ../src/gossip-app.c:1072
 msgid "Click on the notification area icon to show Gossip."
-msgstr ""
+msgstr "Kliknutím na ikonu v oznamovací oblasti aplikaci Gossip zobrazíte."
 
-#: ../src/gossip-app.c:1099
+#: ../src/gossip-app.c:1087
 msgid "You were about to quit!"
-msgstr ""
+msgstr "Informace o ukončení!"
 
-#: ../src/gossip-app.c:1100
+#: ../src/gossip-app.c:1088
 msgid ""
 "Since no system or notification tray has been found, this action would "
 "normally quit Gossip.\n"
@@ -764,291 +784,280 @@ msgid ""
 "This is just a reminder, from now on, Gossip will quit when performing this "
 "action unless you uncheck the option below."
 msgstr ""
+"Vzhledem k tomu, že nebyl nalezen žádný systémový nebo oznamovací panel, "
+"tato volba by normálně Gossip ukončila.\n"
+"\n"
+"Toto je jen upozornění, které je od teď zapnuté a bude se zobrazovat při "
+"ukončování aplikace Gossip tímto způsobem, ledaže zrušíte zaškrtnutí "
+"následující volby."
 
-#: ../src/gossip-app.c:1575 ../src/gossip-edit-contact-dialog.c:231
+#: ../src/gossip-app.c:1563 ../src/gossip-edit-contact-dialog.c:228
 msgid "Group"
 msgstr "Skupina"
 
-#: ../src/gossip-app.c:1596
-#, fuzzy
+#: ../src/gossip-app.c:1584
 msgid "Contact"
-msgstr "_Přidat kontakt..."
+msgstr "Kontakt"
 
-#: ../src/gossip-app.c:1934
-#, fuzzy, c-format
+#: ../src/gossip-app.c:1922
+#, c-format
 msgid "Please enter your %s account password"
-msgstr "Zadejte prosím své heslo."
+msgstr "Zadejte prosím heslo ke svému účtu %s"
 
-#: ../src/gossip-app.c:1945
+#: ../src/gossip-app.c:1933
 #, c-format
 msgid "Logging in to account '%s'"
-msgstr ""
+msgstr "Přihlášení k účtu „%s“"
 
-#: ../src/gossip-app.c:1949
+#: ../src/gossip-app.c:1937
 msgid "Remember Password?"
 msgstr "Zapamatovat si heslo?"
 
-#: ../src/gossip-app.c:2808
-#, fuzzy
+#: ../src/gossip-app.c:2796
 msgid "Edit Account _Details"
-msgstr "Upravit informace o účtu"
+msgstr "Upravit ú_daje účtu"
 
-#: ../src/gossip-avatar-image.c:329
+#: ../src/gossip-avatar-image.c:328
 msgid "Click to enlarge"
-msgstr ""
+msgstr "Kliknutím zvětšíte"
 
 #. Show success dialog
-#: ../src/gossip-change-password-dialog.c:84
-#, fuzzy
+#: ../src/gossip-change-password-dialog.c:81
 msgid "Successfully changed your account password."
-msgstr "Zadejte prosím své heslo."
+msgstr "Heslo vašeho účtu bylo úspěšně změněno."
 
-#: ../src/gossip-change-password-dialog.c:91
+#: ../src/gossip-change-password-dialog.c:88
 msgid "You should now be able to connect with your new password."
-msgstr ""
+msgstr "Nyní byste měli být schopni se připojit se svým novým heslem."
 
-#: ../src/gossip-change-password-dialog.c:94
-#, fuzzy
+#: ../src/gossip-change-password-dialog.c:92
 msgid "Failed to change your account password."
-msgstr "Zadejte prosím své heslo."
+msgstr "Změna hesla vašeho účtu se nezdařila."
 
-#: ../src/gossip-chat.c:602
+#: ../src/gossip-chat.c:598
 msgid "Insert Smiley"
-msgstr ""
+msgstr "Vložit smajlík"
 
-#: ../src/gossip-chat.c:650
+#: ../src/gossip-chat.c:646
 msgid "_Check Word Spelling..."
-msgstr ""
+msgstr "Z_kontrolovat pravopis…"
 
-#: ../src/gossip-chat-invite.c:87 ../src/gossip-spell-dialog.c:86
+#: ../src/gossip-chat-invite.c:81 ../src/gossip-spell-dialog.c:287
 msgid "Word"
-msgstr ""
+msgstr "Slovo"
 
-#: ../src/gossip-chat-invite.c:344
+#: ../src/gossip-chat-invite.c:336
 msgid "Select who would you like to invite to room:"
-msgstr ""
+msgstr "Vyberte, koho si přejete pozvat do místnosti:"
 
-#: ../src/gossip-chat-invite.c:350
+#: ../src/gossip-chat-invite.c:341
 msgid "Select which room you would like to invite:"
-msgstr ""
+msgstr "Vyberte, do které místnosti si přejete zvát:"
 
-#: ../src/gossip-chat-manager.c:158
+#: ../src/gossip-chat-manager.c:152
 #, c-format
 msgid "New message from %s"
 msgstr "Nová zpráva od %s"
 
-#: ../src/gossip-chat-view.c:506
+#: ../src/gossip-chat-view.c:500
+#, c-format
+msgid "_Internet Services for '%s'"
+msgstr "_Internetová služba pro „%s“"
+
+#. TODO: Generate services menu from text file in config
+#: ../src/gossip-chat-view.c:511
+msgid "_Youtube"
+msgstr "_Youtube"
+
+#: ../src/gossip-chat-view.c:520
+msgid "_Wikipedia"
+msgstr "_Wikipedia"
+
+#: ../src/gossip-chat-view.c:529
+msgid "_Google"
+msgstr "_Google"
+
+#: ../src/gossip-chat-view.c:564
 msgid "_Copy Link Address"
 msgstr "_Kopírovat adresu odkazu"
 
-#: ../src/gossip-chat-view.c:514
+#: ../src/gossip-chat-view.c:573
 msgid "_Open Link"
 msgstr "_Otevřít odkaz"
 
-#: ../src/gossip-chat-view.c:753
+#: ../src/gossip-chat-view.c:906
 msgid "Your invitation has been declined"
-msgstr ""
+msgstr "Vaše pozvání bylo odmítnuto"
 
-#: ../src/gossip-chat-view.c:927
+#: ../src/gossip-chat-view.c:1080
 #, c-format
 msgid ""
 "You have been invited to join a chat conference with '%s' in the room '%s'"
-msgstr ""
+msgstr "Jste zváni ke vstupu do diskuzní konference s „%s“ v místnosti „%s“"
 
-#: ../src/gossip-chat-view.c:943
-#, fuzzy
+#: ../src/gossip-chat-view.c:1096
 msgid "Reason: "
 msgstr "Důvod:"
 
-#: ../src/gossip-chat-view.c:958
-#, fuzzy
+#: ../src/gossip-chat-view.c:1111
 msgid "Accept"
-msgstr "_Přijmout"
+msgstr "Přijmout"
 
-#: ../src/gossip-chat-view.c:974
+#: ../src/gossip-chat-view.c:1127
 msgid "Decline"
-msgstr ""
+msgstr "Odmítnout"
 
-#: ../src/gossip-chat-window.c:745 ../src/gossip-chat-window.c:775
-#: ../data/glade/main.glade.h:74
-#, fuzzy
+#: ../src/gossip-chat-window.c:739 ../src/gossip-chat-window.c:769
+#: ../data/glade/main.glade.h:75
 msgid "New Message"
 msgid_plural "New Messages"
-msgstr[0] "_Nová zpráva..."
-msgstr[1] "_Nová zpráva..."
+msgstr[0] "Nová zpráva"
+msgstr[1] "Nové zprávy"
+msgstr[2] "Nové zprávy"
 
-#: ../src/gossip-chat-window.c:751
-#, fuzzy
+#: ../src/gossip-chat-window.c:745
 msgid "Chat Room"
-msgstr "Gossip - Diskuse"
+msgstr "Diskuzní místnost"
 
-#: ../src/gossip-chat-window.c:756 ../src/gossip-chat-window.c:779
-#, fuzzy, c-format
+#: ../src/gossip-chat-window.c:750 ../src/gossip-chat-window.c:773
+#, c-format
 msgid "Conversation"
 msgid_plural "Conversations (%d)"
-msgstr[0] "_Konverzace"
-msgstr[1] "_Konverzace"
+msgstr[0] "Rozhovor"
+msgstr[1] "Rozhovory (%d)"
+msgstr[2] "Rozhovory (%d)"
 
-#: ../src/gossip-chat-window.c:1445
+#: ../src/gossip-chat-window.c:1439
 msgid "Typing a message."
 msgstr "Píše zprávu."
 
-#: ../src/gossip-chatrooms-window.c:146
-#, fuzzy
+#: ../src/gossip-chatrooms-window.c:141
 msgid "Name"
-msgstr "Jméno:"
+msgstr "Název"
 
-#: ../src/gossip-chatrooms-window.c:153
-#, fuzzy
+#: ../src/gossip-chatrooms-window.c:148
 msgid "Room"
-msgstr "_Místnost:"
+msgstr "Místnost"
 
-#: ../src/gossip-chatrooms-window.c:161
-#, fuzzy
+#: ../src/gossip-chatrooms-window.c:156
 msgid "Server"
-msgstr "Server:"
+msgstr "Server"
 
-#: ../src/gossip-chatrooms-window.c:174
-#: ../src/gossip-new-chatroom-dialog.c:606
+#: ../src/gossip-chatrooms-window.c:169
+#: ../src/gossip-new-chatroom-dialog.c:599
 msgid "Locked"
-msgstr ""
+msgstr "Uzamknuto"
 
-#: ../src/gossip-chatrooms-window.c:191
-#: ../src/gossip-new-chatroom-dialog.c:200
-#: ../src/gossip-new-chatroom-dialog.c:213 ../data/glade/group-chat.glade.h:6
-#, fuzzy
+#: ../src/gossip-chatrooms-window.c:186
+#: ../src/gossip-new-chatroom-dialog.c:193
+#: ../src/gossip-new-chatroom-dialog.c:206 ../data/glade/group-chat.glade.h:6
 msgid "Join"
-msgstr "_Připojit"
+msgstr "Vstoupit"
 
-#: ../src/gossip-contact-info-dialog.c:636 ../data/glade/main.glade.h:66
-#, fuzzy
+#: ../src/gossip-contact-info-dialog.c:628 ../data/glade/main.glade.h:66
 msgid "Information requested..."
-msgstr "<b>Požádal jsem o informace, čekejte prosím...</b>"
+msgstr "Byla zaslána žádost o informace…"
 
-#: ../src/gossip-contact-list.c:336 ../data/glade/chat.glade.h:19
-#, fuzzy
+#: ../src/gossip-contact-list.c:326 ../data/glade/chat.glade.h:19
 msgid "_Contact"
-msgstr "_Přidat kontakt..."
+msgstr "_Kontakt"
 
-#: ../src/gossip-contact-list.c:340
-#, fuzzy
+#: ../src/gossip-contact-list.c:330
 msgid "_Group"
-msgstr "Skupina"
+msgstr "_Skupina"
 
-#: ../src/gossip-contact-list.c:344
+#: ../src/gossip-contact-list.c:334
 msgid "_Chat"
 msgstr "_Diskuse"
 
-#: ../src/gossip-contact-list.c:344
-#, fuzzy
+#: ../src/gossip-contact-list.c:334
 msgid "Chat with contact"
-msgstr "Přidat kontakt"
+msgstr "Diskutovat s kontaktem"
 
-#: ../src/gossip-contact-list.c:348
-#, fuzzy
+#: ../src/gossip-contact-list.c:338
 msgid "Infor_mation"
-msgstr "_Informace o kontaktu"
+msgstr "Infor_mace"
 
-#: ../src/gossip-contact-list.c:348
-#, fuzzy
+#: ../src/gossip-contact-list.c:338
 msgid "View contact information"
-msgstr "Informace o kontaktu"
+msgstr "Zobrazit informace o kontaktu"
 
-#: ../src/gossip-contact-list.c:352
-#, fuzzy
+#: ../src/gossip-contact-list.c:342
 msgid "Re_name"
-msgstr "/_Přejmenovat skupinu"
+msgstr "Př_ejmenovat"
 
-#: ../src/gossip-contact-list.c:352 ../src/gossip-contact-list.c:3334
-#, fuzzy
+#: ../src/gossip-contact-list.c:342 ../src/gossip-contact-list.c:3324
 msgid "Rename"
-msgstr "Jméno uživatele:"
+msgstr "Přejmenovat"
 
-#: ../src/gossip-contact-list.c:356
+#: ../src/gossip-contact-list.c:346
 msgid "_Edit"
-msgstr ""
+msgstr "_Upravit"
 
-#: ../src/gossip-contact-list.c:356
-#, fuzzy
+#: ../src/gossip-contact-list.c:346
 msgid "Edit the groups and name for this contact"
-msgstr ""
-"Zadejte prosím novou přezdívku pro kontakt\n"
-"%s"
+msgstr "Upravit skupiny a jméno tohoto kontaktu"
 
-#: ../src/gossip-contact-list.c:360
+#: ../src/gossip-contact-list.c:350
 msgid "_Remove"
 msgstr "_Odstranit"
 
-#: ../src/gossip-contact-list.c:360
-#, fuzzy
+#: ../src/gossip-contact-list.c:350
 msgid "Remove contact"
-msgstr "/_Odstranit kontakt"
+msgstr "Odstranit kontakt"
 
-#: ../src/gossip-contact-list.c:364
-#, fuzzy
+#: ../src/gossip-contact-list.c:354
 msgid "_Invite to Chat Room"
-msgstr "Gossip - Upravit skupinové diskuse"
+msgstr "Pozvat do d_iskuzní místnosti"
 
-#: ../src/gossip-contact-list.c:364
+#: ../src/gossip-contact-list.c:354
 msgid "Invite to a currently open chat room"
-msgstr ""
+msgstr "Pozvat do právě otevřené diskuzní místnosti"
 
-#: ../src/gossip-contact-list.c:368
+#: ../src/gossip-contact-list.c:358
 msgid "_Send File..."
-msgstr ""
+msgstr "Po_slat soubor…"
 
-#: ../src/gossip-contact-list.c:368
-#, fuzzy
+#: ../src/gossip-contact-list.c:358
 msgid "Send a file"
-msgstr "Vybrat"
+msgstr "Poslat soubor"
 
-#: ../src/gossip-contact-list.c:372
-#, fuzzy
+#: ../src/gossip-contact-list.c:362
 msgid "Emai_l..."
-msgstr "E-mail"
+msgstr "E-mai_l…"
 
-#: ../src/gossip-contact-list.c:372
-#, fuzzy
+#: ../src/gossip-contact-list.c:362
 msgid "Email contact"
-msgstr "_Přidat kontakt..."
+msgstr "Poštovní kontakt"
 
-#: ../src/gossip-contact-list.c:376 ../data/glade/chat.glade.h:29
-#: ../data/glade/main.glade.h:164
-#, fuzzy
+#: ../src/gossip-contact-list.c:366 ../data/glade/chat.glade.h:29
+#: ../data/glade/main.glade.h:165
 msgid "_View Previous Conversations"
-msgstr "_Konverzace"
+msgstr "_Zobrazit předchozí rozhovory"
 
-#: ../src/gossip-contact-list.c:376
-#, fuzzy
+#: ../src/gossip-contact-list.c:366
 msgid "View previous conversations with this contact"
-msgstr "_Konverzace"
+msgstr "Zobrazit předchozí rozhovory s tímto kontaktem"
 
-#: ../src/gossip-contact-list.c:3244
-#, fuzzy
+#: ../src/gossip-contact-list.c:3234
 msgid "Do you want to remove this contact from your roster?"
-msgstr ""
-"Chcete odstranit kontakt\n"
-"%s\n"
-"ze svého seznamu kontaktů?"
+msgstr "Chcete odstranit tento kontakt ze svého seznamu?"
 
-#: ../src/gossip-contact-list.c:3327
-#, fuzzy
+#: ../src/gossip-contact-list.c:3317
 msgid "Please enter a new name for the group:"
-msgstr ""
-"Zadejte prosím nový název pro skupinu\n"
-"%s"
+msgstr "Zadejte prosím nový název pro skupinu:"
 
-#: ../src/gossip-edit-contact-dialog.c:221
+#: ../src/gossip-edit-contact-dialog.c:218
 msgid "Select"
 msgstr "Vybrat"
 
-#: ../src/gossip-edit-contact-dialog.c:271
-#: ../src/gossip-edit-contact-dialog.c:281
-#: ../src/gossip-subscription-dialog.c:442
+#: ../src/gossip-edit-contact-dialog.c:268
+#: ../src/gossip-edit-contact-dialog.c:278
+#: ../src/gossip-subscription-dialog.c:436
 msgid "Unsorted"
-msgstr "Nesetříděno"
+msgstr "Neseřazeno"
 
-#: ../src/gossip-edit-contact-dialog.c:719
+#: ../src/gossip-edit-contact-dialog.c:714
 #, c-format
 msgid ""
 "Set the alias you want to use for:\n"
@@ -1056,497 +1065,473 @@ msgid ""
 "\n"
 "You can retrieve contact information from the server."
 msgstr ""
+"Nastavte přezdívku, kterou chcete použít pro:\n"
+"<b>%s</b>\n"
+"\n"
+"Kontaktní údaje můžete získat ze serveru. "
 
-#: ../src/gossip-ft-dialog.c:223
+#: ../src/gossip-ft-dialog.c:215
 #, c-format
 msgid "New file transfer request from %s"
-msgstr ""
+msgstr "Požadavek od %s na přenos nového souboru"
 
-#: ../src/gossip-ft-dialog.c:308
+#: ../src/gossip-ft-dialog.c:300
 msgid "Your file transfer offer declined."
-msgstr ""
+msgstr "Nabídka přenosu vašeho souboru byla odmítnuta."
 
-#: ../src/gossip-ft-dialog.c:309
+#: ../src/gossip-ft-dialog.c:301
 msgid "The other user decided not to continue."
-msgstr ""
+msgstr "Protější uživatel se rozhodl nepokračovat."
 
-#: ../src/gossip-ft-dialog.c:314
-#, fuzzy
+#: ../src/gossip-ft-dialog.c:306
 msgid "Unable to complete the file transfer."
-msgstr "Nemohu vstoupit do skupinové diskuse %s."
+msgstr "Přenos souboru nelze dokončit."
 
-#: ../src/gossip-ft-dialog.c:319
-#, fuzzy
+#: ../src/gossip-ft-dialog.c:311
 msgid "Unable to start the file transfer."
-msgstr "Nemohu vstoupit do skupinové diskuse %s."
+msgstr "Nelze začít přenos souboru."
 
-#: ../src/gossip-ft-dialog.c:324
+#: ../src/gossip-ft-dialog.c:316
 msgid "File transfer is not supported by both parties."
-msgstr ""
+msgstr "Přenos souborů není podporován oběma stranami."
 
-#: ../src/gossip-ft-dialog.c:328
-#, fuzzy
+#: ../src/gossip-ft-dialog.c:320
 msgid "An unknown error occurred during file transfer."
-msgstr "Neznámá chyba"
+msgstr "Během přenosu souboru se vyskytla neznámá chyba."
 
-#: ../src/gossip-ft-dialog.c:492
+#: ../src/gossip-ft-dialog.c:484
 msgid "Transfer complete"
-msgstr ""
+msgstr "Přenos dokončen"
 
-#: ../src/gossip-ft-dialog.c:498
+#: ../src/gossip-ft-dialog.c:490
 msgid "The file has been transfered successfully."
-msgstr ""
+msgstr "Soubor byl úspěšně přenesen."
 
-#: ../src/gossip-ft-dialog.c:533
+#: ../src/gossip-ft-dialog.c:525
 msgid "Transferring file"
-msgstr ""
+msgstr "Přenáší se soubor"
 
-#: ../src/gossip-ft-dialog.c:539
+#: ../src/gossip-ft-dialog.c:531
 msgid "Please wait while the file is transferred"
-msgstr ""
+msgstr "Čekejte prosím, než bude soubor přenesen"
+
+#: ../src/gossip-ft-dialog.c:601
+#, c-format
+msgid "%s would like to send you a file"
+msgstr "%s by vám rád poslal soubor"
+
+#: ../src/gossip-ft-dialog.c:603
+msgid "Someone would like to send you a file"
+msgstr "Někdo by vám rád poslal soubor"
+
+#: ../src/gossip-ft-dialog.c:606 ../data/glade/file-transfer.glade.h:2
+msgid "Do you want to accept this file?"
+msgstr "Chcete přijmout tento soubor?"
 
 #: ../src/gossip-ft-dialog.c:609
-#, fuzzy, c-format
-msgid "%s would like to send you a file"
-msgstr "Rád bych vás přidal do svého seznamu kontaktů."
-
-#: ../src/gossip-ft-dialog.c:611
-#, fuzzy
-msgid "Someone would like to send you a file"
-msgstr "Rád bych vás přidal do svého seznamu kontaktů."
-
-#: ../src/gossip-ft-dialog.c:614 ../data/glade/file-transfer.glade.h:2
-#, fuzzy
-msgid "Do you want to accept this file?"
-msgstr "Chcete přijmout tento požadavek?"
-
-#: ../src/gossip-ft-dialog.c:617
 #, c-format
 msgid "Attempting to send file to %s"
-msgstr ""
+msgstr "Pokus o zaslání souboru pro %s"
 
-#: ../src/gossip-ft-dialog.c:619
+#: ../src/gossip-ft-dialog.c:611
 msgid "Attempting to send file"
-msgstr ""
+msgstr "Pokus o zaslání souboru"
 
-#: ../src/gossip-ft-dialog.c:622
+#: ../src/gossip-ft-dialog.c:614
 msgid "Please wait while the other participant responds"
-msgstr ""
+msgstr "Čekejte prosím, než protější účastník odpoví"
 
-#: ../src/gossip-ft-dialog.c:745
-#, fuzzy
+#: ../src/gossip-ft-dialog.c:737
 msgid "Select a file"
-msgstr "Vybrat"
+msgstr "Vybrat soubor"
 
 #. FIXME: Need special case for nickname to put an
 #. * entry in the chat view and to request a new nick.
 #.
-#: ../src/gossip-group-chat.c:560
-#, fuzzy
+#: ../src/gossip-group-chat.c:550
 msgid "Retry connection"
-msgstr "Připojit"
+msgstr "Zkusit znovu připojit"
 
 #. Send event to chat window
-#: ../src/gossip-group-chat.c:930
+#: ../src/gossip-group-chat.c:920
 #, c-format
 msgid "Invited %s to join this chat conference."
-msgstr ""
+msgstr "%s pozvaný, aby vstoupil do diskuzní konference."
 
-#: ../src/gossip-group-chat.c:1008
-#, fuzzy
+#: ../src/gossip-group-chat.c:998
 msgid "<b>Subject:</b>"
-msgstr "Přihlášení"
+msgstr "<b>Předmět:</b>"
 
-#: ../src/gossip-group-chat.c:1230
+#: ../src/gossip-group-chat.c:1220
 msgid "You have been kicked from this room"
-msgstr ""
+msgstr "Byl jste vyhozen z této místnosti"
 
-#: ../src/gossip-group-chat.c:1262
+#: ../src/gossip-group-chat.c:1252
 #, c-format
 msgid "%s is now known as %s"
-msgstr ""
+msgstr "%s je nyní znám jako %s"
 
-#: ../src/gossip-group-chat.c:1398
+#: ../src/gossip-group-chat.c:1388
 #, c-format
 msgid "%s has set the subject: %s"
-msgstr ""
+msgstr "%s má nastavený předmět: %s"
 
-#: ../src/gossip-group-chat.c:1407
+#: ../src/gossip-group-chat.c:1397
 #, c-format
 msgid "Subject is set as: %s"
-msgstr ""
+msgstr "Předmět je nastaven na: %s"
 
-#: ../src/gossip-group-chat.c:2006
+#: ../src/gossip-group-chat.c:1999
 #, c-format
 msgid "%s has joined the room"
-msgstr ""
+msgstr "%s vstoupil do místnosti"
 
-#: ../src/gossip-group-chat.c:2048
+#: ../src/gossip-group-chat.c:2042
 #, c-format
 msgid "%s has left the room"
-msgstr ""
+msgstr "%s opustil místnost"
 
-#: ../src/gossip-group-chat.c:2312
+#: ../src/gossip-group-chat.c:2309
 msgid "Nick was not recogized"
-msgstr ""
+msgstr "Přezdívka nebyla rozpoznána"
 
-#: ../src/gossip-group-chat.c:2443 ../src/gossip-private-chat.c:1150
+#: ../src/gossip-group-chat.c:2440 ../src/gossip-private-chat.c:1143
 #, c-format
 msgid "Subject: %s"
-msgstr ""
+msgstr "Předmět: %s"
 
-#: ../src/gossip-group-chat.c:2806
-#, fuzzy
+#: ../src/gossip-group-chat.c:2803
 msgid "Enter the new subject you want to set for this room:"
-msgstr "Jakou přezdívku chcete používat pro tento kontakt?"
+msgstr "Zadejte nový předmět, který chcete nastavit pro tuto místnost:"
 
-#: ../src/gossip-group-chat.c:2822
-#, fuzzy
+#: ../src/gossip-group-chat.c:2819
 msgid "Enter the new nickname you want to be known by:"
-msgstr "Jakou přezdívku chcete používat pro tento kontakt?"
+msgstr "Zadejte novou přezdívku, pod kterou chcete být známí:"
 
-#: ../src/gossip-group-chat.c:2846
+#: ../src/gossip-group-chat.c:2843
 #, c-format
 msgid "Kicking %s"
-msgstr ""
+msgstr "Vyhození %s"
 
-#: ../src/gossip-group-chat.c:2854
+#: ../src/gossip-group-chat.c:2851
 msgid "You have been removed from the room by an administrator."
-msgstr ""
+msgstr "Byli jste z této místnosti vykázáni správcem."
 
-#: ../src/gossip-hint.c:87
+#: ../src/gossip-hint.c:86
 msgid "Do not show this again"
-msgstr ""
+msgstr "Příště již nezobrazovat"
 
-#: ../src/gossip-log-window.c:530 ../src/gossip-log-window.c:1998
-#, fuzzy
+#: ../src/gossip-log-window.c:522 ../src/gossip-log-window.c:1990
 msgid "Account"
-msgstr "Účet Jabberu"
+msgstr "Účet"
 
-#: ../src/gossip-log-window.c:537 ../src/gossip-log-window.c:2007
-#, fuzzy
+#: ../src/gossip-log-window.c:529 ../src/gossip-log-window.c:1999
 msgid "Conversation With"
-msgstr "_Konverzace"
+msgstr "Rozhovor s"
 
-#: ../src/gossip-log-window.c:547 ../src/gossip-log-window.c:2018
+#: ../src/gossip-log-window.c:539 ../src/gossip-log-window.c:2010
 msgid "Date"
-msgstr ""
+msgstr "Datum"
 
-#: ../src/gossip-log-window.c:2030
+#: ../src/gossip-log-window.c:2022
 msgid "Link"
-msgstr ""
+msgstr "Odkaz"
 
-#: ../src/gossip-main.c:81
+#: ../src/gossip-main.c:68
 msgid "Don't connect on startup"
-msgstr "Nepřipojovat se při startu"
+msgstr "Nepřipojovat se při spuštění"
 
-#: ../src/gossip-main.c:85
+#: ../src/gossip-main.c:72
 msgid "Allow multiple instances of the application to run at the same time"
-msgstr ""
+msgstr "Povolit běh více kopií aplikace naráz"
 
-#: ../src/gossip-main.c:89
+#: ../src/gossip-main.c:76
 msgid "List the available accounts"
 msgstr "Vypsat dostupné účty"
 
-#: ../src/gossip-main.c:93
+#: ../src/gossip-main.c:80
 msgid "Which account to connect to on startup"
-msgstr "Ke kterému účtu se připojit při startu"
+msgstr "Ke kterému účtu se připojit při spuštění"
 
-#: ../src/gossip-main.c:94
+#: ../src/gossip-main.c:81
 msgid "ACCOUNT-NAME"
 msgstr "NÁZEV-ÚČTU"
 
-#: ../src/gossip-main.c:104 ../src/gossip-main.c:128
-#, fuzzy
+#: ../src/gossip-main.c:91 ../src/gossip-main.c:107
 msgid "- Gossip Instant Messenger"
-msgstr "Instant Messenger"
+msgstr "- komunikátor Gossip"
 
-#: ../src/gossip-main.c:144
+#: ../src/gossip-main.c:122
 #, c-format
 msgid "You can not use --no-connect together with --account"
-msgstr ""
+msgstr "Nemůžete použít --no-connect dohromady s --account"
 
-#: ../src/gossip-main.c:156
+#: ../src/gossip-main.c:134
 #, c-format
 msgid "No accounts available."
-msgstr ""
+msgstr "Není k dispozici žádný účet."
 
-#: ../src/gossip-main.c:161
+#: ../src/gossip-main.c:139
 #, c-format
 msgid "Available accounts:"
 msgstr "Dostupné účty:"
 
-#: ../src/gossip-main.c:171
+#: ../src/gossip-main.c:149
 #, c-format
 msgid "[default]"
-msgstr "[implicitní]"
+msgstr "[výchozí]"
 
-#: ../src/gossip-main.c:187
+#: ../src/gossip-main.c:165
 #, c-format
 msgid "There is no account with the name '%s'."
-msgstr "Neexistuje účet s názvem '%s'."
+msgstr "Účet s názvem „%s“ neexistuje."
 
-#: ../src/gossip-new-chatroom-dialog.c:207
-#, fuzzy
+#: ../src/gossip-new-chatroom-dialog.c:200
 msgid "Create"
-msgstr "Diskuse"
+msgstr "Vytvořit"
 
-#: ../src/gossip-new-chatroom-dialog.c:553
-#, fuzzy
+#: ../src/gossip-new-chatroom-dialog.c:546
 msgid "Rooms"
-msgstr "_Místnost:"
+msgstr "Místnosti"
 
-#: ../src/gossip-new-chatroom-dialog.c:590
+#: ../src/gossip-new-chatroom-dialog.c:583
 msgid "Users"
-msgstr ""
+msgstr "Uživatelé"
 
-#: ../src/gossip-new-chatroom-dialog.c:623
-#, fuzzy
+#: ../src/gossip-new-chatroom-dialog.c:616
 msgid "Description"
 msgstr "Popis"
 
-#: ../src/gossip-new-chatroom-dialog.c:830
+#: ../src/gossip-new-chatroom-dialog.c:823
 #, c-format
 msgid "Found %d conference room"
 msgid_plural "Found %d conference rooms"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Nalezena %d konferenční místnost"
+msgstr[1] "Nalezeny %d konferenční místnosti"
+msgstr[2] "Nalezeno %d konferenčních místností"
 
-#: ../src/gossip-new-chatroom-dialog.c:869
-#, fuzzy
+#: ../src/gossip-new-chatroom-dialog.c:862
 msgid "Browsing for conference rooms, please wait..."
-msgstr "<b>Čekám na odpověď serveru...</b>"
+msgstr "Prochází se seznam konferenčních místností, čekejte prosím…"
 
-#: ../src/gossip-new-chatroom-dialog.c:917
+#: ../src/gossip-new-chatroom-dialog.c:910
 msgid "Browsing cancelled!"
-msgstr ""
+msgstr "Procházení zrušeno!"
 
-#: ../src/gossip-notify.c:224
-#, fuzzy, c-format
+#: ../src/gossip-notify.c:216
+#, c-format
 msgid "%s is %s"
-msgstr "%sDiskuse - %s"
+msgstr "%s je %s"
 
-#: ../src/gossip-notify.c:228
-#, fuzzy
+#: ../src/gossip-notify.c:220
 msgid "Contact Online"
-msgstr "%s se odpojil"
+msgstr "Kontakt připojen"
 
-#: ../src/gossip-notify.c:241 ../src/gossip-notify.c:349
-#: ../src/gossip-notify.c:563
-#, fuzzy
+#: ../src/gossip-notify.c:233 ../src/gossip-notify.c:341
+#: ../src/gossip-notify.c:557
 msgid "Default"
-msgstr "[implicitní]"
+msgstr "Výchozí"
 
-#: ../src/gossip-notify.c:244
-#, fuzzy
+#: ../src/gossip-notify.c:236
 msgid "Chat!"
-msgstr "Diskuse"
+msgstr "Diskuse!"
 
-#: ../src/gossip-notify.c:296
-#, fuzzy, c-format
+#: ../src/gossip-notify.c:288
+#, c-format
 msgid "%s wants to be added to your contact list for your “%s” account"
-msgstr "%s bude přidán do vašeho seznamu kontaktů."
+msgstr "%s chce být přidán do vašeho seznamu kontaktů pro účet „%s“"
 
-#: ../src/gossip-notify.c:300
-#, fuzzy, c-format
+#: ../src/gossip-notify.c:292
+#, c-format
 msgid "Someone wants to be added to your contact list for your “%s” account"
-msgstr "%s bude přidán do vašeho seznamu kontaktů."
+msgstr "Někdo chce být přidán do vašeho seznamu kontaktů pro účet „%s“"
 
-#: ../src/gossip-notify.c:306
-#, fuzzy, c-format
+#: ../src/gossip-notify.c:298
+#, c-format
 msgid "%s wants to be added to your contact list"
-msgstr "%s bude přidán do vašeho seznamu kontaktů."
+msgstr "%s chce být přidán do vašeho seznamu kontaktů"
 
-#: ../src/gossip-notify.c:310
-#, fuzzy, c-format
+#: ../src/gossip-notify.c:302
+#, c-format
 msgid "Someone wants to be added to your contact list"
-msgstr "%s bude přidán do vašeho seznamu kontaktů."
+msgstr "Někdo chce být přidán do vašeho seznamu kontaktů"
 
-#: ../src/gossip-notify.c:331 ../data/glade/main.glade.h:101
-#, fuzzy
+#: ../src/gossip-notify.c:323 ../data/glade/main.glade.h:102
 msgid "Subscription Request"
-msgstr "Požadavek na přihlášení"
+msgstr "Požadavek na schválení"
 
 #. These messages copy (more-or-less) the ones found in the file transfer dialogue.
-#: ../src/gossip-notify.c:375
-#, fuzzy, c-format
+#: ../src/gossip-notify.c:367
+#, c-format
 msgid "%s would like to send you “%s”"
-msgstr "Rád bych vás přidal do svého seznamu kontaktů."
+msgstr "%s by vám rád poslal „%s“"
 
-#: ../src/gossip-notify.c:378 ../data/glade/file-transfer.glade.h:3
-#, fuzzy
+#: ../src/gossip-notify.c:370 ../data/glade/file-transfer.glade.h:3
 msgid "File Transfer"
-msgstr "Jméno uživatele:"
+msgstr "Přenos souboru"
 
-#: ../src/gossip-notify.c:535
-#, fuzzy, c-format
+#: ../src/gossip-notify.c:529
+#, c-format
 msgid "New Message from %s"
 msgstr "Nová zpráva od %s"
 
-#: ../src/gossip-notify.c:544
+#: ../src/gossip-notify.c:538
 #, c-format
 msgid "“%s...”"
-msgstr ""
+msgstr "„%s…“"
 
-#: ../src/gossip-notify.c:546
+#: ../src/gossip-notify.c:540
 #, c-format
 msgid "“%s”"
-msgstr ""
+msgstr "„%s“"
 
-#: ../src/gossip-notify.c:566
+#: ../src/gossip-notify.c:560
 msgid "Show"
-msgstr ""
+msgstr "Zobrazit"
 
-#: ../src/gossip-notify.c:572 ../data/glade/group-chat.glade.h:3
-#, fuzzy
+#: ../src/gossip-notify.c:566 ../data/glade/group-chat.glade.h:3
 msgid "Contact Information"
-msgstr "_Informace o kontaktu"
+msgstr "Informace o kontaktu"
 
-#: ../src/gossip-preferences.c:263
+#: ../src/gossip-preferences.c:262
 msgid "Language"
-msgstr ""
+msgstr "Jazyk"
 
-#: ../src/gossip-presence-chooser.c:504
-#, fuzzy
+#: ../src/gossip-presence-chooser.c:502
 msgid "Are you sure you want to clear the list?"
-msgstr "Chcete přijmout tento požadavek?"
+msgstr "Opravdu chcete seznam vymazat?"
 
-#: ../src/gossip-presence-chooser.c:508
+#: ../src/gossip-presence-chooser.c:506
 msgid ""
 "This will remove any custom messages you have added to the list of preset "
 "status messages."
 msgstr ""
+"Tímto se vymažou případné vlastní zprávy, které máte přidané do seznamu "
+"přednastavených zpráv o stavu."
 
-#: ../src/gossip-presence-chooser.c:513
-#, fuzzy
+#: ../src/gossip-presence-chooser.c:511
 msgid "Clear List"
-msgstr "_Vymazat"
+msgstr "Vymazat seznam"
 
-#: ../src/gossip-presence-chooser.c:1070 ../src/gossip-presence-chooser.c:1117
-#: ../src/gossip-presence-chooser.c:1163
-#, fuzzy
+#: ../src/gossip-presence-chooser.c:1068 ../src/gossip-presence-chooser.c:1115
+#: ../src/gossip-presence-chooser.c:1161
 msgid "Custom message..."
-msgstr "Zpráva požadavku"
+msgstr "Vlastní zpráva…"
 
-#: ../src/gossip-presence-chooser.c:1183
-#, fuzzy
+#: ../src/gossip-presence-chooser.c:1181
 msgid "Clear List..."
-msgstr "_Vymazat"
+msgstr "Vymazat seznam…"
 
-#: ../src/gossip-private-chat.c:494
+#: ../src/gossip-private-chat.c:487
 #, c-format
 msgid "%s went offline"
 msgstr "%s se odpojil"
 
-#: ../src/gossip-private-chat.c:508
-#, fuzzy, c-format
+#: ../src/gossip-private-chat.c:501
+#, c-format
 msgid "%s has come online"
 msgstr "%s se připojil"
 
 #. i18n: An event, as in "has now been connected".
-#: ../src/gossip-private-chat.c:589
+#: ../src/gossip-private-chat.c:582
 msgid "Contact has been removed"
-msgstr ""
+msgstr "Kontakt byl odstraněn"
 
 #. i18n: An event, as in "has now been connected".
-#: ../src/gossip-private-chat.c:612
+#: ../src/gossip-private-chat.c:605
 msgid "Connected"
 msgstr "Připojen"
 
-#: ../src/gossip-private-chat.c:638
+#: ../src/gossip-private-chat.c:631
 msgid "Disconnected"
 msgstr "Odpojen"
 
-#: ../src/gossip-spell-dialog.c:259
+#: ../src/gossip-spell-dialog.c:380
 msgid "Suggestions for the word"
-msgstr ""
+msgstr "Návrh pro slovo"
 
-#: ../src/gossip-subscription-dialog.c:186
-#, fuzzy, c-format
+#: ../src/gossip-subscription-dialog.c:180
+#, c-format
 msgid "New subscription request from %s"
-msgstr "Požadavek na přihlášení"
+msgstr "Nový požadavek na schválení od %s"
 
-#: ../src/gossip-subscription-dialog.c:287
-#, fuzzy, c-format
+#: ../src/gossip-subscription-dialog.c:281
+#, c-format
 msgid "Someone wants to be added to your contact list for your '%s' account."
-msgstr "%s bude přidán do vašeho seznamu kontaktů."
+msgstr "Někdo chce být přidán do vašeho seznamu kontaktů pro účet „%s“."
 
-#: ../src/gossip-subscription-dialog.c:291
-#, fuzzy, c-format
+#: ../src/gossip-subscription-dialog.c:285
+#, c-format
 msgid "Someone wants to be added to your contact list."
-msgstr "%s bude přidán do vašeho seznamu kontaktů."
+msgstr "Někdo chce být přidán do vašeho seznamu kontaktů."
 
-#: ../src/gossip-subscription-dialog.c:294
-#, fuzzy
+#: ../src/gossip-subscription-dialog.c:288
 msgid "Do you want to add this person to your contact list?"
-msgstr ""
-"Chcete odstranit kontakt\n"
-"%s\n"
-"ze svého seznamu kontaktů?"
+msgstr "Chcete přidat tuto osobu do svého seznamu kontaktů?"
 
-#: ../src/gossip-subscription-dialog.c:369
-#, fuzzy, c-format
+#: ../src/gossip-subscription-dialog.c:363
+#, c-format
 msgid "%s wants to be added to your contact list for your '%s' account."
-msgstr "%s bude přidán do vašeho seznamu kontaktů."
+msgstr "%s chce být přidán do vašeho seznamu kontaktů pro váš účet „%s“."
+
+#: ../src/gossip-subscription-dialog.c:367
+#, c-format
+msgid "%s wants to be added to your contact list."
+msgstr "%s chce být přidán do vašeho seznamu kontaktů."
 
 #: ../src/gossip-subscription-dialog.c:373
-#, fuzzy, c-format
-msgid "%s wants to be added to your contact list."
-msgstr "%s bude přidán do vašeho seznamu kontaktů."
-
-#: ../src/gossip-subscription-dialog.c:379
-#, fuzzy, c-format
+#, c-format
 msgid "Do you want to add %s to your contact list?"
-msgstr ""
-"Chcete odstranit kontakt\n"
-"%s\n"
-"ze svého seznamu kontaktů?"
+msgstr "Chcete přidat %s do svého seznamu kontaktů?"
 
-#: ../src/gossip-ui-utils.c:420
+#: ../src/gossip-ui-utils.c:445
+msgid "Online help is not supported on this platform."
+msgstr "On-line nápověda není na této platformě podporovaná."
+
+#: ../src/gossip-ui-utils.c:453
 msgid "Could not display the help contents."
-msgstr ""
+msgstr "Nelze zobrazit obsah nápovědy."
 
 #: ../src/gossip-theme-boxes.c:887 ../src/gossip-theme-irc.c:456
 msgid "%A %d %B %Y"
-msgstr "%A %d. %B %Y"
+msgstr "%A %e. %B %Y"
+
+#: ../src/gossip-theme-manager.c:78
+msgid "Classic"
+msgstr "Klasický"
 
 #: ../src/gossip-theme-manager.c:79
-msgid "Classic"
-msgstr ""
+msgid "Simple"
+msgstr "Jednoduchý"
 
 #: ../src/gossip-theme-manager.c:80
-msgid "Simple"
-msgstr ""
+msgid "Clean"
+msgstr "Čistý"
 
 #: ../src/gossip-theme-manager.c:81
-#, fuzzy
-msgid "Clean"
-msgstr "_Vymazat"
-
-#: ../src/gossip-theme-manager.c:82
 msgid "Blue"
-msgstr ""
+msgstr "Modrý"
 
-#: ../src/gossip-vcard-dialog.c:235
+#: ../src/gossip-vcard-dialog.c:220
 msgid "Select Your Avatar Image"
-msgstr ""
+msgstr "Výběr obrázku vašeho avatara"
 
-#: ../src/gossip-vcard-dialog.c:238
+#: ../src/gossip-vcard-dialog.c:223
 msgid "No Image"
-msgstr ""
+msgstr "Bez obrázku"
 
-#: ../src/gossip-vcard-dialog.c:833
+#: ../src/gossip-vcard-dialog.c:788
 msgid "The server does not seem to be responding."
-msgstr ""
+msgstr "Vypadá to, že server neodpovídá."
 
-#: ../src/gossip-vcard-dialog.c:834
+#: ../src/gossip-vcard-dialog.c:789
 msgid "Try again later."
-msgstr ""
+msgstr "Zkuste to později."
 
 #. Birthday chooser
-#: ../src/gossip-vcard-dialog.c:966 ../data/glade/main.glade.h:35
+#: ../src/gossip-vcard-dialog.c:921 ../data/glade/main.glade.h:35
 msgid "C_hange"
-msgstr ""
+msgstr "_Změnit"
 
 #: ../src/sounds/gossip.soundlist.in.h:1 ../data/glade/chat.glade.h:4
 msgid "Chat"
@@ -1554,12 +1539,11 @@ msgstr "Diskuse"
 
 #: ../src/sounds/gossip.soundlist.in.h:2
 msgid "Contact goes offline"
-msgstr ""
+msgstr "Kontakt se odpojuje"
 
 #: ../src/sounds/gossip.soundlist.in.h:3
-#, fuzzy
 msgid "Contact goes online"
-msgstr "%s se odpojil"
+msgstr "Kontakt se připojuje"
 
 #: ../data/glade/chat.glade.h:1
 msgid "C_lear"
@@ -1567,225 +1551,216 @@ msgstr "_Vymazat"
 
 #: ../data/glade/chat.glade.h:2
 msgid "Change Na_me..."
-msgstr ""
+msgstr "Z_měnit název…"
 
 #: ../data/glade/chat.glade.h:3
 msgid "Change Subjec_t..."
-msgstr ""
+msgstr "Změnit _předmět…"
 
 #: ../data/glade/chat.glade.h:5
-#, fuzzy
 msgid "Contact Infor_mation"
-msgstr "_Informace o kontaktu"
+msgstr "Infor_mace o kontaktu"
 
 #: ../data/glade/chat.glade.h:6
-#, fuzzy
 msgid "Cu_t"
-msgstr "Diskuse"
+msgstr "_Vyjmout"
 
 #: ../data/glade/chat.glade.h:7
-#, fuzzy
 msgid "In_vite..."
-msgstr "Za_registrovat..."
+msgstr "Poz_vat…"
 
 #: ../data/glade/chat.glade.h:8
 msgid "Insert _Smiley"
-msgstr ""
+msgstr "Vložit _smajlík"
 
 #: ../data/glade/chat.glade.h:9
-#, fuzzy
 msgid "Invitation _message:"
-msgstr "Zadejte zprávu o stavu:"
+msgstr "_Uvítací zpráva:"
 
 #: ../data/glade/chat.glade.h:10
 msgid "Invite"
-msgstr ""
+msgstr "Pozvání"
 
 #: ../data/glade/chat.glade.h:11 ../data/glade/main.glade.h:68
 msgid "Join _New..."
-msgstr ""
+msgstr "Vstoupit do _nové…"
 
 #: ../data/glade/chat.glade.h:12
 msgid "Move Tab _Left"
-msgstr "Přesunout záložku do_leva"
+msgstr "Přesunout kartu do_leva"
 
 #: ../data/glade/chat.glade.h:13
 msgid "Move Tab _Right"
-msgstr "Přesunout záložku do_prava"
+msgstr "Přesunout kartu do_prava"
 
 #: ../data/glade/chat.glade.h:14
 msgid "Select who would you like to invite:"
-msgstr ""
+msgstr "Vyberte, koho byste rádi pozvali:"
 
 #: ../data/glade/chat.glade.h:15
-#, fuzzy
 msgid "Send _Email..."
-msgstr "Vybrat"
+msgstr "Poslat _e-mail…"
 
-#: ../data/glade/chat.glade.h:16 ../data/glade/main.glade.h:132
+#: ../data/glade/chat.glade.h:16 ../data/glade/main.glade.h:133
 msgid "_Add Contact..."
-msgstr "_Přidat kontakt..."
+msgstr "_Přidat kontakt…"
 
 #: ../data/glade/chat.glade.h:17
-#, fuzzy
 msgid "_Add To Favorites"
-msgstr "_Upravit oblíbené..."
+msgstr "Přid_at do oblíbených"
 
 #: ../data/glade/chat.glade.h:18
 msgid "_Close"
-msgstr ""
+msgstr "_Zavřít"
 
 #: ../data/glade/chat.glade.h:20
 msgid "_Conversation"
-msgstr "_Konverzace"
+msgstr "_Rozhovor"
 
 #: ../data/glade/chat.glade.h:21
 msgid "_Copy"
-msgstr ""
+msgstr "_Kopírovat"
 
 #: ../data/glade/chat.glade.h:22
 msgid "_Detach Tab"
-msgstr "_Odpojit záložku"
+msgstr "_Odpojit kartu"
 
 #: ../data/glade/chat.glade.h:23
 msgid "_Next Tab"
-msgstr "_Následující záložka"
+msgstr "_Následující karta"
 
 #: ../data/glade/chat.glade.h:24
 msgid "_Paste"
-msgstr ""
+msgstr "V_ložit"
 
 #: ../data/glade/chat.glade.h:25
 msgid "_Previous Tab"
-msgstr "_Předchozí záložka"
+msgstr "_Předchozí karta"
 
-#: ../data/glade/chat.glade.h:26 ../data/glade/main.glade.h:159
-#, fuzzy
+#: ../data/glade/chat.glade.h:26 ../data/glade/main.glade.h:160
 msgid "_Room"
-msgstr "_Místnost:"
+msgstr "_Místnost"
 
 #: ../data/glade/chat.glade.h:27
-#, fuzzy
 msgid "_Show Contacts"
-msgstr "_Zobrazit seznam kontaktů"
+msgstr "_Zobrazit kontakty"
 
 #: ../data/glade/chat.glade.h:28
 msgid "_Tabs"
-msgstr "_Záložky"
+msgstr "_Karty"
 
 #.
 #. This is the text that should appear on a menu title. Don't include the prefix 'menu title|' in the translation.
-#: ../data/glade/chat.glade.h:32 ../data/glade/main.glade.h:170
+#: ../data/glade/chat.glade.h:32 ../data/glade/main.glade.h:171
 msgid "menu title|_Edit"
-msgstr ""
+msgstr "_Upravit"
 
 #: ../data/glade/file-transfer.glade.h:1
 msgid "Contact ID:"
-msgstr ""
+msgstr "ID kontaktu:"
 
 #: ../data/glade/file-transfer.glade.h:4
-#, fuzzy
 msgid "Location:"
-msgstr "Používat zvuky upozornění"
+msgstr "Umístění:"
 
-#: ../data/glade/file-transfer.glade.h:5 ../data/glade/main.glade.h:73
+#: ../data/glade/file-transfer.glade.h:5 ../data/glade/main.glade.h:74
 msgid "Name:"
 msgstr "Jméno:"
 
 #: ../data/glade/file-transfer.glade.h:6
 msgid "Not supported yet"
-msgstr ""
+msgstr "V současnosti není podporováno"
 
 #: ../data/glade/file-transfer.glade.h:7
 msgid "Open _Folder"
-msgstr ""
+msgstr "Otevřít _složku"
 
 #: ../data/glade/file-transfer.glade.h:8
-#, fuzzy
 msgid "Select A File"
-msgstr "Vybrat"
+msgstr "Vybrat soubor"
 
 #: ../data/glade/file-transfer.glade.h:9
 msgid "Size:"
-msgstr ""
+msgstr "Velikost:"
 
 #: ../data/glade/group-chat.glade.h:1 ../data/glade/main.glade.h:27
-#, fuzzy
 msgid "Account:"
-msgstr "Účet Jabberu"
+msgstr "Účet:"
 
 #: ../data/glade/group-chat.glade.h:2
 msgid "Browse:"
-msgstr ""
+msgstr "Procházet:"
 
 #: ../data/glade/group-chat.glade.h:4
-#, fuzzy
 msgid "Edit Favorite Room"
-msgstr "Gossip - Upravit skupinové diskuse"
+msgstr "Upravit oblíbené místnosti"
 
 #: ../data/glade/group-chat.glade.h:5
 msgid ""
 "Enter the room name to join here or click on one or more rooms in the list."
 msgstr ""
+"Zadejte název místnosti, do které chcete vstoupit, nebo na jednu či více "
+"místností klikněte v seznamu."
 
 #: ../data/glade/group-chat.glade.h:7
-#, fuzzy
 msgid "Join New"
-msgstr "_Připojit"
+msgstr "Vstup do nové"
 
 #: ../data/glade/group-chat.glade.h:8
-#, fuzzy
 msgid "Join room on start_up"
-msgstr "Nepřipojovat se při startu"
+msgstr "Vstoupit do místnosti při spuštění"
 
 #: ../data/glade/group-chat.glade.h:9
 msgid "Join this chat room when Gossip starts and you are connected"
 msgstr ""
+"Vstoupit do této diskuzní místnosti, až se spustí aplikace Gossip a budete "
+"připojeni"
 
 #: ../data/glade/group-chat.glade.h:10
 msgid "Kick..."
-msgstr ""
+msgstr "Vyhodit…"
 
 #: ../data/glade/group-chat.glade.h:11
 msgid "Manage Favorite Rooms"
-msgstr ""
+msgstr "Správa oblíbených místností"
 
-#: ../data/glade/group-chat.glade.h:12 ../data/glade/main.glade.h:72
-#, fuzzy
+#: ../data/glade/group-chat.glade.h:12 ../data/glade/main.glade.h:73
 msgid "N_ame:"
-msgstr "Jméno:"
+msgstr "_Jméno:"
 
 #: ../data/glade/group-chat.glade.h:13
 msgid "Private Chat"
-msgstr ""
+msgstr "Soukromá diskuze"
 
 #: ../data/glade/group-chat.glade.h:14
 msgid "Re_fresh"
-msgstr ""
+msgstr "O_bnovit"
 
 #: ../data/glade/group-chat.glade.h:15
-#, fuzzy
 msgid "S_erver:"
-msgstr "Server:"
+msgstr "S_erver:"
 
 #: ../data/glade/group-chat.glade.h:16
 msgid ""
 "Show more information about chatrooms found and make the window resizable."
 msgstr ""
+"Zobrazit více informací o nalezených diskuzních místnostech a nastavit "
+"měnitelnou velikost okna."
 
 #: ../data/glade/group-chat.glade.h:17
 msgid ""
 "This list represents all chat rooms hosted on the server you have entered."
 msgstr ""
+"Tento seznam představuje všechny diskuzní místnosti, které jsou na serveru "
+"hostované a do kterých můžete vstoupit."
 
-#: ../data/glade/group-chat.glade.h:18 ../data/glade/main.glade.h:149
+#: ../data/glade/group-chat.glade.h:18 ../data/glade/main.glade.h:150
 msgid "_Nickname:"
 msgstr "_Přezdívka:"
 
 #: ../data/glade/group-chat.glade.h:19
-#, fuzzy
 msgid "_Password"
-msgstr "_Heslo:"
+msgstr "_Heslo"
 
 #: ../data/glade/group-chat.glade.h:20
 msgid "_Room:"
@@ -1797,172 +1772,153 @@ msgstr "_Server:"
 
 #: ../data/glade/main.glade.h:1
 msgid "-"
-msgstr ""
+msgstr "-"
 
 #: ../data/glade/main.glade.h:2
-#, fuzzy
 msgid "<b>About</b>"
-msgstr "<b>Oblíbené:</b>"
+msgstr "<b>O aplikaci</b>"
 
 #: ../data/glade/main.glade.h:3
-#, fuzzy
 msgid "<b>Appearance</b>"
-msgstr "Vzhled"
+msgstr "<b>Vzhled</b>"
 
 #: ../data/glade/main.glade.h:4
-#, fuzzy
 msgid "<b>Audio</b>"
-msgstr "<b>Oblíbené:</b>"
+msgstr "<b>Zvuk</b>"
 
 #: ../data/glade/main.glade.h:5
-#, fuzzy
 msgid "<b>Behaviour</b>"
-msgstr "<b>Oblíbené:</b>"
+msgstr "<b>Chování</b>"
 
 #: ../data/glade/main.glade.h:6
-#, fuzzy
 msgid "<b>Chat</b>"
-msgstr "Stav"
+msgstr "<b>Diskuze</b>"
 
 #: ../data/glade/main.glade.h:7
-#, fuzzy
 msgid "<b>Client Information</b>"
-msgstr "Informace o klientovi"
+msgstr "<b>Informace o klientovi</b>"
 
 #: ../data/glade/main.glade.h:8
-#, fuzzy
 msgid "<b>Contact List</b>"
-msgstr "Stav"
+msgstr "<b>Seznam kontaktů</b>"
 
 #: ../data/glade/main.glade.h:9
-#, fuzzy
 msgid "<b>Groups</b>"
-msgstr "<b>Oblíbené:</b>"
+msgstr "<b>Skupiny</b>"
 
 #: ../data/glade/main.glade.h:10
 msgid "<b>Languages</b>"
-msgstr ""
+msgstr "<b>Jazyky</b>"
 
 #: ../data/glade/main.glade.h:11
-#, fuzzy
 msgid "<b>Name</b>"
-msgstr "Stav"
+msgstr "<b>Jméno</b>"
 
 #: ../data/glade/main.glade.h:12
-#, fuzzy
 msgid "<b>New Account</b>"
-msgstr "<b>Oblíbené:</b>"
+msgstr "<b>Nový účet</b>"
 
 #: ../data/glade/main.glade.h:14
-#, fuzzy
 msgid "<b>Options</b>"
-msgstr "Připojit"
+msgstr "<b>Volby</b>"
 
 #: ../data/glade/main.glade.h:15
 msgid "<b>Passwords do not match!</b>"
-msgstr ""
+msgstr "<b>Heslo nesouhlasí!</b>"
 
 #: ../data/glade/main.glade.h:16
-#, fuzzy
 msgid "<b>Personal Details</b>"
-msgstr "Osobní detaily"
+msgstr "<b>Osobní údaje</b>"
 
 #: ../data/glade/main.glade.h:17
-#, fuzzy
 msgid "<b>Settings</b>"
-msgstr "<b>Nastavení účtu</b>"
+msgstr "<b>Nastavení</b>"
 
 #: ../data/glade/main.glade.h:18
-#, fuzzy
 msgid "<b>Status</b>"
-msgstr "Stav"
+msgstr "<b>Stav</b>"
 
 #: ../data/glade/main.glade.h:19
-#, fuzzy
 msgid "<b>Subscription</b>"
-msgstr "Přihlášení"
+msgstr "<b>Schválení</b>"
 
 #: ../data/glade/main.glade.h:20
-#, fuzzy
 msgid "<b>Visual</b>"
-msgstr "<b>Popis</b>"
+msgstr "<b>Zobrazení</b>"
 
 #: ../data/glade/main.glade.h:21
 msgid ""
 "<small>The list of languages reflects only the languages for which you have "
 "a dictionary installed.</small>"
 msgstr ""
+"<small>Seznam jazyků obsahuje pouze jazyky, pro které máte nainstalovaný "
+"slovník.</small>"
 
 #: ../data/glade/main.glade.h:22
-#, fuzzy
 msgid "<span size=\"smaller\">Example: Mikael or user@server.org</span>"
-msgstr "<span size=\"smaller\">Příklad: uživatel@jabber.org</span>"
+msgstr "<span size=\"smaller\">Příklad: uzivatel@jabbim.cz</span>"
 
 #: ../data/glade/main.glade.h:23
 msgid ""
 "<span size=\"smaller\">Note: You must select an account if the contact is "
 "unknown</span>"
 msgstr ""
+"<span size=\"smaller\">Poznámka: Pokud je kontakt neznámý, musíte vybrat "
+"účet</span>"
 
 #: ../data/glade/main.glade.h:24
 msgid "A unique name for this account to identify it personally to you."
-msgstr ""
+msgstr "Jedinečný název pro tento účet, který bude identifikovat vaši osobu."
 
 #: ../data/glade/main.glade.h:25
 msgid "A_vatar:"
-msgstr ""
+msgstr "A_vatar:"
 
 #: ../data/glade/main.glade.h:26
-#, fuzzy
 msgid "Accou_nt:"
-msgstr "Účet Jabberu"
+msgstr "Úč_et:"
 
 #: ../data/glade/main.glade.h:29
-#, fuzzy
 msgid "Add Contact"
-msgstr "_Přidat kontakt..."
+msgstr "Přidat kontakt"
 
 #: ../data/glade/main.glade.h:30
-#, fuzzy
 msgid "Add an account"
 msgstr "Přidat další účet"
 
 #: ../data/glade/main.glade.h:31
 msgid "Alia_s:"
-msgstr ""
+msgstr "Přez_dívka:"
 
 #: ../data/glade/main.glade.h:32
-#, fuzzy
 msgid "An Instant Messaging client for GNOME"
-msgstr "Gossip, Klient Instant Messaging"
+msgstr "Komunikační klient pro GNOME"
 
 #: ../data/glade/main.glade.h:33
 msgid "Avatars are user chosen images shown in the contact list"
 msgstr ""
+"Avataři jsou obrázky vybrané uživateli, aby je prezentovaly v seznamu "
+"kontaktů"
 
 #: ../data/glade/main.glade.h:34
 msgid "Birthday:"
-msgstr ""
+msgstr "Datum narození:"
 
 #: ../data/glade/main.glade.h:36
-#, fuzzy
 msgid "Ch_at"
-msgstr "Diskuse"
+msgstr "_Diskutovat"
 
 #: ../data/glade/main.glade.h:37
-#, fuzzy
 msgid "Change Password"
-msgstr "Heslo:"
+msgstr "Změnit heslo"
 
 #: ../data/glade/main.glade.h:38
-#, fuzzy
 msgid "Chat Rooms"
-msgstr "Gossip - Diskuse"
+msgstr "Diskuzní místnosti"
 
 #: ../data/glade/main.glade.h:39
-#, fuzzy
 msgid "Chat Th_eme:"
-msgstr "_Název diskuse:"
+msgstr "_Motiv pro diskuzi:"
 
 #: ../data/glade/main.glade.h:40
 msgid "Client:"
@@ -1970,46 +1926,39 @@ msgstr "Klient:"
 
 #: ../data/glade/main.glade.h:41
 msgid "Con_firm:"
-msgstr ""
+msgstr "Po_tvrzení:"
 
 #: ../data/glade/main.glade.h:42
-#, fuzzy
 msgid "Con_tact:"
-msgstr "_Přidat kontakt..."
+msgstr "Kon_takt:"
 
 #: ../data/glade/main.glade.h:43
-#, fuzzy
 msgid "Connect on S_tartup"
-msgstr "Nepřipojovat se při startu"
+msgstr "Připoji_t se při spuštění"
 
 #: ../data/glade/main.glade.h:44
-#, fuzzy
 msgid "Connect/disconnect the selected account"
-msgstr "Připojen"
+msgstr "Připojit/odpojit vybraný účet"
 
 #: ../data/glade/main.glade.h:45
-#, fuzzy
 msgid "Contact List - Gossip"
-msgstr "_Skrýt seznam kontaktů"
+msgstr "Seznam kontaktů - Gossip"
 
 #: ../data/glade/main.glade.h:46
-#, fuzzy
 msgid "Contacts"
-msgstr "_Přidat kontakt..."
+msgstr "Kontakty"
 
 #: ../data/glade/main.glade.h:47
-#, fuzzy
 msgid "Context"
-msgstr "Připojit"
+msgstr "Kontext"
 
 #: ../data/glade/main.glade.h:48
 msgid "Country:"
 msgstr "Země:"
 
 #: ../data/glade/main.glade.h:49
-#, fuzzy
 msgid "Cr_eate"
-msgstr "Diskuse"
+msgstr "_Vytvořit"
 
 #: ../data/glade/main.glade.h:50
 msgid "Decide _Later"
@@ -2017,18 +1966,19 @@ msgstr "_Rozhodnout se později"
 
 #: ../data/glade/main.glade.h:51
 msgid "Display notifications when contacts come _online"
-msgstr ""
+msgstr "Zobrazit oznámení, když se připojí kontakt"
 
 #: ../data/glade/main.glade.h:52
 msgid ""
 "Each account you create has a unique name associated with it (for example "
 "<b>Google</b>)."
 msgstr ""
+"Každý účet, který vytvoříte, má přidělený jedinečný název (např. <b>Jabbim</"
+"b>)."
 
 #: ../data/glade/main.glade.h:53
-#, fuzzy
 msgid "Edit Contact"
-msgstr "_Přidat kontakt..."
+msgstr "Upravit kontakt"
 
 #: ../data/glade/main.glade.h:54
 msgid "Edit Groups"
@@ -2036,21 +1986,19 @@ msgstr "Upravit skupiny"
 
 #: ../data/glade/main.glade.h:55
 msgid "Email:"
-msgstr "E-mail"
+msgstr "E-mail:"
 
 #: ../data/glade/main.glade.h:56
-#, fuzzy
 msgid "Enable sounds when _away"
-msgstr "Zakázat zvuky, když jsem _pryč"
+msgstr "Povolit zvuky, když jsem _pryč"
 
 #: ../data/glade/main.glade.h:57
-#, fuzzy
 msgid "Enable sounds when _busy"
-msgstr "Zakázat zvuky, když jsem _zaneprázdněn"
+msgstr "Povolit zvuky, když jsem _zaneprázdněn"
 
 #: ../data/glade/main.glade.h:58
 msgid "Encrypt all data sent when communicating with the server"
-msgstr ""
+msgstr "Zašifrovat všechna data odeslaná při komunikaci se serverem"
 
 #: ../data/glade/main.glade.h:59
 msgid "Enter status message:"
@@ -2058,170 +2006,171 @@ msgstr "Zadejte zprávu o stavu:"
 
 #: ../data/glade/main.glade.h:60
 msgid "Forget password"
-msgstr ""
+msgstr "Zapomenout heslo"
 
 #: ../data/glade/main.glade.h:61
 msgid "General"
-msgstr ""
+msgstr "Obecné"
 
 #: ../data/glade/main.glade.h:62
-#, fuzzy
 msgid "ID:"
-msgstr "JID"
+msgstr "ID:"
 
 #: ../data/glade/main.glade.h:63
 msgid "I_gnore security warnings"
-msgstr ""
+msgstr "I_gnorovat bezpečnostní varování"
 
 #: ../data/glade/main.glade.h:64
 msgid ""
 "If you chose to decide later you will be asked the next time you log on."
 msgstr ""
+"Pokud zvolíte, že se rozhodnete později, budete dotázáni až se příště "
+"přihlásíte."
 
 #: ../data/glade/main.glade.h:65
 msgid ""
 "Import your personal information from your desktop settings and use it here"
 msgstr ""
+"Importovat své osobní údaje z nastavení pracovního prostředí a použít je zde"
 
 #: ../data/glade/main.glade.h:67
-#, fuzzy
 msgid "Join _Favorites"
-msgstr "_Upravit oblíbené..."
+msgstr "Vstoupit do o_blíbených"
 
 #: ../data/glade/main.glade.h:69
-msgid "Links"
-msgstr ""
+msgid "Language:"
+msgstr "Jazyk:"
 
 #: ../data/glade/main.glade.h:70
-msgid "Logi_n ID:"
-msgstr ""
+msgid "Links"
+msgstr "Odkazy"
 
 #: ../data/glade/main.glade.h:71
-msgid "Manage Favorites..."
-msgstr ""
+msgid "Logi_n ID:"
+msgstr "ID přihláše_ní:"
 
-#: ../data/glade/main.glade.h:75
-#, fuzzy
-msgid "Notifications"
-msgstr "Používat zvuky upozornění"
+#: ../data/glade/main.glade.h:72
+msgid "Manage Favorites..."
+msgstr "Správa oblíbených…"
 
 #: ../data/glade/main.glade.h:76
+msgid "Notifications"
+msgstr "Oznámení"
+
+#: ../data/glade/main.glade.h:77
 msgid "OS:"
 msgstr "OS:"
 
-#: ../data/glade/main.glade.h:77
-#, fuzzy
-msgid "Pass_word:"
-msgstr "Heslo:"
-
 #: ../data/glade/main.glade.h:78
-#, fuzzy
-msgid "Personal Details"
-msgstr "_Osobní detaily"
+msgid "Pass_word:"
+msgstr "_Heslo:"
 
 #: ../data/glade/main.glade.h:79
-#, fuzzy
-msgid "Preferences"
-msgstr "_Nastavení"
+msgid "Personal Details"
+msgstr "Osobní údaje"
 
 #: ../data/glade/main.glade.h:80
-#, fuzzy
-msgid "R_egister"
-msgstr "Za_registrovat..."
+msgid "Preferences"
+msgstr "Předvolby"
 
 #: ../data/glade/main.glade.h:81
+msgid "R_egister"
+msgstr "Zar_egistrovat"
+
+#: ../data/glade/main.glade.h:82
 msgid ""
 "Register account with the Jabber server. If this is a new account, you will "
 "need to register it before connecting."
 msgstr ""
-
-#: ../data/glade/main.glade.h:82
-msgid "Remove the selected account"
-msgstr ""
+"Registrovat účet na serveru Jabber. Pokud se jedná o nový účet, musíte jej, "
+"než se přihlásíte, zaregistrovat."
 
 #: ../data/glade/main.glade.h:83
-#, fuzzy
+msgid "Remove the selected account"
+msgstr "Odstranit vybraný účet"
+
+#: ../data/glade/main.glade.h:84
 msgid "S_how Offline Contacts"
 msgstr "Zobrazovat _odpojené kontakty"
 
-#: ../data/glade/main.glade.h:84
-#, fuzzy
-msgid "Search"
-msgstr "_Hledat..."
-
 #: ../data/glade/main.glade.h:85
-msgid "Search the log and press enter to continue on to the next item found"
-msgstr ""
+msgid "Search"
+msgstr "Hledat"
 
 #: ../data/glade/main.glade.h:86
+msgid "Search the log and press enter to continue on to the next item found"
+msgstr ""
+"Prohledat záznam, stiskem klávesy Enter pokračovat na další nalezenou položku"
+
+#: ../data/glade/main.glade.h:87
 msgid ""
 "Select the groups you want this contact to appear in, you can select more "
 "than one group or no groups."
 msgstr ""
-
-#: ../data/glade/main.glade.h:87
-#, fuzzy
-msgid "Select the name you want to use for this account:"
-msgstr "Jakou přezdívku chcete používat pro tento kontakt?"
+"Vyberte skupiny, do kterých chcete kontakt zařadit. Můžete vybrat i více "
+"skupin nebo také žádnou."
 
 #: ../data/glade/main.glade.h:88
-#, fuzzy
-msgid "Ser_ver:"
-msgstr "Server:"
+msgid "Select the name you want to use for this account:"
+msgstr "Vyberte název, který chcete použít pro tento účet:"
 
 #: ../data/glade/main.glade.h:89
+msgid "Ser_ver:"
+msgstr "Ser_ver:"
+
+#: ../data/glade/main.glade.h:90
 msgid ""
 "Set the alias you want to use for:\n"
 "<b>foo@bar.baz</b>\n"
 "\n"
 "You can retrieve contact information from the server. "
 msgstr ""
-
-#: ../data/glade/main.glade.h:93
-msgid "Show _avatars"
-msgstr ""
+"Nastavte přezdívku, kterou chcete použít pro:\n"
+"<b>foo@bar.baz</b>\n"
+"\n"
+"Kontaktní údaje můžete získat ze serveru. "
 
 #: ../data/glade/main.glade.h:94
-#, fuzzy
-msgid "Show _smileys as images"
-msgstr "Převádět _smajlíky na grafické obrázky"
+msgid "Show _avatars"
+msgstr "Zobrazovat _avatary"
 
 #: ../data/glade/main.glade.h:95
-#, fuzzy
-msgid "Show co_mpact contact list"
-msgstr "_Zobrazit seznam kontaktů"
+msgid "Show _smileys as images"
+msgstr "Zobrazovat _smajlíky jako grafické obrázky"
 
 #: ../data/glade/main.glade.h:96
-msgid "Sort by _name"
-msgstr ""
+msgid "Show co_mpact contact list"
+msgstr "_Zobrazovat kompaktní seznam kontaktů"
 
 #: ../data/glade/main.glade.h:97
-msgid "Sort by s_tate"
-msgstr ""
+msgid "Sort by _name"
+msgstr "Seřadit podle jmé_na"
 
 #: ../data/glade/main.glade.h:98
-#, fuzzy
-msgid "Spell Checker"
-msgstr "Gossip - Odeslat zprávu"
+msgid "Sort by s_tate"
+msgstr "Seřadit podle s_tavu"
 
 #: ../data/glade/main.glade.h:99
-msgid "Spell Checking"
-msgstr ""
+msgid "Spell Checker"
+msgstr "Kontrola pravopisu"
 
 #: ../data/glade/main.glade.h:100
-#, fuzzy
-msgid "Status Message Presets"
-msgstr "Zprávy o stavu"
+msgid "Spell Checking"
+msgstr "Kontrola pravopisu"
 
-#: ../data/glade/main.glade.h:102
-msgid "Suggestions for the word:"
-msgstr ""
+#: ../data/glade/main.glade.h:101
+msgid "Status Message Presets"
+msgstr "Přednastavené zprávy o stavu"
 
 #: ../data/glade/main.glade.h:103
-msgid "Themes"
-msgstr ""
+msgid "Suggestions for the word:"
+msgstr "Návrh pro slovo:"
 
 #: ../data/glade/main.glade.h:104
+msgid "Themes"
+msgstr "Motivy"
+
+#: ../data/glade/main.glade.h:105
 msgid ""
 "This acts as a filter to the contact list below.\n"
 "\n"
@@ -2231,256 +2180,249 @@ msgid ""
 "You can also use the name of a group to show only contacts in a specific "
 "group."
 msgstr ""
+"Toto funguje jako filtr následujícího seznamu kontaktů.\n"
+"\n"
+"Můžete použít části názvu kontaktu nebo ID, například „jabbim.cz“ vypíše "
+"všechny, kteří používají tento server.\n"
+"\n"
+"Můžete také použít název skupiny, čímž se zobrazí pouze kontakty z takto "
+"vybrané skupiny."
 
-#: ../data/glade/main.glade.h:109
+#: ../data/glade/main.glade.h:110
 msgid ""
 "This acts as a filter to the contact list below. You can use segments of "
 "contact's name or ID, for example, \"jabber.org\" will list everyone using "
 "that server"
 msgstr ""
+"Toto funguje jako filtr následujícího seznamu kontaktů. Můžete použít část "
+"jména kontaktu nebo ID, například „jabbim.cz“ vypíše všechny, kteří "
+"používají tento server"
 
-#: ../data/glade/main.glade.h:110
+#: ../data/glade/main.glade.h:111
 msgid ""
 "This is a legacy option required for supporting older servers which use a "
 "different port (5223) to communicate securely. With newer encryption "
 "techniques, the same port (5222) can be used for both"
 msgstr ""
-
-#: ../data/glade/main.glade.h:111
-#, fuzzy
-msgid "This is the name that will be used on your roster for this contact"
-msgstr "Jakou přezdívku chcete používat pro tento kontakt?"
+"Toto je volba zděděná z minulosti a vyžadovaná kvůli podpoře starších "
+"serverů, které používají jiný port (5223) k zabezpečené komunikaci. S "
+"novějšími šifrovacími technikami lze stejný port (5222) použít pro obojí"
 
 #: ../data/glade/main.glade.h:112
-#, fuzzy
-msgid "This name will be used to identify you in chat windows"
-msgstr "Toto jméno se bude používat pro vaši identifikaci v oknech diskusí."
+msgid "This is the name that will be used on your roster for this contact"
+msgstr "Toto je jméno, které se použije ve vašem seznamu pro tento kontakt"
 
 #: ../data/glade/main.glade.h:113
-#, fuzzy
+msgid "This name will be used to identify you in chat windows"
+msgstr "Toto jméno se bude používat pro vaši identifikaci v diskuzních oknech"
+
+#: ../data/glade/main.glade.h:114
 msgid ""
 "This name will be used to identify you when new contacts lookup your details"
-msgstr "Toto jméno se bude používat pro vaši identifikaci v oknech diskusí."
+msgstr ""
+"Toto jméno se bude používat pro vaši identifikaci, když o vás bude nový "
+"kontakt hledat údaje"
 
-#: ../data/glade/main.glade.h:117
+#: ../data/glade/main.glade.h:118
 msgid ""
 "To make sure your password is set correctly, enter your password and then "
 "confirm it below."
 msgstr ""
-
-#: ../data/glade/main.glade.h:118
-msgid "Use _system document font"
-msgstr ""
+"Aby bylo jisté, že zadáte své heslo správně, zadejte heslo a pod ním jej pro "
+"potvrzení zadejte znovu."
 
 #: ../data/glade/main.glade.h:119
-msgid "Use default name here from the contact's VCard."
-msgstr ""
+msgid "Use _system document font"
+msgstr "Použít systémové písmo dokumentů"
 
 #: ../data/glade/main.glade.h:120
-msgid "Use system pro_xy"
-msgstr "Používat systémovou _proxy"
+msgid "Use default name here from the contact's VCard."
+msgstr "Použít výchozí jméno z vizitky VCard kontaktu."
 
 #: ../data/glade/main.glade.h:121
-msgid "Use this f_ont:"
-msgstr ""
+msgid "Use system pro_xy"
+msgstr "Používat systémovou pro_xy"
 
 #: ../data/glade/main.glade.h:122
-msgid "Use this to filter the links found"
-msgstr ""
+msgid "Use this f_ont:"
+msgstr "Použít toto písm_o:"
 
 #: ../data/glade/main.glade.h:123
+msgid "Use this to filter the links found"
+msgstr "Použijte jako filtr nalezených odkazů"
+
+#: ../data/glade/main.glade.h:124
 msgid "Version:"
 msgstr "Verze:"
 
-#: ../data/glade/main.glade.h:124
-#, fuzzy
-msgid "View Previous Conversations"
-msgstr "_Konverzace"
-
 #: ../data/glade/main.glade.h:125
-msgid "Web site:"
-msgstr "WWW stránka:"
+msgid "View Previous Conversations"
+msgstr "Zobrazení předchozích rozhovorů"
 
 #: ../data/glade/main.glade.h:126
+msgid "Web site:"
+msgstr "Webové stránky:"
+
+#: ../data/glade/main.glade.h:127
 msgid ""
 "When checked, any certification errors will stop the connection attempt. For "
 "example, if the server's certificate has expired or the server simply "
 "doesn't have one, it is considered unsafe and the connection attempt will "
 "stop."
 msgstr ""
-
-#: ../data/glade/main.glade.h:127
-#, fuzzy
-msgid "Which account do you want to use?"
-msgstr "Jaké jméno uživatele chcete používat?"
+"Pokud je zaškrtnuté, výskyt chyby týkající se certifikátu zastaví pokus o "
+"připojení. Například, když serverovému certifikátu vypršela platnost nebo "
+"server jednoduše žádný certifikát nemá, je to považováno za nebezpečné a "
+"pokus o připojení bude zastaven."
 
 #: ../data/glade/main.glade.h:128
-#, fuzzy
-msgid "You are not subscribed to this contact."
-msgstr ""
-"Nejste přihlášeni ke stavu tohoto kontaktu. Jejich stav získejte kliknutím "
-"na Přihlásit."
+msgid "Which account do you want to use?"
+msgstr "Který účet chcete použít?"
 
 #: ../data/glade/main.glade.h:129
-#, fuzzy
-msgid "_About"
-msgstr "_Přijmout"
+msgid "You are not subscribed to this contact."
+msgstr "Pro tento kontakt nejste schválen."
 
 #: ../data/glade/main.glade.h:130
+msgid "_About"
+msgstr "O _aplikaci"
+
+#: ../data/glade/main.glade.h:131
 msgid "_Accept"
 msgstr "_Přijmout"
 
-#: ../data/glade/main.glade.h:131
-#, fuzzy
+#: ../data/glade/main.glade.h:132
 msgid "_Accounts"
-msgstr "_Přijmout"
-
-#: ../data/glade/main.glade.h:133
-#, fuzzy
-msgid "_Add to status message list"
-msgstr "Přednastavené zprávy o stavu"
+msgstr "Úč_ty"
 
 #: ../data/glade/main.glade.h:134
-#, fuzzy
-msgid "_Advanced"
-msgstr "_Přidat"
+msgid "_Add to status message list"
+msgstr "Přid_at do seznamu zpráv o stavu"
 
 #: ../data/glade/main.glade.h:135
-msgid "_Birthday:"
-msgstr ""
+msgid "_Advanced"
+msgstr "_Pokročilé"
 
 #: ../data/glade/main.glade.h:136
-#, fuzzy
-msgid "_Contents"
-msgstr "Připojit"
+msgid "_Birthday:"
+msgstr "_Datum narození:"
 
 #: ../data/glade/main.glade.h:137
-msgid "_Deny"
-msgstr "_Odmítnout"
+msgid "_Contents"
+msgstr "_Obsah"
 
 #: ../data/glade/main.glade.h:138
-#, fuzzy
-msgid "_Description:"
-msgstr "Popis"
+msgid "_Deny"
+msgstr "O_dmítnout"
 
 #: ../data/glade/main.glade.h:139
-#, fuzzy
-msgid "_Email:"
-msgstr "E-mail"
+msgid "_Description:"
+msgstr "_Popis:"
 
 #: ../data/glade/main.glade.h:140
-msgid "_Enable spell checking"
-msgstr ""
+msgid "_Email:"
+msgstr "_E-mail:"
 
 #: ../data/glade/main.glade.h:141
-#, fuzzy
-msgid "_Enter the name or contact ID of the person you want to chat to below:"
-msgstr "Zadejte ID uživatele, kterému chcete odeslat zprávu."
+msgid "_Enable spell checking"
+msgstr "_Zapnout kontrolu pravopisu"
 
 #: ../data/glade/main.glade.h:142
-#, fuzzy
-msgid "_For"
-msgstr "_Port:"
+msgid "_Enter the name or contact ID of the person you want to chat to below:"
+msgstr "Zadejte jméno nebo ID kontaktu osoby, se kterou chcete diskutovat:"
 
 #: ../data/glade/main.glade.h:143
-msgid "_Force older secure connection method"
-msgstr ""
+msgid "_For"
+msgstr "_Co"
 
 #: ../data/glade/main.glade.h:144
-#, fuzzy
-msgid "_Group:"
-msgstr "Skupina"
+msgid "_Force older secure connection method"
+msgstr "Vynutit použití _staršího bezpečného připojení"
 
 #: ../data/glade/main.glade.h:145
-msgid "_Help"
-msgstr ""
+msgid "_Group:"
+msgstr "_Skupina:"
 
 #: ../data/glade/main.glade.h:146
-#, fuzzy
-msgid "_Location:"
-msgstr "_Konverzace"
+msgid "_Help"
+msgstr "_Nápověda"
 
 #: ../data/glade/main.glade.h:147
-#, fuzzy
-msgid "_Name:"
-msgstr "Jméno:"
+msgid "_Location:"
+msgstr "U_místění:"
 
 #: ../data/glade/main.glade.h:148
-msgid "_New Message..."
-msgstr "_Nová zpráva..."
+msgid "_Name:"
+msgstr "_Jméno:"
 
-#: ../data/glade/main.glade.h:150
-#, fuzzy
-msgid "_Open"
-msgstr "_Otevřít odkaz"
+#: ../data/glade/main.glade.h:149
+msgid "_New Message..."
+msgstr "_Nová zpráva…"
 
 #: ../data/glade/main.glade.h:151
-msgid "_Open new chats in separate windows"
-msgstr ""
+msgid "_Open"
+msgstr "_Otevřít"
 
 #: ../data/glade/main.glade.h:152
+msgid "_Open new chats in separate windows"
+msgstr "_Otevírat nové diskuze v samostatných oknech"
+
+#: ../data/glade/main.glade.h:153
 msgid "_Password:"
 msgstr "_Heslo:"
 
-#: ../data/glade/main.glade.h:153
-#, fuzzy
-msgid "_Personal Information"
-msgstr "Osobní informace"
-
 #: ../data/glade/main.glade.h:154
-#, fuzzy
-msgid "_Play sound when messages arrive"
-msgstr "Přehrávat zvuk, když přijdou zprávy"
+msgid "_Personal Information"
+msgstr "Osobní údaje"
 
 #: ../data/glade/main.glade.h:155
-#, fuzzy
+msgid "_Play sound when messages arrive"
+msgstr "_Přehrávat zvuk, když přijdou zprávy"
+
+#: ../data/glade/main.glade.h:156
 msgid "_Port:"
 msgstr "_Port:"
 
-#: ../data/glade/main.glade.h:156
-msgid "_Preferences"
-msgstr "_Nastavení"
-
 #: ../data/glade/main.glade.h:157
-msgid "_Quit"
-msgstr ""
+msgid "_Preferences"
+msgstr "_Předvolby"
 
 #: ../data/glade/main.glade.h:158
-#, fuzzy
-msgid "_Retrieve"
-msgstr "_Odstranit"
+msgid "_Quit"
+msgstr "_Ukončit"
 
-#: ../data/glade/main.glade.h:160
+#: ../data/glade/main.glade.h:159
+msgid "_Retrieve"
+msgstr "_Získat"
+
+#: ../data/glade/main.glade.h:161
 msgid "_Show Contact List"
 msgstr "_Zobrazit seznam kontaktů"
 
-#: ../data/glade/main.glade.h:161
-msgid "_Subscribe"
-msgstr "_Přihlásit"
-
 #: ../data/glade/main.glade.h:162
+msgid "_Subscribe"
+msgstr "_Schválit"
+
+#: ../data/glade/main.glade.h:163
 msgid "_Use encryption"
 msgstr "Po_užívat šifrování"
 
-#: ../data/glade/main.glade.h:163
-#, fuzzy
+#: ../data/glade/main.glade.h:164
 msgid "_Use for chat rooms"
-msgstr "Gossip - Upravit skupinové diskuse"
-
-#: ../data/glade/main.glade.h:165
-#, fuzzy
-msgid "_Web site:"
-msgstr "WWW stránka:"
+msgstr "Po_užít pro diskuzní místnosti"
 
 #: ../data/glade/main.glade.h:166
-#, fuzzy
+msgid "_Web site:"
+msgstr "_Webové stránky:"
+
+#: ../data/glade/main.glade.h:167
 msgid "jabber account settings"
-msgstr "<b>Nastavení účtu</b>"
+msgstr "nastavení účtu jabber"
 
 #. This is the text that should appear on a menu title. Don't include the prefix 'menu title|' in the translation.
-#: ../data/glade/main.glade.h:168
+#: ../data/glade/main.glade.h:169
 msgid "menu title|_Chat"
-msgstr ""
+msgstr "_Diskuze"
 
 #, fuzzy
 #~ msgid "translator-credits"
@@ -3130,3 +3072,4 @@ msgstr ""
 
 #~ msgid "Which protocol would you like to set up? "
 #~ msgstr "Který protokol chcete nastavit? "
+
