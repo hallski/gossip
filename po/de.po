@@ -2,14 +2,15 @@
 # Copyright (C) 2003-2005 Free Software Foundation, Inc.
 # Hendrik Richter <naggeldak@gnome-de.org>, 2003, 2006.
 # Frank Arnold <frank@scirocco-5v-turbo.de>, 2005.
-# Mario Blättermann <mariobl@gnome.org>, 2009.
+# Mario Blättermann <mariobl@gnome.org>, 2009, 2010.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Gossip\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-05-17 17:05+0200\n"
-"PO-Revision-Date: 2009-05-17 20:45+0100\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=gossip&component=general\n"
+"POT-Creation-Date: 2009-05-23 23:23+0000\n"
+"PO-Revision-Date: 2010-02-25 11:58+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -275,6 +276,7 @@ msgstr ""
 #: ../libgossip/gossip-chatroom.c:1324
 msgid "Chatroom reserved nick names must be used on this server"
 msgstr ""
+"Auf diesem Server müssen auf Chaträume begrenzte Spitznamen benutzt werden"
 
 #: ../libgossip/gossip-chatroom.c:1326
 msgid "You are not on the chatroom's members list"
@@ -358,8 +360,8 @@ msgstr[1] "Mitglieder"
 #: ../libgossip/gossip-chatroom.c:1382
 msgid "Outcast"
 msgid_plural "Outcasts"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Ausgeschlossener"
+msgstr[1] "Ausgeschlossene"
 
 #: ../libgossip/gossip-chatroom.c:1384
 msgid "No affiliation"
@@ -895,7 +897,7 @@ msgstr "_Öffne Link"
 
 #: ../src/gossip-chat-view.c:906
 msgid "Your invitation has been declined"
-msgstr ""
+msgstr "Ihre Einladung wurde abgelehnt"
 
 #: ../src/gossip-chat-view.c:1080
 #, c-format
@@ -913,7 +915,7 @@ msgstr "Akzeptieren"
 
 #: ../src/gossip-chat-view.c:1127
 msgid "Decline"
-msgstr ""
+msgstr "Ablehnen"
 
 #: ../src/gossip-chat-window.c:739 ../src/gossip-chat-window.c:769
 #: ../data/glade/main.glade.h:75
@@ -1032,7 +1034,7 @@ msgstr "E-Mai_l …"
 
 #: ../src/gossip-contact-list.c:362
 msgid "Email contact"
-msgstr ""
+msgstr "E-Mail-Kontakt"
 
 #: ../src/gossip-contact-list.c:366 ../data/glade/chat.glade.h:29
 #: ../data/glade/main.glade.h:165
@@ -1081,7 +1083,7 @@ msgstr "Neue Anfrage zur Dateiübertragung von %s"
 
 #: ../src/gossip-ft-dialog.c:300
 msgid "Your file transfer offer declined."
-msgstr ""
+msgstr "Ihr Angebot zur Dateiübertragung wurde abgelehnt."
 
 #: ../src/gossip-ft-dialog.c:301
 msgid "The other user decided not to continue."
@@ -2284,7 +2286,7 @@ msgstr "Welches Konto wollen Sie verwenden?"
 
 #: ../data/glade/main.glade.h:129
 msgid "You are not subscribed to this contact."
-msgstr ""
+msgstr "Sie wurden von diesem Kontakt nicht akzeptiert."
 
 #: ../data/glade/main.glade.h:130
 msgid "_About"
