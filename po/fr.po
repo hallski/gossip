@@ -17,8 +17,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip 0.7.8\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-05 11:52+0100\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=gossip&component=general\n"
+"POT-Creation-Date: 2009-04-17 15:24+0000\n"
 "PO-Revision-Date: 2008-12-05 12:09+0100\n"
 "Last-Translator: Robert-André Mauchin <zebob.m@pengzone.org>\n"
 "Language-Team: GNOME French Team <gnomefr@traduc.org>\n"
@@ -653,7 +654,7 @@ msgstr ""
 msgid "Accounts"
 msgstr "Comptes"
 
-#: ../src/gossip-accounts-dialog.c:1181
+#: ../src/gossip-accounts-dialog.c:1184
 #, c-format
 msgid ""
 "You are about to remove your %s account!\n"
@@ -662,7 +663,7 @@ msgstr ""
 "Vous êtes sur le point de supprimer votre compte %s !\n"
 "Voulez-vous vraiment continuer ?"
 
-#: ../src/gossip-accounts-dialog.c:1187
+#: ../src/gossip-accounts-dialog.c:1190
 msgid ""
 "Any associated conversations and chat rooms will NOT be removed if you "
 "decide to proceed.\n"
@@ -1233,7 +1234,8 @@ msgstr "Expulsion de %s"
 
 #: ../src/gossip-group-chat.c:2851
 msgid "You have been removed from the room by an administrator."
-msgstr "Vous avez été expulsé(e) de ce salon de discussion par un administrateur."
+msgstr ""
+"Vous avez été expulsé(e) de ce salon de discussion par un administrateur."
 
 #: ../src/gossip-hint.c:86
 msgid "Do not show this again"
@@ -1255,51 +1257,51 @@ msgstr "Date"
 msgid "Link"
 msgstr "Lien"
 
-#: ../src/gossip-main.c:77
+#: ../src/gossip-main.c:68
 msgid "Don't connect on startup"
 msgstr "Ne pas se connecter au démarrage"
 
-#: ../src/gossip-main.c:81
+#: ../src/gossip-main.c:72
 msgid "Allow multiple instances of the application to run at the same time"
 msgstr "Autorise plusieurs instances du programme à s'exécuter en même temps"
 
-#: ../src/gossip-main.c:85
+#: ../src/gossip-main.c:76
 msgid "List the available accounts"
 msgstr "Liste les comptes disponibles"
 
-#: ../src/gossip-main.c:89
+#: ../src/gossip-main.c:80
 msgid "Which account to connect to on startup"
 msgstr "Définit le compte connecté au démarrage"
 
-#: ../src/gossip-main.c:90
+#: ../src/gossip-main.c:81
 msgid "ACCOUNT-NAME"
 msgstr "NOM-DU-COMPTE"
 
-#: ../src/gossip-main.c:100 ../src/gossip-main.c:124
+#: ../src/gossip-main.c:91 ../src/gossip-main.c:107
 msgid "- Gossip Instant Messenger"
 msgstr "- Messagerie instantanée Gossip"
 
-#: ../src/gossip-main.c:140
+#: ../src/gossip-main.c:122
 #, c-format
 msgid "You can not use --no-connect together with --account"
 msgstr "Vous ne pouvez pas utiliser --no-connect avec --account"
 
-#: ../src/gossip-main.c:152
+#: ../src/gossip-main.c:134
 #, c-format
 msgid "No accounts available."
 msgstr "Aucun compte disponible."
 
-#: ../src/gossip-main.c:157
+#: ../src/gossip-main.c:139
 #, c-format
 msgid "Available accounts:"
 msgstr "Comptes disponibles :"
 
-#: ../src/gossip-main.c:167
+#: ../src/gossip-main.c:149
 #, c-format
 msgid "[default]"
 msgstr "[par défaut]"
 
-#: ../src/gossip-main.c:183
+#: ../src/gossip-main.c:165
 #, c-format
 msgid "There is no account with the name '%s'."
 msgstr "Il n'y a pas de compte associé au nom « %s »."
@@ -1506,7 +1508,12 @@ msgstr "%s souhaite être ajouté à votre liste de contacts."
 msgid "Do you want to add %s to your contact list?"
 msgstr "Voulez-vous ajouter %s à votre liste de contacts ?"
 
-#: ../src/gossip-ui-utils.c:412
+#: ../src/gossip-ui-utils.c:445
+msgid "Online help is not supported on this platform."
+msgstr ""
+"L'aide en ligne n'est pas prise en charge sur cette plate-forme."
+
+#: ../src/gossip-ui-utils.c:453
 msgid "Could not display the help contents."
 msgstr "Impossible d'afficher le contenu de l'aide."
 
@@ -1530,24 +1537,24 @@ msgstr "Propre"
 msgid "Blue"
 msgstr "Bleu"
 
-#: ../src/gossip-vcard-dialog.c:222
+#: ../src/gossip-vcard-dialog.c:220
 msgid "Select Your Avatar Image"
 msgstr "Sélectionner votre avatar"
 
-#: ../src/gossip-vcard-dialog.c:225
+#: ../src/gossip-vcard-dialog.c:223
 msgid "No Image"
 msgstr "Aucune image"
 
-#: ../src/gossip-vcard-dialog.c:820
+#: ../src/gossip-vcard-dialog.c:788
 msgid "The server does not seem to be responding."
 msgstr "Le serveur ne semble pas répondre."
 
-#: ../src/gossip-vcard-dialog.c:821
+#: ../src/gossip-vcard-dialog.c:789
 msgid "Try again later."
 msgstr "Réessayez plus tard."
 
 #. Birthday chooser
-#: ../src/gossip-vcard-dialog.c:953 ../data/glade/main.glade.h:35
+#: ../src/gossip-vcard-dialog.c:921 ../data/glade/main.glade.h:35
 msgid "C_hange"
 msgstr "_Modifier"
 
@@ -2352,7 +2359,7 @@ msgstr "_Activer le correcteur orthographique"
 #: ../data/glade/main.glade.h:142
 msgid "_Enter the name or contact ID of the person you want to chat to below:"
 msgstr ""
-"Saisissez le nom ou l'identifiant de la personne avec qui vous souhaitez "
+"_Saisissez le nom ou l'identifiant de la personne avec qui vous souhaitez "
 "discuter ci-dessous :"
 
 #: ../data/glade/main.glade.h:143
