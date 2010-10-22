@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: Gossip\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gossip&component=general\n"
-"POT-Creation-Date: 2009-05-23 23:23+0000\n"
-"PO-Revision-Date: 2010-02-25 11:58+0100\n"
+"POT-Creation-Date: 2010-10-22 12:44+0000\n"
+"PO-Revision-Date: 2010-10-22 21:30+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -1464,7 +1464,8 @@ msgstr "Neue Registrierungsanfrage von %s"
 #: ../src/gossip-subscription-dialog.c:281
 #, c-format
 msgid "Someone wants to be added to your contact list for your '%s' account."
-msgstr "Jemand möchte in Ihre Kontaktliste Ihres »%s«-Kontos aufgenommen werden."
+msgstr ""
+"Jemand möchte in Ihre Kontaktliste Ihres »%s«-Kontos aufgenommen werden."
 
 #: ../src/gossip-subscription-dialog.c:285
 #, c-format
@@ -1658,6 +1659,7 @@ msgstr "_Reiter"
 #.
 #. This is the text that should appear on a menu title. Don't include the prefix 'menu title|' in the translation.
 #: ../data/glade/chat.glade.h:32 ../data/glade/main.glade.h:171
+msgctxt "yes"
 msgid "menu title|_Edit"
 msgstr "_Bearbeiten"
 
@@ -2428,6 +2430,7 @@ msgstr "Jabber-Kontoeinstellungen"
 
 #. This is the text that should appear on a menu title. Don't include the prefix 'menu title|' in the translation.
 #: ../data/glade/main.glade.h:169
+msgctxt "yes"
 msgid "menu title|_Chat"
 msgstr "_Unterhaltung"
 
