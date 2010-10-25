@@ -5,22 +5,23 @@
 # Ezequiel Pérez <eazel7@yahoo.com.ar>, 2003.
 # Francisco Javier F. Serrador <serrador@cvs.gnome.org>, 2003, 2004, 2006.
 # Maria Majadas <maria.majadas@hispalinux.es>, 2005, 2006.
-# Daniel Mustieles <daniel.mustieles@ie.edu>, 2008.
 # Jorge González <jorgegonz@svn.gnome.org>, 2007, 200, 2009.
+# Daniel Mustieles <daniel.mustieles@gmail.com>, 2008, 2010.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip.HEAD\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gossip&component=general\n"
-"POT-Creation-Date: 2009-01-02 21:01+0000\n"
-"PO-Revision-Date: 2009-04-12 17:11+0200\n"
-"Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
+"POT-Creation-Date: 2010-10-22 19:34+0000\n"
+"PO-Revision-Date: 2010-10-25 13:35+0200\n"
+"Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 1.11.4\n"
-"Plural-Forms:  nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../gossip.desktop.in.in.h:1
 msgid "Gossip Instant Messenger"
@@ -1652,6 +1653,7 @@ msgstr "_Solapas"
 #.
 #. This is the text that should appear on a menu title. Don't include the prefix 'menu title|' in the translation.
 #: ../data/glade/chat.glade.h:32 ../data/glade/main.glade.h:171
+msgctxt "yes"
 msgid "menu title|_Edit"
 msgstr "_Editar"
 
@@ -2423,6 +2425,7 @@ msgstr "ajustes de la cuenta Jabber"
 
 #. This is the text that should appear on a menu title. Don't include the prefix 'menu title|' in the translation.
 #: ../data/glade/main.glade.h:169
+msgctxt "yes"
 msgid "menu title|_Chat"
 msgstr "_Chat"
 
