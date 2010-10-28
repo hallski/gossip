@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: gossip 0.7.8\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gossip&component=general\n"
-"POT-Creation-Date: 2009-04-17 15:24+0000\n"
+"POT-Creation-Date: 2010-10-22 12:44+0000\n"
 "PO-Revision-Date: 2008-12-05 12:09+0100\n"
 "Last-Translator: Robert-André Mauchin <zebob.m@pengzone.org>\n"
 "Language-Team: GNOME French Team <gnomefr@traduc.org>\n"
@@ -1510,8 +1510,7 @@ msgstr "Voulez-vous ajouter %s à votre liste de contacts ?"
 
 #: ../src/gossip-ui-utils.c:445
 msgid "Online help is not supported on this platform."
-msgstr ""
-"L'aide en ligne n'est pas prise en charge sur cette plate-forme."
+msgstr "L'aide en ligne n'est pas prise en charge sur cette plate-forme."
 
 #: ../src/gossip-ui-utils.c:453
 msgid "Could not display the help contents."
@@ -1677,6 +1676,7 @@ msgstr "_Onglets"
 #.
 #. This is the text that should appear on a menu title. Don't include the prefix 'menu title|' in the translation.
 #: ../data/glade/chat.glade.h:32 ../data/glade/main.glade.h:171
+msgctxt "yes"
 msgid "menu title|_Edit"
 msgstr "É_dition"
 
@@ -2452,131 +2452,7 @@ msgstr "paramètres de compte jabber"
 
 #. This is the text that should appear on a menu title. Don't include the prefix 'menu title|' in the translation.
 #: ../data/glade/main.glade.h:169
+msgctxt "yes"
 msgid "menu title|_Chat"
 msgstr "_Discussion"
 
-#~ msgid ""
-#~ "Gossip is free software; you can redistribute it and/or modify it under "
-#~ "the terms of the GNU General Public License as published by the Free "
-#~ "Software Foundation; either version 2 of the License, or (at your option) "
-#~ "any later version."
-#~ msgstr ""
-#~ "Gossip est un logiciel libre ; vous pouvez le redistribuer et/ou le "
-#~ "modifier selon les termes de la Licence Publique Générale GNU, telle que "
-#~ "publiée par la Free Software Foundation ; version 2 de la licence ou (à "
-#~ "votre discrétion) toute version ultérieure."
-
-#~ msgid ""
-#~ "Gossip is distributed in the hope that it will be useful, but WITHOUT ANY "
-#~ "WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
-#~ "FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
-#~ "details."
-#~ msgstr ""
-#~ "Gossip est distribué dans l'espoir qu'il sera utile, mais SANS AUCUNE "
-#~ "GARANTIE ; sans même la garantie implicite de VALEUR MARCHANDE ou "
-#~ "D'ADÉQUATION À UN BESOIN PARTICULIER. Pour plus de détails, voir la "
-#~ "Licence Publique Générale GNU."
-
-#~ msgid ""
-#~ "You should have received a copy of the GNU General Public License along "
-#~ "with Gossip; if not, write to the Free Software Foundation, Inc., 51 "
-#~ "Franklin Street, Fifth Floor, Boston, MA 02110-130159 USA"
-#~ msgstr ""
-#~ "Un exemplaire de la Licence Publique Générale GNU doit être fourni avec "
-#~ "Gossip ; si ce n'est pas le cas, écrivez à la Free Software Foundation, "
-#~ "Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-130159 USA"
-
-#~ msgid "translator-credits"
-#~ msgstr ""
-#~ "Frédéric Brin <duckx@mezimail.com>\n"
-#~ "Lionel Henry <yoplait@tuxfamily.org>\n"
-#~ "Laurent Richard <laurent.richard@lilit.be>\n"
-#~ "Christophe Merlet <redfox@redfoxcenter.org>\n"
-#~ "Audrey Simons <asimons@redhat.com>\n"
-#~ "Quentin Delance <quentin.delance@laposte.net>\n"
-#~ "Claude Paroz <claude@2xlibre.net>\n"
-#~ "Jonathan Ernst <jonathan@ernstfamily.ch>\n"
-#~ "Stéphane Raimbault <stephane.raimbault@gmail.com>"
-
-#~ msgid ""
-#~ "Please enter a new password for this account:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Veuillez saisir un nouveau mot de passe pour ce compte :\n"
-#~ "%s"
-
-#~ msgid "Auto Connect"
-#~ msgstr "Connexion automatique"
-
-#~ msgid "Connecting..."
-#~ msgstr "Connexion..."
-
-#~ msgid "<b>Topic:</b>"
-#~ msgstr "<b>Sujet :</b>"
-
-#~ msgid "Topic: %s"
-#~ msgstr "Sujet : %s"
-
-#~ msgid "Change"
-#~ msgstr "Modifier"
-
-#~ msgid "Change _Topic..."
-#~ msgstr "Changer de _sujet..."
-
-#~ msgid "<b>Account</b>"
-#~ msgstr "<b>Compte</b>"
-
-#~ msgid "Forget password and clear the entry."
-#~ msgstr "Oublier le mot de passe et effacer la zone."
-
-#~ msgid "Imendio "
-#~ msgstr "Imendio"
-
-#~ msgid "Login I_D:"
-#~ msgstr "I_D de connexion :"
-
-#~ msgid ""
-#~ "Populate from your desktop personal details (set in the Evolution email "
-#~ "client or the About Me application)."
-#~ msgstr ""
-#~ "Renseigner avec les informations issues de vos données personnelles "
-#~ "(définies dans la messagerie Evolution ou l'application À propos de moi)."
-
-#~ msgid "Reso_urce:"
-#~ msgstr "Resso_urce :"
-
-#~ msgid "Status"
-#~ msgstr "État"
-
-#~ msgid "Synchroni_ze when saving"
-#~ msgstr "Synchroni_ser à l'enregistrement"
-
-#~ msgid ""
-#~ "Your desktop personal information can be used here to fill in the details "
-#~ "below.\n"
-#~ "Similarly, you can choose to set this information which is used by the "
-#~ "email \n"
-#~ "client and other desktop applications. "
-#~ msgstr ""
-#~ "Vos informations de bureau personnelles peuvent êtres utilisées pour\n"
-#~ "compléter les informations ci-dessous. \n"
-#~ "De la même manière, vous avez la possibilité d'utiliser les informations\n"
-#~ "issues de votre client de messagerie ou une autre application."
-
-#~ msgid "_Full Name:"
-#~ msgstr "_Nom complet :"
-
-#~ msgid "_Nick Name:"
-#~ msgstr "Pseud_onyme :"
-
-#~ msgid "_Quit Message:"
-#~ msgstr "Message de _déconnexion :"
-
-#~ msgid "_Retrieve From Desktop"
-#~ msgstr "_Récupérer depuis le bureau"
-
-#~ msgid "irc account settings"
-#~ msgstr "paramètres de compte irc"
-
-#~ msgid "msn account settings"
-#~ msgstr "paramètres de compte msn"
