@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gossip\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gossip&component=general\n"
-"POT-Creation-Date: 2009-09-13 14:38+0000\n"
-"PO-Revision-Date: 2009-12-01 19:06+0100\n"
+"POT-Creation-Date: 2010-10-22 12:44+0000\n"
+"PO-Revision-Date: 2010-10-30 07:58+0100\n"
 "Last-Translator: Andrej Žnidaršič <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
@@ -1646,8 +1646,10 @@ msgstr "_Zavihki"
 #. This is the text that should appear on a menu title. Don't include the prefix 'menu title|' in the translation.
 #: ../data/glade/chat.glade.h:32
 #: ../data/glade/main.glade.h:171
+#| msgid "menu title|_Edit"
+msgctxt "yes"
 msgid "menu title|_Edit"
-msgstr "_Uredi"
+msgstr "menu title|_Uredi"
 
 #: ../data/glade/file-transfer.glade.h:1
 msgid "Contact ID:"
@@ -2349,6 +2351,8 @@ msgstr "nastavitve jabber računa"
 
 #. This is the text that should appear on a menu title. Don't include the prefix 'menu title|' in the translation.
 #: ../data/glade/main.glade.h:169
+#| msgid "menu title|_Chat"
+msgctxt "yes"
 msgid "menu title|_Chat"
-msgstr "_Klepet"
+msgstr "menu title|_Klepet"
 
