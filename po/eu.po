@@ -8,8 +8,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: eu\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-18 22:30+0100\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=gossip&component=general\n"
+"POT-Creation-Date: 2010-11-18 21:26+0000\n"
 "PO-Revision-Date: 2010-11-18 22:31+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -36,7 +37,8 @@ msgid "Chat window theme"
 msgstr "Berriketako leihoaren gaia"
 
 #: ../gossip.schemas.in.h:3
-msgid "Comma separated list of spell checker languages to use (e.g. en, fr, nl)."
+msgid ""
+"Comma separated list of spell checker languages to use (e.g. en, fr, nl)."
 msgstr ""
 "Komaz bereiztu erabiltzea nahi diren hizkuntzen zuzentzaile ortografikoen "
 "zerrenda (adib. de, ca, eu)."
@@ -156,7 +158,8 @@ msgstr ""
 "ez."
 
 #: ../gossip.schemas.in.h:29
-msgid "Whether or not to convert smileys into graphical images in conversations."
+msgid ""
+"Whether or not to convert smileys into graphical images in conversations."
 msgstr ""
 "Elkarrizketetan smiley-ak aurpegiera grafikoetara bihurtuko diren ala ez "
 "adierazten du."
@@ -291,7 +294,8 @@ msgstr "Ekintza hau debekatuta dago"
 
 #: ../libgossip/gossip-chatroom.c:1338
 msgid "The remote conference server did not respond in a sensible time"
-msgstr "Urruneko solasaldiko zerbitzariak ez du erantzun denboraldi handi batean"
+msgstr ""
+"Urruneko solasaldiko zerbitzariak ez du erantzun denboraldi handi batean"
 
 #: ../libgossip/gossip-chatroom.c:1340
 msgid "Joining the chatroom was canceled"
@@ -492,7 +496,8 @@ msgstr "Zerbitzariaren helbidea ezin izan da ebatzi."
 
 #: ../libgossip/gossip-jabber-utils.c:485
 msgid "Account requires a password to authenticate and none was given."
-msgstr "Kontuak pasahitz bat behar du autentifikatzeko, baina ez da pasahitzik eman."
+msgstr ""
+"Kontuak pasahitz bat behar du autentifikatzeko, baina ez da pasahitzik eman."
 
 #: ../libgossip/gossip-jabber-utils.c:488
 msgid "Connection timed out."
@@ -880,8 +885,10 @@ msgstr "Uko egin dio zure gonbiteari"
 
 #: ../src/gossip-chat-view.c:1080
 #, c-format
-msgid "You have been invited to join a chat conference with '%s' in the room '%s'"
-msgstr "Berriketako solasaldi batera gonbidatu zaituzte '%s'(r)ekin '%s' gelan."
+msgid ""
+"You have been invited to join a chat conference with '%s' in the room '%s'"
+msgstr ""
+"Berriketako solasaldi batera gonbidatu zaituzte '%s'(r)ekin '%s' gelan."
 
 #: ../src/gossip-chat-view.c:1096
 msgid "Reason: "
@@ -1637,6 +1644,7 @@ msgstr "_Fitxak"
 #.
 #. This is the text that should appear on a menu title. Don't include the prefix 'menu title|' in the translation.
 #: ../data/glade/chat.glade.h:32 ../data/glade/main.glade.h:171
+msgctxt "yes"
 msgid "menu title|_Edit"
 msgstr "_Editatu"
 
@@ -1681,7 +1689,8 @@ msgid "Edit Favorite Room"
 msgstr "Editatu gogoko gela"
 
 #: ../data/glade/group-chat.glade.h:5
-msgid "Enter the room name to join here or click on one or more rooms in the list."
+msgid ""
+"Enter the room name to join here or click on one or more rooms in the list."
 msgstr ""
 "Idatzi gelaren izena bertara elkartzeko edo egin klik gela batean edo "
 "gehiagotan zerrendan."
@@ -1723,13 +1732,15 @@ msgid "S_erver:"
 msgstr "_Zerbitzaria:"
 
 #: ../data/glade/group-chat.glade.h:16
-msgid "Show more information about chatrooms found and make the window resizable."
+msgid ""
+"Show more information about chatrooms found and make the window resizable."
 msgstr ""
 "Erakutsi aurkitutako berriketa-gelen informazio gehiago eta leihoa tamainaz "
 "aldagarria egin."
 
 #: ../data/glade/group-chat.glade.h:17
-msgid "This list represents all chat rooms hosted on the server you have entered."
+msgid ""
+"This list represents all chat rooms hosted on the server you have entered."
 msgstr ""
 "Zerrenda honek emandako zerbitzarian ostatutako berriketa-gela guztiak "
 "adierazten ditu."
@@ -2001,13 +2012,15 @@ msgid "I_gnore security warnings"
 msgstr "_Ez ikusi egin segurtasuneko abisuei"
 
 #: ../data/glade/main.glade.h:64
-msgid "If you chose to decide later you will be asked the next time you log on."
+msgid ""
+"If you chose to decide later you will be asked the next time you log on."
 msgstr ""
 "Geroago erabakitzea hautatu baduzu, saioa hasten duzun hurrengo aldian "
 "galdetuko zaizu."
 
 #: ../data/glade/main.glade.h:65
-msgid "Import your personal information from your desktop settings and use it here"
+msgid ""
+"Import your personal information from your desktop settings and use it here"
 msgstr ""
 "Inportatu zure informazio pertsonala mahaigaineko ezarpenetatik eta erabili "
 "hemen"
@@ -2197,7 +2210,8 @@ msgid "This name will be used to identify you in chat windows"
 msgstr "Izen hau zu identifikatzeko erabiliko da berriketako leihoetan."
 
 #: ../data/glade/main.glade.h:114
-msgid "This name will be used to identify you when new contacts lookup your details"
+msgid ""
+"This name will be used to identify you when new contacts lookup your details"
 msgstr ""
 "Izen hau zu identifikatzeko erabiliko da kontaktu berriek zure xehetasunak "
 "begiratzean."
@@ -2206,7 +2220,8 @@ msgstr ""
 msgid ""
 "To make sure your password is set correctly, enter your password and then "
 "confirm it below."
-msgstr "Pasahitza zuzena dela ziurtatzeko, idatzi pasahitza eta gero berretsi behean."
+msgstr ""
+"Pasahitza zuzena dela ziurtatzeko, idatzi pasahitza eta gero berretsi behean."
 
 #: ../data/glade/main.glade.h:119
 msgid "Use _system document font"
@@ -2398,6 +2413,6 @@ msgstr "jabber kontuaren ezarpenak"
 
 #. This is the text that should appear on a menu title. Don't include the prefix 'menu title|' in the translation.
 #: ../data/glade/main.glade.h:169
+msgctxt "yes"
 msgid "menu title|_Chat"
 msgstr "_Berriketa"
-
