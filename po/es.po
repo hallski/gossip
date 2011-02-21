@@ -6,15 +6,15 @@
 # Francisco Javier F. Serrador <serrador@cvs.gnome.org>, 2003, 2004, 2006.
 # Maria Majadas <maria.majadas@hispalinux.es>, 2005, 2006.
 # Jorge González <jorgegonz@svn.gnome.org>, 2007, 200, 2009.
-# Daniel Mustieles <daniel.mustieles@gmail.com>, 2008, 2010.
+# Daniel Mustieles <daniel.mustieles@gmail.com>, 2008, 2010, 2011.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip.HEAD\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gossip&component=general\n"
-"POT-Creation-Date: 2010-10-22 19:34+0000\n"
-"PO-Revision-Date: 2010-10-25 13:35+0200\n"
+"POT-Creation-Date: 2010-10-25 14:19+0000\n"
+"PO-Revision-Date: 2011-02-21 10:07+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -1588,11 +1588,11 @@ msgstr "Unirse a _nuevo…"
 
 #: ../data/glade/chat.glade.h:12
 msgid "Move Tab _Left"
-msgstr "Mover solapa a la _izquierda"
+msgstr "Mover pestaña a la _izquierda"
 
 #: ../data/glade/chat.glade.h:13
 msgid "Move Tab _Right"
-msgstr "Mover solapa a la _derecha"
+msgstr "Mover pestaña a la _derecha"
 
 #: ../data/glade/chat.glade.h:14
 msgid "Select who would you like to invite:"
@@ -1624,11 +1624,11 @@ msgstr "_Copiar"
 
 #: ../data/glade/chat.glade.h:22
 msgid "_Detach Tab"
-msgstr "_Desacoplar solapa"
+msgstr "_Desacoplar pestaña"
 
 #: ../data/glade/chat.glade.h:23
 msgid "_Next Tab"
-msgstr "Solapa _siguiente"
+msgstr "Pestaña _siguiente"
 
 #: ../data/glade/chat.glade.h:24
 msgid "_Paste"
@@ -1636,7 +1636,7 @@ msgstr "_Pegar"
 
 #: ../data/glade/chat.glade.h:25
 msgid "_Previous Tab"
-msgstr "Solapa _anterior"
+msgstr "Pestaña _anterior"
 
 #: ../data/glade/chat.glade.h:26 ../data/glade/main.glade.h:160
 msgid "_Room"
@@ -1648,7 +1648,7 @@ msgstr "_Mostrar contactos"
 
 #: ../data/glade/chat.glade.h:28
 msgid "_Tabs"
-msgstr "_Solapas"
+msgstr "Pe_stañas"
 
 #.
 #. This is the text that should appear on a menu title. Don't include the prefix 'menu title|' in the translation.
