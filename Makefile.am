@@ -1,9 +1,5 @@
 SUBDIRS = data libloudermouth libgossip src po peekaboo
 
-if ENABLE_SK
-SUBDIRS += help
-endif
-
 desktop_in_files=gossip.desktop.in
 desktop_files=$(desktop_in_files:.desktop.in=.desktop)
 @INTLTOOL_DESKTOP_RULE@
@@ -29,7 +25,6 @@ EXTRA_DIST = 			\
 	CONTRIBUTORS            \
 	xmldocs.make            \
 	omf.make                \
-	gnome-doc-utils.make	\
 	$(desktop_in_files)	\
 	$(desktop_files)	\
 	$(schemas_in_files)	\
@@ -40,7 +35,6 @@ DISTCLEANFILES = 		\
 	intltool-extract	\
 	intltool-merge		\
 	intltool-update		\
-	gnome-doc-utils.make	\
 	$(desktop_files)	\
 	$(schemas_DATA)
 

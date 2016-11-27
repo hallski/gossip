@@ -3,12 +3,11 @@
 
 : ${AUTOCONF=autoconf}
 : ${AUTOHEADER=autoheader}
-: ${AUTOMAKE=automake-1.9}
-: ${ACLOCAL=aclocal-1.9}
+: ${AUTOMAKE=automake-1.15}
+: ${ACLOCAL=aclocal-1.15}
 : ${LIBTOOLIZE=libtoolize}
 : ${INTLTOOLIZE=intltoolize}
 : ${LIBTOOL=libtool}
-: ${GNOME_DOC_PREPARE=gnome-doc-prepare}
 
 srcdir=`dirname $0`
 test -z "$srcdir" && srcdir=.
@@ -36,14 +35,6 @@ DIE=0
     echo "You must have \`intltoolize' installed to compile $PROJECT."
     echo "Get ftp://ftp.gnome.org/pub/GNOME/stable/sources/intltool/intltool-0.35.tar.gz"
     echo "(or a newer version if it is available)"
-    DIE=1
-  }
-}
-
-(grep "^GNOME_DOC_INIT" $srcdir/$CONFIGURE >/dev/null) && {
-  ($GNOME_DOC_PREPARE --version) < /dev/null > /dev/null 2>&1 || {
-    echo
-    echo "You must have \`gnome-doc-prepare' installed to compile $PROJECT."
     DIE=1
   }
 }

@@ -29,7 +29,7 @@ AC_DEFUN([IDT_COMPILE_WARNINGS],[
 	warning_flags="-Wall -Wunused -Wmissing-prototypes -Wmissing-declarations"
 	;;
     maximum|error)
-	warning_flags="-Wall -Wunused -Wchar-subscripts -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith"
+	warning_flags="-Wall -Wunused -Wchar-subscripts -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wno-unused-but-set-variable -Wno-unused-const-variable -Wno-deprecated-declarations -Wno-logical-not-parentheses"
 	CFLAGS="$warning_flags $CFLAGS"
 	for option in -Wno-sign-compare -Wno-pointer-sign; do
 		SAVE_CFLAGS="$CFLAGS"

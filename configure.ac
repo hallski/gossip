@@ -4,7 +4,7 @@ AC_COPYRIGHT([Copyright (C) 2003-2008 Imendio AB])
 
 AC_CONFIG_SRCDIR(src/gossip-app.h)
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(1.9 dist-bzip2 no-define)
+AM_INIT_AUTOMAKE(1.15 dist-bzip2 no-define)
 
 AM_MAINTAINER_MODE
 
@@ -19,7 +19,6 @@ AC_PATH_XTRA
 AC_PATH_PROG(GCONFTOOL, gconftool-2)
 AM_GCONF_SOURCE_2
 
-GNOME_DOC_INIT
 IT_PROG_INTLTOOL([0.35.0])
 
 AC_PATH_PROG(DBUSBINDINGTOOL, dbus-binding-tool)
@@ -318,40 +317,6 @@ dnl -----------------------------------------------------------
 dnl Check for the XScreenSaver extension (used for autoaway)
 dnl -----------------------------------------------------------
 have_xss="no"
-
-# Only check for XSS under GNOME, it doesn't make sense to find it
-# when we're not using X (like on OSX).
-if test $IGE_PLATFORM = x11; then
-   x_libs="$X_PRE_LIBS $X_LIBS -lX11 $X_EXTRA_LIBS"
-
-   AC_CHECK_FUNC(XScreenSaverQueryInfo, [
-      have_xss="yes"], [
-      save_LIBS=$LIBS
-      LIBS="$LIBS $X_PRE_LIBS $X_LIBS -lXss -lXext -lX11"
-      AC_CHECK_LIB(Xss, XScreenSaverQueryInfo, 
-      [
-         have_xss="yes"
-         XSS_LIBS="$X_PRE_LIBS $X_LIBS -lXss -lXext -lX11"
-	 AC_DEFINE(HAVE_XSS, 1, [Define if we have xss])
-      ], 
-      [
-         LIBS=$save_LIBS
-         LIBS="$LIBS $X_PRE_LIBS $X_LIBS -lXext -lX11"
-         AC_CHECK_LIB(Xext, XScreenSaverQueryInfo, 
-         [
-            have_xss="yes"
-            XSS_LIBS="$X_PRE_LIBS $X_LIBS -lXext -lX11"],[])
-	    AC_DEFINE(HAVE_XSS, 1, [Define if we have xss])
-         ])
-         LIBS=$save_LIBS
-      ])
-
-   AC_SUBST(XSS_LIBS)
-
-   if test x$have_xss != xyes; then
-      AC_MSG_ERROR([You must have xss installed])
-   fi
-fi
 
 
 dnl -----------------------------------------------------------
