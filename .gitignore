@@ -1,7 +1,9 @@
 *~
+\#*\#
 aclocal.m4
 autom4te.cache
 *.bak
+compile
 config.guess
 config.h
 config.h.in
@@ -49,8 +51,15 @@ stamp-h1
 # Gossip specific
 data/glade/chat.gladep
 data/glade/main.gladep
+data/packaging/mac/Info.plist
 gossip.desktop
 gossip.desktop.in
 gossip.schemas
+libgossip/libgossip-marshal.[ch]
+libloudermouth/libloudermouth-marshal.[ch]
 peekaboo/data/GNOME_Peekaboo_Applet.server
 peekaboo/data/GNOME_Peekaboo_Applet.server.in
+src/gossip
+src/gossip-marshal.[ch]
+src/gossip-dbus-glue.h
+src/sounds/gossip.soundlist
