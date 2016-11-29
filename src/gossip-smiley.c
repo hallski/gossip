@@ -59,8 +59,7 @@ gossip_chat_view_get_smiley_text (GossipSmiley smiley)
 
 GtkWidget *
 gossip_chat_view_get_smiley_menu (GCallback    callback,
-                                  gpointer     user_data,
-                                  GtkTooltips *tooltips)
+                                  gpointer     user_data)
 {
     GtkWidget *menu;
     gint       x;
@@ -92,10 +91,7 @@ gossip_chat_view_get_smiley_menu (GCallback    callback,
 
         smiley_text = gossip_chat_view_get_smiley_text (i);
 
-        gtk_tooltips_set_tip (tooltips,
-                              item,
-                              smiley_text,
-                              NULL);
+        gtk_widget_set_tooltip_text (item, smiley_text);
 
         g_object_set_data  (G_OBJECT (item), "smiley_text", (gpointer) smiley_text);
         g_signal_connect (item, "activate", callback, user_data);

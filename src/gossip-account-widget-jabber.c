@@ -738,11 +738,11 @@ account_widget_jabber_register_cb (GossipResult               result,
     gtk_widget_set_sensitive (priv->vbox_settings, TRUE);
 
     toplevel = gtk_widget_get_toplevel (priv->vbox_settings);
-    if (GTK_WIDGET_TOPLEVEL (toplevel) != TRUE || 
-        GTK_WIDGET_TYPE (toplevel) != GTK_TYPE_WINDOW) {
+    if (gtk_widget_is_toplevel (toplevel) != TRUE || 
+        G_OBJECT_TYPE (toplevel) != GTK_TYPE_WINDOW) {
         toplevel = NULL;
     }
-        
+
     if (result == GOSSIP_RESULT_OK) {
         str = _("Successfully registered your new account settings.");
         md = gtk_message_dialog_new (GTK_WINDOW (toplevel),

@@ -463,25 +463,20 @@ gossip_help_show (void)
 }
 
 static void
-link_button_hook (GtkLinkButton *button,
-                  const gchar *link,
-                  gpointer user_data)
+link_button_hook (GtkLinkButton *button, gpointer user_data)
 {
-    gossip_url_show (link);
+    gossip_url_show (gtk_link_button_get_uri(button));
 }
 
 GtkWidget *
 gossip_link_button_new (const gchar *url,
                         const gchar *title)
 {
-    static gboolean hook = FALSE;
+    GtkWidget *button = gtk_link_button_new_with_label (url, title);
 
-    if (!hook) {
-        hook = TRUE;
-        gtk_link_button_set_uri_hook (link_button_hook, NULL, NULL);
-    }
+    g_signal_connect (button, "clicked", G_CALLBACK(link_button_hook), NULL);
 
-    return gtk_link_button_new_with_label (url, title);
+    return button;
 }
 
 /* FIXME: Do this in a proper way at some point, probably in GTK+? */

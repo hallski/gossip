@@ -74,8 +74,6 @@ struct _GossipChatWindowPriv {
     GtkWidget   *dialog;
     GtkWidget   *notebook;
 
-    GtkTooltips *tooltips;
-
     GtkWidget   *menu_bar;
 
     /* Menu items. */
@@ -288,9 +286,6 @@ gossip_chat_window_init (GossipChatWindow *window)
 
     priv = GET_PRIV (window);
 
-    priv->tooltips = g_object_ref (gtk_tooltips_new ());
-    gtk_object_sink (GTK_OBJECT (priv->tooltips));
-
     glade = gossip_glade_get_file ("chat.glade",
                                    "chat_window",
                                    NULL,
@@ -385,8 +380,7 @@ gossip_chat_window_init (GossipChatWindow *window)
     /* Set up smiley menu */
     menu = gossip_chat_view_get_smiley_menu (
         G_CALLBACK (chat_window_edit_insert_smiley_activate_cb),
-        window,
-        priv->tooltips);
+        window);
     gtk_menu_item_set_submenu (GTK_MENU_ITEM (priv->menu_conv_insert_smiley), menu);
 
     /* Set up signals we can't do with glade since we may need to
@@ -517,8 +511,6 @@ gossip_chat_window_finalize (GObject *object)
 
     chat_windows = g_list_remove (chat_windows, window);
     gtk_widget_destroy (priv->dialog);
-
-    g_object_unref (priv->tooltips);
 
     G_OBJECT_CLASS (gossip_chat_window_parent_class)->finalize (object);
 }
@@ -1443,11 +1435,7 @@ chat_window_update_tooltip (GossipChatWindow *window,
     }
 
     widget = g_object_get_data (G_OBJECT (chat), "chat-window-tab-tooltip-widget");
-    gtk_tooltips_set_tip (priv->tooltips,
-                          widget,
-                          str,
-                          NULL);
-
+    gtk_widget_set_tooltip_text (widget, str);
     g_free (str);
 }
 

@@ -55,8 +55,6 @@ typedef struct {
     guint                scroll_timeout_id;
     GossipPresenceState  scroll_state;
     gchar               *scroll_status;
-
-    GtkTooltips         *tooltips;
 } GossipPresenceChooserPriv;
 
 static void     presence_chooser_finalize               (GObject               *object);
@@ -182,8 +180,6 @@ gossip_presence_chooser_init (GossipPresenceChooser *chooser)
     gtk_widget_show (arrow);
     gtk_container_add (GTK_CONTAINER (alignment), arrow);
 
-    priv->tooltips = gtk_tooltips_new ();
-
     g_signal_connect (chooser, "toggled",
                       G_CALLBACK (presence_chooser_toggled_cb),
                       NULL);
@@ -273,9 +269,7 @@ presence_chooser_set_state (GossipPresenceChooser *chooser,
 
     priv->last_state = state;
 
-    gtk_tooltips_set_tip (GTK_TOOLTIPS (priv->tooltips), 
-                          GTK_WIDGET (chooser), 
-                          status, status);
+    gtk_widget_set_tooltip_text (GTK_WIDGET (chooser), status);
 
     presence_chooser_reset_scroll_timeout (chooser);
     g_signal_emit (chooser, signals[CHANGED], 0, state, status);
@@ -453,9 +447,7 @@ presence_chooser_noncustom_activate_cb (GtkWidget             *item,
     status = g_object_get_data (G_OBJECT (item), "status");
     state = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (item), "state"));
 
-    gtk_tooltips_set_tip (GTK_TOOLTIPS (priv->tooltips), 
-                          GTK_WIDGET (chooser), 
-                          status, status);
+    gtk_widget_set_tooltip_text (GTK_WIDGET (chooser), status);
 
     presence_chooser_reset_scroll_timeout (chooser);
     g_signal_emit (chooser, signals[CHANGED], 0, state, status);
@@ -985,9 +977,9 @@ presence_chooser_size_allocate_cb (GtkWidget     *chooser,
     layout = gtk_label_get_layout (GTK_LABEL (priv->label));
 
     if (pango_layout_is_ellipsized (layout)) {
-        gtk_tooltips_enable (priv->tooltips);
+        gtk_widget_set_has_tooltip (chooser, TRUE);
     } else {
-        gtk_tooltips_disable (priv->tooltips);
+        gtk_widget_set_has_tooltip (chooser, FALSE);
     }
 }
 
@@ -1224,9 +1216,7 @@ gossip_presence_chooser_set_status (GossipPresenceChooser *chooser,
 
     gtk_label_set_text (GTK_LABEL (priv->label), status);
 
-    gtk_tooltips_set_tip (GTK_TOOLTIPS (priv->tooltips), 
-                          GTK_WIDGET (chooser), 
-                          status, status);
+    gtk_widget_set_tooltip_text (GTK_WIDGET (chooser), status);
 }
 
 static void

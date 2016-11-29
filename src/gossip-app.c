@@ -116,9 +116,6 @@ struct _GossipAppPriv {
     GHashTable            *errors;
     GHashTable            *reconnects;
 
-    /* Tooltips for all widgets */
-    GtkTooltips           *tooltips;
-
     GtkWidget             *menu_bar;
 
     /* Menu widgets */
@@ -384,9 +381,6 @@ gossip_app_init (GossipApp *singleton_app)
     g_signal_connect (priv->self_presence, "updated",
                       G_CALLBACK (app_presence_updated_cb),
                       NULL);
-
-    priv->tooltips = g_object_ref (gtk_tooltips_new ());
-    gtk_object_sink (GTK_OBJECT (priv->tooltips));
 }
 
 static void
@@ -422,8 +416,6 @@ app_finalize (GObject *object)
     if (priv->popup_menu) {
         gtk_widget_destroy (priv->popup_menu);
     }
-
-    g_object_unref (priv->tooltips);
 
     gossip_conf_shutdown ();
 
@@ -522,8 +514,7 @@ app_setup_throbber (void)
     gtk_toolbar_insert (GTK_TOOLBAR (priv->presence_toolbar), item, -1);
 
     str = _("Show and edit accounts");
-    gtk_tooltips_set_tip (GTK_TOOLTIPS (priv->tooltips),
-                          ebox, str, str);
+    gtk_widget_set_tooltip_text(ebox, str);
 
     g_signal_connect (ebox,
                       "button-press-event",
@@ -1128,7 +1119,7 @@ app_main_window_key_press_event_cb (GtkWidget   *window,
     /* First if we have the find entry up, clear the filter and
      * hide the widgets.
      */
-    if (GTK_WIDGET_VISIBLE (priv->find_hbox)) {
+    if (gtk_widget_get_visible (priv->find_hbox)) {
         gtk_entry_set_text (GTK_ENTRY (priv->find_entry), "");
         gtk_widget_hide (priv->find_hbox);
 

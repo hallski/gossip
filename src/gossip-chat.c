@@ -55,8 +55,6 @@
 struct _GossipChatPriv {
     GossipChatWindow *window;
 
-    GtkTooltips      *tooltips;
-
     GSList           *sent_messages;
     gint              sent_messages_index;
 
@@ -196,8 +194,6 @@ gossip_chat_init (GossipChat *chat)
                   NULL);
 
     priv = GET_PRIV (chat);
-        
-    priv->tooltips = gtk_tooltips_new ();
 
     priv->sent_messages = NULL;
     priv->sent_messages_index = -1;
@@ -601,8 +597,7 @@ chat_text_populate_popup_cb (GtkTextView *view,
 
     smiley_menu = gossip_chat_view_get_smiley_menu (
         G_CALLBACK (chat_insert_smiley_activate_cb),
-        chat,
-        priv->tooltips);
+        chat);
     gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), smiley_menu);
 
     /* Add the spell check menu item. */

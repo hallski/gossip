@@ -80,10 +80,6 @@ gossip_avatar_image_init (GossipAvatarImage *avatar_image)
 
     gtk_container_add (GTK_CONTAINER (avatar_image), priv->image);
 
-    priv->tooltips = gtk_tooltips_new ();
-    g_object_ref (priv->tooltips);
-    gtk_object_sink (GTK_OBJECT (priv->tooltips));
-
     avatar_image_add_filter (avatar_image);
 
     gtk_widget_show (priv->image);
@@ -105,8 +101,6 @@ avatar_image_finalize (GObject *object)
     if (priv->pixbuf) {
         g_object_unref (priv->pixbuf);
     }
-
-    g_object_unref (priv->tooltips);
 
     G_OBJECT_CLASS (gossip_avatar_image_parent_class)->finalize (object);
 }
@@ -150,7 +144,7 @@ avatar_image_add_filter (GossipAvatarImage *avatar_image)
     mask = PropertyChangeMask;
 
     window = GDK_ROOT_WINDOW ();
-    gdkwindow = gdk_xid_table_lookup (window);
+    gdkwindow = gdk_x11_window_lookup_for_display (gdk_display_get_default (), window);
 
     gdk_error_trap_push ();
     if (gdkwindow) {
@@ -323,14 +317,9 @@ gossip_avatar_image_set_pixbuf (GossipAvatarImage *avatar_image,
     gtk_image_set_from_pixbuf (GTK_IMAGE (priv->image), scaled_pixbuf);
 
     if (scaled_pixbuf != priv->pixbuf) {
-        gtk_tooltips_set_tip (priv->tooltips,
-                              GTK_WIDGET (avatar_image),
-                              _("Click to enlarge"),
-                              NULL);
+        gtk_widget_set_tooltip_text (GTK_WIDGET (avatar_image), _("Click to enlarge"));
     } else {
-        gtk_tooltips_set_tip (priv->tooltips,
-                              GTK_WIDGET (avatar_image),
-                              NULL, NULL);
+        gtk_widget_set_has_tooltip (GTK_WIDGET (avatar_image), FALSE);
     }
 
     g_object_unref (scaled_pixbuf);

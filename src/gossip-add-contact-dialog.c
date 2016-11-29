@@ -165,7 +165,7 @@ add_contact_dialog_vcard_cb (GossipResult            result,
     }
 
     /* Select the alias entry */
-    gtk_entry_select_region (GTK_ENTRY (dialog->entry_alias), 0, -1);
+    gtk_editable_select_region (GTK_EDITABLE(dialog->entry_alias), 0, -1);
     gtk_widget_grab_focus (dialog->entry_alias);
 }
 
@@ -221,7 +221,7 @@ add_contact_dialog_id_entry_focus_cb (GtkWidget              *widget,
                               dialog,
                               NULL);
 
-    gtk_widget_hide_all (dialog->vbox_information);
+    gtk_widget_hide (dialog->vbox_information);
     gtk_widget_show (dialog->vbox_information);
     gtk_widget_show (dialog->label_information);
 
@@ -475,7 +475,7 @@ gossip_add_contact_dialog_show (GtkWindow     *parent,
 
     /* Set focus to the entry */
     gtk_entry_set_text (GTK_ENTRY (dialog->entry_group), "");
-    gtk_entry_select_region (GTK_ENTRY (dialog->entry_id), 0, -1);
+    gtk_editable_select_region (GTK_EDITABLE (dialog->entry_id), 0, -1);
 
     if (parent) {
         gtk_window_set_transient_for (GTK_WINDOW (dialog->dialog), parent);

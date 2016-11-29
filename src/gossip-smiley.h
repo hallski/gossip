@@ -154,8 +154,7 @@ static const GossipSmileyPattern smileys[] = {
 GdkPixbuf *  gossip_chat_view_get_smiley_image (GossipSmiley  smiley);
 const gchar *gossip_chat_view_get_smiley_text  (GossipSmiley  smiley);
 GtkWidget *  gossip_chat_view_get_smiley_menu  (GCallback     callback,
-                                                gpointer      user_data,
-                                                GtkTooltips  *tooltips);
+                                                gpointer      user_data);
 GdkPixbuf *  gossip_pixbuf_from_smiley         (GossipSmiley  type,
                                                 GtkIconSize   icon_size);
 

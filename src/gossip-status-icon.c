@@ -380,4 +380,3 @@ gossip_status_icon_update_tooltip (GossipStatusIcon *status_icon)
     gtk_status_icon_set_tooltip (gossip_status_icon_get (),
                                  gossip_event_get_message (event));
 }
-
