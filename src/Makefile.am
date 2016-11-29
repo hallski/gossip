@@ -29,10 +29,6 @@ if HAVE_LIBNOTIFY
 libnotify_sources = gossip-notify.c gossip-notify.h
 endif
 
-if HAVE_PLATFORM_OSX
-dock_sources = gossip-mac-dock.c gossip-mac-dock.h
-endif
-
 # Main application 
 bin_PROGRAMS = gossip
 
@@ -87,7 +83,6 @@ gossip_SOURCES = 				                        	\
 	gossip-sound.c		           gossip-sound.h		   	\
 	gossip-spell.c                     gossip-spell.h                  	\
 	gossip-spell-dialog.c 		   gossip-spell-dialog.h           	\
-	gossip-status-icon.c               gossip-status-icon.h            	\
 	gossip-status-presets.c		   gossip-status-presets.h	   	\
 	gossip-subscription-dialog.c       gossip-subscription-dialog.h	   	\
 	gossip-text-iter.c                 gossip-text-iter.h              	\

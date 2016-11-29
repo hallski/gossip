@@ -408,7 +408,8 @@ gossip_dbus_toggle_roster (GossipDBus  *obj,
                            GError     **error)
 {
     gossip_debug (DEBUG_DOMAIN, "Toggling roster visibility");
-    gossip_app_toggle_visibility ();
+
+    // No-op
 
     return TRUE;
 }

@@ -54,7 +54,6 @@
 #include "gossip-presence-chooser.h"
 #include "gossip-private-chat.h"
 #include "gossip-sound.h"
-#include "gossip-status-icon.h"
 #include "gossip-status-presets.h"
 #include "gossip-subscription-dialog.h"
 #include "gossip-ui-utils.h"
@@ -272,21 +271,6 @@ app_session_protocol_error_cb                (GossipSession         *session,
 static void app_account_password_dialog_show (GossipAccount         *account);
 static void     app_restore_user_accels      (void);
 static void     app_save_user_accels         (void);
-static void     app_show_hide_list_cb        (GtkWidget             *widget,
-                                              GossipApp             *app);
-static void     app_popup_new_message_cb     (GtkWidget             *widget,
-                                              gpointer               user_data);
-static void     
-app_status_icon_popup_menu_cb                (GtkStatusIcon         *status_icon,
-                                              guint                  button,
-                                              guint                  activate_time,
-                                              GossipApp             *app);
-static GtkWidget *
-app_status_icon_create_menu  (GossipApp             *app);
-static void     app_status_icon_create       (void);
-static void     app_setup_dock               (void);
-static gboolean 
-app_status_icon_check_embedded_cb            (gpointer               user_data);
 static void     app_notify_show_offline_cb   (GossipConf            *conf,
                                               const gchar           *key,
                                               gpointer               check_menu_item);
@@ -883,7 +867,6 @@ app_setup (GossipSession *session)
 
     /* Set up notification area / tray. */
     gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring notification area widgets");
-    app_status_icon_create ();
 
     app_setup_presences ();
 
@@ -891,15 +874,10 @@ app_setup (GossipSession *session)
 
     app_restore_main_window_geometry (priv->window);
 
+    gossip_window_present (GTK_WINDOW (priv->window), TRUE);
+
     /* Setup the contact list */
     app_setup_contact_list (sw, show_offline_widget);
-
-    app_setup_dock ();
-
-    /* Set window to be hidden. If doesn't have status icon, show window
-     * and mask "chat_hide_list".
-     */
-    g_timeout_add (200, app_status_icon_check_embedded_cb, NULL);
 }
 
 static gboolean
@@ -1057,18 +1035,6 @@ app_main_window_delete_event_cb (GtkWidget *window,
 
     priv = GET_PRIV (app);
 
-    if (gtk_status_icon_is_embedded (priv->status_icon)) {
-        gossip_hint_show (GOSSIP_PREFS_HINTS_CLOSE_MAIN_WINDOW,
-                          _("Gossip is still running, it is just hidden."),
-                          _("Click on the notification area icon to show Gossip."),
-                          GTK_WINDOW (gossip_app_get_window ()),
-                          NULL, NULL);
-
-        gossip_app_set_visibility (FALSE);
-
-        return TRUE;
-    }
-
     if (app_main_window_quit_confirm (app, window)) {
         /* Don't quit if we have messages open */
         return TRUE;
@@ -1076,10 +1042,7 @@ app_main_window_delete_event_cb (GtkWidget *window,
 
     if (gossip_hint_dialog_show (GOSSIP_PREFS_HINTS_CLOSE_MAIN_WINDOW,
                                  _("You were about to quit!"),
-                                 _("Since no system or notification tray has been "
-                                   "found, this action would normally quit Gossip.\n\n"
-                                   "This is just a reminder, from now on, Gossip will "
-                                   "quit when performing this action unless you uncheck "
+                                 _("Gossip will quit when performing this action unless you uncheck "
                                    "the option below."),
                                  GTK_WINDOW (gossip_app_get_window ()),
                                  NULL, NULL)) {
@@ -1098,6 +1061,12 @@ app_main_window_delete_event_cb (GtkWidget *window,
      *
      * So we just quit.
      */
+
+    gint x, y, w, h;
+    gtk_window_get_size (GTK_WINDOW (priv->window), &w, &h);
+    gtk_window_get_position (GTK_WINDOW (priv->window), &x, &y);
+
+    gossip_geometry_save_for_main_window (x, y, w, h);
 
     return FALSE;
 }
@@ -1124,11 +1093,6 @@ app_main_window_key_press_event_cb (GtkWidget   *window,
         gtk_widget_hide (priv->find_hbox);
 
         return FALSE;
-    }
-
-    /* Second assume we want to hide the window */
-    if (event->keyval == GDK_Escape) {
-        gossip_app_toggle_visibility ();
     }
 
     return FALSE;
@@ -1485,29 +1449,6 @@ app_chat_add_contact_cb (GtkWidget *widget,
     priv = GET_PRIV (app);
 
     gossip_add_contact_dialog_show (GTK_WINDOW (priv->window), NULL);
-}
-
-static void
-app_setup_dock (void)
-{
-#ifdef GDK_WINDOWING_QUARTZ
-    GossipAppPriv *priv;
-    GossipConf    *conf;
-    gboolean       hidden;
-
-    priv = GET_PRIV (app);
-
-    priv->dock = gossip_dock_get ();
-
-    conf = gossip_conf_get ();
-    gossip_conf_get_bool (conf,
-                          GOSSIP_PREFS_UI_MAIN_WINDOW_HIDDEN,
-                          &hidden);
-
-    if (!hidden) {
-        gtk_widget_show (priv->window);
-    }
-#endif
 }
 
 static void
@@ -2002,263 +1943,9 @@ gossip_app_is_window_visible (void)
 }
 
 void
-gossip_app_toggle_visibility (void)
-{
-    GossipAppPriv *priv;
-    gboolean       visible;
-
-    priv = GET_PRIV (app);
-
-    visible = gossip_window_get_is_visible (GTK_WINDOW (priv->window));
-
-    if (visible && gtk_status_icon_is_embedded (priv->status_icon)) {
-        gint x, y, w, h;
-
-        gtk_window_get_size (GTK_WINDOW (priv->window), &w, &h);
-        gtk_window_get_position (GTK_WINDOW (priv->window), &x, &y);
-
-        gossip_geometry_save_for_main_window (x, y, w, h);
-
-        if (priv->size_timeout_id) {
-            g_source_remove (priv->size_timeout_id);
-            priv->size_timeout_id = 0;
-        }
-
-        gtk_widget_hide (priv->window);
-
-        gossip_conf_set_bool (gossip_conf_get (),
-                              GOSSIP_PREFS_UI_MAIN_WINDOW_HIDDEN, TRUE);
-    } else {
-        gint x, y, w, h;
-
-        gossip_geometry_load_for_main_window (&x, &y, &w, &h);
-
-        if (w >= 1 && h >= 1) {
-            /* Use the defaults from the glade file if we
-             * don't have good w, h geometry.
-             */
-            gtk_window_set_default_size (GTK_WINDOW (priv->window), w, h);
-        }
-
-        if (x >= 0 && y >= 0) {
-            /* Let the window manager position it if we
-             * don't have good x, y coordinates.
-             */
-            gtk_window_move (GTK_WINDOW (priv->window), x, y);
-        }
-
-        gossip_window_present (GTK_WINDOW (priv->window), TRUE);
-
-        gossip_conf_set_bool (gossip_conf_get (),
-                              GOSSIP_PREFS_UI_MAIN_WINDOW_HIDDEN, FALSE);
-    }
-}
-
-void
 gossip_app_set_visibility (gboolean visible)
 {
-    GtkWidget *window;
-
-    window = gossip_app_get_window ();
-
-    gossip_conf_set_bool (gossip_conf_get (),
-                          GOSSIP_PREFS_UI_MAIN_WINDOW_HIDDEN,
-                          !visible);
-
-    if (visible) {
-        gossip_window_present (GTK_WINDOW (window), TRUE);
-    } else {
-        gtk_widget_hide (window);
-    }
-}
-
-static void
-app_show_hide_list_cb (GtkWidget *widget,
-                       GossipApp *app)
-{
-    gossip_app_toggle_visibility ();
-}
-
-static void
-app_popup_new_message_cb (GtkWidget *widget,
-                          gpointer   user_data)
-{
-    gossip_new_message_dialog_show (NULL);
-}
-
-static void
-app_status_icon_popup_menu_cb (GtkStatusIcon *status_icon,
-                               guint          button,
-                               guint          activate_time,
-                               GossipApp     *app)
-{
-    GossipAppPriv *priv;
-    GtkWidget     *menu;
-
-    priv = GET_PRIV (app);
-
-    menu = app_status_icon_create_menu (app);
-
-    if (!menu) {
-        /* On Mac, there is no menu (at least for now). */ 
-        return;
-    }
-
-    gtk_menu_popup (GTK_MENU (menu),
-                    NULL, NULL,
-                    gtk_status_icon_position_menu,
-                    priv->status_icon,
-                    button,
-                    activate_time);
-}
-
-static GtkWidget *
-app_status_icon_create_menu (GossipApp *app)
-{
-    GossipAppPriv *priv;
-    GladeXML      *glade;
-    GtkWidget     *menu;
-    GtkWidget     *separator_item;
-    GtkWidget     *message_item;
-    GtkWidget     *show_list_item;
-    guint          connected;
-    gboolean       show;
-
-#ifdef GDK_WINDOWING_QUARTZ
-    /* Unused for now. */
-    return NULL;
-#endif
-
-    priv = GET_PRIV (app);
-
-    glade = gossip_glade_get_file ("main.glade",
-                                   "tray_menu",
-                                   NULL,
-                                   "tray_menu", &menu,
-                                   "tray_show_list", &show_list_item,
-                                   "tray_new_message", &message_item,
-                                   "tray_separator1", &separator_item,
-                                   NULL);
-
-    gossip_glade_connect (glade,
-                          app,
-                          "tray_new_message", "activate", app_popup_new_message_cb,
-                          "tray_quit", "activate", app_chat_quit_cb,
-                          NULL);
-
-    /* Status menu items */
-    gossip_session_count_accounts (priv->session,
-                                   &connected,
-                                   NULL,
-                                   NULL);
-
-    gossip_presence_chooser_insert_menu (
-        GOSSIP_PRESENCE_CHOOSER (priv->presence_chooser),
-        menu, 
-        4, 
-        connected > 0,
-        FALSE);
-    gtk_widget_show_all (menu);
-        
-    /* New message item */
-    gtk_widget_set_sensitive (message_item, connected > 0);
-
-    /* Show/hide check menu item */
-    show = gossip_window_get_is_visible (GTK_WINDOW (priv->window));
-    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (show_list_item), show);
-
-    g_signal_connect (show_list_item, "toggled",
-                      G_CALLBACK (app_show_hide_list_cb), app);
-                
-    g_object_unref (glade);
-
-    return menu;
-}
-
-static void
-app_status_icon_create (void)
-{
-    GossipAppPriv *priv;
-
-    priv = GET_PRIV (app);
-
-    priv->status_icon = gossip_status_icon_get ();
-
-    g_signal_connect (priv->status_icon,
-                      "popup_menu",
-                      G_CALLBACK (app_status_icon_popup_menu_cb),
-                      app);
-
-    gtk_status_icon_set_visible (priv->status_icon, TRUE);
-
-#ifdef HAVE_LIBNOTIFY
-    gossip_notify_set_attach_status_icon (priv->status_icon);
-#endif
-
-    gossip_status_icon_update_tooltip (GOSSIP_STATUS_ICON (priv->status_icon));
-}
-
-#define MAX_CHECKS 5
-
-static gboolean
-app_status_icon_check_embedded_cb (gpointer user_data)
-{
-    static guint    checks = 1;
-    GossipAppPriv  *priv;
-    GtkRequisition  req;
-    gboolean        hidden;
-    gboolean        embedded;
-
-    priv = GET_PRIV (app);
-
-    embedded = gtk_status_icon_is_embedded (gossip_status_icon_get ());
-
-    if (!embedded && checks < MAX_CHECKS) {
-        gossip_debug (DEBUG_DOMAIN_SETUP, 
-                      "Configuring window (status icon not embedded, check %d/%d)", 
-                      checks, MAX_CHECKS);
-        checks++;
-        return TRUE;
-    }
-        
-    if (!embedded) {
-        gossip_debug (DEBUG_DOMAIN_SETUP, 
-                      "Configuring window (status icon not embedded, showing)");
-        hidden = FALSE;
-    } else {
-        GossipConf *conf;
-
-        conf = gossip_conf_get ();
-        gossip_conf_get_bool (conf,
-                              GOSSIP_PREFS_UI_MAIN_WINDOW_HIDDEN,
-                              &hidden);
-        gossip_debug (DEBUG_DOMAIN_SETUP, 
-                      "Configuring window visibility (config says %s)", 
-                      hidden ? "hide it" : "show it");
-    }
-
-    if (!hidden) {
-        gtk_widget_show (priv->window);
-    } else {
-        gdk_notify_startup_complete ();
-    }
-
-    /* This is a hack that sets the minimal size of the window so it doesn't
-     * allow resizing to a smaller width than the menubar takes up. We must
-     * set a minimal size, otherwise the window won't shrink beyond the
-     * longest string in the roster, which will cause the ellipsizing cell
-     * renderer not to work. FIXME: needs to update this on theme/font
-     * change.
-     */
-    gtk_widget_size_request (priv->window, &req);
-    req.width = MAX (req.width, MIN_WIDTH);
-    gtk_widget_set_size_request (priv->window, req.width, -1);
-
-    app_connection_items_update ();
-
-    gossip_debug (DEBUG_DOMAIN_SETUP, "Complete!");
-
-    return FALSE;
+    // No-op
 }
 
 static void
@@ -2845,22 +2532,16 @@ static void
 app_presence_updated_cb (GossipSelfPresence *self_presence, gpointer user_data)
 {
     GossipAppPriv       *priv;
-    GdkPixbuf           *pixbuf;
     GossipPresence      *presence;
     GossipPresenceState  state;
     const gchar         *status;
 
     priv = GET_PRIV (app);
 
-    pixbuf = gossip_self_presence_get_current_pixbuf (gossip_app_get_self_presence ());
-    gtk_status_icon_set_from_pixbuf (priv->status_icon, pixbuf);
-    g_object_unref (pixbuf);
-
     if (!gossip_session_is_connected (priv->session, NULL)) {
         gossip_presence_chooser_set_status (
             GOSSIP_PRESENCE_CHOOSER (priv->presence_chooser),
             _("Offline"));
-        gossip_status_icon_update_tooltip (GOSSIP_STATUS_ICON (priv->status_icon));
         return;
     }
 
@@ -2878,8 +2559,6 @@ app_presence_updated_cb (GossipSelfPresence *self_presence, gpointer user_data)
         (GOSSIP_PRESENCE_CHOOSER (priv->presence_chooser), status);
 
     gossip_session_set_presence (priv->session, presence);
-
-    gossip_status_icon_update_tooltip (GOSSIP_STATUS_ICON (priv->status_icon));
 }
 
 void

@@ -60,7 +60,6 @@ void                   gossip_app_create               (GossipSession        *se
 GossipApp *            gossip_app_get                  (void);
 gboolean               gossip_app_is_connected         (void);
 gboolean               gossip_app_is_window_visible    (void);
-void                   gossip_app_toggle_visibility    (void);
 void                   gossip_app_set_visibility       (gboolean              visible);
 void                   gossip_app_set_not_away         (void);
 void                   gossip_app_set_presence         (GossipPresenceState   state,
