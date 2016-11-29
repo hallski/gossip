@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2004 Imendio AB
  *
@@ -29,10 +29,10 @@
 G_BEGIN_DECLS
 
 gboolean gossip_jabber_services_get_version (LmConnection           *connection,
-					     GossipContact          *contact,
-					     GossipVersionCallback   callback,
-					     gpointer                user_data,
-					     GError                **error);
+                                             GossipContact          *contact,
+                                             GossipVersionCallback   callback,
+                                             gpointer                user_data,
+                                             GError                **error);
 
 G_END_DECLS
 

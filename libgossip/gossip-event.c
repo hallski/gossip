@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2004-2007 Imendio AB
  *
@@ -36,33 +36,33 @@
 typedef struct _GossipEventPrivate GossipEventPrivate;
 
 struct _GossipEventPrivate {
-	GossipEventId    id;
-	GossipEventType  type;
+    GossipEventId    id;
+    GossipEventType  type;
 
-	gchar           *msg;
+    gchar           *msg;
 
-	/* A GossipMessage or GossipContact depending on event type */
-	GObject         *data;
+    /* A GossipMessage or GossipContact depending on event type */
+    GObject         *data;
 };
 
 static void gossip_event_class_init (GossipEventClass *klass);
 static void gossip_event_init       (GossipEvent      *event);
 static void gossip_event_finalize   (GObject          *object);
 static void event_get_property      (GObject          *object,
-				     guint             param_id,
-				     GValue           *value,
-				     GParamSpec       *pspec);
+                                     guint             param_id,
+                                     GValue           *value,
+                                     GParamSpec       *pspec);
 static void event_set_property      (GObject          *object,
-				     guint             param_id,
-				     const GValue     *value,
-				     GParamSpec       *pspec);
+                                     guint             param_id,
+                                     const GValue     *value,
+                                     GParamSpec       *pspec);
 
 enum {
-	PROP_0,
-	PROP_ID,
-	PROP_TYPE,
-	PROP_MSG,
-	PROP_DATA
+    PROP_0,
+    PROP_ID,
+    PROP_TYPE,
+    PROP_MSG,
+    PROP_DATA
 };
 
 static gpointer gossip_event_parent_class = NULL;
@@ -72,355 +72,355 @@ static gpointer gossip_event_parent_class = NULL;
 GType
 gossip_event_get_gtype (void)
 {
-	static GType type = 0;
+    static GType type = 0;
 
-	if (!type) {
-		static const GTypeInfo info = {
-			sizeof (GossipEventClass),
-			NULL, /* base_init */
-			NULL, /* base_finalize */
-			(GClassInitFunc) gossip_event_class_init,
-			NULL, /* class_finalize */
-			NULL, /* class_data */
-			sizeof (GossipEvent),
-			0,    /* n_preallocs */
-			(GInstanceInitFunc) gossip_event_init
-		};
+    if (!type) {
+        static const GTypeInfo info = {
+            sizeof (GossipEventClass),
+            NULL, /* base_init */
+            NULL, /* base_finalize */
+            (GClassInitFunc) gossip_event_class_init,
+            NULL, /* class_finalize */
+            NULL, /* class_data */
+            sizeof (GossipEvent),
+            0,    /* n_preallocs */
+            (GInstanceInitFunc) gossip_event_init
+        };
 
-		type = g_type_register_static (G_TYPE_OBJECT,
-					       "GossipEvent",
-					       &info, 0);
-	}
+        type = g_type_register_static (G_TYPE_OBJECT,
+                                       "GossipEvent",
+                                       &info, 0);
+    }
 
-	return type;
+    return type;
 }
 
 static void
 gossip_event_class_init (GossipEventClass *klass)
 {
-	GObjectClass *object_class;
+    GObjectClass *object_class;
 
-	object_class = G_OBJECT_CLASS (klass);
-	gossip_event_parent_class = g_type_class_peek_parent (klass);
+    object_class = G_OBJECT_CLASS (klass);
+    gossip_event_parent_class = g_type_class_peek_parent (klass);
 
-	object_class->finalize     = gossip_event_finalize;
-	object_class->get_property = event_get_property;
-	object_class->set_property = event_set_property;
+    object_class->finalize     = gossip_event_finalize;
+    object_class->get_property = event_get_property;
+    object_class->set_property = event_set_property;
 
-	g_object_class_install_property (object_class,
-					 PROP_ID,
-					 g_param_spec_int ("id",
-							   "Event id",
-							   "The event identification",
-							   1,
-							   G_MAXINT,
-							   1,
-							   G_PARAM_READABLE));
+    g_object_class_install_property (object_class,
+                                     PROP_ID,
+                                     g_param_spec_int ("id",
+                                                       "Event id",
+                                                       "The event identification",
+                                                       1,
+                                                       G_MAXINT,
+                                                       1,
+                                                       G_PARAM_READABLE));
 
 
-	g_object_class_install_property (object_class,
-					 PROP_TYPE,
-					 g_param_spec_int ("type",
-							   "Event type",
-							   "The type of the event",
-							   GOSSIP_EVENT_NEW_MESSAGE,
-							   GOSSIP_EVENT_ERROR,
-							   GOSSIP_EVENT_NEW_MESSAGE,
-							   G_PARAM_READWRITE));
+    g_object_class_install_property (object_class,
+                                     PROP_TYPE,
+                                     g_param_spec_int ("type",
+                                                       "Event type",
+                                                       "The type of the event",
+                                                       GOSSIP_EVENT_NEW_MESSAGE,
+                                                       GOSSIP_EVENT_ERROR,
+                                                       GOSSIP_EVENT_NEW_MESSAGE,
+                                                       G_PARAM_READWRITE));
 
-	g_object_class_install_property (object_class,
-					 PROP_MSG,
-					 g_param_spec_string ("message",
-							      "Event message",
-							      "Human readable event message",
-							      "",
-							      G_PARAM_READWRITE));
+    g_object_class_install_property (object_class,
+                                     PROP_MSG,
+                                     g_param_spec_string ("message",
+                                                          "Event message",
+                                                          "Human readable event message",
+                                                          "",
+                                                          G_PARAM_READWRITE));
 
-	g_object_class_install_property (object_class,
-					 PROP_DATA,
-					 g_param_spec_object ("data",
-							      "Event data",
-							      "Data object sent with the event",
-							      G_TYPE_OBJECT,
-							      G_PARAM_READWRITE));
+    g_object_class_install_property (object_class,
+                                     PROP_DATA,
+                                     g_param_spec_object ("data",
+                                                          "Event data",
+                                                          "Data object sent with the event",
+                                                          G_TYPE_OBJECT,
+                                                          G_PARAM_READWRITE));
 
-	g_type_class_add_private (object_class, sizeof (GossipEventPrivate));
+    g_type_class_add_private (object_class, sizeof (GossipEventPrivate));
 }
 
 static void
 gossip_event_init (GossipEvent *event)
 {
-	GossipEventPrivate   *priv;
-	static GossipEventId  id = 0;
+    GossipEventPrivate   *priv;
+    static GossipEventId  id = 0;
 
-	priv = GOSSIP_EVENT_GET_PRIVATE (event);
+    priv = GOSSIP_EVENT_GET_PRIVATE (event);
 
-	priv->msg = NULL;
-	priv->data = NULL;
+    priv->msg = NULL;
+    priv->data = NULL;
 
-	priv->id = ++id;
+    priv->id = ++id;
 }
 
 static void
 gossip_event_finalize (GObject *object)
 {
-	GossipEventPrivate *priv;
+    GossipEventPrivate *priv;
 
-	priv = GOSSIP_EVENT_GET_PRIVATE (object);
+    priv = GOSSIP_EVENT_GET_PRIVATE (object);
 
-	g_free (priv->msg);
-	if (priv->data) {
-		g_object_unref (priv->data);
-	}
+    g_free (priv->msg);
+    if (priv->data) {
+        g_object_unref (priv->data);
+    }
 
-	(G_OBJECT_CLASS (gossip_event_parent_class)->finalize) (object);
+    (G_OBJECT_CLASS (gossip_event_parent_class)->finalize) (object);
 }
 
 static void
 event_get_property (GObject    *object,
-		    guint       param_id,
-		    GValue     *value,
-		    GParamSpec *pspec)
+                    guint       param_id,
+                    GValue     *value,
+                    GParamSpec *pspec)
 {
-	GossipEventPrivate *priv;
+    GossipEventPrivate *priv;
 
-	priv = GOSSIP_EVENT_GET_PRIVATE (object);
+    priv = GOSSIP_EVENT_GET_PRIVATE (object);
 
-	switch (param_id) {
-	case PROP_ID:
-		g_value_set_int (value, priv->id);
-		break;
-	case PROP_TYPE:
-		g_value_set_int (value, priv->type);
-		break;
-	case PROP_MSG:
-		if (priv->msg) {
-			g_value_set_string (value, priv->msg);
-		} else {
-			g_value_set_string (value, "");
-		}
-		break;
-	case PROP_DATA:
-		if (priv->data) {
-			g_value_set_object (value, priv->data);
-		}
-		break;
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
-		break;
-	}
+    switch (param_id) {
+    case PROP_ID:
+        g_value_set_int (value, priv->id);
+        break;
+    case PROP_TYPE:
+        g_value_set_int (value, priv->type);
+        break;
+    case PROP_MSG:
+        if (priv->msg) {
+            g_value_set_string (value, priv->msg);
+        } else {
+            g_value_set_string (value, "");
+        }
+        break;
+    case PROP_DATA:
+        if (priv->data) {
+            g_value_set_object (value, priv->data);
+        }
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
+        break;
+    }
 }
 
 static void
 event_set_property (GObject      *object,
-		    guint         param_id,
-		    const GValue *value,
-		    GParamSpec   *pspec)
+                    guint         param_id,
+                    const GValue *value,
+                    GParamSpec   *pspec)
 {
-	GossipEventPrivate *priv;
+    GossipEventPrivate *priv;
 
-	priv = GOSSIP_EVENT_GET_PRIVATE (object);
+    priv = GOSSIP_EVENT_GET_PRIVATE (object);
 
-	switch (param_id) {
-	case PROP_TYPE:
-		priv->type = g_value_get_int (value);
-		break;
-	case PROP_MSG:
-		g_free (priv->msg);
-		priv->msg = g_strdup (g_value_get_string (value));
-		break;
-	case PROP_DATA:
-		if (priv->data) {
-			g_object_unref (priv->data);
-		}
+    switch (param_id) {
+    case PROP_TYPE:
+        priv->type = g_value_get_int (value);
+        break;
+    case PROP_MSG:
+        g_free (priv->msg);
+        priv->msg = g_strdup (g_value_get_string (value));
+        break;
+    case PROP_DATA:
+        if (priv->data) {
+            g_object_unref (priv->data);
+        }
 
-		priv->data = g_object_ref (g_value_get_object (value));
-		break;
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
-		break;
-	}
+        priv->data = g_object_ref (g_value_get_object (value));
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
+        break;
+    }
 }
 
 GossipEvent *
 gossip_event_new (GossipEventType type)
 {
-	gossip_debug (DEBUG_DOMAIN, "New of type:%d", type);
+    gossip_debug (DEBUG_DOMAIN, "New of type:%d", type);
 
-	return g_object_new (GOSSIP_TYPE_EVENT,
-			     "type", type,
-			     NULL);
+    return g_object_new (GOSSIP_TYPE_EVENT,
+                         "type", type,
+                         NULL);
 }
 
 GossipEventId
 gossip_event_get_id (GossipEvent *event)
 {
-	GossipEventPrivate *priv;
+    GossipEventPrivate *priv;
 
-	g_return_val_if_fail (GOSSIP_IS_EVENT (event), -1);
+    g_return_val_if_fail (GOSSIP_IS_EVENT (event), -1);
 
-	priv = GOSSIP_EVENT_GET_PRIVATE (event);
+    priv = GOSSIP_EVENT_GET_PRIVATE (event);
 
-	return priv->id;
+    return priv->id;
 }
 
 const gchar *
 gossip_event_get_message (GossipEvent *event)
 {
-	GossipEventPrivate *priv;
+    GossipEventPrivate *priv;
 
-	g_return_val_if_fail (GOSSIP_IS_EVENT (event), "");
+    g_return_val_if_fail (GOSSIP_IS_EVENT (event), "");
 
-	priv = GOSSIP_EVENT_GET_PRIVATE (event);
+    priv = GOSSIP_EVENT_GET_PRIVATE (event);
 
-	return priv->msg;
+    return priv->msg;
 }
 
 GossipContact *
 gossip_event_get_contact (GossipEvent *event)
 {
-	GossipMessage *message;
-	GossipContact *contact;
-	GossipFT      *ft;
+    GossipMessage *message;
+    GossipContact *contact;
+    GossipFT      *ft;
 
-	switch (gossip_event_get_type (event)) {
-	case GOSSIP_EVENT_NEW_MESSAGE:
-		message = GOSSIP_MESSAGE (gossip_event_get_data (event));
-		contact = gossip_message_get_sender (message);
-		break;
+    switch (gossip_event_get_type (event)) {
+    case GOSSIP_EVENT_NEW_MESSAGE:
+        message = GOSSIP_MESSAGE (gossip_event_get_data (event));
+        contact = gossip_message_get_sender (message);
+        break;
 
-	case GOSSIP_EVENT_SUBSCRIPTION_REQUEST:
-		contact = GOSSIP_CONTACT (gossip_event_get_data (event));
-		break;
+    case GOSSIP_EVENT_SUBSCRIPTION_REQUEST:
+        contact = GOSSIP_CONTACT (gossip_event_get_data (event));
+        break;
 
-	case GOSSIP_EVENT_FILE_TRANSFER_REQUEST:
-		ft = GOSSIP_FT (gossip_event_get_data (event));
-		contact = gossip_ft_get_contact (ft);
-		break;
+    case GOSSIP_EVENT_FILE_TRANSFER_REQUEST:
+        ft = GOSSIP_FT (gossip_event_get_data (event));
+        contact = gossip_ft_get_contact (ft);
+        break;
 
-	default:
-		/* Not handled */
-		gossip_debug (DEBUG_DOMAIN,
-			      "Event type does not have a contact: %d",
-			      gossip_event_get_type (event));
-		return NULL;
-	}
+    default:
+        /* Not handled */
+        gossip_debug (DEBUG_DOMAIN,
+                      "Event type does not have a contact: %d",
+                      gossip_event_get_type (event));
+        return NULL;
+    }
 
-	return contact;
+    return contact;
 }
 
 GossipEventType
 gossip_event_get_type (GossipEvent *event)
 {
-	GossipEventPrivate *priv;
+    GossipEventPrivate *priv;
 
-	g_return_val_if_fail (GOSSIP_IS_EVENT (event), -1);
+    g_return_val_if_fail (GOSSIP_IS_EVENT (event), -1);
 
-	priv = GOSSIP_EVENT_GET_PRIVATE (event);
+    priv = GOSSIP_EVENT_GET_PRIVATE (event);
 
-	return priv->type;
+    return priv->type;
 }
 
 GObject *
 gossip_event_get_data (GossipEvent *event)
 {
-	GossipEventPrivate *priv;
+    GossipEventPrivate *priv;
 
-	g_return_val_if_fail (GOSSIP_IS_EVENT (event), NULL);
+    g_return_val_if_fail (GOSSIP_IS_EVENT (event), NULL);
 
-	priv = GOSSIP_EVENT_GET_PRIVATE (event);
+    priv = GOSSIP_EVENT_GET_PRIVATE (event);
 
-	return priv->data;
+    return priv->data;
 }
 
 void
 gossip_event_set_data (GossipEvent *event,
-		       GObject     *data)
+                       GObject     *data)
 {
-	GossipEventPrivate *priv;
+    GossipEventPrivate *priv;
 
-	g_return_if_fail (GOSSIP_IS_EVENT (event));
+    g_return_if_fail (GOSSIP_IS_EVENT (event));
 
-	priv = GOSSIP_EVENT_GET_PRIVATE (event);
+    priv = GOSSIP_EVENT_GET_PRIVATE (event);
 
-	if (priv->data) {
-		g_object_unref (priv->data);
-	}
+    if (priv->data) {
+        g_object_unref (priv->data);
+    }
 
-	priv->data = g_object_ref (data);
+    priv->data = g_object_ref (data);
 }
 
 guint
 gossip_event_hash (gconstpointer key)
 {
-	GossipEventId id;
+    GossipEventId id;
 
-	g_return_val_if_fail (GOSSIP_IS_EVENT (key), 0);
+    g_return_val_if_fail (GOSSIP_IS_EVENT (key), 0);
 
-	id = gossip_event_get_id (GOSSIP_EVENT (key));
+    id = gossip_event_get_id (GOSSIP_EVENT (key));
 
-	return g_int_hash (&id);
+    return g_int_hash (&id);
 }
 
 gboolean
 gossip_event_equal (gconstpointer a,
-		    gconstpointer b)
+                    gconstpointer b)
 {
-	GossipEventId id_a;
-	GossipEventId id_b;
+    GossipEventId id_a;
+    GossipEventId id_b;
 
-	g_return_val_if_fail (GOSSIP_IS_EVENT (a), FALSE);
-	g_return_val_if_fail (GOSSIP_IS_EVENT (b), FALSE);
+    g_return_val_if_fail (GOSSIP_IS_EVENT (a), FALSE);
+    g_return_val_if_fail (GOSSIP_IS_EVENT (b), FALSE);
 
-	id_a = gossip_event_get_id (GOSSIP_EVENT (a));
-	id_b = gossip_event_get_id (GOSSIP_EVENT (b));
+    id_a = gossip_event_get_id (GOSSIP_EVENT (a));
+    id_b = gossip_event_get_id (GOSSIP_EVENT (b));
 
-	return (id_a == id_b);
+    return (id_a == id_b);
 }
 
 gint
 gossip_event_compare (gconstpointer a,
-		      gconstpointer b)
+                      gconstpointer b)
 {
-	GossipEventId id_a;
-	GossipEventId id_b;
+    GossipEventId id_a;
+    GossipEventId id_b;
 
-	g_return_val_if_fail (GOSSIP_IS_EVENT (a), 0);
-	g_return_val_if_fail (GOSSIP_IS_EVENT (b), 0);
+    g_return_val_if_fail (GOSSIP_IS_EVENT (a), 0);
+    g_return_val_if_fail (GOSSIP_IS_EVENT (b), 0);
 
-	id_a = gossip_event_get_id (GOSSIP_EVENT (a));
-	id_b = gossip_event_get_id (GOSSIP_EVENT (b));
+    id_a = gossip_event_get_id (GOSSIP_EVENT (a));
+    id_b = gossip_event_get_id (GOSSIP_EVENT (b));
 
-	if (id_a == id_b) {
-		return 0;
-	}
+    if (id_a == id_b) {
+        return 0;
+    }
 
-	if (id_a < id_b) {
-		return -1;
-	}
+    if (id_a < id_b) {
+        return -1;
+    }
 
-	return 1;
+    return 1;
 }
 
 const gchar *
 gossip_event_get_stock_id (GossipEvent *event)
 {
-	switch (gossip_event_get_type (event)) {
-	case GOSSIP_EVENT_NEW_MESSAGE:
-	case GOSSIP_EVENT_SERVER_MESSAGE:
-		return GOSSIP_STOCK_MESSAGE;
+    switch (gossip_event_get_type (event)) {
+    case GOSSIP_EVENT_NEW_MESSAGE:
+    case GOSSIP_EVENT_SERVER_MESSAGE:
+        return GOSSIP_STOCK_MESSAGE;
 
-	case GOSSIP_EVENT_FILE_TRANSFER_REQUEST:
-		return GOSSIP_STOCK_FILE_TRANSFER;
+    case GOSSIP_EVENT_FILE_TRANSFER_REQUEST:
+        return GOSSIP_STOCK_FILE_TRANSFER;
 
-	case GOSSIP_EVENT_SUBSCRIPTION_REQUEST:
-		return GTK_STOCK_DIALOG_QUESTION;
+    case GOSSIP_EVENT_SUBSCRIPTION_REQUEST:
+        return GTK_STOCK_DIALOG_QUESTION;
 
-	default:
-		/* Shouldn't happen */
-		return GTK_STOCK_DIALOG_WARNING;
-	}
+    default:
+        /* Shouldn't happen */
+        return GTK_STOCK_DIALOG_WARNING;
+    }
 
-	return NULL;
+    return NULL;
 }
 

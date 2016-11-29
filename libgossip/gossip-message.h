@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2004 Imendio AB
  *
@@ -41,53 +41,53 @@ typedef struct _GossipMessage      GossipMessage;
 typedef struct _GossipMessageClass GossipMessageClass;
 
 struct _GossipMessage {
-	GObject parent;
+    GObject parent;
 };
 
 struct _GossipMessageClass {
-	GObjectClass parent_class;
+    GObjectClass parent_class;
 };
 
 typedef enum {
-	GOSSIP_MESSAGE_TYPE_NORMAL,
-	GOSSIP_MESSAGE_TYPE_CHAT_ROOM,
-	GOSSIP_MESSAGE_TYPE_HEADLINE
+    GOSSIP_MESSAGE_TYPE_NORMAL,
+    GOSSIP_MESSAGE_TYPE_CHAT_ROOM,
+    GOSSIP_MESSAGE_TYPE_HEADLINE
 } GossipMessageType;
 
 GType             gossip_message_get_gtype               (void) G_GNUC_CONST;
 GossipMessage *   gossip_message_new                     (GossipMessageType     type,
-							  GossipContact        *to);
+                                                          GossipContact        *to);
 GossipMessageType gossip_message_get_type                (GossipMessage        *message);
 GossipContact *   gossip_message_get_recipient           (GossipMessage        *message);
 void              gossip_message_set_recipient           (GossipMessage        *message,
-							  GossipContact        *contact);
+                                                          GossipContact        *contact);
 const gchar *     gossip_message_get_explicit_resource   (GossipMessage        *message);
 void              gossip_message_set_explicit_resource   (GossipMessage        *message,
-							  const gchar          *resource);
+                                                          const gchar          *resource);
 GossipContact *   gossip_message_get_sender              (GossipMessage        *message);
 void              gossip_message_set_sender              (GossipMessage        *message,
-							  GossipContact        *contact);
+                                                          GossipContact        *contact);
 const gchar *     gossip_message_get_subject             (GossipMessage        *message);
 void              gossip_message_set_subject             (GossipMessage        *message,
-							  const gchar          *subject);
+                                                          const gchar          *subject);
 const gchar *     gossip_message_get_body                (GossipMessage        *message);
 void              gossip_message_set_body                (GossipMessage        *message,
-							  const gchar          *body);
+                                                          const gchar          *body);
 const gchar *     gossip_message_get_thread              (GossipMessage        *message);
 void              gossip_message_set_thread              (GossipMessage        *message,
-							  const gchar          *thread);
+                                                          const gchar          *thread);
 
 /* What return value should we have here? */
 GossipTime        gossip_message_get_timestamp           (GossipMessage        *message);
 void              gossip_message_set_timestamp           (GossipMessage        *message,
-							  GossipTime            timestamp);
+                                                          GossipTime            timestamp);
 GDate *           gossip_message_get_date_and_time       (GossipMessage        *message,
-							  time_t               *timestamp);
+                                                          time_t               *timestamp);
 
 GossipChatroomInvite *
-		  gossip_message_get_invite              (GossipMessage        *message);
+gossip_message_get_invite              (GossipMessage        *message);
 void              gossip_message_set_invite              (GossipMessage        *message,
-							  GossipChatroomInvite *invite);
+                                                          GossipChatroomInvite *invite);
 void              gossip_message_request_composing       (GossipMessage        *message);
 gboolean          gossip_message_is_requesting_composing (GossipMessage        *message);
 gboolean          gossip_message_is_action               (GossipMessage        *message);

@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2004-2005 Imendio AB
  *
@@ -34,59 +34,59 @@ G_BEGIN_DECLS
 typedef struct _GossipJabberChatrooms GossipJabberChatrooms;
 
 GossipJabberChatrooms *
-	       gossip_jabber_chatrooms_init                (GossipJabber          *jabber);
+gossip_jabber_chatrooms_init                (GossipJabber          *jabber);
 void           gossip_jabber_chatrooms_finalize            (GossipJabberChatrooms *chatrooms);
 GossipChatroomId
-	       gossip_jabber_chatrooms_join                (GossipJabberChatrooms *chatrooms,
-							    GossipChatroom        *chatroom,
-							    GossipChatroomJoinCb   callback,
-							    gpointer               user_data);
+gossip_jabber_chatrooms_join                (GossipJabberChatrooms *chatrooms,
+                                             GossipChatroom        *chatroom,
+                                             GossipChatroomJoinCb   callback,
+                                             gpointer               user_data);
 void           gossip_jabber_chatrooms_cancel              (GossipJabberChatrooms *chatrooms,
-							    GossipChatroomId       id);
+                                                            GossipChatroomId       id);
 void           gossip_jabber_chatrooms_send                (GossipJabberChatrooms *chatrooms,
-							    GossipChatroomId       id,
-							    const gchar           *message);
+                                                            GossipChatroomId       id,
+                                                            const gchar           *message);
 void           gossip_jabber_chatrooms_change_subject      (GossipJabberChatrooms *chatrooms,
-							    GossipChatroomId       id,
-							    const gchar           *new_subject);
+                                                            GossipChatroomId       id,
+                                                            const gchar           *new_subject);
 void           gossip_jabber_chatrooms_change_nick         (GossipJabberChatrooms *chatrooms,
-							    GossipChatroomId       id,
-							    const gchar           *new_nick);
+                                                            GossipChatroomId       id,
+                                                            const gchar           *new_nick);
 void           gossip_jabber_chatrooms_leave               (GossipJabberChatrooms *chatrooms,
-							    GossipChatroomId       id);
+                                                            GossipChatroomId       id);
 void           gossip_jabber_chatrooms_kick                (GossipJabberChatrooms *chatrooms,
-							    GossipChatroomId       id,
-							    GossipContact         *contact,
-							    const gchar           *reason);
+                                                            GossipChatroomId       id,
+                                                            GossipContact         *contact,
+                                                            const gchar           *reason);
 GSList *       gossip_jabber_chatrooms_get_contacts        (GossipJabberChatrooms *chatrooms, 
-							    GossipChatroomId       id);
+                                                            GossipChatroomId       id);
 GossipChatroom *
-	       gossip_jabber_chatrooms_find_by_id          (GossipJabberChatrooms *chatrooms,
-							    GossipChatroomId       id);
+gossip_jabber_chatrooms_find_by_id          (GossipJabberChatrooms *chatrooms,
+                                             GossipChatroomId       id);
 GossipChatroom *
-	       gossip_jabber_chatrooms_find                (GossipJabberChatrooms *chatrooms,
-							    GossipChatroom        *chatroom);
+gossip_jabber_chatrooms_find                (GossipJabberChatrooms *chatrooms,
+                                             GossipChatroom        *chatroom);
 void           gossip_jabber_chatrooms_invite              (GossipJabberChatrooms *chatrooms,
-							    GossipChatroomId       id,
-							    GossipContact         *contact,
-							    const gchar           *reason);
+                                                            GossipChatroomId       id,
+                                                            GossipContact         *contact,
+                                                            const gchar           *reason);
 void           gossip_jabber_chatrooms_invite_accept       (GossipJabberChatrooms *chatrooms,
-							    GossipChatroomJoinCb   callback,
-							    GossipChatroomInvite  *invite,
-							    const gchar           *nickname);
+                                                            GossipChatroomJoinCb   callback,
+                                                            GossipChatroomInvite  *invite,
+                                                            const gchar           *nickname);
 void           gossip_jabber_chatrooms_invite_decline      (GossipJabberChatrooms *chatrooms,
-							    GossipChatroomInvite  *invite,
-							    const gchar           *reason);
+                                                            GossipChatroomInvite  *invite,
+                                                            const gchar           *reason);
 GList *        gossip_jabber_chatrooms_get_rooms           (GossipJabberChatrooms *chatrooms);
 void           gossip_jabber_chatrooms_browse_rooms        (GossipJabberChatrooms  *chatrooms,
-							    const gchar            *server,
-							    GossipChatroomBrowseCb  callback,
-							    gpointer                user_data);
+                                                            const gchar            *server,
+                                                            GossipChatroomBrowseCb  callback,
+                                                            gpointer                user_data);
 
 void           gossip_jabber_chatrooms_set_presence        (GossipJabberChatrooms *chatrooms,
-							    GossipPresence        *presence);
+                                                            GossipPresence        *presence);
 gboolean       gossip_jabber_chatrooms_get_jid_is_chatroom (GossipJabberChatrooms *chatrooms,
-							    const gchar           *jid_str);
+                                                            const gchar           *jid_str);
 
 G_END_DECLS
 

@@ -1,4 +1,4 @@
-/* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
+/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 8 -*- */
 /*
  * Copyright © 2000 Eazel, Inc.
  * Copyright © 2004, 2006 Christian Persch
@@ -29,40 +29,40 @@
 
 G_BEGIN_DECLS
 
-#define EPHY_TYPE_SPINNER		(ephy_spinner_get_type ())
-#define EPHY_SPINNER(o)			(G_TYPE_CHECK_INSTANCE_CAST ((o), EPHY_TYPE_SPINNER, EphySpinner))
-#define EPHY_SPINNER_CLASS(k)		(G_TYPE_CHECK_CLASS_CAST((k), EPHY_TYPE_SPINNER, EphySpinnerClass))
-#define EPHY_IS_SPINNER(o)		(G_TYPE_CHECK_INSTANCE_TYPE ((o), EPHY_TYPE_SPINNER))
-#define EPHY_IS_SPINNER_CLASS(k)	(G_TYPE_CHECK_CLASS_TYPE ((k), EPHY_TYPE_SPINNER))
-#define EPHY_SPINNER_GET_CLASS(o)	(G_TYPE_INSTANCE_GET_CLASS ((o), EPHY_TYPE_SPINNER, EphySpinnerClass))
+#define EPHY_TYPE_SPINNER               (ephy_spinner_get_type ())
+#define EPHY_SPINNER(o)                 (G_TYPE_CHECK_INSTANCE_CAST ((o), EPHY_TYPE_SPINNER, EphySpinner))
+#define EPHY_SPINNER_CLASS(k)           (G_TYPE_CHECK_CLASS_CAST((k), EPHY_TYPE_SPINNER, EphySpinnerClass))
+#define EPHY_IS_SPINNER(o)              (G_TYPE_CHECK_INSTANCE_TYPE ((o), EPHY_TYPE_SPINNER))
+#define EPHY_IS_SPINNER_CLASS(k)        (G_TYPE_CHECK_CLASS_TYPE ((k), EPHY_TYPE_SPINNER))
+#define EPHY_SPINNER_GET_CLASS(o)       (G_TYPE_INSTANCE_GET_CLASS ((o), EPHY_TYPE_SPINNER, EphySpinnerClass))
 
-typedef struct _EphySpinner		EphySpinner;
-typedef struct _EphySpinnerClass	EphySpinnerClass;
-typedef struct _EphySpinnerDetails	EphySpinnerDetails;
+typedef struct _EphySpinner             EphySpinner;
+typedef struct _EphySpinnerClass        EphySpinnerClass;
+typedef struct _EphySpinnerDetails      EphySpinnerDetails;
 
 struct _EphySpinner
 {
-	GtkWidget parent;
+    GtkWidget parent;
 
-	/*< private >*/
-	EphySpinnerDetails *details;
+    /*< private >*/
+    EphySpinnerDetails *details;
 };
 
 struct _EphySpinnerClass
 {
-	GtkWidgetClass parent_class;
+    GtkWidgetClass parent_class;
 };
 
-GType		ephy_spinner_get_type	(void);
+GType           ephy_spinner_get_type   (void);
 
-GtkWidget      *ephy_spinner_new	(void);
+GtkWidget      *ephy_spinner_new        (void);
 
-void		ephy_spinner_start	(EphySpinner *throbber);
+void            ephy_spinner_start      (EphySpinner *throbber);
 
-void		ephy_spinner_stop	(EphySpinner *throbber);
+void            ephy_spinner_stop       (EphySpinner *throbber);
 
-void		ephy_spinner_set_size	(EphySpinner *spinner,
-					 GtkIconSize size);
+void            ephy_spinner_set_size   (EphySpinner *spinner,
+                                         GtkIconSize size);
 
 G_END_DECLS
 

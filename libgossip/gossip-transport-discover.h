@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2004 Martyn Russell <mr@gnome.org>
  *
@@ -33,41 +33,41 @@ typedef struct _GossipTransportDisco GossipTransportDisco;
 typedef struct _GossipTransportDiscoItem GossipTransportDiscoItem;
 
 typedef void (*GossipTransportDiscoItemFunc) (GossipTransportDisco     *disco,
-					      GossipTransportDiscoItem *item,
-					      gboolean                  last_item,
-					      gboolean                  timeout,
-					      GError                   *error,
-					      gpointer                  user_data);
+                                              GossipTransportDiscoItem *item,
+                                              gboolean                  last_item,
+                                              gboolean                  timeout,
+                                              GError                   *error,
+                                              gpointer                  user_data);
 
 GossipTransportDisco *    gossip_transport_disco_request               (GossipJabber                 *jabber,
-									const char                   *to,
-									GossipTransportDiscoItemFunc  item_func,
-									gpointer                      user_data);
+                                                                        const char                   *to,
+                                                                        GossipTransportDiscoItemFunc  item_func,
+                                                                        gpointer                      user_data);
 GossipTransportDisco *    gossip_transport_disco_request_info          (GossipJabber                 *jabber,
-									const char                   *to,
-									GossipTransportDiscoItemFunc  item_func,
-									gpointer                      user_data);
+                                                                        const char                   *to,
+                                                                        GossipTransportDiscoItemFunc  item_func,
+                                                                        gpointer                      user_data);
 void                      gossip_transport_disco_destroy               (GossipTransportDisco         *disco);
 GList *                   gossip_transport_disco_get_category          (GossipTransportDisco         *disco,
-									const gchar                  *category);
+                                                                        const gchar                  *category);
 GList *                   gossip_transport_disco_get_category_and_type (GossipTransportDisco         *disco,
-									const gchar                  *category,
-									const gchar                  *type);
+                                                                        const gchar                  *category,
+                                                                        const gchar                  *type);
 gint                      gossip_transport_disco_get_items_remaining   (GossipTransportDisco         *disco);
 gint                      gossip_transport_disco_get_items_total       (GossipTransportDisco         *disco);
 GossipTransportDiscoItem *gossip_transport_disco_get_item              (GossipTransportDisco         *disco,
-									GossipJID                    *jid);
+                                                                        GossipJID                    *jid);
 GossipJID *               gossip_transport_disco_item_get_jid          (GossipTransportDiscoItem     *item);
 const gchar *             gossip_transport_disco_item_get_type         (GossipTransportDiscoItem     *item);
 const gchar *             gossip_transport_disco_item_get_name         (GossipTransportDiscoItem     *item);
 const GList *             gossip_transport_disco_item_get_features     (GossipTransportDiscoItem     *item);
 
 gboolean                  gossip_transport_disco_item_has_category     (GossipTransportDiscoItem     *item,
-									const gchar                  *category);
+                                                                        const gchar                  *category);
 gboolean                  gossip_transport_disco_item_has_feature      (GossipTransportDiscoItem     *item,
-									const gchar                  *feature);
+                                                                        const gchar                  *feature);
 gboolean                  gossip_transport_disco_item_has_type         (GossipTransportDiscoItem     *item,
-									const gchar                  *type);
+                                                                        const gchar                  *type);
 gboolean                  gossip_transport_disco_servers               (void);
 
 

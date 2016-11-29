@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2002-2007 Imendio AB
 
@@ -26,17 +26,17 @@
 G_BEGIN_DECLS
 
 gboolean   gossip_hint_dialog_show                  (const gchar         *conf_path,
-						     const gchar         *message1,
-						     const gchar         *message2,
-						     GtkWindow           *parent,
-						     GFunc                func,
-						     gpointer             user_data);
+                                                     const gchar         *message1,
+                                                     const gchar         *message2,
+                                                     GtkWindow           *parent,
+                                                     GFunc                func,
+                                                     gpointer             user_data);
 gboolean   gossip_hint_show                         (const gchar         *conf_path,
-						     const gchar         *message1,
-						     const gchar         *message2,
-						     GtkWindow           *parent,
-						     GFunc                func,
-						     gpointer             user_data);
+                                                     const gchar         *message1,
+                                                     const gchar         *message2,
+                                                     GtkWindow           *parent,
+                                                     GFunc                func,
+                                                     gpointer             user_data);
 
 G_END_DECLS
 

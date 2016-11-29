@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2004-2006 Imendio AB
  *
@@ -40,11 +40,11 @@ typedef struct _GossipVCard      GossipVCard;
 typedef struct _GossipVCardClass GossipVCardClass;
 
 struct _GossipVCard {
-	GObject parent;
+    GObject parent;
 };
 
 struct _GossipVCardClass {
-	GObjectClass parent_class;
+    GObjectClass parent_class;
 };
 
 GType         gossip_vcard_get_type             (void) G_GNUC_CONST;
@@ -61,21 +61,21 @@ const gchar * gossip_vcard_get_description      (GossipVCard  *vcard);
 GossipAvatar *gossip_vcard_get_avatar           (GossipVCard  *vcard);
 GdkPixbuf *   gossip_vcard_create_avatar_pixbuf (GossipVCard  *vcard);
 void          gossip_vcard_set_name             (GossipVCard  *vcard,
-						 const gchar  *name);
+                                                 const gchar  *name);
 void          gossip_vcard_set_nickname         (GossipVCard  *vcard,
-						 const gchar  *nickname);
+                                                 const gchar  *nickname);
 void          gossip_vcard_set_birthday         (GossipVCard  *vcard,
-						 const gchar  *birthday);
+                                                 const gchar  *birthday);
 void          gossip_vcard_set_email            (GossipVCard  *vcard,
-						 const gchar  *email);
+                                                 const gchar  *email);
 void          gossip_vcard_set_url              (GossipVCard  *vcard,
-						 const gchar  *url);
+                                                 const gchar  *url);
 void          gossip_vcard_set_country          (GossipVCard  *vcard,
-						 const gchar  *country);
+                                                 const gchar  *country);
 void          gossip_vcard_set_description      (GossipVCard  *vcard,
-						 const gchar  *desc);
+                                                 const gchar  *desc);
 void          gossip_vcard_set_avatar           (GossipVCard  *vcard,
-						 GossipAvatar *avatar);
+                                                 GossipAvatar *avatar);
 
 G_END_DECLS
 

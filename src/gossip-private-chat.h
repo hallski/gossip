@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2002-2007 Imendio AB
  *
@@ -46,24 +46,24 @@ typedef struct _GossipPrivateChatPriv GossipPrivateChatPriv;
 #include "gossip-chat-window.h"
 
 struct _GossipPrivateChat {
-	GossipChat parent;
+    GossipChat parent;
 };
 
 struct _GossipPrivateChatClass {
-	GossipChatClass parent;
+    GossipChatClass parent;
 };
 
 GType               gossip_private_chat_get_type           (void);
 GossipPrivateChat * gossip_private_chat_new                (GossipContact     *own_contact,
-							    GossipContact     *contact);
+                                                            GossipContact     *contact);
 GossipPrivateChat * gossip_private_chat_get_for_group_chat (GossipContact     *contact,
-							    GossipGroupChat   *g_chat);
+                                                            GossipGroupChat   *g_chat);
 void                gossip_private_chat_append_message     (GossipPrivateChat *chat,
-							    GossipMessage     *message);
+                                                            GossipMessage     *message);
 void                gossip_private_chat_present            (GossipPrivateChat *chat);
 void                gossip_private_chat_handle_message     (GossipMessage     *msg);
 gchar *             gossip_private_chat_get_history        (GossipPrivateChat *chat,
-							    gint               lines);
+                                                            gint               lines);
 
 G_END_DECLS
 

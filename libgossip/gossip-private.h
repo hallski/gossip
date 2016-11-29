@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2007 Imendio AB
  *
@@ -32,10 +32,10 @@ G_BEGIN_DECLS
 #include "gossip-account-manager.h"
 
 GossipChatroomManager *gossip_chatroom_manager_new (GossipAccountManager  *account_manager,
-						    GossipContactManager  *contact_manager,
-						    const gchar           *filename);
+                                                    GossipContactManager  *contact_manager,
+                                                    const gchar           *filename);
 GossipContactManager * gossip_contact_manager_new  (GossipSession         *session,
-						    const gchar           *filename);
+                                                    const gchar           *filename);
 GossipAccountManager * gossip_account_manager_new  (const gchar           *filename);
 GossipLogManager *     gossip_log_manager_new      (GossipSession         *session);
 

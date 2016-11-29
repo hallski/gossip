@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2003-2007 Imendio AB
  *
@@ -30,7 +30,7 @@
 G_BEGIN_DECLS
 
 void gossip_contact_info_dialog_show (GossipContact *contact,
-				      GtkWindow     *parent);
+                                      GtkWindow     *parent);
 
 G_END_DECLS
 

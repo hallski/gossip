@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2002-2007 Imendio AB
 
@@ -26,151 +26,151 @@
 
 static GladeXML *
 get_glade_file (const gchar *filename,
-		const gchar *root,
-		const gchar *domain,
-		const gchar *first_required_widget,
-		va_list      args)
+                const gchar *root,
+                const gchar *domain,
+                const gchar *first_required_widget,
+                va_list      args)
 {
-	gchar      *path;
-	GladeXML   *gui;
-	const char *name;
-	GtkWidget **widget_ptr;
+    gchar      *path;
+    GladeXML   *gui;
+    const char *name;
+    GtkWidget **widget_ptr;
 
-	path = gossip_paths_get_glade_path (filename);
-	gui = glade_xml_new (path, root, domain);
-	g_free (path);
+    path = gossip_paths_get_glade_path (filename);
+    gui = glade_xml_new (path, root, domain);
+    g_free (path);
 
-	if (!gui) {
-		g_warning ("Couldn't find necessary glade file '%s'", filename);
-		return NULL;
-	}
+    if (!gui) {
+        g_warning ("Couldn't find necessary glade file '%s'", filename);
+        return NULL;
+    }
 
-	for (name = first_required_widget; name; name = va_arg (args, char *)) {
-		widget_ptr = va_arg (args, void *);
+    for (name = first_required_widget; name; name = va_arg (args, char *)) {
+        widget_ptr = va_arg (args, void *);
 
-		*widget_ptr = glade_xml_get_widget (gui, name);
+        *widget_ptr = glade_xml_get_widget (gui, name);
 
-		if (!*widget_ptr) {
-			g_warning ("Glade file '%s' is missing widget '%s'.",
-				   filename, name);
-			continue;
-		}
-	}
+        if (!*widget_ptr) {
+            g_warning ("Glade file '%s' is missing widget '%s'.",
+                       filename, name);
+            continue;
+        }
+    }
 
-	return gui;
+    return gui;
 }
 
 void
 gossip_glade_get_file_simple (const gchar *filename,
-			      const gchar *root,
-			      const gchar *domain,
-			      const gchar *first_required_widget, ...)
+                              const gchar *root,
+                              const gchar *domain,
+                              const gchar *first_required_widget, ...)
 {
-	va_list   args;
-	GladeXML *gui;
+    va_list   args;
+    GladeXML *gui;
 
-	va_start (args, first_required_widget);
+    va_start (args, first_required_widget);
 
-	gui = get_glade_file (filename,
-			      root,
-			      domain,
-			      first_required_widget,
-			      args);
+    gui = get_glade_file (filename,
+                          root,
+                          domain,
+                          first_required_widget,
+                          args);
 
-	va_end (args);
+    va_end (args);
 
-	if (!gui) {
-		return;
-	}
+    if (!gui) {
+        return;
+    }
 
-	g_object_unref (gui);
+    g_object_unref (gui);
 }
 
 GladeXML *
 gossip_glade_get_file (const gchar *filename,
-		       const gchar *root,
-		       const gchar *domain,
-		       const gchar *first_required_widget, ...)
+                       const gchar *root,
+                       const gchar *domain,
+                       const gchar *first_required_widget, ...)
 {
-	va_list   args;
-	GladeXML *gui;
+    va_list   args;
+    GladeXML *gui;
 
-	va_start (args, first_required_widget);
+    va_start (args, first_required_widget);
 
-	gui = get_glade_file (filename,
-			      root,
-			      domain,
-			      first_required_widget,
-			      args);
+    gui = get_glade_file (filename,
+                          root,
+                          domain,
+                          first_required_widget,
+                          args);
 
-	va_end (args);
+    va_end (args);
 
-	if (!gui) {
-		return NULL;
-	}
+    if (!gui) {
+        return NULL;
+    }
 
-	return gui;
+    return gui;
 }
 
 void
 gossip_glade_connect (GladeXML *gui,
-		      gpointer  user_data,
-		      gchar     *first_widget, ...)
+                      gpointer  user_data,
+                      gchar     *first_widget, ...)
 {
-	va_list      args;
-	const gchar *name;
-	const gchar *signal;
-	GtkWidget   *widget;
-	gpointer    *callback;
+    va_list      args;
+    const gchar *name;
+    const gchar *signal;
+    GtkWidget   *widget;
+    gpointer    *callback;
 
-	va_start (args, first_widget);
+    va_start (args, first_widget);
 
-	for (name = first_widget; name; name = va_arg (args, char *)) {
-		signal = va_arg (args, void *);
-		callback = va_arg (args, void *);
+    for (name = first_widget; name; name = va_arg (args, char *)) {
+        signal = va_arg (args, void *);
+        callback = va_arg (args, void *);
 
-		widget = glade_xml_get_widget (gui, name);
-		if (!widget) {
-			g_warning ("Glade file is missing widget '%s', aborting",
-				   name);
-			continue;
-		}
+        widget = glade_xml_get_widget (gui, name);
+        if (!widget) {
+            g_warning ("Glade file is missing widget '%s', aborting",
+                       name);
+            continue;
+        }
 
-		g_signal_connect (widget,
-				  signal,
-				  G_CALLBACK (callback),
-				  user_data);
-	}
+        g_signal_connect (widget,
+                          signal,
+                          G_CALLBACK (callback),
+                          user_data);
+    }
 
-	va_end (args);
+    va_end (args);
 }
 
 void
 gossip_glade_setup_size_group (GladeXML         *gui,
-			       GtkSizeGroupMode  mode,
-			       gchar            *first_widget, ...)
+                               GtkSizeGroupMode  mode,
+                               gchar            *first_widget, ...)
 {
-	va_list       args;
-	GtkWidget    *widget;
-	GtkSizeGroup *size_group;
-	const gchar  *name;
+    va_list       args;
+    GtkWidget    *widget;
+    GtkSizeGroup *size_group;
+    const gchar  *name;
 
-	va_start (args, first_widget);
+    va_start (args, first_widget);
 
-	size_group = gtk_size_group_new (mode);
+    size_group = gtk_size_group_new (mode);
 
-	for (name = first_widget; name; name = va_arg (args, char *)) {
-		widget = glade_xml_get_widget (gui, name);
-		if (!widget) {
-			g_warning ("Glade file is missing widget '%s'", name);
-			continue;
-		}
+    for (name = first_widget; name; name = va_arg (args, char *)) {
+        widget = glade_xml_get_widget (gui, name);
+        if (!widget) {
+            g_warning ("Glade file is missing widget '%s'", name);
+            continue;
+        }
 
-		gtk_size_group_add_widget (size_group, widget);
-	}
+        gtk_size_group_add_widget (size_group, widget);
+    }
 
-	g_object_unref (size_group);
+    g_object_unref (size_group);
 
-	va_end (args);
+    va_end (args);
 }
 

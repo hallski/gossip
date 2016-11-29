@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2007 <martyn@imendio.com>
  *
@@ -39,33 +39,33 @@ typedef struct _GossipContactManager      GossipContactManager;
 typedef struct _GossipContactManagerClass GossipContactManagerClass;
 
 struct _GossipContactManager {
-	GObject parent;
+    GObject parent;
 };
 
 struct _GossipContactManagerClass {
-	GObjectClass parent_class;
+    GObjectClass parent_class;
 };
 
 GType          gossip_contact_manager_get_type        (void) G_GNUC_CONST;
 
 gboolean       gossip_contact_manager_add             (GossipContactManager *manager,
-						       GossipContact        *contact);
+                                                       GossipContact        *contact);
 void           gossip_contact_manager_remove          (GossipContactManager *manager,
-						       GossipContact        *contact);
+                                                       GossipContact        *contact);
 GossipContact *gossip_contact_manager_find            (GossipContactManager *manager,
-						       GossipAccount        *account,
-						       const gchar          *contact_id);
+                                                       GossipAccount        *account,
+                                                       const gchar          *contact_id);
 GossipContact *gossip_contact_manager_find_extended   (GossipContactManager *manager,
-						       GossipAccount        *account,
-						       GossipContactType     type,
-						       const gchar          *contact_id);
+                                                       GossipAccount        *account,
+                                                       GossipContactType     type,
+                                                       const gchar          *contact_id);
 GossipContact *gossip_contact_manager_find_or_create  (GossipContactManager *manager,
-						       GossipAccount        *account,
-						       GossipContactType     type,
-						       const gchar          *contact_id,
-						       gboolean             *created);
+                                                       GossipAccount        *account,
+                                                       GossipContactType     type,
+                                                       const gchar          *contact_id,
+                                                       gboolean             *created);
 GossipContact *gossip_contact_manager_get_own_contact (GossipContactManager *manager,
-						       GossipAccount        *account);
+                                                       GossipAccount        *account);
 gboolean       gossip_contact_manager_store           (GossipContactManager *manager);
 
 

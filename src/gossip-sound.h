@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2003-2007 Imendio AB
  *
@@ -30,9 +30,9 @@
 G_BEGIN_DECLS
 
 typedef enum {
-	GOSSIP_SOUND_CHAT,
-	GOSSIP_SOUND_OFFLINE,
-	GOSSIP_SOUND_ONLINE
+    GOSSIP_SOUND_CHAT,
+    GOSSIP_SOUND_OFFLINE,
+    GOSSIP_SOUND_ONLINE
 } GossipSound;
 
 void     gossip_sound_init        (GossipSession *session);

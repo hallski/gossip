@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /* 
  * Copyright (C) 2006 Imendio AB
  *
@@ -30,8 +30,8 @@ GList *  peekaboo_galago_get_services       (void);
 GList *  peekaboo_galago_get_people         (void);
 GList *  peekaboo_galago_get_accounts       (void);
 gboolean peekaboo_galago_get_state_and_name (const gchar          *id,
-					     gchar               **name,
-					     GossipPresenceState  *state);
+                                             gchar               **name,
+                                             GossipPresenceState  *state);
 
 
 #endif /* __PEEKABO_GALAGO_H__ */

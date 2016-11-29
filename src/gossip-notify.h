@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2006-2007 Imendio AB
  *
@@ -28,15 +28,15 @@
 G_BEGIN_DECLS
 
 void gossip_notify_init                   (GossipSession      *session,
-					   GossipEventManager *event_manager);
+                                           GossipEventManager *event_manager);
 void gossip_notify_finalize               (void);
 void gossip_notify_set_attach_widget      (GtkWidget          *new_attach_widget);
 void gossip_notify_set_attach_status_icon (GtkStatusIcon      *new_attach);
 gboolean gossip_notify_hint_show          (const gchar        *conf_path,
-					   const gchar        *summary,
-					   const gchar        *message,
-					   GFunc               func,
-					   gpointer            user_data);
+                                           const gchar        *summary,
+                                           const gchar        *message,
+                                           GFunc               func,
+                                           gpointer            user_data);
 
 G_END_DECLS
 

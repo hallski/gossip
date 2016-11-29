@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2007 Free Software Foundation
  *
@@ -33,14 +33,14 @@ G_BEGIN_DECLS
 typedef struct  _LmBsListener LmBsListener;
 
 typedef void    (* LmBsNewClientFunction)            (guint                  fd,
-						      gpointer               user_data);
+                                                      gpointer               user_data);
 
 LmBsListener *lm_bs_listener_new                     (void);
 LmBsListener *lm_bs_listener_new_with_context        (GMainContext          *context);
 void          lm_bs_listener_set_new_client_function (LmBsListener          *listener,
-						      LmBsNewClientFunction  func,
-						      gpointer               user_data,
-						      GDestroyNotify         notify);
+                                                      LmBsNewClientFunction  func,
+                                                      gpointer               user_data,
+                                                      GDestroyNotify         notify);
 guint         lm_bs_listener_start                   (LmBsListener          *listener);
 void          lm_bs_listener_stop                    (LmBsListener          *listener);
 guint         lm_bs_listener_get_port                (LmBsListener          *listener);

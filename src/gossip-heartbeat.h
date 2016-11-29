@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2007 Imendio AB
  *
@@ -36,27 +36,27 @@ typedef struct _GossipHeartbeat      GossipHeartbeat;
 typedef struct _GossipHeartbeatClass GossipHeartbeatClass;
 
 struct _GossipHeartbeat {
-	GObject parent;
+    GObject parent;
 };
 
 struct _GossipHeartbeatClass {
-	GObjectClass parent_class;
+    GObjectClass parent_class;
 };
 
 typedef gboolean (*GossipHeartbeatFunc)       (GossipHeartbeat     *heartbeat,
-					       gpointer             user_data);
+                                               gpointer             user_data);
 
 GType      gossip_heartbeat_get_type          (void) G_GNUC_CONST;
 
 guint      gossip_heartbeat_callback_add      (GossipHeartbeat     *heartbeat,
-					       GossipHeartbeatFunc  func,
-					       gpointer             user_data);
+                                               GossipHeartbeatFunc  func,
+                                               gpointer             user_data);
 guint      gossip_heartbeat_callback_add_full (GossipHeartbeat     *heartbeat,
-					       GossipHeartbeatFunc  func,
-					       gpointer             user_data,
-					       GDestroyNotify       free_func);
+                                               GossipHeartbeatFunc  func,
+                                               gpointer             user_data,
+                                               GDestroyNotify       free_func);
 void       gossip_heartbeat_callback_remove   (GossipHeartbeat     *heartbeat,
-					       guint                id);
+                                               guint                id);
 
 G_END_DECLS
 

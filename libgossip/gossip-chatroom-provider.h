@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2004 Imendio AB
  *
@@ -38,114 +38,114 @@ typedef struct _GossipChatroomProvider      GossipChatroomProvider;
 typedef struct _GossipChatroomProviderIface GossipChatroomProviderIface;
 
 typedef void (*GossipChatroomJoinCb)   (GossipChatroomProvider   *provider,
-					GossipChatroomId          id,
-					GossipChatroomError       error,
-					gpointer                  user_data);
+                                        GossipChatroomId          id,
+                                        GossipChatroomError       error,
+                                        gpointer                  user_data);
 typedef void (*GossipChatroomBrowseCb) (GossipChatroomProvider   *provider,
-					const gchar              *server,
-					GList                    *rooms,
-					GError                   *error,
-					gpointer                  user_data);
+                                        const gchar              *server,
+                                        GList                    *rooms,
+                                        GError                   *error,
+                                        gpointer                  user_data);
 
 struct _GossipChatroomProviderIface {
-	GTypeInterface g_iface;
+    GTypeInterface g_iface;
 
-	/* Virtual Table */
-	GossipChatroomId (*join)            (GossipChatroomProvider *provider,
-					     GossipChatroom         *chatroom,
-					     GossipChatroomJoinCb    callback,
-					     gpointer                user_data);
-	void             (*cancel)          (GossipChatroomProvider *provider,
-					     GossipChatroomId        id);
-	void             (*send)            (GossipChatroomProvider *provider,
-					     GossipChatroomId        id,
-					     const gchar            *message);
-	void             (*change_subject)  (GossipChatroomProvider *provider,
-					     GossipChatroomId        id,
-					     const gchar            *new_subject);
-	void             (*change_nick)     (GossipChatroomProvider *provider,
-					     GossipChatroomId        id,
-					     const gchar            *new_nick);
-	void             (*leave)           (GossipChatroomProvider *provider,
-					     GossipChatroomId        id);
-	void             (*kick)            (GossipChatroomProvider *provider,
-					     GossipChatroomId        id,
-					     GossipContact          *contact,
-					     const gchar            *reason);
-	GossipChatroom * (*find_by_id)      (GossipChatroomProvider *provider,
-					     GossipChatroomId        id);
-	GossipChatroom * (*find)            (GossipChatroomProvider *provider,
-					     GossipChatroom         *chatroom);
-	void             (*invite)          (GossipChatroomProvider *provider,
-					     GossipChatroomId        id,
-					     GossipContact          *contact,
-					     const gchar            *reason);
-	void             (*invite_accept)   (GossipChatroomProvider *provider,
-					     GossipChatroomJoinCb    callback,
-					     GossipChatroomInvite   *invite,
-					     const gchar            *nickname);
-	void             (*invite_decline)  (GossipChatroomProvider *provider,
-					     GossipChatroomInvite   *invite,
-					     const gchar            *reason);
-	GList *          (*get_rooms)       (GossipChatroomProvider *provider);
-	void             (*browse_rooms)    (GossipChatroomProvider *provider,
-					     const gchar            *server,
-					     GossipChatroomBrowseCb  callback,
-					     gpointer                user_data);
+    /* Virtual Table */
+    GossipChatroomId (*join)            (GossipChatroomProvider *provider,
+                                         GossipChatroom         *chatroom,
+                                         GossipChatroomJoinCb    callback,
+                                         gpointer                user_data);
+    void             (*cancel)          (GossipChatroomProvider *provider,
+                                         GossipChatroomId        id);
+    void             (*send)            (GossipChatroomProvider *provider,
+                                         GossipChatroomId        id,
+                                         const gchar            *message);
+    void             (*change_subject)  (GossipChatroomProvider *provider,
+                                         GossipChatroomId        id,
+                                         const gchar            *new_subject);
+    void             (*change_nick)     (GossipChatroomProvider *provider,
+                                         GossipChatroomId        id,
+                                         const gchar            *new_nick);
+    void             (*leave)           (GossipChatroomProvider *provider,
+                                         GossipChatroomId        id);
+    void             (*kick)            (GossipChatroomProvider *provider,
+                                         GossipChatroomId        id,
+                                         GossipContact          *contact,
+                                         const gchar            *reason);
+    GossipChatroom * (*find_by_id)      (GossipChatroomProvider *provider,
+                                         GossipChatroomId        id);
+    GossipChatroom * (*find)            (GossipChatroomProvider *provider,
+                                         GossipChatroom         *chatroom);
+    void             (*invite)          (GossipChatroomProvider *provider,
+                                         GossipChatroomId        id,
+                                         GossipContact          *contact,
+                                         const gchar            *reason);
+    void             (*invite_accept)   (GossipChatroomProvider *provider,
+                                         GossipChatroomJoinCb    callback,
+                                         GossipChatroomInvite   *invite,
+                                         const gchar            *nickname);
+    void             (*invite_decline)  (GossipChatroomProvider *provider,
+                                         GossipChatroomInvite   *invite,
+                                         const gchar            *reason);
+    GList *          (*get_rooms)       (GossipChatroomProvider *provider);
+    void             (*browse_rooms)    (GossipChatroomProvider *provider,
+                                         const gchar            *server,
+                                         GossipChatroomBrowseCb  callback,
+                                         gpointer                user_data);
 };
 
 GType        gossip_chatroom_provider_get_type           (void) G_GNUC_CONST;
 
 GossipChatroomId
-	     gossip_chatroom_provider_join               (GossipChatroomProvider *provider,
-							  GossipChatroom         *chatroom,
-							  GossipChatroomJoinCb    callback,
-							  gpointer                user_data);
+gossip_chatroom_provider_join               (GossipChatroomProvider *provider,
+                                             GossipChatroom         *chatroom,
+                                             GossipChatroomJoinCb    callback,
+                                             gpointer                user_data);
 void         gossip_chatroom_provider_cancel             (GossipChatroomProvider *provider,
-							  GossipChatroomId        id);
+                                                          GossipChatroomId        id);
 void         gossip_chatroom_provider_send               (GossipChatroomProvider *provider,
-							  GossipChatroomId        id,
-							  const gchar            *message);
+                                                          GossipChatroomId        id,
+                                                          const gchar            *message);
 void         gossip_chatroom_provider_change_subject     (GossipChatroomProvider *provider,
-							  GossipChatroomId        id,
-							  const gchar            *new_subject);
+                                                          GossipChatroomId        id,
+                                                          const gchar            *new_subject);
 void         gossip_chatroom_provider_change_nick        (GossipChatroomProvider *provider,
-							  GossipChatroomId        id,
-							  const gchar            *new_nick);
+                                                          GossipChatroomId        id,
+                                                          const gchar            *new_nick);
 void         gossip_chatroom_provider_leave              (GossipChatroomProvider *provider,
-							  GossipChatroomId        id);
+                                                          GossipChatroomId        id);
 void         gossip_chatroom_provider_kick               (GossipChatroomProvider *provider,
-							  GossipChatroomId        id,
-							  GossipContact          *contact,
-							  const gchar            *reason);
+                                                          GossipChatroomId        id,
+                                                          GossipContact          *contact,
+                                                          const gchar            *reason);
 GSList *     gossip_chatroom_provider_get_contacts       (GossipChatroomProvider *provider,
-							  GossipChatroomId        id);
+                                                          GossipChatroomId        id);
 GossipContact *
-             gossip_chatroom_provider_get_own_contacts   (GossipChatroomProvider *provider,
-							  GossipChatroomId        id);
+gossip_chatroom_provider_get_own_contacts   (GossipChatroomProvider *provider,
+                                             GossipChatroomId        id);
 GossipChatroom *
-	     gossip_chatroom_provider_find_by_id         (GossipChatroomProvider *provider,
-							  GossipChatroomId        id);
+gossip_chatroom_provider_find_by_id         (GossipChatroomProvider *provider,
+                                             GossipChatroomId        id);
 GossipChatroom *
-	     gossip_chatroom_provider_find               (GossipChatroomProvider *provider,
-							  GossipChatroom         *chatroom);
+gossip_chatroom_provider_find               (GossipChatroomProvider *provider,
+                                             GossipChatroom         *chatroom);
 void         gossip_chatroom_provider_invite             (GossipChatroomProvider *provider,
-							  GossipChatroomId        id,
-							  GossipContact          *contact,
-							  const gchar            *reason);
+                                                          GossipChatroomId        id,
+                                                          GossipContact          *contact,
+                                                          const gchar            *reason);
 void         gossip_chatroom_provider_invite_accept      (GossipChatroomProvider *provider,
-							  GossipChatroomJoinCb    callback,
-							  GossipChatroomInvite   *invite,
-							  const gchar            *nickname);
+                                                          GossipChatroomJoinCb    callback,
+                                                          GossipChatroomInvite   *invite,
+                                                          const gchar            *nickname);
 void         gossip_chatroom_provider_invite_decline     (GossipChatroomProvider *provider,
-							  GossipChatroomInvite   *invite,
-							  const gchar            *reason);
+                                                          GossipChatroomInvite   *invite,
+                                                          const gchar            *reason);
 
 GList *      gossip_chatroom_provider_get_rooms          (GossipChatroomProvider *provider);
 void         gossip_chatroom_provider_browse_rooms       (GossipChatroomProvider *provider,
-							  const gchar            *server,
-							  GossipChatroomBrowseCb  callback,
-							  gpointer                user_data);
+                                                          const gchar            *server,
+                                                          GossipChatroomBrowseCb  callback,
+                                                          gpointer                user_data);
 
 G_END_DECLS
 

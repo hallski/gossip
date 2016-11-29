@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2003-2006 Imendio AB
  *
@@ -44,68 +44,68 @@ typedef struct _GossipLogSearchHit    GossipLogSearchHit;
 typedef struct _GossipLogLinkHit      GossipLogLinkHit;
 
 struct _GossipLogManager {
-	GObject parent;
+    GObject parent;
 };
 
 struct _GossipLogManagerClass {
-	GObjectClass parent_class;
+    GObjectClass parent_class;
 };
 
 typedef void (* GossipLogMessageFunc)  (GossipContact  *own_contact,
-					GossipMessage  *message,
-					gpointer        user_data);
+                                        GossipMessage  *message,
+                                        gpointer        user_data);
 
 GType             gossip_log_manager_get_type          (void) G_GNUC_CONST;
 
 /* Log message handlers */
 void              gossip_log_handler_add_for_contact   (GossipLogManager      *manager,
-							GossipContact         *contact,
-							GossipLogMessageFunc   func,
-							gpointer               user_data);
+                                                        GossipContact         *contact,
+                                                        GossipLogMessageFunc   func,
+                                                        gpointer               user_data);
 void              gossip_log_handler_add_for_chatroom  (GossipLogManager      *manager,
-							GossipChatroom        *chatroom,
-							GossipLogMessageFunc   func,
-							gpointer               user_data);
+                                                        GossipChatroom        *chatroom,
+                                                        GossipLogMessageFunc   func,
+                                                        gpointer               user_data);
 void              gossip_log_handler_remove            (GossipLogManager      *manager,
-							GossipLogMessageFunc   func);
+                                                        GossipLogMessageFunc   func);
 
 
 /* Utils */
 GList *           gossip_log_get_contacts              (GossipLogManager      *manager,
-							GossipAccount         *account);
+                                                        GossipAccount         *account);
 GList *           gossip_log_get_chatrooms             (GossipLogManager      *manager,
-							GossipAccount         *account);
+                                                        GossipAccount         *account);
 gchar *           gossip_log_get_date_readable         (const gchar           *date);
 
 
 /* Contact functions */
 GList *           gossip_log_get_dates_for_contact     (GossipContact         *contact);
 GList *           gossip_log_get_messages_for_contact  (GossipLogManager      *manager,
-							GossipContact         *contact,
-							const gchar           *date);
+                                                        GossipContact         *contact,
+                                                        const gchar           *date);
 void              gossip_log_message_for_contact       (GossipLogManager      *manager,
-							GossipMessage         *message,
-							gboolean               incoming);
+                                                        GossipMessage         *message,
+                                                        gboolean               incoming);
 gboolean          gossip_log_exists_for_contact        (GossipContact         *contact);
 GList *           gossip_log_get_last_for_contact      (GossipLogManager      *manager,
-							GossipContact         *contact);
+                                                        GossipContact         *contact);
 
 
 /* Chatroom functions */
 GList *           gossip_log_get_dates_for_chatroom    (GossipChatroom        *chatroom);
 GList *           gossip_log_get_messages_for_chatroom (GossipLogManager      *manager,
-							GossipChatroom        *chatroom,
-							const gchar           *date);
+                                                        GossipChatroom        *chatroom,
+                                                        const gchar           *date);
 void              gossip_log_message_for_chatroom      (GossipLogManager      *manager,
-							GossipChatroom        *chatroom,
-							GossipMessage         *message,
-							gboolean               incoming);
+                                                        GossipChatroom        *chatroom,
+                                                        GossipMessage         *message,
+                                                        gboolean               incoming);
 gboolean          gossip_log_exists_for_chatroom       (GossipChatroom        *chatroom);
 
 
 /* Searching */
 GList *           gossip_log_search_new                (GossipLogManager      *manager,
-							const gchar           *text);
+                                                        const gchar           *text);
 void              gossip_log_search_free               (GList                 *hits);
 GossipAccount *   gossip_log_search_hit_get_account    (GossipLogSearchHit    *hit);
 GossipContact *   gossip_log_search_hit_get_contact    (GossipLogSearchHit    *hit);
@@ -114,13 +114,13 @@ const gchar *     gossip_log_search_hit_get_filename   (GossipLogSearchHit    *h
 
 /* Links */
 GList *           gossip_log_get_links                 (GossipLogManager      *manager,
-							GossipAccount         *account);
+                                                        GossipAccount         *account);
 void              gossip_log_links_free                (GList                 *hits);
 GossipAccount *   gossip_log_link_hit_get_account      (GossipLogLinkHit      *hit);
 GossipContact *   gossip_log_link_hit_get_contact      (GossipLogLinkHit      *hit);
 const gchar *     gossip_log_link_hit_get_date         (GossipLogLinkHit      *hit);
 const gchar *     gossip_log_link_hit_get_url          (GossipLogLinkHit      *hit);
-						 	
+                                                        
 G_END_DECLS
 
 #endif /* __GOSSIP_LOG_H__ */

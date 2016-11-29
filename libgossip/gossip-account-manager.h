@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2005-2007 Imendio AB
  *
@@ -40,32 +40,32 @@ typedef struct _GossipAccountManager      GossipAccountManager;
 typedef struct _GossipAccountManagerClass GossipAccountManagerClass;
 
 struct _GossipAccountManager {
-	GObject parent;
+    GObject parent;
 };
 
 struct _GossipAccountManagerClass {
-	GObjectClass parent_class;
+    GObjectClass parent_class;
 };
 
 GType          gossip_account_manager_get_type               (void) G_GNUC_CONST;
 gboolean       gossip_account_manager_add                    (GossipAccountManager *manager,
-							      GossipAccount        *account);
+                                                              GossipAccount        *account);
 void           gossip_account_manager_remove                 (GossipAccountManager *manager,
-							      GossipAccount        *account);
+                                                              GossipAccount        *account);
 GList *        gossip_account_manager_get_accounts           (GossipAccountManager *manager);
 guint          gossip_account_manager_get_count              (GossipAccountManager *manager);
 GossipAccount *gossip_account_manager_get_default            (GossipAccountManager *manager);
 GossipAccount *gossip_account_manager_find                   (GossipAccountManager *manager,
-							      const gchar          *name);
+                                                              const gchar          *name);
 GossipAccount *gossip_account_manager_find_by_id             (GossipAccountManager *manager,
-							      const gchar          *id);
+                                                              const gchar          *id);
 void           gossip_account_manager_set_overridden_default (GossipAccountManager *manager,
-							      const gchar          *name);
+                                                              const gchar          *name);
 void           gossip_account_manager_set_default            (GossipAccountManager *manager,
-							      GossipAccount        *account);
+                                                              GossipAccount        *account);
 gboolean       gossip_account_manager_store                  (GossipAccountManager *manager);
 gboolean       gossip_account_manager_set_unique_name        (GossipAccountManager *manager,
-							      GossipAccount        *account);
+                                                              GossipAccount        *account);
 
 G_END_DECLS
 

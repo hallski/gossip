@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2002-2007 Imendio AB
  *
@@ -34,158 +34,158 @@
 #include "gossip-ui-utils.h"
 
 typedef struct {
-	GtkWidget      *dialog;
-	GtkWidget      *entry_name;
-	GtkWidget      *entry_nickname;
-	GtkWidget      *entry_server;
-	GtkWidget      *entry_room;
-	GtkWidget      *entry_password;
-	GtkWidget      *checkbutton_auto_connect;
-	GtkWidget      *button_save;
+    GtkWidget      *dialog;
+    GtkWidget      *entry_name;
+    GtkWidget      *entry_nickname;
+    GtkWidget      *entry_server;
+    GtkWidget      *entry_room;
+    GtkWidget      *entry_password;
+    GtkWidget      *checkbutton_auto_connect;
+    GtkWidget      *button_save;
 
-	GossipChatroom *chatroom;
+    GossipChatroom *chatroom;
 } GossipEditChatroomDialog;
 
 static void edit_chatroom_dialog_set              (GossipEditChatroomDialog *dialog);
 static void edit_chatroom_dialog_entry_changed_cb (GtkEntry                 *entry,
-						   GossipEditChatroomDialog *dialog);
+                                                   GossipEditChatroomDialog *dialog);
 static void edit_chatroom_dialog_response_cb      (GtkWidget                *widget,
-						   gint                      response,
-						   GossipEditChatroomDialog *dialog);
+                                                   gint                      response,
+                                                   GossipEditChatroomDialog *dialog);
 static void edit_chatroom_dialog_destroy_cb       (GtkWidget                *widget,
-						   GossipEditChatroomDialog *dialog);
+                                                   GossipEditChatroomDialog *dialog);
 
 static void
 edit_chatroom_dialog_set (GossipEditChatroomDialog *dialog)
 {
-	GossipChatroomManager *manager;
-	GtkToggleButton       *togglebutton;
-	const gchar           *str;
+    GossipChatroomManager *manager;
+    GtkToggleButton       *togglebutton;
+    const gchar           *str;
 
-	manager = gossip_app_get_chatroom_manager ();
+    manager = gossip_app_get_chatroom_manager ();
 
-	/* Set chatroom information */
-	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_name));
-	gossip_chatroom_set_name (dialog->chatroom, str);
+    /* Set chatroom information */
+    str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_name));
+    gossip_chatroom_set_name (dialog->chatroom, str);
 
-	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_nickname));
-	gossip_chatroom_set_nick (dialog->chatroom, str);
+    str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_nickname));
+    gossip_chatroom_set_nick (dialog->chatroom, str);
 
-	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_server));
-	gossip_chatroom_set_server (dialog->chatroom, str);
+    str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_server));
+    gossip_chatroom_set_server (dialog->chatroom, str);
 
-	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_room));
-	gossip_chatroom_set_room (dialog->chatroom, str);
+    str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_room));
+    gossip_chatroom_set_room (dialog->chatroom, str);
 
-	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_password));
-	gossip_chatroom_set_password (dialog->chatroom, str);
+    str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_password));
+    gossip_chatroom_set_password (dialog->chatroom, str);
 
-	togglebutton = GTK_TOGGLE_BUTTON (dialog->checkbutton_auto_connect);
-	gossip_chatroom_set_auto_connect (dialog->chatroom, 
-					  gtk_toggle_button_get_active (togglebutton));
+    togglebutton = GTK_TOGGLE_BUTTON (dialog->checkbutton_auto_connect);
+    gossip_chatroom_set_auto_connect (dialog->chatroom, 
+                                      gtk_toggle_button_get_active (togglebutton));
 
-	gossip_chatroom_manager_store (manager);
+    gossip_chatroom_manager_store (manager);
 }
 
 static void
 edit_chatroom_dialog_entry_changed_cb (GtkEntry                 *entry,
-				       GossipEditChatroomDialog *dialog)
+                                       GossipEditChatroomDialog *dialog)
 {
-	const gchar *str;
-	gboolean     disabled = FALSE;
+    const gchar *str;
+    gboolean     disabled = FALSE;
 
-	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_nickname));
-	disabled |= G_STR_EMPTY (str);
+    str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_nickname));
+    disabled |= G_STR_EMPTY (str);
 
-	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_server));
-	disabled |= G_STR_EMPTY (str);
+    str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_server));
+    disabled |= G_STR_EMPTY (str);
 
-	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_room));
-	disabled |= G_STR_EMPTY (str);
+    str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_room));
+    disabled |= G_STR_EMPTY (str);
 
-	gtk_widget_set_sensitive (dialog->button_save, !disabled);
+    gtk_widget_set_sensitive (dialog->button_save, !disabled);
 }
 
 static void
 edit_chatroom_dialog_response_cb (GtkWidget               *widget,
-				  gint                     response,
-				  GossipEditChatroomDialog *dialog)
+                                  gint                     response,
+                                  GossipEditChatroomDialog *dialog)
 {
-	if (response == GTK_RESPONSE_OK) {
-		edit_chatroom_dialog_set (dialog);
-	}
+    if (response == GTK_RESPONSE_OK) {
+        edit_chatroom_dialog_set (dialog);
+    }
 
-	gtk_widget_destroy (widget);
+    gtk_widget_destroy (widget);
 }
 
 static void
 edit_chatroom_dialog_destroy_cb (GtkWidget                *widget,
-				 GossipEditChatroomDialog *dialog)
+                                 GossipEditChatroomDialog *dialog)
 {
-	g_object_unref (dialog->chatroom);
-	g_free (dialog);
+    g_object_unref (dialog->chatroom);
+    g_free (dialog);
 }
 
 void
 gossip_edit_chatroom_dialog_show (GtkWindow      *parent,
-				  GossipChatroom *chatroom)
+                                  GossipChatroom *chatroom)
 {
-	GossipEditChatroomDialog *dialog;
-	GossipAccount            *account;
-	GladeXML                 *glade;
-	GtkWidget                *label_server;
+    GossipEditChatroomDialog *dialog;
+    GossipAccount            *account;
+    GladeXML                 *glade;
+    GtkWidget                *label_server;
 
-	g_return_if_fail (chatroom != NULL);
+    g_return_if_fail (chatroom != NULL);
 
-	dialog = g_new0 (GossipEditChatroomDialog, 1);
+    dialog = g_new0 (GossipEditChatroomDialog, 1);
 
-	dialog->chatroom = g_object_ref (chatroom);
+    dialog->chatroom = g_object_ref (chatroom);
 
-	glade = gossip_glade_get_file ("group-chat.glade",
-				       "edit_chatroom_dialog",
-				       NULL,
-				       "edit_chatroom_dialog", &dialog->dialog,
-				       "entry_name", &dialog->entry_name,
-				       "entry_nickname", &dialog->entry_nickname,
-				       "label_server", &label_server,
-				       "entry_server", &dialog->entry_server,
-				       "entry_room", &dialog->entry_room,
-				       "entry_password", &dialog->entry_password,
-				       "checkbutton_auto_connect", &dialog->checkbutton_auto_connect,
-				       "button_save", &dialog->button_save,
-				       NULL);
+    glade = gossip_glade_get_file ("group-chat.glade",
+                                   "edit_chatroom_dialog",
+                                   NULL,
+                                   "edit_chatroom_dialog", &dialog->dialog,
+                                   "entry_name", &dialog->entry_name,
+                                   "entry_nickname", &dialog->entry_nickname,
+                                   "label_server", &label_server,
+                                   "entry_server", &dialog->entry_server,
+                                   "entry_room", &dialog->entry_room,
+                                   "entry_password", &dialog->entry_password,
+                                   "checkbutton_auto_connect", &dialog->checkbutton_auto_connect,
+                                   "button_save", &dialog->button_save,
+                                   NULL);
 
-	gossip_glade_connect (glade,
-			      dialog,
-			      "edit_chatroom_dialog", "destroy", edit_chatroom_dialog_destroy_cb,
-			      "edit_chatroom_dialog", "response", edit_chatroom_dialog_response_cb,
-			      "entry_name", "changed", edit_chatroom_dialog_entry_changed_cb,
-			      "entry_nickname", "changed", edit_chatroom_dialog_entry_changed_cb,
-			      "entry_server", "changed", edit_chatroom_dialog_entry_changed_cb,
-			      "entry_room", "changed", edit_chatroom_dialog_entry_changed_cb,
-			      NULL);
+    gossip_glade_connect (glade,
+                          dialog,
+                          "edit_chatroom_dialog", "destroy", edit_chatroom_dialog_destroy_cb,
+                          "edit_chatroom_dialog", "response", edit_chatroom_dialog_response_cb,
+                          "entry_name", "changed", edit_chatroom_dialog_entry_changed_cb,
+                          "entry_nickname", "changed", edit_chatroom_dialog_entry_changed_cb,
+                          "entry_server", "changed", edit_chatroom_dialog_entry_changed_cb,
+                          "entry_room", "changed", edit_chatroom_dialog_entry_changed_cb,
+                          NULL);
 
-	g_object_unref (glade);
+    g_object_unref (glade);
 
-	account = gossip_chatroom_get_account (chatroom);
+    account = gossip_chatroom_get_account (chatroom);
 
-	gtk_entry_set_text (GTK_ENTRY (dialog->entry_name),
-			    gossip_chatroom_get_name (chatroom));
-	gtk_entry_set_text (GTK_ENTRY (dialog->entry_nickname),
-			    gossip_chatroom_get_nick (chatroom));
-	gtk_entry_set_text (GTK_ENTRY (dialog->entry_server),
-			    gossip_chatroom_get_server (chatroom));
-	gtk_entry_set_text (GTK_ENTRY (dialog->entry_room),
-			    gossip_chatroom_get_room (chatroom));
-	gtk_entry_set_text (GTK_ENTRY (dialog->entry_password),
-			    gossip_chatroom_get_password (chatroom));
-	gtk_toggle_button_set_active (
-		GTK_TOGGLE_BUTTON (dialog->checkbutton_auto_connect),
-		gossip_chatroom_get_auto_connect (chatroom));
+    gtk_entry_set_text (GTK_ENTRY (dialog->entry_name),
+                        gossip_chatroom_get_name (chatroom));
+    gtk_entry_set_text (GTK_ENTRY (dialog->entry_nickname),
+                        gossip_chatroom_get_nick (chatroom));
+    gtk_entry_set_text (GTK_ENTRY (dialog->entry_server),
+                        gossip_chatroom_get_server (chatroom));
+    gtk_entry_set_text (GTK_ENTRY (dialog->entry_room),
+                        gossip_chatroom_get_room (chatroom));
+    gtk_entry_set_text (GTK_ENTRY (dialog->entry_password),
+                        gossip_chatroom_get_password (chatroom));
+    gtk_toggle_button_set_active (
+        GTK_TOGGLE_BUTTON (dialog->checkbutton_auto_connect),
+        gossip_chatroom_get_auto_connect (chatroom));
 
-	if (parent) {
-		gtk_window_set_transient_for (GTK_WINDOW (dialog->dialog), parent);
-	}
+    if (parent) {
+        gtk_window_set_transient_for (GTK_WINDOW (dialog->dialog), parent);
+    }
 
-	gtk_widget_show (dialog->dialog);
+    gtk_widget_show (dialog->dialog);
 }

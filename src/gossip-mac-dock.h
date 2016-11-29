@@ -36,11 +36,11 @@ typedef struct _GossipDock      GossipDock;
 typedef struct _GossipDockClass GossipDockClass;
 
 struct _GossipDock {
-        IgeMacDock parent;
+    IgeMacDock parent;
 };
 
 struct _GossipDockClass {
-        IgeMacDockClass parent_class;
+    IgeMacDockClass parent_class;
 };
 
 GType       gossip_dock_get_type       (void);

@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2004-2007 Imendio AB
  *
@@ -32,7 +32,7 @@ GList       *gossip_spell_get_language_codes  (void);
 
 gboolean     gossip_spell_check               (const gchar *word);
 GList *      gossip_spell_get_suggestions     (const gchar *word,
-					       const gchar *code);
+                                               const gchar *code);
 
 G_END_DECLS
 

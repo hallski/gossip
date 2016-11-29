@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2005 Imendio AB
  *
@@ -34,44 +34,44 @@ typedef struct _GossipJabberFTs GossipJabberFTs;
 GossipJabberFTs *gossip_jabber_ft_init                (GossipJabber    *jabber);
 void             gossip_jabber_ft_finalize            (GossipJabberFTs *fts);
 GossipFT *       gossip_jabber_ft_send                (GossipJabberFTs *fts,
-						       GossipContact   *contact,
-						       const gchar     *file_name);
+                                                       GossipContact   *contact,
+                                                       const gchar     *file_name);
 void             gossip_jabber_ft_accept              (GossipJabberFTs *fts,
-						       GossipFTId       id);
+                                                       GossipFTId       id);
 void             gossip_jabber_ft_decline             (GossipJabberFTs *fts,
-						       GossipFTId       id);
+                                                       GossipFTId       id);
 void             gossip_jabber_ft_cancel              (GossipJabberFTs *fts,
-						       GossipFTId       id);
+                                                       GossipFTId       id);
 void             gossip_jabber_ft_clean_up            (GossipJabberFTs *fts,
-						       GossipFTId       id);
+                                                       GossipFTId       id);
 void             gossip_jabber_ft_send_response       (GossipJabber    *jabber,
-						       const gchar     *to,
-						       const gchar     *id);
+                                                       const gchar     *to,
+                                                       const gchar     *id);
 
 /*
  * Stream API
  */
 void             gossip_jabber_ft_iib_start           (GossipJabber    *jabber,
-						       const gchar     *to);
+                                                       const gchar     *to);
 void             gossip_jabber_ft_iib_start_response  (GossipJabber    *jabber,
-						       const gchar     *to,
-						       const gchar     *id);
+                                                       const gchar     *to,
+                                                       const gchar     *id);
 void             gossip_jabber_ft_iib_error           (GossipJabber    *jabber,
-						       const gchar     *to,
-						       const gchar     *id,
-						       const gchar     *error_code,
-						       const gchar     *error_type);
+                                                       const gchar     *to,
+                                                       const gchar     *id,
+                                                       const gchar     *error_code,
+                                                       const gchar     *error_type);
 void             gossip_jabber_ft_iib_send            (GossipJabber    *jabber,
-						       const gchar     *to,
-						       const gchar     *sid,
-						       const gchar     *data,
-						       const gchar     *seq);
+                                                       const gchar     *to,
+                                                       const gchar     *sid,
+                                                       const gchar     *data,
+                                                       const gchar     *seq);
 void             gossip_jabber_ft_iib_finish          (GossipJabber    *jabber,
-						       const gchar     *to,
-						       const gchar     *sid);
+                                                       const gchar     *to,
+                                                       const gchar     *sid);
 void             gossip_jabber_ft_iib_finish_response (GossipJabber    *jabber,
-						       const gchar     *to,
-						       const gchar     *id);
+                                                       const gchar     *to,
+                                                       const gchar     *id);
 
 G_END_DECLS
 

@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2005-2007 Imendio AB
  *
@@ -39,18 +39,18 @@ typedef struct _GossipPopupButton      GossipPopupButton;
 typedef struct _GossipPopupButtonClass GossipPopupButtonClass;
 
 struct _GossipPopupButton {
-	GtkToggleButton  parent_instance;
+    GtkToggleButton  parent_instance;
 };
 
 struct _GossipPopupButtonClass {
-	GtkToggleButtonClass parent_class;
+    GtkToggleButtonClass parent_class;
 };
 
 GType      gossip_popup_button_get_type (void) G_GNUC_CONST;
 GtkWidget *gossip_popup_button_new      (const gchar       *label);
 void       gossip_popup_button_popup    (GossipPopupButton *button);
 void       gossip_popup_button_popdown  (GossipPopupButton *button,
-					 gboolean           ok);
+                                         gboolean           ok);
 
 G_END_DECLS
 

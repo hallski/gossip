@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2008 Imendio AB
  *
@@ -27,25 +27,25 @@ gossip_callback_data_new (gpointer callback,
                           gpointer data2,
                           gpointer data3)
 {
-	GossipCallbackData *data;
+    GossipCallbackData *data;
 
-	data = g_slice_new0 (GossipCallbackData);
+    data = g_slice_new0 (GossipCallbackData);
 
-	data->callback = callback;
-	data->user_data = user_data;
-        data->data1 = data1;
-        data->data2 = data2;
-        data->data3 = data3;
-	
-	return data;
+    data->callback = callback;
+    data->user_data = user_data;
+    data->data1 = data1;
+    data->data2 = data2;
+    data->data3 = data3;
+        
+    return data;
 }
 
 void
 gossip_callback_data_free (GossipCallbackData *data)
 {
-        if (!data) {
-                return;
-        }
+    if (!data) {
+        return;
+    }
 
-        g_slice_free (GossipCallbackData, data);
+    g_slice_free (GossipCallbackData, data);
 }

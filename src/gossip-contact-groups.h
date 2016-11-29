@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2005 Imendio AB
  *
@@ -31,7 +31,7 @@ void     gossip_contact_groups_get_all     (void);
 
 gboolean gossip_contact_group_get_expanded (const gchar *group);
 void     gossip_contact_group_set_expanded (const gchar *group,
-					    gboolean     expanded);
+                                            gboolean     expanded);
 
 G_END_DECLS
 

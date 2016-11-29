@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2004-2007 Imendio AB
  *
@@ -31,61 +31,61 @@ static void contact_list_base_init (gpointer klass);
 GType
 gossip_contact_list_iface_get_type (void)
 {
-	static GType type = 0;
+    static GType type = 0;
 
-	if (!type) {
-		static const GTypeInfo type_info = {
-			sizeof (GossipContactListIfaceClass),
-			contact_list_base_init,
-			NULL,
-		};
+    if (!type) {
+        static const GTypeInfo type_info = {
+            sizeof (GossipContactListIfaceClass),
+            contact_list_base_init,
+            NULL,
+        };
 
-		type = g_type_register_static (G_TYPE_INTERFACE,
-					       "GossipContactListIface",
-					       &type_info, 0);
-	}
+        type = g_type_register_static (G_TYPE_INTERFACE,
+                                       "GossipContactListIface",
+                                       &type_info, 0);
+    }
 
-	return type;
+    return type;
 }
 
 static void
 contact_list_base_init (gpointer klass)
 {
-	static gboolean initialized = FALSE;
+    static gboolean initialized = FALSE;
 
-	if (!initialized) {
-		g_signal_new ("contact_added",
-			      G_TYPE_FROM_CLASS (klass),
-			      G_SIGNAL_RUN_LAST,
-			      G_STRUCT_OFFSET (GossipContactListIfaceClass,
-					       contact_added),
-			      NULL, NULL,
-			      gossip_marshal_VOID__POINTER,
-			      G_TYPE_NONE,
-			      1, G_TYPE_POINTER);
+    if (!initialized) {
+        g_signal_new ("contact_added",
+                      G_TYPE_FROM_CLASS (klass),
+                      G_SIGNAL_RUN_LAST,
+                      G_STRUCT_OFFSET (GossipContactListIfaceClass,
+                                       contact_added),
+                      NULL, NULL,
+                      gossip_marshal_VOID__POINTER,
+                      G_TYPE_NONE,
+                      1, G_TYPE_POINTER);
 
-		g_signal_new ("contact_removed",
-			      G_TYPE_FROM_CLASS (klass),
-			      G_SIGNAL_RUN_LAST,
-			      G_STRUCT_OFFSET (GossipContactListIfaceClass,
-					       contact_removed),
-			      NULL, NULL,
-			      gossip_marshal_VOID__POINTER,
-			      G_TYPE_NONE,
-			      1, G_TYPE_POINTER);
+        g_signal_new ("contact_removed",
+                      G_TYPE_FROM_CLASS (klass),
+                      G_SIGNAL_RUN_LAST,
+                      G_STRUCT_OFFSET (GossipContactListIfaceClass,
+                                       contact_removed),
+                      NULL, NULL,
+                      gossip_marshal_VOID__POINTER,
+                      G_TYPE_NONE,
+                      1, G_TYPE_POINTER);
 
-		initialized = TRUE;
-	}
+        initialized = TRUE;
+    }
 }
 
 GList *
 gossip_contact_list_iface_get_contacts (GossipContactListIface *list)
 {
-	g_return_val_if_fail (GOSSIP_IS_CONTACT_LIST (list), NULL);
+    g_return_val_if_fail (GOSSIP_IS_CONTACT_LIST (list), NULL);
 
-	if (GOSSIP_CONTACT_LIST_IFACE_GET_CLASS (list)->get_contacts) {
-		return GOSSIP_CONTACT_LIST_IFACE_GET_CLASS (list)->get_contacts (list);
-	}
+    if (GOSSIP_CONTACT_LIST_IFACE_GET_CLASS (list)->get_contacts) {
+        return GOSSIP_CONTACT_LIST_IFACE_GET_CLASS (list)->get_contacts (list);
+    }
 
-	return NULL;
+    return NULL;
 }

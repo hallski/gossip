@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2006-2007 Imendio AB
  *
@@ -36,106 +36,106 @@
 #define MAX_LARGE 400
 
 typedef struct {
-	GtkWidget   *image;
-	GtkWidget   *popup;
-	GtkTooltips *tooltips;
-	GdkPixbuf   *pixbuf;
+    GtkWidget   *image;
+    GtkWidget   *popup;
+    GtkTooltips *tooltips;
+    GdkPixbuf   *pixbuf;
 } GossipAvatarImagePriv;
 
 static void     avatar_image_finalize                (GObject           *object);
 static void     avatar_image_add_filter              (GossipAvatarImage *avatar_image);
 static void     avatar_image_remove_filter           (GossipAvatarImage *avatar_image);
 static gboolean avatar_image_button_press_event      (GtkWidget         *widget,
-						      GdkEventButton    *event);
+                                                      GdkEventButton    *event);
 static gboolean avatar_image_button_release_event    (GtkWidget         *widget,
-						      GdkEventButton    *event);
+                                                      GdkEventButton    *event);
 
 G_DEFINE_TYPE (GossipAvatarImage, gossip_avatar_image, GTK_TYPE_EVENT_BOX);
 
 static void
 gossip_avatar_image_class_init (GossipAvatarImageClass *klass)
 {
-	GObjectClass   *object_class;
-	GtkWidgetClass *widget_class;
+    GObjectClass   *object_class;
+    GtkWidgetClass *widget_class;
 
-	object_class = G_OBJECT_CLASS (klass);
-	widget_class = GTK_WIDGET_CLASS (klass);
+    object_class = G_OBJECT_CLASS (klass);
+    widget_class = GTK_WIDGET_CLASS (klass);
 
-	object_class->finalize = avatar_image_finalize;
+    object_class->finalize = avatar_image_finalize;
 
-	widget_class->button_press_event   = avatar_image_button_press_event;
-	widget_class->button_release_event = avatar_image_button_release_event;
+    widget_class->button_press_event   = avatar_image_button_press_event;
+    widget_class->button_release_event = avatar_image_button_release_event;
 
-	g_type_class_add_private (object_class, sizeof (GossipAvatarImagePriv));
+    g_type_class_add_private (object_class, sizeof (GossipAvatarImagePriv));
 }
 
 static void
 gossip_avatar_image_init (GossipAvatarImage *avatar_image)
 {
-	GossipAvatarImagePriv *priv;
+    GossipAvatarImagePriv *priv;
 
-	priv = GET_PRIV (avatar_image);
+    priv = GET_PRIV (avatar_image);
 
-	priv->image = gtk_image_new ();
+    priv->image = gtk_image_new ();
 
-	gtk_container_add (GTK_CONTAINER (avatar_image), priv->image);
+    gtk_container_add (GTK_CONTAINER (avatar_image), priv->image);
 
-	priv->tooltips = gtk_tooltips_new ();
-	g_object_ref (priv->tooltips);
-	gtk_object_sink (GTK_OBJECT (priv->tooltips));
+    priv->tooltips = gtk_tooltips_new ();
+    g_object_ref (priv->tooltips);
+    gtk_object_sink (GTK_OBJECT (priv->tooltips));
 
-	avatar_image_add_filter (avatar_image);
+    avatar_image_add_filter (avatar_image);
 
-	gtk_widget_show (priv->image);
+    gtk_widget_show (priv->image);
 }
 
 static void
 avatar_image_finalize (GObject *object)
 {
-	GossipAvatarImagePriv *priv;
+    GossipAvatarImagePriv *priv;
 
-	priv = GET_PRIV (object);
+    priv = GET_PRIV (object);
 
-	avatar_image_remove_filter (GOSSIP_AVATAR_IMAGE (object));
+    avatar_image_remove_filter (GOSSIP_AVATAR_IMAGE (object));
 
-	if (priv->popup) {
-		gtk_widget_destroy (priv->popup);
-	}
+    if (priv->popup) {
+        gtk_widget_destroy (priv->popup);
+    }
 
-	if (priv->pixbuf) {
-		g_object_unref (priv->pixbuf);
-	}
+    if (priv->pixbuf) {
+        g_object_unref (priv->pixbuf);
+    }
 
-	g_object_unref (priv->tooltips);
+    g_object_unref (priv->tooltips);
 
-	G_OBJECT_CLASS (gossip_avatar_image_parent_class)->finalize (object);
+    G_OBJECT_CLASS (gossip_avatar_image_parent_class)->finalize (object);
 }
 
 #ifdef HAVE_PLATFORM_X11
 static GdkFilterReturn
 avatar_image_filter_func (GdkXEvent  *gdkxevent,
-			  GdkEvent   *event,
-			  gpointer    data)
+                          GdkEvent   *event,
+                          gpointer    data)
 {
-	XEvent                *xevent = gdkxevent;
-	Atom                   atom;
-	GossipAvatarImagePriv *priv;
+    XEvent                *xevent = gdkxevent;
+    Atom                   atom;
+    GossipAvatarImagePriv *priv;
 
-	priv = GET_PRIV (data);
+    priv = GET_PRIV (data);
 
-	switch (xevent->type) {
-	case PropertyNotify:
-		atom = gdk_x11_get_xatom_by_name ("_NET_CURRENT_DESKTOP");
-		if (xevent->xproperty.atom == atom) {
-			if (priv->popup) {
-				gtk_widget_destroy (priv->popup);
-				priv->popup = NULL;
-			}
-		}
-		break;
-	}
+    switch (xevent->type) {
+    case PropertyNotify:
+        atom = gdk_x11_get_xatom_by_name ("_NET_CURRENT_DESKTOP");
+        if (xevent->xproperty.atom == atom) {
+            if (priv->popup) {
+                gtk_widget_destroy (priv->popup);
+                priv->popup = NULL;
+            }
+        }
+        break;
+    }
 
-	return GDK_FILTER_CONTINUE;
+    return GDK_FILTER_CONTINUE;
 }
 #endif
 
@@ -143,27 +143,27 @@ static void
 avatar_image_add_filter (GossipAvatarImage *avatar_image)
 {
 #ifdef HAVE_PLATFORM_X11
-	Window     window;
-	GdkWindow *gdkwindow;
-	gint       mask;
+    Window     window;
+    GdkWindow *gdkwindow;
+    gint       mask;
 
-	mask = PropertyChangeMask;
+    mask = PropertyChangeMask;
 
-	window = GDK_ROOT_WINDOW ();
-	gdkwindow = gdk_xid_table_lookup (window);
+    window = GDK_ROOT_WINDOW ();
+    gdkwindow = gdk_xid_table_lookup (window);
 
-	gdk_error_trap_push ();
-	if (gdkwindow) {
-		XWindowAttributes attrs;
-		XGetWindowAttributes (gdk_display, window, &attrs);
-		mask |= attrs.your_event_mask;
-	}
+    gdk_error_trap_push ();
+    if (gdkwindow) {
+        XWindowAttributes attrs;
+        XGetWindowAttributes (gdk_display, window, &attrs);
+        mask |= attrs.your_event_mask;
+    }
 
-	XSelectInput (gdk_display, window, mask);
+    XSelectInput (gdk_display, window, mask);
 
-	gdk_error_trap_pop ();
+    gdk_error_trap_pop ();
 
-	gdk_window_add_filter (NULL, avatar_image_filter_func, avatar_image);
+    gdk_window_add_filter (NULL, avatar_image_filter_func, avatar_image);
 #endif
 }
 
@@ -171,170 +171,170 @@ static void
 avatar_image_remove_filter (GossipAvatarImage *avatar_image)
 {
 #ifdef HAVE_PLATFORM_X11
-	gdk_window_remove_filter (NULL, avatar_image_filter_func, avatar_image);
+    gdk_window_remove_filter (NULL, avatar_image_filter_func, avatar_image);
 #endif
 }
 
 static GdkPixbuf *
 avatar_image_scale_down_if_necessary (GdkPixbuf *pixbuf, gint max_size)
 {
-	gint      width, height;
-	gdouble   factor;
+    gint      width, height;
+    gdouble   factor;
 
-	width = gdk_pixbuf_get_width (pixbuf);
-	height = gdk_pixbuf_get_height (pixbuf);
+    width = gdk_pixbuf_get_width (pixbuf);
+    height = gdk_pixbuf_get_height (pixbuf);
 
-	if (width > max_size || height > max_size) {
-		factor = (gdouble) max_size / MAX (width, height);
+    if (width > max_size || height > max_size) {
+        factor = (gdouble) max_size / MAX (width, height);
 
-		width = width * factor;
-		height = height * factor;
+        width = width * factor;
+        height = height * factor;
 
-		return gdk_pixbuf_scale_simple (pixbuf,
-						width, height,
-						GDK_INTERP_HYPER);
-	}
+        return gdk_pixbuf_scale_simple (pixbuf,
+                                        width, height,
+                                        GDK_INTERP_HYPER);
+    }
 
-	return g_object_ref (pixbuf);
+    return g_object_ref (pixbuf);
 }
 
 static gboolean
 avatar_image_button_press_event (GtkWidget *widget, GdkEventButton *event)
 {
-	GossipAvatarImagePriv *priv;
-	GtkWidget             *popup;
-	GtkWidget             *frame;
-	GtkWidget             *image;
-	gint                   x, y;
-	gint                   popup_width, popup_height;
-	gint                   width, height;
-	GdkPixbuf             *pixbuf;
+    GossipAvatarImagePriv *priv;
+    GtkWidget             *popup;
+    GtkWidget             *frame;
+    GtkWidget             *image;
+    gint                   x, y;
+    gint                   popup_width, popup_height;
+    gint                   width, height;
+    GdkPixbuf             *pixbuf;
 
-	priv = GET_PRIV (widget);
+    priv = GET_PRIV (widget);
 
-	if (priv->popup) {
-		gtk_widget_destroy (priv->popup);
-		priv->popup = NULL;
-	}
+    if (priv->popup) {
+        gtk_widget_destroy (priv->popup);
+        priv->popup = NULL;
+    }
 
-	if (event->button != 1 || event->type != GDK_BUTTON_PRESS) {
-		return FALSE;
-	}
+    if (event->button != 1 || event->type != GDK_BUTTON_PRESS) {
+        return FALSE;
+    }
 
-	popup_width = gdk_pixbuf_get_width (priv->pixbuf);
-	popup_height = gdk_pixbuf_get_height (priv->pixbuf);
+    popup_width = gdk_pixbuf_get_width (priv->pixbuf);
+    popup_height = gdk_pixbuf_get_height (priv->pixbuf);
 
-	width = priv->image->allocation.width;
-	height = priv->image->allocation.height;
+    width = priv->image->allocation.width;
+    height = priv->image->allocation.height;
 
-	/* Don't show a popup if the popup is smaller then the currently avatar
-	 * image.
-	 */
-	if (popup_height <= height || popup_width <= width) {
-		return TRUE;
-	}
+    /* Don't show a popup if the popup is smaller then the currently avatar
+     * image.
+     */
+    if (popup_height <= height || popup_width <= width) {
+        return TRUE;
+    }
 
-	pixbuf = avatar_image_scale_down_if_necessary (priv->pixbuf, MAX_LARGE);
-	popup_width = gdk_pixbuf_get_width (pixbuf);
-	popup_height = gdk_pixbuf_get_height (pixbuf);
+    pixbuf = avatar_image_scale_down_if_necessary (priv->pixbuf, MAX_LARGE);
+    popup_width = gdk_pixbuf_get_width (pixbuf);
+    popup_height = gdk_pixbuf_get_height (pixbuf);
 
-	popup = gtk_window_new (GTK_WINDOW_POPUP);
+    popup = gtk_window_new (GTK_WINDOW_POPUP);
 
-	frame = gtk_frame_new (NULL);
-	gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_OUT);
+    frame = gtk_frame_new (NULL);
+    gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_OUT);
 
-	gtk_container_add (GTK_CONTAINER (popup), frame);
+    gtk_container_add (GTK_CONTAINER (popup), frame);
 
-	image = gtk_image_new ();
-	gtk_container_add (GTK_CONTAINER (frame), image);
+    image = gtk_image_new ();
+    gtk_container_add (GTK_CONTAINER (frame), image);
 
-	gtk_image_set_from_pixbuf (GTK_IMAGE (image), pixbuf);
-	g_object_unref (pixbuf);
+    gtk_image_set_from_pixbuf (GTK_IMAGE (image), pixbuf);
+    g_object_unref (pixbuf);
 
-	gdk_window_get_origin (priv->image->window, &x, &y);
+    gdk_window_get_origin (priv->image->window, &x, &y);
 
-	x = x - (popup_width - width) / 2;
-	y = y - (popup_height - height) / 2;
+    x = x - (popup_width - width) / 2;
+    y = y - (popup_height - height) / 2;
 
-	gtk_window_move (GTK_WINDOW (popup), x, y);
+    gtk_window_move (GTK_WINDOW (popup), x, y);
 
-	priv->popup = popup;
+    priv->popup = popup;
 
-	gtk_widget_show_all (popup);
+    gtk_widget_show_all (popup);
 
-	return TRUE;
+    return TRUE;
 }
 
 static gboolean
 avatar_image_button_release_event (GtkWidget *widget, GdkEventButton *event)
 {
-	GossipAvatarImagePriv *priv;
+    GossipAvatarImagePriv *priv;
 
-	priv = GET_PRIV (widget);
+    priv = GET_PRIV (widget);
 
-	if (event->button != 1 || event->type != GDK_BUTTON_RELEASE) {
-		return FALSE;
-	}
+    if (event->button != 1 || event->type != GDK_BUTTON_RELEASE) {
+        return FALSE;
+    }
 
-	if (!priv->popup) {
-		return TRUE;
-	}
+    if (!priv->popup) {
+        return TRUE;
+    }
 
-	gtk_widget_destroy (priv->popup);
-	priv->popup = NULL;
+    gtk_widget_destroy (priv->popup);
+    priv->popup = NULL;
 
-	return TRUE;
+    return TRUE;
 }
 
 GtkWidget *
 gossip_avatar_image_new (GdkPixbuf *pixbuf)
 {
-	GossipAvatarImage *avatar_image;
+    GossipAvatarImage *avatar_image;
 
-	avatar_image = g_object_new (GOSSIP_TYPE_AVATAR_IMAGE, NULL);
+    avatar_image = g_object_new (GOSSIP_TYPE_AVATAR_IMAGE, NULL);
 
-	gossip_avatar_image_set_pixbuf (avatar_image, pixbuf);
+    gossip_avatar_image_set_pixbuf (avatar_image, pixbuf);
 
-	return GTK_WIDGET (avatar_image);
+    return GTK_WIDGET (avatar_image);
 }
 
 void
 gossip_avatar_image_set_pixbuf (GossipAvatarImage *avatar_image,
-				GdkPixbuf         *pixbuf)
+                                GdkPixbuf         *pixbuf)
 {
-	GossipAvatarImagePriv *priv;
-	GdkPixbuf             *scaled_pixbuf;
+    GossipAvatarImagePriv *priv;
+    GdkPixbuf             *scaled_pixbuf;
 
-	priv = GET_PRIV (avatar_image);
+    priv = GET_PRIV (avatar_image);
 
-	if (priv->pixbuf) {
-		g_object_unref (priv->pixbuf);
-		priv->pixbuf = NULL;
-	}
+    if (priv->pixbuf) {
+        g_object_unref (priv->pixbuf);
+        priv->pixbuf = NULL;
+    }
 
-	if (!pixbuf) {
-		gtk_widget_hide (priv->image);
-		return;
-	}
+    if (!pixbuf) {
+        gtk_widget_hide (priv->image);
+        return;
+    }
 
-	priv->pixbuf = g_object_ref (pixbuf);
+    priv->pixbuf = g_object_ref (pixbuf);
 
-	scaled_pixbuf = avatar_image_scale_down_if_necessary (priv->pixbuf, MAX_SMALL);
-	gtk_image_set_from_pixbuf (GTK_IMAGE (priv->image), scaled_pixbuf);
+    scaled_pixbuf = avatar_image_scale_down_if_necessary (priv->pixbuf, MAX_SMALL);
+    gtk_image_set_from_pixbuf (GTK_IMAGE (priv->image), scaled_pixbuf);
 
-	if (scaled_pixbuf != priv->pixbuf) {
-		gtk_tooltips_set_tip (priv->tooltips,
-				      GTK_WIDGET (avatar_image),
-				      _("Click to enlarge"),
-				      NULL);
-	} else {
-		gtk_tooltips_set_tip (priv->tooltips,
-				      GTK_WIDGET (avatar_image),
-				      NULL, NULL);
-	}
+    if (scaled_pixbuf != priv->pixbuf) {
+        gtk_tooltips_set_tip (priv->tooltips,
+                              GTK_WIDGET (avatar_image),
+                              _("Click to enlarge"),
+                              NULL);
+    } else {
+        gtk_tooltips_set_tip (priv->tooltips,
+                              GTK_WIDGET (avatar_image),
+                              NULL, NULL);
+    }
 
-	g_object_unref (scaled_pixbuf);
+    g_object_unref (scaled_pixbuf);
 
-	gtk_widget_show (priv->image);
+    gtk_widget_show (priv->image);
 }
 

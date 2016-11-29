@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2004 Imendio AB
  *
@@ -42,36 +42,36 @@ typedef struct _GossipContact      GossipContact;
 typedef struct _GossipContactClass GossipContactClass;
 
 struct _GossipContact {
-	GObject parent;
+    GObject parent;
 };
 
 struct _GossipContactClass {
-	GObjectClass parent_class;
+    GObjectClass parent_class;
 };
 
 typedef enum {
-	GOSSIP_CONTACT_TYPE_TEMPORARY,
-	GOSSIP_CONTACT_TYPE_CONTACTLIST,
-	GOSSIP_CONTACT_TYPE_CHATROOM,
-	GOSSIP_CONTACT_TYPE_USER           /* Represents the own user */
+    GOSSIP_CONTACT_TYPE_TEMPORARY,
+    GOSSIP_CONTACT_TYPE_CONTACTLIST,
+    GOSSIP_CONTACT_TYPE_CHATROOM,
+    GOSSIP_CONTACT_TYPE_USER           /* Represents the own user */
 } GossipContactType;
 
 typedef enum {
-	GOSSIP_SUBSCRIPTION_NONE,
-	GOSSIP_SUBSCRIPTION_TO,
-	GOSSIP_SUBSCRIPTION_FROM,
-	GOSSIP_SUBSCRIPTION_BOTH
+    GOSSIP_SUBSCRIPTION_NONE,
+    GOSSIP_SUBSCRIPTION_TO,
+    GOSSIP_SUBSCRIPTION_FROM,
+    GOSSIP_SUBSCRIPTION_BOTH
 } GossipSubscription;
 
 GType              gossip_contact_get_gtype                 (void) G_GNUC_CONST;
 
 GossipContact *    gossip_contact_new                       (GossipContactType   type,
-							     GossipAccount      *account);
+                                                             GossipAccount      *account);
 GossipContact *    gossip_contact_new_full                  (GossipContactType   type,
-							     GossipAccount      *account,
-							     const gchar        *id,
-							     const gchar        *display_id,
-							     const gchar        *name);
+                                                             GossipAccount      *account,
+                                                             const gchar        *id,
+                                                             const gchar        *display_id,
+                                                             const gchar        *name);
 GossipContact *    gossip_contact_copy                      (GossipContact      *contact);
 
 GossipContactType  gossip_contact_get_type                  (GossipContact      *contact);
@@ -86,43 +86,43 @@ GList *            gossip_contact_get_groups                (GossipContact      
 GossipSubscription gossip_contact_get_subscription          (GossipContact      *contact);
 
 void               gossip_contact_set_type                  (GossipContact      *contact,
-							     GossipContactType   type);
+                                                             GossipContactType   type);
 void               gossip_contact_set_id                    (GossipContact      *contact,
-							     const gchar        *id);
+                                                             const gchar        *id);
 void               gossip_contact_set_display_id            (GossipContact      *contact,
-							     const gchar        *display_id);
+                                                             const gchar        *display_id);
 void               gossip_contact_set_name                  (GossipContact      *contact,
-							     const gchar        *name);
+                                                             const gchar        *name);
 void               gossip_contact_set_avatar                (GossipContact      *contact,
-							     GossipAvatar       *avatar);
+                                                             GossipAvatar       *avatar);
 void               gossip_contact_set_account               (GossipContact      *contact,
-							     GossipAccount      *account);
+                                                             GossipAccount      *account);
 void               gossip_contact_set_vcard                 (GossipContact      *contact,
-							     GossipVCard        *vcard);
+                                                             GossipVCard        *vcard);
 void               gossip_contact_set_groups                (GossipContact      *contact,
-							     GList              *categories);
+                                                             GList              *categories);
 void               gossip_contact_set_subscription          (GossipContact      *contact,
-							     GossipSubscription  subscription);
+                                                             GossipSubscription  subscription);
 
 /* Presence */
 void               gossip_contact_add_presence              (GossipContact      *contact,
-							     GossipPresence     *presence);
+                                                             GossipPresence     *presence);
 void               gossip_contact_remove_presence           (GossipContact      *contact,
-							     GossipPresence     *presence);
+                                                             GossipPresence     *presence);
 GossipPresence *   gossip_contact_get_presence_for_resource (GossipContact      *contact,
-							     const gchar        *resource);
+                                                             const gchar        *resource);
 GossipPresence *   gossip_contact_get_active_presence       (GossipContact      *contact);
 GList *            gossip_contact_get_presence_list         (GossipContact      *contact);
 void               gossip_contact_set_presence_list         (GossipContact      *contact,
-							     GList              *presences);
+                                                             GList              *presences);
 
 /* Utility functions */
 gboolean           gossip_contact_equal                     (gconstpointer       v1,
-							     gconstpointer       v2);
+                                                             gconstpointer       v2);
 guint              gossip_contact_hash                      (gconstpointer       key);
 gboolean           gossip_contact_is_online                 (GossipContact      *contact);
 gboolean           gossip_contact_is_in_group               (GossipContact      *contact,
-							     const gchar        *group);
+                                                             const gchar        *group);
 const gchar *      gossip_contact_get_status                (GossipContact      *contact);
 const gchar *      gossip_contact_type_to_string            (GossipContactType   type);
 

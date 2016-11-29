@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2003-2007 Imendio AB
  *
@@ -44,11 +44,11 @@ typedef struct _GossipChatWindowPriv  GossipChatWindowPriv;
 #include "gossip-chat.h"
 
 struct _GossipChatWindow {
-	GObject parent;
+    GObject parent;
 };
 
 struct _GossipChatWindowClass {
-	GObjectClass parent_class;
+    GObjectClass parent_class;
 };
 
 GType             gossip_chat_window_get_type        (void);
@@ -59,14 +59,14 @@ GossipChatWindow *gossip_chat_window_new             (void);
 GtkWidget *       gossip_chat_window_get_dialog      (GossipChatWindow *window);
 
 void              gossip_chat_window_add_chat        (GossipChatWindow *window,
-						      GossipChat       *chat);
+                                                      GossipChat       *chat);
 void              gossip_chat_window_remove_chat     (GossipChatWindow *window,
-						      GossipChat       *chat);
+                                                      GossipChat       *chat);
 void              gossip_chat_window_move_chat       (GossipChatWindow *old_window,
-						      GossipChatWindow *new_window,
-						      GossipChat       *chat);
+                                                      GossipChatWindow *new_window,
+                                                      GossipChat       *chat);
 void              gossip_chat_window_switch_to_chat  (GossipChatWindow *window,
-						      GossipChat       *chat);
+                                                      GossipChat       *chat);
 
 gboolean          gossip_chat_window_has_focus       (GossipChatWindow *window);
 

@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2007 Imendio AB
  *
@@ -38,11 +38,11 @@ typedef struct _GossipThemeBoxes      GossipThemeBoxes;
 typedef struct _GossipThemeBoxesClass GossipThemeBoxesClass;
 
 struct _GossipThemeBoxes {
-	GossipTheme parent;
+    GossipTheme parent;
 };
 
 struct _GossipThemeBoxesClass {
-	GossipThemeClass parent_class;
+    GossipThemeClass parent_class;
 };
 
 GType         gossip_theme_boxes_get_type      (void) G_GNUC_CONST;

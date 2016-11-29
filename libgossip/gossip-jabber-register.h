@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2007 Imendio AB
  *
@@ -28,10 +28,10 @@
 G_BEGIN_DECLS
 
 void gossip_jabber_register_account (GossipJabber        *jabber,
-				     GossipAccount       *account,
-				     GossipVCard         *vcard,
-				     GossipErrorCallback  callback,
-				     gpointer             user_data);
+                                     GossipAccount       *account,
+                                     GossipVCard         *vcard,
+                                     GossipErrorCallback  callback,
+                                     gpointer             user_data);
 void gossip_jabber_register_cancel  (GossipJabber        *jabber);
 
 

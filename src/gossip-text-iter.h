@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2002-2007 Imendio AB
  * Copyright (C) 2000 - 2005 Paolo Maggi 
@@ -28,18 +28,18 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 
-G_BEGIN_DECLS
+    G_BEGIN_DECLS
 
-gboolean   gossip_text_iter_forward_search          (const GtkTextIter   *iter,
-						     const gchar         *str,
-						     GtkTextIter         *match_start,
-						     GtkTextIter         *match_end,
-						     const GtkTextIter   *limit);
+    gboolean   gossip_text_iter_forward_search          (const GtkTextIter   *iter,
+                                                         const gchar         *str,
+                                                         GtkTextIter         *match_start,
+                                                         GtkTextIter         *match_end,
+                                                         const GtkTextIter   *limit);
 gboolean   gossip_text_iter_backward_search         (const GtkTextIter   *iter,
-						     const gchar         *str,
-						     GtkTextIter         *match_start,
-						     GtkTextIter         *match_end,
-						     const GtkTextIter   *limit);
+                                                     const gchar         *str,
+                                                     GtkTextIter         *match_start,
+                                                     GtkTextIter         *match_end,
+                                                     const GtkTextIter   *limit);
 
 G_END_DECLS
 

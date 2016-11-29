@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2003-2007 Imendio AB
  *
@@ -33,31 +33,31 @@
 GossipTime
 gossip_time_get_current (void)
 {
-	return time (NULL);
+    return time (NULL);
 }
 
 time_t
 gossip_time_get_local_time (struct tm *tm)
 {
-	const gchar *timezone;
-	time_t       t;
-	
-	timezone = g_getenv ("TZ");
-	g_setenv ("TZ", "", TRUE);
+    const gchar *timezone;
+    time_t       t;
+        
+    timezone = g_getenv ("TZ");
+    g_setenv ("TZ", "", TRUE);
 
-	tzset ();
+    tzset ();
 
-	t = mktime (tm);
+    t = mktime (tm);
 
-	if (timezone) {
-		g_setenv ("TZ", timezone, TRUE);
-	} else {
-		g_unsetenv ("TZ");
-	}
+    if (timezone) {
+        g_setenv ("TZ", timezone, TRUE);
+    } else {
+        g_unsetenv ("TZ");
+    }
 
-	tzset ();
+    tzset ();
 
-	return t;
+    return t;
 }
 
 /* The format is: "20021209T23:51:30" and is in UTC. 0 is returned on
@@ -66,59 +66,59 @@ gossip_time_get_local_time (struct tm *tm)
 GossipTime
 gossip_time_parse (const gchar *str)
 {
-	struct tm tm;
-	gint      year, month;
-	gint      n_parsed;
+    struct tm tm;
+    gint      year, month;
+    gint      n_parsed;
 
-	memset (&tm, 0, sizeof (struct tm));
+    memset (&tm, 0, sizeof (struct tm));
 
-	n_parsed = sscanf (str, "%4d%2d%2dT%2d:%2d:%2d",
-		    &year, &month, &tm.tm_mday, &tm.tm_hour,
-			   &tm.tm_min, &tm.tm_sec);
-	if (n_parsed != 3 && n_parsed != 6) {
-		return 0;
-	}
+    n_parsed = sscanf (str, "%4d%2d%2dT%2d:%2d:%2d",
+                       &year, &month, &tm.tm_mday, &tm.tm_hour,
+                       &tm.tm_min, &tm.tm_sec);
+    if (n_parsed != 3 && n_parsed != 6) {
+        return 0;
+    }
 
-	tm.tm_year = year - 1900;
-	tm.tm_mon = month - 1;
-	tm.tm_isdst = -1;
+    tm.tm_year = year - 1900;
+    tm.tm_mon = month - 1;
+    tm.tm_isdst = -1;
 
-	return gossip_time_get_local_time (&tm);
+    return gossip_time_get_local_time (&tm);
 }
 
 /* Converts the UTC timestamp to a string, also in UTC. Returns NULL on failure. */
 gchar *
 gossip_time_to_string_utc (GossipTime   t,
-			   const gchar *format)
+                           const gchar *format)
 {
-	gchar      stamp[128];
-	struct tm *tm;
+    gchar      stamp[128];
+    struct tm *tm;
 
-	g_return_val_if_fail (format != NULL, NULL);
+    g_return_val_if_fail (format != NULL, NULL);
 
-	tm = gmtime (&t);
-	if (strftime (stamp, sizeof (stamp), format, tm) == 0) {
-		return NULL;
-	}
+    tm = gmtime (&t);
+    if (strftime (stamp, sizeof (stamp), format, tm) == 0) {
+        return NULL;
+    }
 
-	return g_strdup (stamp);
+    return g_strdup (stamp);
 }
 
 /* Converts the UTC timestamp to a string, in local time. Returns NULL on failure. */
 gchar *
 gossip_time_to_string_local (GossipTime   t,
-			     const gchar *format)
+                             const gchar *format)
 {
-	gchar      stamp[128];
-	struct tm *tm;
+    gchar      stamp[128];
+    struct tm *tm;
 
-	g_return_val_if_fail (format != NULL, NULL);
+    g_return_val_if_fail (format != NULL, NULL);
 
-	tm = localtime (&t);
-	if (strftime (stamp, sizeof (stamp), format, tm) == 0) {
-		return NULL;
-	}
+    tm = localtime (&t);
+    if (strftime (stamp, sizeof (stamp), format, tm) == 0) {
+        return NULL;
+    }
 
-	return g_strdup (stamp);
+    return g_strdup (stamp);
 }
 

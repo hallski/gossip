@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2007 Imendio AB
  *
@@ -39,11 +39,11 @@ typedef struct _GossipStatusIcon      GossipStatusIcon;
 typedef struct _GossipStatusIconClass GossipStatusIconClass;
 
 struct _GossipStatusIcon {
-	GtkStatusIcon parent;
+    GtkStatusIcon parent;
 };
 
 struct _GossipStatusIconClass {
-	GtkStatusIconClass parent_class;
+    GtkStatusIconClass parent_class;
 };
 
 GType          gossip_status_icon_get_type       (void) G_GNUC_CONST;

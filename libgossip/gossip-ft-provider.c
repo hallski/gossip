@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2005 Imendio AB
  *
@@ -29,13 +29,13 @@
 static void ft_provider_base_init (gpointer g_class);
 
 enum {
-	REQUEST,
-	CANCELLED,
-	INITIATED,
-	COMPLETE,
-	PROGRESS,
-	ERROR,
-	LAST_SIGNAL
+    REQUEST,
+    CANCELLED,
+    INITIATED,
+    COMPLETE,
+    PROGRESS,
+    ERROR,
+    LAST_SIGNAL
 };
 
 static guint signals[LAST_SIGNAL] = { 0 };
@@ -43,145 +43,145 @@ static guint signals[LAST_SIGNAL] = { 0 };
 GType
 gossip_ft_provider_get_type (void)
 {
-	static GType type = 0;
+    static GType type = 0;
 
-	if (!type) {
-		static const GTypeInfo info =
-		{
-			sizeof (GossipFTProviderIface),
-			ft_provider_base_init,
-			NULL,
-			NULL,
-			NULL,
-			NULL,
-			0,
-			0,
-			NULL
-		};
+    if (!type) {
+        static const GTypeInfo info =
+            {
+                sizeof (GossipFTProviderIface),
+                ft_provider_base_init,
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+                0,
+                0,
+                NULL
+            };
 
-		type = g_type_register_static (G_TYPE_INTERFACE,
-					       "GossipFTProvider",
-					       &info, 0);
+        type = g_type_register_static (G_TYPE_INTERFACE,
+                                       "GossipFTProvider",
+                                       &info, 0);
 
-		g_type_interface_add_prerequisite (type, G_TYPE_OBJECT);
-	}
+        g_type_interface_add_prerequisite (type, G_TYPE_OBJECT);
+    }
 
-	return type;
+    return type;
 }
 
 static void
 ft_provider_base_init (gpointer g_class)
 {
-	static gboolean initialized = FALSE;
+    static gboolean initialized = FALSE;
 
-	if (!initialized) {
-		signals[REQUEST] =
-			g_signal_new ("file-transfer-request",
-				      G_TYPE_FROM_CLASS (g_class),
-				      G_SIGNAL_RUN_LAST,
-				      0,
-				      NULL, NULL,
-				      libgossip_marshal_VOID__OBJECT,
-				      G_TYPE_NONE,
-				      1, GOSSIP_TYPE_FT);
+    if (!initialized) {
+        signals[REQUEST] =
+            g_signal_new ("file-transfer-request",
+                          G_TYPE_FROM_CLASS (g_class),
+                          G_SIGNAL_RUN_LAST,
+                          0,
+                          NULL, NULL,
+                          libgossip_marshal_VOID__OBJECT,
+                          G_TYPE_NONE,
+                          1, GOSSIP_TYPE_FT);
 
-		signals[INITIATED] =
-			g_signal_new ("file-transfer-initiated",
-				      G_TYPE_FROM_CLASS (g_class),
-				      G_SIGNAL_RUN_LAST,
-				      0,
-				      NULL, NULL,
-				      libgossip_marshal_VOID__OBJECT,
-				      G_TYPE_NONE,
-				      1, GOSSIP_TYPE_FT);
+        signals[INITIATED] =
+            g_signal_new ("file-transfer-initiated",
+                          G_TYPE_FROM_CLASS (g_class),
+                          G_SIGNAL_RUN_LAST,
+                          0,
+                          NULL, NULL,
+                          libgossip_marshal_VOID__OBJECT,
+                          G_TYPE_NONE,
+                          1, GOSSIP_TYPE_FT);
 
-		signals[COMPLETE] =
-			g_signal_new ("file-transfer-complete",
-				      G_TYPE_FROM_CLASS (g_class),
-				      G_SIGNAL_RUN_LAST,
-				      0,
-				      NULL, NULL,
-				      libgossip_marshal_VOID__OBJECT,
-				      G_TYPE_NONE,
-				      1, GOSSIP_TYPE_FT);
+        signals[COMPLETE] =
+            g_signal_new ("file-transfer-complete",
+                          G_TYPE_FROM_CLASS (g_class),
+                          G_SIGNAL_RUN_LAST,
+                          0,
+                          NULL, NULL,
+                          libgossip_marshal_VOID__OBJECT,
+                          G_TYPE_NONE,
+                          1, GOSSIP_TYPE_FT);
 
-		signals[PROGRESS] =
-			g_signal_new ("file-transfer-progress",
-				      G_TYPE_FROM_CLASS (g_class),
-				      G_SIGNAL_RUN_LAST,
-				      0,
-				      NULL, NULL,
-				      libgossip_marshal_VOID__OBJECT_DOUBLE,
-				      G_TYPE_NONE,
-				      2, GOSSIP_TYPE_FT, G_TYPE_DOUBLE);
+        signals[PROGRESS] =
+            g_signal_new ("file-transfer-progress",
+                          G_TYPE_FROM_CLASS (g_class),
+                          G_SIGNAL_RUN_LAST,
+                          0,
+                          NULL, NULL,
+                          libgossip_marshal_VOID__OBJECT_DOUBLE,
+                          G_TYPE_NONE,
+                          2, GOSSIP_TYPE_FT, G_TYPE_DOUBLE);
 
-		signals[ERROR] =
-			g_signal_new ("file-transfer-error",
-				      G_TYPE_FROM_CLASS (g_class),
-				      G_SIGNAL_RUN_LAST,
-				      0,
-				      NULL, NULL,
-				      libgossip_marshal_VOID__OBJECT_POINTER,
-				      G_TYPE_NONE,
-				      2, GOSSIP_TYPE_FT, G_TYPE_POINTER);
+        signals[ERROR] =
+            g_signal_new ("file-transfer-error",
+                          G_TYPE_FROM_CLASS (g_class),
+                          G_SIGNAL_RUN_LAST,
+                          0,
+                          NULL, NULL,
+                          libgossip_marshal_VOID__OBJECT_POINTER,
+                          G_TYPE_NONE,
+                          2, GOSSIP_TYPE_FT, G_TYPE_POINTER);
 
-		initialized = TRUE;
-	}
+        initialized = TRUE;
+    }
 }
 
 GossipFT *
 gossip_ft_provider_send (GossipFTProvider *provider,
-			 GossipContact    *contact,
-			 const gchar      *file)
+                         GossipContact    *contact,
+                         const gchar      *file)
 {
-	g_return_val_if_fail (GOSSIP_IS_FT_PROVIDER (provider), NULL);
-	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
-	g_return_val_if_fail (file != NULL, NULL);
+    g_return_val_if_fail (GOSSIP_IS_FT_PROVIDER (provider), NULL);
+    g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
+    g_return_val_if_fail (file != NULL, NULL);
 
-	if (GOSSIP_FT_PROVIDER_GET_IFACE (provider)->send) {
-		return GOSSIP_FT_PROVIDER_GET_IFACE (provider)->send (provider,
-								      contact,
-								      file);
-	}
+    if (GOSSIP_FT_PROVIDER_GET_IFACE (provider)->send) {
+        return GOSSIP_FT_PROVIDER_GET_IFACE (provider)->send (provider,
+                                                              contact,
+                                                              file);
+    }
 
-	return NULL;
+    return NULL;
 }
 
 void
 gossip_ft_provider_cancel (GossipFTProvider *provider,
-			   GossipFTId        id)
+                           GossipFTId        id)
 {
-	g_return_if_fail (GOSSIP_IS_FT_PROVIDER (provider));
-	g_return_if_fail (id > 0);
+    g_return_if_fail (GOSSIP_IS_FT_PROVIDER (provider));
+    g_return_if_fail (id > 0);
 
-	if (GOSSIP_FT_PROVIDER_GET_IFACE (provider)->cancel) {
-		GOSSIP_FT_PROVIDER_GET_IFACE (provider)->cancel (provider,
-								 id);
-	}
+    if (GOSSIP_FT_PROVIDER_GET_IFACE (provider)->cancel) {
+        GOSSIP_FT_PROVIDER_GET_IFACE (provider)->cancel (provider,
+                                                         id);
+    }
 }
 
 void
 gossip_ft_provider_accept (GossipFTProvider *provider,
-			   GossipFTId        id)
+                           GossipFTId        id)
 {
-	g_return_if_fail (GOSSIP_IS_FT_PROVIDER (provider));
-	g_return_if_fail (id > 0);
+    g_return_if_fail (GOSSIP_IS_FT_PROVIDER (provider));
+    g_return_if_fail (id > 0);
 
-	if (GOSSIP_FT_PROVIDER_GET_IFACE (provider)->accept) {
-		GOSSIP_FT_PROVIDER_GET_IFACE (provider)->accept (provider,
-								 id);
-	}
+    if (GOSSIP_FT_PROVIDER_GET_IFACE (provider)->accept) {
+        GOSSIP_FT_PROVIDER_GET_IFACE (provider)->accept (provider,
+                                                         id);
+    }
 }
 
 void
 gossip_ft_provider_decline (GossipFTProvider *provider,
-			    GossipFTId        id)
+                            GossipFTId        id)
 {
-	g_return_if_fail (GOSSIP_IS_FT_PROVIDER (provider));
-	g_return_if_fail (id > 0);
+    g_return_if_fail (GOSSIP_IS_FT_PROVIDER (provider));
+    g_return_if_fail (id > 0);
 
-	if (GOSSIP_FT_PROVIDER_GET_IFACE (provider)->decline) {
-		GOSSIP_FT_PROVIDER_GET_IFACE (provider)->decline (provider,
-								  id);
-	}
+    if (GOSSIP_FT_PROVIDER_GET_IFACE (provider)->decline) {
+        GOSSIP_FT_PROVIDER_GET_IFACE (provider)->decline (provider,
+                                                          id);
+    }
 }

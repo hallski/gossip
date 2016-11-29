@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2005-2007 Imendio AB
  *
@@ -36,21 +36,21 @@ typedef struct _GossipThemeManager      GossipThemeManager;
 typedef struct _GossipThemeManagerClass GossipThemeManagerClass;
 
 struct _GossipThemeManager {
-	GObject      parent;
+    GObject      parent;
 };
 
 struct _GossipThemeManagerClass {
-	GObjectClass parent_class;
+    GObjectClass parent_class;
 };
 
 GType               gossip_theme_manager_get_type            (void) G_GNUC_CONST;
 GossipThemeManager *gossip_theme_manager_get                 (void);
 const gchar **      gossip_theme_manager_get_themes          (void);
 void                gossip_theme_manager_apply               (GossipThemeManager *manager,
-							      GossipChatView     *view,
-							      const gchar        *theme);
+                                                              GossipChatView     *view,
+                                                              const gchar        *theme);
 void                gossip_theme_manager_apply_saved         (GossipThemeManager *manager,
-							      GossipChatView     *view);
+                                                              GossipChatView     *view);
 
 G_END_DECLS
 

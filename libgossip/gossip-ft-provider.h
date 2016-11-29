@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2005 Imendio AB
  *
@@ -37,31 +37,31 @@ typedef struct _GossipFTProvider      GossipFTProvider;
 typedef struct _GossipFTProviderIface GossipFTProviderIface;
 
 struct _GossipFTProviderIface {
-	GTypeInterface g_iface;
+    GTypeInterface g_iface;
 
-	/* Virtual Table */
-	GossipFT*  (*send)    (GossipFTProvider *provider,
-			       GossipContact    *contact,
-			       const gchar      *file);
-	void       (*cancel)  (GossipFTProvider *provider,
-			       GossipFTId        id);
-	void       (*accept)  (GossipFTProvider *provider,
-			       GossipFTId        id);
-	void       (*decline) (GossipFTProvider *provider,
-			       GossipFTId        id);
+    /* Virtual Table */
+    GossipFT*  (*send)    (GossipFTProvider *provider,
+                           GossipContact    *contact,
+                           const gchar      *file);
+    void       (*cancel)  (GossipFTProvider *provider,
+                           GossipFTId        id);
+    void       (*accept)  (GossipFTProvider *provider,
+                           GossipFTId        id);
+    void       (*decline) (GossipFTProvider *provider,
+                           GossipFTId        id);
 };
 
 GType      gossip_ft_provider_get_type (void) G_GNUC_CONST;
 
 GossipFT * gossip_ft_provider_send     (GossipFTProvider *provider,
-					GossipContact    *contact,
-					const gchar      *file);
+                                        GossipContact    *contact,
+                                        const gchar      *file);
 void       gossip_ft_provider_cancel   (GossipFTProvider *provider,
-					GossipFTId        id);
+                                        GossipFTId        id);
 void       gossip_ft_provider_accept   (GossipFTProvider *provider,
-					GossipFTId        id);
+                                        GossipFTId        id);
 void       gossip_ft_provider_decline  (GossipFTProvider *provider,
-					GossipFTId        id);
+                                        GossipFTId        id);
 
 G_END_DECLS
 

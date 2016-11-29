@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2005-2006 Imendio AB
  *
@@ -33,8 +33,8 @@ typedef struct _GossipChatroomInvite      GossipChatroomInvite;
 
 GType                 gossip_chatroom_invite_get_type    (void) G_GNUC_CONST;
 GossipChatroomInvite *gossip_chatroom_invite_new         (GossipContact        *invitor,
-							  const gchar          *id,
-							  const gchar          *reason);
+                                                          const gchar          *id,
+                                                          const gchar          *reason);
 GossipChatroomInvite *gossip_chatroom_invite_ref         (gpointer              invite);
 void                  gossip_chatroom_invite_unref       (gpointer              invite);
 GossipContact *       gossip_chatroom_invite_get_inviter (GossipChatroomInvite *invite);

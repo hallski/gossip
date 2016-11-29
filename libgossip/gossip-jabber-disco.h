@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2004-2006 Imendio AB 
  *
@@ -35,41 +35,41 @@ typedef struct _GossipJabberDisco     GossipJabberDisco;
 typedef struct _GossipJabberDiscoItem GossipJabberDiscoItem;
 
 typedef void (*GossipJabberDiscoItemFunc) (GossipJabberDisco     *disco,
-					   GossipJabberDiscoItem *item,
-					   gboolean               last_item,
-					   gboolean               timeout,
-					   GError                *error,
-					   gpointer               user_data);
+                                           GossipJabberDiscoItem *item,
+                                           gboolean               last_item,
+                                           gboolean               timeout,
+                                           GError                *error,
+                                           gpointer               user_data);
 
 GossipJabberDisco *    gossip_jabber_disco_request               (GossipJabber              *jabber,
-								  const char                *to,
-								  GossipJabberDiscoItemFunc  item_func,
-								  gpointer                   user_data);
+                                                                  const char                *to,
+                                                                  GossipJabberDiscoItemFunc  item_func,
+                                                                  gpointer                   user_data);
 GossipJabberDisco *    gossip_jabber_disco_request_info          (GossipJabber              *jabber,
-								  const char                *to,
-								  GossipJabberDiscoItemFunc  item_func,
-								  gpointer                   user_data);
+                                                                  const char                *to,
+                                                                  GossipJabberDiscoItemFunc  item_func,
+                                                                  gpointer                   user_data);
 void                   gossip_jabber_disco_destroy               (GossipJabberDisco         *disco);
 GList *                gossip_jabber_disco_get_category          (GossipJabberDisco         *disco,
-								  const gchar               *category);
+                                                                  const gchar               *category);
 GList *                gossip_jabber_disco_get_category_and_type (GossipJabberDisco         *disco,
-								  const gchar               *category,
-								  const gchar               *type);
+                                                                  const gchar               *category,
+                                                                  const gchar               *type);
 gint                   gossip_jabber_disco_get_items_remaining   (GossipJabberDisco         *disco);
 gint                   gossip_jabber_disco_get_items_total       (GossipJabberDisco         *disco);
 GossipJabberDiscoItem *gossip_jabber_disco_get_item              (GossipJabberDisco         *disco,
-								  GossipJID                 *jid);
+                                                                  GossipJID                 *jid);
 GossipJID *            gossip_jabber_disco_item_get_jid          (GossipJabberDiscoItem     *item);
 const gchar *          gossip_jabber_disco_item_get_type         (GossipJabberDiscoItem     *item);
 const gchar *          gossip_jabber_disco_item_get_name         (GossipJabberDiscoItem     *item);
 const GList *          gossip_jabber_disco_item_get_features     (GossipJabberDiscoItem     *item);
 LmMessageNode *        gossip_jabber_disco_item_get_data         (GossipJabberDiscoItem     *item);
 gboolean               gossip_jabber_disco_item_has_category     (GossipJabberDiscoItem     *item,
-								  const gchar               *category);
+                                                                  const gchar               *category);
 gboolean               gossip_jabber_disco_item_has_feature      (GossipJabberDiscoItem     *item,
-								  const gchar               *feature);
+                                                                  const gchar               *feature);
 gboolean               gossip_jabber_disco_item_has_type         (GossipJabberDiscoItem     *item,
-								  const gchar               *type);
+                                                                  const gchar               *type);
 gboolean               gossip_jabber_disco_servers               (void);
 void                   gossip_jabber_disco_init                  (GossipJabber              *jabber);
 

@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2005-2006 Imendio AB
  *
@@ -29,41 +29,41 @@
 G_BEGIN_DECLS
 
 typedef enum {
-	GOSSIP_CHATROOM_AFFILIATION_OWNER,
-	GOSSIP_CHATROOM_AFFILIATION_ADMIN,
-	GOSSIP_CHATROOM_AFFILIATION_MEMBER,
-	GOSSIP_CHATROOM_AFFILIATION_OUTCAST,
-	GOSSIP_CHATROOM_AFFILIATION_NONE
+    GOSSIP_CHATROOM_AFFILIATION_OWNER,
+    GOSSIP_CHATROOM_AFFILIATION_ADMIN,
+    GOSSIP_CHATROOM_AFFILIATION_MEMBER,
+    GOSSIP_CHATROOM_AFFILIATION_OUTCAST,
+    GOSSIP_CHATROOM_AFFILIATION_NONE
 } GossipChatroomAffiliation;
 
 typedef enum {
-	GOSSIP_CHATROOM_ROLE_MODERATOR,
-	GOSSIP_CHATROOM_ROLE_PARTICIPANT,
-	GOSSIP_CHATROOM_ROLE_VISITOR,
-	GOSSIP_CHATROOM_ROLE_NONE
+    GOSSIP_CHATROOM_ROLE_MODERATOR,
+    GOSSIP_CHATROOM_ROLE_PARTICIPANT,
+    GOSSIP_CHATROOM_ROLE_VISITOR,
+    GOSSIP_CHATROOM_ROLE_NONE
 } GossipChatroomRole;
 
 typedef enum {
-	GOSSIP_CHATROOM_STATUS_INACTIVE,
-	GOSSIP_CHATROOM_STATUS_JOINING,
-	GOSSIP_CHATROOM_STATUS_ACTIVE,
-	GOSSIP_CHATROOM_STATUS_ERROR,
-	GOSSIP_CHATROOM_STATUS_UNKNOWN,
+    GOSSIP_CHATROOM_STATUS_INACTIVE,
+    GOSSIP_CHATROOM_STATUS_JOINING,
+    GOSSIP_CHATROOM_STATUS_ACTIVE,
+    GOSSIP_CHATROOM_STATUS_ERROR,
+    GOSSIP_CHATROOM_STATUS_UNKNOWN,
 } GossipChatroomStatus;
 
 typedef enum {
-	GOSSIP_CHATROOM_FEATURE_HIDDEN               = 1 << 0,
-	GOSSIP_CHATROOM_FEATURE_MEMBERS_ONLY         = 1 << 1,
-	GOSSIP_CHATROOM_FEATURE_MODERATED            = 1 << 2,
-	GOSSIP_CHATROOM_FEATURE_NONANONYMOUS         = 1 << 3,
-	GOSSIP_CHATROOM_FEATURE_OPEN                 = 1 << 4,
-	GOSSIP_CHATROOM_FEATURE_PASSWORD_PROTECTED   = 1 << 5,
-	GOSSIP_CHATROOM_FEATURE_PERSISTENT           = 1 << 6,
-	GOSSIP_CHATROOM_FEATURE_PUBLIC               = 1 << 7,
-	GOSSIP_CHATROOM_FEATURE_SEMIANONYMOUS        = 1 << 8,
-	GOSSIP_CHATROOM_FEATURE_TEMPORARY            = 1 << 9,
-	GOSSIP_CHATROOM_FEATURE_UNMODERATED          = 1 << 10,
-	GOSSIP_CHATROOM_FEATURE_UNSECURED            = 1 << 11
+    GOSSIP_CHATROOM_FEATURE_HIDDEN               = 1 << 0,
+    GOSSIP_CHATROOM_FEATURE_MEMBERS_ONLY         = 1 << 1,
+    GOSSIP_CHATROOM_FEATURE_MODERATED            = 1 << 2,
+    GOSSIP_CHATROOM_FEATURE_NONANONYMOUS         = 1 << 3,
+    GOSSIP_CHATROOM_FEATURE_OPEN                 = 1 << 4,
+    GOSSIP_CHATROOM_FEATURE_PASSWORD_PROTECTED   = 1 << 5,
+    GOSSIP_CHATROOM_FEATURE_PERSISTENT           = 1 << 6,
+    GOSSIP_CHATROOM_FEATURE_PUBLIC               = 1 << 7,
+    GOSSIP_CHATROOM_FEATURE_SEMIANONYMOUS        = 1 << 8,
+    GOSSIP_CHATROOM_FEATURE_TEMPORARY            = 1 << 9,
+    GOSSIP_CHATROOM_FEATURE_UNMODERATED          = 1 << 10,
+    GOSSIP_CHATROOM_FEATURE_UNSECURED            = 1 << 11
 } GossipChatroomFeature;
 
 /*
@@ -72,26 +72,26 @@ typedef enum {
 #define GOSSIP_TYPE_CHATROOM_ERROR (gossip_chatroom_error_get_type ())
 
 typedef enum {
-	GOSSIP_CHATROOM_ERROR_NONE,
+    GOSSIP_CHATROOM_ERROR_NONE,
 
-	/* MUC errors */
-	GOSSIP_CHATROOM_ERROR_PASSWORD_INVALID_OR_MISSING,
-	GOSSIP_CHATROOM_ERROR_USER_BANNED,
-	GOSSIP_CHATROOM_ERROR_ROOM_NOT_FOUND,
-	GOSSIP_CHATROOM_ERROR_ROOM_CREATION_RESTRICTED,
-	GOSSIP_CHATROOM_ERROR_USE_RESERVED_ROOM_NICK,
-	GOSSIP_CHATROOM_ERROR_NOT_ON_MEMBERS_LIST,
-	GOSSIP_CHATROOM_ERROR_NICK_IN_USE,
-	GOSSIP_CHATROOM_ERROR_MAXIMUM_USERS_REACHED,
-	GOSSIP_CHATROOM_ERROR_UNAUTHORIZED_REQUEST,
-	GOSSIP_CHATROOM_ERROR_FORBIDDEN,
+    /* MUC errors */
+    GOSSIP_CHATROOM_ERROR_PASSWORD_INVALID_OR_MISSING,
+    GOSSIP_CHATROOM_ERROR_USER_BANNED,
+    GOSSIP_CHATROOM_ERROR_ROOM_NOT_FOUND,
+    GOSSIP_CHATROOM_ERROR_ROOM_CREATION_RESTRICTED,
+    GOSSIP_CHATROOM_ERROR_USE_RESERVED_ROOM_NICK,
+    GOSSIP_CHATROOM_ERROR_NOT_ON_MEMBERS_LIST,
+    GOSSIP_CHATROOM_ERROR_NICK_IN_USE,
+    GOSSIP_CHATROOM_ERROR_MAXIMUM_USERS_REACHED,
+    GOSSIP_CHATROOM_ERROR_UNAUTHORIZED_REQUEST,
+    GOSSIP_CHATROOM_ERROR_FORBIDDEN,
 
-	/* Internal errors */
-	GOSSIP_CHATROOM_ERROR_ALREADY_OPEN,
-	GOSSIP_CHATROOM_ERROR_TIMED_OUT,
-	GOSSIP_CHATROOM_ERROR_CANCELED,
-	GOSSIP_CHATROOM_ERROR_BAD_REQUEST,
-	GOSSIP_CHATROOM_ERROR_UNKNOWN
+    /* Internal errors */
+    GOSSIP_CHATROOM_ERROR_ALREADY_OPEN,
+    GOSSIP_CHATROOM_ERROR_TIMED_OUT,
+    GOSSIP_CHATROOM_ERROR_CANCELED,
+    GOSSIP_CHATROOM_ERROR_BAD_REQUEST,
+    GOSSIP_CHATROOM_ERROR_UNKNOWN
 } GossipChatroomError;
 
 GType gossip_chatroom_error_get_type (void) G_GNUC_CONST;
@@ -112,19 +112,19 @@ typedef struct _GossipChatroomContactInfo GossipChatroomContactInfo;
 typedef gint                              GossipChatroomId;
 
 /*
- * Privilege  	                        None  	Visitor  Participant  	Moderator
+ * Privilege                            None    Visitor  Participant    Moderator
 
- * Present in Room  	                No  	Yes  	 Yes  		Yes
- * Receive Messages 	                No 	Yes 	 Yes 		Yes
- * Change Availability Status 	        No 	Yes 	 Yes 		Yes
- * Change Room Nickname 	        No 	Yes* 	 Yes 		Yes
- * Send Private Messages 	        No 	Yes* 	 Yes 		Yes
- * Invite Other Users 	                No 	Yes* 	 Yes* 		Yes
- * Send Messages to All 	        No 	No** 	 Yes 		Yes
- * Modify Subject 	                No 	No* 	 Yes* 		Yes
- * Kick Participants and Visitors 	No 	No 	 No 		Yes
- * Grant Voice 	                        No 	No 	 No 		Yes
- * Revoke Voice 	                No 	No 	 No 		Yes***
+ * Present in Room                      No      Yes      Yes            Yes
+ * Receive Messages                     No      Yes      Yes            Yes
+ * Change Availability Status           No      Yes      Yes            Yes
+ * Change Room Nickname                 No      Yes*     Yes            Yes
+ * Send Private Messages                No      Yes*     Yes            Yes
+ * Invite Other Users                   No      Yes*     Yes*           Yes
+ * Send Messages to All                 No      No**     Yes            Yes
+ * Modify Subject                       No      No*      Yes*           Yes
+ * Kick Participants and Visitors       No      No       No             Yes
+ * Grant Voice                          No      No       No             Yes
+ * Revoke Voice                         No      No       No             Yes***
  *
  * - *   Default; configuration settings MAY modify this privilege.
  * - **  An implementation MAY grant voice by default to visitors in unmoderated rooms.
@@ -132,28 +132,28 @@ typedef gint                              GossipChatroomId;
  */
 
 struct _GossipChatroom {
-	GObject      parent;
+    GObject      parent;
 };
 
 struct _GossipChatroomClass {
-	GObjectClass parent_class;
+    GObjectClass parent_class;
 };
 
 struct _GossipChatroomContactInfo {
-	GossipChatroomRole        role;
-	GossipChatroomAffiliation affiliation;
+    GossipChatroomRole        role;
+    GossipChatroomAffiliation affiliation;
 };
 
 /* Chatroom */
 GType          gossip_chatroom_get_type                (void) G_GNUC_CONST;
 GossipChatroom *
-               gossip_chatroom_new                     (GossipAccount             *account,
-							const gchar               *server,
-							const gchar               *room);
+gossip_chatroom_new                     (GossipAccount             *account,
+                                         const gchar               *server,
+                                         const gchar               *room);
 GossipAccount * 
-               gossip_chatroom_get_account             (GossipChatroom            *chatroom);
+gossip_chatroom_get_account             (GossipChatroom            *chatroom);
 GossipChatroomId 
-               gossip_chatroom_get_id                  (GossipChatroom            *chatroom);
+gossip_chatroom_get_id                  (GossipChatroom            *chatroom);
 const gchar *  gossip_chatroom_get_id_str              (GossipChatroom            *chatroom);
 const gchar *  gossip_chatroom_get_name                (GossipChatroom            *chatroom);
 const gchar *  gossip_chatroom_get_description         (GossipChatroom            *chatroom);
@@ -166,83 +166,83 @@ gboolean       gossip_chatroom_get_auto_connect        (GossipChatroom          
 gboolean       gossip_chatroom_get_favorite            (GossipChatroom            *chatroom);
 
 GossipChatroomFeature
-               gossip_chatroom_get_features            (GossipChatroom            *chatroom);
+gossip_chatroom_get_features            (GossipChatroom            *chatroom);
 GossipChatroomStatus
-               gossip_chatroom_get_status              (GossipChatroom            *chatroom);
+gossip_chatroom_get_status              (GossipChatroom            *chatroom);
 guint          gossip_chatroom_get_occupants           (GossipChatroom            *chatroom);
 GossipChatroomError
-               gossip_chatroom_get_last_error          (GossipChatroom            *chatroom);
+gossip_chatroom_get_last_error          (GossipChatroom            *chatroom);
 GossipChatroomContactInfo *
-               gossip_chatroom_get_contact_info        (GossipChatroom            *chatroom,
-							GossipContact             *contact);
+gossip_chatroom_get_contact_info        (GossipChatroom            *chatroom,
+                                         GossipContact             *contact);
 GList *        gossip_chatroom_get_contacts            (GossipChatroom            *chatroom);
 
 GossipContact *gossip_chatroom_get_own_contact         (GossipChatroom            *chatroom);
 const gchar *  gossip_chatroom_get_own_contact_id_str  (GossipChatroom            *chatroom);
 void           gossip_chatroom_set_account             (GossipChatroom            *chatroom,
-							GossipAccount             *account);
+                                                        GossipAccount             *account);
 void           gossip_chatroom_set_name                (GossipChatroom            *chatroom,
-							const gchar               *name);
+                                                        const gchar               *name);
 void           gossip_chatroom_set_description         (GossipChatroom            *chatroom,
-							const gchar               *description);
+                                                        const gchar               *description);
 void           gossip_chatroom_set_subject             (GossipChatroom            *chatroom,
-							const gchar               *subject);
+                                                        const gchar               *subject);
 void           gossip_chatroom_set_nick                (GossipChatroom            *chatroom,
-							const gchar               *nick);
+                                                        const gchar               *nick);
 void           gossip_chatroom_set_server              (GossipChatroom            *chatroom,
-							const gchar               *server);
+                                                        const gchar               *server);
 void           gossip_chatroom_set_room                (GossipChatroom            *chatroom,
-							const gchar               *room);
+                                                        const gchar               *room);
 void           gossip_chatroom_set_password            (GossipChatroom            *chatroom,
-							const gchar               *password);
+                                                        const gchar               *password);
 void           gossip_chatroom_set_auto_connect        (GossipChatroom            *chatroom,
-							gboolean                   auto_connect);
+                                                        gboolean                   auto_connect);
 void           gossip_chatroom_set_favorite            (GossipChatroom            *chatroom,
-							gboolean                   favorite);
+                                                        gboolean                   favorite);
 void           gossip_chatroom_set_features            (GossipChatroom            *chatroom,
-							GossipChatroomFeature      features);
+                                                        GossipChatroomFeature      features);
 void           gossip_chatroom_set_status              (GossipChatroom            *chatroom,
-							GossipChatroomStatus       status);
+                                                        GossipChatroomStatus       status);
 void           gossip_chatroom_set_occupants           (GossipChatroom            *chatroom,
-							guint                      occupants);
+                                                        guint                      occupants);
 void           gossip_chatroom_set_last_error          (GossipChatroom            *chatroom,
-							GossipChatroomError        last_error);
+                                                        GossipChatroomError        last_error);
 void           gossip_chatroom_set_contact_info        (GossipChatroom            *chatroom,
-							GossipContact             *contact,
-							GossipChatroomContactInfo *info);
+                                                        GossipContact             *contact,
+                                                        GossipChatroomContactInfo *info);
 void           gossip_chatroom_set_own_contact         (GossipChatroom            *chatroom,
-							GossipContact             *contact);
+                                                        GossipContact             *contact);
 
 /* Utils */
 guint          gossip_chatroom_hash                    (gconstpointer              key);
 gboolean       gossip_chatroom_equal                   (gconstpointer              v1,
-							gconstpointer              v2);
+                                                        gconstpointer              v2);
 gboolean       gossip_chatroom_equal_full              (gconstpointer              v1,
-							gconstpointer              v2);
+                                                        gconstpointer              v2);
 const gchar *  gossip_chatroom_status_to_string        (GossipChatroomStatus       status);
 const gchar *  gossip_chatroom_error_to_string         (GossipChatroomError        error);
 const gchar *  gossip_chatroom_role_to_string          (GossipChatroomRole         role,
-							gint                       nr);
+                                                        gint                       nr);
 const gchar *  gossip_chatroom_affiliation_to_string   (GossipChatroomAffiliation  affiliation,
-							gint                       nr);
+                                                        gint                       nr);
 
 /* Actions */
 void           gossip_chatroom_contact_joined          (GossipChatroom            *chatroom,
-							GossipContact             *contact,
-							GossipChatroomContactInfo *info);
+                                                        GossipContact             *contact,
+                                                        GossipChatroomContactInfo *info);
 void           gossip_chatroom_contact_left            (GossipChatroom            *chatroom,
-							GossipContact             *contact);
+                                                        GossipContact             *contact);
 
 /* Privileges */
 gboolean       gossip_chatroom_contact_can_message_all (GossipChatroom            *chatroom,
-							GossipContact             *contact);
+                                                        GossipContact             *contact);
 gboolean       gossip_chatroom_contact_can_change_subject 
-                                                        (GossipChatroom           *chatroom,
-							 GossipContact            *contact);
+(GossipChatroom           *chatroom,
+ GossipContact            *contact);
 gboolean       gossip_chatroom_contact_can_kick         (GossipChatroom           *chatroom,
-							 GossipContact            *contact);
+                                                         GossipContact            *contact);
 gboolean       gossip_chatroom_contact_can_change_role  (GossipChatroom           *chatroom,
-							 GossipContact            *contact);
+                                                         GossipContact            *contact);
 
 G_BEGIN_DECLS
 

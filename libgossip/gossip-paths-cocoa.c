@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2006-2007 Imendio AB
  *
@@ -30,48 +30,48 @@
 static gchar *
 paths_get_root_dir (void)
 {
-	static gchar *root = NULL;
+    static gchar *root = NULL;
 
-	if (!root) {
-		const gchar *env;
+    if (!root) {
+        const gchar *env;
 
-		env = g_getenv ("GOSSIP_DATA_PREFIX");
-		if (env) {
-			root = g_build_filename (env, "share", NULL);
-		} else {
-			root = g_strdup (SHAREDIR);
-		}
-	}
+        env = g_getenv ("GOSSIP_DATA_PREFIX");
+        if (env) {
+            root = g_build_filename (env, "share", NULL);
+        } else {
+            root = g_strdup (SHAREDIR);
+        }
+    }
 
-	return root;
+    return root;
 }
 
 gchar *
 gossip_paths_get_glade_path (const gchar *filename)
 {
-	return g_build_filename (paths_get_root_dir (), "gossip", filename, NULL);
+    return g_build_filename (paths_get_root_dir (), "gossip", filename, NULL);
 }
 
 gchar *
 gossip_paths_get_image_path (const gchar *filename)
 {
-	return g_build_filename (paths_get_root_dir (), "gossip", filename, NULL);
+    return g_build_filename (paths_get_root_dir (), "gossip", filename, NULL);
 }
 
 gchar *
 gossip_paths_get_dtd_path (const gchar *filename)
 {
-	return g_build_filename (paths_get_root_dir (), "gossip", filename, NULL);
+    return g_build_filename (paths_get_root_dir (), "gossip", filename, NULL);
 }
 
 gchar *
 gossip_paths_get_sound_path (const gchar *filename)
 {
-	return g_build_filename (paths_get_root_dir (), "sounds", "gossip", filename, NULL);
+    return g_build_filename (paths_get_root_dir (), "sounds", "gossip", filename, NULL);
 }
 
 gchar *
 gossip_paths_get_locale_path (void)
 {
-	return g_build_filename (paths_get_root_dir (), "locale", NULL);
+    return g_build_filename (paths_get_root_dir (), "locale", NULL);
 }

@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2007 Imendio AB
  *
@@ -39,11 +39,11 @@ typedef struct _GossipEBook      GossipEBook;
 typedef struct _GossipEBookClass GossipEBookClass;
 
 struct _GossipEBook {
-	GObject      parent;
+    GObject      parent;
 };
 
 struct _GossipEBookClass {
-	GObjectClass parent_class;
+    GObjectClass parent_class;
 };
 
 GType         gossip_ebook_get_type      (void) G_GNUC_CONST;

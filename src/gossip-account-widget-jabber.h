@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2005-2007 Imendio AB
  *
@@ -39,11 +39,11 @@ typedef struct _GossipAccountWidgetJabber      GossipAccountWidgetJabber;
 typedef struct _GossipAccountWidgetJabberClass GossipAccountWidgetJabberClass;
 
 struct _GossipAccountWidgetJabber {
-	GtkVBox      parent;
+    GtkVBox      parent;
 };
 
 struct _GossipAccountWidgetJabberClass {
-	GtkVBoxClass parent_class;
+    GtkVBoxClass parent_class;
 };
 
 GType      gossip_account_widget_jabber_get_type   (void) G_GNUC_CONST;

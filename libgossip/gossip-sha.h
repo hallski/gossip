@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2003 Imendio AB
  *
@@ -26,7 +26,7 @@
 G_BEGIN_DECLS
 
 gchar * gossip_sha_hash (const guchar *str,
-			 gsize         len);
+                         gsize         len);
 
 G_END_DECLS
 

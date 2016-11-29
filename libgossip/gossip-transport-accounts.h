@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2004 Martyn Russell <mr@gnome.org>
  *
@@ -53,7 +53,7 @@ const gchar *               gossip_transport_account_get_name           (GossipT
 const gchar *               gossip_transport_account_get_username       (GossipTransportAccount     *account);
 const gchar *               gossip_transport_account_get_password       (GossipTransportAccount     *account);
 GossipTransportAccount *    gossip_transport_account_find_by_disco_type (GossipTransportAccountList *al,
-									 const gchar                *disco_type);
+                                                                         const gchar                *disco_type);
 gint                        gossip_transport_account_count_contacts     (GossipTransportAccount     *account);
 
 void                        gossip_transport_account_remove             (GossipTransportAccount     *account);

@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2004 Martyn Russell <mr@gnome.org>
  *
@@ -31,50 +31,50 @@
 G_BEGIN_DECLS
 
 typedef void (*GossipTransportRegisterFunc)     (GossipJID   *jid,
-						 const gchar *error_code,
-						 const gchar *error_reason,
-						 gpointer     user_data);
+                                                 const gchar *error_code,
+                                                 const gchar *error_reason,
+                                                 gpointer     user_data);
 
 typedef void (*GossipTransportUnregisterFunc)   (GossipJID   *jid,
-						 const gchar *error_code,
-						 const gchar *error_reason,
-						 gpointer     user_data);
+                                                 const gchar *error_code,
+                                                 const gchar *error_reason,
+                                                 gpointer     user_data);
 /* also used to check registered */
 typedef void (*GossipTransportRequirementsFunc) (GossipJID   *jid,
-						 const gchar *key,
-						 const gchar *username,
-						 const gchar *password,
-						 const gchar *nick,
-						 const gchar *email,
-						 gboolean     require_username,
-						 gboolean     require_password,
-						 gboolean     require_nick,
-						 gboolean     require_email,
-						 gboolean     is_registered,
-						 const gchar *error_code,
-						 const gchar *error_reason,
-						 gpointer     user_data);
+                                                 const gchar *key,
+                                                 const gchar *username,
+                                                 const gchar *password,
+                                                 const gchar *nick,
+                                                 const gchar *email,
+                                                 gboolean     require_username,
+                                                 gboolean     require_password,
+                                                 gboolean     require_nick,
+                                                 gboolean     require_email,
+                                                 gboolean     is_registered,
+                                                 const gchar *error_code,
+                                                 const gchar *error_reason,
+                                                 gpointer     user_data);
 
 
 void     gossip_transport_unregister          (GossipJabber                    *jabber,
-					       GossipJID                       *jid,
-					       GossipTransportUnregisterFunc    func,
-					       gpointer                         user_data);
+                                               GossipJID                       *jid,
+                                               GossipTransportUnregisterFunc    func,
+                                               gpointer                         user_data);
 gboolean gossip_transport_unregister_cancel   (GossipJID                       *jid);
 void     gossip_transport_requirements        (GossipJabber                    *jabber,
-					       GossipJID                       *jid,
-					       GossipTransportRequirementsFunc  func,
-					       gpointer                         user_data);
+                                               GossipJID                       *jid,
+                                               GossipTransportRequirementsFunc  func,
+                                               gpointer                         user_data);
 gboolean gossip_transport_requirements_cancel (GossipJID                       *jid);
 void     gossip_transport_register            (GossipJabber                    *jabber,
-					       GossipJID                       *jid,
-					       const gchar                     *key,
-					       const gchar                     *username,
-					       const gchar                     *password,
-					       const gchar                     *nick,
-					       const gchar                     *email,
-					       GossipTransportRegisterFunc      func,
-					       gpointer                         user_data);
+                                               GossipJID                       *jid,
+                                               const gchar                     *key,
+                                               const gchar                     *username,
+                                               const gchar                     *password,
+                                               const gchar                     *nick,
+                                               const gchar                     *email,
+                                               GossipTransportRegisterFunc      func,
+                                               gpointer                         user_data);
 gboolean gossip_transport_register_cancel     (GossipJID                       *jid);
 
 

@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2005-2007 Imendio AB
  *
@@ -36,28 +36,28 @@ typedef struct _GossipPresenceChooser      GossipPresenceChooser;
 typedef struct _GossipPresenceChooserClass GossipPresenceChooserClass;
 
 struct _GossipPresenceChooser {
-	GtkToggleButton parent;
+    GtkToggleButton parent;
 };
 
 struct _GossipPresenceChooserClass {
-	GtkToggleButtonClass parent_class;
+    GtkToggleButtonClass parent_class;
 };
 
 GType      gossip_presence_chooser_get_type    (void) G_GNUC_CONST;
 GtkWidget *gossip_presence_chooser_new         (void);
 GtkWidget *gossip_presence_chooser_create_menu (GossipPresenceChooser *chooser,
-						gint                   position,
-						gboolean               sensitive,
-						gboolean               include_clear);
+                                                gint                   position,
+                                                gboolean               sensitive,
+                                                gboolean               include_clear);
 void       gossip_presence_chooser_insert_menu (GossipPresenceChooser *chooser,
-						GtkWidget             *menu,
-						gint                   position,
-						gboolean               sensitive,
-						gboolean               include_clear);
+                                                GtkWidget             *menu,
+                                                gint                   position,
+                                                gboolean               sensitive,
+                                                gboolean               include_clear);
 void       gossip_presence_chooser_set_state   (GossipPresenceChooser *chooser,
-						GossipPresenceState    state);
+                                                GossipPresenceState    state);
 void       gossip_presence_chooser_set_status  (GossipPresenceChooser *chooser,
-						const gchar           *status);
+                                                const gchar           *status);
 
 G_END_DECLS
 

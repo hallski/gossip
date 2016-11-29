@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2007 Free Software Foundation
  *
@@ -43,11 +43,11 @@ typedef struct _LmBsSession      LmBsSession;
 typedef struct _LmBsSessionClass LmBsSessionClass;
 
 struct _LmBsSession {
-	GObject parent;
+    GObject parent;
 };
 
 struct _LmBsSessionClass {
-	GObjectClass parent_class;
+    GObjectClass parent_class;
 };
 
 GType           lm_bs_session_get_type              (void) G_GNUC_CONST;
@@ -55,32 +55,32 @@ GType           lm_bs_session_get_type              (void) G_GNUC_CONST;
 LmBsSession *   lm_bs_session_new                   (GMainContext  *context);
 LmBsSession *   lm_bs_session_get_default           (GMainContext  *context);
 void            lm_bs_session_receive_file          (LmBsSession   *session, 
-						     LmConnection  *connection,
-						     guint          id,
-						     const gchar   *sid,
-						     const gchar   *sender,
-						     const gchar   *location,
-						     guint64        file_size);
+                                                     LmConnection  *connection,
+                                                     guint          id,
+                                                     const gchar   *sid,
+                                                     const gchar   *sender,
+                                                     const gchar   *location,
+                                                     guint64        file_size);
 void            lm_bs_session_send_file             (LmBsSession   *session, 
-						     LmConnection  *connection,
-						     guint          id,
-						     const gchar   *sid,
-						     const gchar   *receiver,
-						     const gchar   *location,
-						     guint64        file_size);
+                                                     LmConnection  *connection,
+                                                     guint          id,
+                                                     const gchar   *sid,
+                                                     const gchar   *receiver,
+                                                     const gchar   *location,
+                                                     guint64        file_size);
 void            lm_bs_session_set_iq_id             (LmBsSession   *session,
-						     guint          id,
-						     const gchar   *iq_id);
+                                                     guint          id,
+                                                     const gchar   *iq_id);
 void            lm_bs_session_streamhost_add        (LmBsSession   *session,
-						     guint          id,
-						     const gchar   *host,
-						     const gchar   *port,
-						     const gchar   *jid);
+                                                     guint          id,
+                                                     const gchar   *host,
+                                                     const gchar   *port,
+                                                     const gchar   *jid);
 void            lm_bs_session_streamhost_activate   (LmBsSession   *session,
-						     const gchar   *iq_id,
-						     const gchar   *jid);
+                                                     const gchar   *iq_id,
+                                                     const gchar   *jid);
 void            lm_bs_session_remove_transfer       (LmBsSession   *session,
-						     guint          fd);
+                                                     guint          fd);
 guint           lm_bs_session_start_listener        (LmBsSession   *session);
 
 G_END_DECLS

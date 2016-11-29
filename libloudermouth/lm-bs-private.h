@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2007 Free Software Foundation
  *
@@ -30,10 +30,10 @@ G_BEGIN_DECLS
 
 GMainContext * _lm_bs_session_get_context           (LmBsSession   *session);
 void           _lm_bs_session_remove_sender         (LmBsSession   *session,
-						     guint          fd);
+                                                     guint          fd);
 void           _lm_bs_session_match_sha             (LmBsSession   *session,
-						     const gchar   *sha,
-						     guint          fd);
+                                                     const gchar   *sha,
+                                                     guint          fd);
 G_END_DECLS
 
 #endif /* __LM_BS_PRIVATE_H__ */

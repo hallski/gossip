@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2005-2007 Imendio AB
  *
@@ -29,16 +29,16 @@ G_BEGIN_DECLS
 
 void                gossip_status_presets_get_all            (void);
 GList *             gossip_status_presets_get                (GossipPresenceState  state,
-							      gint                 max_number);
+                                                              gint                 max_number);
 void                gossip_status_presets_set_last           (GossipPresenceState  state,
-							      const gchar         *status);
+                                                              const gchar         *status);
 void                gossip_status_presets_reset              (void);
 
 /* Default */
 GossipPresenceState gossip_status_presets_get_default_state  (void);
 const gchar *       gossip_status_presets_get_default_status (void);
 void                gossip_status_presets_set_default        (GossipPresenceState  state,
-							      const gchar         *status);
+                                                              const gchar         *status);
 void                gossip_status_presets_clear_default      (void);
 
 G_END_DECLS

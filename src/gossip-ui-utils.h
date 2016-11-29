@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2002-2007 Imendio AB
  * Copyright (C) 2000 - 2005 Paolo Maggi 
@@ -37,23 +37,23 @@ GdkPixbuf *gossip_pixbuf_for_presence               (GossipPresence      *presen
 GdkPixbuf *gossip_pixbuf_for_contact                (GossipContact       *contact);
 GdkPixbuf *gossip_pixbuf_offline                    (void);
 GdkPixbuf *gossip_pixbuf_for_chatroom_status        (GossipChatroom      *chatroom,
-						     GtkIconSize          icon_size);
+                                                     GtkIconSize          icon_size);
 
 /* Windows */
 gboolean   gossip_window_get_is_visible             (GtkWindow           *window);
 void       gossip_window_present                    (GtkWindow           *window,
-						     gboolean             steal_focus);
+                                                     gboolean             steal_focus);
 void       gossip_window_set_default_icon_name      (const gchar         *name);
 
 gboolean   gossip_url_show                          (const char          *url);
 void       gossip_help_show                         (void);
 
 void       gossip_toggle_button_set_state_quietly   (GtkWidget           *widget,
-						     GCallback            callback,
-						     gpointer             user_data,
-						     gboolean             active);
+                                                     GCallback            callback,
+                                                     gpointer             user_data,
+                                                     gboolean             active);
 GtkWidget *gossip_link_button_new                   (const gchar         *url,
-						     const gchar         *title);
+                                                     const gchar         *title);
 
 void       gossip_request_user_attention            (void);
 

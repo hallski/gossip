@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2004-2007 Imendio AB
  *
@@ -33,8 +33,8 @@ G_BEGIN_DECLS
 #define GOSSIP_TYPE_CONTACT_LIST_SORT    (gossip_contact_list_sort_get_type ())
 
 typedef enum {
-	GOSSIP_CONTACT_LIST_SORT_STATE,
-	GOSSIP_CONTACT_LIST_SORT_NAME
+    GOSSIP_CONTACT_LIST_SORT_STATE,
+    GOSSIP_CONTACT_LIST_SORT_NAME
 } GossipContactListSort;
 
 GType                 gossip_contact_list_sort_get_type      (void) G_GNUC_CONST;
@@ -54,11 +54,11 @@ typedef struct _GossipContactListClass GossipContactListClass;
 typedef struct _GossipContactListPriv  GossipContactListPriv;
 
 struct _GossipContactList {
-	GtkTreeView            parent;
+    GtkTreeView            parent;
 };
 
 struct _GossipContactListClass {
-	GtkTreeViewClass       parent_class;
+    GtkTreeViewClass       parent_class;
 };
 
 GType                 gossip_contact_list_get_type           (void) G_GNUC_CONST;
@@ -72,19 +72,19 @@ gboolean              gossip_contact_list_get_show_avatars   (GossipContactList 
 gboolean              gossip_contact_list_get_is_compact     (GossipContactList     *list);
 GossipContactListSort gossip_contact_list_get_sort_criterium (GossipContactList     *list);
 GtkWidget *           gossip_contact_list_get_contact_menu   (GossipContactList     *list,
-							      GossipContact         *contact);
+                                                              GossipContact         *contact);
 GtkWidget *           gossip_contact_list_get_group_menu     (GossipContactList     *list);
 
 void                  gossip_contact_list_set_show_offline   (GossipContactList     *list,
-							      gboolean               show_offline);
+                                                              gboolean               show_offline);
 void                  gossip_contact_list_set_show_avatars   (GossipContactList     *list,
-							      gboolean               show_avatars);
+                                                              gboolean               show_avatars);
 void                  gossip_contact_list_set_is_compact     (GossipContactList     *list,
-							      gboolean               is_compact);
+                                                              gboolean               is_compact);
 void                  gossip_contact_list_set_sort_criterium (GossipContactList     *list,
-							      GossipContactListSort  sort_criterium);
+                                                              GossipContactListSort  sort_criterium);
 void                  gossip_contact_list_set_filter         (GossipContactList     *list,
-							      const gchar           *filter);
+                                                              const gchar           *filter);
 G_END_DECLS
 
 #endif /* __GOSSIP_CONTACT_LIST_H__ */

@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2002-2007 Imendio AB
 
@@ -27,23 +27,23 @@
 G_BEGIN_DECLS
 
 void       gossip_glade_get_file_simple             (const gchar         *filename,
-						     const gchar         *root,
-						     const gchar         *domain,
-						     const gchar         *first_required_widget,
-						     ...);
+                                                     const gchar         *root,
+                                                     const gchar         *domain,
+                                                     const gchar         *first_required_widget,
+                                                     ...);
 GladeXML * gossip_glade_get_file                    (const gchar         *filename,
-						     const gchar         *root,
-						     const gchar         *domain,
-						     const gchar         *first_required_widget,
-						     ...);
+                                                     const gchar         *root,
+                                                     const gchar         *domain,
+                                                     const gchar         *first_required_widget,
+                                                     ...);
 void       gossip_glade_connect                     (GladeXML            *gui,
-						     gpointer             user_data,
-						     gchar               *first_widget,
-						     ...);
+                                                     gpointer             user_data,
+                                                     gchar               *first_widget,
+                                                     ...);
 void       gossip_glade_setup_size_group            (GladeXML            *gui,
-						     GtkSizeGroupMode     mode,
-						     gchar               *first_widget,
-						     ...);
+                                                     GtkSizeGroupMode     mode,
+                                                     gchar               *first_widget,
+                                                     ...);
 
 G_END_DECLS
 

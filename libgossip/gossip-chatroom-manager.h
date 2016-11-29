@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2005 <mr@gnome.org>
  *
@@ -39,40 +39,40 @@ typedef struct _GossipChatroomManager      GossipChatroomManager;
 typedef struct _GossipChatroomManagerClass GossipChatroomManagerClass;
 
 struct _GossipChatroomManager {
-	GObject parent;
+    GObject parent;
 };
 
 struct _GossipChatroomManagerClass {
-	GObjectClass parent_class;
+    GObjectClass parent_class;
 };
 
 GType           gossip_chatroom_manager_get_type        (void) G_GNUC_CONST;
 gboolean        gossip_chatroom_manager_add             (GossipChatroomManager *manager,
-							 GossipChatroom        *chatroom);
+                                                         GossipChatroom        *chatroom);
 void            gossip_chatroom_manager_remove          (GossipChatroomManager *manager,
-							 GossipChatroom        *chatroom);
+                                                         GossipChatroom        *chatroom);
 void            gossip_chatroom_manager_set_index       (GossipChatroomManager *manager,
-							 GossipChatroom        *chatroom,
-							 gint                   index);
+                                                         GossipChatroom        *chatroom,
+                                                         gint                   index);
 GossipChatroom *gossip_chatroom_manager_find            (GossipChatroomManager *manager,
-							 GossipChatroomId       id);
+                                                         GossipChatroomId       id);
 GList *         gossip_chatroom_manager_find_extended   (GossipChatroomManager *manager,
-							 GossipAccount         *account,
-							 const gchar           *server,
-							 const gchar           *room);
+                                                         GossipAccount         *account,
+                                                         const gchar           *server,
+                                                         const gchar           *room);
 GossipChatroom *gossip_chatroom_manager_find_or_create  (GossipChatroomManager *manager,
-							 GossipAccount         *account,
-							 const gchar           *server,
-							 const gchar           *room,
-							 gboolean              *created);
+                                                         GossipAccount         *account,
+                                                         const gchar           *server,
+                                                         const gchar           *room,
+                                                         gboolean              *created);
 gboolean        gossip_chatroom_manager_store           (GossipChatroomManager *manager);
 GList *         gossip_chatroom_manager_get_chatrooms   (GossipChatroomManager *manager,
-							 GossipAccount         *account);
+                                                         GossipAccount         *account);
 guint           gossip_chatroom_manager_get_count       (GossipChatroomManager *manager,
-							 GossipAccount         *account);
+                                                         GossipAccount         *account);
 GossipChatroom *gossip_chatroom_manager_get_default     (GossipChatroomManager *manager);
 void            gossip_chatroom_manager_set_default     (GossipChatroomManager *manager,
-							 GossipChatroom        *chatroom);
+                                                         GossipChatroom        *chatroom);
 G_END_DECLS
 
 #endif /* __GOSSIP_CHATROOM_MANAGER_H__ */

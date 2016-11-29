@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2003-2004 Imendio AB
  *
@@ -36,20 +36,20 @@ typedef struct _GossipJID      GossipJID;
 typedef struct _GossipJIDClass GossipJIDClass;
 
 struct _GossipJID {
-	GObject parent;
+    GObject parent;
 };
 
 struct _GossipJIDClass {
-	GObjectClass parent_class;
+    GObjectClass parent_class;
 };
 
 GType        gossip_jid_get_type                 (void) G_GNUC_CONST;
 
 GossipJID *  gossip_jid_new                      (const gchar   *str_jid);
 void         gossip_jid_set_without_resource     (GossipJID     *jid,
-						  const gchar   *str);
+                                                  const gchar   *str);
 void         gossip_jid_set_resource             (GossipJID     *jid,
-						  const gchar   *resource);
+                                                  const gchar   *resource);
 const gchar *gossip_jid_get_full                 (GossipJID     *jid);
 const gchar *gossip_jid_get_without_resource     (GossipJID     *jid);
 const gchar *gossip_jid_get_resource             (GossipJID     *jid);
@@ -59,13 +59,13 @@ gboolean     gossip_jid_is_service               (GossipJID     *jid);
 
 /* Compare functions */
 gboolean     gossip_jid_equals                   (GossipJID     *jid_a,
-						  GossipJID     *jid_b);
+                                                  GossipJID     *jid_b);
 gboolean     gossip_jid_equals_without_resource  (GossipJID     *jid_a,
-						  GossipJID     *jid_b);
+                                                  GossipJID     *jid_b);
 
 /* String functions */
 gboolean     gossip_jid_string_is_valid          (const gchar   *str,
-						  gboolean       with_resource);
+                                                  gboolean       with_resource);
 gchar *      gossip_jid_string_get_part_name     (const gchar   *str);
 gchar *      gossip_jid_string_get_part_host     (const gchar   *str);
 const gchar *gossip_jid_string_get_part_resource (const gchar   *str);
@@ -73,15 +73,15 @@ gchar *      gossip_jid_string_escape            (const gchar   *jid_str);
 gchar *      gossip_jid_string_unescape          (const gchar   *jid_str);
 
 gint         gossip_jid_case_compare             (gconstpointer  a,
-						  gconstpointer  b);
+                                                  gconstpointer  b);
 
 /* Hash table functions */
 gboolean     gossip_jid_equal                    (gconstpointer  v1,
-						  gconstpointer  v2);
+                                                  gconstpointer  v2);
 guint        gossip_jid_hash                     (gconstpointer  key);
 
 gboolean     gossip_jid_equal_without_resource   (gconstpointer  v1,
-						  gconstpointer  v2);
+                                                  gconstpointer  v2);
 guint        gossip_jid_hash_without_resource    (gconstpointer  key);
 
 const gchar *gossip_jid_get_example_string       (void);

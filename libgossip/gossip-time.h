@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2004 Imendio AB
  *
@@ -38,11 +38,11 @@ GossipTime  gossip_time_get_current     (void);
 time_t      gossip_time_get_local_time  (struct tm   *tm);
 GossipTime  gossip_time_parse           (const gchar *str);
 GossipTime  gossip_time_parse_format    (const gchar *str,
-					 const gchar *format);
+                                         const gchar *format);
 gchar      *gossip_time_to_string_utc   (GossipTime   t,
-					 const gchar *format);
+                                         const gchar *format);
 gchar      *gossip_time_to_string_local (GossipTime   t,
-					 const gchar *format);
+                                         const gchar *format);
 
 G_END_DECLS
 

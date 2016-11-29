@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2006-2007 Imendio AB
  *
@@ -40,53 +40,53 @@ static gboolean   all_domains = FALSE;
 static void
 debug_init (void)
 {
-	static gboolean inited = FALSE;
+    static gboolean inited = FALSE;
 
-	if (!inited) {
-		const gchar *env;
-		gint         i;
+    if (!inited) {
+        const gchar *env;
+        gint         i;
 
-		env = g_getenv ("GOSSIP_DEBUG");
+        env = g_getenv ("GOSSIP_DEBUG");
 
-		if (env) {
-			debug_strv = g_strsplit_set (env, ":, ", 0);
-		} else {
-			debug_strv = NULL;
-		}
+        if (env) {
+            debug_strv = g_strsplit_set (env, ":, ", 0);
+        } else {
+            debug_strv = NULL;
+        }
 
-		for (i = 0; debug_strv && debug_strv[i]; i++) {
-			if (strcmp ("all", debug_strv[i]) == 0) {
-				all_domains = TRUE;
-			}
-		}
+        for (i = 0; debug_strv && debug_strv[i]; i++) {
+            if (strcmp ("all", debug_strv[i]) == 0) {
+                all_domains = TRUE;
+            }
+        }
 
-		inited = TRUE;
-	}
+        inited = TRUE;
+    }
 }
 
 void
 gossip_debug_impl (const gchar *domain, const gchar *msg, ...)
 {
-	gint i;
+    gint i;
 
-	g_return_if_fail (domain != NULL);
-	g_return_if_fail (msg != NULL);
+    g_return_if_fail (domain != NULL);
+    g_return_if_fail (msg != NULL);
 
-	debug_init ();
+    debug_init ();
 
-	for (i = 0; debug_strv && debug_strv[i]; i++) {
-		if (all_domains || strcmp (domain, debug_strv[i]) == 0) {
-			va_list args;
+    for (i = 0; debug_strv && debug_strv[i]; i++) {
+        if (all_domains || strcmp (domain, debug_strv[i]) == 0) {
+            va_list args;
 
-			g_print ("%s: ", domain);
+            g_print ("%s: ", domain);
 
-			va_start (args, msg);
-			g_vprintf (msg, args);
-			va_end (args);
+            va_start (args, msg);
+            g_vprintf (msg, args);
+            va_end (args);
 
-			g_print ("\n");
-			break;
-		}
-	}
+            g_print ("\n");
+            break;
+        }
+    }
 }
 

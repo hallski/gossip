@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2002-2007 Imendio AB
  *
@@ -41,79 +41,79 @@ typedef struct _GossipChatViewPriv  GossipChatViewPriv;
 #include "gossip-theme.h"
 
 struct _GossipChatView {
-	GtkTextView parent;
+    GtkTextView parent;
 };
 
 struct _GossipChatViewClass {
-	GtkTextViewClass parent_class;
+    GtkTextViewClass parent_class;
 };
 
 typedef enum {
-	BLOCK_TYPE_NONE,
-	BLOCK_TYPE_SELF,
-	BLOCK_TYPE_OTHER,
-	BLOCK_TYPE_EVENT,
-	BLOCK_TYPE_TIME,
-	BLOCK_TYPE_INVITE
+    BLOCK_TYPE_NONE,
+    BLOCK_TYPE_SELF,
+    BLOCK_TYPE_OTHER,
+    BLOCK_TYPE_EVENT,
+    BLOCK_TYPE_TIME,
+    BLOCK_TYPE_INVITE
 } BlockType;
 
 GType           gossip_chat_view_get_type                  (void) G_GNUC_CONST;
 GossipChatView *gossip_chat_view_new                       (void);
 void            gossip_chat_view_append_message_from_self  (GossipChatView *view,
-							    GossipMessage  *msg,
-							    GossipContact  *my_contact,
-							    GdkPixbuf      *avatar);
+                                                            GossipMessage  *msg,
+                                                            GossipContact  *my_contact,
+                                                            GdkPixbuf      *avatar);
 void            gossip_chat_view_append_message_from_other (GossipChatView *view,
-							    GossipMessage  *msg,
-							    GossipContact  *my_contact,
-							    GdkPixbuf      *avatar);
+                                                            GossipMessage  *msg,
+                                                            GossipContact  *my_contact,
+                                                            GdkPixbuf      *avatar);
 void            gossip_chat_view_append_event              (GossipChatView *view,
-							    const gchar    *str);
+                                                            const gchar    *str);
 void            gossip_chat_view_append_invite             (GossipChatView *view,
-							    GossipMessage  *message);
+                                                            GossipMessage  *message);
 void            gossip_chat_view_append_button             (GossipChatView *view,
-							    const gchar    *message,
-							    GtkWidget      *button1,
-							    GtkWidget      *button2);
+                                                            const gchar    *message,
+                                                            GtkWidget      *button1,
+                                                            GtkWidget      *button2);
 void            gossip_chat_view_set_margin                (GossipChatView *view,
-							    gint            margin);
+                                                            gint            margin);
 void            gossip_chat_view_allow_scroll              (GossipChatView *view,
-							    gboolean        allow_scrolling);
+                                                            gboolean        allow_scrolling);
 void            gossip_chat_view_scroll_down               (GossipChatView *view);
 void            gossip_chat_view_scroll_down_smoothly      (GossipChatView *view);
 gboolean        gossip_chat_view_get_selection_bounds      (GossipChatView *view,
-							    GtkTextIter    *start,
-							    GtkTextIter    *end);
+                                                            GtkTextIter    *start,
+                                                            GtkTextIter    *end);
 void            gossip_chat_view_clear                     (GossipChatView *view);
 gboolean        gossip_chat_view_find_previous             (GossipChatView *view,
-							    const gchar    *search_criteria,
-							    gboolean        new_search);
+                                                            const gchar    *search_criteria,
+                                                            gboolean        new_search);
 gboolean        gossip_chat_view_find_next                 (GossipChatView *view,
-							    const gchar    *search_criteria,
-							    gboolean        new_search);
+                                                            const gchar    *search_criteria,
+                                                            gboolean        new_search);
 void            gossip_chat_view_find_abilities            (GossipChatView *view,
-							    const gchar    *search_criteria,
-							    gboolean       *can_do_previous,
-							    gboolean       *can_do_next);
+                                                            const gchar    *search_criteria,
+                                                            gboolean       *can_do_previous,
+                                                            gboolean       *can_do_next);
 void            gossip_chat_view_highlight                 (GossipChatView *view,
-							    const gchar    *text);
+                                                            const gchar    *text);
 void            gossip_chat_view_copy_clipboard            (GossipChatView *view);
 GossipTheme *   gossip_chat_view_get_theme                 (GossipChatView *view);
 void            gossip_chat_view_set_theme                 (GossipChatView *view,
-							    GossipTheme    *theme);
+                                                            GossipTheme    *theme);
 void            gossip_chat_view_set_margin                (GossipChatView *view,
-							    gint            margin);
+                                                            gint            margin);
 void            gossip_chat_view_set_is_group_chat         (GossipChatView *view,
-							    gboolean        is_group_chat);
+                                                            gboolean        is_group_chat);
 GossipContact * gossip_chat_view_get_last_contact          (GossipChatView *view);
 void            gossip_chat_view_set_last_contact          (GossipChatView *view, 
-							    GossipContact  *contact);
+                                                            GossipContact  *contact);
 BlockType       gossip_chat_view_get_last_block_type       (GossipChatView *view);
 void            gossip_chat_view_set_last_block_type       (GossipChatView *view,
-							    BlockType       block_type);
+                                                            BlockType       block_type);
 time_t          gossip_chat_view_get_last_timestamp        (GossipChatView *view);
 void            gossip_chat_view_set_last_timestamp        (GossipChatView *view,
-							    time_t          timestamp);
+                                                            time_t          timestamp);
 
 G_END_DECLS
 

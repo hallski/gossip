@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2007 Imendio AB
  *
@@ -26,12 +26,12 @@
 G_BEGIN_DECLS
 
 void          gossip_theme_utils_ensure_tag_by_name  (GtkTextBuffer   *buffer,
-						      const gchar     *name);
+                                                      const gchar     *name);
 
 GtkTextTag *  gossip_theme_utils_init_tag_by_name    (GtkTextTagTable *table,
-						      const gchar     *name);
+                                                      const gchar     *name);
 void          gossip_theme_utils_add_tag             (GtkTextTagTable *table,
-						      GtkTextTag      *tag);
+                                                      GtkTextTag      *tag);
 
 G_END_DECLS
 

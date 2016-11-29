@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2004 Imendio AB
  *
@@ -36,11 +36,11 @@ typedef struct _GossipVersionInfo      GossipVersionInfo;
 typedef struct _GossipVersionInfoClass GossipVersionInfoClass;
 
 struct _GossipVersionInfo {
-	GObject parent;
+    GObject parent;
 };
 
 struct _GossipVersionInfoClass {
-	GObjectClass parent_class;
+    GObjectClass parent_class;
 };
 
 GType               gossip_version_info_get_type    (void) G_GNUC_CONST;
@@ -49,13 +49,13 @@ GossipVersionInfo * gossip_version_info_new         (void);
 
 const gchar *       gossip_version_info_get_name    (GossipVersionInfo *info);
 void                gossip_version_info_set_name    (GossipVersionInfo *info,
-						     const gchar       *name);
+                                                     const gchar       *name);
 const gchar *       gossip_version_info_get_version (GossipVersionInfo *info);
 void                gossip_version_info_set_version (GossipVersionInfo *info,
-						     const gchar       *version);
+                                                     const gchar       *version);
 const gchar *       gossip_version_info_get_os      (GossipVersionInfo *info);
 void                gossip_version_info_set_os      (GossipVersionInfo *info,
-						     const gchar       *os);
+                                                     const gchar       *os);
 
 /* Don't free the returned version info */
 GossipVersionInfo * gossip_version_info_get_own     (void);

@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2005 Imendio AB
  *
@@ -26,26 +26,26 @@
 G_BEGIN_DECLS
 
 size_t  gossip_jabber_ft_base64_encode_close  (guint8 const *in,
-					       size_t        inlen,
-					       gboolean      break_lines,
-					       guint8       *out,
-					       int          *state,
-					       unsigned int *save);
+                                               size_t        inlen,
+                                               gboolean      break_lines,
+                                               guint8       *out,
+                                               int          *state,
+                                               unsigned int *save);
 size_t  gossip_jabber_ft_base64_encode_step   (guint8 const *in,
-					       size_t        len,
-					       gboolean      break_lines,
-					       guint8       *out,
-					       int          *state,
-					       unsigned int *save);
+                                               size_t        len,
+                                               gboolean      break_lines,
+                                               guint8       *out,
+                                               int          *state,
+                                               unsigned int *save);
 size_t  gossip_jabber_ft_base64_decode_step   (guint8 const *in,
-					       size_t        len,
-					       guint8       *out,
-					       int          *state,
-					       guint        *save);
+                                               size_t        len,
+                                               guint8       *out,
+                                               int          *state,
+                                               guint        *save);
 guint8 *gossip_jabber_ft_base64_encode_simple (guint8 const *data,
-					       size_t        len);
+                                               size_t        len);
 size_t  gossip_jabber_ft_base64_decode_simple (guint8       *data,
-					       size_t        len);
+                                               size_t        len);
 
 G_END_DECLS
 

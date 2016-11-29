@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2006-2007 Imendio AB
  *
@@ -27,29 +27,29 @@
 gchar *
 gossip_paths_get_glade_path (const gchar *filename)
 {
-	return g_build_filename (SHAREDIR, PACKAGE_TARNAME, filename, NULL);
+    return g_build_filename (SHAREDIR, PACKAGE_TARNAME, filename, NULL);
 }
 
 gchar *
 gossip_paths_get_image_path (const gchar *filename)
 {
-	return g_build_filename (SHAREDIR, PACKAGE_TARNAME, filename, NULL);
+    return g_build_filename (SHAREDIR, PACKAGE_TARNAME, filename, NULL);
 }
 
 gchar *
 gossip_paths_get_dtd_path (const gchar *filename)
 {
-	return g_build_filename (SHAREDIR, PACKAGE_TARNAME, filename, NULL);
+    return g_build_filename (SHAREDIR, PACKAGE_TARNAME, filename, NULL);
 }
 
 gchar *
 gossip_paths_get_sound_path (const gchar *filename)
 {
-	return g_build_filename (SHAREDIR, "sounds", PACKAGE_TARNAME, filename, NULL);
+    return g_build_filename (SHAREDIR, "sounds", PACKAGE_TARNAME, filename, NULL);
 }
 
 gchar *
 gossip_paths_get_locale_path ()
 {
-	return g_strdup (LOCALEDIR);
+    return g_strdup (LOCALEDIR);
 }

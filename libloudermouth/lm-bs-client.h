@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2007 Free Software Foundation
  *
@@ -35,35 +35,35 @@ G_BEGIN_DECLS
 typedef struct _LmBsClient LmBsClient;
 
 typedef enum {
-	LM_BS_CLIENT_STATUS_INITIAL,
-	LM_BS_CLIENT_STATUS_CONNECTING,
-	LM_BS_CLIENT_STATUS_CONNECTED,
-	LM_BS_CLIENT_STATUS_AUTHENTICATED,
-	LM_BS_CLIENT_STATUS_INVALID,
-	LM_BS_CLIENT_STATUS_INTERRUPTED
+    LM_BS_CLIENT_STATUS_INITIAL,
+    LM_BS_CLIENT_STATUS_CONNECTING,
+    LM_BS_CLIENT_STATUS_CONNECTED,
+    LM_BS_CLIENT_STATUS_AUTHENTICATED,
+    LM_BS_CLIENT_STATUS_INVALID,
+    LM_BS_CLIENT_STATUS_INTERRUPTED
 } LmBsClientStatus;
 
 typedef void (* LmBsClientFunction)               (LmBsClient   *client,
-						   gpointer      user_data);
+                                                   gpointer      user_data);
 typedef void (* LmBsClientReadFunction)           (LmBsClient   *client,
-						   gpointer      user_data,
-						   gpointer      user_data2);
+                                                   gpointer      user_data,
+                                                   gpointer      user_data2);
 
 LmBsClient *     lm_bs_client_new                 (guint64       port,
-						   const gchar  *host,
-						   LmCallback   *connected_cb,
-						   LmCallback   *disconnected_cb,
-						   LmCallback   *data_read_cb,
-						   LmCallback   *data_written_cb);
+                                                   const gchar  *host,
+                                                   LmCallback   *connected_cb,
+                                                   LmCallback   *disconnected_cb,
+                                                   LmCallback   *data_read_cb,
+                                                   LmCallback   *data_written_cb);
 LmBsClient *     lm_bs_client_new_from_fd         (gint          fd,
-						   GMainContext *context);
+                                                   GMainContext *context);
 LmBsClient *     lm_bs_client_new_with_context    (guint64       port,
-						   const gchar  *host,
-						   LmCallback   *connected_cb,
-						   LmCallback   *disconnected_cb,
-						   LmCallback   *data_read_cb,
-						   LmCallback   *data_written_cb,
-						   GMainContext *context);
+                                                   const gchar  *host,
+                                                   LmCallback   *connected_cb,
+                                                   LmCallback   *disconnected_cb,
+                                                   LmCallback   *data_read_cb,
+                                                   LmCallback   *data_written_cb,
+                                                   GMainContext *context);
 LmBsClient *     lm_bs_client_ref                 (LmBsClient   *client);
 void             lm_bs_client_unref               (LmBsClient   *client);
 
@@ -74,13 +74,13 @@ gchar *          lm_bs_client_get_host            (LmBsClient   *client);
 LmSocket         lm_bs_client_get_fd              (LmBsClient   *client);
 LmBsClientStatus lm_bs_client_get_status          (LmBsClient   *client);
 void             lm_bs_client_set_data_read_cb    (LmBsClient   *client,
-						   LmCallback   *data_read_cb);
+                                                   LmCallback   *data_read_cb);
 void             lm_bs_client_set_data_written_cb (LmBsClient   *client,
-						   LmCallback   *data_written_cb);
+                                                   LmCallback   *data_written_cb);
 void             lm_bs_client_set_disconnected_cb (LmBsClient   *client,
-						   LmCallback   *disconnected_cb);
+                                                   LmCallback   *disconnected_cb);
 void             lm_bs_client_write_data          (LmBsClient   *client,
-						   GString      *data);
+                                                   GString      *data);
 void             lm_bs_client_do_read             (LmBsClient   *client);
 void             lm_bs_client_remove_watch        (LmBsClient   *client);
 

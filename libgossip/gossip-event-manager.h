@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2004 Imendio AB
  *
@@ -38,31 +38,31 @@ typedef struct _GossipEventManager      GossipEventManager;
 typedef struct _GossipEventManagerClass GossipEventManagerClass;
 
 struct _GossipEventManager {
-	GObject parent;
+    GObject parent;
 };
 
 struct _GossipEventManagerClass {
-	GObjectClass parent_class;
+    GObjectClass parent_class;
 };
 
 typedef void (* GossipEventActivateFunction) (GossipEventManager *manager,
-					      GossipEvent        *event,
-					      GObject            *object);
+                                              GossipEvent        *event,
+                                              GObject            *object);
 
 GType        gossip_event_manager_get_type        (void) G_GNUC_CONST;
 GossipEventManager *
-	     gossip_event_manager_new             (void);
+gossip_event_manager_new             (void);
 void         gossip_event_manager_add             (GossipEventManager          *manager,
-						   GossipEvent                 *event,
-						   GossipEventActivateFunction  callback,
-						   GObject                     *object);
+                                                   GossipEvent                 *event,
+                                                   GossipEventActivateFunction  callback,
+                                                   GObject                     *object);
 void         gossip_event_manager_remove          (GossipEventManager          *manager,
-						   GossipEvent                 *event,
-						   GObject                     *object);
+                                                   GossipEvent                 *event,
+                                                   GObject                     *object);
 void         gossip_event_manager_activate        (GossipEventManager          *manager,
-						   GossipEvent                 *event);
+                                                   GossipEvent                 *event);
 void         gossip_event_manager_activate_by_id  (GossipEventManager          *manager,
-						   GossipEventId                id);
+                                                   GossipEventId                id);
 GossipEvent *gossip_event_manager_get_first       (GossipEventManager          *manager);
 GList       *gossip_event_manager_get_events      (GossipEventManager          *manager);
 guint        gossip_event_manager_get_event_count (GossipEventManager          *manager);

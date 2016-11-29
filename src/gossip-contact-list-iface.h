@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2004-2007 Imendio AB
  *
@@ -41,15 +41,15 @@ typedef struct _GossipContactListIface      GossipContactListIface;
 typedef struct _GossipContactListIfaceClass GossipContactListIfaceClass;
 
 struct _GossipContactListIfaceClass {
-	GTypeInterface   base_iface;
+    GTypeInterface   base_iface;
 
-	/* Signals */
-	void (*contact_added)             (GossipContactListIface *list,
-					   GossipContact          *contact);
-	void (*contact_removed)           (GossipContactListIface *list,
-					   GossipContact          *contact);
-	/* VTabled */
-	GList * (*get_contacts)           (GossipContactListIface *list);
+    /* Signals */
+    void (*contact_added)             (GossipContactListIface *list,
+                                       GossipContact          *contact);
+    void (*contact_removed)           (GossipContactListIface *list,
+                                       GossipContact          *contact);
+    /* VTabled */
+    GList * (*get_contacts)           (GossipContactListIface *list);
 };
 
 GType   gossip_contact_list_iface_get_type     (void) G_GNUC_CONST;

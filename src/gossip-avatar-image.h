@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2006-2007 Imendio AB
  *
@@ -36,17 +36,17 @@ typedef struct _GossipAvatarImage      GossipAvatarImage;
 typedef struct _GossipAvatarImageClass GossipAvatarImageClass;
 
 struct _GossipAvatarImage {
-	GtkEventBox      parent;
+    GtkEventBox      parent;
 };
 
 struct _GossipAvatarImageClass {
-	GtkEventBoxClass parent_class;
+    GtkEventBoxClass parent_class;
 };
 
 GType       gossip_avatar_image_get_type   (void) G_GNUC_CONST;
 GtkWidget * gossip_avatar_image_new        (GdkPixbuf         *pixbuf);
 void        gossip_avatar_image_set_pixbuf (GossipAvatarImage *avatar_image,
-					    GdkPixbuf         *pixbuf);
+                                            GdkPixbuf         *pixbuf);
 
 G_END_DECLS
 

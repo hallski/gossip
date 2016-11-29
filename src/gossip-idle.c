@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2003-2007 Imendio AB
  *
@@ -46,103 +46,103 @@ gint32
 gossip_idle_get_seconds (void)
 {
 #ifdef HAVE_XSS
-	static gboolean          inited = FALSE;
-	static XScreenSaverInfo *ss_info = NULL;
-	gint                     event_base;
-	gint                     error_base;
-	gint32                   idle = 0;
+    static gboolean          inited = FALSE;
+    static XScreenSaverInfo *ss_info = NULL;
+    gint                     event_base;
+    gint                     error_base;
+    gint32                   idle = 0;
 
-	if (!inited) {
-		timestamp = time (NULL);
-		if (XScreenSaverQueryExtension (GDK_DISPLAY (), &event_base, &error_base)) {
-			ss_info = XScreenSaverAllocInfo ();
-		}
+    if (!inited) {
+        timestamp = time (NULL);
+        if (XScreenSaverQueryExtension (GDK_DISPLAY (), &event_base, &error_base)) {
+            ss_info = XScreenSaverAllocInfo ();
+        }
 
-		inited = TRUE;
-	}
+        inited = TRUE;
+    }
 
-	if (ss_info) {
-		XScreenSaverQueryInfo (GDK_DISPLAY (), DefaultRootWindow (GDK_DISPLAY ()), ss_info);
-		idle = ss_info->idle / 1000;
-	}
+    if (ss_info) {
+        XScreenSaverQueryInfo (GDK_DISPLAY (), DefaultRootWindow (GDK_DISPLAY ()), ss_info);
+        idle = ss_info->idle / 1000;
+    }
 
-	/* When idle time is low enough, we're not really idle. */
-	if (idle < 3) {
-		return timestamp - time (NULL);
-	}
+    /* When idle time is low enough, we're not really idle. */
+    if (idle < 3) {
+        return timestamp - time (NULL);
+    }
 
-	timestamp = time (NULL);
+    timestamp = time (NULL);
 
-	return idle;
+    return idle;
 
 #elif defined(HAVE_PLATFORM_OSX)
-	static gboolean            inited = FALSE;
-	static mach_port_t         port;
-	static io_registry_entry_t object;
-	CFMutableDictionaryRef     properties;
-	CFTypeRef                  idle_object;
-	uint64_t                   idle_time;
+    static gboolean            inited = FALSE;
+    static mach_port_t         port;
+    static io_registry_entry_t object;
+    CFMutableDictionaryRef     properties;
+    CFTypeRef                  idle_object;
+    uint64_t                   idle_time;
 
-	if (!inited) {
-		io_iterator_t iter;
+    if (!inited) {
+        io_iterator_t iter;
 
-		timestamp = time (NULL);
+        timestamp = time (NULL);
 
-		inited = TRUE;
+        inited = TRUE;
 
-		IOMasterPort (MACH_PORT_NULL, &port);
-		IOServiceGetMatchingServices (port,
-					      IOServiceMatching ("IOHIDSystem"),
-					      &iter);
-		if (iter == 0) {
-			g_warning ("Couldn't access IOHIDSystem\n");
-			return 0;
-		}
+        IOMasterPort (MACH_PORT_NULL, &port);
+        IOServiceGetMatchingServices (port,
+                                      IOServiceMatching ("IOHIDSystem"),
+                                      &iter);
+        if (iter == 0) {
+            g_warning ("Couldn't access IOHIDSystem\n");
+            return 0;
+        }
 
-		object = IOIteratorNext (iter);
-	}
+        object = IOIteratorNext (iter);
+    }
 
-	if (!object) {
-		return 5;
-	}
+    if (!object) {
+        return 5;
+    }
 
-	idle_time = 5;
-	properties = 0;
-	if (IORegistryEntryCreateCFProperties (object, &properties, kCFAllocatorDefault, 0) ==
-	    KERN_SUCCESS && properties != NULL) {
-		CFTypeID type;
+    idle_time = 5;
+    properties = 0;
+    if (IORegistryEntryCreateCFProperties (object, &properties, kCFAllocatorDefault, 0) ==
+        KERN_SUCCESS && properties != NULL) {
+        CFTypeID type;
 
-		idle_object = CFDictionaryGetValue (properties, CFSTR ("HIDIdleTime"));
+        idle_object = CFDictionaryGetValue (properties, CFSTR ("HIDIdleTime"));
 
-		type = CFGetTypeID (idle_object);
-		if (type == CFNumberGetTypeID ()) {
-			CFNumberGetValue ((CFNumberRef) idle_object,
-					  kCFNumberSInt64Type,
-					  &idle_time);
-			idle_time >>= 30;
-		} else {
-			idle_time = 5;
-		}
-	}
+        type = CFGetTypeID (idle_object);
+        if (type == CFNumberGetTypeID ()) {
+            CFNumberGetValue ((CFNumberRef) idle_object,
+                              kCFNumberSInt64Type,
+                              &idle_time);
+            idle_time >>= 30;
+        } else {
+            idle_time = 5;
+        }
+    }
 
-	CFRelease ((CFTypeRef) properties);
+    CFRelease ((CFTypeRef) properties);
 
-	/* When idle time is low enough, we're not really idle. */
-	if (idle_time < 3) {
-		return timestamp - time (NULL);
-	}
+    /* When idle time is low enough, we're not really idle. */
+    if (idle_time < 3) {
+        return timestamp - time (NULL);
+    }
 
-	timestamp = time (NULL);
+    timestamp = time (NULL);
 
-	return idle_time;
+    return idle_time;
 #else
-	return 5;
+    return 5;
 #endif
 }
 
 void
 gossip_idle_reset (void)
 {
-	timestamp = time (NULL);
+    timestamp = time (NULL);
 }
 

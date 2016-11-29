@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2005-2007 Imendio AB
  *
@@ -25,105 +25,105 @@
 #include "gossip-chatroom-invite.h"
 
 struct _GossipChatroomInvite {
-	guint          ref_count;
+    guint          ref_count;
 
-	GossipContact *inviter;
-	gchar         *id;
-	gchar         *reason;
+    GossipContact *inviter;
+    gchar         *id;
+    gchar         *reason;
 };
 
 GType
 gossip_chatroom_invite_get_type (void)
 {
-	static GType type = 0;
+    static GType type = 0;
 
-	if (type == 0) {
-		type = g_boxed_type_register_static
-			("GossipChatroomInvite",
-			 (GBoxedCopyFunc) gossip_chatroom_invite_ref,
-			 (GBoxedFreeFunc) gossip_chatroom_invite_unref);
-	}
+    if (type == 0) {
+        type = g_boxed_type_register_static
+            ("GossipChatroomInvite",
+             (GBoxedCopyFunc) gossip_chatroom_invite_ref,
+             (GBoxedFreeFunc) gossip_chatroom_invite_unref);
+    }
 
-	return type;
+    return type;
 }
 
 GossipChatroomInvite *
 gossip_chatroom_invite_new (GossipContact *inviter,
-			    const gchar   *id,
-			    const gchar   *reason)
+                            const gchar   *id,
+                            const gchar   *reason)
 {
-	GossipChatroomInvite *invite;
+    GossipChatroomInvite *invite;
 
-	g_return_val_if_fail (GOSSIP_IS_CONTACT (inviter), NULL);
-	g_return_val_if_fail (id != NULL, NULL);
+    g_return_val_if_fail (GOSSIP_IS_CONTACT (inviter), NULL);
+    g_return_val_if_fail (id != NULL, NULL);
 
-	invite = g_new0 (GossipChatroomInvite, 1);
+    invite = g_new0 (GossipChatroomInvite, 1);
 
-	invite->ref_count = 1;
+    invite->ref_count = 1;
 
-	invite->inviter = g_object_ref (inviter);
-	invite->id = g_strdup (id);
-		invite->reason = g_strdup (reason);
+    invite->inviter = g_object_ref (inviter);
+    invite->id = g_strdup (id);
+    invite->reason = g_strdup (reason);
 
-	return invite;
+    return invite;
 }
 
 GossipChatroomInvite *
 gossip_chatroom_invite_ref (gpointer data)
 {
-	GossipChatroomInvite *invite = data;
+    GossipChatroomInvite *invite = data;
 
-	g_return_val_if_fail (invite != NULL, NULL);
-	g_return_val_if_fail (invite->ref_count > 0, NULL);
+    g_return_val_if_fail (invite != NULL, NULL);
+    g_return_val_if_fail (invite->ref_count > 0, NULL);
 
-	invite->ref_count++;
+    invite->ref_count++;
 
-	return invite;
+    return invite;
 }
 
 void
 gossip_chatroom_invite_unref (gpointer data)
 {
-	GossipChatroomInvite *invite = data;
-	
-	g_return_if_fail (invite != NULL);
-	g_return_if_fail (invite->ref_count > 0);
+    GossipChatroomInvite *invite = data;
+        
+    g_return_if_fail (invite != NULL);
+    g_return_if_fail (invite->ref_count > 0);
 
-	invite->ref_count--;
+    invite->ref_count--;
 
-	if (invite->ref_count > 0) {
-		return;
-	}
+    if (invite->ref_count > 0) {
+        return;
+    }
 
-	if (invite->inviter) {
-		g_object_unref (invite->inviter);
-	}
+    if (invite->inviter) {
+        g_object_unref (invite->inviter);
+    }
 
-	g_free (invite->id);
-	g_free (invite->reason);
+    g_free (invite->id);
+    g_free (invite->reason);
 }
 
 GossipContact *
 gossip_chatroom_invite_get_inviter (GossipChatroomInvite *invite)
 {
-	g_return_val_if_fail (invite != NULL, NULL);
+    g_return_val_if_fail (invite != NULL, NULL);
 
-	return invite->inviter;
+    return invite->inviter;
 }
 
 const gchar *
 gossip_chatroom_invite_get_id (GossipChatroomInvite *invite)
 {
-	g_return_val_if_fail (invite != NULL, NULL);
+    g_return_val_if_fail (invite != NULL, NULL);
 
-	return invite->id;
+    return invite->id;
 }
 
 const gchar *
 gossip_chatroom_invite_get_reason (GossipChatroomInvite *invite)
 {
-	g_return_val_if_fail (invite != NULL, NULL);
+    g_return_val_if_fail (invite != NULL, NULL);
 
-	return invite->reason;
+    return invite->reason;
 }
 

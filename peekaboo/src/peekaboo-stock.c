@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2006 Imendio AB
  *
@@ -25,44 +25,44 @@
 #include "peekaboo-stock.h"
 
 static GtkStockItem stock_items[] = {
-	{ PEEKABOO_STOCK_OFFLINE,                 NULL },     
-	{ PEEKABOO_STOCK_AVAILABLE,               NULL },
-	{ PEEKABOO_STOCK_BUSY,                    NULL },
-	{ PEEKABOO_STOCK_AWAY,                    NULL },
-	{ PEEKABOO_STOCK_EXT_AWAY,                NULL },    
-	{ PEEKABOO_STOCK_PENDING,                 NULL },
-	{ PEEKABOO_STOCK_MESSAGE,                 NULL },
-	{ PEEKABOO_STOCK_TYPING,                  NULL },
-	{ PEEKABOO_STOCK_CONTACT_INFORMATION,     NULL },
-	{ PEEKABOO_STOCK_GROUP_MESSAGE,           NULL }
+    { PEEKABOO_STOCK_OFFLINE,                 NULL },     
+    { PEEKABOO_STOCK_AVAILABLE,               NULL },
+    { PEEKABOO_STOCK_BUSY,                    NULL },
+    { PEEKABOO_STOCK_AWAY,                    NULL },
+    { PEEKABOO_STOCK_EXT_AWAY,                NULL },    
+    { PEEKABOO_STOCK_PENDING,                 NULL },
+    { PEEKABOO_STOCK_MESSAGE,                 NULL },
+    { PEEKABOO_STOCK_TYPING,                  NULL },
+    { PEEKABOO_STOCK_CONTACT_INFORMATION,     NULL },
+    { PEEKABOO_STOCK_GROUP_MESSAGE,           NULL }
 };
 
 void
 peekaboo_stock_init (void)
 {
-       GtkIconFactory *icon_factory;
-       GtkIconSet     *icon_set;
-       GdkPixbuf      *pixbuf;
-       gint            i;
-       gchar          *filename;
+    GtkIconFactory *icon_factory;
+    GtkIconSet     *icon_set;
+    GdkPixbuf      *pixbuf;
+    gint            i;
+    gchar          *filename;
        
-       gtk_stock_add (stock_items, G_N_ELEMENTS (stock_items));
+    gtk_stock_add (stock_items, G_N_ELEMENTS (stock_items));
        
-       icon_factory = gtk_icon_factory_new ();
-       gtk_icon_factory_add_default (icon_factory);
+    icon_factory = gtk_icon_factory_new ();
+    gtk_icon_factory_add_default (icon_factory);
        
-       for (i = 0; i < G_N_ELEMENTS (stock_items); i++) {
-	       filename = g_strdup_printf (IMAGEDIR "/%s.png", stock_items[i].stock_id);
-	       pixbuf = gdk_pixbuf_new_from_file (filename, NULL);
-	       g_free (filename);
+    for (i = 0; i < G_N_ELEMENTS (stock_items); i++) {
+        filename = g_strdup_printf (IMAGEDIR "/%s.png", stock_items[i].stock_id);
+        pixbuf = gdk_pixbuf_new_from_file (filename, NULL);
+        g_free (filename);
 
-	       icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
-	       
-	       gtk_icon_factory_add (icon_factory,
-				     stock_items[i].stock_id,
-				     icon_set);
+        icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
+               
+        gtk_icon_factory_add (icon_factory,
+                              stock_items[i].stock_id,
+                              icon_set);
 
-	       g_object_unref (pixbuf);
-       }
+        g_object_unref (pixbuf);
+    }
 }
 

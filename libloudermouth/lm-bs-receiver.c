@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2007 Free Software Foundation
  *
@@ -36,247 +36,247 @@
 #define IO_WRITE_FLAGS G_IO_OUT | G_IO_ERR
 
 typedef enum {
-	STATE_INITIAL,
-	STATE_AUTH_SENT,
-	STATE_AUTH_REPLIED,
-	STATE_CONNECT_REQUEST_SENT,
-	STATE_CONNECT_REQUEST_REPLIED,
-	STATE_TRANSFER_STARTED
+    STATE_INITIAL,
+    STATE_AUTH_SENT,
+    STATE_AUTH_REPLIED,
+    STATE_CONNECT_REQUEST_SENT,
+    STATE_CONNECT_REQUEST_REPLIED,
+    STATE_TRANSFER_STARTED
 } ReceiverState;
 
 struct _LmBsReceiver {
-	gint           ref_count;
+    gint           ref_count;
 
-	LmBsClient    *client;
-	LmBsTransfer  *transfer;
+    LmBsClient    *client;
+    LmBsTransfer  *transfer;
 
-	const gchar   *append_data;
-	ReceiverState  state;
+    const gchar   *append_data;
+    ReceiverState  state;
 
-	gchar         *jid_used;
+    gchar         *jid_used;
 };
 
 static void bs_receiver_client_disconnected (LmBsClient    *client,
-					     LmBsReceiver  *receiver);
+                                             LmBsReceiver  *receiver);
 static void bs_receiver_fill_request_buf    (LmBsClient    *client,
-					     GString      **buf,
-					     const gchar   *msg);
+                                             GString      **buf,
+                                             const gchar   *msg);
 static void bs_receiver_read_cb             (LmBsClient    *client,
-					     LmBsReceiver  *receiver,
-					     GString       *data);
+                                             LmBsReceiver  *receiver,
+                                             GString       *data);
 static void bs_receiver_write_cb            (LmBsClient    *client,
-					     LmBsReceiver  *receiver);
+                                             LmBsReceiver  *receiver);
 static void bs_receiver_transfer_error      (LmBsReceiver  *receiver);
 
 static void
 bs_receiver_client_disconnected (LmBsClient   *client, 
-				 LmBsReceiver *receiver)
+                                 LmBsReceiver *receiver)
 {
-	LmBsTransferStatus status;
-	
-	g_return_if_fail (client != NULL);
-	g_return_if_fail (receiver != NULL);
-	g_return_if_fail (receiver->transfer != NULL);
+    LmBsTransferStatus status;
+        
+    g_return_if_fail (client != NULL);
+    g_return_if_fail (receiver != NULL);
+    g_return_if_fail (receiver->transfer != NULL);
 
-	lm_bs_client_unref (client);
+    lm_bs_client_unref (client);
 
-	status = lm_bs_transfer_get_status (receiver->transfer);
+    status = lm_bs_transfer_get_status (receiver->transfer);
 
-	if (status != LM_BS_TRANSFER_STATUS_COMPLETE) {
-		GError *error;
+    if (status != LM_BS_TRANSFER_STATUS_COMPLETE) {
+        GError *error;
 
-		error = g_error_new (lm_error_quark (),
-				     LM_BS_TRANSFER_ERROR_CLIENT_DISCONNECTED,
-				     _("The other party disconnected"));
-		lm_bs_transfer_error (receiver->transfer, error);
-		g_error_free (error);
-	}
+        error = g_error_new (lm_error_quark (),
+                             LM_BS_TRANSFER_ERROR_CLIENT_DISCONNECTED,
+                             _("The other party disconnected"));
+        lm_bs_transfer_error (receiver->transfer, error);
+        g_error_free (error);
+    }
 
-	lm_bs_transfer_close_file (receiver->transfer);
+    lm_bs_transfer_close_file (receiver->transfer);
 }
 
 static void 
 bs_receiver_fill_request_buf (LmBsClient   *client, 
-			      GString     **buf, 
-			      const gchar  *msg)
+                              GString     **buf, 
+                              const gchar  *msg)
 {
-	*buf = g_string_new_len ("\x05\x01\x00\x03", 4);
+    *buf = g_string_new_len ("\x05\x01\x00\x03", 4);
 
-	g_string_append_printf (*buf, "%c%s", (int)strlen (msg), msg);
-	g_string_append_len (*buf, "\x00\x00", 2);
+    g_string_append_printf (*buf, "%c%s", (int)strlen (msg), msg);
+    g_string_append_len (*buf, "\x00\x00", 2);
 }
 
 static void
 bs_receiver_transfer_error (LmBsReceiver *receiver)
 {
-	GError *error;
+    GError *error;
 
-	error = g_error_new (lm_error_quark (),
-			     LM_BS_TRANSFER_ERROR_PROTOCOL_SPECIFIC,
-			     _("A protocol error occurred during the transfer"));
-	lm_bs_transfer_error (receiver->transfer, error);
-	g_error_free (error);
+    error = g_error_new (lm_error_quark (),
+                         LM_BS_TRANSFER_ERROR_PROTOCOL_SPECIFIC,
+                         _("A protocol error occurred during the transfer"));
+    lm_bs_transfer_error (receiver->transfer, error);
+    g_error_free (error);
 }
 
 static void 
 bs_receiver_read_cb (LmBsClient   *client, 
-		     LmBsReceiver *receiver, 
-		     GString      *data)
+                     LmBsReceiver *receiver, 
+                     GString      *data)
 {
-	GString      *send_data;
-	LmBsTransfer *transfer;
-	gchar        *bytes;
-	gchar        *auth_sha;
-	guint         addrlen;
-	gboolean      result;
+    GString      *send_data;
+    LmBsTransfer *transfer;
+    gchar        *bytes;
+    gchar        *auth_sha;
+    guint         addrlen;
+    gboolean      result;
 
-	send_data = NULL;
-	bytes = data->str;
+    send_data = NULL;
+    bytes = data->str;
 
-	transfer = receiver->transfer;
+    transfer = receiver->transfer;
 
-	switch (receiver->state) {
-	case STATE_AUTH_SENT:
-		if (data->len < 2) {
-			lm_bs_receiver_unref (receiver);
-			bs_receiver_transfer_error (receiver);
-			return;
-		}
-		
-		receiver->state = STATE_AUTH_REPLIED;
-		
-		if (bytes[0] != '\x05' || bytes[1] == '\xff') {
-			lm_bs_receiver_unref (receiver);
-			bs_receiver_transfer_error (receiver);
-			return;
-		}
-		
-		auth_sha = lm_bs_transfer_get_auth_sha (transfer);
-		bs_receiver_fill_request_buf (client, &send_data, auth_sha);
-		g_free (auth_sha);
-		break;
-		
-	case STATE_CONNECT_REQUEST_SENT:
-		if (data->len <= 4 ) {
-			lm_bs_receiver_unref (receiver);
-			bs_receiver_transfer_error (receiver);
-			return;
-		}
-		
-		receiver->state = STATE_TRANSFER_STARTED;
-		
-		if (bytes[3] == '\x03') {
-			gchar* address;
-			
-			addrlen = (guint) bytes[4];
-			address = bytes + 5;
-			address[addrlen] = '\0';
-			
-			if (data->len - addrlen - 6 < 0) {
-				lm_bs_receiver_unref (receiver);
-				bs_receiver_transfer_error (receiver);
-				return;
-			}
-		}
-		
-		lm_bs_transfer_send_success_reply (transfer,
-						   receiver->jid_used);
-		break;
-		
-	case STATE_TRANSFER_STARTED:
-		g_object_ref (transfer);
-		result = lm_bs_transfer_append_to_file (transfer, data);
-		
-		if (!result) {
-			lm_bs_receiver_unref (receiver);
-		}
-		
-		g_object_unref (transfer);
-		break;
-		
-	default:
-		g_assert_not_reached ();
-	}
-	
-	if (send_data) {
-		lm_bs_client_write_data (receiver->client, send_data);
-	}
+    switch (receiver->state) {
+    case STATE_AUTH_SENT:
+        if (data->len < 2) {
+            lm_bs_receiver_unref (receiver);
+            bs_receiver_transfer_error (receiver);
+            return;
+        }
+                
+        receiver->state = STATE_AUTH_REPLIED;
+                
+        if (bytes[0] != '\x05' || bytes[1] == '\xff') {
+            lm_bs_receiver_unref (receiver);
+            bs_receiver_transfer_error (receiver);
+            return;
+        }
+                
+        auth_sha = lm_bs_transfer_get_auth_sha (transfer);
+        bs_receiver_fill_request_buf (client, &send_data, auth_sha);
+        g_free (auth_sha);
+        break;
+                
+    case STATE_CONNECT_REQUEST_SENT:
+        if (data->len <= 4 ) {
+            lm_bs_receiver_unref (receiver);
+            bs_receiver_transfer_error (receiver);
+            return;
+        }
+                
+        receiver->state = STATE_TRANSFER_STARTED;
+                
+        if (bytes[3] == '\x03') {
+            gchar* address;
+                        
+            addrlen = (guint) bytes[4];
+            address = bytes + 5;
+            address[addrlen] = '\0';
+                        
+            if (data->len - addrlen - 6 < 0) {
+                lm_bs_receiver_unref (receiver);
+                bs_receiver_transfer_error (receiver);
+                return;
+            }
+        }
+                
+        lm_bs_transfer_send_success_reply (transfer,
+                                           receiver->jid_used);
+        break;
+                
+    case STATE_TRANSFER_STARTED:
+        g_object_ref (transfer);
+        result = lm_bs_transfer_append_to_file (transfer, data);
+                
+        if (!result) {
+            lm_bs_receiver_unref (receiver);
+        }
+                
+        g_object_unref (transfer);
+        break;
+                
+    default:
+        g_assert_not_reached ();
+    }
+        
+    if (send_data) {
+        lm_bs_client_write_data (receiver->client, send_data);
+    }
 }
 
 static void 
 bs_receiver_write_cb (LmBsClient   *client, 
-		      LmBsReceiver *receiver)
+                      LmBsReceiver *receiver)
 {
-	switch (receiver->state) {
-	case STATE_INITIAL:
-		receiver->state = STATE_AUTH_SENT;
-		break;
-	case STATE_AUTH_REPLIED:
-		receiver->state = STATE_CONNECT_REQUEST_SENT;
-		break;
-	default:
-		g_assert_not_reached ();
-	}
+    switch (receiver->state) {
+    case STATE_INITIAL:
+        receiver->state = STATE_AUTH_SENT;
+        break;
+    case STATE_AUTH_REPLIED:
+        receiver->state = STATE_CONNECT_REQUEST_SENT;
+        break;
+    default:
+        g_assert_not_reached ();
+    }
 
-	lm_bs_client_do_read (client);
+    lm_bs_client_do_read (client);
 }
 
 LmBsReceiver *
 lm_bs_receiver_new (LmBsClient   *client,
-		    LmBsTransfer *transfer,
-		    const gchar  *jid_used)
+                    LmBsTransfer *transfer,
+                    const gchar  *jid_used)
 {
-	LmBsReceiver           *receiver;
-	LmBsClientReadFunction  read_func;
-	LmBsClientFunction      func;
-	LmCallback             *read_cb;
-	LmCallback             *written_cb;
-	LmCallback             *discon_cb;
+    LmBsReceiver           *receiver;
+    LmBsClientReadFunction  read_func;
+    LmBsClientFunction      func;
+    LmCallback             *read_cb;
+    LmCallback             *written_cb;
+    LmCallback             *discon_cb;
 
-	_lm_sock_library_init ();
-	lm_debug_init ();
-	receiver = g_new0 (LmBsReceiver, 1);
-	receiver->client = client;
-	lm_bs_client_ref (client);
-	receiver->transfer = transfer;
-	receiver->jid_used = g_strdup (jid_used);
+    _lm_sock_library_init ();
+    lm_debug_init ();
+    receiver = g_new0 (LmBsReceiver, 1);
+    receiver->client = client;
+    lm_bs_client_ref (client);
+    receiver->transfer = transfer;
+    receiver->jid_used = g_strdup (jid_used);
 
-	read_func = (LmBsClientReadFunction) bs_receiver_read_cb;
-	read_cb = _lm_utils_new_callback (read_func, receiver, NULL);
-	lm_bs_client_set_data_read_cb (client, read_cb);
+    read_func = (LmBsClientReadFunction) bs_receiver_read_cb;
+    read_cb = _lm_utils_new_callback (read_func, receiver, NULL);
+    lm_bs_client_set_data_read_cb (client, read_cb);
 
-	func = (LmBsClientFunction) bs_receiver_write_cb;
-	written_cb = _lm_utils_new_callback (func, receiver, NULL);
-	lm_bs_client_set_data_written_cb (client, written_cb);
-	
-	func = (LmBsClientFunction) bs_receiver_client_disconnected;
-	discon_cb = _lm_utils_new_callback (func, receiver, NULL);
-	lm_bs_client_set_disconnected_cb (client, discon_cb);
+    func = (LmBsClientFunction) bs_receiver_write_cb;
+    written_cb = _lm_utils_new_callback (func, receiver, NULL);
+    lm_bs_client_set_data_written_cb (client, written_cb);
+        
+    func = (LmBsClientFunction) bs_receiver_client_disconnected;
+    discon_cb = _lm_utils_new_callback (func, receiver, NULL);
+    lm_bs_client_set_disconnected_cb (client, discon_cb);
 
-	receiver->ref_count = 1;
+    receiver->ref_count = 1;
 
-	return receiver;
+    return receiver;
 }
 
 void
 lm_bs_receiver_unref (LmBsReceiver *receiver)
 {
-	g_return_if_fail (receiver != NULL);
+    g_return_if_fail (receiver != NULL);
 
-	receiver->ref_count--;
+    receiver->ref_count--;
 
-	if (receiver->ref_count == 0) {
-		lm_bs_client_unref (receiver->client);
-		g_free (receiver->jid_used);
-		g_free (receiver);
-	}
+    if (receiver->ref_count == 0) {
+        lm_bs_client_unref (receiver->client);
+        g_free (receiver->jid_used);
+        g_free (receiver);
+    }
 }
 
 void
 lm_bs_receiver_start_transfer (LmBsReceiver *receiver)
 {
-	receiver->state = STATE_INITIAL;
+    receiver->state = STATE_INITIAL;
 
-	lm_bs_client_write_data (receiver->client,
-				 g_string_new_len ("\x05\x01\x00", 3));
+    lm_bs_client_write_data (receiver->client,
+                             g_string_new_len ("\x05\x01\x00", 3));
 }

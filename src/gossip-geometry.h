@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2006-2007 Imendio AB
  *
@@ -26,23 +26,23 @@
 G_BEGIN_DECLS
 
 void gossip_geometry_save_for_chat        (GossipChat *chat,
-					   gint        x,
-					   gint        y,
-					   gint        w,
-					   gint        h);
+                                           gint        x,
+                                           gint        y,
+                                           gint        w,
+                                           gint        h);
 void gossip_geometry_load_for_chat        (GossipChat *chat,
-					   gint       *x,
-					   gint       *y,
-					   gint       *w,
-					   gint       *h);
+                                           gint       *x,
+                                           gint       *y,
+                                           gint       *w,
+                                           gint       *h);
 void gossip_geometry_save_for_main_window (gint        x,
-					   gint        y,
-					   gint        w,
-					   gint        h);
+                                           gint        y,
+                                           gint        w,
+                                           gint        h);
 void gossip_geometry_load_for_main_window (gint       *x,
-					   gint       *y,
-					   gint       *w,
-					   gint       *h);
+                                           gint       *y,
+                                           gint       *w,
+                                           gint       *h);
 
 G_END_DECLS
 

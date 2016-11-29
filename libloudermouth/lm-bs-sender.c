@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2007 Free Software Foundation
  *
@@ -41,334 +41,334 @@
 #define IO_WRITE_FLAGS G_IO_OUT | G_IO_ERR
 
 typedef enum {
-	STATE_INITIAL,
-	STATE_AUTH_READ,
-	STATE_AUTH_REPLIED,
-	STATE_CONNECT_REQUEST_READ,
-	STATE_CONNECT_REQUEST_REPLIED,
-	STATE_TRANSFER_STARTED
+    STATE_INITIAL,
+    STATE_AUTH_READ,
+    STATE_AUTH_REPLIED,
+    STATE_CONNECT_REQUEST_READ,
+    STATE_CONNECT_REQUEST_REPLIED,
+    STATE_TRANSFER_STARTED
 } SenderState;
 
 struct _LmBsSender {
-	gint          ref_count;
+    gint          ref_count;
 
-	LmBsSession  *session;
-	LmBsClient   *client;
-	LmBsTransfer *transfer;
-	SenderState   state;
+    LmBsSession  *session;
+    LmBsClient   *client;
+    LmBsTransfer *transfer;
+    SenderState   state;
 
-	const gchar  *append_data;
+    const gchar  *append_data;
 
-	gchar        *jid_used;
+    gchar        *jid_used;
 };
 
 static void bs_sender_destroy                (LmBsSender   *sender);
 static void bs_sender_write_next             (LmBsSender   *sender);
 static void bs_sender_read_cb                (LmBsClient   *client,
-					      LmBsSender   *sender,
-					      GString      *data);
+                                              LmBsSender   *sender,
+                                              GString      *data);
 static void bs_sender_write_cb               (LmBsClient   *client,
-					      LmBsSender   *sender);
+                                              LmBsSender   *sender);
 static void bs_sender_client_disconnected_cb (LmBsClient   *client,
-					      LmBsSender   *sender);
+                                              LmBsSender   *sender);
 static void bs_sender_match_sha              (LmBsSender   *sender,
-					      const gchar  *sha);
+                                              const gchar  *sha);
 static void bs_sender_fill_request_buf       (LmBsClient   *client,
-					      GString     **buf,
-					      const gchar  *msg);
+                                              GString     **buf,
+                                              const gchar  *msg);
 static void bs_sender_activate_streamhost    (gpointer      ptr,
-					      LmBsSender   *sender);
+                                              LmBsSender   *sender);
 
 static void
 bs_sender_destroy (LmBsSender *sender)
 {
-	guint fd;
+    guint fd;
 
-	fd = lm_bs_client_get_fd (sender->client);
-	_lm_bs_session_remove_sender (sender->session, fd);
+    fd = lm_bs_client_get_fd (sender->client);
+    _lm_bs_session_remove_sender (sender->session, fd);
 }
 
 static void 
 bs_sender_read_cb (LmBsClient *client, 
-		   LmBsSender *sender, 
-		   GString    *data)
+                   LmBsSender *sender, 
+                   GString    *data)
 {
-	GString *send_data;
-	gchar   *bytes;
-	gchar    ver;
-	gchar    num_auth;
-	gchar    host_type;
-	gchar   *host_addr;
-	guint    addrlen;
+    GString *send_data;
+    gchar   *bytes;
+    gchar    ver;
+    gchar    num_auth;
+    gchar    host_type;
+    gchar   *host_addr;
+    guint    addrlen;
 
-	send_data = NULL;
-	bytes = data->str;
+    send_data = NULL;
+    bytes = data->str;
 
-	switch (sender->state) {
-	case STATE_INITIAL:
-		if (data->len < 3) {
-			/* no auth mechanisms supported */
-			return bs_sender_destroy (sender);
-		}
+    switch (sender->state) {
+    case STATE_INITIAL:
+        if (data->len < 3) {
+            /* no auth mechanisms supported */
+            return bs_sender_destroy (sender);
+        }
 
-		ver = bytes[0];
-		num_auth = bytes[1];
-		if (ver != '\x05') {
-			return bs_sender_destroy (sender);
-		}
+        ver = bytes[0];
+        num_auth = bytes[1];
+        if (ver != '\x05') {
+            return bs_sender_destroy (sender);
+        }
 
-		if ((gint) num_auth < 1) {
-			/* zero auth mechanisms supported */
-			return bs_sender_destroy (sender);
-		}
+        if ((gint) num_auth < 1) {
+            /* zero auth mechanisms supported */
+            return bs_sender_destroy (sender);
+        }
 
-		send_data = g_string_new_len ("\x05\x00", 2);
-		sender->state = STATE_AUTH_READ;
-		break;
+        send_data = g_string_new_len ("\x05\x00", 2);
+        sender->state = STATE_AUTH_READ;
+        break;
 
-	case STATE_AUTH_REPLIED:
-		if (data->len < 5) {
-			/* wrong connect request */
-			return bs_sender_destroy (sender);
-		}
+    case STATE_AUTH_REPLIED:
+        if (data->len < 5) {
+            /* wrong connect request */
+            return bs_sender_destroy (sender);
+        }
 
-		if (bytes[1] != '\x01') {
-			/* request type is not 'connect' */
-			return bs_sender_destroy (sender);
-		}
+        if (bytes[1] != '\x01') {
+            /* request type is not 'connect' */
+            return bs_sender_destroy (sender);
+        }
 
-		host_type = bytes[3];
-		if (host_type == '\x01') {
-			if (data->len < 8) {
-				return bs_sender_destroy (sender);
-			}
-			
-			host_addr = g_strdup_printf ("%d.%d.%d.%d", 
-						     (guint) bytes[4],
-						     (guint) bytes[5],
-						     (guint) bytes[6],
-						     (guint) bytes[7]);
+        host_type = bytes[3];
+        if (host_type == '\x01') {
+            if (data->len < 8) {
+                return bs_sender_destroy (sender);
+            }
+                        
+            host_addr = g_strdup_printf ("%d.%d.%d.%d", 
+                                         (guint) bytes[4],
+                                         (guint) bytes[5],
+                                         (guint) bytes[6],
+                                         (guint) bytes[7]);
 
-			addrlen = strlen (host_addr);
-		} else if (host_type == '\x03') {
-			addrlen = (guint) bytes[4];
+            addrlen = strlen (host_addr);
+        } else if (host_type == '\x03') {
+            addrlen = (guint) bytes[4];
 
-			if (data->len < addrlen + 5) {
-				return bs_sender_destroy (sender);
-			}
+            if (data->len < addrlen + 5) {
+                return bs_sender_destroy (sender);
+            }
 
-			host_addr = bytes + 5;
-			host_addr[addrlen] = '\0';
-			host_addr = g_strdup (host_addr);
-		} else {
-			/*  unknown host type */
-			return bs_sender_destroy (sender);
-		}
+            host_addr = bytes + 5;
+            host_addr[addrlen] = '\0';
+            host_addr = g_strdup (host_addr);
+        } else {
+            /*  unknown host type */
+            return bs_sender_destroy (sender);
+        }
 
-		bs_sender_match_sha (sender, host_addr);
-		g_free (host_addr);
-		/* lm_bs_client_remove_watch (client); */
-		sender->state = STATE_CONNECT_REQUEST_READ;
-		break;
+        bs_sender_match_sha (sender, host_addr);
+        g_free (host_addr);
+        /* lm_bs_client_remove_watch (client); */
+        sender->state = STATE_CONNECT_REQUEST_READ;
+        break;
 
-	default:
-		g_assert_not_reached ();
-	}
+    default:
+        g_assert_not_reached ();
+    }
 
-	if (send_data) {
-		lm_bs_client_write_data (sender->client, send_data);
-	}
+    if (send_data) {
+        lm_bs_client_write_data (sender->client, send_data);
+    }
 }
 
 static void
 bs_sender_write_next (LmBsSender *sender)
 {
-	GString      *data;
-	LmBsTransfer *transfer;
-	gboolean      result;
+    GString      *data;
+    LmBsTransfer *transfer;
+    gboolean      result;
 
-	transfer = sender->transfer;
-	g_return_if_fail (transfer != NULL);
+    transfer = sender->transfer;
+    g_return_if_fail (transfer != NULL);
 
-	data = NULL;
-	g_object_ref (transfer);
-	result = lm_bs_transfer_get_file_content (sender->transfer, &data);
+    data = NULL;
+    g_object_ref (transfer);
+    result = lm_bs_transfer_get_file_content (sender->transfer, &data);
 
-	if (!result) {
-		lm_bs_sender_unref (sender);
-	} else {
-		lm_bs_client_write_data (sender->client, data);
-	}
+    if (!result) {
+        lm_bs_sender_unref (sender);
+    } else {
+        lm_bs_client_write_data (sender->client, data);
+    }
 
-	g_object_unref (transfer);
+    g_object_unref (transfer);
 }
 
 static void
 bs_sender_write_cb (LmBsClient *client,
-		    LmBsSender *sender)
+                    LmBsSender *sender)
 {
-	switch (sender->state) {
-	case STATE_AUTH_READ:
-		sender->state = STATE_AUTH_REPLIED;
-		break;
+    switch (sender->state) {
+    case STATE_AUTH_READ:
+        sender->state = STATE_AUTH_REPLIED;
+        break;
 
-	case STATE_CONNECT_REQUEST_READ:
-		sender->state = STATE_CONNECT_REQUEST_REPLIED;
-		lm_bs_client_remove_watch (client);
-		return;
+    case STATE_CONNECT_REQUEST_READ:
+        sender->state = STATE_CONNECT_REQUEST_REPLIED;
+        lm_bs_client_remove_watch (client);
+        return;
 
-	case STATE_TRANSFER_STARTED:
-		bs_sender_write_next (sender);
-		return;
+    case STATE_TRANSFER_STARTED:
+        bs_sender_write_next (sender);
+        return;
 
-	default:
-		break;
-	}
+    default:
+        break;
+    }
 
-	lm_bs_client_do_read (client);
+    lm_bs_client_do_read (client);
 }
 
 static void
 bs_sender_client_disconnected_cb (LmBsClient *client,
-				  LmBsSender *sender)
+                                  LmBsSender *sender)
 {
-	LmBsTransferStatus  status;
-	LmBsTransfer       *transfer;
+    LmBsTransferStatus  status;
+    LmBsTransfer       *transfer;
 
-	transfer = sender->transfer;
+    transfer = sender->transfer;
 
-	if (transfer != NULL) {
-		lm_bs_transfer_close_file (sender->transfer);
-		status = lm_bs_transfer_get_status (sender->transfer);
+    if (transfer != NULL) {
+        lm_bs_transfer_close_file (sender->transfer);
+        status = lm_bs_transfer_get_status (sender->transfer);
 
-		if (status != LM_BS_TRANSFER_STATUS_COMPLETE) {
-			GError *error;
+        if (status != LM_BS_TRANSFER_STATUS_COMPLETE) {
+            GError *error;
 
-			bs_sender_destroy (sender);
+            bs_sender_destroy (sender);
 
-			error = g_error_new (lm_error_quark (),
-					     LM_BS_TRANSFER_ERROR_CLIENT_DISCONNECTED,
-					     _("The other party disconnected"));
-			lm_bs_transfer_error (sender->transfer, error);
-			g_error_free (error);
-			return;
-		}
-	}
+            error = g_error_new (lm_error_quark (),
+                                 LM_BS_TRANSFER_ERROR_CLIENT_DISCONNECTED,
+                                 _("The other party disconnected"));
+            lm_bs_transfer_error (sender->transfer, error);
+            g_error_free (error);
+            return;
+        }
+    }
 
-	bs_sender_destroy (sender);
+    bs_sender_destroy (sender);
 }
 
 static void
 bs_sender_match_sha (LmBsSender  *sender, 
-		     const gchar *sha)
+                     const gchar *sha)
 {
-	guint fd;
+    guint fd;
 
-	fd = lm_bs_client_get_fd (sender->client);
-	_lm_bs_session_match_sha (sender->session, sha, fd);
+    fd = lm_bs_client_get_fd (sender->client);
+    _lm_bs_session_match_sha (sender->session, sha, fd);
 }
 
 static void 
 bs_sender_fill_request_buf (LmBsClient  *client,
-			    GString    **buf,
-			    const gchar *msg)
+                            GString    **buf,
+                            const gchar *msg)
 {
-	*buf = g_string_new_len ("\x05\x00\x00\x03", 4);
+    *buf = g_string_new_len ("\x05\x00\x00\x03", 4);
 
-	g_string_append_printf (*buf, "%c%s", (int)strlen (msg), msg);
-	g_string_append_len (*buf, "\x00\x00", 2);
+    g_string_append_printf (*buf, "%c%s", (int)strlen (msg), msg);
+    g_string_append_len (*buf, "\x00\x00", 2);
 }
 
 static void
 bs_sender_activate_streamhost (gpointer    ptr,
-			       LmBsSender *sender)
+                               LmBsSender *sender)
 {
-	sender->state = STATE_TRANSFER_STARTED;
-	bs_sender_write_next (sender);
+    sender->state = STATE_TRANSFER_STARTED;
+    bs_sender_write_next (sender);
 }
 
 LmBsSender *
 lm_bs_sender_new (LmBsClient  *client, 
-		  LmBsSession *session)
+                  LmBsSession *session)
 {
-	LmBsSender             *sender;
-	LmBsClientReadFunction  read_func;
-	LmBsClientFunction      func;
-	LmCallback             *read_cb;
-	LmCallback             *written_cb;
-	LmCallback             *discon_cb;
+    LmBsSender             *sender;
+    LmBsClientReadFunction  read_func;
+    LmBsClientFunction      func;
+    LmCallback             *read_cb;
+    LmCallback             *written_cb;
+    LmCallback             *discon_cb;
 
-	_lm_sock_library_init ();
-	lm_debug_init ();
+    _lm_sock_library_init ();
+    lm_debug_init ();
 
-	sender = g_new0 (LmBsSender, 1);
+    sender = g_new0 (LmBsSender, 1);
 
-	sender->ref_count = 1;
-	sender->client = client;
-	sender->transfer = NULL;
-	sender->jid_used = NULL;
-	sender->state = STATE_INITIAL;
-	sender->session = session;
+    sender->ref_count = 1;
+    sender->client = client;
+    sender->transfer = NULL;
+    sender->jid_used = NULL;
+    sender->state = STATE_INITIAL;
+    sender->session = session;
 
-	read_func = (LmBsClientReadFunction) bs_sender_read_cb;
-	read_cb = _lm_utils_new_callback (read_func, sender, NULL);
-	lm_bs_client_set_data_read_cb (client, read_cb);
+    read_func = (LmBsClientReadFunction) bs_sender_read_cb;
+    read_cb = _lm_utils_new_callback (read_func, sender, NULL);
+    lm_bs_client_set_data_read_cb (client, read_cb);
 
-	func = (LmBsClientFunction) bs_sender_write_cb;
-	written_cb = _lm_utils_new_callback (func, sender, NULL);
-	lm_bs_client_set_data_written_cb (client, written_cb);
-	
-	func = (LmBsClientFunction) bs_sender_client_disconnected_cb;
-	discon_cb = _lm_utils_new_callback (func, sender, NULL);
-	lm_bs_client_set_disconnected_cb (client, discon_cb);
+    func = (LmBsClientFunction) bs_sender_write_cb;
+    written_cb = _lm_utils_new_callback (func, sender, NULL);
+    lm_bs_client_set_data_written_cb (client, written_cb);
+        
+    func = (LmBsClientFunction) bs_sender_client_disconnected_cb;
+    discon_cb = _lm_utils_new_callback (func, sender, NULL);
+    lm_bs_client_set_disconnected_cb (client, discon_cb);
 
-	lm_bs_client_do_read (client);
+    lm_bs_client_do_read (client);
 
-	return sender;
+    return sender;
 }
 
 LmBsSender *
 lm_bs_sender_ref (LmBsSender *sender)
 {
-	g_return_val_if_fail (sender != NULL, NULL);
+    g_return_val_if_fail (sender != NULL, NULL);
 
-	sender->ref_count++;
+    sender->ref_count++;
 
-	return sender;
+    return sender;
 }
 
 void
 lm_bs_sender_unref (LmBsSender *sender)
 {
-	g_return_if_fail (sender != NULL);
+    g_return_if_fail (sender != NULL);
 
-	sender->ref_count--;
+    sender->ref_count--;
 
-	if (sender->ref_count == 0) {
-		lm_bs_client_unref (sender->client);
-		g_free (sender->jid_used);
-		g_free (sender);
-	}
+    if (sender->ref_count == 0) {
+        lm_bs_client_unref (sender->client);
+        g_free (sender->jid_used);
+        g_free (sender);
+    }
 }
 
 void
 lm_bs_sender_set_transfer (LmBsSender   *sender,
-			   LmBsTransfer *transfer)
+                           LmBsTransfer *transfer)
 {
-	GString            *send_data;
-	gchar              *auth_sha;
-	LmBsClientFunction  func;
-	LmCallback         *activate_cb;
+    GString            *send_data;
+    gchar              *auth_sha;
+    LmBsClientFunction  func;
+    LmCallback         *activate_cb;
 
-	sender->transfer = transfer;
+    sender->transfer = transfer;
 
-	func = (LmBsClientFunction) bs_sender_activate_streamhost;
-	activate_cb = _lm_utils_new_callback (func, sender, NULL);
-	lm_bs_transfer_set_activate_cb (transfer, activate_cb);
+    func = (LmBsClientFunction) bs_sender_activate_streamhost;
+    activate_cb = _lm_utils_new_callback (func, sender, NULL);
+    lm_bs_transfer_set_activate_cb (transfer, activate_cb);
 
-	auth_sha = lm_bs_transfer_get_auth_sha (transfer);
-	bs_sender_fill_request_buf (sender->client, &send_data, auth_sha);
-	g_free (auth_sha);
+    auth_sha = lm_bs_transfer_get_auth_sha (transfer);
+    bs_sender_fill_request_buf (sender->client, &send_data, auth_sha);
+    g_free (auth_sha);
 
-	lm_bs_client_write_data (sender->client, send_data);
+    lm_bs_client_write_data (sender->client, send_data);
 }

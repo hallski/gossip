@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /* 
  * Copyright (C) 2006-2007 Imendio AB
  *
@@ -30,27 +30,27 @@
 const gchar *
 peekaboo_presence_state_to_stock_id (GossipPresenceState state)
 {
-	const gchar *stock_id = NULL; 
+    const gchar *stock_id = NULL; 
 
-	switch (state) {
-	case GOSSIP_PRESENCE_STATE_AVAILABLE:
-		stock_id = PEEKABOO_STOCK_AVAILABLE;
-		break;
-	case GOSSIP_PRESENCE_STATE_BUSY:
-		stock_id = PEEKABOO_STOCK_BUSY;
-		break;
-	case GOSSIP_PRESENCE_STATE_AWAY:
-		stock_id = PEEKABOO_STOCK_AWAY;
-		break;
-	case GOSSIP_PRESENCE_STATE_EXT_AWAY:
-		stock_id = PEEKABOO_STOCK_EXT_AWAY;
-		break;
-	case GOSSIP_PRESENCE_STATE_HIDDEN:
-	case GOSSIP_PRESENCE_STATE_UNAVAILABLE:
-	default:
-		stock_id = PEEKABOO_STOCK_OFFLINE;
-		break;
-	}
+    switch (state) {
+    case GOSSIP_PRESENCE_STATE_AVAILABLE:
+        stock_id = PEEKABOO_STOCK_AVAILABLE;
+        break;
+    case GOSSIP_PRESENCE_STATE_BUSY:
+        stock_id = PEEKABOO_STOCK_BUSY;
+        break;
+    case GOSSIP_PRESENCE_STATE_AWAY:
+        stock_id = PEEKABOO_STOCK_AWAY;
+        break;
+    case GOSSIP_PRESENCE_STATE_EXT_AWAY:
+        stock_id = PEEKABOO_STOCK_EXT_AWAY;
+        break;
+    case GOSSIP_PRESENCE_STATE_HIDDEN:
+    case GOSSIP_PRESENCE_STATE_UNAVAILABLE:
+    default:
+        stock_id = PEEKABOO_STOCK_OFFLINE;
+        break;
+    }
 
-	return stock_id;
+    return stock_id;
 }

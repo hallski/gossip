@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2007 Free Software Foundation
  *
@@ -34,11 +34,11 @@ G_BEGIN_DECLS
 typedef struct _LmBsSender LmBsSender;
 
 LmBsSender * lm_bs_sender_new          (LmBsClient *client,
-					LmBsSession *session);
+                                        LmBsSession *session);
 LmBsSender * lm_bs_sender_ref          (LmBsSender *sender);
 void         lm_bs_sender_unref        (LmBsSender *sender);
 void         lm_bs_sender_set_transfer (LmBsSender *sender,
-					LmBsTransfer *transfer);
+                                        LmBsTransfer *transfer);
 
 G_END_DECLS
 

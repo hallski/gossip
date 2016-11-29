@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2007 Imendio AB
  *
@@ -39,50 +39,50 @@ typedef struct _GossipThemeClass GossipThemeClass;
 #include "gossip-chat-view.h"
 
 struct _GossipTheme {
-	GObject parent;
+    GObject parent;
 };
 
 typedef void GossipThemeContext;
 
 struct _GossipThemeClass {
-	GObjectClass parent_class;
+    GObjectClass parent_class;
 
-	/* <vtable> */
-	GossipThemeContext * (*setup_with_view)  (GossipTheme        *theme,
-						  GossipChatView     *view);
-	void                 (*detach_from_view) (GossipTheme        *theme,
-						  GossipThemeContext *context,
-						  GossipChatView     *view);
-	void                 (*view_cleared)     (GossipTheme        *theme,
-						  GossipThemeContext *context,
-						  GossipChatView     *view);
-	void                 (*append_message)   (GossipTheme        *theme,
-						  GossipThemeContext *context,
-						  GossipChatView     *view,
-						  GossipMessage      *message,
-						  gboolean            from_self);
-	void                 (*append_action)    (GossipTheme        *theme,
-						  GossipThemeContext *context,
-						  GossipChatView     *view,
-						  GossipMessage      *message,
-						  gboolean            from_self);
-	void                 (*append_event)     (GossipTheme        *theme,
-						  GossipThemeContext *context,
-						  GossipChatView     *view,
-						  const gchar        *str);
-	void                 (*append_timestamp) (GossipTheme        *theme,
-						  GossipThemeContext *context,
-						  GossipChatView     *view,
-						  GossipMessage      *message,
-						  gboolean            show_date,
-						  gboolean            show_time);
-	void                 (*append_spacing)   (GossipTheme        *theme,
-						  GossipThemeContext *context,
-						  GossipChatView     *view);
-	void                 (*update_show_avatars) (GossipTheme     *theme,
-						     GossipThemeContext *context,
-						     GossipChatView  *view,
-						     gboolean         show);
+    /* <vtable> */
+    GossipThemeContext * (*setup_with_view)  (GossipTheme        *theme,
+                                              GossipChatView     *view);
+    void                 (*detach_from_view) (GossipTheme        *theme,
+                                              GossipThemeContext *context,
+                                              GossipChatView     *view);
+    void                 (*view_cleared)     (GossipTheme        *theme,
+                                              GossipThemeContext *context,
+                                              GossipChatView     *view);
+    void                 (*append_message)   (GossipTheme        *theme,
+                                              GossipThemeContext *context,
+                                              GossipChatView     *view,
+                                              GossipMessage      *message,
+                                              gboolean            from_self);
+    void                 (*append_action)    (GossipTheme        *theme,
+                                              GossipThemeContext *context,
+                                              GossipChatView     *view,
+                                              GossipMessage      *message,
+                                              gboolean            from_self);
+    void                 (*append_event)     (GossipTheme        *theme,
+                                              GossipThemeContext *context,
+                                              GossipChatView     *view,
+                                              const gchar        *str);
+    void                 (*append_timestamp) (GossipTheme        *theme,
+                                              GossipThemeContext *context,
+                                              GossipChatView     *view,
+                                              GossipMessage      *message,
+                                              gboolean            show_date,
+                                              gboolean            show_time);
+    void                 (*append_spacing)   (GossipTheme        *theme,
+                                              GossipThemeContext *context,
+                                              GossipChatView     *view);
+    void                 (*update_show_avatars) (GossipTheme     *theme,
+                                                 GossipThemeContext *context,
+                                                 GossipChatView  *view,
+                                                 gboolean         show);
 };
 
 GType        gossip_theme_get_type              (void) G_GNUC_CONST;
@@ -90,50 +90,50 @@ GType        gossip_theme_get_type              (void) G_GNUC_CONST;
 GossipTheme *gossip_theme_new                   (void);
 
 GossipThemeContext *
-             gossip_theme_setup_with_view       (GossipTheme        *theme,
-						 GossipChatView     *view);
+gossip_theme_setup_with_view       (GossipTheme        *theme,
+                                    GossipChatView     *view);
 void         gossip_theme_detach_from_view      (GossipTheme        *theme,
-						 GossipThemeContext *context,
-						 GossipChatView     *view);
+                                                 GossipThemeContext *context,
+                                                 GossipChatView     *view);
 void         gossip_theme_view_cleared          (GossipTheme        *theme,
-						 GossipThemeContext *context,
-						 GossipChatView     *view);
+                                                 GossipThemeContext *context,
+                                                 GossipChatView     *view);
 void         gossip_theme_append_message        (GossipTheme        *theme,
-						 GossipThemeContext *context,
-						 GossipChatView     *view,
-						 GossipMessage      *msg,
-						 gboolean            from_self);
+                                                 GossipThemeContext *context,
+                                                 GossipChatView     *view,
+                                                 GossipMessage      *msg,
+                                                 gboolean            from_self);
 void         gossip_theme_append_action         (GossipTheme        *theme,
-						 GossipThemeContext *context,
-						 GossipChatView     *view,
-						 GossipMessage      *msg,
-						 gboolean            from_self);
+                                                 GossipThemeContext *context,
+                                                 GossipChatView     *view,
+                                                 GossipMessage      *msg,
+                                                 gboolean            from_self);
 void         gossip_theme_append_text           (GossipTheme        *theme,
-						 GossipThemeContext *context,
-						 GossipChatView     *view,
-						 const gchar        *body,
-						 const gchar        *tag, 
-						 const gchar        *link_tag);
+                                                 GossipThemeContext *context,
+                                                 GossipChatView     *view,
+                                                 const gchar        *body,
+                                                 const gchar        *tag, 
+                                                 const gchar        *link_tag);
 void         gossip_theme_append_spacing        (GossipTheme        *theme,
-						 GossipThemeContext *context,
-						 GossipChatView     *view);
+                                                 GossipThemeContext *context,
+                                                 GossipChatView     *view);
 void         gossip_theme_append_event          (GossipTheme        *theme,
-						 GossipThemeContext *context,
-						 GossipChatView     *view,
-						 const gchar        *str);
+                                                 GossipThemeContext *context,
+                                                 GossipChatView     *view,
+                                                 const gchar        *str);
 void         gossip_theme_append_timestamp      (GossipTheme        *theme,
-						 GossipThemeContext *context,
-						 GossipChatView     *view,
-						 GossipMessage      *message,
-						 gboolean            show_date,
-						 gboolean            show_time);
+                                                 GossipThemeContext *context,
+                                                 GossipChatView     *view,
+                                                 GossipMessage      *message,
+                                                 gboolean            show_date,
+                                                 gboolean            show_time);
 void         gossip_theme_append_time_maybe     (GossipTheme        *theme,
-						 GossipThemeContext *context,
-						 GossipChatView     *view,
-						 GossipMessage      *message);
+                                                 GossipThemeContext *context,
+                                                 GossipChatView     *view,
+                                                 GossipMessage      *message);
 gboolean     gossip_theme_get_show_avatars      (GossipTheme        *theme);
 void         gossip_theme_set_show_avatars      (GossipTheme        *theme,
-						 gboolean            show);
+                                                 gboolean            show);
 
 G_END_DECLS
 

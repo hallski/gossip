@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2007 Imendio AB
  *
@@ -27,22 +27,22 @@
 typedef struct _GossipDummyPriv GossipDummyPriv;
 
 struct _GossipDummyPriv {
-	gint my_prop;
+    gint my_prop;
 };
 
 static void         dummy_finalize           (GObject             *object);
 static void         dummy_get_property       (GObject             *object,
-					      guint                param_id,
-					      GValue              *value,
-					      GParamSpec          *pspec);
+                                              guint                param_id,
+                                              GValue              *value,
+                                              GParamSpec          *pspec);
 static void         dummy_set_property       (GObject             *object,
-					      guint                param_id,
-					      const GValue        *value,
-					      GParamSpec          *pspec);
+                                              guint                param_id,
+                                              const GValue        *value,
+                                              GParamSpec          *pspec);
 
 enum {
-	PROP_0,
-	PROP_MY_PROP
+    PROP_0,
+    PROP_MY_PROP
 };
 
 G_DEFINE_TYPE (GossipDummy, gossip_dummy, G_TYPE_OBJECT);
@@ -50,80 +50,80 @@ G_DEFINE_TYPE (GossipDummy, gossip_dummy, G_TYPE_OBJECT);
 static void
 gossip_dummy_class_init (GossipDummyClass *class)
 {
-	GObjectClass *object_class;
+    GObjectClass *object_class;
 
-	object_class = G_OBJECT_CLASS (class);
+    object_class = G_OBJECT_CLASS (class);
 
-	object_class->finalize     = dummy_finalize;
-	object_class->get_property = dummy_get_property;
-	object_class->set_property = dummy_set_property;
+    object_class->finalize     = dummy_finalize;
+    object_class->get_property = dummy_get_property;
+    object_class->set_property = dummy_set_property;
 
-	g_object_class_install_property (object_class,
-					 PROP_MY_PROP,
-					 g_param_spec_int ("my-prop",
-							   "",
-							   "",
-							   0, 1,
-							   1,
-							   G_PARAM_READWRITE));
+    g_object_class_install_property (object_class,
+                                     PROP_MY_PROP,
+                                     g_param_spec_int ("my-prop",
+                                                       "",
+                                                       "",
+                                                       0, 1,
+                                                       1,
+                                                       G_PARAM_READWRITE));
 
-	g_type_class_add_private (object_class, sizeof (GossipDummyPriv));
+    g_type_class_add_private (object_class, sizeof (GossipDummyPriv));
 }
 
 static void
 gossip_dummy_init (GossipDummy *presence)
 {
-	GossipDummyPriv *priv;
+    GossipDummyPriv *priv;
 
-	priv = GET_PRIV (presence);
+    priv = GET_PRIV (presence);
 }
 
 static void
 dummy_finalize (GObject *object)
 {
-	GossipDummyPriv *priv;
+    GossipDummyPriv *priv;
 
-	priv = GET_PRIV (object);
+    priv = GET_PRIV (object);
 
-	(G_OBJECT_CLASS (gossip_dummy_parent_class)->finalize) (object);
+    (G_OBJECT_CLASS (gossip_dummy_parent_class)->finalize) (object);
 }
 
 static void
 dummy_get_property (GObject    *object,
-		    guint       param_id,
-		    GValue     *value,
-		    GParamSpec *pspec)
+                    guint       param_id,
+                    GValue     *value,
+                    GParamSpec *pspec)
 {
-	GossipDummyPriv *priv;
+    GossipDummyPriv *priv;
 
-	priv = GET_PRIV (object);
+    priv = GET_PRIV (object);
 
-	switch (param_id) {
-	case PROP_MY_PROP:
-		g_value_set_int (value, priv->my_prop);
-		break;
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
-		break;
-	}
+    switch (param_id) {
+    case PROP_MY_PROP:
+        g_value_set_int (value, priv->my_prop);
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
+        break;
+    }
 }
 static void
 dummy_set_property (GObject      *object,
-		    guint         param_id,
-		    const GValue *value,
-		    GParamSpec   *pspec)
+                    guint         param_id,
+                    const GValue *value,
+                    GParamSpec   *pspec)
 {
-	GossipDummyPriv *priv;
+    GossipDummyPriv *priv;
 
-	priv = GET_PRIV (object);
+    priv = GET_PRIV (object);
 
-	switch (param_id) {
-	case PROP_MY_PROP:
-		priv->my_prop = g_value_get_int (value);
-		break;
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
-		break;
-	}
+    switch (param_id) {
+    case PROP_MY_PROP:
+        priv->my_prop = g_value_get_int (value);
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
+        break;
+    }
 }
 

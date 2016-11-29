@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2004 Imendio AB
  *
@@ -30,38 +30,38 @@
 G_BEGIN_DECLS 
 
 typedef struct {
-	gpointer callback;
-	gpointer user_data;
-	gpointer data1;
-	gpointer data2;
-	gpointer data3;
+    gpointer callback;
+    gpointer user_data;
+    gpointer data1;
+    gpointer data2;
+    gpointer data3;
 } GossipCallbackData;
 
 typedef enum {
-	GOSSIP_RESULT_OK,
-	GOSSIP_RESULT_ERROR_INVALID_REPLY,
-	GOSSIP_RESULT_ERROR_TIMEOUT,
-	GOSSIP_RESULT_ERROR_FAILED,
-	GOSSIP_RESULT_ERROR_UNAVAILABLE
+    GOSSIP_RESULT_OK,
+    GOSSIP_RESULT_ERROR_INVALID_REPLY,
+    GOSSIP_RESULT_ERROR_TIMEOUT,
+    GOSSIP_RESULT_ERROR_FAILED,
+    GOSSIP_RESULT_ERROR_UNAVAILABLE
 } GossipResult;
 
 typedef void (*GossipVCardCallback)   (GossipResult       result,
-				       GossipVCard       *vcard,
-				       gpointer           user_data);
+                                       GossipVCard       *vcard,
+                                       gpointer           user_data);
 typedef void (*GossipCallback)        (GossipResult       result,
-				       gpointer           user_data);
+                                       gpointer           user_data);
 typedef void (*GossipErrorCallback)   (GossipResult       result,
-				       GError            *error,
-				       gpointer           user_data);
+                                       GError            *error,
+                                       gpointer           user_data);
 typedef void (*GossipVersionCallback) (GossipResult       result,
-				       GossipVersionInfo *info,
-				       gpointer           user_data);
+                                       GossipVersionInfo *info,
+                                       gpointer           user_data);
 
 GossipCallbackData *gossip_callback_data_new  (gpointer            callback,
-					       gpointer            user_data,
-					       gpointer            data1,
-					       gpointer            data2,
-					       gpointer            data3);
+                                               gpointer            user_data,
+                                               gpointer            data1,
+                                               gpointer            data2,
+                                               gpointer            data3);
 void                gossip_callback_data_free (GossipCallbackData *data);
 
 G_END_DECLS 

@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /* 
  * Copyright (C) 2006-2007 Imendio AB
  *
@@ -27,10 +27,10 @@
 #include <libgossip/gossip-presence.h>
 
 gboolean peekaboo_dbus_get_presence       (const gchar           *id,
-					   GossipPresenceState   *state,
-					   gchar                **status);
+                                           GossipPresenceState   *state,
+                                           gchar                **status);
 gboolean peekaboo_dbus_get_name           (const gchar           *id,
-					   gchar                **name);
+                                           gchar                **name);
 gboolean peekaboo_dbus_get_roster_visible (gboolean              *visible);
 gboolean peekaboo_dbus_get_open_chats     (gchar               ***open_chats);
 gboolean peekaboo_dbus_send_message       (const gchar           *contact_id);

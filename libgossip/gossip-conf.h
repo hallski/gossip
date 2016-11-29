@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2006 Imendio AB
  *
@@ -36,57 +36,57 @@ typedef struct _GossipConf      GossipConf;
 typedef struct _GossipConfClass GossipConfClass;
 
 struct _GossipConf  {
-	GObject parent;
+    GObject parent;
 };
 
 struct _GossipConfClass {
-	GObjectClass parent_class;
+    GObjectClass parent_class;
 };
 
 typedef void (*GossipConfNotifyFunc) (GossipConf  *conf, 
-				      const gchar *key,
-				      gpointer     user_data);
+                                      const gchar *key,
+                                      gpointer     user_data);
 
 GType       gossip_conf_get_type        (void) G_GNUC_CONST;
 GossipConf *gossip_conf_get             (void);
 void        gossip_conf_shutdown        (void);
 guint       gossip_conf_notify_add      (GossipConf            *conf,
-					 const gchar           *key,
-					 GossipConfNotifyFunc   func,
-					 gpointer               data);
+                                         const gchar           *key,
+                                         GossipConfNotifyFunc   func,
+                                         gpointer               data);
 gboolean    gossip_conf_notify_remove   (GossipConf            *conf,
-					 guint                  id);
+                                         guint                  id);
 gboolean    gossip_conf_set_int         (GossipConf            *conf,
-					 const gchar           *key,
-					 gint                   value);
+                                         const gchar           *key,
+                                         gint                   value);
 gboolean    gossip_conf_get_int         (GossipConf            *conf,
-					 const gchar           *key,
-					 gint                  *value);
+                                         const gchar           *key,
+                                         gint                  *value);
 gboolean    gossip_conf_set_bool        (GossipConf            *conf,
-					 const gchar           *key,
-					 gboolean               value);
+                                         const gchar           *key,
+                                         gboolean               value);
 gboolean    gossip_conf_get_bool        (GossipConf            *conf,
-					 const gchar           *key,
-					 gboolean              *value);
+                                         const gchar           *key,
+                                         gboolean              *value);
 gboolean    gossip_conf_set_string      (GossipConf            *conf,
-					 const gchar           *key,
-					 const gchar           *value);
+                                         const gchar           *key,
+                                         const gchar           *value);
 gboolean    gossip_conf_get_string      (GossipConf            *conf,
-					 const gchar           *key,
-					 gchar                **value);
+                                         const gchar           *key,
+                                         gchar                **value);
 gboolean    gossip_conf_set_string_list (GossipConf            *conf,
-					 const gchar           *key,
-					 GSList                *value);
+                                         const gchar           *key,
+                                         GSList                *value);
 gboolean    gossip_conf_get_string_list (GossipConf            *conf,
-					 const gchar           *key,
-					 GSList              **value);
+                                         const gchar           *key,
+                                         GSList              **value);
 gboolean    gossip_conf_get_http_proxy  (GossipConf            *conf,
-					 gboolean              *use_http_proxy,
-					 gchar                **host,
-					 gint                  *port,
-					 gboolean              *use_auth,
-					 gchar                **username,
-					 gchar                **password);
+                                         gboolean              *use_http_proxy,
+                                         gchar                **host,
+                                         gint                  *port,
+                                         gboolean              *use_auth,
+                                         gchar                **username,
+                                         gchar                **password);
 
 G_END_DECLS
 

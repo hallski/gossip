@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2005-2007 Imendio AB
  *
@@ -28,7 +28,7 @@
 G_BEGIN_DECLS
 
 void gossip_chat_invite_dialog_show (GossipContact    *contact,
-				     GossipChatroomId  id);
+                                     GossipChatroomId  id);
 
 G_END_DECLS
 

@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2007 Imendio AB
  *
@@ -26,36 +26,36 @@
 gboolean
 gossip_email_available (GossipContact *contact)
 {
-	GossipVCard *vcard;
+    GossipVCard *vcard;
 
-	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), FALSE);
+    g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), FALSE);
 
-	vcard = gossip_contact_get_vcard (contact);
+    vcard = gossip_contact_get_vcard (contact);
 
-	if (vcard && gossip_vcard_get_email (vcard)) {
-		return TRUE;
-	}
+    if (vcard && gossip_vcard_get_email (vcard)) {
+        return TRUE;
+    }
 
-	return FALSE;
+    return FALSE;
 }
 
 void
 gossip_email_open (GossipContact *contact)
 {
-	GossipVCard *vcard;
-	gchar       *url;
+    GossipVCard *vcard;
+    gchar       *url;
 
-	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
+    g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 
-	vcard = gossip_contact_get_vcard (contact);
-	if (!vcard) {
-		g_warning ("Failed to email contact as it had no vcard");
-	}
+    vcard = gossip_contact_get_vcard (contact);
+    if (!vcard) {
+        g_warning ("Failed to email contact as it had no vcard");
+    }
 
-	url = g_strdup_printf ("mailto:%s", gossip_vcard_get_email (vcard));
+    url = g_strdup_printf ("mailto:%s", gossip_vcard_get_email (vcard));
 
-	gossip_url_show (url);
-	
-	g_free (url);
+    gossip_url_show (url);
+        
+    g_free (url);
 }
 

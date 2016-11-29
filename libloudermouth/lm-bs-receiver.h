@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2007 Free Software Foundation
  *
@@ -36,8 +36,8 @@ G_BEGIN_DECLS
 typedef struct _LmBsReceiver LmBsReceiver;
 
 LmBsReceiver *lm_bs_receiver_new            (LmBsClient   *client,
-					     LmBsTransfer *transfer,
-					     const gchar  *jid_used);
+                                             LmBsTransfer *transfer,
+                                             const gchar  *jid_used);
 void          lm_bs_receiver_unref          (LmBsReceiver *receiver);
 void          lm_bs_receiver_start_transfer (LmBsReceiver *receiver);
 

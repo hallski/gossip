@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2005-2007 Imendio AB
  *
@@ -38,48 +38,48 @@
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_THEME_MANAGER, GossipThemeManagerPriv))
 
 typedef struct {
-	gchar       *name;
-	guint        name_notify_id;
-	guint        room_notify_id;
+    gchar       *name;
+    guint        name_notify_id;
+    guint        room_notify_id;
 
-	gboolean     show_avatars;
-	guint        show_avatars_notify_id;
+    gboolean     show_avatars;
+    guint        show_avatars_notify_id;
 
-	GossipTheme *clean_theme;
-	GossipTheme *simple_theme;
-	GossipTheme *blue_theme;
-	GossipTheme *classic_theme;
+    GossipTheme *clean_theme;
+    GossipTheme *simple_theme;
+    GossipTheme *blue_theme;
+    GossipTheme *classic_theme;
 
-	gboolean     irc_style;
+    gboolean     irc_style;
 } GossipThemeManagerPriv;
 
 static void        theme_manager_finalize                 (GObject            *object);
 static void        theme_manager_notify_name_cb           (GossipConf         *conf,
-							   const gchar        *key,
-							   gpointer            user_data);
+                                                           const gchar        *key,
+                                                           gpointer            user_data);
 static void        theme_manager_notify_room_cb           (GossipConf         *conf,
-							   const gchar        *key,
-							   gpointer            user_data);
+                                                           const gchar        *key,
+                                                           gpointer            user_data);
 static void        theme_manager_notify_show_avatars_cb   (GossipConf         *conf,
-							   const gchar        *key,
-							   gpointer            user_data);
+                                                           const gchar        *key,
+                                                           gpointer            user_data);
 static void        theme_manager_apply_theme              (GossipThemeManager *manager,
-							   GossipChatView     *view,
-							   const gchar        *name);
+                                                           GossipChatView     *view,
+                                                           const gchar        *name);
 
 enum {
-	THEME_CHANGED,
-	LAST_SIGNAL
+    THEME_CHANGED,
+    LAST_SIGNAL
 };
 
 static guint signals[LAST_SIGNAL] = { 0 };
 
 static const gchar *themes[] = {
-	"classic", N_("Classic"),
-	"simple", N_("Simple"),
-	"clean", N_("Clean"),
-	"blue", N_("Blue"),
-	NULL
+    "classic", N_("Classic"),
+    "simple", N_("Simple"),
+    "clean", N_("Clean"),
+    "blue", N_("Blue"),
+    NULL
 };
 
 G_DEFINE_TYPE (GossipThemeManager, gossip_theme_manager, G_TYPE_OBJECT);
@@ -87,225 +87,225 @@ G_DEFINE_TYPE (GossipThemeManager, gossip_theme_manager, G_TYPE_OBJECT);
 static void
 gossip_theme_manager_class_init (GossipThemeManagerClass *klass)
 {
-	GObjectClass *object_class = G_OBJECT_CLASS (klass);
+    GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-	signals[THEME_CHANGED] =
-		g_signal_new ("theme-changed",
-			      G_OBJECT_CLASS_TYPE (object_class),
-			      G_SIGNAL_RUN_LAST,
-			      0,
-			      NULL, NULL,
-			      g_cclosure_marshal_VOID__VOID,
-			      G_TYPE_NONE,
-			      0);
+    signals[THEME_CHANGED] =
+        g_signal_new ("theme-changed",
+                      G_OBJECT_CLASS_TYPE (object_class),
+                      G_SIGNAL_RUN_LAST,
+                      0,
+                      NULL, NULL,
+                      g_cclosure_marshal_VOID__VOID,
+                      G_TYPE_NONE,
+                      0);
 
-	g_type_class_add_private (object_class, sizeof (GossipThemeManagerPriv));
+    g_type_class_add_private (object_class, sizeof (GossipThemeManagerPriv));
 
-	object_class->finalize = theme_manager_finalize;
+    object_class->finalize = theme_manager_finalize;
 }
 
 static void
 gossip_theme_manager_init (GossipThemeManager *manager)
 {
-	GossipThemeManagerPriv *priv;
+    GossipThemeManagerPriv *priv;
 
-	priv = GET_PRIV (manager);
+    priv = GET_PRIV (manager);
 
-	priv->name_notify_id =
-		gossip_conf_notify_add (gossip_conf_get (),
-					GOSSIP_PREFS_CHAT_THEME,
-					theme_manager_notify_name_cb,
-					manager);
+    priv->name_notify_id =
+        gossip_conf_notify_add (gossip_conf_get (),
+                                GOSSIP_PREFS_CHAT_THEME,
+                                theme_manager_notify_name_cb,
+                                manager);
 
-	priv->room_notify_id =
-		gossip_conf_notify_add (gossip_conf_get (),
-					GOSSIP_PREFS_CHAT_THEME_CHAT_ROOM,
-					theme_manager_notify_room_cb,
-					manager);
+    priv->room_notify_id =
+        gossip_conf_notify_add (gossip_conf_get (),
+                                GOSSIP_PREFS_CHAT_THEME_CHAT_ROOM,
+                                theme_manager_notify_room_cb,
+                                manager);
 
-	gossip_conf_get_string (gossip_conf_get (),
-				GOSSIP_PREFS_CHAT_THEME,
-				&priv->name);
+    gossip_conf_get_string (gossip_conf_get (),
+                            GOSSIP_PREFS_CHAT_THEME,
+                            &priv->name);
 
-	/* Unused right now, but will be used soon. */
-	priv->show_avatars_notify_id =
-		gossip_conf_notify_add (gossip_conf_get (),
-					GOSSIP_PREFS_UI_SHOW_AVATARS,
-					theme_manager_notify_show_avatars_cb,
-					manager);
+    /* Unused right now, but will be used soon. */
+    priv->show_avatars_notify_id =
+        gossip_conf_notify_add (gossip_conf_get (),
+                                GOSSIP_PREFS_UI_SHOW_AVATARS,
+                                theme_manager_notify_show_avatars_cb,
+                                manager);
 
-	gossip_conf_get_bool (gossip_conf_get (),
-			      GOSSIP_PREFS_UI_SHOW_AVATARS,
-			      &priv->show_avatars);
+    gossip_conf_get_bool (gossip_conf_get (),
+                          GOSSIP_PREFS_UI_SHOW_AVATARS,
+                          &priv->show_avatars);
 
-	priv->clean_theme   = gossip_theme_boxes_new ("clean");
-	priv->simple_theme  = gossip_theme_boxes_new ("simple");
-	priv->blue_theme    = gossip_theme_boxes_new ("blue");
-	priv->classic_theme = g_object_new (GOSSIP_TYPE_THEME_IRC, NULL);
+    priv->clean_theme   = gossip_theme_boxes_new ("clean");
+    priv->simple_theme  = gossip_theme_boxes_new ("simple");
+    priv->blue_theme    = gossip_theme_boxes_new ("blue");
+    priv->classic_theme = g_object_new (GOSSIP_TYPE_THEME_IRC, NULL);
 }
 
 static void
 theme_manager_finalize (GObject *object)
 {
-	GossipThemeManagerPriv *priv;
+    GossipThemeManagerPriv *priv;
 
-	priv = GET_PRIV (object);
+    priv = GET_PRIV (object);
 
-	gossip_conf_notify_remove (gossip_conf_get (), priv->name_notify_id);
-	gossip_conf_notify_remove (gossip_conf_get (), priv->room_notify_id);
-	gossip_conf_notify_remove (gossip_conf_get (), priv->show_avatars_notify_id);
+    gossip_conf_notify_remove (gossip_conf_get (), priv->name_notify_id);
+    gossip_conf_notify_remove (gossip_conf_get (), priv->room_notify_id);
+    gossip_conf_notify_remove (gossip_conf_get (), priv->show_avatars_notify_id);
 
-	g_free (priv->name);
+    g_free (priv->name);
 
-	g_object_unref (priv->clean_theme);
-	g_object_unref (priv->simple_theme);
-	g_object_unref (priv->blue_theme);
-	g_object_unref (priv->classic_theme);
+    g_object_unref (priv->clean_theme);
+    g_object_unref (priv->simple_theme);
+    g_object_unref (priv->blue_theme);
+    g_object_unref (priv->classic_theme);
 
-	G_OBJECT_CLASS (gossip_theme_manager_parent_class)->finalize (object);
+    G_OBJECT_CLASS (gossip_theme_manager_parent_class)->finalize (object);
 }
 
 static void
 theme_manager_notify_name_cb (GossipConf  *conf,
-			      const gchar *key,
-			      gpointer     user_data)
+                              const gchar *key,
+                              gpointer     user_data)
 {
-	GossipThemeManager     *manager;
-	GossipThemeManagerPriv *priv;
-	gchar                  *name;
+    GossipThemeManager     *manager;
+    GossipThemeManagerPriv *priv;
+    gchar                  *name;
 
-	manager = user_data;
-	priv = GET_PRIV (manager);
+    manager = user_data;
+    priv = GET_PRIV (manager);
 
-	g_free (priv->name);
+    g_free (priv->name);
 
-	name = NULL;
-	if (!gossip_conf_get_string (conf, key, &name) ||
-	    name == NULL || name[0] == 0) {
-		priv->name = g_strdup ("classic");
-		g_free (name);
-	} else {
-		priv->name = name;
-	}
+    name = NULL;
+    if (!gossip_conf_get_string (conf, key, &name) ||
+        name == NULL || name[0] == 0) {
+        priv->name = g_strdup ("classic");
+        g_free (name);
+    } else {
+        priv->name = name;
+    }
 
-	g_signal_emit (manager, signals[THEME_CHANGED], 0, NULL);
+    g_signal_emit (manager, signals[THEME_CHANGED], 0, NULL);
 }
 
 static void
 theme_manager_notify_room_cb (GossipConf  *conf,
-			      const gchar *key,
-			      gpointer     user_data)
+                              const gchar *key,
+                              gpointer     user_data)
 {
-	g_signal_emit (user_data, signals[THEME_CHANGED], 0, NULL);
+    g_signal_emit (user_data, signals[THEME_CHANGED], 0, NULL);
 }
 
 static void
 theme_manager_notify_show_avatars_cb (GossipConf  *conf,
-				      const gchar *key,
-				      gpointer     user_data)
+                                      const gchar *key,
+                                      gpointer     user_data)
 {
-	GossipThemeManager     *manager;
-	GossipThemeManagerPriv *priv;
-	gboolean                value;
+    GossipThemeManager     *manager;
+    GossipThemeManagerPriv *priv;
+    gboolean                value;
 
-	manager = user_data;
-	priv = GET_PRIV (manager);
+    manager = user_data;
+    priv = GET_PRIV (manager);
 
-	if (!gossip_conf_get_bool (conf, key, &value)) {
-		priv->show_avatars = FALSE;
-	} else {
-		priv->show_avatars = value;
-	}
+    if (!gossip_conf_get_bool (conf, key, &value)) {
+        priv->show_avatars = FALSE;
+    } else {
+        priv->show_avatars = value;
+    }
 }
 
 static gboolean
 theme_manager_ensure_theme_exists (const gchar *name)
 {
-	gint i;
+    gint i;
 
-	if (G_STR_EMPTY (name)) {
-		return FALSE;
-	}
+    if (G_STR_EMPTY (name)) {
+        return FALSE;
+    }
 
-	for (i = 0; themes[i]; i += 2) {
-		if (strcmp (themes[i], name) == 0) {
-			return TRUE;
-		}
-	}
+    for (i = 0; themes[i]; i += 2) {
+        if (strcmp (themes[i], name) == 0) {
+            return TRUE;
+        }
+    }
 
-	return FALSE;
+    return FALSE;
 }
 
 static void
 theme_manager_apply_theme (GossipThemeManager *manager,
-			   GossipChatView     *view,
-			   const gchar        *name)
+                           GossipChatView     *view,
+                           const gchar        *name)
 {
-	GossipThemeManagerPriv *priv;
-	GossipTheme            *theme;
+    GossipThemeManagerPriv *priv;
+    GossipTheme            *theme;
 
-	priv = GET_PRIV (manager);
+    priv = GET_PRIV (manager);
 
-	/* Make sure all tags are present. Note: not useful now but when we have
-	 * user defined theme it will be.
-	 */
-	if (theme_manager_ensure_theme_exists (name)) {
-		if (strcmp (name, "clean") == 0) {
-			theme = priv->clean_theme;
-		}
-		else if (strcmp (name, "simple") == 0) {
-			theme = priv->simple_theme;
-		}
-		else if (strcmp (name, "blue") == 0) {
-			theme = priv->blue_theme;
-		} else {
-			theme = priv->classic_theme;
-		}
-	} else {
-		theme = priv->classic_theme;
-	}
+    /* Make sure all tags are present. Note: not useful now but when we have
+     * user defined theme it will be.
+     */
+    if (theme_manager_ensure_theme_exists (name)) {
+        if (strcmp (name, "clean") == 0) {
+            theme = priv->clean_theme;
+        }
+        else if (strcmp (name, "simple") == 0) {
+            theme = priv->simple_theme;
+        }
+        else if (strcmp (name, "blue") == 0) {
+            theme = priv->blue_theme;
+        } else {
+            theme = priv->classic_theme;
+        }
+    } else {
+        theme = priv->classic_theme;
+    }
 
-	gossip_chat_view_set_theme (view, theme);
+    gossip_chat_view_set_theme (view, theme);
 }
 
 GossipThemeManager *
 gossip_theme_manager_get (void)
 {
-	static GossipThemeManager *manager = NULL;
+    static GossipThemeManager *manager = NULL;
 
-	if (!manager) {
-		manager = g_object_new (GOSSIP_TYPE_THEME_MANAGER, NULL);
-	}
+    if (!manager) {
+        manager = g_object_new (GOSSIP_TYPE_THEME_MANAGER, NULL);
+    }
 
-	return manager;
+    return manager;
 }
 
 const gchar **
 gossip_theme_manager_get_themes (void)
 {
-	return themes;
+    return themes;
 }
 
 void
 gossip_theme_manager_apply (GossipThemeManager *manager,
-			    GossipChatView     *view,
-			    const gchar        *name)
+                            GossipChatView     *view,
+                            const gchar        *name)
 {
-	GossipThemeManagerPriv *priv;
+    GossipThemeManagerPriv *priv;
 
-	priv = GET_PRIV (manager);
+    priv = GET_PRIV (manager);
 
-	theme_manager_apply_theme (manager, view, name);
+    theme_manager_apply_theme (manager, view, name);
 }
 
 void
 gossip_theme_manager_apply_saved (GossipThemeManager *manager,
-				  GossipChatView     *view)
+                                  GossipChatView     *view)
 {
-	GossipThemeManagerPriv *priv;
+    GossipThemeManagerPriv *priv;
 
-	priv = GET_PRIV (manager);
+    priv = GET_PRIV (manager);
 
-	theme_manager_apply_theme (manager, view, priv->name);
+    theme_manager_apply_theme (manager, view, priv->name);
 }
 

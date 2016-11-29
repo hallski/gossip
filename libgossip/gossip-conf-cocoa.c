@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2006 Imendio AB
  *
@@ -34,13 +34,13 @@
 #define GOSSIP_CONF_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CONF, GossipConfPrivate))
 
 typedef struct {
-	NSUserDefaults *defaults;
+    NSUserDefaults *defaults;
 } GossipConfPrivate;
 
 typedef struct {
-	GossipConf           *conf;
-	GossipConfNotifyFunc  func;
-	gpointer               user_data;
+    GossipConf           *conf;
+    GossipConfNotifyFunc  func;
+    gpointer               user_data;
 } GossipConfNotifyData;
 
 static void conf_finalize (GObject *object);
@@ -52,31 +52,31 @@ static GossipConf *global_conf = NULL;
 static void
 gossip_conf_class_init (GossipConfClass *class)
 {
-	GObjectClass *object_class;
+    GObjectClass *object_class;
 
-	object_class = G_OBJECT_CLASS (class);
+    object_class = G_OBJECT_CLASS (class);
 
-	object_class->finalize = conf_finalize;
+    object_class->finalize = conf_finalize;
 
-	g_type_class_add_private (object_class, sizeof (GossipConfPrivate));
+    g_type_class_add_private (object_class, sizeof (GossipConfPrivate));
 }
 
 static void
 gossip_conf_init (GossipConf *conf)
 {
-	GossipConfPrivate *priv;
-	NSDictionary   *dict;
+    GossipConfPrivate *priv;
+    NSDictionary   *dict;
 
-	priv = GOSSIP_CONF_GET_PRIVATE (conf);
+    priv = GOSSIP_CONF_GET_PRIVATE (conf);
 
-	priv->defaults = [NSUserDefaults standardUserDefaults];
+    priv->defaults = [NSUserDefaults standardUserDefaults];
 
-	POOL_ALLOC;
+    POOL_ALLOC;
 
-	/* FIXME: We should probably share those in gossip-conf.h
-	 * instead of in the GUI, or have a way for the GUI to register
-	 * them.
-	 */
+    /* FIXME: We should probably share those in gossip-conf.h
+     * instead of in the GUI, or have a way for the GUI to register
+     * them.
+     */
 
 #define GOSSIP_PREFS_PATH "/apps/gossip"
 
@@ -105,368 +105,368 @@ gossip_conf_init (GossipConf *conf)
 
 #define GOSSIP_PREFS_FILE_TRANSFER_DEFAULT_FOLDER GOSSIP_PREFS_PATH "/file_transfer/default_folder"
 
-	dict = [NSDictionary dictionaryWithObjectsAndKeys:
-		@"YES", @GOSSIP_PREFS_SOUNDS_FOR_MESSAGES,
-		@"NO", @GOSSIP_PREFS_SOUNDS_WHEN_AWAY,
-		@"NO", @GOSSIP_PREFS_SOUNDS_WHEN_BUSY,
-		@"NO", @GOSSIP_PREFS_POPUPS_WHEN_AVAILABLE,
-		@"YES", @GOSSIP_PREFS_CHAT_SHOW_SMILEYS,
-		@"clean", @GOSSIP_PREFS_CHAT_THEME,
-		@"YES", @GOSSIP_PREFS_CHAT_THEME_CHAT_ROOM,
-		@"YES", @GOSSIP_PREFS_CHAT_THEME_USE_SYSTEM_FONT,
-		@"Lucida Grande 11", @GOSSIP_PREFS_CHAT_THEME_FONT_NAME,
-		@"", @GOSSIP_PREFS_CHAT_SPELL_CHECKER_LANGUAGES,
-		@"NO", @GOSSIP_PREFS_CHAT_SPELL_CHECKER_ENABLED,
-		@"NO", @GOSSIP_PREFS_UI_SEPARATE_CHAT_WINDOWS,
-		@"NO", @GOSSIP_PREFS_UI_MAIN_WINDOW_HIDDEN,
-		@"", @GOSSIP_PREFS_UI_AVATAR_DIRECTORY,
-		@"YES", @GOSSIP_PREFS_UI_SHOW_AVATARS,
-		@"NO", @GOSSIP_PREFS_UI_COMPACT_CONTACT_LIST,
-		@"NO", @GOSSIP_PREFS_CONTACTS_SHOW_OFFLINE,
-		@"name", @GOSSIP_PREFS_CONTACTS_SORT_CRITERIUM,
-		@"YES", @GOSSIP_PREFS_HINTS_CLOSE_MAIN_WINDOW,
-		@"", @GOSSIP_PREFS_FILE_TRANSFER_DEFAULT_FOLDER,
-		nil];
+    dict = [NSDictionary dictionaryWithObjectsAndKeys:
+            @"YES", @GOSSIP_PREFS_SOUNDS_FOR_MESSAGES,
+            @"NO", @GOSSIP_PREFS_SOUNDS_WHEN_AWAY,
+            @"NO", @GOSSIP_PREFS_SOUNDS_WHEN_BUSY,
+            @"NO", @GOSSIP_PREFS_POPUPS_WHEN_AVAILABLE,
+            @"YES", @GOSSIP_PREFS_CHAT_SHOW_SMILEYS,
+            @"clean", @GOSSIP_PREFS_CHAT_THEME,
+            @"YES", @GOSSIP_PREFS_CHAT_THEME_CHAT_ROOM,
+            @"YES", @GOSSIP_PREFS_CHAT_THEME_USE_SYSTEM_FONT,
+            @"Lucida Grande 11", @GOSSIP_PREFS_CHAT_THEME_FONT_NAME,
+            @"", @GOSSIP_PREFS_CHAT_SPELL_CHECKER_LANGUAGES,
+            @"NO", @GOSSIP_PREFS_CHAT_SPELL_CHECKER_ENABLED,
+            @"NO", @GOSSIP_PREFS_UI_SEPARATE_CHAT_WINDOWS,
+            @"NO", @GOSSIP_PREFS_UI_MAIN_WINDOW_HIDDEN,
+            @"", @GOSSIP_PREFS_UI_AVATAR_DIRECTORY,
+            @"YES", @GOSSIP_PREFS_UI_SHOW_AVATARS,
+            @"NO", @GOSSIP_PREFS_UI_COMPACT_CONTACT_LIST,
+            @"NO", @GOSSIP_PREFS_CONTACTS_SHOW_OFFLINE,
+            @"name", @GOSSIP_PREFS_CONTACTS_SORT_CRITERIUM,
+            @"YES", @GOSSIP_PREFS_HINTS_CLOSE_MAIN_WINDOW,
+            @"", @GOSSIP_PREFS_FILE_TRANSFER_DEFAULT_FOLDER,
+            nil];
 
-	/* Setup defaults. FIXME: Can we do this only when needed? */
-	[priv->defaults registerDefaults: dict];
+    /* Setup defaults. FIXME: Can we do this only when needed? */
+    [priv->defaults registerDefaults: dict];
 
-	POOL_RELEASE;
+    POOL_RELEASE;
 }
 
 static void
 conf_finalize (GObject *object)
 {
-	GossipConfPrivate *priv;
+    GossipConfPrivate *priv;
 
-	priv = GOSSIP_CONF_GET_PRIVATE (object);
+    priv = GOSSIP_CONF_GET_PRIVATE (object);
 
-	/*	gconf_client_remove_dir (priv->gconf_client,
-				 GOSSIP_CONF_ROOT,
-				 NULL);
-	gconf_client_remove_dir (priv->gconf_client,
-				 DESKTOP_INTERFACE_ROOT,
-				 NULL);
-	gconf_client_remove_dir (priv->gconf_client,
-				 HTTP_PROXY_ROOT,
-				 NULL);
-	*/
+    /*  gconf_client_remove_dir (priv->gconf_client,
+        GOSSIP_CONF_ROOT,
+        NULL);
+        gconf_client_remove_dir (priv->gconf_client,
+        DESKTOP_INTERFACE_ROOT,
+        NULL);
+        gconf_client_remove_dir (priv->gconf_client,
+        HTTP_PROXY_ROOT,
+        NULL);
+    */
 
-	[priv->defaults synchronize];
+    [priv->defaults synchronize];
 
-	G_OBJECT_CLASS (gossip_conf_parent_class)->finalize (object);
+    G_OBJECT_CLASS (gossip_conf_parent_class)->finalize (object);
 }
 
 GossipConf *
 gossip_conf_get (void)
 {
-	if (!global_conf) {
-		global_conf = g_object_new (GOSSIP_TYPE_CONF, NULL);
-	}
+    if (!global_conf) {
+        global_conf = g_object_new (GOSSIP_TYPE_CONF, NULL);
+    }
 
-	return global_conf;
+    return global_conf;
 }
 
 void
 gossip_conf_shutdown (void)
 {
-	if (global_conf) {
-		g_object_unref (global_conf);
-		global_conf = NULL;
-	}
+    if (global_conf) {
+        g_object_unref (global_conf);
+        global_conf = NULL;
+    }
 }
 
 gboolean
 gossip_conf_set_int (GossipConf  *conf,
-		     const gchar *key,
-		     gint         value)
+                     const gchar *key,
+                     gint         value)
 {
-	GossipConfPrivate *priv;
-	NSString       *string;
+    GossipConfPrivate *priv;
+    NSString       *string;
 
-	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
+    g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
 
-	priv = GOSSIP_CONF_GET_PRIVATE (conf);
+    priv = GOSSIP_CONF_GET_PRIVATE (conf);
 
-	POOL_ALLOC;
+    POOL_ALLOC;
 
-	string = [NSString stringWithUTF8String: key];
-	[priv->defaults setInteger: value forKey: string];
+    string = [NSString stringWithUTF8String: key];
+    [priv->defaults setInteger: value forKey: string];
 
-	POOL_RELEASE;
+    POOL_RELEASE;
 
-	return TRUE;
+    return TRUE;
 }
 
 gboolean
 gossip_conf_get_int (GossipConf  *conf,
-		     const gchar *key,
-		     gint        *value)
+                     const gchar *key,
+                     gint        *value)
 {
-	GossipConfPrivate *priv;
-	NSString       *string;
+    GossipConfPrivate *priv;
+    NSString       *string;
 
-	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
+    g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
 
-	priv = GOSSIP_CONF_GET_PRIVATE (conf);
+    priv = GOSSIP_CONF_GET_PRIVATE (conf);
 
-	POOL_ALLOC;
+    POOL_ALLOC;
 
-	string = [NSString stringWithUTF8String: key];
-	*value = [priv->defaults integerForKey: string];
+    string = [NSString stringWithUTF8String: key];
+    *value = [priv->defaults integerForKey: string];
 
-	[priv->defaults synchronize];
+    [priv->defaults synchronize];
 
-	POOL_RELEASE;
+    POOL_RELEASE;
 
-	return TRUE;
+    return TRUE;
 }
 
 gboolean
 gossip_conf_set_bool (GossipConf  *conf,
-		      const gchar *key,
-		      gboolean     value)
+                      const gchar *key,
+                      gboolean     value)
 {
-	GossipConfPrivate *priv;
-	NSString       *string;
+    GossipConfPrivate *priv;
+    NSString       *string;
 
-	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
+    g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
 
-	priv = GOSSIP_CONF_GET_PRIVATE (conf);
+    priv = GOSSIP_CONF_GET_PRIVATE (conf);
 
-	POOL_ALLOC;
+    POOL_ALLOC;
 
-	string = [NSString stringWithUTF8String: key];
-	[priv->defaults setBool: value forKey: string];
+    string = [NSString stringWithUTF8String: key];
+    [priv->defaults setBool: value forKey: string];
 
-	[priv->defaults synchronize];
+    [priv->defaults synchronize];
 
-	POOL_RELEASE;
+    POOL_RELEASE;
 
-	return TRUE;
+    return TRUE;
 }
 
 gboolean
 gossip_conf_get_bool (GossipConf  *conf,
-		      const gchar *key,
-		      gboolean    *value)
+                      const gchar *key,
+                      gboolean    *value)
 {
-	GossipConfPrivate *priv;
-	NSString       *string;
+    GossipConfPrivate *priv;
+    NSString       *string;
 
-	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
+    g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
 
-	priv = GOSSIP_CONF_GET_PRIVATE (conf);
+    priv = GOSSIP_CONF_GET_PRIVATE (conf);
 
-	POOL_ALLOC;
+    POOL_ALLOC;
 
-	string = [NSString stringWithUTF8String: key];
-	*value = [priv->defaults boolForKey: string];
+    string = [NSString stringWithUTF8String: key];
+    *value = [priv->defaults boolForKey: string];
 
-	POOL_RELEASE;
+    POOL_RELEASE;
 
-	return TRUE;
+    return TRUE;
 }
 
 gboolean
 gossip_conf_set_string (GossipConf  *conf,
-			const gchar *key,
-			const gchar *value)
+                        const gchar *key,
+                        const gchar *value)
 {
-	GossipConfPrivate *priv;
-	NSString       *string, *nsvalue;
+    GossipConfPrivate *priv;
+    NSString       *string, *nsvalue;
 
-	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
+    g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
 
-	priv = GOSSIP_CONF_GET_PRIVATE (conf);
+    priv = GOSSIP_CONF_GET_PRIVATE (conf);
 
-	POOL_ALLOC;
+    POOL_ALLOC;
 
-	string = [NSString stringWithUTF8String: key];
-	nsvalue = [NSString stringWithUTF8String: value];
-	[priv->defaults setObject: nsvalue forKey: string];
+    string = [NSString stringWithUTF8String: key];
+    nsvalue = [NSString stringWithUTF8String: value];
+    [priv->defaults setObject: nsvalue forKey: string];
 
-	[priv->defaults synchronize];
+    [priv->defaults synchronize];
 
-	POOL_RELEASE;
+    POOL_RELEASE;
 
-	return TRUE;
+    return TRUE;
 }
 
 gboolean
 gossip_conf_get_string (GossipConf   *conf,
-			const gchar  *key,
-			gchar       **value)
+                        const gchar  *key,
+                        gchar       **value)
 {
-	GossipConfPrivate *priv;
-	NSString       *string, *nsvalue;
+    GossipConfPrivate *priv;
+    NSString       *string, *nsvalue;
 
-	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
+    g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
 
-	priv = GOSSIP_CONF_GET_PRIVATE (conf);
+    priv = GOSSIP_CONF_GET_PRIVATE (conf);
 
-	POOL_ALLOC;
+    POOL_ALLOC;
 
-	string = [NSString stringWithUTF8String: key];
-	nsvalue = [priv->defaults stringForKey: string];
+    string = [NSString stringWithUTF8String: key];
+    nsvalue = [priv->defaults stringForKey: string];
 
-	*value = g_strdup ([nsvalue UTF8String]);
+    *value = g_strdup ([nsvalue UTF8String]);
 
-	POOL_RELEASE;
+    POOL_RELEASE;
 
-	return TRUE;
+    return TRUE;
 }
 
 gboolean
 gossip_conf_set_string_list (GossipConf  *conf,
-			     const gchar *key,
-			     GSList      *value)
+                             const gchar *key,
+                             GSList      *value)
 {
-	GossipConfPrivate *priv;
+    GossipConfPrivate *priv;
 
-	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
+    g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
 
-	priv = GOSSIP_CONF_GET_PRIVATE (conf);
+    priv = GOSSIP_CONF_GET_PRIVATE (conf);
 
-	return TRUE; /*gconf_client_set_string_list (priv->gconf_client,
-					     key,
-					     value,
-					     NULL);
-		     */
+    return TRUE; /*gconf_client_set_string_list (priv->gconf_client,
+                   key,
+                   value,
+                   NULL);
+                 */
 }
 
 gboolean
 gossip_conf_get_string_list (GossipConf   *conf,
-			     const gchar  *key,
-			     GSList      **value)
+                             const gchar  *key,
+                             GSList      **value)
 {
-	GossipConfPrivate *priv;
+    GossipConfPrivate *priv;
 
-	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
+    g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
 
-	priv = GOSSIP_CONF_GET_PRIVATE (conf);
+    priv = GOSSIP_CONF_GET_PRIVATE (conf);
 
-	*value = NULL; /*gconf_client_get_string_list (priv->gconf_client,
-					       key,
-					       &error);
-		       */
-	return TRUE;
+    *value = NULL; /*gconf_client_get_string_list (priv->gconf_client,
+                     key,
+                     &error);
+                   */
+    return TRUE;
 }
 
 /*
-static void
-conf_notify_data_free (GossipConfNotifyData *data)
-{
-	g_object_unref (data->conf);
-	g_slice_free (GossipConfNotifyData, data);
-}
+  static void
+  conf_notify_data_free (GossipConfNotifyData *data)
+  {
+  g_object_unref (data->conf);
+  g_slice_free (GossipConfNotifyData, data);
+  }
 
-static void
-conf_notify_func (GConfClient *client,
-		  guint        id,
-		  GConfEntry  *entry,
-		  gpointer     user_data)
-{
-	GossipConfNotifyData *data;
+  static void
+  conf_notify_func (GConfClient *client,
+  guint        id,
+  GConfEntry  *entry,
+  gpointer     user_data)
+  {
+  GossipConfNotifyData *data;
 
-	data = user_data;
+  data = user_data;
 
-	data->func (data->conf,
-		    gconf_entry_get_key (entry),
-		    data->user_data);
-}
+  data->func (data->conf,
+  gconf_entry_get_key (entry),
+  data->user_data);
+  }
 */
 
 guint
 gossip_conf_notify_add (GossipConf           *conf,
-			const gchar          *key,
-			GossipConfNotifyFunc func,
-			gpointer              user_data)
+                        const gchar          *key,
+                        GossipConfNotifyFunc func,
+                        gpointer              user_data)
 {
-	GossipConfPrivate     *priv;
-	guint                  id;
-	GossipConfNotifyData *data;
+    GossipConfPrivate     *priv;
+    guint                  id;
+    GossipConfNotifyData *data;
 
-	g_return_val_if_fail (GOSSIP_IS_CONF (conf), 0);
+    g_return_val_if_fail (GOSSIP_IS_CONF (conf), 0);
 
-	priv = GOSSIP_CONF_GET_PRIVATE (conf);
+    priv = GOSSIP_CONF_GET_PRIVATE (conf);
 
-	data = g_slice_new (GossipConfNotifyData);
-	data->func = func;
-	data->user_data = user_data;
-	data->conf = g_object_ref (conf);
+    data = g_slice_new (GossipConfNotifyData);
+    data->func = func;
+    data->user_data = user_data;
+    data->conf = g_object_ref (conf);
 
-	id = 0; /*gconf_client_notify_add (priv->gconf_client,
-				      key,
-				      conf_notify_func,
-				      data,
-				      (GFreeFunc) conf_notify_data_free,
-				      NULL);
-	*/
-	return id;
+    id = 0; /*gconf_client_notify_add (priv->gconf_client,
+              key,
+              conf_notify_func,
+              data,
+              (GFreeFunc) conf_notify_data_free,
+              NULL);
+            */
+    return id;
 }
 
 gboolean
 gossip_conf_notify_remove (GossipConf *conf,
-			   guint       id)
+                           guint       id)
 {
-	GossipConfPrivate *priv;
+    GossipConfPrivate *priv;
 
-	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
+    g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
 
-	priv = GOSSIP_CONF_GET_PRIVATE (conf);
+    priv = GOSSIP_CONF_GET_PRIVATE (conf);
 
-	/*gconf_client_notify_remove (priv->gconf_client, id);*/
+    /*gconf_client_notify_remove (priv->gconf_client, id);*/
 
-	return TRUE;
+    return TRUE;
 }
 
 /* Special cased settings that also need to be in the backends. */
 
 gboolean
 gossip_conf_get_http_proxy (GossipConf  *conf,
-			    gboolean    *use_http_proxy,
-			    gchar      **host,
-			    gint        *port,
-			    gboolean    *use_auth,
-			    gchar      **username,
-			    gchar      **password)
+                            gboolean    *use_http_proxy,
+                            gchar      **host,
+                            gint        *port,
+                            gboolean    *use_auth,
+                            gchar      **username,
+                            gchar      **password)
 {
-	GossipConfPrivate *priv;
+    GossipConfPrivate *priv;
 
-	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
+    g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
 
-	priv = GOSSIP_CONF_GET_PRIVATE (conf);
+    priv = GOSSIP_CONF_GET_PRIVATE (conf);
 
-	/*
-	*use_http_proxy = gconf_client_get_bool (priv->gconf_client,
-						 HTTP_PROXY_ROOT "/use_http_proxy",
-						 NULL);
-	*host = gconf_client_get_string (priv->gconf_client,
-					 HTTP_PROXY_ROOT "/host",
-					 NULL);
-	*port = gconf_client_get_int (priv->gconf_client,
-				      HTTP_PROXY_ROOT "/port",
-				      NULL);
-	*use_auth = gconf_client_get_bool (priv->gconf_client,
-					   HTTP_PROXY_ROOT "/use_authentication",
-					   NULL);
-	*username = gconf_client_get_string (priv->gconf_client,
-					     HTTP_PROXY_ROOT "/authentication_user",
-					     NULL);
-	*password = gconf_client_get_string (priv->gconf_client,
-					     HTTP_PROXY_ROOT "/authentication_password",
-					     NULL);
-	*/
+    /*
+     *use_http_proxy = gconf_client_get_bool (priv->gconf_client,
+     HTTP_PROXY_ROOT "/use_http_proxy",
+     NULL);
+     *host = gconf_client_get_string (priv->gconf_client,
+     HTTP_PROXY_ROOT "/host",
+     NULL);
+     *port = gconf_client_get_int (priv->gconf_client,
+     HTTP_PROXY_ROOT "/port",
+     NULL);
+     *use_auth = gconf_client_get_bool (priv->gconf_client,
+     HTTP_PROXY_ROOT "/use_authentication",
+     NULL);
+     *username = gconf_client_get_string (priv->gconf_client,
+     HTTP_PROXY_ROOT "/authentication_user",
+     NULL);
+     *password = gconf_client_get_string (priv->gconf_client,
+     HTTP_PROXY_ROOT "/authentication_password",
+     NULL);
+    */
 
-	*use_http_proxy = FALSE;
-	*host = NULL;
-	*port = 0;
-	*use_auth = FALSE;
-	*username = NULL;
-	*password = NULL;
+    *use_http_proxy = FALSE;
+    *host = NULL;
+    *port = 0;
+    *use_auth = FALSE;
+    *username = NULL;
+    *password = NULL;
 
-	return TRUE;
+    return TRUE;
 }
 
 #include "gossip-conf.h"

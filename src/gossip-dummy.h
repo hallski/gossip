@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2007 Imendio AB
  *
@@ -36,11 +36,11 @@ typedef struct _GossipDummy      GossipDummy;
 typedef struct _GossipDummyClass GossipDummyClass;
 
 struct _GossipDummy {
-	GObject parent;
+    GObject parent;
 };
 
 struct _GossipDummyClass {
-	GObjectClass parent_class;
+    GObjectClass parent_class;
 };
 
 GType               gossip_dummy_get_type                 (void) G_GNUC_CONST;

@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2002-2007 Imendio AB
  *
@@ -43,21 +43,21 @@ typedef struct _GossipGroupChatClass GossipGroupChatClass;
 typedef struct _GossipGroupChatPriv  GossipGroupChatPriv;
 
 struct _GossipGroupChat {
-	GossipChat           parent;
+    GossipChat           parent;
 
-	GossipGroupChatPriv *priv;
+    GossipGroupChatPriv *priv;
 };
 
 struct _GossipGroupChatClass {
-	GossipChatClass parent_class;
+    GossipChatClass parent_class;
 };
 
 GType            gossip_group_chat_get_type                   (void) G_GNUC_CONST;
 GossipGroupChat *gossip_group_chat_new                        (GossipChatroomProvider *provider,
-							       GossipChatroom         *chatroom);
+                                                               GossipChatroom         *chatroom);
 GossipChatroomId gossip_group_chat_get_chatroom_id            (GossipGroupChat        *group_chat);
 GossipChatroomProvider *
-		 gossip_group_chat_get_chatroom_provider      (GossipGroupChat        *group_chat);
+gossip_group_chat_get_chatroom_provider      (GossipGroupChat        *group_chat);
 GossipChatroom * gossip_group_chat_get_chatroom               (GossipGroupChat        *group_chat);
 GossipContact *  gossip_group_chat_get_selected_contact       (GossipGroupChat        *group_chat);
 GtkWidget *      gossip_group_chat_contact_menu               (GossipGroupChat        *group_chat);
@@ -66,17 +66,17 @@ GtkWidget *      gossip_group_chat_contact_menu               (GossipGroupChat  
 void             gossip_group_chat_change_subject             (GossipGroupChat        *group_chat);
 void             gossip_group_chat_change_nick                (GossipGroupChat        *group_chat);
 void             gossip_group_chat_contact_kick               (GossipGroupChat        *group_chat,
-							       GossipContact          *contact);
+                                                               GossipContact          *contact);
 
 /* Privileges */
 gboolean         gossip_group_chat_contact_can_message_all    (GossipGroupChat        *group_chat,
-							       GossipContact          *contact);
+                                                               GossipContact          *contact);
 gboolean         gossip_group_chat_contact_can_change_subject (GossipGroupChat        *group_chat,
-							       GossipContact          *contact);
+                                                               GossipContact          *contact);
 gboolean         gossip_group_chat_contact_can_kick           (GossipGroupChat        *group_chat,
-							       GossipContact          *contact);
+                                                               GossipContact          *contact);
 gboolean         gossip_group_chat_contact_can_change_role    (GossipGroupChat        *group_chat,
-							       GossipContact          *contact);
+                                                               GossipContact          *contact);
 
 G_END_DECLS
 

@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2002-2007 Imendio AB
  *
@@ -43,16 +43,16 @@ typedef struct _GossipAppClass GossipAppClass;
 typedef struct _GossipAppPriv  GossipAppPriv;
 
 struct _GossipApp {
-	GObject parent;
+    GObject parent;
 };
 
 struct _GossipAppClass {
-	GObjectClass parent_class;
+    GObjectClass parent_class;
 };
 
 GType                  gossip_app_get_type             (void) G_GNUC_CONST;
 void                   gossip_app_connect              (GossipAccount        *account,
-							gboolean              startup);
+                                                        gboolean              startup);
 void                   gossip_app_disconnect           (GossipAccount        *account);
 void                   gossip_app_net_down             (void);
 void                   gossip_app_net_up               (void);
@@ -64,7 +64,7 @@ void                   gossip_app_toggle_visibility    (void);
 void                   gossip_app_set_visibility       (gboolean              visible);
 void                   gossip_app_set_not_away         (void);
 void                   gossip_app_set_presence         (GossipPresenceState   state,
-							const gchar          *status);
+                                                        const gchar          *status);
 GtkWidget *            gossip_app_get_window           (void);
 GossipSession *        gossip_app_get_session          (void);
 GossipChatroomManager *gossip_app_get_chatroom_manager (void);

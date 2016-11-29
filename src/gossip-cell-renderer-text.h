@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2004-2007 Imendio AB
  *
@@ -39,13 +39,13 @@ typedef struct _GossipCellRendererTextClass GossipCellRendererTextClass;
 typedef struct _GossipCellRendererTextPriv  GossipCellRendererTextPriv;
 
 struct _GossipCellRendererText {
-	GtkCellRendererText         parent;
+    GtkCellRendererText         parent;
 
-	GossipCellRendererTextPriv *priv;
+    GossipCellRendererTextPriv *priv;
 };
 
 struct _GossipCellRendererTextClass {
-	GtkCellRendererTextClass    parent_class;
+    GtkCellRendererTextClass    parent_class;
 };
 
 GType             gossip_cell_renderer_text_get_type (void) G_GNUC_CONST;

@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2004-2007 Imendio AB
  *
@@ -36,159 +36,159 @@
 
 static LmHandlerResult
 jabber_services_get_version_cb (LmMessageHandler   *handler,
-				LmConnection       *connection,
-				LmMessage          *m,
-				GossipCallbackData *data)
+                                LmConnection       *connection,
+                                LmMessage          *m,
+                                GossipCallbackData *data)
 {
-	GossipVersionInfo     *info;
-	GossipVersionCallback  callback;
-	LmMessageNode         *query_node, *node;
-	LmMessageSubType       type;
+    GossipVersionInfo     *info;
+    GossipVersionCallback  callback;
+    LmMessageNode         *query_node, *node;
+    LmMessageSubType       type;
 
-	gossip_debug (DEBUG_DOMAIN, "Received client information");
+    gossip_debug (DEBUG_DOMAIN, "Received client information");
 
-	callback = data->callback;
-	if (!callback) {
-		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
-	}
+    callback = data->callback;
+    if (!callback) {
+        return LM_HANDLER_RESULT_REMOVE_MESSAGE;
+    }
 
-	/* check for error */
-	type = lm_message_get_sub_type (m);
+    /* check for error */
+    type = lm_message_get_sub_type (m);
 
-	if (type == LM_MESSAGE_SUB_TYPE_ERROR) {
-		GossipResult result = GOSSIP_RESULT_ERROR_INVALID_REPLY;
+    if (type == LM_MESSAGE_SUB_TYPE_ERROR) {
+        GossipResult result = GOSSIP_RESULT_ERROR_INVALID_REPLY;
 
-		node = lm_message_node_get_child (m->node, "error");
-		if (node) {
-			const gchar *str;
-			gint         code;
+        node = lm_message_node_get_child (m->node, "error");
+        if (node) {
+            const gchar *str;
+            gint         code;
 
-			str = lm_message_node_get_attribute (node, "code");
-			code = str ? atoi (str) : 0;
+            str = lm_message_node_get_attribute (node, "code");
+            code = str ? atoi (str) : 0;
 
-			switch (code) {
-			case 404: {
-				/* not found */
-				gossip_debug (DEBUG_DOMAIN, "Not found");
-				result = GOSSIP_RESULT_ERROR_UNAVAILABLE;
-				break;
-			}
+            switch (code) {
+            case 404: {
+                /* not found */
+                gossip_debug (DEBUG_DOMAIN, "Not found");
+                result = GOSSIP_RESULT_ERROR_UNAVAILABLE;
+                break;
+            }
 
-			case 502: {
-				/* service not available */
-				gossip_debug (DEBUG_DOMAIN, "Service not available");
-				result = GOSSIP_RESULT_ERROR_UNAVAILABLE;
-				break;
-			}
+            case 502: {
+                /* service not available */
+                gossip_debug (DEBUG_DOMAIN, "Service not available");
+                result = GOSSIP_RESULT_ERROR_UNAVAILABLE;
+                break;
+            }
 
-			default:
-				gossip_debug (DEBUG_DOMAIN, "Unhandled presence error:%d", code);
-				result = GOSSIP_RESULT_ERROR_INVALID_REPLY;
-				break;
-			}
-		}
+            default:
+                gossip_debug (DEBUG_DOMAIN, "Unhandled presence error:%d", code);
+                result = GOSSIP_RESULT_ERROR_INVALID_REPLY;
+                break;
+            }
+        }
 
-		(callback) (result,
-			    NULL,
-			    data->user_data);
+        (callback) (result,
+                    NULL,
+                    data->user_data);
 
-		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
-	}
+        return LM_HANDLER_RESULT_REMOVE_MESSAGE;
+    }
 
-	/* no vcard node */
-	query_node = lm_message_node_get_child (m->node, "query");
-	if (!query_node) {
-		(callback) (GOSSIP_RESULT_ERROR_INVALID_REPLY,
-			    NULL,
-			    data->user_data);
+    /* no vcard node */
+    query_node = lm_message_node_get_child (m->node, "query");
+    if (!query_node) {
+        (callback) (GOSSIP_RESULT_ERROR_INVALID_REPLY,
+                    NULL,
+                    data->user_data);
 
-		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
-	}
+        return LM_HANDLER_RESULT_REMOVE_MESSAGE;
+    }
 
-	info = gossip_version_info_new ();
+    info = gossip_version_info_new ();
 
-	node = lm_message_node_get_child (query_node, "name");
-	if (node) {
-		gossip_version_info_set_name (info,
-					      lm_message_node_get_value (node));
-	}
+    node = lm_message_node_get_child (query_node, "name");
+    if (node) {
+        gossip_version_info_set_name (info,
+                                      lm_message_node_get_value (node));
+    }
 
-	node = lm_message_node_get_child (query_node, "version");
-	if (node) {
-		gossip_version_info_set_version (info,
-						 lm_message_node_get_value (node));
-	}
+    node = lm_message_node_get_child (query_node, "version");
+    if (node) {
+        gossip_version_info_set_version (info,
+                                         lm_message_node_get_value (node));
+    }
 
-	node = lm_message_node_get_child (query_node, "os");
-	if (node) {
-		gossip_version_info_set_os (info,
-					    lm_message_node_get_value (node));
-	}
+    node = lm_message_node_get_child (query_node, "os");
+    if (node) {
+        gossip_version_info_set_os (info,
+                                    lm_message_node_get_value (node));
+    }
 
-	(callback) (GOSSIP_RESULT_OK,
-		    info,
-		    data->user_data);
+    (callback) (GOSSIP_RESULT_OK,
+                info,
+                data->user_data);
 
-	g_object_unref (info);
+    g_object_unref (info);
 
-	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
+    return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
 
 gboolean
 gossip_jabber_services_get_version (LmConnection           *connection,
-				    GossipContact          *contact,
-				    GossipVersionCallback   callback,
-				    gpointer                user_data,
-				    GError                **error)
+                                    GossipContact          *contact,
+                                    GossipVersionCallback   callback,
+                                    gpointer                user_data,
+                                    GError                **error)
 {
-	LmMessage          *m;
-	LmMessageNode      *node;
-	LmMessageHandler   *handler;
-	GossipCallbackData *data;
-	gboolean            result;
-	GossipPresence     *presence;
-	const gchar        *id;
-	const gchar        *resource = NULL;
-	gchar              *jid_str;
+    LmMessage          *m;
+    LmMessageNode      *node;
+    LmMessageHandler   *handler;
+    GossipCallbackData *data;
+    gboolean            result;
+    GossipPresence     *presence;
+    const gchar        *id;
+    const gchar        *resource = NULL;
+    gchar              *jid_str;
 
-	gossip_debug (DEBUG_DOMAIN,
-		      "Requesting client information from contact:'%s'",
-		      gossip_contact_get_id (contact));
+    gossip_debug (DEBUG_DOMAIN,
+                  "Requesting client information from contact:'%s'",
+                  gossip_contact_get_id (contact));
 
-	/* If offline, contacts don't have presence */
-	presence = gossip_contact_get_active_presence (contact);
-	if (presence) {
-		resource = gossip_presence_get_resource (presence);
-	}
+    /* If offline, contacts don't have presence */
+    presence = gossip_contact_get_active_presence (contact);
+    if (presence) {
+        resource = gossip_presence_get_resource (presence);
+    }
 
-	id = gossip_contact_get_id (contact);
+    id = gossip_contact_get_id (contact);
 
-	if (resource && strcmp (resource, "") != 0) {
-		jid_str = g_strdup_printf ("%s/%s", id, resource);
-	} else {
-		jid_str = (gchar *) id;
-	}
+    if (resource && strcmp (resource, "") != 0) {
+        jid_str = g_strdup_printf ("%s/%s", id, resource);
+    } else {
+        jid_str = (gchar *) id;
+    }
 
-	m = lm_message_new (jid_str, LM_MESSAGE_TYPE_IQ);
+    m = lm_message_new (jid_str, LM_MESSAGE_TYPE_IQ);
 
-	if (jid_str != id) {
-		g_free (jid_str);
-	}
+    if (jid_str != id) {
+        g_free (jid_str);
+    }
 
-	node = lm_message_node_add_child (m->node, "query", NULL);
-	lm_message_node_set_attribute (node, "xmlns", "jabber:iq:version");
+    node = lm_message_node_add_child (m->node, "query", NULL);
+    lm_message_node_set_attribute (node, "xmlns", "jabber:iq:version");
 
-	data = g_new0 (GossipCallbackData, 1);
-	data->callback = callback;
-	data->user_data = user_data;
+    data = g_new0 (GossipCallbackData, 1);
+    data->callback = callback;
+    data->user_data = user_data;
 
-	handler = lm_message_handler_new ((LmHandleMessageFunction) jabber_services_get_version_cb,
-					  data, g_free);
+    handler = lm_message_handler_new ((LmHandleMessageFunction) jabber_services_get_version_cb,
+                                      data, g_free);
 
-	result = lm_connection_send_with_reply (connection, m, handler, error);
+    result = lm_connection_send_with_reply (connection, m, handler, error);
 
-	lm_message_unref (m);
-	lm_message_handler_unref (handler);
+    lm_message_unref (m);
+    lm_message_handler_unref (handler);
 
-	return result;
+    return result;
 }

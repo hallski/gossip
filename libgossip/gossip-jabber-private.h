@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2005 Imendio AB
  *
@@ -30,10 +30,10 @@
 G_BEGIN_DECLS
 
 LmConnection *   _gossip_jabber_new_connection (GossipJabber  *jabber,
-						GossipAccount *account);
+                                                GossipAccount *account);
 gboolean         _gossip_jabber_set_connection (LmConnection  *connection,
-						GossipJabber  *jabber,
-						GossipAccount *account);
+                                                GossipJabber  *jabber,
+                                                GossipAccount *account);
 LmConnection *   _gossip_jabber_get_connection (GossipJabber  *jabber);
 GossipSession *  _gossip_jabber_get_session    (GossipJabber  *jabber);
 GossipJabberFTs *_gossip_jabber_get_fts        (GossipJabber  *jabber);

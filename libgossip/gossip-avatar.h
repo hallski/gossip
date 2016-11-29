@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2006 Xavier Claessens <xclaesse@gmail.com>
  * Copyright (C) 2007 Imendio AB
@@ -33,20 +33,20 @@ G_BEGIN_DECLS
 typedef struct _GossipAvatar GossipAvatar;
 
 struct _GossipAvatar {
-	guchar    *data;
-	gsize      len;
-	gchar     *format;
-	GdkPixbuf *pixbuf;
-	guint      refcount;
+    guchar    *data;
+    gsize      len;
+    gchar     *format;
+    GdkPixbuf *pixbuf;
+    guint      refcount;
 };
 
 GType          gossip_avatar_get_gtype                  (void) G_GNUC_CONST;
 GossipAvatar *gossip_avatar_new                     (guchar       *avatar,
-							 gsize         len,
-							 const gchar  *format);
+                                                     gsize         len,
+                                                     const gchar  *format);
 GdkPixbuf *    gossip_avatar_get_pixbuf                 (GossipAvatar *avatar);
 GdkPixbuf *    gossip_avatar_create_pixbuf_with_size    (GossipAvatar *avatar,
-							 gint          size);
+                                                         gint          size);
 GossipAvatar *gossip_avatar_ref                     (GossipAvatar *avatar);
 void           gossip_avatar_unref                      (GossipAvatar *avatar);
 

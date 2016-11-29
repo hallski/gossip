@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2004 Imendio AB
  *
@@ -39,21 +39,21 @@ typedef struct _GossipEventClass GossipEventClass;
 typedef gint                     GossipEventId;
 
 struct _GossipEvent {
-	GObject parent;
+    GObject parent;
 };
 
 struct _GossipEventClass {
-	GObjectClass parent_class;
+    GObjectClass parent_class;
 };
 
 typedef enum {
-	GOSSIP_EVENT_NEW_MESSAGE,
-	GOSSIP_EVENT_SUBSCRIPTION_REQUEST,
-	GOSSIP_EVENT_SERVER_MESSAGE,
-	GOSSIP_EVENT_FILE_TRANSFER_REQUEST,
-	GOSSIP_EVENT_USER_ONLINE,
-	GOSSIP_EVENT_USER_OFFLINE,
-	GOSSIP_EVENT_ERROR
+    GOSSIP_EVENT_NEW_MESSAGE,
+    GOSSIP_EVENT_SUBSCRIPTION_REQUEST,
+    GOSSIP_EVENT_SERVER_MESSAGE,
+    GOSSIP_EVENT_FILE_TRANSFER_REQUEST,
+    GOSSIP_EVENT_USER_ONLINE,
+    GOSSIP_EVENT_USER_OFFLINE,
+    GOSSIP_EVENT_ERROR
 } GossipEventType;
 
 GType           gossip_event_get_gtype    (void) G_GNUC_CONST;
@@ -66,12 +66,12 @@ GossipContact * gossip_event_get_contact  (GossipEvent     *event);
 /* Should probably subclass event instead */
 GObject *       gossip_event_get_data     (GossipEvent     *event);
 void            gossip_event_set_data     (GossipEvent     *event,
-					   GObject         *data);
+                                           GObject         *data);
 guint           gossip_event_hash         (gconstpointer    key);
 gboolean        gossip_event_equal        (gconstpointer    a,
-					   gconstpointer    b);
+                                           gconstpointer    b);
 gint            gossip_event_compare      (gconstpointer    a,
-					   gconstpointer    b);
+                                           gconstpointer    b);
 const gchar *   gossip_event_get_stock_id (GossipEvent     *event); 
 
 G_END_DECLS

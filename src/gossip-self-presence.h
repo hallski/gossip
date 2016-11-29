@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2007 Imendio AB
  *
@@ -39,11 +39,11 @@ typedef struct _GossipSelfPresence      GossipSelfPresence;
 typedef struct _GossipSelfPresenceClass GossipSelfPresenceClass;
 
 struct _GossipSelfPresence {
-	GObject parent;
+    GObject parent;
 };
 
 struct _GossipSelfPresenceClass {
-	GObjectClass parent_class;
+    GObjectClass parent_class;
 };
 
 GType                gossip_self_presence_get_type                  (void) G_GNUC_CONST;
@@ -60,8 +60,8 @@ void                 gossip_self_presence_updated                   (GossipSelfP
 
 void                 gossip_self_presence_set_not_away              (GossipSelfPresence *self_presence);
 void                 gossip_self_presence_set_state_status          (GossipSelfPresence *self_presence,
-							   GossipPresenceState state,
-							   const gchar *status);
+                                                                     GossipPresenceState state,
+                                                                     const gchar *status);
 
 G_END_DECLS
 

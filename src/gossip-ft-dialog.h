@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2005-2007 Imendio AB
  *
@@ -32,7 +32,7 @@ void gossip_ft_dialog_finalize           (GossipSession *session);
 
 void gossip_ft_dialog_send_file          (GossipContact *account);
 void gossip_ft_dialog_send_file_from_uri (GossipContact *contact,
-					  const gchar   *file);
+                                          const gchar   *file);
 
 G_END_DECLS
 

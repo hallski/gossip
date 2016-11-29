@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2007 Imendio AB
  *
@@ -25,64 +25,64 @@
 void
 gossip_theme_utils_ensure_tag_by_name (GtkTextBuffer *buffer, const gchar *name)
 {
-	GtkTextTagTable *table;
-	GtkTextTag      *tag;
+    GtkTextTagTable *table;
+    GtkTextTag      *tag;
 
-	table = gtk_text_buffer_get_tag_table (buffer);
-	tag = gtk_text_tag_table_lookup (table, name);
+    table = gtk_text_buffer_get_tag_table (buffer);
+    tag = gtk_text_tag_table_lookup (table, name);
 
-	if (!tag) {
-		gtk_text_buffer_create_tag (buffer,
-					    name,
-					    NULL);
-	}
+    if (!tag) {
+        gtk_text_buffer_create_tag (buffer,
+                                    name,
+                                    NULL);
+    }
 }
 
 GtkTextTag *
 gossip_theme_utils_init_tag_by_name (GtkTextTagTable *table, const gchar *name)
 {
-	GtkTextTag *tag;
+    GtkTextTag *tag;
 
-	tag = gtk_text_tag_table_lookup (table, name);
+    tag = gtk_text_tag_table_lookup (table, name);
 
-	if (!tag) {
-		return gtk_text_tag_new (name);
-	}
+    if (!tag) {
+        return gtk_text_tag_new (name);
+    }
 
-	/* Clear the old values so that we don't affect the new theme. */
-	g_object_set (tag,
-		      "background-set", FALSE,
-		      "foreground-set", FALSE,
-		      "invisible-set", FALSE,
-		      "justification-set", FALSE,
-		      "paragraph-background-set", FALSE,
-		      "pixels-above-lines-set", FALSE,
-		      "pixels-below-lines-set", FALSE,
-		      "rise-set", FALSE,
-		      "scale-set", FALSE,
-		      "size-set", FALSE,
-		      "style-set", FALSE,
-		      "weight-set", FALSE,
-		      NULL);
+    /* Clear the old values so that we don't affect the new theme. */
+    g_object_set (tag,
+                  "background-set", FALSE,
+                  "foreground-set", FALSE,
+                  "invisible-set", FALSE,
+                  "justification-set", FALSE,
+                  "paragraph-background-set", FALSE,
+                  "pixels-above-lines-set", FALSE,
+                  "pixels-below-lines-set", FALSE,
+                  "rise-set", FALSE,
+                  "scale-set", FALSE,
+                  "size-set", FALSE,
+                  "style-set", FALSE,
+                  "weight-set", FALSE,
+                  NULL);
 
-	return tag;
+    return tag;
 }
 
 void
 gossip_theme_utils_add_tag (GtkTextTagTable *table, GtkTextTag *tag)
 {
-	gchar      *name;
-	GtkTextTag *check_tag;
+    gchar      *name;
+    GtkTextTag *check_tag;
 
-	g_object_get (tag, "name", &name, NULL);
-	check_tag = gtk_text_tag_table_lookup (table, name);
-	g_free (name);
-	if (check_tag) {
-		return;
-	}
+    g_object_get (tag, "name", &name, NULL);
+    check_tag = gtk_text_tag_table_lookup (table, name);
+    g_free (name);
+    if (check_tag) {
+        return;
+    }
 
-	gtk_text_tag_table_add (table, tag);
+    gtk_text_tag_table_add (table, tag);
 
-	g_object_unref (tag);
+    g_object_unref (tag);
 }
 

@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2004 Imendio AB
  *
@@ -29,15 +29,15 @@
 G_BEGIN_DECLS
 
 gboolean gossip_jabber_vcard_get (GossipJabber         *jabber,
-				  const gchar          *jid_str,
-				  GossipVCardCallback   callback,
-				  gpointer              user_data,
-				  GError              **error);
+                                  const gchar          *jid_str,
+                                  GossipVCardCallback   callback,
+                                  gpointer              user_data,
+                                  GError              **error);
 gboolean gossip_jabber_vcard_set (GossipJabber         *jabber,
-				  GossipVCard          *vcard,
-				  GossipCallback        callback,
-				  gpointer              user_data,
-				  GError              **error);
+                                  GossipVCard          *vcard,
+                                  GossipCallback        callback,
+                                  gpointer              user_data,
+                                  GError              **error);
 
 G_END_DECLS
 

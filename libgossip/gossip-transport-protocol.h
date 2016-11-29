@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2004 Martyn Russell <mr@gnome.org>
  *
@@ -29,15 +29,15 @@ G_BEGIN_DECLS
 typedef struct _GossipTransportProtocol GossipTransportProtocol;
 
 typedef void (*GossipTransportProtocolIDFunc) (GossipJID  *jid,
-					       const gchar *id,
-					       gpointer    user_data);
+                                               const gchar *id,
+                                               gpointer    user_data);
 
 
 GList *      gossip_transport_protocol_get_all            (void);
 GossipTransportProtocol *
-	     gossip_transport_protocol_find_by_disco_type (const gchar                   *disco_type);
+gossip_transport_protocol_find_by_disco_type (const gchar                   *disco_type);
 GossipTransportProtocol *
-	     gossip_transport_protocol_ref                (GossipTransportProtocol       *protocol);
+gossip_transport_protocol_ref                (GossipTransportProtocol       *protocol);
 void         gossip_transport_protocol_unref              (GossipTransportProtocol       *protocol);
 const gchar *gossip_transport_protocol_get_name           (GossipTransportProtocol       *protocol);
 const gchar *gossip_transport_protocol_get_disco_type     (GossipTransportProtocol       *protocol);
@@ -48,9 +48,9 @@ const gchar *gossip_transport_protocol_get_icon           (GossipTransportProtoc
 const gchar *gossip_transport_protocol_get_url            (GossipTransportProtocol       *protocol);
 GList *      gossip_transport_protocol_get_services       (GossipTransportProtocol       *protocol);
 void         gossip_transport_protocol_id_to_jid          (GossipTransportProtocol       *protocol,
-							   const gchar                   *id,
-							   GossipTransportProtocolIDFunc  func,
-							   gpointer                       user_data);
+                                                           const gchar                   *id,
+                                                           GossipTransportProtocolIDFunc  func,
+                                                           gpointer                       user_data);
 
 /* services */
 typedef struct _GossipTransportService GossipTransportService;

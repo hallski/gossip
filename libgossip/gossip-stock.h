@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2003-2007 Imendio AB
  *
@@ -49,8 +49,8 @@ G_BEGIN_DECLS
 void         gossip_stock_init          (void);
 void         gossip_stock_finalize      (void);
 GdkPixbuf *  gossip_stock_create_pixbuf (GtkWidget   *widget,
-					 const gchar *stock,
-					 GtkIconSize  size);
+                                         const gchar *stock,
+                                         GtkIconSize  size);
 
 G_END_DECLS
 

@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2006-2007 Imendio AB
  *
@@ -27,28 +27,28 @@
 
 G_BEGIN_DECLS
 
-#define GOSSIP_TYPE_CELL_RENDERER_EXPANDER		(gossip_cell_renderer_expander_get_type ())
-#define GOSSIP_CELL_RENDERER_EXPANDER(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), GOSSIP_TYPE_CELL_RENDERER_EXPANDER, GossipCellRendererExpander))
-#define GOSSIP_CELL_RENDERER_EXPANDER_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), GOSSIP_TYPE_CELL_RENDERER_EXPANDER, GossipCellRendererExpanderClass))
-#define GOSSIP_IS_CELL_RENDERER_EXPANDER(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GOSSIP_TYPE_CELL_RENDERER_EXPANDER))
-#define GOSSIP_IS_CELL_RENDERER_EXPANDER_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GOSSIP_TYPE_CELL_RENDERER_EXPANDER))
-#define GOSSIP_CELL_RENDERER_EXPANDER_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), GOSSIP_TYPE_CELL_RENDERER_EXPANDER, GossipCellRendererExpanderClass))
+#define GOSSIP_TYPE_CELL_RENDERER_EXPANDER              (gossip_cell_renderer_expander_get_type ())
+#define GOSSIP_CELL_RENDERER_EXPANDER(obj)              (G_TYPE_CHECK_INSTANCE_CAST ((obj), GOSSIP_TYPE_CELL_RENDERER_EXPANDER, GossipCellRendererExpander))
+#define GOSSIP_CELL_RENDERER_EXPANDER_CLASS(klass)      (G_TYPE_CHECK_CLASS_CAST ((klass), GOSSIP_TYPE_CELL_RENDERER_EXPANDER, GossipCellRendererExpanderClass))
+#define GOSSIP_IS_CELL_RENDERER_EXPANDER(obj)           (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GOSSIP_TYPE_CELL_RENDERER_EXPANDER))
+#define GOSSIP_IS_CELL_RENDERER_EXPANDER_CLASS(klass)   (G_TYPE_CHECK_CLASS_TYPE ((klass), GOSSIP_TYPE_CELL_RENDERER_EXPANDER))
+#define GOSSIP_CELL_RENDERER_EXPANDER_GET_CLASS(obj)    (G_TYPE_INSTANCE_GET_CLASS ((obj), GOSSIP_TYPE_CELL_RENDERER_EXPANDER, GossipCellRendererExpanderClass))
 
 typedef struct _GossipCellRendererExpander GossipCellRendererExpander;
 typedef struct _GossipCellRendererExpanderClass GossipCellRendererExpanderClass;
 
 struct _GossipCellRendererExpander {
-  GtkCellRenderer parent;
+    GtkCellRenderer parent;
 };
 
 struct _GossipCellRendererExpanderClass {
-  GtkCellRendererClass parent_class;
+    GtkCellRendererClass parent_class;
 
-  /* Padding for future expansion */
-  void (*_gtk_reserved1) (void);
-  void (*_gtk_reserved2) (void);
-  void (*_gtk_reserved3) (void);
-  void (*_gtk_reserved4) (void);
+    /* Padding for future expansion */
+    void (*_gtk_reserved1) (void);
+    void (*_gtk_reserved2) (void);
+    void (*_gtk_reserved3) (void);
+    void (*_gtk_reserved4) (void);
 };
 
 GType            gossip_cell_renderer_expander_get_type (void) G_GNUC_CONST;

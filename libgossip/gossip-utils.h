@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2002-2005 Imendio AB
  *
@@ -32,39 +32,39 @@ G_BEGIN_DECLS
 #define G_STR_EMPTY(x) ((x) == NULL || (x)[0] == '\0')
 
 typedef enum {
-	GOSSIP_REGEX_AS_IS,
-	GOSSIP_REGEX_BROWSER,
-	GOSSIP_REGEX_EMAIL,
-	GOSSIP_REGEX_OTHER,
-	GOSSIP_REGEX_ALL,
+    GOSSIP_REGEX_AS_IS,
+    GOSSIP_REGEX_BROWSER,
+    GOSSIP_REGEX_EMAIL,
+    GOSSIP_REGEX_OTHER,
+    GOSSIP_REGEX_ALL,
 } GossipRegExType;
 
 /* Regular expressions */
 gchar *      gossip_substring                      (const gchar     *str,
-						    gint             start,
-						    gint             end);
+                                                    gint             start,
+                                                    gint             end);
 gint         gossip_regex_match                    (GossipRegExType  type,
-						    const gchar     *msg,
-						    GArray          *start,
-						    GArray          *end);
+                                                    const gchar     *msg,
+                                                    GArray          *start,
+                                                    GArray          *end);
 
 /* Strings */
 gint         gossip_strcasecmp                     (const gchar     *s1,
-						    const gchar     *s2);
+                                                    const gchar     *s2);
 gint         gossip_strncasecmp                    (const gchar     *s1,
-						    const gchar     *s2,
-						    gsize            n);
+                                                    const gchar     *s2,
+                                                    gsize            n);
 
 /* XML */
 gboolean     gossip_xml_validate                   (xmlDoc          *doc,
-						    const gchar     *dtd_filename);
+                                                    const gchar     *dtd_filename);
 xmlNodePtr   gossip_xml_node_get_child             (xmlNodePtr       node,
-						    const gchar     *child_name);
+                                                    const gchar     *child_name);
 xmlChar *    gossip_xml_node_get_child_content     (xmlNodePtr       node,
-						    const gchar     *child_name);
+                                                    const gchar     *child_name);
 xmlNodePtr   gossip_xml_node_find_child_prop_value (xmlNodePtr       node,
-						    const gchar     *prop_name,
-						    const gchar     *prop_value);
+                                                    const gchar     *prop_name,
+                                                    const gchar     *prop_value);
 
 /* Markup */
 gchar *      gossip_markup_unescape_text           (const gchar     *markup);

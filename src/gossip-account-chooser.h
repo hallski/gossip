@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2005-2007 Imendio AB
  *
@@ -40,11 +40,11 @@ typedef struct _GossipAccountChooser      GossipAccountChooser;
 typedef struct _GossipAccountChooserClass GossipAccountChooserClass;
 
 struct _GossipAccountChooser {
-	GtkComboBox parent;
+    GtkComboBox parent;
 };
 
 struct _GossipAccountChooserClass {
-	GtkComboBoxClass parent_class;
+    GtkComboBoxClass parent_class;
 };
 
 GType          gossip_account_chooser_get_type           (void) G_GNUC_CONST;
@@ -58,11 +58,11 @@ guint          gossip_account_chooser_get_count          (GossipAccountChooser *
 guint          gossip_account_chooser_get_connected      (GossipAccountChooser *account_chooser);
 
 gboolean       gossip_account_chooser_set_account        (GossipAccountChooser *account_chooser,
-							  GossipAccount        *account);
+                                                          GossipAccount        *account);
 void           gossip_account_chooser_set_can_select_all (GossipAccountChooser *account_chooser,
-							  gboolean              can_select_all);
+                                                          gboolean              can_select_all);
 void           gossip_account_chooser_set_has_all_option (GossipAccountChooser *account_chooser,
-							  gboolean              has_all_option);
+                                                          gboolean              has_all_option);
 
 G_END_DECLS
 

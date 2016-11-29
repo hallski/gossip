@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2004-2007 Imendio AB
  *
@@ -27,9 +27,9 @@
 G_BEGIN_DECLS
 
 void gossip_spell_dialog_show (GossipChat  *chat,
-			       GtkTextIter  start,
-			       GtkTextIter  end,
-			       const gchar *word);
+                               GtkTextIter  start,
+                               GtkTextIter  end,
+                               const gchar *word);
 
 G_END_DECLS
 

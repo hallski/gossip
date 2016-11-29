@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2002-2007 Imendio AB
  *
@@ -29,7 +29,7 @@
 G_BEGIN_DECLS
 
 void gossip_edit_chatroom_dialog_show (GtkWindow      *parent,
-				       GossipChatroom *chatroom);
+                                       GossipChatroom *chatroom);
 
 G_END_DECLS
 
