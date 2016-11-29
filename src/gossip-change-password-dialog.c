@@ -33,7 +33,6 @@
 #include "gossip-change-password-dialog.h"
 #include "gossip-app.h"
 #include "gossip-glade.h"
-#include "ephy-spinner.h"
 
 #define DEBUG_DOMAIN "ChangePasswordDialog"
 
@@ -130,7 +129,7 @@ change_password_dialog_start (GossipChangePasswordDialog *dialog)
 
     /* Show progress widget */
     gtk_widget_show (dialog->throbber);
-    ephy_spinner_start (EPHY_SPINNER (dialog->throbber));
+    gtk_spinner_start (GTK_SPINNER(dialog->throbber));
 
     /* Actually set the password */
     password = gtk_entry_get_text (GTK_ENTRY (dialog->entry_password));
@@ -160,7 +159,7 @@ change_password_dialog_stop (GossipChangePasswordDialog *dialog)
     dialog->changing_password = FALSE;
 
     /* Stop progress widget */
-    ephy_spinner_stop (EPHY_SPINNER (dialog->throbber));
+    gtk_spinner_stop (GTK_SPINNER (dialog->throbber));
     gtk_widget_hide (dialog->throbber);
 
     /* Enable widgets */ 
@@ -260,8 +259,7 @@ gossip_change_password_dialog_show (GossipAccount *account)
     g_object_unref (glade);
 
     /* Set up throbber */
-    dialog->throbber = ephy_spinner_new ();
-    ephy_spinner_set_size (EPHY_SPINNER (dialog->throbber), GTK_ICON_SIZE_SMALL_TOOLBAR);
+    dialog->throbber = gtk_spinner_new();
     gtk_box_pack_end (GTK_BOX (hbox_progress), dialog->throbber, FALSE, FALSE, 0);
     gtk_widget_hide (dialog->throbber);
 

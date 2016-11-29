@@ -58,7 +58,6 @@
 #include "gossip-subscription-dialog.h"
 #include "gossip-ui-utils.h"
 #include "gossip-vcard-dialog.h"
-#include "ephy-spinner.h"
 
 #ifdef GDK_WINDOWING_QUARTZ
 #include "gossip-mac-dock.h"
@@ -487,8 +486,7 @@ app_setup_throbber (void)
     ebox = gtk_event_box_new ();
     gtk_event_box_set_visible_window (GTK_EVENT_BOX (ebox), FALSE);
 
-    priv->throbber = ephy_spinner_new ();
-    ephy_spinner_set_size (EPHY_SPINNER (priv->throbber), GTK_ICON_SIZE_LARGE_TOOLBAR);
+    priv->throbber = gtk_spinner_new ();
     gtk_container_add (GTK_CONTAINER (ebox), priv->throbber);
 
     item = gtk_tool_item_new ();
@@ -1630,7 +1628,7 @@ app_session_protocol_connecting_cb (GossipSession  *session,
     name = gossip_account_get_name (account);
     gossip_debug (DEBUG_DOMAIN_SESSION, "Connecting account:'%s'", name);
 
-    ephy_spinner_start (EPHY_SPINNER (priv->throbber));
+    gtk_spinner_start (GTK_SPINNER (priv->throbber));
 }
 
 static void
@@ -1667,7 +1665,7 @@ app_session_protocol_connected_cb (GossipSession *session,
                                    NULL);
 
     if (connecting < 1) {
-        ephy_spinner_stop (EPHY_SPINNER (priv->throbber));
+        gtk_spinner_stop (GTK_SPINNER (priv->throbber));
     }
 
     g_hash_table_remove (priv->errors, account);
@@ -1727,7 +1725,7 @@ app_session_protocol_disconnected_cb (GossipSession *session,
                                    NULL);
 
     if (connecting < 1) {
-        ephy_spinner_stop (EPHY_SPINNER (priv->throbber));
+        gtk_spinner_stop (GTK_SPINNER (priv->throbber));
     }
 
     app_connection_items_update ();
@@ -1782,7 +1780,7 @@ app_session_protocol_error_cb (GossipSession  *session,
                                    NULL);
 
     if (connecting < 1) {
-        ephy_spinner_stop (EPHY_SPINNER (priv->throbber));
+        gtk_spinner_stop (GTK_SPINNER (priv->throbber));
     }
 
     if (error && error->code == GOSSIP_JABBER_NO_PASSWORD) {

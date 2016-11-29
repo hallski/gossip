@@ -36,7 +36,6 @@
 #include "gossip-glade.h"
 #include "gossip-new-chatroom-dialog.h"
 #include "gossip-ui-utils.h"
-#include "ephy-spinner.h"
 
 #define DEBUG_DOMAIN "NewChatroomDialog"
 
@@ -798,7 +797,7 @@ new_chatroom_dialog_browse_cb (GossipChatroomProvider  *provider,
                                             dialog,
                                             FALSE);
 
-    ephy_spinner_stop (EPHY_SPINNER (dialog->throbber));
+    gtk_spinner_stop (GTK_SPINNER (dialog->throbber));
 
     gtk_widget_hide (dialog->throbber);
     gtk_widget_show (dialog->button_size);
@@ -865,7 +864,7 @@ new_chatroom_dialog_browse_start (GossipNewChatroomDialog *dialog)
     gtk_widget_show (dialog->throbber);
     gtk_widget_hide (dialog->button_size);
 
-    ephy_spinner_start (EPHY_SPINNER (dialog->throbber));
+    gtk_spinner_start (GTK_SPINNER (dialog->throbber));
 
     /* Fire off request */
     session = gossip_app_get_session ();
@@ -913,7 +912,7 @@ new_chatroom_dialog_browse_stop (GossipNewChatroomDialog *dialog)
     gtk_widget_hide (dialog->throbber);
     gtk_widget_show (dialog->button_size);
 
-    ephy_spinner_stop (EPHY_SPINNER (dialog->throbber));
+    gtk_spinner_stop (GTK_SPINNER (dialog->throbber));
 
     /* Fire off cancellation */
     session = gossip_app_get_session ();
@@ -1121,8 +1120,7 @@ gossip_new_chatroom_dialog_show (GtkWindow *parent)
     }
 
     /* Add throbber */
-    dialog->throbber = ephy_spinner_new ();
-    ephy_spinner_set_size (EPHY_SPINNER (dialog->throbber), GTK_ICON_SIZE_LARGE_TOOLBAR);
+    dialog->throbber = gtk_spinner_new ();
     gtk_widget_show (dialog->throbber);
 
     gtk_box_pack_start (GTK_BOX (dialog->hbox_status), dialog->throbber, 
