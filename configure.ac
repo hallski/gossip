@@ -26,16 +26,15 @@ AC_PATH_PROG(DBUSBINDINGTOOL, dbus-binding-tool)
 IDT_COMPILE_WARNINGS
 
 LIBXML_REQUIRED=2.6.16
-GLIB_REQUIRED=2.12.0
-GTK_REQUIRED=2.14.0
+GLIB_REQUIRED=2.50.1
+GTK_REQUIRED=2.24.0
 LIBGLADE_REQUIRED=2.0.0
-LOUDMOUTH_REQUIRED=1.4.1
+LOUDMOUTH_REQUIRED=1.5.3
 GCONF_REQUIRED=1.2.0
 LIBGNOME_REQUIRED=2.0.0
 LIBGNOMEVFS_REQUIRED=2.0.0
 DESKTOP_FILE_UTILS_REQUIRED=0.2.90
-LIBPANELAPPLET_REQUIRED=2.10.0
-DBUS_REQUIRED=0.61
+DBUS_REQUIRED=1.11.6
 
 
 dnl -----------------------------------------------------------
@@ -49,7 +48,7 @@ if test "x$IGE_PLATFORM" = xx11; then
    PLATFORM_LDFLAGS=
 elif test "x$IGE_PLATFORM" = xosx; then
    gconf_pkgconfig=
-   platform_pkgconfig="ige-mac-integration >= 0.8.2"
+   platform_pkgconfig=
    PLATFORM_CFLAGS="-xobjective-c"
    PLATFORM_LDFLAGS="-framework Carbon -framework AppKit -framework IOKit -lobjc"
 elif test "x$IGE_PLATFORM" = xwin32; then
@@ -94,34 +93,6 @@ fi
 
 AM_CONDITIONAL(HAVE_DBUS, test x$have_dbus = xyes)
 
-
-dnl -----------------------------------------------------------
-dnl Galago
-dnl -----------------------------------------------------------
-AC_ARG_ENABLE(galago,
-              AS_HELP_STRING([--enable-galago=@<:@no/yes/auto@:>@],
-                             [compile with galago support]), ,
-              enable_galago=no)
-
-if test "x$enable_galago" != "xno"; then
-   galago_pkgconfig_tmp="libgalago >= 0.5.0"
-   PKG_CHECK_MODULES(GALAGO, $galago_pkgconfig_tmp, have_galago=yes, have_galago=no)
-   if test x$have_galago = xyes; then
-      AC_DEFINE(HAVE_GALAGO, 1, [Galago support])
-      galago_pkgconfig=$galago_pkgconfig_tmp
-   fi
-else
-   have_galago=no
-   galago_pkgconfig=
-fi
-
-if test "x$enable_galago" = "xyes"; then
-   if test "x$have_galago" != "xyes"; then
-      AC_MSG_ERROR([Couldn't find Galago])
-   fi
-fi
-
-AM_CONDITIONAL(HAVE_GALAGO, test x$have_galago = xyes)
 
 
 dnl -----------------------------------------------------------
@@ -278,7 +249,6 @@ PKG_CHECK_MODULES(GOSSIP,
    loudmouth-1.0 >= $LOUDMOUTH_REQUIRED
    $iso_codes_pkgconfig
    $dbus_pkgconfig
-   $galago_pkgconfig
    $libnotify_pkgconfig
    $platform_pkgconfig
 ])
@@ -290,24 +260,6 @@ PKG_CHECK_MODULES(GOSSIP_JABBER,
    loudmouth-1.0 >= $LOUDMOUTH_REQUIRED
    libxml-2.0 >= $LIBXML_REQUIRED
 ])
-
-if test x$have_dbus = xyes; then
-   PKG_CHECK_MODULES(PEEKABOO, 
-   [
-      libgnomeui-2.0
-      libpanelapplet-2.0 >= $LIBPANELAPPLET_REQUIRED
-      gconf-2.0 >= $GCONF_REQUIRED
-      glib-2.0 >= $GLIB_REQUIRED
-      gtk+-2.0 >= $GTK_REQUIRED
-      libglade-2.0 >= $LIBGLADE_REQUIRED 
-      $dbus_pkgconfig
-      $galago_pkgconfig
-   ], have_peekaboo="yes", have_peekaboo="no")
-else
-  have_peekaboo="no"
-fi
-
-AM_CONDITIONAL(HAVE_PEEKABOO, test x$have_peekaboo = xyes)
 
 GLIB_GENMARSHAL=`$PKG_CONFIG glib-2.0 --variable=glib_genmarshal`
 AC_SUBST(GLIB_GENMARSHAL)
@@ -419,9 +371,6 @@ AC_OUTPUT([
   src/sounds/Makefile
   po/Makefile.in
   help/Makefile
-  peekaboo/Makefile
-  peekaboo/src/Makefile
-  peekaboo/data/Makefile
   gossip.desktop.in
 ])
 
@@ -433,14 +382,10 @@ echo
 echo "Extras:"
 echo "  DBUS:          $have_dbus"
 echo "  Sound:         $have_libcanberra_gtk (libcanberra-gtk)"
-echo "  Galago:        $have_galago"
 echo "  Notify:        $have_libnotify"
 echo "  GNOME Keyring: $have_gnome_keyring (only with GNOME)"
 echo "  EBook:         $have_ebook (only with GNOME)"
 echo "  XSS:           $have_xss (only with GNOME)"
 echo "  ASpell:        $have_aspell"
-echo
-echo "Build:"
-echo "  Peekaboo:      $have_peekaboo (only with DBUS)"
 echo
 

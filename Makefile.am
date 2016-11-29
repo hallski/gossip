@@ -1,4 +1,4 @@
-SUBDIRS = data libloudermouth libgossip src po peekaboo
+SUBDIRS = data libloudermouth libgossip src po
 
 desktop_in_files=gossip.desktop.in
 desktop_files=$(desktop_in_files:.desktop.in=.desktop)
