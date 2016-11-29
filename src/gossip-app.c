@@ -1374,8 +1374,8 @@ app_chat_search_cb (GtkWidget *window,
     GossipAppPriv *priv;
 
     priv = GET_PRIV (app);
-        
-    if (GTK_WIDGET_VISIBLE (priv->find_hbox)) {
+
+    if (gtk_widget_get_visible (priv->find_hbox)) {
         gtk_widget_hide (priv->find_hbox);
     } else {
         gtk_widget_show (priv->find_hbox);

@@ -413,7 +413,7 @@ chatrooms_window_row_activated_cb (GtkTreeView           *tree_view,
                                    GtkTreeViewColumn     *column,
                                    GossipChatroomsWindow *window)
 {
-    if (GTK_WIDGET_IS_SENSITIVE (window->button_edit)) {
+    if (gtk_widget_is_sensitive (window->button_edit)) {
         chatrooms_window_model_action_selected (window);
     }
 }

@@ -474,7 +474,7 @@ presence_chooser_clear_activate_cb (GtkWidget             *item,
     GtkWindow *parent = NULL;
 
     toplevel = gtk_widget_get_toplevel (GTK_WIDGET (chooser));
-    if (GTK_WIDGET_TOPLEVEL (toplevel) &&
+    if (gtk_widget_is_toplevel (toplevel) &&
         GTK_IS_WINDOW (toplevel)) {
         GtkWindow *window;
         gboolean   visible;
